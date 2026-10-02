@@ -10,6 +10,8 @@ BEGIN
 END
 $$;
 
+GRANT app_rw TO CURRENT_USER;
+
 CREATE TYPE user_status AS ENUM ('active', 'suspended', 'deleted');
 CREATE TYPE platform_role AS ENUM ('user', 'admin');
 CREATE TYPE work_format AS ENUM ('remote', 'hybrid', 'onsite');
