@@ -1,5 +1,61 @@
 {
   "product": {
     "name": "INTGETION JOB LIST"
+  },
+  "meta": {
+    "description": "Remote work. Real matches."
+  },
+  "nav": {
+    "home": "Home",
+    "main": "Main",
+    "language": "Language",
+    "theme": "Color theme",
+    "themeLight": "Light theme",
+    "themeDark": "Dark theme"
+  },
+  "locale": {
+    "en": "English",
+    "ru": "Russian"
+  },
+  "home": {
+    "tagline": "Remote work. Real matches.",
+    "subtitle": "Find work. Find people. Connect directly.",
+    "findJob": "Find a Remote Job",
+    "postJob": "Post a Job",
+    "searchLabel": "Search",
+    "searchPlaceholder": "Role, skill, or company",
+    "searchSubmit": "Search",
+    "categoriesTitle": "Categories",
+    "latestTitle": "Latest vacancies",
+    "latestEmpty": "Published vacancies will appear here.",
+    "benefitsTitle": "Why this platform",
+    "benefitBotTitle": "Agent bot",
+    "benefitBotBody": "A conversation that fills the profile and finds roles with you.",
+    "benefitMatchTitle": "Matches with explanations",
+    "benefitMatchBody": "Every recommendation says which parts of the profile it used.",
+    "benefitContactsTitle": "Contacts only by mutual interest",
+    "benefitContactsBody": "A company sees contact details only after it expresses interest in an application.",
+    "postNote": "Posting a vacancy opens after an employer account exists."
+  },
+  "categories": {
+    "engineering": "Engineering",
+    "data": "Data",
+    "design": "Design",
+    "product": "Product",
+    "marketing": "Marketing",
+    "sales": "Sales",
+    "support": "Support",
+    "operations": "Operations",
+    "finance": "Finance",
+    "hr": "HR"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This address is not part of the platform."
+  },
+  "error": {
+    "title": "Something went wrong",
+    "body": "The page could not be shown.",
+    "retry": "Try again"
   }
 }

@@ -4,6 +4,7 @@ import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import noForeignRepoImport from "./eslint-rules/no-foreign-repo-import.mjs";
+import noHardcodedJsxText from "./eslint-rules/no-hardcoded-jsx-text.mjs";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -19,11 +20,13 @@ const eslintConfig = defineConfig([
       intgetion: {
         rules: {
           "no-foreign-repo-import": noForeignRepoImport,
+          "no-hardcoded-jsx-text": noHardcodedJsxText,
         },
       },
     },
     rules: {
       "intgetion/no-foreign-repo-import": "error",
+      "intgetion/no-hardcoded-jsx-text": "error",
     },
   },
   prettier,

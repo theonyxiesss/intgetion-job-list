@@ -58,3 +58,7 @@ The workspace directory name is not a valid npm package name (spaces and capital
 ## D34 — роль миграций на хостинге
 
 Пароль встроенной роли `postgres` на Supabase нельзя сменить SQL-ролью `postgres` (это может только superuser). `DATABASE_MIGRATION_URL` — session pooler, пользователь `migrator.<ref>`. `DATABASE_URL` — session pooler, пользователь `app_rw.<ref>`. Пароли только в `.env.local`. Для не-loopback TLS в клиенте `rejectUnauthorized: false`, потому что локальная цепочка сертификатов не доверяет пулеру.
+
+## D35 — категории на главной
+
+Раздел 9.1 говорит «8 категорий» и не называет, какие именно. Раздел 11.1 называет десять категорий навыков. Главная показывает весь список 11.1. Живые вакансии на главную приходят в подфазе 4A; в 0C блок «последние вакансии» — пустое состояние, без выдуманных карточек.
