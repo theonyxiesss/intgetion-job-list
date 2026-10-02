@@ -45,6 +45,11 @@ async function signOut(page: Page) {
   expect((await page.request.get("/api/me")).status()).toBe(401);
 }
 
+// Next.js renders an empty route announcer with role=alert next to ours.
+async function expectFormAlert(page: Page, text: string) {
+  await expect(page.getByRole("alert").filter({ hasText: text })).toBeVisible();
+}
+
 async function signInWithPassword(page: Page, email: string, pw: string) {
   await page.goto("/en/login");
   await page.getByLabel("Email", { exact: true }).fill(email);
@@ -59,7 +64,7 @@ test("password: unconfirmed email cannot sign in or write; confirmed can", async
   await registerWithPassword(page, email);
 
   await signInWithPassword(page, email, password);
-  await expect(page.getByRole("alert")).toContainText("Confirm your email");
+  await expectFormAlert(page, "Confirm your email");
   const write = await page.request.patch("/api/me", {
     data: { locale: "ru" },
   });
@@ -137,7 +142,7 @@ test("password reset sets a new password through the emailed link", async ({
 
   await openLatestLink(page, email, seen);
   await expect(page).toHaveURL(/\/en\/reset-password\?mode=update$/);
-  const newPassword = "harbor-violet-73";
+  const newPassword = "harbor-violet-73"; // gitleaks:allow (test fixture)
   await page.getByLabel("New password").fill(newPassword);
   await page.getByRole("button", { name: "Save password" }).click();
   await expect(page).toHaveURL(/\/en$/);
@@ -145,9 +150,7 @@ test("password reset sets a new password through the emailed link", async ({
   await signOut(page);
 
   await signInWithPassword(page, email, password);
-  await expect(page.getByRole("alert")).toContainText(
-    "Wrong email or password",
-  );
+  await expectFormAlert(page, "Wrong email or password");
   await signInWithPassword(page, email, newPassword);
   await expect(page).toHaveURL(/\/en$/);
   await expectSignedIn(page);

@@ -1,0 +1,2 @@
+# Test fixture password in the 1A e2e reset test, not a secret (generic-api-key false positive).
+d9d8df85c38d2ee8b70fc94a3b6dfb39855048f6:tests/e2e/auth.spec.ts:generic-api-key:140
