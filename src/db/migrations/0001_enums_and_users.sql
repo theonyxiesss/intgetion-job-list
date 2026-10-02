@@ -136,8 +136,9 @@ BEGIN
   SELECT c.relname INTO short_name FROM pg_class c WHERE c.oid = target;
   EXECUTE format('ALTER TABLE %s ENABLE ROW LEVEL SECURITY', target);
   EXECUTE format('ALTER TABLE %s FORCE ROW LEVEL SECURITY', target);
+  EXECUTE format('REVOKE ALL ON TABLE %s FROM PUBLIC', target);
   EXECUTE format(
-    'REVOKE ALL ON TABLE %s FROM PUBLIC, anon, authenticated',
+    'GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE %s TO anon, authenticated, app_rw',
     target
   );
   EXECUTE format('DROP POLICY IF EXISTS %I ON %s', short_name || '_app_rw_all', target);
