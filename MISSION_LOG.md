@@ -22,13 +22,13 @@
 - OPEN QUESTION: нет
 - Следующая подфаза: 0C
 
-## [2026-10-03] — 0C — NOT DONE
+## [2026-10-03] — 0C — DONE
 
-- Сделано: next-intl с префиксом `/en` и `/ru` (D33, оболочка). Шапка, футер, тема `prefers-color-scheme` с переключателем, главная из статических блоков раздела 9.1, 404/500 на локали, eslint-запрет хардкода в JSX. Категории — весь список 11.1 (D35). Блок вакансий — пустое состояние, без выдуманных карточек.
-- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 0 (5 files, 13 tests); `pnpm build` → 0. Локально `GET /en` и `GET /ru` → 200, `GET /en/missing-page` → 404, в HTML есть слоган и название. `pnpm test:e2e` → 1: браузер Playwright не скачался (таймаут cdn.playwright.dev, две попытки). axe и Lighthouse вынесены в `scripts/ci-ui.sh` и job `check`. CI дописывается после `gh run watch`.
+- Сделано: next-intl с префиксом `/en` и `/ru`. Шапка, футер, тема `prefers-color-scheme` с переключателем, главная из статических блоков раздела 9.1, локализованные 404/500, eslint-запрет хардкода в JSX. Категории — весь список 11.1 (D35). Блок вакансий — пустое состояние. Неизвестный путь внутри локали вызывает `notFound()`.
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 0 (5 files, 13 tests); `pnpm format:check` → 0; `pnpm build` → 0. Локально `GET /en` и `GET /ru` → 200, слоган и название в HTML. Локальный `pnpm test:e2e` → 1: таймаут скачивания Chromium с cdn.playwright.dev (две попытки). `gh run watch 37071580945` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37071580945 — jobs `check` и `database` success. В CI e2e 4 passed, axe без critical, Lighthouse LCP `lcp_ms 2069.3522`.
 - P-тесты подфазы: нет
 - Миграции: нет
-- Изменённые файлы: `src/app/[locale]/**`, `src/components/shell/**`, `src/i18n/**`, `src/messages/**`, `src/proxy.ts`, `eslint-rules/no-hardcoded-jsx-text.*`, `tests/e2e/home.spec.ts`, `scripts/ci-ui.sh`, `.github/workflows/ci.yml`, `docs/DECISIONS.md`
+- Изменённые файлы: `src/app/[locale]/**`, `src/components/shell/**`, `src/i18n/**`, `src/messages/**`, `src/proxy.ts`, `eslint-rules/no-hardcoded-jsx-text.*`, `tests/e2e/home.spec.ts`, `scripts/ci-ui.sh`, `.github/workflows/ci.yml`, `next.config.ts`, `docs/DECISIONS.md`
 - Отклонения от ТЗ: D35
 - OPEN QUESTION: нет
-- Следующая подфаза: 0C, пока CI с axe и Lighthouse не зелёный
+- Следующая подфаза: 1A
