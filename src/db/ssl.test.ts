@@ -20,7 +20,10 @@ describe("hosted TLS", () => {
       path.join(process.cwd(), "src/db/supabase-root-2021-ca.pem"),
       "utf8",
     );
-    expect(SUPABASE_ROOT_CA_2021.trim()).toBe(pem.trim());
+    // A Windows checkout may turn LF into CRLF.
+    expect(SUPABASE_ROOT_CA_2021.trim()).toBe(
+      pem.replace(/\r\n/g, "\n").trim(),
+    );
   });
 
   it("verifies the chain for hosted databases", () => {
