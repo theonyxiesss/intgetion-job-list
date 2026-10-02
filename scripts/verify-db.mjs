@@ -1,5 +1,5 @@
 import pg from "pg";
-import { loadLocalEnv, redact } from "./db-url.mjs";
+import { loadLocalEnv, pgConfig, redact } from "./db-url.mjs";
 
 loadLocalEnv();
 
@@ -10,7 +10,7 @@ if (!connectionString) {
 }
 
 const appUrl = process.env.DATABASE_URL;
-const client = new pg.Client({ connectionString });
+const client = new pg.Client(pgConfig(connectionString));
 client.on("error", (error) => {
   console.error(redact(error.message));
 });
@@ -102,7 +102,7 @@ try {
   if (!appUrl) {
     failures.push("DATABASE_URL is not set; cannot log in as app_rw");
   } else {
-    const appClient = new pg.Client({ connectionString: appUrl });
+    const appClient = new pg.Client(pgConfig(appUrl));
     appClient.on("error", (error) => {
       console.error(redact(error.message));
     });

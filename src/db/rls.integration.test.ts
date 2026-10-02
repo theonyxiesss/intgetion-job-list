@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import pg from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { getDb } from "@/db/client";
+import { hostedSsl, withoutSslMode } from "@/db/ssl";
 
 const migrationUrl = process.env.DATABASE_MIGRATION_URL;
 const appUrl = process.env.DATABASE_URL;
@@ -12,7 +13,10 @@ if (!migrationUrl || !appUrl) {
   );
 }
 
-const admin = new pg.Client({ connectionString: migrationUrl });
+const admin = new pg.Client({
+  connectionString: withoutSslMode(migrationUrl),
+  ssl: hostedSsl(migrationUrl),
+});
 
 afterAll(async () => {
   await admin.end();

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import pg from "pg";
-import { isLoopback, loadLocalEnv, redact } from "./db-url.mjs";
+import { isLoopback, loadLocalEnv, pgConfig, redact } from "./db-url.mjs";
 
 const migrationsDir = path.join("src", "db", "migrations");
 const localPassword = "app_rw_local_only";
@@ -16,7 +16,7 @@ if (!connectionString) {
   process.exit(1);
 }
 
-const client = new pg.Client({ connectionString });
+const client = new pg.Client(pgConfig(connectionString));
 client.on("error", (error) => {
   console.error(redact(error.message));
 });

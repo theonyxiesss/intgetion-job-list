@@ -28,3 +28,14 @@ export function isLoopback(connectionString) {
     hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1"
   );
 }
+
+export function pgConfig(connectionString) {
+  const url = new URL(connectionString);
+  url.searchParams.delete("sslmode");
+  return {
+    connectionString: url.toString(),
+    ssl: isLoopback(connectionString)
+      ? undefined
+      : { rejectUnauthorized: false },
+  };
+}

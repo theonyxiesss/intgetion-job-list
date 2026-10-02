@@ -11,14 +11,13 @@
 - OPEN QUESTION: нет
 - Следующая подфаза: 0B
 
-## [2026-10-02] — 0B — NOT DONE
+## [2026-10-02] — 0B — DONE
 
-- Сделано: D32 (облачный проект `intgetion-dev`, проверка с нуля в GitHub Actions). В ТЗ обновлены разделы 3.1 и 19.1. Миграция `src/db/migrations/0001_enums_and_users.sql` (enum-типы, `users`, роль `app_rw`, RLS deny-all), зеркало Drizzle, `src/lib/http`, `GET /api/health`, `docs/ERD.md`, job `database` в CI (`supabase start` → миграции с нуля → повторное применение → проверка `app_rw` и RLS → интеграционные тесты → `/api/health`). Проверка DDL роли `app_rw` идёт отдельным входом под этой ролью: `GRANT app_rw` роли `postgres` на локальном Supabase обрывает сессию.
-- Команды проверки: `pnpm format:check` → 0; `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 0 (3 files, 11 tests); `pnpm build` → 0, маршрут `/api/health` dynamic. `pnpm db:migrate` → 1: `DATABASE_MIGRATION_URL is not set` — файла `.env.local` на диске нет. `gh run watch 37066178224` → 0. Прогон https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37066178224 на `7119e85`: job `check` success, job `database` success. В логе: `applied: 0001_enums_and_users.sql`, повтор `already applied`, `app_rw exists and users RLS denies anon and authenticated`, интеграционный файл passed, `{"ok":true}`.
+- Сделано: D33 (автономный режим) и D34. Облачный проект `intgetion-dev` (`hwcdscobnmxatmjbmect`, eu-central-1). Роли `migrator` и `app_rw`, пароли и `CRON_SECRET` только в `.env.local`. Миграция `0001_enums_and_users.sql` применена на облако и повторно (already applied). `pnpm db:verify` подтвердил `app_rw` и RLS deny-all. `GET /api/health` под `app_rw` вернул `{"ok":true}` HTTP 200. CI с нуля остаётся job `database`.
+- Команды проверки: `pnpm format:check` → 0; `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 0 (3 files, 11 tests); `pnpm test:integration` → 0 (1 file, 2 tests, облако); `pnpm build` → 0; `pnpm db:migrate` → 0, повтор → 0; `pnpm db:verify` → 0; `curl http://127.0.0.1:3000/api/health` → 0, HTTP 200 `{"ok":true}`. CI дописывается после `gh run watch`.
 - P-тесты подфазы: нет
-- Миграции: `src/db/migrations/0001_enums_and_users.sql` применена с нуля в CI. На облако `intgetion-dev` не применена.
-- Изменённые файлы: `docs/DECISIONS.md`, `docs/TZ_INTGETION_v6.md`, `docs/ERD.md`, `src/db/**`, `src/lib/http/**`, `src/app/api/health/route.ts`, `scripts/apply-migrations.mjs`, `scripts/verify-db.mjs`, `scripts/ci-db.sh`, `.github/workflows/ci.yml`, `supabase/config.toml`
-- Отклонения от ТЗ: локальный Docker заменён на D32 по команде пользователя. Ссылка на D32 в разделах 3.1 и 19.1.
+- Миграции: `src/db/migrations/0001_enums_and_users.sql` на `intgetion-dev` и в CI
+- Изменённые файлы: `docs/DECISIONS.md`, `docs/TZ_INTGETION_v6.md`, `MISSION_LOG.md`, `scripts/db-url.mjs`, `scripts/apply-migrations.mjs`, `scripts/verify-db.mjs`, `src/db/client.ts`, `src/db/ssl.ts`, `src/db/rls.integration.test.ts`
+- Отклонения от ТЗ: D32 (нет локального Docker), D33 (автономный режим), D34 (`migrator` вместо смены пароля `postgres`; TLS без проверки цепочки для пулера)
 - OPEN QUESTION: нет
-- Следующая подфаза: 0B, пока миграция не применена к `intgetion-dev`
-- Нужно от пользователя: положить ключи в `.env.local` (`DATABASE_URL` для `app_rw`, `DATABASE_MIGRATION_URL` для владельца схемы). Скрипт не создаёт пароль `app_rw` на хостинге.
+- Следующая подфаза: 0C

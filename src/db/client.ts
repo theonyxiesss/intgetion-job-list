@@ -1,6 +1,7 @@
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as schema from "./schema";
+import { hostedSsl, withoutSslMode } from "./ssl";
 
 let database: PostgresJsDatabase<typeof schema> | undefined;
 
@@ -9,6 +10,13 @@ export function getDb() {
   if (!url) {
     throw new Error("DATABASE_URL is not set");
   }
-  database ??= drizzle(postgres(url, { max: 1, prepare: false }), { schema });
+  database ??= drizzle(
+    postgres(withoutSslMode(url), {
+      max: 1,
+      prepare: false,
+      ssl: hostedSsl(url),
+    }),
+    { schema },
+  );
   return database;
 }
