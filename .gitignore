@@ -12,6 +12,10 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
 # next.js
 /.next/
@@ -31,7 +35,15 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env
+.env.*
+.env.local
+.env*.local
+!.env.example
+
+# supabase local scratch
+supabase/.temp/
+supabase/.branches/
 
 # vercel
 .vercel

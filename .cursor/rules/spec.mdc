@@ -1,0 +1,18 @@
+---
+description: Protocol for INTGETION JOB LIST. One subphase per session. The spec is the source of truth.
+alwaysApply: true
+---
+
+# INTGETION JOB LIST
+
+Source of truth: `docs/TZ_INTGETION_v6.md`. Do not treat archived specs as current.
+
+- One subphase per session (section 22). Do not start the next subphase without an explicit user command.
+- Session start: read sections 0, 2, and the current subphase, then `MISSION_LOG.md`.
+- Before code: print a 5–15 line plan (files, migrations, tests).
+- Session end: append `MISSION_LOG.md` using the section 0 template, including command output.
+- Do not change `PRODUCT_NAME` (`INTGETION JOB LIST`).
+- Do not invent functionality beyond MVP (section 21) or the current subphase.
+- If something is undefined: record `OPEN QUESTION` in `MISSION_LOG.md`, pick the smallest conservative option, and record it in `docs/DECISIONS.md`.
+- Do not skip or weaken tests.
+- If a check fails, say the subphase is not done. A one-word "Готово" report is forbidden.
