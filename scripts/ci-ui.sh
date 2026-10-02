@@ -27,7 +27,7 @@ if [[ "$ready" -ne 1 ]]; then
   exit 1
 fi
 
-chrome="$(find "${HOME}/.cache/ms-playwright" -type f -path '*/chrome-linux/chrome' | head -n 1)"
+chrome="$(find "${HOME}/.cache/ms-playwright" -type f -name chrome | head -n 1)"
 if [[ -z "$chrome" ]]; then
   echo "playwright chrome was not found" >&2
   exit 1
