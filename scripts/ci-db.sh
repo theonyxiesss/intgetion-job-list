@@ -11,12 +11,11 @@ if [[ -z "$db_url" ]]; then
 fi
 
 export DATABASE_MIGRATION_URL="$db_url"
+app_url="${db_url/postgres:postgres@/app_rw:app_rw_local_only@}"
+export DATABASE_URL="$app_url"
 pnpm db:migrate
 pnpm db:migrate
 pnpm db:verify
-
-app_url="${db_url/postgres:postgres@/app_rw:app_rw_local_only@}"
-export DATABASE_URL="$app_url"
 pnpm test:integration
 pnpm build
 pnpm start > /tmp/next-start.log 2>&1 &

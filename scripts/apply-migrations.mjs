@@ -17,6 +17,9 @@ if (!connectionString) {
 }
 
 const client = new pg.Client({ connectionString });
+client.on("error", (error) => {
+  console.error(redact(error.message));
+});
 
 try {
   await client.connect();

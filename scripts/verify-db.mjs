@@ -9,7 +9,11 @@ if (!connectionString) {
   process.exit(1);
 }
 
+const appUrl = process.env.DATABASE_URL;
 const client = new pg.Client({ connectionString });
+client.on("error", (error) => {
+  console.error(redact(error.message));
+});
 const failures = [];
 
 function expect(condition, message) {
@@ -95,18 +99,29 @@ try {
     await client.query("ROLLBACK");
   }
 
-  await client.query("BEGIN");
-  try {
-    await client.query("SET LOCAL ROLE app_rw");
-    let ddlFailed = false;
+  if (!appUrl) {
+    failures.push("DATABASE_URL is not set; cannot log in as app_rw");
+  } else {
+    const appClient = new pg.Client({ connectionString: appUrl });
+    appClient.on("error", (error) => {
+      console.error(redact(error.message));
+    });
+    await appClient.connect();
     try {
-      await client.query("CREATE TABLE public.app_rw_should_fail (id int)");
-    } catch {
-      ddlFailed = true;
+      await appClient.query("BEGIN");
+      let ddlFailed = false;
+      try {
+        await appClient.query(
+          "CREATE TABLE public.app_rw_should_fail (id int)",
+        );
+      } catch {
+        ddlFailed = true;
+      }
+      expect(ddlFailed, "app_rw was able to create a table");
+      await appClient.query("ROLLBACK");
+    } finally {
+      await appClient.end().catch(() => undefined);
     }
-    expect(ddlFailed, "app_rw was able to create a table");
-  } finally {
-    await client.query("ROLLBACK");
   }
 
   if (failures.length > 0) {
