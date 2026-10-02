@@ -27,6 +27,8 @@
 # misc
 .DS_Store
 *.pem
+# Public Supabase root CA (D36). Not a key.
+!src/db/supabase-root-2021-ca.pem
 
 # debug
 npm-debug.log*

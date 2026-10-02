@@ -32,3 +32,14 @@
 - Отклонения от ТЗ: D35
 - OPEN QUESTION: нет
 - Следующая подфаза: 1A
+
+## [2026-10-03] — fix: TLS к пулеру — DONE
+
+- Сделано: вместо `rejectUnauthorized: false` клиенты (`src/db/ssl.ts`, `scripts/db-url.mjs`) проверяют цепочку по закреплённому `Supabase Root 2021 CA` (D36). Loopback-проверка теперь распознаёт `[::1]`: `URL.hostname` для IPv6 возвращает адрес в скобках.
+- Команды проверки: `pnpm db:verify` → 0 с проверкой цепочки; подключение `app_rw` через `postgres` с `hostedSsl()` → успех; без закреплённого CA пулер отклонён с `SELF_SIGNED_CERT_IN_CHAIN`.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `src/db/ssl.ts`, `src/db/ssl.test.ts`, `src/db/supabase-root-2021-ca.pem`, `scripts/db-url.mjs`, `docs/DECISIONS.md`, `MISSION_LOG.md`
+- Отклонения от ТЗ: D36
+- OPEN QUESTION: нет
+- Следующая подфаза: 1A

@@ -25,9 +25,18 @@ export function loadLocalEnv() {
 export function isLoopback(connectionString) {
   const hostname = new URL(connectionString).hostname;
   return (
-    hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1"
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "::1" ||
+    hostname === "[::1]"
   );
 }
+
+// Supabase Root 2021 CA. src/db/ssl.ts embeds the same bytes for the app.
+const supabaseRootCa = fs.readFileSync(
+  new URL("../src/db/supabase-root-2021-ca.pem", import.meta.url),
+  "utf8",
+);
 
 export function pgConfig(connectionString) {
   const url = new URL(connectionString);
@@ -36,6 +45,6 @@ export function pgConfig(connectionString) {
     connectionString: url.toString(),
     ssl: isLoopback(connectionString)
       ? undefined
-      : { rejectUnauthorized: false },
+      : { ca: supabaseRootCa, rejectUnauthorized: true },
   };
 }
