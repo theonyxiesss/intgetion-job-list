@@ -11,7 +11,11 @@
     "language": "Language",
     "theme": "Color theme",
     "themeLight": "Light theme",
-    "themeDark": "Dark theme"
+    "themeDark": "Dark theme",
+    "login": "Sign in",
+    "register": "Register",
+    "logout": "Sign out",
+    "account": "Account"
   },
   "locale": {
     "en": "English",
@@ -57,5 +61,48 @@
     "title": "Something went wrong",
     "body": "The page could not be shown.",
     "retry": "Try again"
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "registerTitle": "Create an account",
+    "resetTitle": "Reset password",
+    "updatePasswordTitle": "Set a new password",
+    "checkEmailTitle": "Check your email",
+    "checkEmailBody": "We sent you a link. Open it in this browser to continue. The link works once.",
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "New password",
+    "passwordHint": "At least 10 characters.",
+    "methodLabel": "Sign-in method",
+    "methodPassword": "Password",
+    "methodMagicLink": "Email link",
+    "magicLinkHint": "We will email you a one-time sign-in link.",
+    "acceptTerms": "I accept the terms of use and the privacy policy.",
+    "submitLogin": "Sign in",
+    "submitMagicLink": "Send link",
+    "submitRegister": "Create account",
+    "submitReset": "Send reset link",
+    "submitNewPassword": "Save password",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already registered?",
+    "forgotPassword": "Forgot password?",
+    "toRegister": "Create an account",
+    "toLogin": "Sign in",
+    "resetHint": "We will email a reset link if an account exists for this address.",
+    "errors": {
+      "invalid_email": "Enter a valid email address.",
+      "password_too_short": "The password must be at least 10 characters.",
+      "password_too_long": "The password must be at most 72 characters.",
+      "password_too_common": "This password is too common. Choose another one.",
+      "password_weak": "This password is too weak. Choose another one.",
+      "terms_required": "Accept the terms to continue.",
+      "invalid_credentials": "Wrong email or password.",
+      "email_not_confirmed": "Confirm your email first: open the link we sent you.",
+      "invalid_link": "The link is invalid or expired. Request a new one.",
+      "missing_terms": "Registration is not finished. Register again and accept the terms.",
+      "rate_limited": "Too many attempts. Try again later.",
+      "session_missing": "The reset link has expired. Request a new one.",
+      "generic": "Something went wrong. Try again."
+    }
   }
 }

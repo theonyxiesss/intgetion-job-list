@@ -66,3 +66,17 @@ The workspace directory name is not a valid npm package name (spaces and capital
 ## D36 — проверка TLS для хостинга
 
 Заменяет последнее предложение D34. Для не-loopback подключений клиент проверяет цепочку пулера по корню `Supabase Root 2021 CA` (`prod-ca-2021.crt`, SHA-256 `80:70:25:AD:…:CA:FA`) с `rejectUnauthorized: true`. Сертификат лежит в `src/db/supabase-root-2021-ca.pem` (его читают скрипты) и встроен в `src/db/ssl.ts` (его использует приложение); `src/db/ssl.test.ts` держит их одинаковыми и проверяет отпечаток. Корень сверен побайтно с копией в репозитории `supabase/cli`. Срок действия корня — до 2031-04-26.
+
+## D37 — детали auth-потока (1A)
+
+1. Регистрация — `POST /api/auth/register` на сервере через `@supabase/ssr`. Версия условий, время согласия и локаль хранятся в `user_metadata` до подтверждения email; строку `users` создаёт `/auth/callback` (`ON CONFLICT (auth_uid) DO NOTHING`). Нет согласия в metadata → выход из сессии и `/login?error=missing_terms`.
+2. Вход паролем и magic link — на клиенте через supabase-js (раздел 7: «Supabase Auth на клиенте»). Magic link со страницы входа не создаёт пользователя (`shouldCreateUser: false`) и для неизвестного адреса показывает тот же экран (anti-enumeration).
+3. `/[locale]/auth/callback` принимает `code` (PKCE, ссылка открывается в том же браузере) и `token_hash` + `type` (на случай своих шаблонов писем).
+4. Неподтверждённый email, отсутствие строки `users` и статус не `active` считаются отсутствием сессии: 401 `UNAUTHENTICATED`. Новый код ошибки не вводится.
+5. Дополнительный эндпоинт `POST /api/auth/password` `{ password }` — новый пароль после ссылки восстановления. Сервер применяет те же правила пароля; без сессии — 401.
+6. `GET /api/me` дополнительно отдаёт `marketingOptIn` (своё поле, его меняет `PATCH /api/me`). `hasCandidateProfile: false` и `companies: []` — честный ответ, пока нет таблиц 2B и 3A; эти подфазы заполняют поля.
+7. Блок-лист паролей — список SecLists `10k-most-common` (MIT), только записи длиной ≥ 10 (короче отсекает правило длины). Максимум — 72 символа (предел bcrypt).
+8. `TERMS_VERSION = "2026-10-03"` в `src/config/legal.ts`. Тексты условий — OPEN QUESTION 25.4, поэтому чекбокс пока без ссылки на `/legal/*`.
+9. Сессия обновляется в `src/proxy.ts` до next-intl, чтобы обновлённые cookie дошли до Server Components. Route Handlers под `/api` обновляют cookie сами.
+10. Supabase нужен proxy и шапке, поэтому e2e, axe и Lighthouse перенесены в CI-job `database` (`supabase start` + Mailpit). Job `check` оставляет lint, format, typecheck, unit, build, gitleaks.
+11. Локальный `supabase/config.toml`: подтверждение email включено, минимум пароля 10, redirect `http://127.0.0.1:3000/**`, лимиты писем и входов подняты для CI. Облачный проект настраивается так же в дашборде (MISSION_LOG 1A).

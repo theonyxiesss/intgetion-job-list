@@ -34,3 +34,14 @@ test("home has no critical axe violations", async ({ page }) => {
   );
   expect(critical).toEqual([]);
 });
+
+for (const path of ["/en/login", "/en/register", "/en/reset-password"]) {
+  test(`${path} has no critical axe violations`, async ({ page }) => {
+    await page.goto(path);
+    const results = await new AxeBuilder({ page }).analyze();
+    const critical = results.violations.filter(
+      (violation) => violation.impact === "critical",
+    );
+    expect(critical).toEqual([]);
+  });
+}

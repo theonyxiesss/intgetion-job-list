@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Runs after scripts/ci-db.sh has started Supabase and built the app.
 set -euo pipefail
 
 pnpm exec playwright install --with-deps chromium
@@ -24,6 +25,13 @@ done
 if [[ "$ready" -ne 1 ]]; then
   echo "production server did not serve /en" >&2
   cat /tmp/next-start.log >&2 || true
+  exit 1
+fi
+
+health="$(curl -sf "http://127.0.0.1:3000/api/health")"
+echo "$health"
+if [[ "$health" != '{"ok":true}' ]]; then
+  echo "GET /api/health did not return ok" >&2
   exit 1
 fi
 

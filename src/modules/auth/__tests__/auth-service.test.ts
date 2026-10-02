@@ -1,0 +1,296 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { TERMS_VERSION } from "@/config/legal";
+import { HttpError } from "@/lib/http";
+import * as usersRepo from "../repo/users";
+import {
+  changePassword,
+  completeCallback,
+  getCurrentUser,
+  register,
+  requestPasswordReset,
+  requireCurrentUser,
+  type AuthClient,
+  type CurrentUser,
+} from "../service/auth-service";
+
+vi.mock("../repo/users", () => ({
+  findUserByAuthUid: vi.fn(),
+  insertUserIfMissing: vi.fn(),
+  updateUser: vi.fn(),
+}));
+
+const repo = vi.mocked(usersRepo);
+
+const row: CurrentUser = {
+  id: "11111111-1111-4111-8111-111111111111",
+  authUid: "22222222-2222-4222-8222-222222222222",
+  platformRole: "user",
+  status: "active",
+  locale: "en",
+  termsAcceptedAt: new Date("2026-10-03T00:00:00Z"),
+  termsVersion: TERMS_VERSION,
+  marketingOptIn: false,
+  lastActiveAt: null,
+  createdAt: new Date("2026-10-03T00:00:00Z"),
+  updatedAt: new Date("2026-10-03T00:00:00Z"),
+  deletedAt: null,
+};
+
+type AuthUser = {
+  id: string;
+  email_confirmed_at?: string;
+  user_metadata: Record<string, unknown>;
+};
+
+function fakeAuth(user: AuthUser | null) {
+  const ok = { data: {}, error: null };
+  return {
+    signUp: vi.fn().mockResolvedValue(ok),
+    signInWithOtp: vi.fn().mockResolvedValue(ok),
+    resetPasswordForEmail: vi.fn().mockResolvedValue(ok),
+    exchangeCodeForSession: vi.fn().mockResolvedValue(ok),
+    verifyOtp: vi.fn().mockResolvedValue(ok),
+    getUser: vi.fn().mockResolvedValue({ data: { user }, error: null }),
+    signOut: vi.fn().mockResolvedValue({ error: null }),
+    updateUser: vi.fn().mockResolvedValue(ok),
+  };
+}
+
+function asAuth(fake: ReturnType<typeof fakeAuth>) {
+  return fake as unknown as AuthClient;
+}
+
+const confirmed: AuthUser = {
+  id: row.authUid,
+  email_confirmed_at: "2026-10-03T00:00:00Z",
+  user_metadata: {
+    terms_version: TERMS_VERSION,
+    terms_accepted_at: "2026-10-03T10:00:00.000Z",
+    locale: "ru",
+  },
+};
+const unconfirmed: AuthUser = { ...confirmed, email_confirmed_at: undefined };
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  process.env.NEXT_PUBLIC_SITE_URL = "http://127.0.0.1:3000/";
+});
+
+describe("register", () => {
+  const now = new Date("2026-10-03T10:00:00.000Z");
+
+  it("signs up with a password and stores terms in metadata", async () => {
+    const auth = fakeAuth(null);
+    await register(
+      asAuth(auth),
+      {
+        email: "ana@example.com",
+        password: "orbit-lantern-42",
+        locale: "ru",
+        acceptTerms: true,
+      },
+      now,
+    );
+    expect(auth.signUp).toHaveBeenCalledWith({
+      email: "ana@example.com",
+      password: "orbit-lantern-42",
+      options: {
+        emailRedirectTo: "http://127.0.0.1:3000/ru/auth/callback",
+        data: {
+          terms_version: TERMS_VERSION,
+          terms_accepted_at: "2026-10-03T10:00:00.000Z",
+          locale: "ru",
+        },
+      },
+    });
+    expect(auth.signInWithOtp).not.toHaveBeenCalled();
+  });
+
+  it("sends a magic link that may create the user when there is no password", async () => {
+    const auth = fakeAuth(null);
+    await register(
+      asAuth(auth),
+      { email: "ana@example.com", locale: "en", acceptTerms: true },
+      now,
+    );
+    expect(auth.signInWithOtp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email: "ana@example.com",
+        options: expect.objectContaining({ shouldCreateUser: true }),
+      }),
+    );
+    expect(auth.signUp).not.toHaveBeenCalled();
+  });
+
+  it("answers an existing address like a new one", async () => {
+    const auth = fakeAuth(null);
+    auth.signUp.mockResolvedValue({
+      data: {},
+      error: { code: "user_already_exists", status: 422 },
+    });
+    await expect(
+      register(asAuth(auth), {
+        email: "ana@example.com",
+        password: "orbit-lantern-42",
+        locale: "en",
+        acceptTerms: true,
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  it("maps provider rate limits to 429 RATE_LIMITED", async () => {
+    const auth = fakeAuth(null);
+    auth.signInWithOtp.mockResolvedValue({
+      data: {},
+      error: { code: "over_email_send_rate_limit", status: 429 },
+    });
+    await expect(
+      register(asAuth(auth), {
+        email: "ana@example.com",
+        locale: "en",
+        acceptTerms: true,
+      }),
+    ).rejects.toMatchObject({ status: 429, code: "RATE_LIMITED" });
+  });
+});
+
+describe("requestPasswordReset", () => {
+  it("never reveals whether the address exists", async () => {
+    const auth = fakeAuth(null);
+    auth.resetPasswordForEmail.mockResolvedValue({
+      data: {},
+      error: { code: "user_not_found", status: 400 },
+    });
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    await expect(
+      requestPasswordReset(asAuth(auth), {
+        email: "nobody@example.com",
+        locale: "en",
+      }),
+    ).resolves.toBeUndefined();
+    expect(auth.resetPasswordForEmail).toHaveBeenCalledWith(
+      "nobody@example.com",
+      { redirectTo: "http://127.0.0.1:3000/en/auth/callback?next=reset" },
+    );
+  });
+});
+
+describe("completeCallback", () => {
+  it("creates the users row from signup metadata after a PKCE exchange", async () => {
+    const auth = fakeAuth(confirmed);
+    repo.findUserByAuthUid.mockResolvedValue(undefined);
+    repo.insertUserIfMissing.mockResolvedValue(row);
+
+    const result = await completeCallback(asAuth(auth), { code: "abc" });
+
+    expect(auth.exchangeCodeForSession).toHaveBeenCalledWith("abc");
+    expect(repo.insertUserIfMissing).toHaveBeenCalledWith(row.authUid, {
+      terms_version: TERMS_VERSION,
+      terms_accepted_at: "2026-10-03T10:00:00.000Z",
+      locale: "ru",
+    });
+    expect(result).toEqual({ ok: true, user: row });
+  });
+
+  it("verifies token_hash links", async () => {
+    const auth = fakeAuth(confirmed);
+    repo.findUserByAuthUid.mockResolvedValue(row);
+    const result = await completeCallback(asAuth(auth), {
+      tokenHash: "hash",
+      type: "magiclink",
+    });
+    expect(auth.verifyOtp).toHaveBeenCalledWith({
+      token_hash: "hash",
+      type: "magiclink",
+    });
+    expect(result.ok).toBe(true);
+    expect(repo.insertUserIfMissing).not.toHaveBeenCalled();
+  });
+
+  it("rejects links without a code or with an unknown type", async () => {
+    const auth = fakeAuth(confirmed);
+    expect(await completeCallback(asAuth(auth), {})).toEqual({
+      ok: false,
+      reason: "invalid_link",
+    });
+    expect(
+      await completeCallback(asAuth(auth), { tokenHash: "h", type: "sms" }),
+    ).toEqual({ ok: false, reason: "invalid_link" });
+  });
+
+  it("rejects an expired code", async () => {
+    const auth = fakeAuth(confirmed);
+    auth.exchangeCodeForSession.mockResolvedValue({
+      data: {},
+      error: { code: "flow_state_expired", status: 400 },
+    });
+    expect(await completeCallback(asAuth(auth), { code: "old" })).toEqual({
+      ok: false,
+      reason: "invalid_link",
+    });
+    expect(repo.insertUserIfMissing).not.toHaveBeenCalled();
+  });
+
+  it("does not create a row for an unconfirmed email", async () => {
+    const auth = fakeAuth(unconfirmed);
+    const result = await completeCallback(asAuth(auth), { code: "abc" });
+    expect(result).toEqual({ ok: false, reason: "invalid_link" });
+    expect(repo.insertUserIfMissing).not.toHaveBeenCalled();
+  });
+
+  it("signs out and refuses when the terms were never accepted", async () => {
+    const auth = fakeAuth({ ...confirmed, user_metadata: {} });
+    repo.findUserByAuthUid.mockResolvedValue(undefined);
+    const result = await completeCallback(asAuth(auth), { code: "abc" });
+    expect(result).toEqual({ ok: false, reason: "missing_terms" });
+    expect(auth.signOut).toHaveBeenCalled();
+    expect(repo.insertUserIfMissing).not.toHaveBeenCalled();
+  });
+});
+
+describe("current user", () => {
+  it("returns the active row for a confirmed session", async () => {
+    repo.findUserByAuthUid.mockResolvedValue(row);
+    expect(await getCurrentUser(asAuth(fakeAuth(confirmed)))).toEqual(row);
+  });
+
+  it("treats an unconfirmed email as no session", async () => {
+    repo.findUserByAuthUid.mockResolvedValue(row);
+    expect(await getCurrentUser(asAuth(fakeAuth(unconfirmed)))).toBeNull();
+    expect(repo.findUserByAuthUid).not.toHaveBeenCalled();
+  });
+
+  it("treats suspended and missing rows as no session", async () => {
+    repo.findUserByAuthUid.mockResolvedValue({ ...row, status: "suspended" });
+    expect(await getCurrentUser(asAuth(fakeAuth(confirmed)))).toBeNull();
+    repo.findUserByAuthUid.mockResolvedValue(undefined);
+    expect(await getCurrentUser(asAuth(fakeAuth(confirmed)))).toBeNull();
+  });
+
+  it("requireCurrentUser answers 401 UNAUTHENTICATED", async () => {
+    const error = await requireCurrentUser(asAuth(fakeAuth(null))).catch(
+      (caught: unknown) => caught,
+    );
+    expect(error).toBeInstanceOf(HttpError);
+    expect(error).toMatchObject({ status: 401, code: "UNAUTHENTICATED" });
+  });
+});
+
+describe("writes need a confirmed email", () => {
+  it("changePassword refuses an unconfirmed session before touching auth", async () => {
+    const auth = fakeAuth(unconfirmed);
+    await expect(
+      changePassword(asAuth(auth), { password: "orbit-lantern-42" }),
+    ).rejects.toMatchObject({ status: 401 });
+    expect(auth.updateUser).not.toHaveBeenCalled();
+  });
+
+  it("changePassword updates the password for a confirmed user", async () => {
+    const auth = fakeAuth(confirmed);
+    repo.findUserByAuthUid.mockResolvedValue(row);
+    await changePassword(asAuth(auth), { password: "orbit-lantern-42" });
+    expect(auth.updateUser).toHaveBeenCalledWith({
+      password: "orbit-lantern-42",
+    });
+  });
+});

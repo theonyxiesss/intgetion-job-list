@@ -1,10 +1,19 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
+import { LogoutButton } from "@/components/auth/logout-button";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ThemeToggle } from "./theme-toggle";
 
-export function Header() {
-  const t = useTranslations();
+async function hasSession() {
+  const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.auth.getClaims();
+  return Boolean(data?.claims);
+}
+
+export async function Header() {
+  const t = await getTranslations();
+  const signedIn = await hasSession();
 
   return (
     <header className="border-b border-current/15">
@@ -19,6 +28,26 @@ export function Header() {
           <a href="#post" className="inline-flex min-h-11 items-center px-2">
             {t("home.postJob")}
           </a>
+        </nav>
+        <nav aria-label={t("nav.account")} className="flex gap-1">
+          {signedIn ? (
+            <LogoutButton />
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="inline-flex min-h-11 items-center px-2"
+              >
+                {t("nav.login")}
+              </Link>
+              <Link
+                href="/register"
+                className="inline-flex min-h-11 items-center px-2"
+              >
+                {t("nav.register")}
+              </Link>
+            </>
+          )}
         </nav>
         <nav aria-label={t("nav.language")} className="flex gap-1">
           {routing.locales.map((locale) => (

@@ -59,6 +59,21 @@ export function httpErrorResponse(error: HttpError): Response {
   return Response.json(body, { status: error.status });
 }
 
+/** zod rejected the input. `details` lists the failing fields. */
+export function validationError(details?: unknown): HttpError {
+  return new HttpError(
+    400,
+    errorCodes.validationError,
+    "Invalid input",
+    details,
+  );
+}
+
+/** No session, or a session whose email is not confirmed yet. */
+export function unauthenticated(message = "Sign in first"): HttpError {
+  return new HttpError(401, errorCodes.unauthenticated, message);
+}
+
 /** Missing object, foreign object, or admin route for a non-admin. */
 export function notFound(message = "Not found"): HttpError {
   return new HttpError(404, errorCodes.notFound, message);
