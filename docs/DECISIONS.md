@@ -108,3 +108,7 @@ The workspace directory name is not a valid npm package name (spaces and capital
 5. `normalizeSkill(raw, source = "user")`. `source` — `user | bot | import`. В `raw_text` попадает trim не длиннее 500 символов.
 6. Повторный seed обновляет `name_en`, `name_ru`, `category` и цель алиаса. `is_active` не перезаписывается, лишние строки не удаляются. В миграции seed выполняется до RLS, чтобы роль миграции вставила строки без политики.
 7. `id` — uuid, как у `users`. `name_en` и `name_ru` — NOT NULL. Алиас удаляется вместе с навыком (`ON DELETE CASCADE`). `mapped_skill_id` при удалении навыка становится NULL.
+
+## D40 — расширения на хостинге
+
+Роль `migrator` на облачном проекте не может создавать схемы и расширения и выдавать права на схему `extensions` (её владелец — `postgres`). Расширения, которые нужны миграциям (`pg_trgm` для 2A), и `GRANT USAGE ON SCHEMA extensions TO app_rw` один раз выполняет роль `postgres` (дашборд или Supabase MCP). Миграции делают эти шаги условно — только если их ещё нет, поэтому одна и та же миграция проходит и в CI от суперпользователя, и на облаке от `migrator`. Так исправлена `0003_skills.sql` до её первого применения на облаке. Новое расширение в будущих подфазах — тем же способом: условный шаг в миграции + запись в MISSION_LOG о ручной установке на облаке.

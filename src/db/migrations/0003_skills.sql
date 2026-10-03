@@ -2,11 +2,22 @@
 -- Seed runs before RLS so the migration role can insert without a policy.
 -- Repeating the inserts is safe: conflicts update names and alias targets only.
 
-CREATE SCHEMA IF NOT EXISTS extensions;
-
-CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA extensions;
-
-GRANT USAGE ON SCHEMA extensions TO app_rw;
+-- On the hosted project the migration role cannot create schemas or
+-- extensions, so each step runs only when it is still missing (D40).
+-- There pg_trgm and the grant are set up once by the postgres role.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'extensions') THEN
+    CREATE SCHEMA extensions;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_trgm') THEN
+    CREATE EXTENSION pg_trgm WITH SCHEMA extensions;
+  END IF;
+  IF NOT has_schema_privilege('app_rw', 'extensions', 'USAGE') THEN
+    GRANT USAGE ON SCHEMA extensions TO app_rw;
+  END IF;
+END
+$$;
 
 DO $$
 DECLARE
