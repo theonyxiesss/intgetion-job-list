@@ -86,10 +86,7 @@ export const candidateProfiles = pgTable(
     ),
     check(
       "candidate_profiles_desired_titles_check",
-      sql`cardinality(${table.desiredTitles}) <= 5 and not exists (
-        select 1 from unnest(${table.desiredTitles}) as title
-        where char_length(title) < 1 or char_length(title) > 80
-      )`,
+      sql`public.candidate_titles_valid(${table.desiredTitles})`,
     ),
     check(
       "candidate_profiles_country_check",
