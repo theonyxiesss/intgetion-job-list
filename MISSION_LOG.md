@@ -159,3 +159,14 @@
 - Отклонения от ТЗ: D90–D94 (граничные правила: candidate experience null = 0; отсутствующий must-have = навыка нет вообще; «без зарплаты» = нет полных данных зарплаты у вакансии; hidden_company — hard, не множитель; verdict matched только при score = 1). Локальный prettier/CRLF — как в 4A-lib.
 - OPEN QUESTION: нет.
 - Следующая подфаза: полная 6A (`glm/4a` → 6A после 4B/2B; зависит от 4B и 2B).
+
+## [2026-10-03] — 5A-rules — DONE (ветка `cursor/5a-rules`, ждёт слияния в master)
+
+- Сделано: чистые правила отклика без таблиц, SQL, API и UI. `checkTransition` по таблице 4.2 (`via`: `patch`, `express_interest`, `auto_view`, `withdraw`): нет ребра или не тот актор → 409 `INVALID_TRANSITION`; `shortlisted` не через `express_interest` → 422 `EXPRESS_INTEREST_REQUIRED`. `checkApplyEligibility` зовёт `profileCompleteness` сервиса кандидатов: порог 60 и обязательные timezone, ≥3 навыка, контактный email → иначе 422 `PROFILE_INCOMPLETE` с `details.completeness` и `details.missing[]`. `checkApplyTarget`: imported → 422 `EXTERNAL_APPLY` с `externalUrl`; не `published` → 422 `JOB_NOT_PUBLISHED`. `checkReapply`: активный (не `withdrawn`) → 409 `ALREADY_APPLIED`; один повтор после одной отмены; вторая отмена и повтор сверх лимита → 409 `REAPPLY_LIMIT`.
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 0 (25 files, 199 tests); `pnpm exec prettier --check src/modules/applications` → 0; `pnpm build` → 0 (`SWC_NATIVE_BINDING_CACHE=C:\Users\Admin\.swc-cache-cursor`). `pnpm format:check` целиком локально может падать из-за CRLF. Миграций нет. До rebase на D80: `gh run watch 37121527634` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37121527634 — `check` и `database` success.
+- P-тесты подфазы: нет (P9 — в 5A, когда появятся маршруты). Unit покрывает таблицу 4.2, D15, D8 и D27.
+- Миграции: нет
+- Изменённые файлы: `src/modules/applications/**`, `docs/DECISIONS.md`, `MISSION_LOG.md`
+- Отклонения от ТЗ: D75 (код `EXPRESS_INTEREST_REQUIRED` и 409 вместо 403 для чужого актора), D76 (трактовка «второй отмены» и `reapply_count`), D77 (59 недостижимо формулой 11.3; `missing[]` — ключи `profile.missing.*`), D78 (imported проверяется раньше статуса), D79 (срез без записи)
+- OPEN QUESTION: нет
+- Следующая подфаза: 5A после 3B в `master`. Для этого агента — стоп до явной команды.
