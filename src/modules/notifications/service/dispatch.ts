@@ -81,7 +81,7 @@ async function deliverOne(
     });
     return "skipped";
   }
-  const address = await lookupLoginEmail(tx, row.user_id);
+  const address = await lookupLoginEmail();
   if (process.env.RESEND_API_KEY?.trim() && !address) {
     await mark(tx, row.id, {
       status: "skipped",
@@ -143,31 +143,13 @@ async function mark(
     .where(sql`${notificationEmails.id} = ${id}`);
 }
 
-/** Login email lives in Supabase Auth, not in `users` (D7, D126). */
-export async function lookupLoginEmail(
-  conn: { execute: ReturnType<typeof getDb>["execute"] },
-  userId: string,
-): Promise<string | null> {
-  try {
-    await conn.execute(sql`savepoint lookup_email`);
-    const rows = await conn.execute<{ email: string | null }>(sql`
-      select au.email
-      from auth.users au
-      join public.users u on u.auth_uid = au.id
-      where u.id = ${userId}
-      limit 1
-    `);
-    await conn.execute(sql`release savepoint lookup_email`);
-    const email = rows[0]?.email;
-    return email && email.includes("@") ? email : null;
-  } catch {
-    try {
-      await conn.execute(sql`rollback to savepoint lookup_email`);
-    } catch {
-      return null;
-    }
-    return null;
-  }
+/**
+ * Login email lives in Supabase Auth, not in `users` (D7, D126).
+ * `app_rw` cannot read `auth.users`, and a failed query aborts the
+ * send transaction, so this returns null until that grant exists.
+ */
+export async function lookupLoginEmail(): Promise<string | null> {
+  return null;
 }
 
 export async function hasJobExpiringNotice(jobId: string): Promise<boolean> {
