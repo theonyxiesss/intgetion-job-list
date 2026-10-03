@@ -136,7 +136,7 @@ export async function readFeedback(
   now: Date,
 ): Promise<FeedbackForScoring> {
   const db = getDb();
-  const since = new Date(now.getTime() - FEEDBACK_WINDOW_MS);
+  const since = new Date(now.getTime() - FEEDBACK_WINDOW_MS).toISOString();
   const hiddenJobs = await db
     .select({ jobId: userJobFeedback.jobId })
     .from(userJobFeedback)
@@ -170,23 +170,23 @@ export async function readFeedback(
     join public.jobs j on j.id = f.job_id
     where f.user_id = ${userId}
       and f.action in ('hidden', 'dismissed')
-      and f.created_at >= ${since}
+      and f.created_at >= ${since}::timestamptz
     group by j.category
   `);
   const skills = await db.execute<{ skill_id: string }>(sql`
     with touched as (
       select job_id from public.saved_jobs
-      where user_id = ${userId} and created_at >= ${since}
+      where user_id = ${userId} and created_at >= ${since}::timestamptz
       union
       select job_id from public.applications
       where candidate_id = ${userId}
-        and created_at >= ${since}
+        and created_at >= ${since}::timestamptz
         and status <> 'withdrawn'
       union
       select job_id from public.user_job_feedback
       where user_id = ${userId}
         and action in ('saved', 'applied', 'applied_external')
-        and created_at >= ${since}
+        and created_at >= ${since}::timestamptz
     )
     select js.skill_id
     from touched t
@@ -200,7 +200,7 @@ export async function readFeedback(
     where user_id = ${userId}
       and action in ('hidden', 'dismissed')
       and reason in ('salary', 'format', 'timezone')
-      and created_at >= ${since}
+      and created_at >= ${since}::timestamptz
     group by reason
   `);
 
