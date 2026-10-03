@@ -214,9 +214,10 @@ The workspace directory name is not a valid npm package name (spaces and capital
 1. `PATCH /api/candidates/me` считает полноту по уже сохранённому email и пишет профиль вместе с `completeness` в одной транзакции.
 2. `PUT /api/candidates/me/contacts` в одной транзакции пишет контакт и затем `completeness`. Счётчик собирает маршрут из `scoreStoredProfile` и `storeCompleteness`, чтобы модули не импортировали друг друга по кругу.
 3. `GET /api/me` по-прежнему отдаёт `hasCandidateProfile: false`. После D46 это строка в `meContext` (`src/app/api/me/route.ts`): модуль auth кандидатов не импортирует. Её подставляет Claude Code вызовом `hasCandidateProfile(user.id)` из `@/modules/candidates/service`.
-## D60 — временный DTO денег до 4A-lib (3B)
 
-`src/lib/money.ts` отсутствует в `origin/master`. В 3B сериализация сумм вынесена в `src/modules/jobs/api/money-dto.ts`, без округлений и арифметики: `bigint` minor units превращаются в десятичную строку DTO. Заменить адаптер и подключить сравнение зарплат к `src/lib/money.ts` после его появления в `master`; собственная money-логика в общем `src/lib` запрещена.
+## D60 — деньги и временные зоны вакансий (3B)
+
+После появления `src/lib/money.ts` в `origin/master` 3B использует `toMoneyDto` для зарплат; временный адаптер удалён. Зарплатный outlier считается exact numeric в SQL при сравнении зарплаты с медианой той же категории/валюты/периода/базы (порог > 3×), чтобы не переводить bigint minor units в number. Проверка `timezoneRequired` использует `isValidTimeZone` из `src/lib/tz.ts`, включая отказ фиксированным смещениям.
 
 ## D61 — схема вакансий (3B)
 

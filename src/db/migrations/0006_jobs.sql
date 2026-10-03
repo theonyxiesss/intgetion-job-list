@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS public.jobs (
   application_email text,
   source public.job_source NOT NULL DEFAULT 'internal',
   status public.job_status NOT NULL DEFAULT 'draft',
-  risk_score smallint NOT NULL DEFAULT 0 CHECK (risk_score BETWEEN 0 AND 10),
+  risk_score smallint NOT NULL DEFAULT 0 CHECK (risk_score >= 0),
   risk_flags jsonb NOT NULL DEFAULT '[]'::jsonb,
   published_at timestamptz,
   expires_at timestamptz,
@@ -58,7 +58,6 @@ CREATE INDEX IF NOT EXISTS jobs_fts_idx ON public.jobs USING gin(fts);
 CREATE INDEX IF NOT EXISTS jobs_title_trgm_idx ON public.jobs USING gin(title extensions.gin_trgm_ops);
 CREATE INDEX IF NOT EXISTS jobs_country_restrictions_idx ON public.jobs USING gin(country_restrictions);
 DROP TRIGGER IF EXISTS jobs_set_updated_at ON public.jobs;
-CREATE TRIGGER jobs_set_updated_at BEFORE UPDATE ON public.jobs FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 CREATE TRIGGER jobs_set_updated_at BEFORE UPDATE ON public.jobs FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 SELECT public.enable_rls_deny_all('public.jobs');
 

@@ -68,21 +68,19 @@ async function getRisk(
   const [similar] = await tx.execute<{ exists: boolean }>(
     sql`select exists(select 1 from public.jobs where company_id <> ${company.id} and public.skill_similarity(description, ${input.description}) >= 0.9) as exists`,
   );
-  let salaryRatio: number | null = null;
+  let salaryOutlier = false;
   if (
     input.salaryMax &&
     input.salaryCurrency &&
     input.salaryPeriod &&
     input.salaryBasis
   ) {
-    const [median] = await tx.execute<{ median: string | null }>(sql`
-      select percentile_cont(0.5) within group (order by salary_max::numeric)::text as median
+    const [median] = await tx.execute<{ outlier: boolean | null }>(sql`
+      select ${BigInt(input.salaryMax)}::numeric > percentile_cont(0.5) within group (order by salary_max::numeric) * 3 as outlier
       from public.jobs where category = ${input.category} and salary_max is not null
         and salary_currency = ${input.salaryCurrency} and salary_period = ${input.salaryPeriod} and salary_basis = ${input.salaryBasis}
     `);
-    const amount = Number(input.salaryMax);
-    const med = Number(median?.median);
-    if (med > 0) salaryRatio = amount / med;
+    salaryOutlier = Boolean(median?.outlier);
   }
   const appHost = host(input.applicationUrl);
   const companyHost =
@@ -102,7 +100,7 @@ async function getRisk(
     similarDescriptionInOtherCompany: Boolean(similar?.exists),
     applicationDomainMismatch: mismatch,
     scamPattern: hasScamPattern(`${input.title}\n${input.description}`),
-    salaryOverCategoryMedianTimes: salaryRatio,
+    salaryOutlier,
   });
 }
 
@@ -207,9 +205,7 @@ export async function createJob(
     .limit(1);
   if (!company || company.origin === "imported") throw notFound();
   await enforceRateLimit(
-    company.status === "verified"
-      ? "jobCreateVerified"
-      : "jobCreateUnverified",
+    company.status === "verified" ? "jobCreateVerified" : "jobCreateUnverified",
     company.id,
   );
   const risk = await getRisk(user, email, company, input, db, true);

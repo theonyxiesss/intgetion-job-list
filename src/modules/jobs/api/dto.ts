@@ -1,5 +1,5 @@
 import type { JobRow } from "../repo/jobs-repo";
-import { toJobMoneyDto } from "./money-dto";
+import { toMoneyDto } from "@/lib/money";
 
 export function toJobDto(job: JobRow) {
   const moneyInfo = {
@@ -25,8 +25,14 @@ export function toJobDto(job: JobRow) {
     workHoursStart: job.workHoursStart,
     workHoursEnd: job.workHoursEnd,
     minOverlapHours: job.minOverlapHours,
-    salaryMin: toJobMoneyDto({ amountMinor: job.salaryMin, ...moneyInfo }),
-    salaryMax: toJobMoneyDto({ amountMinor: job.salaryMax, ...moneyInfo }),
+    salaryMin:
+      job.salaryMin === null || !moneyInfo.currency || !moneyInfo.period || !moneyInfo.basis
+        ? null
+        : toMoneyDto(job.salaryMin, moneyInfo.currency, moneyInfo.period, moneyInfo.basis),
+    salaryMax:
+      job.salaryMax === null || !moneyInfo.currency || !moneyInfo.period || !moneyInfo.basis
+        ? null
+        : toMoneyDto(job.salaryMax, moneyInfo.currency, moneyInfo.period, moneyInfo.basis),
     applicationMethod: job.applicationMethod,
     applicationUrl: job.applicationUrl,
     applicationEmail: job.applicationEmail,

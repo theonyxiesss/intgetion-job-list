@@ -5,7 +5,7 @@ export type RiskInput = {
   similarDescriptionInOtherCompany: boolean;
   applicationDomainMismatch: boolean;
   scamPattern: boolean;
-  salaryOverCategoryMedianTimes: number | null;
+  salaryOutlier: boolean;
 };
 
 const FREE_EMAIL_DOMAINS = new Set([
@@ -57,10 +57,7 @@ export function scoreJobRisk(input: RiskInput): {
     flags.push("application_domain_mismatch");
   if (input.scamPattern) flags.push("scam_pattern");
   if (
-    input.salaryOverCategoryMedianTimes !== null &&
-    input.salaryOverCategoryMedianTimes > 3
-  )
-    flags.push("salary_outlier");
+    input.salaryOutlier) flags.push("salary_outlier");
   const weights: Record<string, number> = {
     new_creator: 2,
     free_email: 2,
