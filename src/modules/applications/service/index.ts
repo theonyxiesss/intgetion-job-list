@@ -26,6 +26,7 @@ export {
   TERMINAL_APPLICATION_STATUSES,
   TRANSITIONS,
   checkTransition,
+  employerPatchTargets,
 } from "./transitions";
 export type {
   ApplicationStatus,
@@ -50,7 +51,20 @@ export type {
   CreateApplicationInput,
   PatchApplicationStatusInput,
 } from "../schemas";
-export { APPLICATION_DTO_KEYS, toApplicationDto } from "../api/dto";
-export type { ApplicationDto } from "../api/dto";
+export {
+  APPLICATION_DTO_KEYS,
+  EMPLOYER_APPLICATION_DTO_KEYS,
+  toApplicationDto,
+  toEmployerApplicationDto,
+} from "../api/dto";
+export type { ApplicationDto, EmployerApplicationDto } from "../api/dto";
+export {
+  employerCanSeeCandidate,
+  employerMayOpen,
+  employerNotification,
+  listEmployerApplications,
+  needsAutoView,
+  openApplication,
+} from "./employer-service";
 export { transitionApplication } from "./transition-application";
 export type { TransitionCommand } from "./transition-application";

@@ -184,5 +184,6 @@ export async function patchApplicationStatus(
     via: "patch",
     actorId: userId,
   });
+  // 9A: when actor is employer, enqueue application.status_changed for row.candidateId.
   return toApplicationDto({ ...updated, jobTitle: row.jobTitle });
 }

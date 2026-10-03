@@ -86,14 +86,21 @@ export async function getOwnCandidate(
 }
 
 /**
- * Until applications exist (5A), only the owner may read a profile (D24, D56).
+ * The owner, or a member of a company this candidate applied to (D24, D118).
  * The DTO never contains a `contacts` key.
  */
 export async function getCandidateForViewer(
   viewerId: string,
   candidateId: string,
 ): Promise<CandidateDto> {
-  if (!UUID.test(candidateId) || viewerId !== candidateId) throw notFound();
+  if (!UUID.test(candidateId)) throw notFound();
+  if (viewerId !== candidateId) {
+    const { employerCanSeeCandidate } =
+      await import("@/modules/applications/service");
+    if (!(await employerCanSeeCandidate(viewerId, candidateId))) {
+      throw notFound();
+    }
+  }
   const profile = await getOwnCandidate(candidateId);
   if (!profile) throw notFound();
   return profile;

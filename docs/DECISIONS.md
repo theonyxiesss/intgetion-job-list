@@ -401,3 +401,23 @@ FTS использует сохранённый `tsvector` и GIN индекс. 
 ## D49 — источники импорта создаются в 4A
 
 `import_sources` и `job_sources` (4.1) созданы миграцией 0007 (4A, Codex): публичная карточка импортированной вакансии отдаёт `source{name,url}` (раздел 7), и 4A первой читает эти таблицы. Подфаза 8A использует их как есть и добавляет только `import_runs`; менять их структуру — с записью в своём диапазоне D.
+
+## D115 — список откликов работодателя (5B)
+
+`GET /api/applications?as=employer&jobId=` отдаёт отклики вакансии любому члену её компании (`owner`, `admin`, `recruiter`, `member`). Нет вакансии или нет членства → 404, в том числе для чужой компании. Без `jobId` → 400. Ответ — курсор раздела 6: `{ items, nextCursor }`, `limit` по умолчанию 20 и не больше 50, ключ `(created_at, id)` по убыванию. Список кандидата (`as` пустой или `candidate`) остаётся `{ applications }` как в D105. В строке работодателя есть `candidateId` и `candidateName`, ключа `contacts` нет.
+
+## D116 — автопросмотр (5B)
+
+`GET /api/applications/:id`: кандидат-владелец получает отклик и статус не меняется. Член компании, если статус `applied`, вызывает `transitionApplication` с `actor: employer` и `via: auto_view`. Повторное открытие `transitionApplication` не вызывает: из `viewed` такого ребра нет. Роль `member` может открыть и тем самым поставить `viewed`, но PATCH по-прежнему только у `owner` / `admin` / `recruiter` (D106): для `member` это 403.
+
+## D117 — кнопки статуса (5B)
+
+Кнопки карточки — это `TRANSITIONS`, где `actor = employer` и `via = patch`. Отдельной таблицы нет. `shortlisted` в этот список не входит: PATCH туда → 422 `EXPRESS_INTEREST_REQUIRED` (D75). Дойти до `interview` можно только из уже стоящего `shortlisted`, а эту запись пишет 5C. 5B статус `shortlisted` не вставляет. Тест, которому нужно проверить `interview` / `offer` / `hired`, сам ставит `shortlisted` прямым SQL; продукт так не делает.
+
+## D118 — профиль кандидата работодателю (5B)
+
+`getCandidateForViewer` пускает не только владельца. Член компании видит профиль, если у кандидата есть любой отклик на вакансию этой компании. Проверка живёт в сервисе откликов (`employerCanSeeCandidate`); сервис кандидатов вызывает её, а не репозиторий откликов. Ответ — прежний allowlist `CANDIDATE_DTO_KEYS`: ключа `contacts` нет (не `null`), нет email входа и `auth_uid`. Остальным — 404.
+
+## D119 — уведомления не отправляются (5B)
+
+Миграции 5B нет: таблиц раздела 4.1 для этого пайплайна хватает. События 9A уже есть в каталоге `application.viewed` и `application.status_changed`. Вызов, когда появится отправка: после первого auto-view — `application.viewed` кандидату (`employerNotification` в `openApplication`); после успешного employer PATCH — `application.status_changed` тому же кандидату (комментарий в `patchApplicationStatus`). 5B очередь не ставит и писем не шлёт.

@@ -109,3 +109,13 @@ export function checkTransition(input: TransitionInput): void {
   }
   throw invalidTransition();
 }
+
+/** Employer buttons. Reads `TRANSITIONS`; it does not add edges (D117). */
+export function employerPatchTargets(
+  from: ApplicationStatus,
+): ApplicationStatus[] {
+  return TRANSITIONS.filter(
+    (edge) =>
+      edge.from === from && edge.actor === "employer" && edge.via === "patch",
+  ).map((edge) => edge.to);
+}

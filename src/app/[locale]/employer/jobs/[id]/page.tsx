@@ -29,6 +29,7 @@ export default async function EmployerJobPage({
   }
   const dto = toJobDto(job);
   const t = await getTranslations("employerJobs");
+  const pipeline = await getTranslations("employerApplications");
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 py-12">
       <Link className="underline" href={`/${locale}/employer/jobs`}>
@@ -40,6 +41,12 @@ export default async function EmployerJobPage({
       </p>
       <p>{dto.description}</p>
       <JobActions jobId={job.id} status={job.status} text={t.raw("actions")} />
+      <Link
+        className="w-fit underline"
+        href={`/${locale}/employer/jobs/${id}/applications`}
+      >
+        {pipeline("open")}
+      </Link>
       <Link
         className="w-fit rounded-md border border-zinc-300 px-4 py-2"
         href={`/${locale}/employer/jobs/${id}/edit`}

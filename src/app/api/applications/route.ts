@@ -1,18 +1,34 @@
-import { readJson, readQuery, toErrorResponse, notFound } from "@/lib/http";
-import { requireCandidate } from "@/lib/auth-guards";
+import {
+  readJson,
+  readQuery,
+  toErrorResponse,
+  validationError,
+} from "@/lib/http";
+import { requireCandidate, requireUser } from "@/lib/auth-guards";
 import { hasCandidateProfile } from "@/modules/candidates/service";
 import {
   applyToJob,
   createApplicationInput,
   listApplicationsQuery,
+  listEmployerApplications,
   listOwnApplications,
 } from "@/modules/applications/service";
 
 export async function GET(request: Request) {
   try {
-    const user = await requireCandidate(hasCandidateProfile);
     const query = readQuery(request, listApplicationsQuery);
-    if (query.as === "employer") throw notFound();
+    if (query.as === "employer") {
+      const user = await requireUser();
+      if (!query.jobId) throw validationError({ jobId: ["required"] });
+      return Response.json(
+        await listEmployerApplications(user.id, {
+          jobId: query.jobId,
+          cursor: query.cursor,
+          limit: query.limit,
+        }),
+      );
+    }
+    const user = await requireCandidate(hasCandidateProfile);
     const applications = await listOwnApplications(user.id);
     return Response.json({ applications });
   } catch (error) {

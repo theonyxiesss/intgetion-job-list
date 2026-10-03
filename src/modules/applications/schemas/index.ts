@@ -13,6 +13,9 @@ export type CreateApplicationInput = z.infer<typeof createApplicationInput>;
 export const listApplicationsQuery = z
   .object({
     as: z.enum(["candidate", "employer"]).optional(),
+    jobId: z.uuid().optional(),
+    cursor: z.string().trim().min(1).max(200).optional(),
+    limit: z.coerce.number().int().min(1).max(50).optional(),
   })
   .strict();
 

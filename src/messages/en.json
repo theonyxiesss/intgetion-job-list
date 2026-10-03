@@ -517,5 +517,35 @@
       "rejected": "Rejected",
       "withdrawn": "Withdrawn"
     }
+  },
+  "employerApplications": {
+    "open": "Applications",
+    "title": "Applications",
+    "empty": "No applications yet.",
+    "unnamed": "Candidate",
+    "back": "Back to the job",
+    "backToList": "Back to applications",
+    "profileTitle": "Candidate profile",
+    "noProfile": "This candidate has no profile.",
+    "coverNote": "Cover note",
+    "next": "Next page",
+    "status": {
+      "applied": "Applied",
+      "viewed": "Viewed",
+      "shortlisted": "Shortlisted",
+      "interview": "Interview",
+      "offer": "Offer",
+      "hired": "Hired",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn"
+    },
+    "actions": {
+      "rejected": "Rejected",
+      "interview": "Interview",
+      "offer": "Offer",
+      "hired": "Hired",
+      "processing": "Working…",
+      "error": "Could not change the status."
+    }
   }
 }
