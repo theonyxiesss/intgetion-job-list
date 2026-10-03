@@ -318,3 +318,8 @@
 - Три коммита 9A переиграны на `origin/master` (после 5C и 10B). В `vercel.json` оставлен cron `trusted` вместе с `notifications` и `job-expiring`. `transitionOwnedJob` по-прежнему идёт через `notify-job`.
 - `gh run watch 37139999991` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37139999991 — `check` 1m41s и `database` 7m50s success на `7d8d071`.
 - 9B не начата.
+
+## [2026-10-03] — интеграция 9A (Cursor) — DONE
+
+- Перебазирована на master (4B, 10A, 7-lib), склеены записи. Исправлено: без `UNSUBSCRIBE_SECRET` (≥ 32 символа) токены отписки отклоняются — иначе их можно было подделать; в CI секрет задаётся. CI 37142022857 → success, влито fast-forward. Миграция 0013 применена к облаку.
+- Открыто: письма не уходят, пока нет адреса входа (D126) — нужен `SUPABASE_SERVICE_ROLE_KEY` и Auth admin API; уведомления админ-действий (`job.moderation_decided`, `company.verification_decided`, `report.decided`) подключить в 10A/10B.
