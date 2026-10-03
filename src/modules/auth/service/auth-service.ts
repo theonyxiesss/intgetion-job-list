@@ -2,6 +2,7 @@ import type { EmailOtpType, SupabaseClient, User } from "@supabase/supabase-js";
 import { TERMS_VERSION } from "@/config/legal";
 import type { AppLocale } from "@/i18n/routing";
 import { recordAudit } from "@/lib/audit";
+import { logger } from "@/lib/logger";
 import { siteUrl } from "@/lib/supabase/env";
 import {
   HttpError,
@@ -158,7 +159,9 @@ export async function requestPasswordReset(
   const { error } = await auth.resetPasswordForEmail(input.email, {
     redirectTo: callbackUrl(input.locale, "reset"),
   });
-  if (error) console.error("password reset request failed", error.code);
+  if (error) {
+    logger.warn({ code: error.code }, "password reset request failed");
+  }
 }
 
 export type CallbackParams = {

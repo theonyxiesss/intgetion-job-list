@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { reportError } from "@/lib/logger";
 import { HttpError, httpErrorResponse, validationError } from "./errors";
 
 /** Parses a JSON body with a zod schema; bad JSON and bad shape are both 400. */
@@ -44,8 +45,11 @@ export function readQuery<T extends z.ZodType>(
 
 /** Turns a thrown HttpError into its response; anything else is a 500. */
 export function toErrorResponse(error: unknown): Response {
-  if (error instanceof HttpError) return httpErrorResponse(error);
-  console.error(error instanceof Error ? error.name : "unknown error");
+  if (error instanceof HttpError) {
+    if (error.status >= 500) reportError(error, "http_error");
+    return httpErrorResponse(error);
+  }
+  reportError(error, "route_handler");
   return Response.json(
     { error: { code: "INTERNAL", message: "Internal error" } },
     { status: 500 },

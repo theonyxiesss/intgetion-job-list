@@ -146,3 +146,20 @@ test("a forged session header does not sign a guest in", async ({ page }) => {
     0,
   );
 });
+
+test("every response carries a request id; a well-formed client id is kept", async ({
+  request,
+}) => {
+  const page = await request.get("/en");
+  expect(page.headers()["x-request-id"]).toMatch(/^[A-Za-z0-9-]{8,64}$/);
+
+  const api = await request.get("/api/health", {
+    headers: { "x-request-id": "support-ticket-1234" },
+  });
+  expect(api.headers()["x-request-id"]).toBe("support-ticket-1234");
+
+  const forged = await request.get("/api/health", {
+    headers: { "x-request-id": "<script>alert(1)</script>" },
+  });
+  expect(forged.headers()["x-request-id"]).not.toContain("<");
+});
