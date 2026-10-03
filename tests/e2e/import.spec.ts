@@ -24,8 +24,12 @@ test("8A: fixture import publishes jobs that apply on the source site", async ({
   await page.goto("/en/jobs?q=Illustration%20Designer");
   const link = page.getByRole("link", { name: "Illustration Designer" });
   await expect(link.first()).toBeVisible();
-  const href = await link.first().getAttribute("href");
-  await page.goto(href ?? "/");
+  const count = await link.count();
+  const hrefs: Array<string | null> = [];
+  for (let index = 0; index < count; index += 1) {
+    hrefs.push(await link.nth(index).getAttribute("href"));
+  }
+  throw new Error(`illustration links ${JSON.stringify({ count, hrefs })}`);
   await expect(page).toHaveURL(/\/en\/jobs\/[0-9a-f-]{36}$/);
   await expect(page.getByText("Imported from")).toBeVisible();
   await expect(page.getByRole("link", { name: "Apply" })).toHaveAttribute(
