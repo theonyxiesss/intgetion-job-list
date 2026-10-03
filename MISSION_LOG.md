@@ -330,3 +330,14 @@
 - Проверено в браузере: desktop 1440 и mobile 375 без горизонтальной прокрутки, меню открывается.
 - Движение (D143, D145), один веб-шрифт ради LCP (D144), прямые импорты кита в клиентских компонентах и медиана 5 прогонов Lighthouse (D41a). CI 37148637380 → success: 39 e2e, медиана LCP 1901 мс. Влито fast-forward.
 - Следующее: Cursor — UI-2 (`docs/prompts/cursor-ui-2.md`), Claude Code — UI-3.
+
+## [2026-10-03] — UI-2 — DONE (ветка `cursor/ui-2`)
+
+- Сделано: публичные и кандидатские страницы на UI-ките (D155–D159). Главная: герой из двух строк, поиск, категории, телеметрия каталога, последние вакансии, шаги 01/02/03. Каталог: колонка фильтров и полноэкранная панель на телефоне, карточки вне формы. Вакансия с общим именем перехода заголовка, компания с вкладками About/Jobs и инициалами вместо логотипа. Вход, онбординг, профиль (полоса полноты из 20 сегментов, оглавление), отклики (Active / Interviews and offers / Archive), сохранённые, уведомления, настройки, отписка. Новых шрифтов и картинок в герое нет.
+- Команды проверки: `git rebase origin/master` → already up to date (`0fae6e7`). `gh run view 37158204229` → success: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37158204229 — `check` (lint, format, typecheck, 50 files / 426 tests, build) и `database` (18 files / 68 integration, e2e 42 passed). Lighthouse: прогоны 2713, 2475, 1958, 1934, 1899 мс; `lcp_ms 1958.3045` (медиана из 5), элемент — первая строка героя. До этого падали: склейка H1 без пробела; `id="skills"` на обёртке перехватывал поле Skills; статус Withdrawn оказывался на вкладке Archive; чип поиска назывался так же, как вакансия, и клик вёл на `/en/jobs`.
+- P-тесты подфазы: `ui-layout.spec.ts` — на 360 px у `/en` и `/en/jobs` нет горизонтальной прокрутки, панель Filters открывается и закрывается, HTML `/profile` без `style=`. Бюджет LCP соблюдён.
+- Миграции: нет
+- Изменённые файлы: `src/app/[locale]/{page,jobs,jobs/[id],companies/[slug],applications,notifications,onboarding,profile,profile/edit,saved-jobs,settings/notifications,unsubscribe}/page.tsx`, `src/components/{applications,auth,notifications,profile}/**`, `src/modules/jobs/{repo/public-search-repo,service,ui}/**`, `src/modules/feedback/ui/**`, `src/messages/{en,ru}.json`, `tests/e2e/{applications,import,ui-layout}.spec.ts`, `docs/DECISIONS.md`
+- Отклонения от ТЗ: D155–D159. Тест откликов после Withdraw открывает вкладку Archive (статус иначе не на экране). Доступное имя чипа фильтра — «Clear filter», видимый текст по-прежнему значение фильтра: иначе селектор названия вакансии совпадал с чипом. Ассерт «Imported from» и переход на карточку не ослаблялись.
+- OPEN QUESTION: нет
+- Следующая подфаза: не начинать. UI-3 — зона Claude Code.
