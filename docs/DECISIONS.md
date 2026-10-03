@@ -245,3 +245,38 @@ The workspace directory name is not a valid npm package name (spaces and capital
 ## D64 — квоты, публикация и интерфейс вакансий (3B)
 
 Квоты создания 5 вакансий/сутки для непроверенной компании и 50/сутки для verified используют общие `enforceRateLimit` buckets `jobCreateUnverified` / `jobCreateVerified` и company id как subject. Они добавлены Claude Code в `src/lib/rate-limit.ts` до старта 3B. Cron `expire-jobs` запускается ежечасно по `vercel.json`; moderation queue здесь только принимает publish/risk флаги, обработчик очереди остаётся 10A.
+
+## D75 — статус-машина отклика как данные (5A-rules)
+
+Таблица раздела 4.2 хранится один раз: `TRANSITIONS` (`from`, `to`, `actor`, `via`). `checkTransition` ничего не пишет. В 5A `transitionApplication()` вызывает только её (D2). Успех — возврат без значения. Ошибка — `HttpError`.
+
+1. Пары нет в таблице, в том числе любой переход из `hired`, `rejected` или `withdrawn` и переход в тот же статус → 409 `INVALID_TRANSITION`.
+2. `to = shortlisted` при акторе `employer` и `from` `applied` или `viewed`, но `via` не `express_interest` → 422 `EXPRESS_INTEREST_REQUIRED`. В каталоге раздела 6 такого кода нет; `src/lib/http` не меняется. `via = patch` — это общий PATCH статуса.
+3. `viewed` разрешён только `via = auto_view`, только из `applied`, только работодателю. Другой `via` → 409 `INVALID_TRANSITION`.
+4. `withdrawn` разрешён только `via = withdraw` кандидату. Общий PATCH в `withdrawn` этим переходом не является.
+5. Актор не тот (кандидат ставит `rejected`, работодатель — `withdrawn`, кандидат — `shortlisted`) → 409 `INVALID_TRANSITION`, не 403. Отклик этому актору виден. Скрытый объект был бы 404 (D16). Здесь объекта не прячут: у этого актора просто нет такого ребра.
+
+## D76 — один повтор после отмены (5A-rules)
+
+`checkReapply` читает историю пары вакансия+кандидат и строку не создаёт.
+
+1. Истории нет → первый отклик. В 5A его пишут с `reapply_count` 0.
+2. Любая строка не в `withdrawn`, включая `rejected` и `hired`, → 409 `ALREADY_APPLIED`. Частичный уникальный индекс D27 исключает только `withdrawn`. Активный повтор важнее лимита: это дубль, не исчерпанный лимит.
+3. Ровно одна строка `withdrawn` с `reapply_count` 0 → один повтор разрешён. Новую строку в 5A пишут с `reapply_count` 1.
+4. 409 `REAPPLY_LIMIT` в двух случаях, оба буквально из D27. «Вторая отмена» — в истории две или больше строк `withdrawn` (отозван и сам повтор). «Повтор сверх лимита» — среди `withdrawn` есть строка с `reapply_count` ≥ 1: единственный повтор уже учтён, даже если первой строки в переданной истории нет.
+
+## D77 — допуск к отклику (5A-rules)
+
+`checkApplyEligibility` вызывает `profileCompleteness` из `@/modules/candidates/service` и свою копию весов не держит.
+
+1. Порог — 60. Формула 11.3 даёт только числа, кратные 5, поэтому снимок профиля не может дать 59. Сравнение всё равно `score < 60`. Тест на 59 подменяет результат функции полноты.
+2. При полноте 60 и выше всё равно обязательны `timezone`, `skills` (не меньше 3) и `contact_email`. Нет любой из них → 422 `PROFILE_INCOMPLETE`.
+3. `details.completeness` — число из функции полноты. `details.missing` — её `missing[]`, ключи `profile.missing.*`, они уже есть в `en.json` и `ru.json`. Отдельные строки под ключом `applications` не добавлялись.
+
+## D78 — импортированная вакансия (5A-rules)
+
+`checkApplyTarget` сначала смотрит `origin`. `imported` → 422 `EXTERNAL_APPLY` и `details.externalUrl`, даже если статус не `published` и даже если ссылка `null`. Иначе любой статус кроме `published` (`draft`, `closed`, `paused` и остальные) → 422 `JOB_NOT_PUBLISHED`. `internal` и `published` → успех. Строка `applications` здесь не создаётся (D8).
+
+## D79 — срез без записи (5A-rules)
+
+В 5A-rules нет таблиц, миграций, маршрутов и страниц. Наружу модуль отдаёт только `src/modules/applications/service/index.ts`. Запись статуса, history и reveal остаются на 5A и обязаны вызывать эти функции, а не повторять условия.
