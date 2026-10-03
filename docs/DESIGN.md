@@ -87,7 +87,7 @@
 | Text    | **Inter** 400/500/600            | основной текст, поля, описания вакансий                                        |
 | Mono    | **JetBrains Mono** 400/500       | числа, зарплаты, даты, время, часовые пояса, ID, счётчики, проценты совпадения |
 
-Подключение — в `src/app/[locale]/layout.tsx` через `next/font/google` с `subsets: ["latin", "cyrillic"]`, `display: "swap"`, переменные `--font-display`, `--font-text`, `--font-mono`. Ничего не грузить с CDN в рантайме.
+Подключение — в `src/app/[locale]/layout.tsx` через `next/font/google` с `subsets: ["latin", "cyrillic"]`, вариативные версии (один файл на семейство); Display и Text — `display: "optional"` (без перерисовки LCP-текста, D144), Mono — `swap` без preload; переменные `--font-display`, `--font-text`, `--font-mono`. Ничего не грузить с CDN в рантайме.
 
 ### 4.2 Шкала
 

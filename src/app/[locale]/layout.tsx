@@ -12,21 +12,20 @@ import { routing } from "@/i18n/routing";
 import "../globals.css";
 
 // Fonts are self-hosted by next/font at build time (DESIGN.md 4.1, 12).
+// Variable fonts: one file per family. "optional" keeps the fallback when a
+// font misses the first ~100 ms, so the LCP text is never repainted (D144).
 const display = Roboto_Condensed({
   subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600"],
-  display: "swap",
+  display: "optional",
   variable: "--font-roboto-condensed",
 });
 const text = Inter({
   subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600"],
-  display: "swap",
+  display: "optional",
   variable: "--font-inter",
 });
 const mono = JetBrains_Mono({
   subsets: ["latin", "cyrillic"],
-  weight: ["400", "500"],
   display: "swap",
   preload: false,
   variable: "--font-jetbrains-mono",
