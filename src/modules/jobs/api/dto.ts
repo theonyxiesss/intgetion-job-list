@@ -53,8 +53,7 @@ export function toJobDto(job: JobRow) {
     applicationUrl: job.applicationUrl,
     applicationEmail: job.applicationEmail,
     status: job.status,
-    riskScore: job.riskScore,
-    riskFlags: job.riskFlags,
+    // risk_score and risk_flags never leave the server (5.3).
     publishedAt: job.publishedAt?.toISOString() ?? null,
     expiresAt: job.expiresAt?.toISOString() ?? null,
     createdAt: job.createdAt.toISOString(),

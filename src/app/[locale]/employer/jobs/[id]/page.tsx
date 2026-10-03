@@ -39,9 +39,6 @@ export default async function EmployerJobPage({
         {t("status")}: {dto.status}
       </p>
       <p>{dto.description}</p>
-      <p>
-        {t("riskScore")}: {dto.riskScore}
-      </p>
       <JobActions jobId={job.id} status={job.status} text={t.raw("actions")} />
       <Link
         className="w-fit rounded-md border border-zinc-300 px-4 py-2"

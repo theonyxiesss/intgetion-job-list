@@ -263,7 +263,7 @@
     "noSuggestions": "No suggestions are waiting.",
     "nextPage": "Next page",
     "actionFailed": "The action failed. Refresh and try again."
-
+  },
   "employerJobs": {
     "title": "Your jobs",
     "newJob": "Create a job",
@@ -271,7 +271,6 @@
     "status": "Status",
     "edit": "Edit job",
     "back": "Back to jobs",
-    "riskScore": "Risk score",
     "form": {
       "title": "Job title",
       "description": "Description (at least 50 characters)",
