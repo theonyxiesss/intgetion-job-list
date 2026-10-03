@@ -6,6 +6,7 @@ export {
   createCompany,
   editCompany,
   findMemberRole,
+  listMemberUserIds,
   getCompaniesForUser,
   getPublicCompany,
   recordCompanyStatusChange,

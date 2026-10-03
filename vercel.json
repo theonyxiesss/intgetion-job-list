@@ -15,6 +15,14 @@
     {
       "path": "/api/cron/trusted",
       "schedule": "45 3 * * *"
+    },
+    {
+      "path": "/api/cron/notifications",
+      "schedule": "5 * * * *"
+    },
+    {
+      "path": "/api/cron/job-expiring",
+      "schedule": "10 4 * * *"
     }
   ]
 }

@@ -426,8 +426,15 @@
     }
   },
   "notifications": {
+    "nav": "Notifications",
+    "title": "Notifications",
+    "empty": "No notifications yet.",
+    "markAll": "Mark all as read",
     "unsubscribe": {
-      "link": "Unsubscribe from these emails"
+      "link": "Unsubscribe from these emails",
+      "title": "Unsubscribe",
+      "button": "Turn off these emails",
+      "done": "These emails are turned off."
     },
     "types": {
       "applicationCreated": {
@@ -525,6 +532,13 @@
         }
       }
     }
+  },
+  "notificationSettings": {
+    "title": "Notification settings",
+    "inapp": "In the app",
+    "email": "Email",
+    "saved": "Saved",
+    "error": "Could not save this setting."
   },
   "applications": {
     "nav": "Applications",

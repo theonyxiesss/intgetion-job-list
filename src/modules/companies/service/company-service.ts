@@ -7,6 +7,7 @@ import type { CreateCompanyInput, PatchCompanyInput } from "../schemas";
 
 export type { CompanyRow, CompanySummary } from "../repo/company-repo";
 export const findMemberRole = repo.findMemberRole;
+export const listMemberUserIds = repo.listMemberUserIds;
 
 export function assertCompanyEditable(
   company: Pick<repo.CompanyRow, "origin">,

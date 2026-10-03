@@ -66,6 +66,7 @@ export {
   needsAutoView,
   openApplication,
 } from "./employer-service";
+export { listActiveCandidateIds } from "../repo/applications";
 export { transitionApplication } from "./transition-application";
 export type { TransitionCommand } from "./transition-application";
 export {

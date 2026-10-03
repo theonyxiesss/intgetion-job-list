@@ -244,6 +244,29 @@ export async function listOpenContactApplications(userId: string) {
     .orderBy(desc(applications.updatedAt));
 }
 
+const ACTIVE_APPLICATION_STATUSES = [
+  "applied",
+  "viewed",
+  "shortlisted",
+  "interview",
+  "offer",
+] as const;
+
+/** Candidates who still have a live application on this job (D128). */
+export async function listActiveCandidateIds(jobId: string) {
+  if (!isUuid(jobId)) return [];
+  const rows = await getDb()
+    .select({ candidateId: applications.candidateId })
+    .from(applications)
+    .where(
+      and(
+        eq(applications.jobId, jobId),
+        inArray(applications.status, [...ACTIVE_APPLICATION_STATUSES]),
+      ),
+    );
+  return [...new Set(rows.map((row) => row.candidateId))];
+}
+
 /** True when `viewerId` belongs to a company this candidate applied to. */
 export async function viewerSharesApplication(
   viewerId: string,

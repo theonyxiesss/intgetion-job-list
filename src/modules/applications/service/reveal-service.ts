@@ -1,7 +1,8 @@
 import { getDb } from "@/db/client";
 import { recordAudit } from "@/lib/audit";
 import { errorCodes, forbidden, HttpError, notFound } from "@/lib/http";
-import { findMemberRole } from "@/modules/companies/service";
+import { findMemberRole, listMemberUserIds } from "@/modules/companies/service";
+import { safeNotify } from "@/modules/notifications/service";
 import { getOwnContacts, type ContactsDto } from "@/modules/contacts/service";
 import {
   toEmployerApplicationDto,
@@ -86,7 +87,18 @@ export async function expressInterest(
     };
   });
 
-  revealNotification(outcome.created);
+  if (revealNotification(outcome.created)) {
+    const members = await listMemberUserIds(preview.companyId);
+    await safeNotify(
+      "mutual_interest.revealed",
+      [preview.candidateId, ...members],
+      {
+        applicationId: preview.id,
+        jobId: preview.jobId,
+        jobTitle: preview.jobTitle,
+      },
+    );
+  }
   return outcome.application;
 }
 

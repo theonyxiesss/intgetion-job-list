@@ -3,8 +3,8 @@ export {
   createJob,
   expireJobs,
   findOwnedJob,
+  listJobsExpiring,
   listJobsForUser,
-  transitionOwnedJob,
   updateJob,
 } from "../repo/jobs-repo";
 export {
@@ -14,6 +14,7 @@ export {
   republishImportedJob,
 } from "../repo/admin-jobs-repo";
 export type { AdminJobRow } from "../repo/admin-jobs-repo";
+export { transitionOwnedJob } from "./notify-job";
 export { findMemberRole } from "@/modules/companies/service";
 export { JOB_TRANSITIONS, transitionJob } from "./status-machine";
 export type { JobAction, JobActor, JobStatus } from "./status-machine";

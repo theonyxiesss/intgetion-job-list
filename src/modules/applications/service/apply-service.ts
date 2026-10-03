@@ -7,7 +7,8 @@ import {
   type CandidateDto,
   type CompletenessInput,
 } from "@/modules/candidates/service";
-import { findMemberRole } from "@/modules/companies/service";
+import { findMemberRole, listMemberUserIds } from "@/modules/companies/service";
+import { safeNotify } from "@/modules/notifications/service";
 import { findContactEmail } from "@/modules/contacts/service";
 import { toApplicationDto, type ApplicationDto } from "../api/dto";
 import {
@@ -113,6 +114,17 @@ export async function applyToJob(
       });
       return row;
     });
+    const members = await listMemberUserIds(job.companyId, [
+      "owner",
+      "admin",
+      "recruiter",
+    ]);
+    await safeNotify("application.created", members, {
+      applicationId: created.id,
+      jobId: job.id,
+      jobTitle: job.title,
+      candidateId,
+    });
     return toApplicationDto({ ...created, jobTitle: job.title });
   } catch (error) {
     if (error instanceof HttpError) throw error;
@@ -156,6 +168,13 @@ export async function withdrawOwnApplication(
     via: "withdraw",
     actorId: candidateId,
   });
+  const members = await listMemberUserIds(row.companyId);
+  await safeNotify("application.withdrawn", members, {
+    applicationId: row.id,
+    jobId: row.jobId,
+    jobTitle: row.jobTitle,
+    candidateId,
+  });
   return toApplicationDto({ ...updated, jobTitle: row.jobTitle });
 }
 
@@ -184,6 +203,13 @@ export async function patchApplicationStatus(
     via: "patch",
     actorId: userId,
   });
-  // 9A: when actor is employer, enqueue application.status_changed for row.candidateId.
+  if (actor === "employer") {
+    await safeNotify("application.status_changed", [row.candidateId], {
+      applicationId: row.id,
+      jobId: row.jobId,
+      jobTitle: row.jobTitle,
+      status: updated.status,
+    });
+  }
   return toApplicationDto({ ...updated, jobTitle: row.jobTitle });
 }
