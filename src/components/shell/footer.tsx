@@ -23,10 +23,7 @@ const columns = [
   },
   {
     title: "footer.account",
-    links: [
-      { href: "/notifications", label: "notifications.nav" },
-      { href: "/settings/notifications", label: "footer.settings" },
-    ],
+    links: [{ href: "/settings/notifications", label: "footer.settings" }],
   },
 ] as const;
 

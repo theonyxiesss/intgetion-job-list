@@ -105,7 +105,16 @@ test("hiding a job removes it from the viewer listing but not from others", asyn
     await page.goto(`/en/jobs/${jobs[0].id}`);
     await page.getByRole("button", { name: "Hide", exact: true }).click();
     await page.getByRole("radio", { name: "Hide this job" }).check();
-    await page.getByRole("button", { name: "Confirm" }).click();
+    // Wait for the hide request itself: leaving the page at once could
+    // abort it before the server records the feedback.
+    await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url().includes(`/api/jobs/${jobs[0].id}/hide`) &&
+          response.ok(),
+      ),
+      page.getByRole("button", { name: "Confirm" }).click(),
+    ]);
     await page.goto(`/en/jobs?q=${token}`);
     await expect(page.getByRole("link", { name: jobs[0].title })).toHaveCount(
       0,

@@ -46,7 +46,11 @@ const rule = {
   },
   create(context) {
     function check(node, value) {
-      if (typeof value === "string" && RAW.test(value) && isClassContext(node)) {
+      if (
+        typeof value === "string" &&
+        RAW.test(value) &&
+        isClassContext(node)
+      ) {
         context.report({ node, messageId: "raw" });
       }
     }
