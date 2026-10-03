@@ -59,6 +59,26 @@ export const applications = pgTable(
   ],
 );
 
+/** One row per application, written only inside express-interest (D3). */
+export const applicationReveals = pgTable(
+  "application_reveals",
+  {
+    applicationId: uuid("application_id")
+      .primaryKey()
+      .references(() => applications.id, { onDelete: "cascade" }),
+    revealedBy: uuid("revealed_by")
+      .notNull()
+      .references(() => users.id),
+    revealedAt: timestamp("revealed_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    via: text("via").notNull(),
+  },
+  (table) => [
+    check("application_reveals_via_check", sql`${table.via} = 'shortlisted'`),
+  ],
+);
+
 export const applicationStatusHistory = pgTable(
   "application_status_history",
   {

@@ -441,3 +441,23 @@ FTS использует сохранённый `tsvector` и GIN индекс. 
 ## D74 — автомодерация импорта
 
 Scam-паттерны (`src/config/scam-patterns.ts`) проверяются по заголовку, описанию и ссылке отклика (сокращатели ссылок — сигнал). Совпадение → вакансия `removed` с `risk_score=4` и `risk_flags=['scam_pattern_rejected']`, счётчик `rejected` и одна строка `moderation_queue` в `pending` (без повторов при следующих прогонах), чтобы модератор мог проверить ложное срабатывание.
+
+## D120 — express-interest одной транзакцией (5C)
+
+`POST /api/applications/:id/express-interest` для `owner` / `admin` / `recruiter`. Нет членства → 404, роль `member` → 403. В транзакции строка отклика блокируется `SELECT … FOR UPDATE`, затем `transitionApplication` с `via: express_interest` и INSERT в `application_reveals` (`via = shortlisted`). Уже `shortlisted` и строка reveal есть → 200 без второй строки. Из статуса, откуда в `shortlisted` ребра нет → 409. Ответ 200 и в первый раз: тело — DTO отклика без ключа `contacts`. Два одновременных вызова сериализуются блокировкой и оставляют одну строку reveal. Тестовый `beforeReveal` бросает ошибку после UPDATE и до INSERT: транзакция откатывает оба.
+
+## D121 — кто читает контакты (5C)
+
+`GET /api/applications/:id/contacts`: любой член компании (включая `member`), только если статус `shortlisted | interview | offer | hired` и строка reveal есть. Иначе 404, в том числе для гостя, чужой компании и закрытого статуса. Тело — `ContactsDto` из `contactsService`, не вложенный ключ отклика. Каждый ответ 200 пишет `audit_logs(action='contacts.read', entity_type='application')`; в `diff` только статус, без email и телефона. `recordAudit` ходит своим соединением и вызывается после успешного чтения: пул `app_rw` один, а `src/lib/audit.ts` менять нельзя.
+
+## D122 — закрытие доступа (5C)
+
+`withdrawn` и `rejected` снова дают 404 на контакты. Строка `application_reveals` остаётся. `interview` / `offer` / `hired` доступ не закрывают. Удаление аккаунта — 10C. `shortlisted` без строки reveal контактом не считается: так продукт не пишет, а прямой SQL из тестов 5B контакты не открывает.
+
+## D123 — страница контактов и кнопка (5C)
+
+`/[locale]/contacts` перечисляет кандидатов, чьи контакты этому члену сейчас доступны по D23, и показывает поля контакта. Кнопка «Проявить интерес» на карточке отклика есть только из `applied` и `viewed`. Профиль и DTO отклика по-прежнему без ключа `contacts`.
+
+## D124 — уведомление reveal не отправляется (5C)
+
+Миграция — `0012_application_reveals.sql`. `0008` уже в дереве (8A); `0010` и `0011` могут ещё отсутствовать. Файлы применяются по имени, поэтому `0012` идёт после `0009`. Событие `mutual_interest.revealed` уже есть в каталоге 9A-lib. Вызов, когда появится отправка: после новой (не повторной) строки reveal — кандидату и членам recruiter+ (`revealNotification` в `expressInterest`). 5C очередь не ставит.

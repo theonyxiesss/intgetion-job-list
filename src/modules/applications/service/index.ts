@@ -68,3 +68,15 @@ export {
 } from "./employer-service";
 export { transitionApplication } from "./transition-application";
 export type { TransitionCommand } from "./transition-application";
+export {
+  CONTACTS_OPEN_STATUSES,
+  contactsOpen,
+  expressInterestPlan,
+} from "./reveal-rules";
+export {
+  expressInterest,
+  listAccessibleContacts,
+  readApplicationContacts,
+  revealNotification,
+} from "./reveal-service";
+export type { ExpressInterestHooks } from "./reveal-service";

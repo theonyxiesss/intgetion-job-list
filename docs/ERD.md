@@ -195,7 +195,7 @@ erDiagram
   }
 ```
 
-Migration 0009 creates `applications` and `application_status_history`. `application_reveals` stays for 5C. One active row per job and candidate (`status <> withdrawn`). A status change is an update of `applications` plus a history row; the first row is an insert with `from_status` null.
+Migration 0009 creates `applications` and `application_status_history`. Migration 0012 creates `application_reveals` (one row per application, `via = shortlisted`). One active row per job and candidate (`status <> withdrawn`). A status change is an update of `applications` plus a history row; the first row is an insert with `from_status` null. The reveal row is inserted in the same transaction as the move to `shortlisted`.
 
 ```mermaid
 erDiagram

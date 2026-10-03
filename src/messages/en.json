@@ -547,5 +547,15 @@
       "processing": "Working…",
       "error": "Could not change the status."
     }
+  },
+  "expressInterest": {
+    "button": "Express interest",
+    "processing": "Working…",
+    "error": "Could not express interest."
+  },
+  "contacts": {
+    "title": "Contacts",
+    "empty": "No contacts are open.",
+    "unnamed": "Candidate"
   }
 }

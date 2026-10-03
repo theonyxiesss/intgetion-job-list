@@ -1,6 +1,7 @@
-import { and, desc, eq, lt, or } from "drizzle-orm";
+import { and, desc, eq, inArray, lt, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  applicationReveals,
   applications,
   candidateProfiles,
   companyMembers,
@@ -173,6 +174,74 @@ export async function listForJob(
     )
     .orderBy(desc(applications.createdAt), desc(applications.id))
     .limit(limit);
+}
+
+export async function lockApplication(applicationId: string, conn: Conn) {
+  if (!isUuid(applicationId)) return null;
+  const [row] = await conn
+    .select()
+    .from(applications)
+    .where(eq(applications.id, applicationId))
+    .for("update");
+  return row ?? null;
+}
+
+export async function findReveal(applicationId: string, conn: Conn = getDb()) {
+  const [row] = await conn
+    .select()
+    .from(applicationReveals)
+    .where(eq(applicationReveals.applicationId, applicationId))
+    .limit(1);
+  return row ?? null;
+}
+
+export async function insertReveal(
+  conn: Conn,
+  input: { applicationId: string; revealedBy: string },
+) {
+  await conn.insert(applicationReveals).values({
+    applicationId: input.applicationId,
+    revealedBy: input.revealedBy,
+    via: "shortlisted",
+  });
+}
+
+const OPEN_CONTACT_STATUSES = [
+  "shortlisted",
+  "interview",
+  "offer",
+  "hired",
+] as const;
+
+/** Applications whose contacts this member may currently read (D23). */
+export async function listOpenContactApplications(userId: string) {
+  if (!isUuid(userId)) return [];
+  return getDb()
+    .select({
+      applicationId: applications.id,
+      candidateName: candidateProfiles.fullName,
+      jobTitle: jobs.title,
+      status: applications.status,
+    })
+    .from(applications)
+    .innerJoin(jobs, eq(jobs.id, applications.jobId))
+    .innerJoin(
+      companyMembers,
+      and(
+        eq(companyMembers.companyId, jobs.companyId),
+        eq(companyMembers.userId, userId),
+      ),
+    )
+    .innerJoin(
+      applicationReveals,
+      eq(applicationReveals.applicationId, applications.id),
+    )
+    .leftJoin(
+      candidateProfiles,
+      eq(candidateProfiles.userId, applications.candidateId),
+    )
+    .where(inArray(applications.status, [...OPEN_CONTACT_STATUSES]))
+    .orderBy(desc(applications.updatedAt));
 }
 
 /** True when `viewerId` belongs to a company this candidate applied to. */
