@@ -336,5 +336,25 @@
       "neutral": "The job lists no language requirements.",
       "failed": "Does not meet the language requirements."
     }
+  },
+  "applications": {
+    "nav": "Applications",
+    "title": "Your applications",
+    "empty": "You have not applied to any jobs yet.",
+    "needProfile": "Create a candidate profile before you apply.",
+    "createProfile": "Create profile",
+    "withdraw": "Withdraw",
+    "withdrawing": "Withdrawing…",
+    "withdrawFailed": "Could not withdraw this application.",
+    "status": {
+      "applied": "Applied",
+      "viewed": "Viewed",
+      "shortlisted": "Shortlisted",
+      "interview": "Interview",
+      "offer": "Offer",
+      "hired": "Hired",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn"
+    }
   }
 }

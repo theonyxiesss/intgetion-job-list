@@ -194,3 +194,29 @@ erDiagram
     text reason
   }
 ```
+
+Migration 0009 creates `applications` and `application_status_history`. `application_reveals` stays for 5C. One active row per job and candidate (`status <> withdrawn`). A status change is an update of `applications` plus a history row; the first row is an insert with `from_status` null.
+
+```mermaid
+erDiagram
+  jobs ||--o{ applications : receives
+  users ||--o{ applications : submits
+  applications ||--o{ application_status_history : history
+  applications {
+    uuid id PK
+    uuid job_id FK
+    uuid candidate_id FK
+    text cover_note
+    application_status status
+    smallint reapply_count
+    timestamptz viewed_at
+    timestamptz decided_at
+  }
+  application_status_history {
+    uuid id PK
+    uuid application_id FK
+    application_status from_status
+    application_status to_status
+    uuid actor_id FK
+  }
+```
