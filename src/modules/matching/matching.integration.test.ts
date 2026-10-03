@@ -56,7 +56,16 @@ async function insertJob(input: {
   hourEnd?: string | null;
   overlap?: number;
 }): Promise<void> {
-  const hasSalary = input.salaryMin !== undefined;
+  const salaryMin =
+    input.salaryMin === undefined ? BigInt(500000) : input.salaryMin;
+  const salaryMax =
+    input.salaryMax === undefined ? BigInt(700000) : input.salaryMax;
+  const salaryCurrency =
+    input.salaryCurrency === undefined ? "EUR" : input.salaryCurrency;
+  const salaryPeriod =
+    input.salaryPeriod === undefined ? "month" : input.salaryPeriod;
+  const salaryBasis =
+    input.salaryBasis === undefined ? "gross" : input.salaryBasis;
   await getDb().execute(sql`
     insert into public.jobs(
       id, company_id, title, description, category, work_format, employment_type,
@@ -68,11 +77,11 @@ async function insertJob(input: {
       ${input.id}, ${input.companyId}, ${input.title}, ${description},
       'engineering', 'remote', 'full_time', 'internal',
       ${input.status ?? "published"}::job_status, now(), now() + interval '30 days',
-      ${hasSalary ? input.salaryMin : BigInt(500000)},
-      ${hasSalary ? input.salaryMax : BigInt(700000)},
-      ${hasSalary ? input.salaryCurrency : "EUR"},
-      ${hasSalary ? input.salaryPeriod : "month"}::salary_period,
-      ${hasSalary ? input.salaryBasis : "gross"}::salary_basis,
+      ${salaryMin},
+      ${salaryMax},
+      ${salaryCurrency},
+      ${salaryPeriod}::salary_period,
+      ${salaryBasis}::salary_basis,
       ${input.timezone ?? null},
       ${input.hourStart ?? null}::time,
       ${input.hourEnd ?? null}::time,
