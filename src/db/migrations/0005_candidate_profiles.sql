@@ -16,6 +16,21 @@ BEGIN
 END
 $$;
 
+CREATE OR REPLACE FUNCTION public.candidate_titles_valid(titles text[])
+RETURNS boolean
+LANGUAGE sql
+IMMUTABLE
+AS $$
+  SELECT cardinality(titles) <= 5
+    AND NOT EXISTS (
+      SELECT 1 FROM unnest(titles) AS title
+      WHERE char_length(title) < 1 OR char_length(title) > 80
+    );
+$$;
+
+REVOKE ALL ON FUNCTION public.candidate_titles_valid(text[]) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.candidate_titles_valid(text[]) TO app_rw;
+
 CREATE TABLE public.candidate_profiles (
   user_id uuid PRIMARY KEY REFERENCES public.users (id) ON DELETE CASCADE,
   full_name text,
@@ -47,13 +62,7 @@ CREATE TABLE public.candidate_profiles (
   CONSTRAINT candidate_profiles_headline_check
     CHECK (headline IS NULL OR char_length(headline) BETWEEN 1 AND 160),
   CONSTRAINT candidate_profiles_desired_titles_check
-    CHECK (
-      cardinality(desired_titles) <= 5
-      AND NOT EXISTS (
-        SELECT 1 FROM unnest(desired_titles) AS title
-        WHERE char_length(title) < 1 OR char_length(title) > 80
-      )
-    ),
+    CHECK (public.candidate_titles_valid(desired_titles)),
   CONSTRAINT candidate_profiles_country_check
     CHECK (country IS NULL OR country ~ '^[A-Z]{2}$'),
   CONSTRAINT candidate_profiles_city_check
