@@ -266,3 +266,13 @@
 - Отклонения от ТЗ: D110–D114 (имя модуля feedback; hidden_company без reason; 409 ALREADY_REPORTED строкой вне errorCodes — src/lib/http чужой; идемпотентные save/unsave; фильтр в сервисе jobs; Cache-Control private при viewer; прямая ссылка на скрытую вакансию продолжает работать).
 - OPEN QUESTION: нет.
 - Следующая подфаза: 6B (loop, 10.5) — для другого агента; мои следующие: —
+
+## [2026-10-03] — 4B доделано Cursor (ветка `cursor/4b`)
+
+- GLM уже сделал сохранение, скрытие, жалобы, страницу `/saved-jobs`, фильтр скрытого в выдаче и миграцию `0011_feedback_reports.sql` (D110–D114). Последний зелёный прогон GLM: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37134410915 на `7d2f295`. Ветка `glm/4b` не менялась.
+- Cursor: rebase на `origin/master`, `recordAppliedExternal` как `ExternalApplyRecorder` в `POST /api/jobs/:id/apply-external` (повтор не пишет вторую строку), ссылка Apply у внешней вакансии делает POST и открывает `externalUrl`, без JS ведёт сразу на внешний URL. Пустая строка в `docs/prompts/cursor-4b.md` — иначе `format:check` падает на файле передачи.
+- Команды проверки: unit `feedback-rules` → 7 passed. Полный прогон в CI. `gh run watch 37138543278` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37138543278 — `check` 1m6s и `database` 9m13s success на `a246b92`. Прогон кода `37138008783`: `database` success, `check` упал только на prettier промпта.
+- P-тесты подфазы: P15 ✅, скрытие из листинга ✅, apply-external для вошедшего пишет feedback, гость получает URL без строки ✅.
+- Миграции: `0011_feedback_reports.sql` (на облако не применялась).
+- OPEN QUESTION: нет
+- Следующая подфаза: не начинать здесь. 9A уже в `cursor/9a`.
