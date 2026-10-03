@@ -39,8 +39,10 @@ describe("skill catalog", () => {
     expect(normalizeNewlines(sql)).toBe(
       normalizeNewlines(renderSkillsMigration()),
     );
+    // Conditional so the hosted migration role can run it (D40).
+    expect(sql).toContain("CREATE EXTENSION pg_trgm WITH SCHEMA extensions");
     expect(sql).toContain(
-      "CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA extensions",
+      "IF NOT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_trgm')",
     );
     expect(sql).toContain("public.enable_rls_deny_all('public.skills')");
     expect(sql).toContain(
