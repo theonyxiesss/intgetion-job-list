@@ -3,16 +3,11 @@
 import { Save } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Button,
-  Field,
-  FieldGroup,
-  Icon,
-  Input,
-  Select,
-  Textarea,
-  useToast,
-} from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
+import { Input, Select, Textarea } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
 import type { toJobDto } from "../api/dto";
 
 type JobDto = ReturnType<typeof toJobDto>;

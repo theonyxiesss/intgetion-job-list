@@ -2,14 +2,11 @@
 
 import { Save } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import {
-  Button,
-  Field,
-  Icon,
-  Input,
-  Textarea,
-  useToast,
-} from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
+import { Input, Textarea } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
 
 type CompanyFormProps = {
   action: "create" | "edit";

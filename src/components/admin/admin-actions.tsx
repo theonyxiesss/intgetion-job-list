@@ -3,7 +3,10 @@
 import { Ban, Check, Trash2, Undo2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
-import { Button, Icon, Input, Select, useToast } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { Input, Select } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
 import { useRouter } from "@/i18n/navigation";
 
 async function post(path: string, body?: unknown) {

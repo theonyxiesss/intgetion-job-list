@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, useToast } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import type { ApplicationStatus } from "@/modules/applications/service";
 
 /** Status buttons of an application (5B); «rejected» is the danger one. */

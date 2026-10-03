@@ -3,16 +3,13 @@
 import { Check, Copy, Save, Send, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
-import {
-  Button,
-  Choice,
-  Field,
-  FieldGroup,
-  Icon,
-  Input,
-  cn,
-  useToast,
-} from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Choice } from "@/components/ui/choice";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/components/ui/cn";
+import { useToast } from "@/components/ui/toast";
 import { useRouter } from "@/i18n/navigation";
 
 type Steps = {

@@ -3,7 +3,9 @@
 import { CirclePause, CirclePlay, Send, XCircle } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Icon, useToast, type ButtonVariant } from "@/components/ui";
+import { Button, type ButtonVariant } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { useToast } from "@/components/ui/toast";
 
 type Action = "publish" | "pause" | "close" | "extend";
 

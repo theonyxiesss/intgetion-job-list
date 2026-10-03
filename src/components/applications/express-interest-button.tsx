@@ -3,7 +3,9 @@
 import { Handshake } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Icon, useToast } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { useToast } from "@/components/ui/toast";
 
 /** 5C: shortlists the application and opens contacts in one step. */
 export function ExpressInterestButton({
