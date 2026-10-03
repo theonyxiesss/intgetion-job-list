@@ -8,15 +8,18 @@ import {
   type CurrentUser,
   type MeContext,
 } from "@/modules/auth/service";
+import { hasCandidateProfile } from "@/modules/candidates/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
 
 /** Gathers what other modules know about the user for `/api/me`. */
 async function meContext(user: CurrentUser): Promise<MeContext> {
-  const companies = await getCompaniesForUser(user.id);
+  const [companies, candidate] = await Promise.all([
+    getCompaniesForUser(user.id),
+    hasCandidateProfile(user.id),
+  ]);
   return {
     companies: companies.map(({ id, name, role }) => ({ id, name, role })),
-    // Candidate profiles arrive with 2B (D37.6).
-    hasCandidateProfile: false,
+    hasCandidateProfile: candidate,
   };
 }
 

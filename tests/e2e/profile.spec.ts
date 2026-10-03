@@ -70,7 +70,12 @@ test("profile completeness grows, and another candidate gets 404 without contact
   expect(Number(score)).toBeGreaterThan(0);
 
   const me = await page.request.get("/api/me");
-  const ownerId = ((await me.json()) as { id: string }).id;
+  const meBody = (await me.json()) as {
+    id: string;
+    hasCandidateProfile: boolean;
+  };
+  expect(meBody.hasCandidateProfile).toBe(true);
+  const ownerId = meBody.id;
   const own = await page.request.get(`/api/candidates/${ownerId}`);
   expect(own.status()).toBe(200);
   const ownBody = await own.json();
