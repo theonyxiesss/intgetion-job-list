@@ -349,11 +349,14 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           className={controlClass}
         />
       </label>
-      <div id="skills" />
-      <label className="flex flex-col gap-1 font-medium" htmlFor="skills">
+      <label
+        id="skills"
+        className="flex flex-col gap-1 font-medium"
+        htmlFor="skill-names"
+      >
         {t("fields.skills")}
         <input
-          id="skills"
+          id="skill-names"
           name="skills"
           defaultValue={initial.skills}
           className={controlClass}
