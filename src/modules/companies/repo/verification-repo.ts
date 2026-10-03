@@ -188,7 +188,7 @@ export async function trustedCandidates(now: Date): Promise<TrustedRow[]> {
           where h.job_id = j.id and h.to_status = 'published'))) as ever_published,
       (select count(*)::int from first_action f where f.company_id = c.id) as applications,
       (select percentile_cont(0.5) within group (order by
-          extract(epoch from (coalesce(f.acted_at, ${now}) - f.created_at)) / 86400)
+          extract(epoch from (coalesce(f.acted_at, ${now.toISOString()}::timestamptz) - f.created_at)) / 86400)
         from first_action f where f.company_id = c.id) as median_days
     from public.companies c
     where c.origin = 'internal' and (c.status = 'verified' or c.is_trusted)
