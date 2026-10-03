@@ -56,3 +56,22 @@ export type {
   JobLanguageForScoring,
 } from "../score/types";
 export { emptyFeedback, skillLevelIndex, cefrLevelIndex } from "../score/types";
+export {
+  CACHE_MAX_AGE_MS,
+  JOB_CANDIDATE_LIMIT,
+  MATCH_STORE_LIMIT,
+  PREFILTER_LIMIT,
+  envelopeLowData,
+  isCacheFresh,
+  scoreToNumeric,
+  selectShown,
+} from "./cache-rules";
+export {
+  computeMatches,
+  computeMatchesForJob,
+  getMatches,
+  resetComputeCount,
+  takeComputeCount,
+  type MatchItem,
+  type MatchList,
+} from "./compute";
