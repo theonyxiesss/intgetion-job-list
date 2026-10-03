@@ -29,7 +29,7 @@ const user: CurrentUser = {
 async function seed() {
   await getDb().execute(sql`
     insert into public.users (id, auth_uid, terms_accepted_at, terms_version, created_at)
-    values (${ownerId}, ${user.authUid}, now(), 'integration', ${user.createdAt}),
+    values (${ownerId}, ${user.authUid}, now(), 'integration', ${user.createdAt.toISOString()}),
            (${outsiderId}, ${randomUUID()}, now(), 'integration', now())
   `);
   await getDb().execute(sql`
