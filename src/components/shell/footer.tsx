@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { Logo } from "@/components/ui";
+import { Logo, navFade } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitch } from "./locale-switch";
 
@@ -50,6 +50,7 @@ export function Footer() {
             <p className="t-label text-fg-subtle">{t(column.title)}</p>
             {column.links.map((link) => (
               <Link
+                {...navFade}
                 key={link.href}
                 href={link.href}
                 className="t-body-s inline-flex min-h-8 items-center text-fg-muted transition-colors hover:text-fg"

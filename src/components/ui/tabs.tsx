@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "./cn";
-import { Morph } from "./page-transition";
+import { Morph, navFade } from "./page-transition";
 
 export type TabItem = {
   label: string;
@@ -31,6 +31,7 @@ export function LinkTabs({
           <li key={item.label}>
             <Link
               href={item.href}
+              {...navFade}
               aria-current={item.active ? "page" : undefined}
               className={cn(
                 "t-nav relative inline-flex min-h-11 items-center gap-2 whitespace-nowrap transition-colors duration-[120ms]",

@@ -21,4 +21,10 @@ export { OrbitBackdrop } from "./orbit-backdrop";
 export { ConfirmCard, Dialog } from "./dialog";
 export { ToastProvider, useToast } from "./toast";
 export { CountUp, Reveal, ScrollFrame } from "./motion";
-export { Morph, PageTransition, navBack, navForward } from "./page-transition";
+export {
+  Morph,
+  PageTransition,
+  navBack,
+  navFade,
+  navForward,
+} from "./page-transition";

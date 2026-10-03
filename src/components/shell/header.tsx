@@ -2,7 +2,14 @@ import { Bell, Send, Shield, User } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { LogoutButton } from "@/components/auth/logout-button";
-import { ButtonLink, Icon, Logo, ScrollFrame, cn } from "@/components/ui";
+import {
+  ButtonLink,
+  Icon,
+  Logo,
+  ScrollFrame,
+  cn,
+  navFade,
+} from "@/components/ui";
 import { Suspense } from "react";
 import { NavProgress } from "./nav-progress";
 import { Link } from "@/i18n/navigation";
@@ -54,6 +61,7 @@ export async function Header() {
     <ScrollFrame className="sticky top-0 z-40 border-b border-line bg-bg transition-colors duration-200 data-[scrolled]:bg-surface">
       <div className="mx-auto flex h-16 w-full max-w-[1376px] items-center gap-4 px-4 md:px-6 xl:px-12">
         <Link
+          {...navFade}
           href="/"
           aria-label={t("product.name")}
           className="inline-flex min-h-11 items-center"
@@ -84,6 +92,7 @@ export async function Header() {
             {signedIn ? (
               <>
                 <Link
+                  {...navFade}
                   href="/notifications"
                   className={iconLink}
                   title={t("notifications.nav")}
@@ -97,6 +106,7 @@ export async function Header() {
                   )}
                 </Link>
                 <Link
+                  {...navFade}
                   href="/applications"
                   className={cn(iconLink, "hidden lg:inline-flex")}
                   title={t("applications.nav")}
@@ -105,6 +115,7 @@ export async function Header() {
                   <span className="sr-only">{t("applications.nav")}</span>
                 </Link>
                 <Link
+                  {...navFade}
                   href="/profile"
                   className={cn(iconLink, "hidden lg:inline-flex")}
                   title={t("profile.nav")}
@@ -114,6 +125,7 @@ export async function Header() {
                 </Link>
                 {isAdmin && (
                   <Link
+                    {...navFade}
                     href="/admin"
                     className={cn(iconLink, "hidden lg:inline-flex")}
                     title={t("nav.admin")}
@@ -130,10 +142,10 @@ export async function Header() {
               // A wrapper hides them: `hidden` on the link itself would lose
               // to the button's own `inline-flex`.
               <span className="hidden gap-1 sm:inline-flex">
-                <ButtonLink href="/login" variant="ghost">
+                <ButtonLink {...navFade} href="/login" variant="ghost">
                   {t("nav.login")}
                 </ButtonLink>
-                <ButtonLink href="/register" variant="secondary">
+                <ButtonLink {...navFade} href="/register" variant="secondary">
                   {t("nav.register")}
                 </ButtonLink>
               </span>

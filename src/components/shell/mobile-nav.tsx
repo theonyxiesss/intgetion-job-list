@@ -2,7 +2,7 @@
 
 import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Button, Icon } from "@/components/ui";
+import { Button, Icon, navFade } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { LocaleSwitch } from "./locale-switch";
@@ -66,6 +66,7 @@ export function MobileNav({
         <nav aria-label={label} className="flex flex-col px-4 py-6">
           {items.map((item, i) => (
             <Link
+              {...navFade}
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}

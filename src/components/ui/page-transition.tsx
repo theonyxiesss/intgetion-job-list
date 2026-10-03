@@ -1,15 +1,18 @@
 import { ViewTransition, type ReactNode } from "react";
 
 /**
- * Page content transition (DESIGN.md 6.2): a crossfade by default, a
- * directional slide for links tagged `nav-forward` / `nav-back`. Used by
- * `app/[locale]/template.tsx`, which remounts on every navigation.
+ * Page content transition (DESIGN.md 6.2): a crossfade for links tagged
+ * `nav-fade`, a directional slide for `nav-forward` / `nav-back`. Untyped
+ * transitions do nothing — Next hydrates inside a transition, and animating
+ * that pushed the first paint of the page past the LCP budget (D145).
+ * Used by `app/[locale]/template.tsx`, which remounts on every navigation.
  */
 export function PageTransition({ children }: { children: ReactNode }) {
   const types = {
     "nav-forward": "nav-forward",
     "nav-back": "nav-back",
-    default: "auto",
+    "nav-fade": "auto",
+    default: "none",
   };
   return (
     <ViewTransition enter={types} exit={types} default="none">
@@ -21,6 +24,8 @@ export function PageTransition({ children }: { children: ReactNode }) {
 /** Link props for going one level deeper or back up (DESIGN.md 6.2). */
 export const navForward = { transitionTypes: ["nav-forward"] };
 export const navBack = { transitionTypes: ["nav-back"] };
+/** Link props for a plain crossfade: header, menus, footer, tabs. */
+export const navFade = { transitionTypes: ["nav-fade"] };
 
 /**
  * An element that morphs between pages or positions (job title, company
