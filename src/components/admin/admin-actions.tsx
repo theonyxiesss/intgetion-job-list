@@ -1,7 +1,9 @@
 "use client";
 
+import { Ban, Check, Trash2, Undo2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useId, useState } from "react";
+import { Button, Icon, Input, Select, useToast } from "@/components/ui";
 import { useRouter } from "@/i18n/navigation";
 
 async function post(path: string, body?: unknown) {
@@ -12,22 +14,23 @@ async function post(path: string, body?: unknown) {
   });
 }
 
+/** One admin action: pending state, refresh on success, toast on failure. */
 function useAction() {
+  const t = useTranslations("admin");
   const router = useRouter();
-  const [pending, setPending] = useState(false);
-  const [failed, setFailed] = useState(false);
-  async function run(path: string, body?: unknown) {
-    setPending(true);
-    setFailed(false);
-    const response = await post(path, body);
-    setPending(false);
-    if (!response.ok) {
-      setFailed(true);
+  const toast = useToast();
+  const [pending, setPending] = useState<string | null>(null);
+  async function run(key: string, path: string, body?: unknown) {
+    setPending(key);
+    const response = await post(path, body).catch(() => null);
+    setPending(null);
+    if (!response?.ok) {
+      toast.show(t("actionFailed"), "danger");
       return;
     }
     router.refresh();
   }
-  return { pending, failed, run };
+  return { pending, run };
 }
 
 export function UserStatusAction({
@@ -38,27 +41,23 @@ export function UserStatusAction({
   status: string;
 }) {
   const t = useTranslations("admin");
-  const { pending, failed, run } = useAction();
+  const { pending, run } = useAction();
   if (status !== "active" && status !== "suspended") return null;
   const suspend = status === "active";
   return (
-    <span className="inline-flex items-center gap-2">
-      <button
-        type="button"
-        disabled={pending}
-        onClick={() =>
-          run(`/api/admin/users/${userId}/${suspend ? "suspend" : "unsuspend"}`)
-        }
-        className="min-h-11 rounded-md border border-current px-3"
-      >
-        {suspend ? t("suspend") : t("unsuspend")}
-      </button>
-      {failed && (
-        <span role="alert" className="text-sm text-danger">
-          {t("actionFailed")}
-        </span>
-      )}
-    </span>
+    <Button
+      variant={suspend ? "danger" : "secondary"}
+      loading={pending === "status"}
+      icon={<Icon icon={suspend ? Ban : Undo2} size={16} />}
+      onClick={() =>
+        run(
+          "status",
+          `/api/admin/users/${userId}/${suspend ? "suspend" : "unsuspend"}`,
+        )
+      }
+    >
+      {suspend ? t("suspend") : t("unsuspend")}
+    </Button>
   );
 }
 
@@ -70,19 +69,19 @@ export function SuggestionActions({
   skills: { id: string; label: string }[];
 }) {
   const t = useTranslations("admin");
-  const { pending, failed, run } = useAction();
+  const { pending, run } = useAction();
   const [skillId, setSkillId] = useState("");
-  const selectId = `skill-${suggestionId}`;
+  const selectId = useId();
   return (
-    <span className="inline-flex flex-wrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       <label htmlFor={selectId} className="sr-only">
         {t("mapTo")}
       </label>
-      <select
+      <Select
         id={selectId}
         value={skillId}
         onChange={(event) => setSkillId(event.target.value)}
-        className="min-h-11 rounded-md border border-current/30 bg-transparent px-2"
+        className="w-auto min-w-48"
       >
         <option value="">{t("chooseSkill")}</option>
         {skills.map((skill) => (
@@ -90,160 +89,148 @@ export function SuggestionActions({
             {skill.label}
           </option>
         ))}
-      </select>
-      <button
-        type="button"
-        disabled={pending || !skillId}
+      </Select>
+      <Button
+        variant="secondary"
+        disabled={!skillId}
+        loading={pending === "map"}
+        icon={<Icon icon={Check} size={16} />}
         onClick={() =>
-          run(`/api/admin/taxonomy/suggestions/${suggestionId}/map`, {
+          run("map", `/api/admin/taxonomy/suggestions/${suggestionId}/map`, {
             skillId,
           })
         }
-        className="min-h-11 rounded-md border border-current px-3"
       >
         {t("map")}
-      </button>
-      <button
-        type="button"
-        disabled={pending}
+      </Button>
+      <Button
+        variant="ghost"
+        loading={pending === "reject"}
         onClick={() =>
-          run(`/api/admin/taxonomy/suggestions/${suggestionId}/reject`)
+          run(
+            "reject",
+            `/api/admin/taxonomy/suggestions/${suggestionId}/reject`,
+          )
         }
-        className="min-h-11 rounded-md border border-current px-3"
       >
         {t("reject")}
-      </button>
-      {failed && (
-        <span role="alert" className="text-sm text-danger">
-          {t("actionFailed")}
-        </span>
-      )}
-    </span>
+      </Button>
+    </div>
   );
 }
 
 export function QueueDecision({ itemId }: { itemId: string }) {
   const t = useTranslations("admin");
-  const { pending, failed, run } = useAction();
+  const { pending, run } = useAction();
   const [note, setNote] = useState("");
-  const noteId = `note-${itemId}`;
+  const noteId = useId();
   return (
-    <span className="inline-flex flex-wrap items-center gap-2">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
       <label htmlFor={noteId} className="sr-only">
         {t("decisionNote")}
       </label>
-      <input
+      <Input
         id={noteId}
         value={note}
         onChange={(event) => setNote(event.target.value)}
         placeholder={t("decisionNote")}
         maxLength={1000}
-        className="min-h-11 rounded-md border border-current/30 bg-transparent px-2"
+        className="sm:w-56"
       />
-      <button
-        type="button"
-        disabled={pending}
-        onClick={() =>
-          run(`/api/admin/queue/${itemId}/decide`, {
-            decision: "approved",
-            ...(note.trim() ? { note } : {}),
-          })
-        }
-        className="min-h-11 rounded-md border border-current px-3"
-      >
-        {t("approve")}
-      </button>
-      <button
-        type="button"
-        disabled={pending || !note.trim()}
-        onClick={() =>
-          run(`/api/admin/queue/${itemId}/decide`, {
-            decision: "rejected",
-            note,
-          })
-        }
-        className="min-h-11 rounded-md border border-current px-3"
-      >
-        {t("reject")}
-      </button>
-      {failed && (
-        <span role="alert" className="text-sm text-danger">
-          {t("actionFailed")}
-        </span>
-      )}
-    </span>
+      <div className="flex gap-2">
+        <Button
+          loading={pending === "approve"}
+          icon={<Icon icon={Check} size={16} />}
+          onClick={() =>
+            run("approve", `/api/admin/queue/${itemId}/decide`, {
+              decision: "approved",
+              ...(note.trim() ? { note } : {}),
+            })
+          }
+        >
+          {t("approve")}
+        </Button>
+        <Button
+          variant="danger"
+          disabled={!note.trim()}
+          loading={pending === "reject"}
+          icon={<Icon icon={X} size={16} />}
+          onClick={() =>
+            run("reject", `/api/admin/queue/${itemId}/decide`, {
+              decision: "rejected",
+              note,
+            })
+          }
+        >
+          {t("reject")}
+        </Button>
+      </div>
+    </div>
   );
 }
 
 export function RemoveJobAction({ jobId }: { jobId: string }) {
   const t = useTranslations("admin");
-  const { pending, failed, run } = useAction();
+  const { pending, run } = useAction();
   const [reason, setReason] = useState("");
-  const reasonId = `reason-${jobId}`;
+  const reasonId = useId();
   return (
-    <span className="inline-flex flex-wrap items-center gap-2">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
       <label htmlFor={reasonId} className="sr-only">
         {t("removeReason")}
       </label>
-      <input
+      <Input
         id={reasonId}
         value={reason}
         onChange={(event) => setReason(event.target.value)}
         placeholder={t("removeReason")}
         maxLength={500}
-        className="min-h-11 rounded-md border border-current/30 bg-transparent px-2"
+        className="sm:w-48"
       />
-      <button
-        type="button"
-        disabled={pending || reason.trim().length < 3}
-        onClick={() => run(`/api/admin/jobs/${jobId}/remove`, { reason })}
-        className="min-h-11 rounded-md border border-current px-3"
+      <Button
+        variant="danger"
+        disabled={reason.trim().length < 3}
+        loading={pending === "remove"}
+        icon={<Icon icon={Trash2} size={16} />}
+        onClick={() =>
+          run("remove", `/api/admin/jobs/${jobId}/remove`, { reason })
+        }
       >
         {t("remove")}
-      </button>
-      {failed && (
-        <span role="alert" className="text-sm text-danger">
-          {t("actionFailed")}
-        </span>
-      )}
-    </span>
+      </Button>
+    </div>
   );
 }
 
 export function ReportDecision({ reportId }: { reportId: string }) {
   const t = useTranslations("admin");
-  const { pending, failed, run } = useAction();
+  const { pending, run } = useAction();
   return (
-    <span className="inline-flex flex-wrap items-center gap-2">
-      <button
-        type="button"
-        disabled={pending}
+    <div className="flex gap-2">
+      <Button
+        variant="danger"
+        loading={pending === "confirm"}
+        icon={<Icon icon={Check} size={16} />}
         onClick={() =>
-          run(`/api/admin/reports/${reportId}/decide`, {
+          run("confirm", `/api/admin/reports/${reportId}/decide`, {
             decision: "confirmed",
           })
         }
-        className="min-h-11 rounded-md border border-current px-3"
       >
         {t("confirmReport")}
-      </button>
-      <button
-        type="button"
-        disabled={pending}
+      </Button>
+      <Button
+        variant="secondary"
+        loading={pending === "dismiss"}
+        icon={<Icon icon={X} size={16} />}
         onClick={() =>
-          run(`/api/admin/reports/${reportId}/decide`, {
+          run("dismiss", `/api/admin/reports/${reportId}/decide`, {
             decision: "dismissed",
           })
         }
-        className="min-h-11 rounded-md border border-current px-3"
       >
         {t("dismissReport")}
-      </button>
-      {failed && (
-        <span role="alert" className="text-sm text-danger">
-          {t("actionFailed")}
-        </span>
-      )}
-    </span>
+      </Button>
+    </div>
   );
 }

@@ -6,6 +6,15 @@ import { getCurrentUser } from "@/modules/auth/service";
 import { toJobDto } from "@/modules/jobs/api/dto";
 import { findOwnedJob } from "@/modules/jobs/service";
 import { JobForm } from "@/modules/jobs/ui/job-form";
+import { ArrowLeft } from "lucide-react";
+import {
+  ButtonLink,
+  Container,
+  Icon,
+  PageHeader,
+  navBack,
+} from "@/components/ui";
+import { jobFormOptions } from "../../form-options";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -32,13 +41,25 @@ export default async function EditEmployerJobPage({
     notFound();
   const t = await getTranslations("employerJobs");
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-12">
-      <h1 className="text-3xl font-semibold">{t("edit")}</h1>
-      <JobForm
-        companyId={job.companyId}
-        initial={toJobDto(job)}
-        text={t.raw("form")}
-      />
+    <main className="flex-1 py-10">
+      <Container className="flex flex-col gap-8">
+        <ButtonLink
+          href={`/employer/jobs/${id}`}
+          variant="ghost"
+          {...navBack}
+          icon={<Icon icon={ArrowLeft} size={16} />}
+          className="-ml-5 self-start"
+        >
+          {t("back")}
+        </ButtonLink>
+        <PageHeader label={job.title} title={t("edit")} />
+        <JobForm
+          companyId={job.companyId}
+          initial={toJobDto(job)}
+          text={t.raw("form")}
+          options={await jobFormOptions()}
+        />
+      </Container>
     </main>
   );
 }

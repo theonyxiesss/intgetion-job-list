@@ -1,6 +1,17 @@
-import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
+import {
+  Container,
+  EmptyState,
+  PageHeader,
+  StatusBadge,
+  Table,
+  Td,
+  Th,
+  Tr,
+  navForward,
+} from "@/components/ui";
+import { Link } from "@/i18n/navigation";
 import { HttpError } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
@@ -22,6 +33,7 @@ export default async function ContactsPage({
   if (!user) redirect(`/${locale}/login`);
 
   const t = await getTranslations("contacts");
+  const statusT = await getTranslations("employerApplications");
   const items = await listAccessibleContacts(user.id);
   const open: Array<
     Awaited<ReturnType<typeof listAccessibleContacts>>[number] & {
@@ -41,25 +53,54 @@ export default async function ContactsPage({
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-12">
-      <h1 className="text-3xl font-semibold">{t("title")}</h1>
-      {open.length === 0 ? <p>{t("empty")}</p> : null}
-      <ul className="flex flex-col gap-4">
-        {open.map((item) => (
-          <li key={item.applicationId} className="flex flex-col gap-1">
-            <Link
-              className="underline"
-              href={`/${locale}/employer/applications/${item.applicationId}`}
-            >
-              {item.candidateName ?? t("unnamed")}
-            </Link>
-            <p>{item.jobTitle}</p>
-            <p>{item.contacts.email}</p>
-            {item.contacts.phone ? <p>{item.contacts.phone}</p> : null}
-            {item.contacts.telegram ? <p>{item.contacts.telegram}</p> : null}
-          </li>
-        ))}
-      </ul>
+    <main className="flex-1 py-10">
+      <Container className="flex flex-col gap-8">
+        <PageHeader title={t("title")} intro={t("intro")} />
+        {open.length === 0 ? (
+          <EmptyState title={t("empty")} />
+        ) : (
+          <Table caption={t("title")}>
+            <thead>
+              <tr>
+                <Th>{statusT("candidate")}</Th>
+                <Th>{t("job")}</Th>
+                <Th>{t("contactsCol")}</Th>
+                <Th>{statusT("status.shortlisted")}</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {open.map((item) => (
+                <Tr key={item.applicationId}>
+                  <Td>
+                    <Link
+                      {...navForward}
+                      href={`/employer/applications/${item.applicationId}`}
+                      className="font-medium underline-offset-4 hover:underline"
+                    >
+                      {item.candidateName ?? t("unnamed")}
+                    </Link>
+                  </Td>
+                  <Td className="text-fg-muted">{item.jobTitle}</Td>
+                  <Td mono>
+                    <span className="block">{item.contacts.email}</span>
+                    {item.contacts.phone ? (
+                      <span className="block">{item.contacts.phone}</span>
+                    ) : null}
+                    {item.contacts.telegram ? (
+                      <span className="block">{item.contacts.telegram}</span>
+                    ) : null}
+                  </Td>
+                  <Td>
+                    <StatusBadge status={item.status}>
+                      {statusT(`status.${item.status}`)}
+                    </StatusBadge>
+                  </Td>
+                </Tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </Container>
     </main>
   );
 }

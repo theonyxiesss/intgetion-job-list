@@ -127,3 +127,5 @@ export async function decideReport(
     pausedJobs: pausedJobs.length,
   };
 }
+
+export const countOpenReports = repo.countOpenReports;

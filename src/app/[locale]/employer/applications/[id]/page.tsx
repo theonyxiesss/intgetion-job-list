@@ -1,8 +1,19 @@
-import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { EmployerStatusActions } from "@/components/applications/employer-status-actions";
 import { ExpressInterestButton } from "@/components/applications/express-interest-button";
+import {
+  ButtonLink,
+  Container,
+  EmptyState,
+  Icon,
+  Stat,
+  StatRow,
+  StatusBadge,
+  Tag,
+  navBack,
+} from "@/components/ui";
 import { HttpError } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
@@ -30,6 +41,7 @@ export default async function EmployerApplicationPage({
   const t = await getTranslations("employerApplications");
   const interest = await getTranslations("expressInterest");
   const contactsText = await getTranslations("contacts");
+  const labels = await getTranslations("jobs");
   let application;
   try {
     application = await openApplication(user.id, id);
@@ -59,65 +71,138 @@ export default async function EmployerApplicationPage({
     (typeof targets)[number] | "processing" | "error",
     string
   >;
+  const canExpress =
+    expressInterestPlan(application.status, false) === "commit";
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-12">
-      <Link
-        className="underline"
-        href={`/${locale}/employer/jobs/${application.jobId}/applications`}
-      >
-        {t("backToList")}
-      </Link>
-      <h1 className="text-3xl font-semibold">
-        {application.candidateName ?? t("unnamed")}
-      </h1>
-      <p>{application.jobTitle}</p>
-      <p>{t(`status.${application.status}`)}</p>
-      {application.coverNote ? (
-        <section className="flex flex-col gap-1">
-          <h2 className="text-xl font-semibold">{t("coverNote")}</h2>
-          <p>{application.coverNote}</p>
-        </section>
-      ) : null}
-      <section className="flex flex-col gap-2">
-        <h2 className="text-xl font-semibold">{t("profileTitle")}</h2>
-        {profile ? (
-          <>
-            <p>{profile.headline}</p>
-            <p>{profile.desiredTitles.join(", ")}</p>
-            <ul className="list-disc pl-5">
-              {profile.skills.map((skill) => (
-                <li key={skill.skillId}>{skill.nameEn}</li>
-              ))}
+    <main className="flex-1 py-10">
+      <Container className="flex flex-col gap-8">
+        <ButtonLink
+          href={`/employer/jobs/${application.jobId}/applications`}
+          variant="ghost"
+          {...navBack}
+          icon={<Icon icon={ArrowLeft} size={16} />}
+          className="-ml-5 self-start"
+        >
+          {t("backToList")}
+        </ButtonLink>
+
+        <header className="flex flex-col gap-4 border-b border-line pb-8 md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-col gap-3">
+            <p className="t-label text-fg-muted">{application.jobTitle}</p>
+            <h1 className="t-display-l">
+              {application.candidateName ?? t("unnamed")}
+            </h1>
+            {profile?.headline && (
+              <p className="t-body-l text-fg-muted">{profile.headline}</p>
+            )}
+            <StatusBadge status={application.status}>
+              {t(`status.${application.status}`)}
+            </StatusBadge>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {canExpress && (
+              <ExpressInterestButton
+                applicationId={application.id}
+                label={interest("button")}
+                error={interest("error")}
+              />
+            )}
+            <EmployerStatusActions
+              applicationId={application.id}
+              targets={targets}
+              text={actions}
+            />
+          </div>
+        </header>
+
+        {contacts ? (
+          <section
+            aria-labelledby="contacts-title"
+            className="flex flex-col gap-4 border border-success p-6"
+          >
+            <h2 id="contacts-title" className="t-h3 text-success">
+              {contactsText("title")}
+            </h2>
+            <ul className="t-data flex flex-col gap-2">
+              <li>{contacts.email}</li>
+              {contacts.phone ? <li>{contacts.phone}</li> : null}
+              {contacts.telegram ? <li>{contacts.telegram}</li> : null}
+              {contacts.linkedinUrl ? <li>{contacts.linkedinUrl}</li> : null}
+              {contacts.websiteUrl ? <li>{contacts.websiteUrl}</li> : null}
             </ul>
-          </>
-        ) : (
-          <p>{t("noProfile")}</p>
-        )}
-      </section>
-      {expressInterestPlan(application.status, false) === "commit" ? (
-        <ExpressInterestButton
-          applicationId={application.id}
-          label={interest("button")}
-          processing={interest("processing")}
-          error={interest("error")}
-        />
-      ) : null}
-      {contacts ? (
-        <section className="flex flex-col gap-1">
-          <h2 className="text-xl font-semibold">{contactsText("title")}</h2>
-          <p>{contacts.email}</p>
-          {contacts.phone ? <p>{contacts.phone}</p> : null}
-          {contacts.telegram ? <p>{contacts.telegram}</p> : null}
-          {contacts.linkedinUrl ? <p>{contacts.linkedinUrl}</p> : null}
-          {contacts.websiteUrl ? <p>{contacts.websiteUrl}</p> : null}
+          </section>
+        ) : null}
+
+        {application.coverNote ? (
+          <section
+            aria-labelledby="cover-title"
+            className="flex flex-col gap-3"
+          >
+            <h2 id="cover-title" className="t-h3">
+              {t("coverNote")}
+            </h2>
+            <p className="max-w-[68ch] whitespace-pre-wrap">
+              {application.coverNote}
+            </p>
+          </section>
+        ) : null}
+
+        <section
+          aria-labelledby="profile-title"
+          className="flex flex-col gap-6"
+        >
+          <h2 id="profile-title" className="t-h3">
+            {t("profileTitle")}
+          </h2>
+          {profile ? (
+            <>
+              <StatRow>
+                <Stat
+                  label={t("experience")}
+                  value={profile.experienceYears ?? "—"}
+                  muted={profile.experienceYears === null}
+                />
+                <Stat label={t("timezone")} value={profile.timezone} />
+                <Stat
+                  label={t("hours")}
+                  value={`${profile.workHoursStart}–${profile.workHoursEnd}`}
+                />
+                <Stat
+                  label={t("formats")}
+                  value={
+                    profile.workFormats.map((f) => labels(f)).join(" · ") || "—"
+                  }
+                />
+                <Stat
+                  label={t("languages")}
+                  value={
+                    profile.languages
+                      .map((l) => `${l.lang} · ${l.level}`)
+                      .join(", ") || "—"
+                  }
+                />
+              </StatRow>
+              {profile.desiredTitles.length > 0 && (
+                <p className="text-fg-muted">
+                  {profile.desiredTitles.join(" · ")}
+                </p>
+              )}
+              {profile.skills.length > 0 && (
+                <ul className="flex flex-wrap gap-2">
+                  {profile.skills.map((skill) => (
+                    <li key={skill.skillId}>
+                      <Tag>{locale === "ru" ? skill.nameRu : skill.nameEn}</Tag>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ) : (
+            <EmptyState title={t("noProfile")} />
+          )}
         </section>
-      ) : null}
-      <EmployerStatusActions
-        applicationId={application.id}
-        targets={targets}
-        text={actions}
-      />
+      </Container>
     </main>
   );
 }

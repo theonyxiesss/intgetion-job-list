@@ -1,7 +1,11 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SuggestionActions } from "@/components/admin/admin-actions";
-import { AdminShell, requireAdminPage } from "@/components/admin/admin-page";
-import { Link } from "@/i18n/navigation";
+import {
+  AdminShell,
+  NextPageLink,
+  requireAdminPage,
+} from "@/components/admin/admin-page";
+import { EmptyState, Table, Td, Th, Tr } from "@/components/ui";
 import {
   listActiveSkills,
   listSuggestions,
@@ -32,40 +36,37 @@ export default async function AdminTaxonomyPage({
   }));
 
   return (
-    <AdminShell title={t("taxonomyTitle")}>
+    <AdminShell title={t("taxonomyTitle")} active="taxonomy">
       {items.length === 0 ? (
-        <p>{t("noSuggestions")}</p>
+        <EmptyState title={t("noSuggestions")} />
       ) : (
-        <table className="w-full text-left text-sm">
+        <Table caption={t("taxonomyTitle")}>
           <thead>
             <tr>
-              <th scope="col">{t("colText")}</th>
-              <th scope="col">{t("colOccurrences")}</th>
-              <th scope="col">{t("colSource")}</th>
-              <th scope="col">{t("colActions")}</th>
+              <Th>{t("colText")}</Th>
+              <Th numeric>{t("colOccurrences")}</Th>
+              <Th>{t("colSource")}</Th>
+              <Th>{t("colActions")}</Th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item.id} className="border-t border-current/15">
-                <td className="py-2">{item.rawText}</td>
-                <td>{item.occurrences}</td>
-                <td>{item.source}</td>
-                <td>
+              <Tr key={item.id}>
+                <Td>{item.rawText}</Td>
+                <Td numeric>{item.occurrences}</Td>
+                <Td className="text-fg-muted">{item.source}</Td>
+                <Td>
                   <SuggestionActions suggestionId={item.id} skills={skills} />
-                </td>
-              </tr>
+                </Td>
+              </Tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       )}
       {nextCursor && (
-        <Link
+        <NextPageLink
           href={{ pathname: "/admin/taxonomy", query: { cursor: nextCursor } }}
-          className="underline"
-        >
-          {t("nextPage")}
-        </Link>
+        />
       )}
     </AdminShell>
   );

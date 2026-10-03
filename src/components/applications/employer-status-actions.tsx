@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button, useToast } from "@/components/ui";
 import type { ApplicationStatus } from "@/modules/applications/service";
 
+/** Status buttons of an application (5B); «rejected» is the danger one. */
 export function EmployerStatusActions({
   applicationId,
   targets,
@@ -14,20 +16,19 @@ export function EmployerStatusActions({
   text: Record<string, string>;
 }) {
   const router = useRouter();
-  const [busy, setBusy] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const toast = useToast();
+  const [busy, setBusy] = useState<ApplicationStatus | null>(null);
 
   async function run(to: ApplicationStatus) {
-    setBusy(true);
-    setFailed(false);
+    setBusy(to);
     const response = await fetch(`/api/applications/${applicationId}/status`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ to }),
-    });
-    setBusy(false);
-    if (!response.ok) {
-      setFailed(true);
+    }).catch(() => null);
+    setBusy(null);
+    if (!response?.ok) {
+      toast.show(text.error ?? "", "danger");
       return;
     }
     router.refresh();
@@ -35,19 +36,18 @@ export function EmployerStatusActions({
 
   if (targets.length === 0) return null;
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-3">
       {targets.map((to) => (
-        <button
+        <Button
           key={to}
-          type="button"
-          className="inline-flex min-h-11 items-center border border-current px-3"
-          disabled={busy}
+          variant={to === "rejected" ? "danger" : "secondary"}
+          loading={busy === to}
+          disabled={busy !== null && busy !== to}
           onClick={() => run(to)}
         >
-          {busy ? text.processing : text[to]}
-        </button>
+          {text[to]}
+        </Button>
       ))}
-      {failed ? <p>{text.error}</p> : null}
     </div>
   );
 }

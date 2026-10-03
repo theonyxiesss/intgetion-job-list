@@ -1,16 +1,25 @@
-import Link from "next/link";
+import { ArrowLeft, Pencil } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
-import { routing } from "@/i18n/routing";
+import {
+  ButtonLink,
+  Container,
+  Icon,
+  Stat,
+  StatRow,
+  StatusBadge,
+  navBack,
+} from "@/components/ui";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { toJobDto } from "@/modules/jobs/api/dto";
 import { findOwnedJob } from "@/modules/jobs/service";
 import { JobActions } from "@/modules/jobs/ui/job-actions";
+import { EmployerJobTabs } from "./job-tabs";
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
+const date = (value: Date | null) =>
+  value ? value.toISOString().slice(0, 10) : "—";
+
 export default async function EmployerJobPage({
   params,
 }: {
@@ -29,30 +38,61 @@ export default async function EmployerJobPage({
   }
   const dto = toJobDto(job);
   const t = await getTranslations("employerJobs");
-  const pipeline = await getTranslations("employerApplications");
+  const labels = await getTranslations("jobs");
+  const categories = await getTranslations("categories");
+  const editable = ["draft", "pending_moderation", "published", "paused"];
+
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 py-12">
-      <Link className="underline" href={`/${locale}/employer/jobs`}>
-        {t("back")}
-      </Link>
-      <h1 className="text-3xl font-semibold">{dto.title}</h1>
-      <p>
-        {t("status")}: {dto.status}
-      </p>
-      <p>{dto.description}</p>
-      <JobActions jobId={job.id} status={job.status} text={t.raw("actions")} />
-      <Link
-        className="w-fit underline"
-        href={`/${locale}/employer/jobs/${id}/applications`}
-      >
-        {pipeline("open")}
-      </Link>
-      <Link
-        className="w-fit rounded-md border border-line-strong px-4 py-2"
-        href={`/${locale}/employer/jobs/${id}/edit`}
-      >
-        {t("edit")}
-      </Link>
+    <main className="flex-1 py-10">
+      <Container className="flex flex-col gap-8">
+        <ButtonLink
+          href="/employer/jobs"
+          variant="ghost"
+          {...navBack}
+          icon={<Icon icon={ArrowLeft} size={16} />}
+          className="-ml-5 self-start"
+        >
+          {t("back")}
+        </ButtonLink>
+        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div className="flex flex-col gap-3">
+            <StatusBadge status={job.status}>
+              {t(`statusLabel.${job.status}`)}
+            </StatusBadge>
+            <h1 className="t-display-l">{dto.title}</h1>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {editable.includes(job.status) && (
+              <ButtonLink
+                href={`/employer/jobs/${id}/edit`}
+                variant="secondary"
+                icon={<Icon icon={Pencil} size={16} />}
+              >
+                {t("edit")}
+              </ButtonLink>
+            )}
+            <JobActions
+              jobId={job.id}
+              status={job.status}
+              text={t.raw("actions")}
+            />
+          </div>
+        </header>
+        <EmployerJobTabs jobId={id} active="job" />
+        <StatRow>
+          <Stat label={t("form.category")} value={categories(dto.category)} />
+          <Stat label={t("form.workFormat")} value={labels(dto.workFormat)} />
+          <Stat
+            label={t("form.employmentType")}
+            value={labels(dto.employmentType)}
+          />
+          <Stat label={t("colPublished")} value={date(job.publishedAt)} />
+          <Stat label={t("colExpires")} value={date(job.expiresAt)} />
+        </StatRow>
+        <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
+          {dto.description}
+        </div>
+      </Container>
     </main>
   );
 }

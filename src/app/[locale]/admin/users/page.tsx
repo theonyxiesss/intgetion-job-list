@@ -1,7 +1,11 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { UserStatusAction } from "@/components/admin/admin-actions";
-import { AdminShell, requireAdminPage } from "@/components/admin/admin-page";
-import { Link } from "@/i18n/navigation";
+import {
+  AdminShell,
+  NextPageLink,
+  requireAdminPage,
+} from "@/components/admin/admin-page";
+import { StatusBadge, Table, Td, Th, Tr } from "@/components/ui";
 import { listUsers, listUsersQuery } from "@/modules/admin/service";
 
 export default async function AdminUsersPage({
@@ -21,40 +25,41 @@ export default async function AdminUsersPage({
   );
 
   return (
-    <AdminShell title={t("usersTitle")}>
-      <table className="w-full text-left text-sm">
+    <AdminShell title={t("usersTitle")} active="users">
+      <Table caption={t("usersTitle")}>
         <thead>
           <tr>
-            <th scope="col">{t("colId")}</th>
-            <th scope="col">{t("colRole")}</th>
-            <th scope="col">{t("colStatus")}</th>
-            <th scope="col">{t("colCreated")}</th>
-            <th scope="col">{t("colActions")}</th>
+            <Th>{t("colId")}</Th>
+            <Th>{t("colRole")}</Th>
+            <Th>{t("colStatus")}</Th>
+            <Th>{t("colCreated")}</Th>
+            <Th>{t("colActions")}</Th>
           </tr>
         </thead>
         <tbody>
           {items.map((user) => (
-            <tr key={user.id} className="border-t border-current/15">
-              <td className="py-2 font-mono text-xs">{user.id}</td>
-              <td>{user.platformRole}</td>
-              <td>{user.status}</td>
-              <td>{user.createdAt.slice(0, 10)}</td>
-              <td>
+            <Tr key={user.id}>
+              <Td mono className="text-fg-muted">
+                {user.id}
+              </Td>
+              <Td>{user.platformRole}</Td>
+              <Td>
+                <StatusBadge status={user.status}>{user.status}</StatusBadge>
+              </Td>
+              <Td mono>{user.createdAt.slice(0, 10)}</Td>
+              <Td>
                 {user.id !== admin.id && user.platformRole !== "admin" && (
                   <UserStatusAction userId={user.id} status={user.status} />
                 )}
-              </td>
-            </tr>
+              </Td>
+            </Tr>
           ))}
         </tbody>
-      </table>
+      </Table>
       {nextCursor && (
-        <Link
+        <NextPageLink
           href={{ pathname: "/admin/users", query: { cursor: nextCursor } }}
-          className="underline"
-        >
-          {t("nextPage")}
-        </Link>
+        />
       )}
     </AdminShell>
   );

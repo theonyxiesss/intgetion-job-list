@@ -1,7 +1,18 @@
 "use client";
 
+import { Save } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  Button,
+  Field,
+  FieldGroup,
+  Icon,
+  Input,
+  Select,
+  Textarea,
+  useToast,
+} from "@/components/ui";
 import type { toJobDto } from "../api/dto";
 
 type JobDto = ReturnType<typeof toJobDto>;
@@ -23,20 +34,50 @@ type Text = {
   saving: string;
   error: string;
   saved: string;
+  groups: {
+    basics: string;
+    details: string;
+    application: string;
+    salary: string;
+    skills: string;
+  };
+  methods: Record<"internal" | "external_url" | "email", string>;
 };
+
+/** Translated labels for enum options; the raw value is the fallback. */
+export type JobFormOptions = {
+  categories: Record<string, string>;
+  employment: Record<string, string>;
+  formats: Record<string, string>;
+};
+
+const CATEGORIES = [
+  "engineering",
+  "data",
+  "design",
+  "product",
+  "marketing",
+  "sales",
+  "support",
+  "operations",
+  "finance",
+  "hr",
+] as const;
 
 export function JobForm({
   companyId,
   initial,
   text,
+  options,
 }: {
   companyId: string;
   initial?: JobDto;
   text: Text;
+  options: JobFormOptions;
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [message, setMessage] = useState("");
+  const toast = useToast();
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     title: initial?.title ?? "",
@@ -54,11 +95,13 @@ export function JobForm({
     salaryMax: initial?.salaryMax?.amountMinor ?? "",
     skills: "",
   });
+  const set =
+    (name: keyof typeof form) => (event: { target: { value: string } }) =>
+      setForm({ ...form, [name]: event.target.value });
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSaving(true);
-    setMessage("");
     const payload = {
       ...form,
       companyId,
@@ -90,142 +133,139 @@ export function JobForm({
       );
       if (!response.ok) throw new Error(text.error);
       const result = (await response.json()) as { job: { id: string } };
-      setMessage(text.saved);
+      toast.show(text.saved);
       if (!initial)
         router.push(pathname.replace(/\/new$/, `/${result.job.id}`));
+      else router.refresh();
     } catch {
-      setMessage(text.error);
+      toast.show(text.error, "danger");
     } finally {
       setSaving(false);
     }
   }
 
-  function field(name: keyof typeof form, label: string, type = "text") {
-    return (
-      <label className="flex flex-col gap-1 text-sm" key={name}>
-        {label}
-        <input
-          className="rounded-md border border-line-strong px-3 py-2 text-fg"
-          type={type}
-          value={form[name]}
-          onChange={(event) => setForm({ ...form, [name]: event.target.value })}
-        />
-      </label>
-    );
-  }
-
   return (
-    <form className="flex max-w-2xl flex-col gap-4" onSubmit={submit}>
-      {field("title", text.title)}
-      <label className="flex flex-col gap-1 text-sm">
-        {text.description}
-        <textarea
-          className="min-h-40 rounded-md border border-line-strong px-3 py-2 text-fg"
-          minLength={50}
-          maxLength={20000}
-          required
-          value={form.description}
-          onChange={(event) =>
-            setForm({ ...form, description: event.target.value })
-          }
-        />
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        {text.category}
-        <select
-          className="rounded-md border border-line-strong px-3 py-2 text-fg"
-          value={form.category}
-          onChange={(event) =>
-            setForm({ ...form, category: event.target.value })
-          }
+    <form className="flex max-w-[720px] flex-col gap-10" onSubmit={submit}>
+      <FieldGroup legend={text.groups.basics}>
+        <Field label={text.title} required>
+          <Input value={form.title} onChange={set("title")} maxLength={140} />
+        </Field>
+        <Field label={text.description} required>
+          <Textarea
+            className="min-h-60"
+            minLength={50}
+            maxLength={20000}
+            value={form.description}
+            onChange={set("description")}
+          />
+        </Field>
+      </FieldGroup>
+
+      <FieldGroup legend={text.groups.details}>
+        <div className="grid gap-4 md:grid-cols-3">
+          <Field label={text.category}>
+            <Select value={form.category} onChange={set("category")}>
+              {CATEGORIES.map((value) => (
+                <option key={value} value={value}>
+                  {options.categories[value] ?? value}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label={text.employmentType}>
+            <Select
+              value={form.employmentType}
+              onChange={set("employmentType")}
+            >
+              {["full_time", "part_time", "contract"].map((value) => (
+                <option key={value} value={value}>
+                  {options.employment[value] ?? value}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label={text.workFormat}>
+            <Select value={form.workFormat} onChange={set("workFormat")}>
+              {["remote", "hybrid", "onsite"].map((value) => (
+                <option key={value} value={value}>
+                  {options.formats[value] ?? value}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
+        <Field label={text.location}>
+          <Input value={form.location} onChange={set("location")} />
+        </Field>
+      </FieldGroup>
+
+      <FieldGroup legend={text.groups.application}>
+        <Field label={text.applicationMethod}>
+          <Select
+            value={form.applicationMethod}
+            onChange={set("applicationMethod")}
+          >
+            {(["internal", "external_url", "email"] as const).map((value) => (
+              <option key={value} value={value}>
+                {text.methods[value]}
+              </option>
+            ))}
+          </Select>
+        </Field>
+        {form.applicationMethod === "external_url" && (
+          <Field label={text.applicationUrl} required>
+            <Input
+              type="url"
+              value={form.applicationUrl}
+              onChange={set("applicationUrl")}
+            />
+          </Field>
+        )}
+        {form.applicationMethod === "email" && (
+          <Field label={text.applicationEmail} required>
+            <Input
+              type="email"
+              value={form.applicationEmail}
+              onChange={set("applicationEmail")}
+            />
+          </Field>
+        )}
+      </FieldGroup>
+
+      <FieldGroup legend={text.groups.salary}>
+        <div className="grid gap-4 md:grid-cols-3">
+          <Field label={text.salaryCurrency}>
+            <Input
+              className="t-data uppercase"
+              maxLength={3}
+              value={form.salaryCurrency}
+              onChange={set("salaryCurrency")}
+            />
+          </Field>
+          <Field label={text.salaryMin}>
+            <Input numeric value={form.salaryMin} onChange={set("salaryMin")} />
+          </Field>
+          <Field label={text.salaryMax}>
+            <Input numeric value={form.salaryMax} onChange={set("salaryMax")} />
+          </Field>
+        </div>
+      </FieldGroup>
+
+      <FieldGroup legend={text.groups.skills}>
+        <Field label={text.skills}>
+          <Input value={form.skills} onChange={set("skills")} />
+        </Field>
+      </FieldGroup>
+
+      <div className="sticky bottom-0 -mx-4 flex gap-3 border-t border-line bg-bg/95 px-4 py-4">
+        <Button
+          type="submit"
+          loading={saving}
+          icon={<Icon icon={Save} size={16} />}
         >
-          {[
-            "engineering",
-            "data",
-            "design",
-            "product",
-            "marketing",
-            "sales",
-            "support",
-            "operations",
-            "finance",
-            "hr",
-          ].map((value) => (
-            <option key={value}>{value}</option>
-          ))}
-        </select>
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        {text.employmentType}
-        <select
-          className="rounded-md border border-line-strong px-3 py-2 text-fg"
-          value={form.employmentType}
-          onChange={(event) =>
-            setForm({
-              ...form,
-              employmentType: event.target.value as typeof form.employmentType,
-            })
-          }
-        >
-          {["full_time", "part_time", "contract"].map((value) => (
-            <option key={value}>{value}</option>
-          ))}
-        </select>
-      </label>
-      <label className="flex flex-col gap-1 text-sm">
-        {text.workFormat}
-        <select
-          className="rounded-md border border-line-strong px-3 py-2 text-fg"
-          value={form.workFormat}
-          onChange={(event) =>
-            setForm({
-              ...form,
-              workFormat: event.target.value as typeof form.workFormat,
-            })
-          }
-        >
-          {["remote", "hybrid", "onsite"].map((value) => (
-            <option key={value}>{value}</option>
-          ))}
-        </select>
-      </label>
-      {field("location", text.location)}
-      <label className="flex flex-col gap-1 text-sm">
-        {text.applicationMethod}
-        <select
-          className="rounded-md border border-line-strong px-3 py-2 text-fg"
-          value={form.applicationMethod}
-          onChange={(event) =>
-            setForm({
-              ...form,
-              applicationMethod: event.target
-                .value as typeof form.applicationMethod,
-            })
-          }
-        >
-          {["internal", "external_url", "email"].map((value) => (
-            <option key={value}>{value}</option>
-          ))}
-        </select>
-      </label>
-      {form.applicationMethod === "external_url"
-        ? field("applicationUrl", text.applicationUrl, "url")
-        : null}
-      {form.applicationMethod === "email"
-        ? field("applicationEmail", text.applicationEmail, "email")
-        : null}
-      {field("salaryCurrency", text.salaryCurrency)}
-      {field("salaryMin", text.salaryMin, "number")}
-      {field("salaryMax", text.salaryMax, "number")}
-      {field("skills", text.skills)}
-      <button
-        className="w-fit rounded-md bg-accent px-4 py-2 font-medium text-accent-fg disabled:opacity-60"
-        disabled={saving}
-        type="submit"
-      >
-        {saving ? text.saving : text.save}
-      </button>
-      {message ? <p role="status">{message}</p> : null}
+          {text.save}
+        </Button>
+      </div>
     </form>
   );
 }

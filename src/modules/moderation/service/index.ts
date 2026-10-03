@@ -20,6 +20,7 @@ export {
 } from "../schemas";
 export {
   AUTO_PAUSE_THRESHOLD,
+  countOpenReports,
   decideReport,
   listReports,
   reachesAutoPause,

@@ -1,8 +1,23 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ReportDecision } from "@/components/admin/admin-actions";
-import { AdminShell, requireAdminPage } from "@/components/admin/admin-page";
-import { Link } from "@/i18n/navigation";
+import {
+  AdminShell,
+  NextPageLink,
+  requireAdminPage,
+} from "@/components/admin/admin-page";
+import {
+  Badge,
+  EmptyState,
+  LinkTabs,
+  StatusBadge,
+  Table,
+  Td,
+  Th,
+  Tr,
+} from "@/components/ui";
 import { listReports, listReportsQuery } from "@/modules/moderation/service";
+
+const statuses = ["open", "confirmed", "dismissed"] as const;
 
 export default async function AdminReportsPage({
   params,
@@ -15,66 +30,86 @@ export default async function AdminReportsPage({
   setRequestLocale(locale);
   await requireAdminPage();
   const t = await getTranslations("admin");
-  const query = listReportsQuery.safeParse(await searchParams);
-  const { items, nextCursor } = await listReports(
-    query.success ? query.data : listReportsQuery.parse({}),
-  );
+  const parsed = listReportsQuery.safeParse(await searchParams);
+  const query = parsed.success ? parsed.data : listReportsQuery.parse({});
+  const { items, nextCursor } = await listReports(query);
 
   return (
-    <AdminShell title={t("reportsTitle")}>
-      <p className="text-sm opacity-80">{t("reportsNote")}</p>
+    <AdminShell
+      title={t("reportsTitle")}
+      active="reports"
+      intro={t("reportsNote")}
+    >
+      <LinkTabs
+        label={t("reportsTitle")}
+        items={statuses.map((status) => ({
+          label: t(`reportStatus.${status}`),
+          href: { pathname: "/admin/reports", query: { status } },
+          active: query.status === status,
+        }))}
+      />
       {items.length === 0 ? (
-        <p>{t("reportsEmpty")}</p>
+        <EmptyState title={t("reportsEmpty")} />
       ) : (
-        <table className="w-full text-left text-sm">
+        <Table caption={t("reportsTitle")}>
           <thead>
             <tr>
-              <th scope="col">{t("colTime")}</th>
-              <th scope="col">{t("colEntity")}</th>
-              <th scope="col">{t("colReason")}</th>
-              <th scope="col">{t("colActions")}</th>
+              <Th>{t("colTime")}</Th>
+              <Th>{t("colEntity")}</Th>
+              <Th>{t("colReason")}</Th>
+              <Th>
+                {query.status === "open" ? t("colActions") : t("colStatus")}
+              </Th>
             </tr>
           </thead>
           <tbody>
             {items.map((report) => (
-              <tr key={report.id} className="border-t border-current/15">
-                <td className="py-2">
+              <Tr key={report.id}>
+                <Td mono className="whitespace-nowrap">
                   {report.createdAt.slice(0, 16).replace("T", " ")}
-                </td>
-                <td>
-                  <span className="block text-xs opacity-80">
-                    {report.entityType}
+                </Td>
+                <Td>
+                  <span className="flex flex-wrap items-center gap-2">
+                    <Badge>{report.entityType}</Badge>
+                    <span className="font-medium">
+                      {report.jobTitle ?? report.companyName ?? report.entityId}
+                    </span>
                   </span>
-                  {report.jobTitle ?? report.companyName ?? report.entityId}
                   {report.jobTitle && report.companyName && (
-                    <span className="block text-xs opacity-80">
+                    <span className="t-caption block text-fg-muted">
                       {report.companyName}
                     </span>
                   )}
-                </td>
-                <td>
-                  {report.reason}
+                </Td>
+                <Td>
+                  <span className="t-data">{report.reason}</span>
                   {report.details && (
-                    <span className="block text-xs opacity-80">
+                    <span className="t-caption block max-w-[40ch] text-fg-muted">
                       {report.details}
                     </span>
                   )}
-                </td>
-                <td>
-                  <ReportDecision reportId={report.id} />
-                </td>
-              </tr>
+                </Td>
+                <Td>
+                  {report.status === "open" ? (
+                    <ReportDecision reportId={report.id} />
+                  ) : (
+                    <StatusBadge status={report.status}>
+                      {t(`reportStatus.${report.status}`)}
+                    </StatusBadge>
+                  )}
+                </Td>
+              </Tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       )}
       {nextCursor && (
-        <Link
-          href={{ pathname: "/admin/reports", query: { cursor: nextCursor } }}
-          className="underline"
-        >
-          {t("nextPage")}
-        </Link>
+        <NextPageLink
+          href={{
+            pathname: "/admin/reports",
+            query: { status: query.status, cursor: nextCursor },
+          }}
+        />
       )}
     </AdminShell>
   );

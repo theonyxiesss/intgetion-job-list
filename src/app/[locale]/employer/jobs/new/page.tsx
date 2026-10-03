@@ -1,14 +1,19 @@
+import { ArrowLeft } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { routing } from "@/i18n/routing";
+import {
+  ButtonLink,
+  Container,
+  Icon,
+  PageHeader,
+  navBack,
+} from "@/components/ui";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
 import { JobForm } from "@/modules/jobs/ui/job-form";
+import { jobFormOptions } from "../form-options";
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
 export default async function NewEmployerJobPage({
   params,
 }: {
@@ -27,9 +32,24 @@ export default async function NewEmployerJobPage({
   if (!companies[0]) redirect(`/${locale}/employer/company`);
   const t = await getTranslations("employerJobs");
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-12">
-      <h1 className="text-3xl font-semibold">{t("newJob")}</h1>
-      <JobForm companyId={companies[0].id} text={t.raw("form")} />
+    <main className="flex-1 py-10">
+      <Container className="flex flex-col gap-8">
+        <ButtonLink
+          href="/employer/jobs"
+          variant="ghost"
+          {...navBack}
+          icon={<Icon icon={ArrowLeft} size={16} />}
+          className="-ml-5 self-start"
+        >
+          {t("back")}
+        </ButtonLink>
+        <PageHeader label={companies[0].name} title={t("newJob")} />
+        <JobForm
+          companyId={companies[0].id}
+          text={t.raw("form")}
+          options={await jobFormOptions()}
+        />
+      </Container>
     </main>
   );
 }

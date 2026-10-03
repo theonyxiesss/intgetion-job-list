@@ -1,7 +1,18 @@
 "use client";
 
+import { Check, Copy, Save, Send, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
+import {
+  Button,
+  Choice,
+  Field,
+  FieldGroup,
+  Icon,
+  Input,
+  cn,
+  useToast,
+} from "@/components/ui";
 import { useRouter } from "@/i18n/navigation";
 
 type Steps = {
@@ -15,13 +26,47 @@ async function send(path: string, method: string, body: unknown) {
     method,
     headers: { "content-type": "application/json" },
     body: JSON.stringify(body),
-  });
-  const data = (await response.json().catch(() => ({}))) as {
+  }).catch(() => null);
+  const data = ((await response?.json().catch(() => ({}))) ?? {}) as {
     error?: { code?: string };
     dnsRecord?: string;
     emailSent?: boolean;
   };
-  return { ok: response.ok, data };
+  return { ok: Boolean(response?.ok), data };
+}
+
+/** Three steps of 14.1 as a stepper (DESIGN.md 9.10). */
+function Stepper({ steps, labels }: { steps: Steps; labels: string[] }) {
+  const done = [
+    steps.domainConfirmed,
+    steps.requisitesComplete,
+    steps.firstJobModerated,
+  ];
+  const current = done.findIndex((d) => !d);
+  return (
+    <ol className="grid gap-px border border-line bg-line md:grid-cols-3">
+      {labels.map((label, i) => (
+        <li
+          key={label}
+          className={cn(
+            "flex gap-4 bg-bg p-5",
+            i === current &&
+              "outline outline-1 -outline-offset-1 outline-accent",
+          )}
+        >
+          <span
+            className={cn(
+              "t-data-l",
+              done[i] ? "text-success" : "text-fg-subtle",
+            )}
+          >
+            {done[i] ? <Icon icon={Check} size={24} /> : `0${i + 1}`}
+          </span>
+          <span className="t-body-s text-fg-muted">{label}</span>
+        </li>
+      ))}
+    </ol>
+  );
 }
 
 export function VerificationPanel({
@@ -36,17 +81,14 @@ export function VerificationPanel({
   domain: string | null;
   companyStatus: string;
   steps: Steps;
-  requisites: {
-    legalName: string;
-    country: string;
-    websiteUrl: string;
-  };
+  requisites: { legalName: string; country: string; websiteUrl: string };
   initialToken: string;
 }) {
   const t = useTranslations("companyVerify");
+  const ui = useTranslations("ui");
   const router = useRouter();
-  const [pending, setPending] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const toast = useToast();
+  const [pending, setPending] = useState<string | null>(null);
   const [dnsRecord, setDnsRecord] = useState<string | null>(null);
   const [method, setMethod] = useState<"corporate_email" | "dns_txt">(
     "corporate_email",
@@ -74,187 +116,195 @@ export function VerificationPanel({
 
   async function saveRequisites(event: FormEvent) {
     event.preventDefault();
-    setPending(true);
+    setPending("requisites");
     const { ok, data } = await send(`/api/companies/${companyId}`, "PATCH", {
       legalName: legalName.trim() || null,
       country: country.trim().toUpperCase() || null,
       websiteUrl: websiteUrl.trim() || null,
     });
-    setPending(false);
-    setMessage(ok ? t("saved") : errorText(data.error?.code));
-    if (ok) router.refresh();
+    setPending(null);
+    if (!ok) return toast.show(errorText(data.error?.code), "danger");
+    toast.show(t("saved"));
+    router.refresh();
   }
 
   async function request(event: FormEvent) {
     event.preventDefault();
-    setPending(true);
+    setPending("request");
     const { ok, data } = await send(
       `/api/companies/${companyId}/verification`,
       "POST",
       method === "corporate_email" ? { method, target: email } : { method },
     );
-    setPending(false);
-    if (!ok) {
-      setMessage(errorText(data.error?.code));
-      return;
-    }
+    setPending(null);
+    if (!ok) return toast.show(errorText(data.error?.code), "danger");
     if (data.dnsRecord) {
       setDnsRecord(data.dnsRecord);
       setToken(data.dnsRecord.replace(/^intgetion-verify=/, ""));
-      setMessage(t("dnsAdd"));
+      toast.show(t("dnsAdd"));
     } else {
-      setMessage(data.emailSent ? t("emailSent") : t("emailNotConfigured"));
+      toast.show(data.emailSent ? t("emailSent") : t("emailNotConfigured"));
     }
     router.refresh();
   }
 
   async function confirm(event: FormEvent) {
     event.preventDefault();
-    setPending(true);
+    setPending("confirm");
     const { ok, data } = await send(
       `/api/companies/${companyId}/verification/confirm`,
       "POST",
       { token },
     );
-    setPending(false);
-    setMessage(ok ? t("confirmed") : errorText(data.error?.code));
-    if (ok) router.refresh();
+    setPending(null);
+    if (!ok) return toast.show(errorText(data.error?.code), "danger");
+    toast.show(t("confirmed"));
+    router.refresh();
   }
 
-  const mark = (done: boolean) => (done ? "✓" : "—");
+  async function copy() {
+    if (!dnsRecord) return;
+    try {
+      await navigator.clipboard.writeText(dnsRecord);
+      toast.show(ui("copied"));
+    } catch {
+      // Clipboard blocked: the record stays selectable on the page.
+    }
+  }
 
   return (
-    <div className="flex flex-col gap-8">
-      <section aria-labelledby="verify-steps">
-        <h2 id="verify-steps" className="text-xl font-semibold">
+    <div className="flex flex-col gap-12">
+      <section aria-labelledby="verify-steps" className="flex flex-col gap-4">
+        <h2 id="verify-steps" className="t-h3">
           {t("stepsTitle")}
         </h2>
-        <ol className="mt-2 list-decimal pl-6">
-          <li>
-            {t("stepDomain")}: {mark(steps.domainConfirmed)}
-          </li>
-          <li>
-            {t("stepRequisites")}: {mark(steps.requisitesComplete)}
-          </li>
-          <li>
-            {t("stepFirstJob")}: {mark(steps.firstJobModerated)}
-          </li>
-        </ol>
+        <Stepper
+          steps={steps}
+          labels={[t("stepDomain"), t("stepRequisites"), t("stepFirstJob")]}
+        />
       </section>
 
-      <form onSubmit={saveRequisites} className="flex flex-col gap-3">
-        <h2 className="text-xl font-semibold">{t("requisitesTitle")}</h2>
-        <label className="flex flex-col gap-1">
-          {t("legalName")}
-          <input
-            value={legalName}
-            onChange={(e) => setLegalName(e.target.value)}
-            maxLength={240}
-            className="min-h-11 rounded-md border border-current/30 bg-transparent px-2"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          {t("country")}
-          <input
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            maxLength={2}
-            className="min-h-11 rounded-md border border-current/30 bg-transparent px-2"
-          />
-        </label>
-        <label className="flex flex-col gap-1">
-          {t("website", { domain: domain ?? "—" })}
-          <input
-            type="url"
-            value={websiteUrl}
-            onChange={(e) => setWebsiteUrl(e.target.value)}
-            className="min-h-11 rounded-md border border-current/30 bg-transparent px-2"
-          />
-        </label>
-        <button
-          disabled={pending}
-          className="min-h-11 self-start rounded-md border border-current px-4"
+      <form
+        onSubmit={saveRequisites}
+        className="flex max-w-[720px] flex-col gap-6"
+      >
+        <FieldGroup legend={t("requisitesTitle")}>
+          <Field label={t("legalName")}>
+            <Input
+              value={legalName}
+              onChange={(e) => setLegalName(e.target.value)}
+              maxLength={240}
+            />
+          </Field>
+          <div className="grid gap-4 md:grid-cols-[120px_1fr]">
+            <Field label={t("country")}>
+              <Input
+                className="t-data uppercase"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                maxLength={2}
+              />
+            </Field>
+            <Field label={t("website", { domain: domain ?? "—" })}>
+              <Input
+                type="url"
+                value={websiteUrl}
+                onChange={(e) => setWebsiteUrl(e.target.value)}
+              />
+            </Field>
+          </div>
+        </FieldGroup>
+        <Button
+          type="submit"
+          variant="secondary"
+          loading={pending === "requisites"}
+          icon={<Icon icon={Save} size={16} />}
+          className="self-start"
         >
           {t("saveRequisites")}
-        </button>
+        </Button>
       </form>
 
       {canRequest && (
-        <form onSubmit={request} className="flex flex-col gap-3">
-          <h2 className="text-xl font-semibold">{t("requestTitle")}</h2>
-          <fieldset className="flex flex-col gap-2">
-            <legend className="sr-only">{t("method")}</legend>
-            <label className="flex items-center gap-2">
-              <input
+        <form onSubmit={request} className="flex max-w-[720px] flex-col gap-6">
+          <FieldGroup legend={t("requestTitle")}>
+            <div
+              role="radiogroup"
+              aria-label={t("method")}
+              className="flex flex-col"
+            >
+              <Choice
                 type="radio"
                 name="method"
                 checked={method === "corporate_email"}
                 onChange={() => setMethod("corporate_email")}
+                label={t("methodEmail")}
               />
-              {t("methodEmail")}
-            </label>
-            <label className="flex items-center gap-2">
-              <input
+              <Choice
                 type="radio"
                 name="method"
                 checked={method === "dns_txt"}
                 onChange={() => setMethod("dns_txt")}
+                label={t("methodDns", { domain: domain ?? "—" })}
               />
-              {t("methodDns", { domain: domain ?? "—" })}
-            </label>
-          </fieldset>
-          {method === "corporate_email" && (
-            <label className="flex flex-col gap-1">
-              {t("email", { domain: domain ?? "—" })}
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="min-h-11 rounded-md border border-current/30 bg-transparent px-2"
-              />
-            </label>
-          )}
-          <button
-            disabled={pending}
-            className="min-h-11 self-start rounded-md border border-current px-4"
+            </div>
+            {method === "corporate_email" && (
+              <Field label={t("email", { domain: domain ?? "—" })} required>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </Field>
+            )}
+          </FieldGroup>
+          <Button
+            type="submit"
+            loading={pending === "request"}
+            icon={<Icon icon={Send} size={16} />}
+            className="self-start"
           >
             {t("request")}
-          </button>
+          </Button>
         </form>
       )}
 
       {dnsRecord && (
-        <p>
-          {t("dnsRecord")}{" "}
-          <code className="break-all font-mono text-sm">{dnsRecord}</code>
-        </p>
+        <section className="flex max-w-[720px] flex-col gap-3 border border-line-strong p-5">
+          <p className="t-label text-fg-muted">{t("dnsRecord")}</p>
+          <code className="t-data break-all text-fg">{dnsRecord}</code>
+          <Button
+            variant="ghost"
+            onClick={copy}
+            icon={<Icon icon={Copy} size={16} />}
+            className="-ml-5 self-start"
+          >
+            {ui("copy")}
+          </Button>
+        </section>
       )}
 
       {canRequest && (
-        <form onSubmit={confirm} className="flex flex-col gap-3">
-          <h2 className="text-xl font-semibold">{t("confirmTitle")}</h2>
-          <label className="flex flex-col gap-1">
-            {t("token")}
-            <input
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              className="min-h-11 rounded-md border border-current/30 bg-transparent px-2 font-mono"
-            />
-          </label>
-          <button
-            disabled={pending || token.trim().length < 20}
-            className="min-h-11 self-start rounded-md border border-current px-4"
+        <form onSubmit={confirm} className="flex max-w-[720px] flex-col gap-6">
+          <FieldGroup legend={t("confirmTitle")}>
+            <Field label={t("token")}>
+              <Input
+                className="t-data"
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+              />
+            </Field>
+          </FieldGroup>
+          <Button
+            type="submit"
+            disabled={token.trim().length < 20}
+            loading={pending === "confirm"}
+            icon={<Icon icon={ShieldCheck} size={16} />}
+            className="self-start"
           >
             {t("confirm")}
-          </button>
+          </Button>
         </form>
-      )}
-
-      {message && (
-        <p role="status" aria-live="polite">
-          {message}
-        </p>
       )}
     </div>
   );

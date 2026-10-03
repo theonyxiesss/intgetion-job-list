@@ -1,7 +1,21 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { QueueDecision } from "@/components/admin/admin-actions";
-import { AdminShell, requireAdminPage } from "@/components/admin/admin-page";
-import { Link } from "@/i18n/navigation";
+import {
+  AdminShell,
+  NextPageLink,
+  requireAdminPage,
+} from "@/components/admin/admin-page";
+import {
+  Badge,
+  EmptyState,
+  LinkTabs,
+  StatusBadge,
+  StatusDot,
+  Table,
+  Td,
+  Th,
+  Tr,
+} from "@/components/ui";
 import { listQueue, listQueueQuery } from "@/modules/moderation/service";
 
 export default async function AdminModerationPage({
@@ -15,68 +29,104 @@ export default async function AdminModerationPage({
   setRequestLocale(locale);
   await requireAdminPage();
   const t = await getTranslations("admin");
-  const query = listQueueQuery.safeParse(await searchParams);
-  const { items, nextCursor } = await listQueue(
-    query.success ? query.data : listQueueQuery.parse({}),
-  );
+  const parsed = listQueueQuery.safeParse(await searchParams);
+  const query = parsed.success ? parsed.data : listQueueQuery.parse({});
+  const entityType = query.entityType ?? "job";
+  const { items, nextCursor } = await listQueue({ ...query, entityType });
 
   return (
-    <AdminShell title={t("moderationTitle")}>
+    <AdminShell
+      title={t("moderationTitle")}
+      active="moderation"
+      intro={t("moderationIntro")}
+    >
+      <LinkTabs
+        label={t("moderationTitle")}
+        items={[
+          {
+            label: t("tabJobs"),
+            href: {
+              pathname: "/admin/moderation",
+              query: { entityType: "job" },
+            },
+            active: entityType === "job",
+          },
+          {
+            label: t("tabCompanies"),
+            href: {
+              pathname: "/admin/moderation",
+              query: { entityType: "company" },
+            },
+            active: entityType === "company",
+          },
+        ]}
+      />
       {items.length === 0 ? (
-        <p>{t("queueEmpty")}</p>
+        <EmptyState title={t("queueEmpty")} />
       ) : (
-        <table className="w-full text-left text-sm">
+        <Table caption={t("moderationTitle")}>
           <thead>
             <tr>
-              <th scope="col">{t("colTime")}</th>
-              <th scope="col">{t("colEntity")}</th>
-              <th scope="col">{t("colReason")}</th>
-              <th scope="col">{t("colRisk")}</th>
-              <th scope="col">{t("colActions")}</th>
+              <Th>{t("colTime")}</Th>
+              <Th>{t("colEntity")}</Th>
+              <Th>{t("colReason")}</Th>
+              <Th numeric>{t("colRisk")}</Th>
+              <Th>{t("colActions")}</Th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item.id} className="border-t border-current/15">
-                <td className="py-2">
-                  {item.createdAt.slice(0, 16).replace("T", " ")}
-                  {item.overdue && (
-                    <strong className="ml-2 text-danger">{t("overdue")}</strong>
-                  )}
-                </td>
-                <td>
-                  <span className="block text-xs opacity-80">
-                    {item.entityType}
-                    {item.subject?.source ? ` · ${item.subject.source}` : ""}
-                    {item.subject ? ` · ${item.subject.status}` : ""}
+              <Tr key={item.id}>
+                <Td mono className="whitespace-nowrap">
+                  <span className="inline-flex items-center gap-2">
+                    {item.overdue && <StatusDot tone="warning" />}
+                    {item.createdAt.slice(0, 16).replace("T", " ")}
                   </span>
-                  {item.subject?.title ?? t("entityMissing")}
+                  {item.overdue && (
+                    <span className="t-label mt-1 block text-warning">
+                      {t("overdue")}
+                    </span>
+                  )}
+                </Td>
+                <Td>
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium">
+                      {item.subject?.title ?? t("entityMissing")}
+                    </span>
+                    {item.subject?.source === "imported" && (
+                      <Badge tone="imported">{t("imported")}</Badge>
+                    )}
+                    {item.subject && (
+                      <StatusBadge status={item.subject.status}>
+                        {item.subject.status}
+                      </StatusBadge>
+                    )}
+                  </span>
                   {item.subject?.companyName && (
-                    <span className="block text-xs opacity-80">
+                    <span className="t-caption block text-fg-muted">
                       {item.subject.companyName}
                     </span>
                   )}
-                </td>
-                <td>{item.reason}</td>
-                <td>{item.subject?.riskScore ?? "—"}</td>
-                <td>
+                </Td>
+                <Td mono className="text-fg-muted">
+                  {item.reason}
+                </Td>
+                <Td numeric>{item.subject?.riskScore ?? "—"}</Td>
+                <Td>
                   <QueueDecision itemId={item.id} />
-                </td>
-              </tr>
+                </Td>
+              </Tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       )}
       {nextCursor && (
-        <Link
+        <NextPageLink
           href={{
             pathname: "/admin/moderation",
-            query: { cursor: nextCursor },
+            query: { entityType, cursor: nextCursor },
           }}
-          className="underline"
-        >
-          {t("nextPage")}
-        </Link>
+        />
       )}
     </AdminShell>
   );

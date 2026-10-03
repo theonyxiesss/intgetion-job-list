@@ -201,7 +201,19 @@
       "error": "The company could not be saved. Check the fields and try again.",
       "saved": "Company profile saved."
     },
-    "verifyLink": "Verify the company"
+    "verifyLink": "Verify the company",
+    "createTitle": "Create a company",
+    "tabProfile": "Profile",
+    "tabVerify": "Verification",
+    "imported": "Imported",
+    "verifyHint": "Verified companies publish without pre-moderation and get a badge.",
+    "statusLabel": {
+      "unverified": "Unverified",
+      "pending_verification": "Verification pending",
+      "verified": "Verified",
+      "rejected": "Rejected",
+      "suspended": "Suspended"
+    }
   },
   "profile": {
     "nav": "Profile",
@@ -314,7 +326,7 @@
     "navAudit": "Audit log",
     "navTaxonomy": "Skill suggestions",
     "pendingSuggestions": "Skill suggestions waiting for review: {count}",
-    "laterNote": "Every admin action is recorded in the audit log.",
+    "laterNote": "Live counters. Overdue items (older than 24 h) are marked in the queue.",
     "usersTitle": "Users",
     "auditTitle": "Audit log",
     "taxonomyTitle": "Skill suggestions",
@@ -371,7 +383,31 @@
     "reportsEmpty": "No open reports.",
     "reportsNote": "Three confirmed reports about a company within 30 days pause all its published jobs and put the company in the moderation queue.",
     "confirmReport": "Confirm",
-    "dismissReport": "Dismiss"
+    "dismissReport": "Dismiss",
+    "overviewTitle": "Overview",
+    "statQueue": "Moderation queue",
+    "statReports": "Open reports",
+    "statSuggestions": "Skill suggestions",
+    "open": "Open",
+    "moderationIntro": "Oldest first. A rejection needs a reason; the employer sees it.",
+    "tabJobs": "Jobs",
+    "tabCompanies": "Companies",
+    "imported": "Imported",
+    "internal": "Internal",
+    "jobsEmpty": "No jobs match.",
+    "auditEmpty": "The audit log is empty.",
+    "importEmpty": "Nothing here yet.",
+    "runFetched": "Fetched",
+    "runCreated": "Created",
+    "runUpdated": "Updated",
+    "runMerged": "Merged",
+    "runRejected": "Rejected",
+    "runExpired": "Expired",
+    "reportStatus": {
+      "open": "Open",
+      "confirmed": "Confirmed",
+      "dismissed": "Dismissed"
+    }
   },
   "employerJobs": {
     "title": "Your jobs",
@@ -397,7 +433,19 @@
       "save": "Save draft",
       "saving": "Saving…",
       "error": "Could not save the job. Check the required fields.",
-      "saved": "Job saved."
+      "saved": "Job saved.",
+      "groups": {
+        "basics": "Basics",
+        "details": "Details",
+        "application": "How to apply",
+        "salary": "Salary",
+        "skills": "Skills"
+      },
+      "methods": {
+        "internal": "On this platform",
+        "external_url": "On an external site",
+        "email": "By email"
+      }
     },
     "actions": {
       "publish": "Publish",
@@ -406,6 +454,32 @@
       "extend": "Extend for 30 days",
       "processing": "Working…",
       "error": "Could not change the job status."
+    },
+    "colTitle": "Job",
+    "colPublished": "Published",
+    "colExpires": "Expires",
+    "jobSections": "Job sections",
+    "tabJob": "Job",
+    "tabs": {
+      "published": "Published",
+      "moderation": "On moderation",
+      "drafts": "Drafts",
+      "archive": "Archive"
+    },
+    "tabEmpty": {
+      "published": "No published jobs.",
+      "moderation": "Nothing is waiting for moderation.",
+      "drafts": "No drafts.",
+      "archive": "The archive is empty."
+    },
+    "statusLabel": {
+      "draft": "Draft",
+      "pending_moderation": "On moderation",
+      "published": "Published",
+      "paused": "Paused",
+      "expired": "Expired",
+      "closed": "Closed",
+      "removed": "Removed"
     }
   },
   "explain": {
@@ -609,7 +683,16 @@
       "hired": "Hired",
       "processing": "Working…",
       "error": "Could not change the status."
-    }
+    },
+    "all": "All",
+    "emptyStatus": "No applications with this status.",
+    "candidate": "Candidate",
+    "appliedAt": "Applied",
+    "experience": "Experience, years",
+    "timezone": "Time zone",
+    "hours": "Work hours",
+    "formats": "Format",
+    "languages": "Languages"
   },
   "expressInterest": {
     "button": "Express interest",
@@ -619,7 +702,10 @@
   "contacts": {
     "title": "Contacts",
     "empty": "No contacts are open.",
-    "unnamed": "Candidate"
+    "unnamed": "Candidate",
+    "intro": "Candidates whose contacts are open after mutual interest.",
+    "job": "Job",
+    "contactsCol": "Contacts"
   },
   "companyVerify": {
     "title": "Company verification",

@@ -1,6 +1,8 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { VerificationPanel } from "@/components/companies/verification-panel";
+import { Badge, Container, StatusBadge } from "@/components/ui";
+import { CompanyTabs } from "../company-tabs";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import {
@@ -28,21 +30,30 @@ export default async function CompanyVerifyPage({
   }
   const state = await getVerificationState(user, company.id);
   const t = await getTranslations("companyVerify");
+  const companyT = await getTranslations("company");
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-12">
-      <h1 className="text-3xl font-semibold">{t("title")}</h1>
-      <p>
-        {t("status", { status: state.companyStatus })}
-        {state.isTrusted ? ` · ${t("trusted")}` : ""}
-      </p>
-      <VerificationPanel
-        companyId={company.id}
-        domain={state.domain}
-        companyStatus={state.companyStatus}
-        steps={state.steps}
-        requisites={state.requisites}
-        initialToken={query.token ?? ""}
-      />
+    <main className="flex-1 py-10">
+      <Container className="flex flex-col gap-8">
+        <header className="flex flex-col gap-3">
+          <p className="t-label text-fg-muted">{t("title")}</p>
+          <h1 className="t-display-l">{company.name}</h1>
+          <div className="flex flex-wrap gap-2">
+            <StatusBadge status={state.companyStatus}>
+              {companyT(`statusLabel.${state.companyStatus}`)}
+            </StatusBadge>
+            {state.isTrusted && <Badge tone="trusted">{t("trusted")}</Badge>}
+          </div>
+        </header>
+        <CompanyTabs active="verify" showVerify />
+        <VerificationPanel
+          companyId={company.id}
+          domain={state.domain}
+          companyStatus={state.companyStatus}
+          steps={state.steps}
+          requisites={state.requisites}
+          initialToken={query.token ?? ""}
+        />
+      </Container>
     </main>
   );
 }

@@ -1,7 +1,9 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { Link } from "@/i18n/navigation";
+import { Alert, Badge, Container, StatusBadge } from "@/components/ui";
+import { CompanyTabs } from "./company-tabs";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
@@ -34,35 +36,60 @@ export default async function EmployerCompanyPage({
     error: t("form.error"),
     saved: t("form.saved"),
   };
+  const canEdit =
+    company &&
+    company.origin !== "imported" &&
+    (company.role === "owner" || company.role === "admin");
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-12">
-      <h1 className="text-3xl font-semibold">{t("title")}</h1>
-      {company ? (
-        <>
-          <p>
-            {t("status")}: {company.status}
-          </p>
-          {company.origin !== "imported" && company.role === "owner" ? (
-            <Link href="/employer/company/verify" className="underline">
-              {t("verifyLink")}
-            </Link>
-          ) : null}
-          {company.origin === "imported" ? (
-            <p>{t("importedReadonly")}</p>
-          ) : null}
-          {company.origin !== "imported" &&
-          (company.role === "owner" || company.role === "admin") ? (
+    <main className="flex-1 py-10">
+      <Container className="flex flex-col gap-8">
+        <header className="flex flex-col gap-3">
+          <p className="t-label text-fg-muted">{t("title")}</p>
+          <h1 className="t-display-l">
+            {company ? company.name : t("createTitle")}
+          </h1>
+          {company && (
+            <div className="flex flex-wrap gap-2">
+              <StatusBadge status={company.status}>
+                {t(`statusLabel.${company.status}`)}
+              </StatusBadge>
+              {company.origin === "imported" && (
+                <Badge tone="imported">{t("imported")}</Badge>
+              )}
+            </div>
+          )}
+        </header>
+        {company && company.origin !== "imported" && (
+          <CompanyTabs active="profile" showVerify={company.role === "owner"} />
+        )}
+        {company?.origin === "imported" && (
+          <Alert title={t("importedReadonly")} />
+        )}
+        {company &&
+          company.status === "unverified" &&
+          company.role === "owner" && (
+            <Alert tone="warning" title={t("verifyHint")}>
+              <Link
+                href="/employer/company/verify"
+                className="underline underline-offset-4"
+              >
+                {t("verifyLink")}
+              </Link>
+            </Alert>
+          )}
+        {company ? (
+          canEdit ? (
             <CompanyForm
               action="edit"
               companyId={company.id}
               initial={company}
               text={formText}
             />
-          ) : null}
-        </>
-      ) : (
-        <CompanyForm action="create" text={formText} />
-      )}
+          ) : null
+        ) : (
+          <CompanyForm action="create" text={formText} />
+        )}
+      </Container>
     </main>
   );
 }

@@ -1,7 +1,23 @@
+import { Search } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { RemoveJobAction } from "@/components/admin/admin-actions";
-import { AdminShell, requireAdminPage } from "@/components/admin/admin-page";
-import { Link } from "@/i18n/navigation";
+import {
+  AdminShell,
+  NextPageLink,
+  requireAdminPage,
+} from "@/components/admin/admin-page";
+import {
+  Badge,
+  Button,
+  EmptyState,
+  Icon,
+  Input,
+  StatusBadge,
+  Table,
+  Td,
+  Th,
+  Tr,
+} from "@/components/ui";
 import {
   listAdminJobs,
   listAdminJobsQuery,
@@ -25,61 +41,75 @@ export default async function AdminJobsPage({
   );
 
   return (
-    <AdminShell title={t("jobsTitle")}>
-      <form className="flex flex-wrap gap-2" role="search">
+    <AdminShell title={t("jobsTitle")} active="jobs">
+      <form role="search" className="flex max-w-xl gap-2">
         <label htmlFor="admin-jobs-q" className="sr-only">
           {t("searchTitle")}
         </label>
-        <input
+        <Input
           id="admin-jobs-q"
           name="q"
           defaultValue={raw.q ?? ""}
           placeholder={t("searchTitle")}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-2"
         />
-        <button className="min-h-11 rounded-md border border-current px-3">
+        <Button
+          type="submit"
+          variant="secondary"
+          icon={<Icon icon={Search} size={16} />}
+        >
           {t("search")}
-        </button>
+        </Button>
       </form>
-      <table className="w-full text-left text-sm">
-        <thead>
-          <tr>
-            <th scope="col">{t("colTitle")}</th>
-            <th scope="col">{t("colSource")}</th>
-            <th scope="col">{t("colStatus")}</th>
-            <th scope="col">{t("colRisk")}</th>
-            <th scope="col">{t("colActions")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((job) => (
-            <tr key={job.id} className="border-t border-current/15">
-              <td className="py-2">
-                {job.title}
-                <span className="block text-xs opacity-80">
-                  {job.companyName}
-                </span>
-              </td>
-              <td>{job.source}</td>
-              <td>{job.status}</td>
-              <td>{job.riskScore}</td>
-              <td>
-                {job.status !== "removed" && <RemoveJobAction jobId={job.id} />}
-              </td>
+      {items.length === 0 ? (
+        <EmptyState title={t("jobsEmpty")} />
+      ) : (
+        <Table caption={t("jobsTitle")}>
+          <thead>
+            <tr>
+              <Th>{t("colTitle")}</Th>
+              <Th>{t("colSource")}</Th>
+              <Th>{t("colStatus")}</Th>
+              <Th numeric>{t("colRisk")}</Th>
+              <Th>{t("colActions")}</Th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {items.map((job) => (
+              <Tr key={job.id}>
+                <Td>
+                  <span className="font-medium">{job.title}</span>
+                  <span className="t-caption block text-fg-muted">
+                    {job.companyName}
+                  </span>
+                </Td>
+                <Td>
+                  {job.source === "imported" ? (
+                    <Badge tone="imported">{t("imported")}</Badge>
+                  ) : (
+                    <Badge>{t("internal")}</Badge>
+                  )}
+                </Td>
+                <Td>
+                  <StatusBadge status={job.status}>{job.status}</StatusBadge>
+                </Td>
+                <Td numeric>{job.riskScore}</Td>
+                <Td>
+                  {job.status !== "removed" && (
+                    <RemoveJobAction jobId={job.id} />
+                  )}
+                </Td>
+              </Tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
       {nextCursor && (
-        <Link
+        <NextPageLink
           href={{
             pathname: "/admin/jobs",
             query: { ...(raw.q ? { q: raw.q } : {}), cursor: nextCursor },
           }}
-          className="underline"
-        >
-          {t("nextPage")}
-        </Link>
+        />
       )}
     </AdminShell>
   );

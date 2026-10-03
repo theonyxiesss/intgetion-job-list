@@ -1,49 +1,46 @@
 "use client";
 
+import { Handshake } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button, Icon, useToast } from "@/components/ui";
 
+/** 5C: shortlists the application and opens contacts in one step. */
 export function ExpressInterestButton({
   applicationId,
   label,
-  processing,
   error,
 }: {
   applicationId: string;
   label: string;
-  processing: string;
+  processing?: string;
   error: string;
 }) {
   const router = useRouter();
+  const toast = useToast();
   const [busy, setBusy] = useState(false);
-  const [failed, setFailed] = useState(false);
 
   async function run() {
     setBusy(true);
-    setFailed(false);
     const response = await fetch(
       `/api/applications/${applicationId}/express-interest`,
       { method: "POST" },
-    );
+    ).catch(() => null);
     setBusy(false);
-    if (!response.ok) {
-      setFailed(true);
+    if (!response?.ok) {
+      toast.show(error, "danger");
       return;
     }
     router.refresh();
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <button
-        type="button"
-        className="inline-flex min-h-11 items-center border border-current px-3"
-        disabled={busy}
-        onClick={() => run()}
-      >
-        {busy ? processing : label}
-      </button>
-      {failed ? <p>{error}</p> : null}
-    </div>
+    <Button
+      loading={busy}
+      onClick={() => run()}
+      icon={<Icon icon={Handshake} size={16} />}
+    >
+      {label}
+    </Button>
   );
 }

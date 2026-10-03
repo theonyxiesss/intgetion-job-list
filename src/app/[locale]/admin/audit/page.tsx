@@ -1,6 +1,10 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { AdminShell, requireAdminPage } from "@/components/admin/admin-page";
-import { Link } from "@/i18n/navigation";
+import {
+  AdminShell,
+  NextPageLink,
+  requireAdminPage,
+} from "@/components/admin/admin-page";
+import { EmptyState, Table, Td, Th, Tr } from "@/components/ui";
 import { listAudit, listAuditQuery } from "@/modules/admin/service";
 
 export default async function AdminAuditPage({
@@ -20,38 +24,41 @@ export default async function AdminAuditPage({
   );
 
   return (
-    <AdminShell title={t("auditTitle")}>
-      <table className="w-full text-left text-sm">
-        <thead>
-          <tr>
-            <th scope="col">{t("colTime")}</th>
-            <th scope="col">{t("colAction")}</th>
-            <th scope="col">{t("colEntity")}</th>
-            <th scope="col">{t("colActor")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((row) => (
-            <tr key={row.id} className="border-t border-current/15">
-              <td className="py-2">
-                {row.createdAt.replace("T", " ").slice(0, 19)}
-              </td>
-              <td className="font-mono text-xs">{row.action}</td>
-              <td className="font-mono text-xs">
-                {row.entityType}:{row.entityId ?? "-"}
-              </td>
-              <td className="font-mono text-xs">{row.actorId ?? "-"}</td>
+    <AdminShell title={t("auditTitle")} active="audit">
+      {items.length === 0 ? (
+        <EmptyState title={t("auditEmpty")} />
+      ) : (
+        <Table caption={t("auditTitle")}>
+          <thead>
+            <tr>
+              <Th>{t("colTime")}</Th>
+              <Th>{t("colAction")}</Th>
+              <Th>{t("colEntity")}</Th>
+              <Th>{t("colActor")}</Th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {items.map((row) => (
+              <Tr key={row.id}>
+                <Td mono className="whitespace-nowrap">
+                  {row.createdAt.replace("T", " ").slice(0, 19)}
+                </Td>
+                <Td mono>{row.action}</Td>
+                <Td mono className="text-fg-muted">
+                  {row.entityType}:{row.entityId ?? "—"}
+                </Td>
+                <Td mono className="text-fg-muted">
+                  {row.actorId ?? "—"}
+                </Td>
+              </Tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
       {nextCursor && (
-        <Link
+        <NextPageLink
           href={{ pathname: "/admin/audit", query: { cursor: nextCursor } }}
-          className="underline"
-        >
-          {t("nextPage")}
-        </Link>
+        />
       )}
     </AdminShell>
   );

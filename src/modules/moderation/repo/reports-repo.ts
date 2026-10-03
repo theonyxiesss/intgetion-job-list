@@ -130,3 +130,10 @@ export async function queueCompanyOnce(companyId: string, reason: string) {
     )
   `);
 }
+
+export async function countOpenReports(): Promise<number> {
+  const rows = await getDb().execute<{ n: number }>(
+    sql`select count(*)::int as n from public.reports where status = 'open'`,
+  );
+  return Number(rows[0]?.n ?? 0);
+}

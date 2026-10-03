@@ -1,9 +1,19 @@
 "use client";
 
+import { CirclePause, CirclePlay, Send, XCircle } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button, Icon, useToast, type ButtonVariant } from "@/components/ui";
 
 type Action = "publish" | "pause" | "close" | "extend";
+
+const look: Record<Action, { variant: ButtonVariant; icon: typeof Send }> = {
+  publish: { variant: "primary", icon: Send },
+  extend: { variant: "primary", icon: CirclePlay },
+  pause: { variant: "secondary", icon: CirclePause },
+  close: { variant: "danger", icon: XCircle },
+};
+
 export function JobActions({
   jobId,
   status,
@@ -14,8 +24,8 @@ export function JobActions({
   text: Record<Action | "processing" | "error", string>;
 }) {
   const router = useRouter();
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const toast = useToast();
+  const [busy, setBusy] = useState<Action | null>(null);
   const actions: Action[] =
     status === "draft"
       ? ["publish"]
@@ -25,8 +35,7 @@ export function JobActions({
           ? ["extend", "close"]
           : [];
   async function run(action: Action) {
-    setBusy(true);
-    setError("");
+    setBusy(action);
     try {
       const response = await fetch(`/api/jobs/${jobId}/${action}`, {
         method: "POST",
@@ -34,25 +43,26 @@ export function JobActions({
       if (!response.ok) throw new Error(text.error);
       router.refresh();
     } catch {
-      setError(text.error);
+      toast.show(text.error, "danger");
     } finally {
-      setBusy(false);
+      setBusy(null);
     }
   }
+  if (actions.length === 0) return null;
   return (
     <div className="flex flex-wrap gap-3">
       {actions.map((action) => (
-        <button
-          className="rounded-md border border-line-strong px-4 py-2 disabled:opacity-60"
-          disabled={busy}
+        <Button
           key={action}
+          variant={look[action].variant}
+          loading={busy === action}
+          disabled={busy !== null && busy !== action}
+          icon={<Icon icon={look[action].icon} size={16} />}
           onClick={() => void run(action)}
-          type="button"
         >
-          {busy ? text.processing : text[action]}
-        </button>
+          {text[action]}
+        </Button>
       ))}
-      {error ? <p role="alert">{error}</p> : null}
     </div>
   );
 }
