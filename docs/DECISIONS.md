@@ -245,3 +245,38 @@ The workspace directory name is not a valid npm package name (spaces and capital
 ## D64 — квоты, публикация и интерфейс вакансий (3B)
 
 Квоты создания 5 вакансий/сутки для непроверенной компании и 50/сутки для verified используют общие `enforceRateLimit` buckets `jobCreateUnverified` / `jobCreateVerified` и company id как subject. Они добавлены Claude Code в `src/lib/rate-limit.ts` до старта 3B. Cron `expire-jobs` запускается ежечасно по `vercel.json`; moderation queue здесь только принимает publish/risk флаги, обработчик очереди остаётся 10A.
+
+## D90 — входные типы скоринга (6A-score)
+
+1. `CandidateForScoring`, `JobForScoring`, `FeedbackForScoring` (`src/modules/matching/score/types.ts`) — простые объекты по полям 4.1; таблиц ещё нет, 2B/3B/4B потом соберут их из БД, скоринг базу не видит.
+2. Сходство названий приходит параметром `titleSimilarity(a, b)` в контексте — в 6A его считает pg_trgm в SQL; свои текстовые сходства скоринг не вычисляет.
+3. Feedback приходит уже агрегированным за 90-дневные окна (списки id и счётчики), а не событиями: чистая функция не фильтрует по датам.
+4. `experienceYears` кандидата null трактуется как 0 лет (компонент нейтрален только если у вакансии нет `experience_min`, по 10.3).
+
+## D91 — hard-фильтры (6A-score)
+
+1. `hardFilter` проверяет все 6 пунктов 10.2 и возвращает `{ pass: true } | { pass: false, reason }` с машиной причин: `work_format`, `country_restricted`, `employment_type`, `location`, `tz_overlap`, `hidden_by_user`, `already_applied`, `not_published`. Валюта и gross/net — не hard (D4, D5).
+2. П.5 считается через `workHoursOverlap` из `src/lib/tz.ts` за 14 дней от `context.now`, среднее в часах сравнивается с `job.min_overlap_hours` (только вакансия, по 10.2; R = max(обе стороны) — это компонент 10.3).
+3. П.6 (скрытия, активный отклик, статус) берётся из `FeedbackForScoring` (`hiddenJobIds`, `hiddenCompanyIds`, `activeApplicationJobIds`) и `job.status`; `hidden_company` исключает всю компанию — единственное место, где feedback-событие работает как hard-фильтр (10.5).
+
+## D92 — компоненты, граничные правила (6A-score)
+
+1. skills: `m_j` = 1 при уровне ≥ min_level, 0.5 при уровне ниже, 0 при отсутствии; нейтрально, если у вакансии нет навыков. Отсутствующий must-have для штрафа — навыка вообще нет у кандидата; «есть, но ниже уровня» отсутствующим не считается (он уже оштрафован через m_j = 0.5).
+2. role: сходство считается только по `desired_titles`; категория даёт пол 0.7 (`max(·, 0.7)`). Нейтрально при пустых titles и categories.
+3. salary: через `compareSalaries`/`salaryScore` из `src/lib/money.ts`; сторона с суммой, но без currency/period/basis, считается отсутствующей; C = 0 → нейтрально (`candidate_salary_zero`). Все нейтральные случаи D4/D5 не исключают вакансию.
+4. experience: переопыт `cand > max + 3` даёт 0.7 поверх любого базового значения, включая 1.
+5. languages: язык отсутствует у кандидата → 0; ровно на 1 ступень CEFR ниже → 0.5.
+
+## D93 — сборка, штрафы, feedback (6A-score)
+
+1. Веса 0.35/0.15/0.20/0.10/0.10/0.10; нейтральные компоненты исключаются из суммы, вес перераспределяется пропорционально; Σ активных весов < 0.4 → `lowData = true` (граница: ровно 0.4 — ещё не lowData). Пустая сумма (все нейтральны) даёт base = 0.
+2. Штрафы: ×0.8 за каждый отсутствующий must-have (weight = 3); ×0.95, если у вакансии нет полной зарплаты (нет сумм или нет currency/period/basis) — это тот же критерий «без зарплаты», что и нейтральность компонента.
+3. Feedback: ×0.9ⁿ по категории hidden/dismissed с полом 0.6; +0.03 за навык вакансии, встречавшийся в ≥ 2 сохранённых/откликнутых, потолок ×1.15; множители пишутся в `breakdown.feedback`. `hidden_company` в множитель не входит — он hard (D91.3). Флаг `suggestProfileUpdate` (salary|format|timezone) ставится при ≥ 3 скрытиях с этой причиной; функция ничего не меняет сама.
+4. Итог: `score = clamp(base × штрафы × feedback, 0, 1)`; порог показа 0.55 (`shown`); `ALGO_VERSION = 1`. `scoreCandidate` = hard-фильтр + buildMatch (удобство для конвейера 10.1).
+
+## D94 — explain и публичная форма (6A-score)
+
+1. Explain строится детерминированно из breakdown, без LLM (D30): verdict по компоненту — matched при score = 1, failed при score = 0, partial между ними, neutral для нейтральных; порядок matched → partial → neutral → failed (ничья — по порядку критериев 10.3); карточка берёт `topExplain(…, 4)`.
+2. `detail.key` — полный путь next-intl вида `explain.salary.partial` под своим ключом верхнего уровня `explain` в `en.json`/`ru.json`; params — только строки/числа; зарплата вакансии форматируется из минорных единиц целочисленным BigInt («4250 EUR/mo gross») — только для показа, арифметики денег нет.
+3. `toPublicMatch(result)` отдаёт наружу только `{ score, explain }`: score округлён до 2 знаков (5.3), breakdown/веса/сырые компоненты не покидают бэкенд.
+4. Semantic (10.9, D11): интерфейс `SemanticProvider` и `NoopSemanticProvider` (→ null) зарезервированы, компонент не используется.

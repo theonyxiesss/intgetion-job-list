@@ -148,3 +148,14 @@
 - Миграции: `0006_jobs.sql`
 - Отклонения от ТЗ: D80
 - Следующее: волна 4 — 4A, 8A, 5A, 10A (вторая часть)
+
+## [2026-10-03] — 6A-score — DONE
+
+- Сделано: чистый скоринг matching v1 в `src/modules/matching/score/`: `types.ts` (CandidateForScoring/JobForScoring/FeedbackForScoring по 4.1, D90), `hard-filter.ts` (все 6 пунктов 10.2, причины-машина, пересечение часов через `workHoursOverlap` из `src/lib/tz.ts`, D91), `components.ts` (шесть компонентов 10.3 с нейтральными случаями; зарплата — через `compareSalaries`/`salaryScore` из `src/lib/money.ts` с курсами-параметром; сходство названий — параметром; D92), `feedback.ts` (×0.9ⁿ с полом 0.6, +0.03 с потолком ×1.15, флаг предложения обновить поле, D93), `assemble.ts` (перераспределение весов, lowData < 0.4, штрафы ×0.8/×0.95, clamp, порог 0.55, ALGO_VERSION = 1), `explain.ts` (детерминированный explain 10.7/D30 с i18n-ключами `explain.*`, `topExplain(…, 4)`, `toPublicMatch` → только score в 2 знака + explain), `semantic.ts` (SemanticProvider + NoopSemanticProvider → null, D11). Публичная поверхность — `src/modules/matching/service/index.ts`. i18n: ключ `explain` в `en.json` и `ru.json` (только свой ключ, файл не переформатирован). Деньги — только bigint/строки (D19), float только в скорах 0..1.
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 225 passed (23 файла; из них 44 новых: hard-filter 10, components 20, assemble 21 + builders), включая кейсы DoD 6A: нейтральная зарплата (не исключает вакансию), gross/net, DST-расхождение Berlin↔NY (март: 4 ч; октябрь: среднее 3.5 ч за 14 дней из-за перехода США 1 ноября), окно через полночь; `pnpm format:check` на файлах подфазы → 0 (по репозиторию локально падает из-за core.autocrlf=CRLF — как в 4A-lib, в CI зелёный); `SWC_NATIVE_BINDING_CACHE='C:\Users\Admin\.swc-cache-glm' pnpm build` → 0.
+- P-тесты подфазы: нет (чистые функции без API/UI; P-кейсы появятся в полной 6A).
+- Миграции: нет.
+- Изменённые файлы: `src/modules/matching/score/{types,hard-filter,components,feedback,assemble,explain,semantic,index}.ts`, `src/modules/matching/service/index.ts`, `src/modules/matching/__tests__/{builders,hard-filter.test,components.test,assemble.test}.ts`, `src/messages/en.json`, `src/messages/ru.json`, `docs/DECISIONS.md` (D90–D94), `MISSION_LOG.md`. `src/lib/money.ts`/`src/lib/tz.ts` не менялись.
+- Отклонения от ТЗ: D90–D94 (граничные правила: candidate experience null = 0; отсутствующий must-have = навыка нет вообще; «без зарплаты» = нет полных данных зарплаты у вакансии; hidden_company — hard, не множитель; verdict matched только при score = 1). Локальный prettier/CRLF — как в 4A-lib.
+- OPEN QUESTION: нет.
+- Следующая подфаза: полная 6A (`glm/4a` → 6A после 4B/2B; зависит от 4B и 2B).

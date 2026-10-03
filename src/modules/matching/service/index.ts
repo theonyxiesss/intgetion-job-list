@@ -2,4 +2,57 @@
  * Public service surface.
  * Other modules may import only this file, never this module's repo.
  */
-export {};
+export {
+  ALGO_VERSION,
+  SHOW_THRESHOLD,
+  LOW_DATA_WEIGHT_SUM,
+  COMPONENT_WEIGHTS,
+  buildMatch,
+  scoreCandidate,
+  countMissingMustHaves,
+  type MatchResult,
+  type ComponentBreakdown,
+  type ScoreExclusion,
+} from "../score/assemble";
+export {
+  hardFilter,
+  type HardFilterReason,
+  type HardFilterResult,
+} from "../score/hard-filter";
+export {
+  skillsComponent,
+  roleComponent,
+  salaryComponent,
+  tzOverlapComponent,
+  experienceComponent,
+  languagesComponent,
+  hasCompleteJobSalary,
+} from "../score/components";
+export {
+  feedbackMultiplier,
+  type FeedbackMultiplier,
+  type SuggestProfileUpdateField,
+} from "../score/feedback";
+export {
+  explainMatch,
+  topExplain,
+  sortExplain,
+  toPublicMatch,
+  type PublicMatch,
+} from "../score/explain";
+export { NoopSemanticProvider, type SemanticProvider } from "../score/semantic";
+export type {
+  CandidateForScoring,
+  JobForScoring,
+  FeedbackForScoring,
+  ScoringContext,
+  ComponentKey,
+  ComponentResult,
+  ExplainEntry,
+  ExplainVerdict,
+  CandidateSkillForScoring,
+  CandidateLanguageForScoring,
+  JobSkillForScoring,
+  JobLanguageForScoring,
+} from "../score/types";
+export { emptyFeedback, skillLevelIndex, cefrLevelIndex } from "../score/types";

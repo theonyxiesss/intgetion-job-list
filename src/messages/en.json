@@ -298,5 +298,43 @@
       "processing": "Working…",
       "error": "Could not change the job status."
     }
+  },
+  "explain": {
+    "skills": {
+      "matched": "Has the required skills.",
+      "partial": "Covers {percent}% of the required skill weight.",
+      "neutral": "The job lists no skill requirements.",
+      "failed": "None of the required skills are present."
+    },
+    "role": {
+      "matched": "The role matches the desired title.",
+      "partial": "Partially matches the desired titles ({percent}% similarity).",
+      "neutral": "No desired titles or categories in the profile.",
+      "failed": "The role does not match the desired titles."
+    },
+    "salary": {
+      "matched": "Salary meets your expectations ({job}).",
+      "partial": "Salary is somewhat below your expectations ({job}).",
+      "neutral": "Salary cannot be compared — currency, period, basis or exchange rate data is missing or outdated.",
+      "failed": "The offered salary is far below your expectations ({job})."
+    },
+    "tzOverlap": {
+      "matched": "Working hours overlap enough ({percent}% of the required overlap).",
+      "partial": "Working hours overlap partially ({percent}% of the required overlap).",
+      "neutral": "The job has no timezone requirement.",
+      "failed": "Working hours do not overlap."
+    },
+    "experience": {
+      "matched": "Experience matches the requirement.",
+      "partial": "Experience only partially matches the requested range ({percent}%).",
+      "neutral": "The job has no experience requirement.",
+      "failed": "Not enough experience for this role."
+    },
+    "languages": {
+      "matched": "Meets the language requirements.",
+      "partial": "Partially meets the language requirements ({percent}%).",
+      "neutral": "The job lists no language requirements.",
+      "failed": "Does not meet the language requirements."
+    }
   }
 }
