@@ -6,6 +6,7 @@ import { toJobDto } from "@/modules/jobs/api/dto";
 import { createJobInput } from "@/modules/jobs/schemas";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import { createJob, findMemberRole, searchJobs } from "@/modules/jobs/service";
+import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 
 const recruiterRoles = ["owner", "admin", "recruiter"] as const;
 
@@ -31,14 +32,30 @@ export async function GET(request: Request) {
         { status: 400 },
       );
     const started = performance.now();
+    // Personalization needs a session; outside a request scope (integration
+    // tests) there is none — serve the guest view (4B, D112).
+    let viewer: Parameters<typeof searchJobs>[2] = { hidden: null };
+    try {
+      const supabase = await createSupabaseServerClient();
+      const viewerUser = await getCurrentUser(supabase.auth);
+      if (viewerUser) {
+        viewer = { hidden: await getHiddenSetsForViewer(viewerUser.id) };
+      }
+    } catch {
+      // No request scope → guest view.
+    }
     const result = await searchJobs(
       parsed.data,
       request.headers.get("accept-language")?.startsWith("ru") ? "ru" : "en",
+      viewer,
     );
     const serverMs = performance.now() - started;
     return Response.json(result, {
       headers: {
-        "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+        // A personalized listing must not hit the shared cache (4B).
+        "Cache-Control": viewer.hidden
+          ? "private, no-store"
+          : "public, s-maxage=30, stale-while-revalidate=60",
         "Server-Timing": `jobs;dur=${serverMs.toFixed(1)}`,
       },
     });

@@ -164,7 +164,21 @@ export function salaryDecision(
   };
 }
 
-export async function searchJobs(query: JobSearchQuery, locale = "en") {
+export interface SearchViewer {
+  /** Hidden jobs and companies of the logged-in viewer (4B, section 7).
+   * Structurally identical to feedback's HiddenSets, imported nowhere to
+   * keep the module dependency one-way. */
+  hidden: {
+    hiddenJobIds: ReadonlySet<string>;
+    hiddenCompanyIds: ReadonlySet<string>;
+  } | null;
+}
+
+export async function searchJobs(
+  query: JobSearchQuery,
+  locale = "en",
+  viewer: SearchViewer = { hidden: null },
+) {
   const cursor = cursorDecode(query.cursor);
   if (cursor?.sort && cursor.sort !== query.sort)
     throw new Error("invalid_cursor");
@@ -186,6 +200,12 @@ export async function searchJobs(query: JobSearchQuery, locale = "en") {
   const now = new Date();
   const filtered: Array<{ row: PublicRow; comparable: boolean | null }> = [];
   for (const row of rows) {
+    if (
+      viewer.hidden?.hiddenJobIds.has(row.job.id) ||
+      viewer.hidden?.hiddenCompanyIds.has(row.company.id)
+    ) {
+      continue;
+    }
     const salary = salaryDecision(row, query, rates, now);
     if (!salary.include) continue;
     if (query.tzOverlapWith) {
@@ -288,8 +308,33 @@ export async function getJobForPublic(
 export async function listPublishedJobsForCompany(
   companyId: string,
   locale = "en",
+  viewer: SearchViewer = { hidden: null },
 ) {
   const rows = await repo.listCompanyPublicJobs(companyId);
+  const visible = viewer.hidden
+    ? rows.filter(
+        (row) =>
+          !viewer.hidden!.hiddenJobIds.has(row.job.id) &&
+          !viewer.hidden!.hiddenCompanyIds.has(row.company.id),
+      )
+    : rows;
+  const req = await repo.getJobRequirements(visible.map(({ job }) => job.id));
+  return visible.map((row) =>
+    toPublicJobDto(
+      row,
+      {
+        skills: req.skillRows.filter((skill) => skill.jobId === row.job.id),
+        languages: req.languageRows
+          .filter((language) => language.jobId === row.job.id)
+          .map(({ lang, minLevel }) => ({ lang: lang.trim(), minLevel })),
+      },
+      locale,
+    ),
+  );
+}
+
+export async function listPublicJobsByIds(ids: string[], locale = "en") {
+  const rows = await repo.listPublicJobsByIds(ids);
   const req = await repo.getJobRequirements(rows.map(({ job }) => job.id));
   return rows.map((row) =>
     toPublicJobDto(

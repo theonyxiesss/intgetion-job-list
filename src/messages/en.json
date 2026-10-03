@@ -624,5 +624,51 @@
       "DNS_RECORD_NOT_FOUND": "The TXT record is not visible yet. DNS changes can take a while.",
       "RATE_LIMITED": "Too many requests today. Try again tomorrow."
     }
+  },
+  "savedJobs": {
+    "title": "Saved jobs",
+    "empty": "You have no saved jobs yet.",
+    "savedOn": "Saved",
+    "unsave": "Remove from saved",
+    "unsaveError": "Could not remove the job. Try again."
+  },
+  "jobActions": {
+    "save": "Save",
+    "saved": "Saved",
+    "unsave": "Unsave",
+    "saveError": "The job could not be saved. Try again.",
+    "hide": "Hide",
+    "hideTitle": "Hide this job",
+    "hideScopeJob": "Hide this job",
+    "hideScopeCompany": "Hide all jobs of this company",
+    "reasonLabel": "Reason (optional)",
+    "reasonNone": "No reason",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "hideError": "The job could not be hidden. Try again.",
+    "report": "Report",
+    "reportTitle": "Report this job",
+    "detailsLabel": "Details (optional)",
+    "reportSuccess": "Thank you. Your report was submitted for review.",
+    "alreadyReported": "You have already reported this job.",
+    "rateLimited": "Too many reports today. Try again tomorrow.",
+    "reportError": "The report could not be submitted. Try again.",
+    "reasons": {
+      "salary": "Salary",
+      "format": "Work format",
+      "timezone": "Timezone",
+      "company": "Company",
+      "role": "Role",
+      "other": "Other"
+    },
+    "reportReasons": {
+      "scam": "Scam",
+      "spam": "Spam",
+      "fake_company": "Fake company",
+      "discrimination": "Discrimination",
+      "wrong_info": "Wrong information",
+      "inappropriate": "Inappropriate content",
+      "other": "Other"
+    }
   }
 }

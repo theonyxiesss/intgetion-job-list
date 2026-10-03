@@ -22,6 +22,7 @@ export type { RiskInput } from "./risk-score";
 export {
   cursorDecode,
   getJobForPublic,
+  listPublicJobsByIds,
   listPublishedJobsForCompany,
   searchJobs,
   toPublicJobDto,
