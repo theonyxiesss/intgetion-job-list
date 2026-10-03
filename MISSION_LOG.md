@@ -311,4 +311,10 @@
 - Изменённые файлы: `src/db/migrations/0013_notifications.sql`, `src/db/schema/notifications.ts`, `src/modules/notifications/**`, `src/modules/applications/service/{apply-service,employer-service,reveal-service}.ts`, `src/modules/companies/repo/company-repo.ts`, `src/modules/jobs/service/notify-job.ts`, `src/app/api/notifications/**`, `src/app/api/cron/{notifications,job-expiring}/route.ts`, `src/app/[locale]/{notifications,settings/notifications,unsubscribe}/page.tsx`, `src/components/notifications/**`, `src/components/shell/header.tsx`, `src/messages/{en,ru}.json`, `tests/e2e/notifications.spec.ts`, `vercel.json`, `.env.example`, `docs/DECISIONS.md`, `docs/ERD.md`.
 - Отклонения от ТЗ: D125 (таблица очереди, pg-boss отложен до 6B), D126 (без React Email, адрес входа не читается), D127 (ошибка уведомления не откатывает запись), D128 (получатели и пачка), D129 (граница 9A).
 - OPEN QUESTION: нет. Почта Resend не уходит, пока `app_rw` не сможет прочитать адрес входа: модуль auth не менялся.
-- Следующая подфаза: не начинать. 9B не начата. Запись перенесена на `origin/master` после 5C и 10B; зелёный CI этого rebase — в следующей записи, когда прогон закончится.
+- Следующая подфаза: не начинать. 9B не начата. Запись перенесена на `origin/master` после 5C и 10B.
+
+## [2026-10-03] — 9A перебазирована на master (ветка `cursor/9a`)
+
+- Три коммита 9A переиграны на `origin/master` (после 5C и 10B). В `vercel.json` оставлен cron `trusted` вместе с `notifications` и `job-expiring`. `transitionOwnedJob` по-прежнему идёт через `notify-job`.
+- `gh run watch 37139999991` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37139999991 — `check` 1m41s и `database` 7m50s success на `7d8d071`.
+- 9B не начата.
