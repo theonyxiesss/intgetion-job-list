@@ -19,7 +19,7 @@
 | 3     | 6A-score: `src/modules/matching/score/**`            | GLM         | —          | `glm/matching-score`  | нет                        | D90–D94        |
 | 3     | 5A-rules: `src/modules/applications/**` (без таблиц) | Cursor      | 2B         | `cursor/5a-rules`     | нет                        | D75–D79        |
 | 4     | 9A-lib: `src/modules/notifications/**` (без таблиц)  | GLM         | —          | `glm/notify-lib`      | нет                        | D100–D104      |
-| 5     | 4B                                                   | GLM         | 4A         | `glm/4b`              | `0011_*`                   | D110–D114      |
+| 5     | 4B (передана от GLM)                                 | Cursor      | 4A         | `cursor/4b`           | `0011_*`                   | D110–D114      |
 | 5     | 5B                                                   | Cursor      | 5A         | `cursor/5b`           | `0012_*` при необходимости | D115–D119      |
 | 6     | 5C                                                   | Cursor      | 5B         | `cursor/5c`           | `0012_*`                   | D120–D124      |
 | 7     | 9A                                                   | Cursor      | 5C         | `cursor/9a`           | `0013_*`                   | D125–D129      |
