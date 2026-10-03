@@ -1,6 +1,6 @@
 # ERD
 
-Generated from section 4.1 of `docs/TZ_INTGETION_v6.md`. Migration 0001 creates `users`. Migration 0002 creates `audit_logs` and `rate_limit_counters`. Migration 0003 creates `skills`, `skills_aliases`, and `skill_suggestions`. Other entities are the target model and are not tables yet.
+Generated from section 4.1 of `docs/TZ_INTGETION_v6.md`. Migrations 0001–0004 create users, infra, skills, and companies; later subphases add the remaining target model.
 
 ```mermaid
 erDiagram
@@ -53,6 +53,33 @@ erDiagram
     text entity_type
     uuid entity_id
   }
+  companies {
+    uuid id PK
+    text name
+    text slug UK
+    text domain
+    text website_url
+    text description
+    text logo_path
+    company_status status
+    company_origin origin
+    uuid created_by FK
+    timestamptz created_at
+    timestamptz updated_at
+  }
+  company_members {
+    uuid company_id PK, FK
+    uuid user_id PK, FK
+    member_role role
+    timestamptz created_at
+  }
+  employer_profiles {
+    uuid user_id PK, FK
+    text full_name
+    text title
+    text linkedin_url
+    timestamptz updated_at
+  }
   audit_logs {
     uuid id PK
     uuid actor_id
@@ -86,3 +113,5 @@ erDiagram
     timestamptz created_at
   }
 ```
+
+Migration 0004 (3A) creates companies, company_members, employer_profiles, and the moderation_queue table used for possible_duplicate records.

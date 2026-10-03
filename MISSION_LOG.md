@@ -85,3 +85,14 @@
 - Отклонения от ТЗ: D40
 - OPEN QUESTION: нет. Риск: LCP главной 2228–2435 мс при бюджете 2500 — на странице два сетевых вызова Supabase Auth (proxy и шапка). Разобрать до 4A.
 - Следующая подфаза: 3A (Codex), 2B (Cursor)
+
+## [2026-10-03] — 3A — NOT DONE (ветка `codex/3a`)
+
+- Сделано: миграция `0004_companies.sql` для компаний, memberships, профилей работодателя и `moderation_queue`; API создания, публичного просмотра, редактирования и загрузки логотипа; сервис прав с `findMemberRole`; поиск дублей по домену и similarity ≥ 0.8; `/onboarding` и `/employer/company`; en/ru строки; audit записи смены статуса; unit, DB integration и P2 e2e тесты.
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 0 (14 files, 95 tests); `pnpm build` → 0; Prettier по изменённым форматируемым файлам → 0. `pnpm format:check` целиком локально сообщает 124 существующих несвязанных файла (рабочие копии CRLF при `core.autocrlf=true`); интеграция с БД и P2 e2e ждут CI на чистой БД.
+- P-тесты подфазы: P2 ✅ реализован как e2e (создание/редактирование своей компании, чужой PATCH → 404); итоговый прогон CI ожидается.
+- Миграции: `src/db/migrations/0004_companies.sql` (RLS deny-all; использует pg_trgm из 0003; применение с нуля ожидает CI).
+- Изменённые файлы: `src/db/migrations/0004_companies.sql`, `src/db/schema/{companies,index}.ts`, `src/modules/companies/**`, `src/app/api/companies/**`, `src/app/[locale]/{onboarding,employer/company}/**`, `src/messages/{en,ru}.json`, `tests/e2e/company.spec.ts`, `package.json`, `pnpm-lock.yaml`, `docs/{DECISIONS,ERD}.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: D50 — domain не unique, чтобы при совпадении домена создать компанию и поставить possible_duplicate; D51–D54 — таблицы/RLS, права, logo pipeline и employer UI.
+- OPEN QUESTION / BLOCKED: загрузка в Supabase Storage не проверена и недоступна без `SUPABASE_SERVICE_ROLE_KEY`; серверная валидация, Sharp-конвертация и адаптер Storage с тестовым двойником готовы.
+- Следующая подфаза: 3B.

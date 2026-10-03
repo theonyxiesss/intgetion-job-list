@@ -104,5 +104,27 @@
       "session_missing": "The reset link has expired. Request a new one.",
       "generic": "Something went wrong. Try again."
     }
+  },
+  "onboarding": {
+    "title": "What brings you here?",
+    "candidate": "I’m looking for work",
+    "candidateDescription": "Explore remote roles and build your profile.",
+    "employer": "I’m hiring",
+    "employerDescription": "Set up your company profile and prepare to post roles."
+  },
+  "company": {
+    "title": "Company profile",
+    "status": "Status",
+    "importedReadonly": "Imported company profiles cannot be edited or joined.",
+    "form": {
+      "name": "Company name",
+      "domain": "Company domain",
+      "website": "Website",
+      "description": "About the company",
+      "logo": "Company logo (PNG, JPEG, or WebP; max 2 MB)",
+      "save": "Save company",
+      "error": "The company could not be saved. Check the fields and try again.",
+      "saved": "Company profile saved."
+    }
   }
 }
