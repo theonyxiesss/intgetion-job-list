@@ -436,7 +436,8 @@
           "body": "Your report was reviewed: {decision}."
         }
       }
-
+    }
+  },
   "applications": {
     "nav": "Applications",
     "title": "Your applications",
