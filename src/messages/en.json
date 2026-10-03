@@ -263,5 +263,41 @@
     "noSuggestions": "No suggestions are waiting.",
     "nextPage": "Next page",
     "actionFailed": "The action failed. Refresh and try again."
+
+  "employerJobs": {
+    "title": "Your jobs",
+    "newJob": "Create a job",
+    "empty": "You have not created any jobs yet.",
+    "status": "Status",
+    "edit": "Edit job",
+    "back": "Back to jobs",
+    "riskScore": "Risk score",
+    "form": {
+      "title": "Job title",
+      "description": "Description (at least 50 characters)",
+      "category": "Category",
+      "employmentType": "Employment type",
+      "workFormat": "Work format",
+      "location": "Location (required for hybrid or onsite)",
+      "applicationMethod": "Application method",
+      "applicationUrl": "Application URL",
+      "applicationEmail": "Application email",
+      "salaryCurrency": "Salary currency (ISO 4217)",
+      "salaryMin": "Minimum salary in minor units",
+      "salaryMax": "Maximum salary in minor units",
+      "skills": "Skills (comma separated)",
+      "save": "Save draft",
+      "saving": "Saving…",
+      "error": "Could not save the job. Check the required fields.",
+      "saved": "Job saved."
+    },
+    "actions": {
+      "publish": "Publish",
+      "pause": "Pause",
+      "close": "Close",
+      "extend": "Extend for 30 days",
+      "processing": "Working…",
+      "error": "Could not change the job status."
+    }
   }
 }
