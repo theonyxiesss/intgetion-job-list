@@ -16,6 +16,7 @@
 | 3     | 3B                                          | Codex       | 3A, 2A     | `codex/3b`            | `0006_*` | D60–D64               |
 | 2     | 4A-lib: `src/lib/money.ts`, `src/lib/tz.ts` | GLM         | —          | `glm/lib`             | нет      | D65–D69               |
 | 2     | 7-lib: `src/lib/llm/**`, `evals/**`         | Antigravity | —          | `antigravity/llm-lib` | нет      | D85–D89               |
+| 3     | 6A-score: `src/modules/matching/score/**`   | GLM         | —          | `glm/matching-score`  | нет      | D90–D94               |
 | 4     | 4A                                          | GLM         | 3B         | `glm/4a`              | `0007_*` | D65–D69 (продолжение) |
 | 4     | 8A                                          | Antigravity | 3B, 2A     | `antigravity/8a`      | `0008_*` | D70–D74               |
 | 4     | 5A                                          | Cursor      | 3B, 2B     | `cursor/5a`           | `0009_*` | D75–D79               |
