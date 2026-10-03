@@ -52,7 +52,13 @@
     "salaryMissing": "Salary not specified",
     "apply": "Apply"
   },
-  "companyPage": { "trusted": "Trusted employer", "verified": "Verified company", "companyLogo": "Company logo", "openRoles": "Open positions", "empty": "No open positions right now." },
+  "companyPage": {
+    "trusted": "Trusted employer",
+    "verified": "Verified company",
+    "companyLogo": "Company logo",
+    "openRoles": "Open positions",
+    "empty": "No open positions right now."
+  },
   "product": {
     "name": "INTGETION JOB LIST"
   },

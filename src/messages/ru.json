@@ -52,7 +52,13 @@
     "salaryMissing": "Зарплата не указана",
     "apply": "Откликнуться"
   },
-  "companyPage": { "trusted": "Надёжный работодатель", "verified": "Проверенная компания", "companyLogo": "Логотип компании", "openRoles": "Открытые вакансии", "empty": "Сейчас открытых вакансий нет." },
+  "companyPage": {
+    "trusted": "Надёжный работодатель",
+    "verified": "Проверенная компания",
+    "companyLogo": "Логотип компании",
+    "openRoles": "Открытые вакансии",
+    "empty": "Сейчас открытых вакансий нет."
+  },
   "product": {
     "name": "INTGETION JOB LIST"
   },

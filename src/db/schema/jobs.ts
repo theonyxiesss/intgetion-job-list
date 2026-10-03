@@ -29,7 +29,9 @@ import { companies } from "./companies";
 import { skills } from "./skills";
 import { users } from "./users";
 
-const tsvector = customType<{ data: string; driverData: string }>({ dataType: () => "tsvector" });
+const tsvector = customType<{ data: string; driverData: string }>({
+  dataType: () => "tsvector",
+});
 
 export const jobs = pgTable(
   "jobs",
@@ -43,7 +45,9 @@ export const jobs = pgTable(
     }),
     title: text("title").notNull(),
     description: text("description").notNull(),
-    fts: tsvector("fts").generatedAlwaysAs(sql`setweight(to_tsvector('simple', coalesce(title, '')), 'A') || setweight(to_tsvector('simple', coalesce(description, '')), 'B')`),
+    fts: tsvector("fts").generatedAlwaysAs(
+      sql`setweight(to_tsvector('simple', coalesce(title, '')), 'A') || setweight(to_tsvector('simple', coalesce(description, '')), 'B')`,
+    ),
     category: text("category").notNull(),
     workFormat: workFormat("work_format").notNull().default("remote"),
     employmentType: employmentType("employment_type").notNull(),
