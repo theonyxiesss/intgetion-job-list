@@ -64,9 +64,13 @@ test("10B: the owner starts domain verification; free mail and strangers are ref
   });
 
   await page.goto("/en/employer/company/verify");
+  // UI-3: the company name is the H1; the verification tab is current.
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    company.name,
+  );
   await expect(
-    page.getByRole("heading", { name: "Company verification" }),
-  ).toBeVisible();
+    page.getByRole("link", { name: "Verification" }),
+  ).toHaveAttribute("aria-current", "page");
 
   const stranger = await newContextWithIp(browser);
   try {
