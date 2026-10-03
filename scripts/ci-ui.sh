@@ -61,6 +61,14 @@ const runs = [1, 2, 3].map((run) => {
   const lcp = report.audits["largest-contentful-paint"].numericValue;
   const fcp = report.audits["first-contentful-paint"].numericValue;
   console.log(`run ${run}: lcp_ms ${Math.round(lcp)} fcp_ms ${Math.round(fcp)}`);
+  // Which element is the LCP and where its time goes, to debug the budget.
+  const element = report.audits["largest-contentful-paint-element"]?.details?.items ?? [];
+  for (const table of element) {
+    for (const item of table.items ?? []) {
+      if (item.node?.snippet) console.log(`  lcp element: ${item.node.snippet.slice(0, 160)}`);
+      if (item.phase) console.log(`  ${item.phase}: ${Math.round(item.timing)} ms`);
+    }
+  }
   return lcp;
 });
 if (!runs.every((lcp) => typeof lcp === "number")) process.exit(1);
