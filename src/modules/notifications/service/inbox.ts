@@ -102,7 +102,10 @@ export async function writePreferences(
 }
 
 export async function unsubscribeByToken(token: string, now = new Date()) {
-  const result = verifyUnsubscribe(token, unsubscribeSecret(), now);
+  // Without a real secret any token could be forged: refuse them all.
+  const secret = unsubscribeSecret();
+  if (secret.length < 32) throw notFound();
+  const result = verifyUnsubscribe(token, secret, now);
   if (!result.valid) throw notFound();
   await upsertPreference({
     userId: result.claims.userId,
