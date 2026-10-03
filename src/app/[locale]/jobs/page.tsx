@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { routing } from "@/i18n/routing";
 import { formatMoneyDto } from "@/lib/money";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/modules/auth/service";
+import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import { listSearchSkillOptions, searchJobs } from "@/modules/jobs/service";
 
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
+// The listing is personalized for logged-in users (hidden jobs/companies,
+// 4B) — it must never be prerendered or cached as a static guest view.
+export const dynamic = "force-dynamic";
+
 export default async function JobsPage({
   params,
   searchParams,
@@ -21,9 +24,20 @@ export default async function JobsPage({
   const categories = await getTranslations("categories");
   const raw = await searchParams;
   const parsed = jobSearchQuery.safeParse(raw);
+  let viewer: Parameters<typeof searchJobs>[2] = { hidden: null };
+  try {
+    const supabase = await createSupabaseServerClient();
+    const viewerUser = await getCurrentUser(supabase.auth);
+    if (viewerUser) {
+      viewer = { hidden: await getHiddenSetsForViewer(viewerUser.id) };
+    }
+  } catch {
+    // No session → guest view.
+  }
   const result = await searchJobs(
     parsed.success ? parsed.data : jobSearchQuery.parse({}),
     locale,
+    viewer,
   );
   const skillOptions = await listSearchSkillOptions(locale);
   const nextParams = new URLSearchParams();

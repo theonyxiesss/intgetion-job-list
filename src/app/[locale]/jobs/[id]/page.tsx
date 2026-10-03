@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { formatMoneyDto } from "@/lib/money";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/modules/auth/service";
+import { isJobSavedForUser } from "@/modules/feedback/service";
+import { JobFeedbackActions } from "@/modules/feedback/ui/job-feedback-actions";
 import { getJobForPublic } from "@/modules/jobs/service";
 
 export default async function JobPage({
@@ -11,8 +15,12 @@ export default async function JobPage({
   const { locale, id } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("jobs");
+  const actions = await getTranslations("jobActions");
   const job = await getJobForPublic(id, { locale });
   if (!job) notFound();
+  const supabase = await createSupabaseServerClient();
+  const user = await getCurrentUser(supabase.auth);
+  const initialSaved = user ? await isJobSavedForUser(user.id, job.id) : false;
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-10">
       <p className="text-sm">
@@ -55,6 +63,51 @@ export default async function JobPage({
           .join(" · ")}
       </p>
       <div className="whitespace-pre-wrap">{job.description}</div>
+      {user && (
+        <JobFeedbackActions
+          jobId={job.id}
+          initialSaved={initialSaved}
+          text={{
+            save: actions("save"),
+            saved: actions("saved"),
+            unsave: actions("unsave"),
+            saveError: actions("saveError"),
+            hide: actions("hide"),
+            hideTitle: actions("hideTitle"),
+            hideScopeJob: actions("hideScopeJob"),
+            hideScopeCompany: actions("hideScopeCompany"),
+            reasonLabel: actions("reasonLabel"),
+            reasonNone: actions("reasonNone"),
+            confirm: actions("confirm"),
+            cancel: actions("cancel"),
+            hideError: actions("hideError"),
+            report: actions("report"),
+            reportTitle: actions("reportTitle"),
+            detailsLabel: actions("detailsLabel"),
+            reportSuccess: actions("reportSuccess"),
+            alreadyReported: actions("alreadyReported"),
+            rateLimited: actions("rateLimited"),
+            reportError: actions("reportError"),
+            hideReasons: {
+              salary: actions("reasons.salary"),
+              format: actions("reasons.format"),
+              timezone: actions("reasons.timezone"),
+              company: actions("reasons.company"),
+              role: actions("reasons.role"),
+              other: actions("reasons.other"),
+            },
+            reportReasons: {
+              scam: actions("reportReasons.scam"),
+              spam: actions("reportReasons.spam"),
+              fake_company: actions("reportReasons.fake_company"),
+              discrimination: actions("reportReasons.discrimination"),
+              wrong_info: actions("reportReasons.wrong_info"),
+              inappropriate: actions("reportReasons.inappropriate"),
+              other: actions("reportReasons.other"),
+            },
+          }}
+        />
+      )}
       {job.applicationUrl && (
         <a
           className="min-h-11 self-start rounded bg-blue-700 px-4 py-3 text-white"
