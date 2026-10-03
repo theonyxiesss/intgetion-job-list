@@ -80,3 +80,19 @@ The workspace directory name is not a valid npm package name (spaces and capital
 9. Сессия обновляется в `src/proxy.ts` до next-intl, чтобы обновлённые cookie дошли до Server Components. Route Handlers под `/api` обновляют cookie сами.
 10. Supabase нужен proxy и шапке, поэтому e2e, axe и Lighthouse перенесены в CI-job `database` (`supabase start` + Mailpit). Job `check` оставляет lint, format, typecheck, unit, build, gitleaks.
 11. Локальный `supabase/config.toml`: подтверждение email включено, минимум пароля 10, redirect `http://127.0.0.1:3000/**`, лимиты писем и входов подняты для CI. Облачный проект настраивается так же в дашборде (MISSION_LOG 1A).
+
+## D38 — вход на сервере и guards (1B)
+
+1. Вход паролем и отправка magic link перенесены с клиента на сервер: `POST /api/auth/login` `{ email, password }` и `POST /api/auth/magic-link` `{ email, locale }`. Иначе лимиты раздела 6 (login по IP+email, magic link по email) нечем применить. Заменяет D37.2 в части «на клиенте»; браузерный клиент Supabase больше не нужен и удалён. Ошибка входа — 401 `UNAUTHENTICATED` с `details.reason` (`invalid_credentials` | `email_not_confirmed`), чтобы форма показала нужный текст.
+2. Guards лежат в `src/lib/auth-guards.ts`. `requireCandidate` и `requireMembership` получают функцию поиска профиля/членства параметром: таблиц `candidate_profiles` (2B) и `company_members` (3A) ещё нет. Эти подфазы передают свои функции из своих сервисов. Поведение по 5.1: нет сессии → 401; не админ (и гость) → 404; нет профиля кандидата → 404; не член компании → 404; член без нужной роли → 403.
+3. Аудит в 1B пишет только входы админа (`auth.admin_sign_in`, 16.1) — паролем и по ссылке. Остальные события аудита появляются в подфазах, где появляются сами действия.
+
+## D39 — ключи лимитов, CSP, заголовки (1B)
+
+1. Ключи `rate_limit_counters` и `audit_logs.ip_hash` — HMAC-SHA256 от IP/email с секретом `PRIVACY_HASH_SECRET` (новая переменная окружения, только сервер). SHA-256 без ключа от IPv4 перебирается за минуты. В CI секрет одноразовый.
+2. Лимиты 1B: login 5/15 мин (IP+email), magic link + сброс пароля + регистрация без пароля 3/час (общий счётчик на email), регистрация 10/час (IP). Лимит считается после валидации входа. Глобальный лимит 300/мин на IP — в 11A (ревизия лимитов), чтобы не добавлять запись в БД на каждый запрос до замера нагрузки.
+3. CSRF-проверка `Origin` — в `src/proxy.ts` для всех мутирующих `/api/*`; запрос без `Origin` тоже отклоняется (403 `FORBIDDEN`). Cron-эндпоинты вызываются `GET` и защищены `Authorization: Bearer CRON_SECRET`; без секрета — 404.
+4. CSP для страниц — в proxy, nonce на запрос: раздел 16.1 плюс `style-src 'self' 'nonce-…'`, `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`; `'unsafe-eval'` только в dev. Для `/api/*` — `default-src 'none'; frame-ancestors 'none'`. HSTS, `nosniff`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` — для всех ответов через `next.config.ts`; `X-Powered-By` выключен.
+5. `audit_logs` для `app_rw` только на добавление и чтение (UPDATE отозван); DELETE остаётся для retention-cron (10C).
+6. `/api/cron/rate-limit-gc` удаляет окна старше 48 часов. Расписание Vercel Cron настраивается при деплое (11B).
+7. Исправление 1A: matcher в `src/proxy.ts` содержал `\.` в обычной строке (то есть «любой символ»), и proxy работал только на `/`. Исправлено на `\\.`; `src/proxy.test.ts` проверяет matcher.

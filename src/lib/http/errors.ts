@@ -31,18 +31,21 @@ export class HttpError extends Error {
   readonly status: number;
   readonly code: string;
   readonly details?: unknown;
+  readonly headers?: Record<string, string>;
 
   constructor(
     status: number,
     code: string,
     message: string,
     details?: unknown,
+    headers?: Record<string, string>,
   ) {
     super(message);
     this.name = "HttpError";
     this.status = status;
     this.code = code;
     this.details = details;
+    this.headers = headers;
   }
 }
 
@@ -56,7 +59,7 @@ export function httpErrorResponse(error: HttpError): Response {
   if (error.details !== undefined) {
     body.error.details = error.details;
   }
-  return Response.json(body, { status: error.status });
+  return Response.json(body, { status: error.status, headers: error.headers });
 }
 
 /** zod rejected the input. `details` lists the failing fields. */
@@ -72,6 +75,17 @@ export function validationError(details?: unknown): HttpError {
 /** No session, or a session whose email is not confirmed yet. */
 export function unauthenticated(message = "Sign in first"): HttpError {
   return new HttpError(401, errorCodes.unauthenticated, message);
+}
+
+/** A rate limit is used up (section 6, P15). */
+export function rateLimited(retryAfterSeconds: number): HttpError {
+  return new HttpError(
+    429,
+    errorCodes.rateLimited,
+    "Too many requests",
+    { retryAfterSeconds },
+    { "Retry-After": String(retryAfterSeconds) },
+  );
 }
 
 /** Missing object, foreign object, or admin route for a non-admin. */

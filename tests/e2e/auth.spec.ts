@@ -8,6 +8,8 @@ import { authLink, countMails, waitForMail } from "./mail";
  */
 
 const password = "orbit-lantern-42";
+// Mutating API calls need the site Origin (CSRF check, 1B).
+const sameOrigin = { origin: "http://127.0.0.1:3000" };
 
 function uniqueEmail(prefix: string) {
   const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -66,6 +68,7 @@ test("password: unconfirmed email cannot sign in or write; confirmed can", async
   await signInWithPassword(page, email, password);
   await expectFormAlert(page, "Confirm your email");
   const write = await page.request.patch("/api/me", {
+    headers: sameOrigin,
     data: { locale: "ru" },
   });
   expect(write.status()).toBe(401);
@@ -83,6 +86,7 @@ test("password: unconfirmed email cannot sign in or write; confirmed can", async
   expect(me).not.toHaveProperty("authUid");
 
   const patched = await page.request.patch("/api/me", {
+    headers: sameOrigin,
     data: { locale: "ru", marketingOptIn: true },
   });
   expect(patched.status()).toBe(200);
@@ -160,6 +164,7 @@ test("reset request answers the same for an unknown address", async ({
   request,
 }) => {
   const response = await request.post("/api/auth/reset", {
+    headers: sameOrigin,
     data: { email: uniqueEmail("nobody"), locale: "en" },
   });
   expect(response.status()).toBe(200);
@@ -181,6 +186,7 @@ test("registration rejects short and common passwords and missing terms", async 
   await expect(page).toHaveURL(/\/en\/register$/);
 
   const common = await request.post("/api/auth/register", {
+    headers: sameOrigin,
     data: {
       email: uniqueEmail("common"),
       password: "basketball",

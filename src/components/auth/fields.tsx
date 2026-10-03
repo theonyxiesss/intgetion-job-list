@@ -84,10 +84,17 @@ export function SubmitButton({
 export async function apiErrorCode(response: Response) {
   try {
     const body = (await response.json()) as {
-      error?: { code?: string; details?: { message?: string }[] };
+      error?: { code?: string; details?: unknown };
     };
-    const detail = body.error?.details?.[0]?.message;
-    if (body.error?.code === "VALIDATION_ERROR" && detail) return detail;
+    const details = body.error?.details;
+    if (body.error?.code === "VALIDATION_ERROR" && Array.isArray(details)) {
+      const message = (details[0] as { message?: string } | undefined)?.message;
+      if (message) return message;
+    }
+    if (body.error?.code === "UNAUTHENTICATED") {
+      const reason = (details as { reason?: string } | undefined)?.reason;
+      return reason ?? "invalid_credentials";
+    }
     if (body.error?.code === "RATE_LIMITED") return "rate_limited";
     return "generic";
   } catch {

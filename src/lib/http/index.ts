@@ -4,6 +4,7 @@ export {
   HttpError,
   httpErrorResponse,
   notFound,
+  rateLimited,
   unauthenticated,
   validationError,
 } from "./errors";

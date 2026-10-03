@@ -1,6 +1,7 @@
 import type { EmailOtpType, SupabaseClient, User } from "@supabase/supabase-js";
 import { TERMS_VERSION } from "@/config/legal";
 import type { AppLocale } from "@/i18n/routing";
+import { recordAudit } from "@/lib/audit";
 import { siteUrl } from "@/lib/supabase/env";
 import {
   HttpError,
@@ -11,6 +12,8 @@ import {
 import * as usersRepo from "../repo/users";
 import {
   signupMetadata,
+  type LoginInput,
+  type MagicLinkInput,
   type NewPasswordInput,
   type RegisterInput,
   type ResetInput,
@@ -28,6 +31,7 @@ export type AuthClient = Pick<
   | "getUser"
   | "signOut"
   | "updateUser"
+  | "signInWithPassword"
 >;
 
 export type CurrentUser = usersRepo.UserRow;
@@ -80,6 +84,70 @@ export async function register(
       });
   // An existing address gets the same answer as a new one (anti-enumeration).
   if (error && error.code !== "user_already_exists") throw authFailure(error);
+}
+
+/**
+ * Password sign-in on the server, so it can be rate limited (D38).
+ * Wrong credentials and an unconfirmed email are both 401; `details.reason`
+ * tells the form which message to show.
+ */
+export async function signIn(
+  auth: AuthClient,
+  input: LoginInput,
+): Promise<CurrentUser> {
+  const { data, error } = await auth.signInWithPassword(input);
+  if (error) {
+    if (error.status === 429) throw authFailure(error);
+    const reason =
+      error.code === "email_not_confirmed"
+        ? "email_not_confirmed"
+        : "invalid_credentials";
+    throw new HttpError(401, errorCodes.unauthenticated, "Sign-in failed", {
+      reason,
+    });
+  }
+  const row = data.user
+    ? await usersRepo.findUserByAuthUid(data.user.id)
+    : undefined;
+  if (!row || row.status !== "active" || !isEmailConfirmed(data.user)) {
+    await auth.signOut();
+    throw new HttpError(401, errorCodes.unauthenticated, "Sign-in failed", {
+      reason: "invalid_credentials",
+    });
+  }
+  return row;
+}
+
+/** Sign-in link for an existing account. Unknown addresses look the same. */
+export async function sendMagicLink(
+  auth: AuthClient,
+  input: MagicLinkInput,
+): Promise<void> {
+  const { error } = await auth.signInWithOtp({
+    email: input.email,
+    options: {
+      shouldCreateUser: false,
+      emailRedirectTo: callbackUrl(input.locale),
+    },
+  });
+  if (error?.status === 429) throw authFailure(error);
+}
+
+/** Section 16.1: admin sign-ins are audited. Others are not recorded. */
+export async function auditSignIn(
+  user: CurrentUser,
+  method: "password" | "email_link",
+  ip: string,
+): Promise<void> {
+  if (user.platformRole !== "admin") return;
+  await recordAudit({
+    actorId: user.id,
+    action: "auth.admin_sign_in",
+    entityType: "user",
+    entityId: user.id,
+    diff: { method },
+    ip,
+  });
 }
 
 /** Always succeeds from the caller's point of view (anti-enumeration). */

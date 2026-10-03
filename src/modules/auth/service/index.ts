@@ -3,6 +3,7 @@
  * Other modules may import only this file, never this module's repo.
  */
 export {
+  auditSignIn,
   callbackUrl,
   changePassword,
   completeCallback,
@@ -12,6 +13,8 @@ export {
   register,
   requestPasswordReset,
   requireCurrentUser,
+  sendMagicLink,
+  signIn,
   updateMe,
 } from "./auth-service";
 export type {
@@ -25,6 +28,8 @@ export type { MeDto } from "../api/me-dto";
 export {
   PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
+  loginInput,
+  magicLinkInput,
   newPasswordInput,
   passwordSchema,
   registerInput,

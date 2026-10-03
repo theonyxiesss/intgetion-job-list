@@ -78,6 +78,38 @@ try {
     "authenticated policy is not deny-all",
   );
 
+  // Every app table follows the deny-all template (D22).
+  const tables = await client.query(
+    `SELECT c.relname, c.relrowsecurity, c.relforcerowsecurity,
+            (SELECT count(*) FROM pg_policy p
+              WHERE p.polrelid = c.oid
+                AND p.polname IN (c.relname || '_anon_deny',
+                                  c.relname || '_authenticated_deny',
+                                  c.relname || '_app_rw_all'))::int AS policies
+     FROM pg_class c
+     JOIN pg_namespace n ON n.oid = c.relnamespace
+     WHERE n.nspname = 'public' AND c.relkind = 'r'
+       AND c.relname <> 'schema_migrations'`,
+  );
+  for (const table of tables.rows) {
+    expect(
+      table.relrowsecurity && table.relforcerowsecurity,
+      `${table.relname} RLS is not enabled and forced`,
+    );
+    expect(
+      table.policies === 3,
+      `${table.relname} lacks the deny-all policy template`,
+    );
+  }
+
+  const auditUpdate = await client.query(
+    "SELECT has_table_privilege('app_rw', 'public.audit_logs', 'UPDATE') AS can",
+  );
+  expect(
+    auditUpdate.rows[0]?.can === false,
+    "app_rw must not update audit_logs",
+  );
+
   await client.query("BEGIN");
   try {
     await client.query("SET LOCAL ROLE anon");
@@ -128,7 +160,9 @@ try {
     for (const failure of failures) console.error(failure);
     process.exitCode = 1;
   } else {
-    console.log("app_rw exists and users RLS denies anon and authenticated");
+    console.log(
+      `app_rw exists; RLS deny-all holds on ${tables.rowCount} tables; audit_logs is append-only`,
+    );
   }
 } catch (error) {
   console.error(redact(error instanceof Error ? error.message : error));

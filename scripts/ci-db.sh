@@ -18,6 +18,9 @@ fi
 
 export DATABASE_MIGRATION_URL="$db_url"
 export DATABASE_URL="${db_url/postgres:postgres@/app_rw:app_rw_local_only@}"
+# Throwaway secrets for this run only (1B).
+export PRIVACY_HASH_SECRET="$(openssl rand -hex 32)"
+export CRON_SECRET="$(openssl rand -hex 32)"
 pnpm db:migrate
 pnpm db:migrate
 pnpm db:verify

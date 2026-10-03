@@ -44,8 +44,8 @@ erDiagram
     date as_of
   }
   rate_limit_counters {
-    text key
-    timestamptz window_start
+    text key PK
+    timestamptz window_start PK
     int count
   }
   moderation_queue {
@@ -54,8 +54,15 @@ erDiagram
     uuid entity_id
   }
   audit_logs {
-    uuid id
+    uuid id PK
     uuid actor_id
     text action
+    text entity_type
+    uuid entity_id
+    jsonb diff
+    text ip_hash
+    timestamptz created_at
   }
 ```
+
+Migration 0002 (1B) creates `audit_logs` and `rate_limit_counters`.

@@ -3,7 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { routing } from "@/i18n/routing";
 import { siteUrl } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { completeCallback } from "@/modules/auth/service";
+import { clientIp } from "@/lib/request-ip";
+import { auditSignIn, completeCallback } from "@/modules/auth/service";
 
 export async function GET(
   request: NextRequest,
@@ -21,6 +22,10 @@ export async function GET(
     tokenHash: query.get("token_hash"),
     type: query.get("type"),
   });
+
+  if (result.ok) {
+    await auditSignIn(result.user, "email_link", clientIp(request.headers));
+  }
 
   const target = new URL(`/${locale}`, siteUrl());
   if (!result.ok) {

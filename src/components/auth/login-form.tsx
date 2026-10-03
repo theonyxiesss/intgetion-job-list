@@ -6,10 +6,15 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "@/i18n/navigation";
-import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { emailSchema } from "@/modules/auth/schemas";
 import { MethodPicker, type Method } from "./method-picker";
-import { Field, FormAlert, SubmitButton, useAuthError } from "./fields";
+import {
+  apiErrorCode,
+  Field,
+  FormAlert,
+  SubmitButton,
+  useAuthError,
+} from "./fields";
 
 const passwordLogin = z.object({
   email: emailSchema,
@@ -28,18 +33,19 @@ export function LoginForm({ initialError }: { initialError?: string }) {
   const passwordForm = useForm({ resolver: zodResolver(passwordLogin) });
   const magicForm = useForm({ resolver: zodResolver(magicLogin) });
 
+  async function post(path: string, body: unknown) {
+    return fetch(path, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  }
+
   const signInWithPassword = passwordForm.handleSubmit(async (values) => {
     setFormError(undefined);
-    const { error } =
-      await createSupabaseBrowserClient().auth.signInWithPassword(values);
-    if (error) {
-      setFormError(
-        error.status === 429
-          ? "rate_limited"
-          : error.code === "email_not_confirmed"
-            ? "email_not_confirmed"
-            : "invalid_credentials",
-      );
+    const response = await post("/api/auth/login", values);
+    if (!response.ok) {
+      setFormError(await apiErrorCode(response));
       return;
     }
     router.replace("/");
@@ -48,16 +54,9 @@ export function LoginForm({ initialError }: { initialError?: string }) {
 
   const sendMagicLink = magicForm.handleSubmit(async ({ email }) => {
     setFormError(undefined);
-    const { error } = await createSupabaseBrowserClient().auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: false,
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/auth/callback`,
-      },
-    });
-    // Unknown addresses get the same screen (anti-enumeration).
-    if (error?.status === 429) {
-      setFormError("rate_limited");
+    const response = await post("/api/auth/magic-link", { email, locale });
+    if (!response.ok) {
+      setFormError(await apiErrorCode(response));
       return;
     }
     router.push("/auth/check-email");

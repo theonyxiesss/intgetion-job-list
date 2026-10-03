@@ -32,6 +32,23 @@ export const registerInput = z.object({
 });
 export type RegisterInput = z.infer<typeof registerInput>;
 
+/** `POST /api/auth/login` (D38). Strength rules apply at registration, not here. */
+export const loginInput = z.object({
+  email: emailSchema,
+  password: z
+    .string()
+    .min(1, { error: "invalid_credentials" })
+    .max(PASSWORD_MAX_LENGTH, { error: "invalid_credentials" }),
+});
+export type LoginInput = z.infer<typeof loginInput>;
+
+/** `POST /api/auth/magic-link` (D38): sign-in link for an existing account. */
+export const magicLinkInput = z.object({
+  email: emailSchema,
+  locale: localeSchema,
+});
+export type MagicLinkInput = z.infer<typeof magicLinkInput>;
+
 /** `POST /api/auth/reset`. */
 export const resetInput = z.object({
   email: emailSchema,

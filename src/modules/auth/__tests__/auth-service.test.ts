@@ -1,14 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TERMS_VERSION } from "@/config/legal";
 import { HttpError } from "@/lib/http";
+import * as audit from "@/lib/audit";
 import * as usersRepo from "../repo/users";
 import {
+  auditSignIn,
   changePassword,
   completeCallback,
   getCurrentUser,
   register,
   requestPasswordReset,
   requireCurrentUser,
+  sendMagicLink,
+  signIn,
   type AuthClient,
   type CurrentUser,
 } from "../service/auth-service";
@@ -19,7 +23,10 @@ vi.mock("../repo/users", () => ({
   updateUser: vi.fn(),
 }));
 
+vi.mock("@/lib/audit", () => ({ recordAudit: vi.fn() }));
+
 const repo = vi.mocked(usersRepo);
+const recordAudit = vi.mocked(audit.recordAudit);
 
 const row: CurrentUser = {
   id: "11111111-1111-4111-8111-111111111111",
@@ -53,6 +60,9 @@ function fakeAuth(user: AuthUser | null) {
     getUser: vi.fn().mockResolvedValue({ data: { user }, error: null }),
     signOut: vi.fn().mockResolvedValue({ error: null }),
     updateUser: vi.fn().mockResolvedValue(ok),
+    signInWithPassword: vi
+      .fn()
+      .mockResolvedValue({ data: { user }, error: null }),
   };
 }
 
@@ -292,5 +302,103 @@ describe("writes need a confirmed email", () => {
     expect(auth.updateUser).toHaveBeenCalledWith({
       password: "orbit-lantern-42",
     });
+  });
+});
+
+describe("signIn (server password login, D38)", () => {
+  const input = { email: "ana@example.com", password: "orbit-lantern-42" };
+
+  it("returns the active row for good credentials", async () => {
+    const auth = fakeAuth(confirmed);
+    repo.findUserByAuthUid.mockResolvedValue(row);
+    await expect(signIn(asAuth(auth), input)).resolves.toEqual(row);
+    expect(auth.signInWithPassword).toHaveBeenCalledWith(input);
+  });
+
+  it("answers 401 with a reason the form can show", async () => {
+    const auth = fakeAuth(null);
+    auth.signInWithPassword.mockResolvedValue({
+      data: { user: null },
+      error: { code: "email_not_confirmed", status: 400 },
+    });
+    await expect(signIn(asAuth(auth), input)).rejects.toMatchObject({
+      status: 401,
+      code: "UNAUTHENTICATED",
+      details: { reason: "email_not_confirmed" },
+    });
+    auth.signInWithPassword.mockResolvedValue({
+      data: { user: null },
+      error: { code: "invalid_credentials", status: 400 },
+    });
+    await expect(signIn(asAuth(auth), input)).rejects.toMatchObject({
+      details: { reason: "invalid_credentials" },
+    });
+  });
+
+  it("signs a suspended account straight back out", async () => {
+    const auth = fakeAuth(confirmed);
+    repo.findUserByAuthUid.mockResolvedValue({ ...row, status: "suspended" });
+    await expect(signIn(asAuth(auth), input)).rejects.toMatchObject({
+      status: 401,
+    });
+    expect(auth.signOut).toHaveBeenCalled();
+  });
+});
+
+describe("sendMagicLink", () => {
+  it("never creates a user from the sign-in page", async () => {
+    const auth = fakeAuth(null);
+    await sendMagicLink(asAuth(auth), {
+      email: "ana@example.com",
+      locale: "ru",
+    });
+    expect(auth.signInWithOtp).toHaveBeenCalledWith({
+      email: "ana@example.com",
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: "http://127.0.0.1:3000/ru/auth/callback",
+      },
+    });
+  });
+
+  it("hides unknown addresses but passes on provider rate limits", async () => {
+    const auth = fakeAuth(null);
+    auth.signInWithOtp.mockResolvedValue({
+      data: {},
+      error: { code: "otp_disabled", status: 422 },
+    });
+    await expect(
+      sendMagicLink(asAuth(auth), { email: "x@example.com", locale: "en" }),
+    ).resolves.toBeUndefined();
+    auth.signInWithOtp.mockResolvedValue({
+      data: {},
+      error: { code: "over_email_send_rate_limit", status: 429 },
+    });
+    await expect(
+      sendMagicLink(asAuth(auth), { email: "x@example.com", locale: "en" }),
+    ).rejects.toMatchObject({ status: 429 });
+  });
+});
+
+describe("auditSignIn (16.1)", () => {
+  it("records admin sign-ins with the method and IP", async () => {
+    await auditSignIn(
+      { ...row, platformRole: "admin" },
+      "password",
+      "203.0.113.7",
+    );
+    expect(recordAudit).toHaveBeenCalledWith({
+      actorId: row.id,
+      action: "auth.admin_sign_in",
+      entityType: "user",
+      entityId: row.id,
+      diff: { method: "password" },
+      ip: "203.0.113.7",
+    });
+  });
+
+  it("does not record regular users", async () => {
+    await auditSignIn(row, "email_link", "203.0.113.7");
+    expect(recordAudit).not.toHaveBeenCalled();
   });
 });
