@@ -214,3 +214,12 @@ The workspace directory name is not a valid npm package name (spaces and capital
 1. `PATCH /api/candidates/me` считает полноту по уже сохранённому email и пишет профиль вместе с `completeness` в одной транзакции.
 2. `PUT /api/candidates/me/contacts` в одной транзакции пишет контакт и затем `completeness`. Счётчик собирает маршрут из `scoreStoredProfile` и `storeCompleteness`, чтобы модули не импортировали друг друга по кругу.
 3. `GET /api/me` по-прежнему отдаёт `hasCandidateProfile: false`. После D46 это строка в `meContext` (`src/app/api/me/route.ts`): модуль auth кандидатов не импортирует. Её подставляет Claude Code вызовом `hasCandidateProfile(user.id)` из `@/modules/candidates/service`.
+
+## D80 — админка без вакансий (10A, первая часть)
+
+1. 10A разбита на две части. Первая (сейчас, не зависит от 3B): `/admin`, пользователи, журнал аудита, разбор `skill_suggestions`. Вторая (после 3B): модерация вакансий (`moderation_queue`), жалобы, блокировка компаний и снятие вакансий.
+2. Права: каждая страница `/[locale]/admin/*` сама вызывает проверку админа (layout не перезапускается при каждой навигации); каждый `/api/admin/*` начинается с `requireAdmin()` до разбора ввода — гость и не-админ получают 404 (P7).
+3. Поиск пользователей — по точному id и статусу: email входа хранится в Supabase Auth, а не в `users`; поиск по email потребует `SUPABASE_SERVICE_ROLE_KEY` (Auth admin API) и добавится, когда ключ появится.
+4. Блокировка: только `active → suspended` и обратно; себя и другого админа заблокировать нельзя — 422 `ADMIN_PROTECTED`; неверный исходный статус — 409 `INVALID_TRANSITION`. Заблокированный теряет доступ со следующего запроса (`getCurrentUser` проверяет статус). Отзыв сессий в Supabase — тоже через service role, позже.
+5. Разбор навыков: `map` одобряет предложение и добавляет его нормализованный текст алиасом навыка в одной транзакции, после этого `normalizeSkill` находит навык сам; алиас, уже указывающий на другой навык, — 409 `ALIAS_TAKEN`; повторное решение — 409 `ALREADY_DECIDED`. Новые коды ошибок — `ADMIN_PROTECTED`, `ALIAS_TAKEN`, `ALREADY_DECIDED`.
+6. Каждое действие админа пишет `audit_logs` с админом как actor и хешем IP (P16); в выдаче журнала `ip_hash` нет. Назначение админа — только скриптом `pnpm admin:grant <email>` (D21), запись `admin.granted` без actor.

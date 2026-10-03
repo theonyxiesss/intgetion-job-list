@@ -9,4 +9,4 @@ export {
   validationError,
 } from "./errors";
 export type { ErrorBody, ErrorCode } from "./errors";
-export { readJson, toErrorResponse } from "./handler";
+export { readJson, readQuery, toErrorResponse } from "./handler";

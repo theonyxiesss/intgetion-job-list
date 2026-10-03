@@ -16,3 +16,11 @@ export {
   normalizeSkill,
   seedSkills,
 } from "./taxonomy-service";
+export {
+  countPendingSkillSuggestions,
+  listActiveSkills,
+  listSkillSuggestions,
+  mapSkillSuggestion,
+  rejectSkillSuggestion,
+} from "./suggestions-service";
+export type { SkillSuggestionDto } from "./suggestions-service";
