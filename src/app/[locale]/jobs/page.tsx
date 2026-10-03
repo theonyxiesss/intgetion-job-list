@@ -286,8 +286,14 @@ export default async function JobsPage({
               <ul className="flex flex-wrap gap-2">
                 {chips.map((chip) => (
                   <li key={chip.key}>
-                    <Link href={without(raw, chip.key)} className="inline-flex">
-                      <Tag>{chip.label} ×</Tag>
+                    <Link
+                      href={without(raw, chip.key)}
+                      className="inline-flex"
+                      aria-label={t("clearFilter")}
+                    >
+                      <Tag>
+                        <span aria-hidden="true">{chip.label} ×</span>
+                      </Tag>
                     </Link>
                   </li>
                 ))}

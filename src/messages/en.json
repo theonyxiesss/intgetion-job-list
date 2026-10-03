@@ -4,6 +4,7 @@
     "subtitle": "Search published remote roles.",
     "filters": "Filters",
     "closeFilters": "Close",
+    "clearFilter": "Clear filter",
     "backToJobs": "Back to jobs",
     "search": "Search jobs",
     "category": "Category",
