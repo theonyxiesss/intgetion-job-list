@@ -254,20 +254,33 @@ describe("matching results", () => {
   });
 
   it("scores Berlin against New York the same before and after DST, and differently in the gap week", async () => {
-    const winter = await computeMatches(userId, {
-      now: new Date("2026-03-02T12:00:00Z"),
-    });
-    const gap = await computeMatches(userId, {
-      now: new Date("2026-03-16T12:00:00Z"),
-    });
-    const summer = await computeMatches(userId, {
-      now: new Date("2026-04-06T12:00:00Z"),
-    });
-    const score = (list: { items: { jobId: string; score: number }[] }) =>
-      list.items.find((item) => item.jobId === tzJobId)?.score;
-    expect(score(winter)).toBeDefined();
-    expect(score(summer)).toBe(score(winter));
-    expect(score(gap)).not.toBe(score(winter));
+    await getDb().execute(sql`
+      update public.candidate_profiles
+      set min_overlap_hours = 8
+      where user_id = ${userId}
+    `);
+    try {
+      const winter = await computeMatches(userId, {
+        now: new Date("2026-03-02T12:00:00Z"),
+      });
+      const gap = await computeMatches(userId, {
+        now: new Date("2026-03-16T12:00:00Z"),
+      });
+      const summer = await computeMatches(userId, {
+        now: new Date("2026-04-06T12:00:00Z"),
+      });
+      const score = (list: { items: { jobId: string; score: number }[] }) =>
+        list.items.find((item) => item.jobId === tzJobId)?.score;
+      expect(score(winter)).toBeDefined();
+      expect(score(summer)).toBe(score(winter));
+      expect(score(gap)).not.toBe(score(winter));
+    } finally {
+      await getDb().execute(sql`
+        update public.candidate_profiles
+        set min_overlap_hours = 0
+        where user_id = ${userId}
+      `);
+    }
   });
 
   it("overlaps a window that crosses midnight and drops a daytime window that does not", async () => {
