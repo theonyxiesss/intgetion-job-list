@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export function MarkAllReadButton({ label }: { label: string }) {
   const router = useRouter();
@@ -19,13 +20,8 @@ export function MarkAllReadButton({ label }: { label: string }) {
   }
 
   return (
-    <button
-      type="button"
-      className="inline-flex min-h-11 items-center border border-current px-3"
-      disabled={busy}
-      onClick={run}
-    >
+    <Button type="button" variant="secondary" disabled={busy} onClick={run}>
       {label}
-    </button>
+    </Button>
   );
 }

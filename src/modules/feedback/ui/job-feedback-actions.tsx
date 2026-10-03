@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { buttonClass } from "@/components/ui/button";
 
 export type HideReasonKey =
   "salary" | "format" | "timezone" | "company" | "role" | "other";
@@ -140,7 +141,7 @@ export function JobFeedbackActions({
       <div className="flex flex-wrap gap-3">
         <button
           type="button"
-          className="min-h-11 rounded border px-4 py-2"
+          className={buttonClass("secondary")}
           onClick={toggleSave}
           disabled={busy}
         >
@@ -148,14 +149,14 @@ export function JobFeedbackActions({
         </button>
         <button
           type="button"
-          className="min-h-11 rounded border px-4 py-2"
+          className={buttonClass("secondary")}
           onClick={() => setDialog("hide")}
         >
           {text.hide}
         </button>
         <button
           type="button"
-          className="min-h-11 rounded border px-4 py-2"
+          className={buttonClass("secondary")}
           onClick={() => setDialog("report")}
         >
           {text.report}
@@ -165,7 +166,7 @@ export function JobFeedbackActions({
       {reportMessage && <p role="status">{reportMessage}</p>}
       {dialog === "hide" && (
         <form
-          className="flex flex-col gap-3 rounded border p-4"
+          className="flex flex-col gap-3 border border-line p-4"
           aria-label={text.hideTitle}
           onSubmit={(event) => {
             event.preventDefault();
@@ -215,13 +216,13 @@ export function JobFeedbackActions({
             <button
               type="submit"
               disabled={busy}
-              className="min-h-11 rounded bg-accent px-4 py-2 text-accent-fg"
+              className={buttonClass("primary")}
             >
               {text.confirm}
             </button>
             <button
               type="button"
-              className="min-h-11 rounded border px-4 py-2"
+              className={buttonClass("secondary")}
               onClick={() => setDialog(null)}
             >
               {text.cancel}
@@ -232,7 +233,7 @@ export function JobFeedbackActions({
       )}
       {dialog === "report" && (
         <form
-          className="flex flex-col gap-3 rounded border p-4"
+          className="flex flex-col gap-3 border border-line p-4"
           aria-label={text.reportTitle}
           onSubmit={(event) => {
             event.preventDefault();
@@ -268,13 +269,13 @@ export function JobFeedbackActions({
             <button
               type="submit"
               disabled={busy}
-              className="min-h-11 rounded bg-accent px-4 py-2 text-accent-fg"
+              className={buttonClass("primary")}
             >
               {text.confirm}
             </button>
             <button
               type="button"
-              className="min-h-11 rounded border px-4 py-2"
+              className={buttonClass("secondary")}
               onClick={() => setDialog(null)}
             >
               {text.cancel}

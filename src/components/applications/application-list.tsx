@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { buttonClass } from "@/components/ui/button";
 import type { ApplicationStatus } from "@/modules/applications/service";
 
 export type ApplicationListItem = {
@@ -38,14 +39,14 @@ export function ApplicationList({ items }: { items: ApplicationListItem[] }) {
       {items.map((item) => (
         <article
           key={item.id}
-          className="flex flex-col gap-2 border border-current/20 p-4"
+          className="flex flex-col gap-2 border border-line p-4"
         >
-          <h3 className="text-lg font-semibold">{item.jobTitle}</h3>
-          <p>{t(`status.${item.status}`)}</p>
+          <h3 className="t-h3">{item.jobTitle}</h3>
+          <p className="t-label text-fg-muted">{t(`status.${item.status}`)}</p>
           {item.canWithdraw ? (
             <button
               type="button"
-              className="inline-flex min-h-11 w-fit items-center border border-current px-3"
+              className={buttonClass("secondary")}
               disabled={pendingId === item.id}
               onClick={() => withdraw(item.id)}
             >

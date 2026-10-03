@@ -1,6 +1,8 @@
-import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { Container, PageHeader } from "@/components/ui/container";
+import { navForward } from "@/components/ui/page-transition";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -15,24 +17,28 @@ export default async function OnboardingPage({
   setRequestLocale(locale);
   const t = await getTranslations("onboarding");
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-12">
-      <h1 className="text-3xl font-semibold">{t("title")}</h1>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Link
-          href={`/${locale}`}
-          className="rounded-lg border border-current/30 p-6"
-        >
-          <h2 className="text-xl font-medium">{t("candidate")}</h2>
-          <p className="mt-2">{t("candidateDescription")}</p>
-        </Link>
-        <Link
-          href={`/${locale}/employer/company`}
-          className="rounded-lg border border-current/30 p-6"
-        >
-          <h2 className="text-xl font-medium">{t("employer")}</h2>
-          <p className="mt-2">{t("employerDescription")}</p>
-        </Link>
-      </div>
+    <main className="py-10 md:py-16">
+      <Container narrow className="flex flex-col gap-8">
+        <PageHeader title={t("title")} />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Link
+            href="/"
+            {...navForward}
+            className="flex flex-col gap-2 border border-line p-6 hover:border-line-strong"
+          >
+            <h2 className="t-h3">{t("candidate")}</h2>
+            <p className="text-fg-muted">{t("candidateDescription")}</p>
+          </Link>
+          <Link
+            href="/employer/company"
+            {...navForward}
+            className="flex flex-col gap-2 border border-line p-6 hover:border-line-strong"
+          >
+            <h2 className="t-h3">{t("employer")}</h2>
+            <p className="text-fg-muted">{t("employerDescription")}</p>
+          </Link>
+        </div>
+      </Container>
     </main>
   );
 }

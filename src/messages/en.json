@@ -1,6 +1,10 @@
 {
   "jobs": {
     "title": "Remote jobs",
+    "subtitle": "Search published remote roles.",
+    "filters": "Filters",
+    "closeFilters": "Close",
+    "backToJobs": "Back to jobs",
     "search": "Search jobs",
     "category": "Category",
     "anyCategory": "Any category",
@@ -57,7 +61,11 @@
     "verified": "Verified company",
     "companyLogo": "Company logo",
     "openRoles": "Open positions",
-    "empty": "No open positions right now."
+    "empty": "No open positions right now.",
+    "about": "About",
+    "jobsTab": "Jobs",
+    "tabsLabel": "Company",
+    "emptyAbout": "This company has not added a description."
   },
   "product": {
     "name": "INTGETION JOB LIST",
@@ -95,6 +103,10 @@
   },
   "home": {
     "tagline": "Remote work. Real matches.",
+    "line1": "Remote work.",
+    "line2": "Real matches.",
+    "statJobs": "Published jobs",
+    "statCompanies": "Companies",
     "subtitle": "Find work. Find people. Connect directly.",
     "findJob": "Find a Remote Job",
     "postJob": "Post a Job",
@@ -241,6 +253,15 @@
     "contactsTitle": "Contacts",
     "contactsHint": "A company sees these only after it expresses interest in your application.",
     "noContacts": "No contact email yet.",
+    "tocLabel": "Profile sections",
+    "toc": {
+      "basics": "Basics",
+      "preferences": "Preferences",
+      "experience": "Experience",
+      "skills": "Skills",
+      "languages": "Languages",
+      "salary": "Salary"
+    },
     "fields": {
       "fullName": "Full name",
       "headline": "Headline",
@@ -523,6 +544,9 @@
   "notifications": {
     "nav": "Notifications",
     "title": "Notifications",
+    "tabsLabel": "Notifications",
+    "tabAll": "All",
+    "tabUnread": "Unread",
     "empty": "No notifications yet.",
     "markAll": "Mark all as read",
     "unsubscribe": {
@@ -638,6 +662,10 @@
   "applications": {
     "nav": "Applications",
     "title": "Your applications",
+    "tabsLabel": "Applications",
+    "tabActive": "Active",
+    "tabProgress": "Interviews and offers",
+    "tabArchive": "Archive",
     "empty": "You have not applied to any jobs yet.",
     "needProfile": "Create a candidate profile before you apply.",
     "createProfile": "Create profile",

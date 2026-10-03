@@ -272,6 +272,10 @@ export async function searchJobs(
   return { items, nextCursor };
 }
 
+export async function countPublicCatalog() {
+  return repo.countPublicCatalog();
+}
+
 export async function getJobForPublic(
   id: string,
   options: { userId?: string; isAdmin?: boolean; locale?: string } = {},
