@@ -123,6 +123,11 @@ export interface HideableRow {
   company: { id: string };
 }
 
+/** A second applied_external for the same user and job writes nothing (D72). */
+export function shouldRecordExternalApply(alreadyRecorded: boolean): boolean {
+  return !alreadyRecorded;
+}
+
 /** Filters jobs the viewer hid and jobs of companies the viewer hid (7). */
 export function withoutHidden<T extends HideableRow>(
   rows: readonly T[],

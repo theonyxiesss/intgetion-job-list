@@ -10,6 +10,7 @@ import {
   isReportEntityType,
   isReportReason,
   withoutHidden,
+  shouldRecordExternalApply,
   validateFeedbackEvent,
   type HiddenSets,
 } from "../rules";
@@ -84,6 +85,8 @@ describe("feedback rules (4.1, D110)", () => {
 
   it("checks type guards", () => {
     expect(isFeedbackAction("applied_external")).toBe(true);
+    expect(shouldRecordExternalApply(false)).toBe(true);
+    expect(shouldRecordExternalApply(true)).toBe(false);
     expect(isFeedbackAction("hidden_companyx")).toBe(false);
     expect(isHideReason("timezone")).toBe(true);
     expect(isHideReason("tz")).toBe(false);

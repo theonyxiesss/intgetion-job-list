@@ -62,6 +62,25 @@ export interface FeedbackInput {
   reason: string | null;
 }
 
+export async function hasFeedback(
+  userId: string,
+  jobId: string,
+  action: string,
+): Promise<boolean> {
+  const [row] = await getDb()
+    .select({ id: userJobFeedback.id })
+    .from(userJobFeedback)
+    .where(
+      and(
+        eq(userJobFeedback.userId, userId),
+        eq(userJobFeedback.jobId, jobId),
+        eq(userJobFeedback.action, action as never),
+      ),
+    )
+    .limit(1);
+  return row !== undefined;
+}
+
 export async function insertFeedback(input: FeedbackInput): Promise<void> {
   await getDb()
     .insert(userJobFeedback)
