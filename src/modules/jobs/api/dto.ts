@@ -26,13 +26,29 @@ export function toJobDto(job: JobRow) {
     workHoursEnd: job.workHoursEnd,
     minOverlapHours: job.minOverlapHours,
     salaryMin:
-      job.salaryMin === null || !moneyInfo.currency || !moneyInfo.period || !moneyInfo.basis
+      job.salaryMin === null ||
+      !moneyInfo.currency ||
+      !moneyInfo.period ||
+      !moneyInfo.basis
         ? null
-        : toMoneyDto(job.salaryMin, moneyInfo.currency, moneyInfo.period, moneyInfo.basis),
+        : toMoneyDto(
+            job.salaryMin,
+            moneyInfo.currency,
+            moneyInfo.period,
+            moneyInfo.basis,
+          ),
     salaryMax:
-      job.salaryMax === null || !moneyInfo.currency || !moneyInfo.period || !moneyInfo.basis
+      job.salaryMax === null ||
+      !moneyInfo.currency ||
+      !moneyInfo.period ||
+      !moneyInfo.basis
         ? null
-        : toMoneyDto(job.salaryMax, moneyInfo.currency, moneyInfo.period, moneyInfo.basis),
+        : toMoneyDto(
+            job.salaryMax,
+            moneyInfo.currency,
+            moneyInfo.period,
+            moneyInfo.basis,
+          ),
     applicationMethod: job.applicationMethod,
     applicationUrl: job.applicationUrl,
     applicationEmail: job.applicationEmail,
