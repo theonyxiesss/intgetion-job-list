@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { hasLocale } from "next-intl";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
 import { Roboto_Condensed } from "next/font/google";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
@@ -20,6 +24,23 @@ const display = Roboto_Condensed({
   display: "optional",
   variable: "--font-roboto-condensed",
 });
+/** Namespaces used by "use client" components; add one when a client component needs it. */
+const CLIENT_NAMESPACES = [
+  "nav",
+  "ui",
+  "locale",
+  "error",
+  "auth",
+  "applications",
+  "profile",
+  "companyVerify",
+  "admin",
+  "notifications",
+  "notificationSettings",
+  "jobActions",
+  "savedJobs",
+] as const;
+
 // Only an explicit "light" choice changes the default dark theme (D141).
 const themeScript = `(function(){try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light";}catch(e){}})();`;
 
@@ -58,6 +79,12 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   const t = await getTranslations();
+  // Only namespaces that client components read go into the page (D41b);
+  // the full catalogue added ~22 KB to every HTML document.
+  const all = await getMessages();
+  const clientMessages = Object.fromEntries(
+    CLIENT_NAMESPACES.filter((key) => key in all).map((key) => [key, all[key]]),
+  );
 
   return (
     <html
@@ -76,7 +103,7 @@ export default async function LocaleLayout({
         >
           {t("nav.skip")}
         </a>
-        <NextIntlClientProvider>
+        <NextIntlClientProvider messages={clientMessages}>
           <ToastProvider closeLabel={t("ui.close")}>
             <Header />
             <div id="content" tabIndex={-1} className="flex flex-1 flex-col">
