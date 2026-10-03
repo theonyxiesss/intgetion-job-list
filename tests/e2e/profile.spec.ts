@@ -1,4 +1,5 @@
-import { expect, test, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { expect, newContextWithIp, test } from "./fixtures";
 import { authLink, waitForMail } from "./mail";
 
 /**
@@ -76,7 +77,7 @@ test("profile completeness grows, and another candidate gets 404 without contact
   expect(ownBody).not.toHaveProperty("contacts");
   expect(JSON.stringify(ownBody)).not.toContain(contactEmail);
 
-  const otherContext = await browser.newContext();
+  const otherContext = await newContextWithIp(browser);
   const other = await otherContext.newPage();
   const otherEmail = uniqueEmail("profile-b");
   await registerWithPassword(other, otherEmail);
