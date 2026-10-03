@@ -271,7 +271,7 @@ export default async function JobsPage({
               <Button type="submit">{t("applyFilters")}</Button>
             </FilterShell>
           </form>
-          <div className="flex min-w-0 flex-col gap-4">
+          <div className="relative z-10 flex min-w-0 flex-col gap-4">
             <label className="sr-only" htmlFor="job-q">
               {t("search")}
             </label>
