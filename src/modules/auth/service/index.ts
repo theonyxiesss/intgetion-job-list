@@ -24,7 +24,7 @@ export type {
   CurrentUser,
 } from "./auth-service";
 export { toMeDto } from "../api/me-dto";
-export type { MeDto } from "../api/me-dto";
+export type { MeCompany, MeContext, MeDto } from "../api/me-dto";
 export {
   PASSWORD_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,

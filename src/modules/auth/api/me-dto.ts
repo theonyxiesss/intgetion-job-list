@@ -7,20 +7,35 @@ export type MeDto = {
   platformRole?: "admin";
   marketingOptIn: boolean;
   hasCandidateProfile: boolean;
-  companies: { id: string; name: string; role: string }[];
+  companies: MeCompany[];
 };
 
+export type MeCompany = { id: string; name: string; role: string };
+
 /**
- * Candidate profiles arrive in 2B and companies in 3A (D37); until those
- * tables exist the honest answer is "none".
+ * What other modules know about the user. The route handler gathers it
+ * through their services, so auth does not depend on them. Candidate
+ * profiles arrive in 2B; until then `hasCandidateProfile` is false (D37.6).
  */
-export function toMeDto(user: CurrentUser): MeDto {
+export type MeContext = {
+  companies: readonly MeCompany[];
+  hasCandidateProfile: boolean;
+};
+
+export function toMeDto(
+  user: CurrentUser,
+  context: MeContext = { companies: [], hasCandidateProfile: false },
+): MeDto {
   const dto: MeDto = {
     id: user.id,
     locale: user.locale,
     marketingOptIn: user.marketingOptIn,
-    hasCandidateProfile: false,
-    companies: [],
+    hasCandidateProfile: context.hasCandidateProfile,
+    companies: context.companies.map(({ id, name, role }) => ({
+      id,
+      name,
+      role,
+    })),
   };
   if (user.platformRole === "admin") dto.platformRole = "admin";
   return dto;

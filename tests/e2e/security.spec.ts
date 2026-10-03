@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 /** Subphase 1B: CSRF (P12), rate limits (P15), security headers and CSP. */
 

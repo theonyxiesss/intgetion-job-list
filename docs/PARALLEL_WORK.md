@@ -21,7 +21,7 @@
 | 4     | 5A                                          | Cursor      | 3B, 2B     | `cursor/5a`           | `0009_*` | D75–D79               |
 | 4     | 10A                                         | Claude Code | 3B         | `claude/10a`          | `0010_*` | D80–D84               |
 
-Claude Code между волнами сливает ветки, применяет миграции к облачной БД и чинит конфликты.
+Claude Code между волнами сливает ветки, применяет миграции к облачной БД и чинит конфликты. Для своей инфраструктурной работы вне подфаз Claude Code использует номера D46–D49.
 
 ## Правила
 
@@ -38,6 +38,7 @@ Claude Code между волнами сливает ветки, применя�
 4. **Решения — только свои номера D из таблицы.** Дописывай в конец `docs/DECISIONS.md`.
 5. **Чужие файлы не трогать.** Только Claude Code меняет: `src/proxy.ts`, `src/lib/http/**`, `src/lib/supabase/**`, `src/lib/auth-guards.ts`, `src/lib/rate-limit.ts`, `src/lib/audit.ts`, `src/lib/security-headers.ts`, `src/modules/auth/**`, `next.config.ts`, `.github/workflows/ci.yml`, `scripts/ci-*.sh`, `scripts/*-db.mjs`, `supabase/config.toml`. Нужно изменение там — опиши его в отчёте, не делай сам.
 6. **Общие файлы — минимально:** `src/db/schema/index.ts` (одна строка `export`), `src/messages/{en,ru}.json` (только свой ключ верхнего уровня, например `profile`, `company`, `jobs`; не переформатировать файл), `docs/ERD.md` (только свои таблицы), `MISSION_LOG.md` (только своя запись в конец). Новые npm-зависимости — только если без них нельзя, с объяснением в отчёте.
+   6a. **e2e-тесты** импортируют `test` и `expect` из `tests/e2e/fixtures.ts`, а не из `@playwright/test`: так у каждого теста свой IP и лимиты по IP не заканчиваются в CI (D46). Второй пользователь в тесте — `newContextWithIp(browser)` оттуда же. Лимиты раздела 6 для своей подфазы бери из `rateRules` в `src/lib/rate-limit.ts` (`jobCreateUnverified`, `jobCreateVerified`, `apply`, `report`, `botGuest`, `botUser` уже есть).
 7. **Чужие модули — только через `src/modules/<m>/service/index.ts`.** Guards — из `src/lib/auth-guards.ts`; `requireCandidate` и `requireMembership` принимают функцию поиска из сервиса твоего модуля (D38.2).
 8. **Облачная БД.** `pnpm db:migrate` на облако не запускать — это делает Claude Code после слияния. Проверка миграций с нуля — в CI (`supabase start`). Интеграционные тесты против облака — только читающие или убирающие за собой.
 9. **Коммиты** в свою ветку: `<подфаза>: <кратко>`, push в `origin <ветка>`, CI смотреть через `gh run watch`. Красный CI — чинить до отчёта. В `master` не пушить и не мерджить.

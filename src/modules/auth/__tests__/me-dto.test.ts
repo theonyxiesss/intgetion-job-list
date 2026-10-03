@@ -36,4 +36,22 @@ describe("toMeDto", () => {
     );
     expect("platformRole" in toMeDto(row)).toBe(false);
   });
+
+  it("lists companies with id, name and role only", () => {
+    const company = {
+      id: "33333333-3333-4333-8333-333333333333",
+      name: "Acme",
+      role: "owner",
+      domain: "acme.example.com",
+      status: "unverified",
+    };
+    const dto = toMeDto(row, {
+      companies: [company],
+      hasCandidateProfile: true,
+    });
+    expect(dto.companies).toEqual([
+      { id: company.id, name: "Acme", role: "owner" },
+    ]);
+    expect(dto.hasCandidateProfile).toBe(true);
+  });
 });

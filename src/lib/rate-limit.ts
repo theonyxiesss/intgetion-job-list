@@ -13,6 +13,19 @@ export const rateRules = {
   emailLink: { limit: 3, windowSeconds: 60 * 60 },
   /** registration, keyed by IP: 10 per hour */
   register: { limit: 10, windowSeconds: 60 * 60 },
+  // Below: section 6 limits for later subphases, ready before they start.
+  /** job creation by an unverified company, keyed by company id (3B) */
+  jobCreateUnverified: { limit: 5, windowSeconds: 24 * 60 * 60 },
+  /** job creation by a verified company, keyed by company id (3B) */
+  jobCreateVerified: { limit: 50, windowSeconds: 24 * 60 * 60 },
+  /** applications, keyed by user id (5A) */
+  apply: { limit: 30, windowSeconds: 24 * 60 * 60 },
+  /** job reports, keyed by user id (4B) */
+  report: { limit: 10, windowSeconds: 24 * 60 * 60 },
+  /** bot messages from a guest, keyed by IP + bot session (7A) */
+  botGuest: { limit: 30, windowSeconds: 24 * 60 * 60 },
+  /** bot messages from a user, keyed by user id (7A) */
+  botUser: { limit: 200, windowSeconds: 24 * 60 * 60 },
 } as const satisfies Record<string, RateRule>;
 
 /** Fixed window (D26): windows start at multiples of the window length. */

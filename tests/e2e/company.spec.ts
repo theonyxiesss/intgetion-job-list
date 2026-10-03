@@ -1,4 +1,5 @@
-import { expect, test, type Browser, type Page } from "@playwright/test";
+import type { Browser, Page } from "@playwright/test";
+import { expect, newContextWithIp, test } from "./fixtures";
 import { authLink, waitForMail } from "./mail";
 
 const sameOrigin = { origin: "http://127.0.0.1:3000" };
@@ -21,9 +22,7 @@ async function signUp(page: Page, email: string) {
 }
 
 async function newUserPage(browser: Browser) {
-  const context = await browser.newContext({
-    baseURL: "http://127.0.0.1:3000",
-  });
+  const context = await newContextWithIp(browser);
   const page = await context.newPage();
   await signUp(page, uniqueEmail("employer"));
   return { context, page };
@@ -44,6 +43,10 @@ test("P2: employer creates and edits a company; another user receives 404", asyn
   });
   expect(created.status()).toBe(201);
   const { company } = await created.json();
+  const me = await (await page.request.get("/api/me")).json();
+  expect(me.companies).toEqual([
+    { id: company.id, name: company.name, role: "owner" },
+  ]);
   const edited = await page.request.patch(`/api/companies/${company.id}`, {
     headers: sameOrigin,
     data: { description: "Edited by the company owner" },
