@@ -29,6 +29,12 @@ export async function Header() {
           {signedIn ? (
             <>
               <Link
+                href="/applications"
+                className="inline-flex min-h-11 items-center px-2"
+              >
+                {t("applications.nav")}
+              </Link>
+              <Link
                 href="/profile"
                 className="inline-flex min-h-11 items-center px-2"
               >

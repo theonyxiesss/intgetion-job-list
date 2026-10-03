@@ -359,3 +359,23 @@ The workspace directory name is not a valid npm package name (spaces and capital
 
 1. Ключи под верхнеуровневым `notifications`: `unsubscribe.link` и `types.<camelCase>.{inapp.{title,body}, email.{subject,body}}`; email-ключи только у типов с email-умолчанием. Соответствие «тип → i18nKey» — поле каталога, содержимое payload подставляется в params.
 2. Значения status/decision в params — сырые enum-строки; их человекочитаемые подписи — отдельные UI-ключи в полной 9A. Шаблоны React Email и отправка — в 9A; plural-формы ICU записаны прямо в строках en/ru.
+
+## D105 — запись отклика (5A)
+
+`transitionApplication` — единственный `UPDATE` колонки `applications.status`. Первый отклик — это `INSERT` со статусом `applied` и строка history с `from_status` null, не обновление. Нарушение частичного уникального индекса (SQLSTATE 23505) → 409 `ALREADY_APPLIED`: гонка двух apply не создаёт вторую активную строку. `enforceRateLimit("apply", userId)` вызывается после `checkApplyTarget`, `checkApplyEligibility` и `checkReapply`, поэтому неполный профиль и импортированная вакансия не тратят лимит 30/сутки. `GET /api/applications?as=employer` в 5A → 404: список работодателя — подфаза 5B. Без `as` и с `as=candidate` список — только отклики вызывающего.
+
+## D106 — кто видит отклик (5A)
+
+`GET /api/applications/:id` в 5A отдаёт отклик только кандидату-владельцу. Чужой id и не-uuid → 404. Автопросмотр (`applied` → `viewed`) не делается: это 5B. `PATCH /api/applications/:id/status` всегда идёт с `via = patch` в `transitionApplication`, поэтому `to = shortlisted` → 422 `EXPRESS_INTEREST_REQUIRED` (D75), а кандидат не может этим маршрутом поставить `withdrawn`. Актор PATCH: если `candidate_id` совпал с пользователем — `candidate`; иначе `findMemberRole`. Нет роли → 404, роль `member` → 403, `owner` / `admin` / `recruiter` → `employer`.
+
+## D107 — счётчик повтора (5A)
+
+Новая строка получает `reapply_count` 0, если истории пары нет, и 1, если единственная прошлая строка — `withdrawn` с нулём (D76). В базе `CHECK (reapply_count BETWEEN 0 AND 1)`. Вторая отмена не вставляет третью строку: `checkReapply` отвечает 409 `REAPPLY_LIMIT`.
+
+## D108 — что видит кандидат (5A)
+
+Публичный DTO отклика: `id`, `jobId`, `jobTitle`, `status`, `coverNote`, `reapplyCount`, `createdAt`. Полей риска и контактов нет. Страница `/[locale]/applications` группирует свои отклики по статусу и показывает отзыв, пока статус не `hired`, `rejected` или `withdrawn`. Строки интерфейса — только под ключом `applications`.
+
+## D109 — номер миграции (5A)
+
+Файл — `0009_applications.sql`, хотя `0007` (4A) и `0008` (8A) в этом дереве ещё нет. Скрипт миграций применяет файлы по имени, поэтому после `0006` выполняется `0009`. Пропуск номеров безопасен: отсутствующие файлы не требуются.
