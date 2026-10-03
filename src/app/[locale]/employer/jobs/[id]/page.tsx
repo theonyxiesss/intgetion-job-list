@@ -48,7 +48,7 @@ export default async function EmployerJobPage({
         {pipeline("open")}
       </Link>
       <Link
-        className="w-fit rounded-md border border-zinc-300 px-4 py-2"
+        className="w-fit rounded-md border border-line-strong px-4 py-2"
         href={`/${locale}/employer/jobs/${id}/edit`}
       >
         {t("edit")}

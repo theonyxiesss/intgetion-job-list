@@ -1,56 +1,46 @@
 "use client";
 
+import { Moon, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useSyncExternalStore } from "react";
+import { Button, Icon } from "@/components/ui";
 
 type Theme = "light" | "dark";
 
+/** Dark unless the user chose light explicitly (D141). */
 function readTheme(): Theme {
-  const stored = document.documentElement.dataset.theme;
-  if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  return document.documentElement.dataset.theme === "light" ? "light" : "dark";
 }
 
 function subscribe(onStoreChange: () => void) {
-  const media = window.matchMedia("(prefers-color-scheme: dark)");
-  media.addEventListener("change", onStoreChange);
   window.addEventListener("storage", onStoreChange);
-  return () => {
-    media.removeEventListener("change", onStoreChange);
-    window.removeEventListener("storage", onStoreChange);
-  };
+  return () => window.removeEventListener("storage", onStoreChange);
 }
 
 export function ThemeToggle() {
   const t = useTranslations("nav");
-  const theme = useSyncExternalStore(subscribe, readTheme, () => "light");
+  const theme = useSyncExternalStore(subscribe, readTheme, () => "dark");
+  const next: Theme = theme === "dark" ? "light" : "dark";
 
-  function choose(next: Theme) {
+  function choose() {
     document.documentElement.dataset.theme = next;
-    localStorage.setItem("theme", next);
+    try {
+      localStorage.setItem("theme", next);
+    } catch {
+      // Private mode: the choice lasts for this page only.
+    }
     window.dispatchEvent(new Event("storage"));
   }
 
+  const label = next === "light" ? t("themeLight") : t("themeDark");
   return (
-    <div className="flex gap-1" role="group" aria-label={t("theme")}>
-      <button
-        type="button"
-        className="min-h-11 rounded-md px-3"
-        aria-pressed={theme === "light"}
-        onClick={() => choose("light")}
-      >
-        {t("themeLight")}
-      </button>
-      <button
-        type="button"
-        className="min-h-11 rounded-md px-3"
-        aria-pressed={theme === "dark"}
-        onClick={() => choose("dark")}
-      >
-        {t("themeDark")}
-      </button>
-    </div>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={choose}
+      aria-label={label}
+      title={label}
+      icon={<Icon icon={theme === "dark" ? Sun : Moon} />}
+    />
   );
 }

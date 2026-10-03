@@ -574,3 +574,15 @@ Scam-паттерны (`src/config/scam-patterns.ts`) проверяются п�
 ## D129 — граница 9A (9A)
 
 Миграция `0013_notifications.sql`. Продюсеры `job.moderation_decided`, `report.decided`, `company.verification_decided` и `matches.digest` в 9A не вызываются: `notify` только экспортируется. В шапке одна новая ссылка на ленту, с числом непрочитанных.
+
+## D140 — дизайн-токены и запрет «сырых» цветов (UI-1)
+
+Цвета, шрифты, шкала текста и анимации — токены в `src/app/globals.css` (`--bg`, `--surface`, `--line`, `--fg`, `--fg-muted`, `--accent`, `--signal`, статусы) и Tailwind-утилиты на них (`bg-surface`, `text-fg-muted`, `border-line`, …), стили текста — классы `t-display-xl … t-data`. ESLint-правило `intgetion/no-raw-colors` запрещает палитру Tailwind (`bg-zinc-900`, `text-white`, …) и hex в классах во всех `src/**/*.tsx`, кроме `src/components/ui/**`. Шесть старых файлов с синими кнопками и серыми рамками переведены на токены механически. Старые имена `bg-background`/`text-foreground` оставлены алиасами до UI-2/UI-3.
+
+## D141 — тёмная тема по умолчанию, шрифты, иконки
+
+Тёмная тема — всегда, пока пользователь явно не выбрал светлую (`localStorage.theme = "light"`); системная тема больше не учитывается. Переключатель — одна кнопка-иконка. Шрифты — Roboto Condensed, Inter, JetBrains Mono через `next/font/google` (самохостинг на сборке, `font-src 'self'` в CSP не меняется), latin + cyrillic, mono без preload. Иконки — только `lucide-react` через `ui/icon.tsx` (stroke 1.5, 16/20/24).
+
+## D142 — UI-кит, шапка и витрина
+
+`src/components/ui/*` — компоненты раздела 8 `docs/DESIGN.md`; страницы собираются из них (`@/components/ui`). Кнопки-ссылки — `ButtonLink`; скрывать их по брейкпоинту нужно обёрткой, класс `hidden` на самой кнопке проигрывает её `inline-flex`. Шапка: на ≥ 1024 — навигация и иконки аккаунта (имена «Notifications», «Sign out» и т.д. сохранены для e2e и экранных дикторов), ниже — меню на `<dialog>`. Ссылка «к содержимому» ведёт на `#content`. Модальные окна — нативный `<dialog>` (фокус-ловушка и Esc от браузера). Витрина `/[locale]/dev/ui` показывает все компоненты; в production отдаёт 404, тексты в ней не переводятся (правило `no-hardcoded-jsx-text` отключено только в двух её файлах).

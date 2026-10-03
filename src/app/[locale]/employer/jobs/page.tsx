@@ -27,7 +27,7 @@ export default async function EmployerJobsPage({
       <header className="flex items-center justify-between gap-4">
         <h1 className="text-3xl font-semibold">{t("title")}</h1>
         <Link
-          className="rounded-md bg-blue-700 px-4 py-2 text-white"
+          className="rounded-md bg-accent px-4 py-2 text-accent-fg"
           href={`/${locale}/employer/jobs/new`}
         >
           {t("newJob")}
@@ -39,7 +39,7 @@ export default async function EmployerJobsPage({
             const dto = toJobDto(job);
             return (
               <li
-                className="rounded-lg border border-zinc-200 p-4"
+                className="rounded-lg border border-line p-4"
                 key={job.id}
               >
                 <Link

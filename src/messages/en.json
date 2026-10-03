@@ -60,7 +60,9 @@
     "empty": "No open positions right now."
   },
   "product": {
-    "name": "INTGETION JOB LIST"
+    "name": "INTGETION JOB LIST",
+    "wordmark": "INTGETION",
+    "wordmarkSub": "Job list"
   },
   "meta": {
     "description": "Remote work. Real matches."
@@ -75,11 +77,21 @@
     "login": "Sign in",
     "register": "Register",
     "logout": "Sign out",
-    "account": "Account"
+    "account": "Account",
+    "skip": "Skip to content",
+    "menu": "Menu",
+    "jobs": "Jobs",
+    "employers": "For employers",
+    "saved": "Saved jobs",
+    "admin": "Administration"
   },
   "locale": {
     "en": "English",
-    "ru": "Russian"
+    "ru": "Russian",
+    "short": {
+      "en": "EN",
+      "ru": "RU"
+    }
   },
   "home": {
     "tagline": "Remote work. Real matches.",
@@ -115,12 +127,15 @@
   },
   "notFound": {
     "title": "Page not found",
-    "body": "This address is not part of the platform."
+    "body": "This address is not part of the platform.",
+    "code": "404",
+    "home": "Back to home"
   },
   "error": {
     "title": "Something went wrong",
     "body": "The page could not be shown.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "code": "500"
   },
   "auth": {
     "loginTitle": "Sign in",
@@ -690,5 +705,25 @@
       "inappropriate": "Inappropriate content",
       "other": "Other"
     }
+  },
+  "footer": {
+    "candidates": "Candidates",
+    "employers": "Employers",
+    "account": "Account",
+    "company": "Company profile",
+    "contacts": "Open contacts",
+    "settings": "Notification settings",
+    "rights": "All rights reserved.",
+    "language": "Footer language"
+  },
+  "ui": {
+    "close": "Close",
+    "requestId": "Request ID",
+    "moreSkills": "+{count}",
+    "notSpecified": "Not specified",
+    "previous": "Back",
+    "next": "Next",
+    "copy": "Copy",
+    "copied": "Copied"
   }
 }

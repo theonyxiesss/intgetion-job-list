@@ -1,26 +1,38 @@
 "use client";
 
+import { RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Button, Container, Icon, OrbitBackdrop } from "@/components/ui";
 
 export default function LocaleError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const t = useTranslations("error");
+  const t = useTranslations();
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-4 py-10">
-      <h1 className="text-3xl font-semibold">{t("title")}</h1>
-      <p>{t("body")}</p>
-      <button
-        type="button"
-        className="min-h-11 w-fit rounded-md border border-current px-4"
-        onClick={reset}
-      >
-        {t("retry")}
-      </button>
+    <main className="relative flex flex-1 items-center overflow-hidden py-24">
+      <OrbitBackdrop faint />
+      <Container className="relative flex flex-col items-start gap-6">
+        <p className="t-data-l text-danger">{t("error.code")}</p>
+        <h1 className="t-display-l">{t("error.title")}</h1>
+        <p className="max-w-[48ch] text-fg-muted">{t("error.body")}</p>
+        <Button
+          variant="secondary"
+          onClick={reset}
+          icon={<Icon icon={RotateCcw} />}
+        >
+          {t("error.retry")}
+        </Button>
+        {error.digest && (
+          <p className="t-caption text-fg-subtle">
+            {t("ui.requestId")} <span className="t-data">{error.digest}</span>
+          </p>
+        )}
+      </Container>
     </main>
   );
 }

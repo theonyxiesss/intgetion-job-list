@@ -215,7 +215,7 @@ export function JobFeedbackActions({
             <button
               type="submit"
               disabled={busy}
-              className="min-h-11 rounded bg-blue-700 px-4 py-2 text-white"
+              className="min-h-11 rounded bg-accent px-4 py-2 text-accent-fg"
             >
               {text.confirm}
             </button>
@@ -268,7 +268,7 @@ export function JobFeedbackActions({
             <button
               type="submit"
               disabled={busy}
-              className="min-h-11 rounded bg-blue-700 px-4 py-2 text-white"
+              className="min-h-11 rounded bg-accent px-4 py-2 text-accent-fg"
             >
               {text.confirm}
             </button>

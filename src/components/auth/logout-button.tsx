@@ -1,10 +1,13 @@
 "use client";
 
+import { LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { Button, Icon } from "@/components/ui";
 import { useRouter } from "@/i18n/navigation";
 
-export function LogoutButton() {
+/** Sign out. `compact` shows only the icon (the name stays for AT). */
+export function LogoutButton({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("nav");
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -17,14 +20,24 @@ export function LogoutButton() {
     setPending(false);
   }
 
-  return (
-    <button
-      type="button"
+  return compact ? (
+    <Button
+      variant="ghost"
+      size="icon"
       onClick={logout}
-      disabled={pending}
-      className="inline-flex min-h-11 items-center px-2"
+      loading={pending}
+      aria-label={t("logout")}
+      title={t("logout")}
+      icon={<Icon icon={LogOut} />}
+    />
+  ) : (
+    <Button
+      variant="secondary"
+      onClick={logout}
+      loading={pending}
+      icon={<Icon icon={LogOut} />}
     >
       {t("logout")}
-    </button>
+    </Button>
   );
 }

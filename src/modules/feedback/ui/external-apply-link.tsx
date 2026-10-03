@@ -32,7 +32,7 @@ export function ExternalApplyLink({
 
   return (
     <a
-      className="inline-flex min-h-11 items-center self-start rounded bg-blue-700 px-4 py-3 text-white"
+      className="inline-flex min-h-11 items-center self-start rounded bg-accent px-4 py-3 text-accent-fg"
       href={href}
       rel="noreferrer"
       onClick={onClick}

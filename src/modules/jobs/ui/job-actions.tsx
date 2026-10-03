@@ -43,7 +43,7 @@ export function JobActions({
     <div className="flex flex-wrap gap-3">
       {actions.map((action) => (
         <button
-          className="rounded-md border border-zinc-300 px-4 py-2 disabled:opacity-60"
+          className="rounded-md border border-line-strong px-4 py-2 disabled:opacity-60"
           disabled={busy}
           key={action}
           onClick={() => void run(action)}

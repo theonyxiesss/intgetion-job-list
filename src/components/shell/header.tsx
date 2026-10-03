@@ -1,95 +1,154 @@
+import { Bell, Send, Shield, User } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { ButtonLink, Icon, Logo, cn } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
 import { requireUser } from "@/lib/auth-guards";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { countUnread } from "@/modules/notifications/service";
+import { LocaleSwitch } from "./locale-switch";
+import { MobileNav, type NavItem } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
 
+const iconLink =
+  "relative inline-flex size-11 items-center justify-center text-fg-muted transition-colors hover:text-fg";
+
+/** Site header (DESIGN.md 8.11). */
 export async function Header() {
   const t = await getTranslations();
   // Set by the proxy, which already checked the session (D41).
   const signedIn = hasSessionMark(await headers());
   let unread = 0;
+  let isAdmin = false;
   if (signedIn) {
     try {
       const user = await requireUser();
+      isAdmin = user.platformRole === "admin";
       unread = await countUnread(user.id);
     } catch {
       unread = 0;
     }
   }
 
+  const main: NavItem[] = [
+    { href: "/jobs", label: t("nav.jobs") },
+    { href: "/employer/jobs", label: t("nav.employers") },
+  ];
+  const account: NavItem[] = signedIn
+    ? [
+        { href: "/notifications", label: t("notifications.nav") },
+        { href: "/applications", label: t("applications.nav") },
+        { href: "/saved-jobs", label: t("nav.saved") },
+        { href: "/profile", label: t("profile.nav") },
+        ...(isAdmin ? [{ href: "/admin", label: t("nav.admin") }] : []),
+      ]
+    : [
+        { href: "/login", label: t("nav.login") },
+        { href: "/register", label: t("nav.register") },
+      ];
+
   return (
-    <header className="border-b border-current/15">
-      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-3 px-4 py-3">
-        <Link href="/" className="min-h-11 text-lg font-semibold">
-          {t("product.name")}
+    <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-sm">
+      <div className="mx-auto flex h-16 w-full max-w-[1376px] items-center gap-4 px-4 md:px-6 xl:px-12">
+        <Link
+          href="/"
+          aria-label={t("product.name")}
+          className="inline-flex min-h-11 items-center"
+        >
+          <Logo name={t("product.wordmark")} sub={t("product.wordmarkSub")} />
         </Link>
-        <nav aria-label={t("nav.main")} className="flex flex-1 gap-2">
-          <a href="#search" className="inline-flex min-h-11 items-center px-2">
-            {t("home.findJob")}
-          </a>
-          <a href="#post" className="inline-flex min-h-11 items-center px-2">
-            {t("home.postJob")}
-          </a>
-        </nav>
-        <nav aria-label={t("nav.account")} className="flex gap-1">
-          {signedIn ? (
-            <>
-              <Link
-                href="/notifications"
-                className="inline-flex min-h-11 items-center px-2"
-              >
-                {t("notifications.nav")}
-                {unread > 0 ? ` (${unread})` : ""}
-              </Link>
-              <Link
-                href="/applications"
-                className="inline-flex min-h-11 items-center px-2"
-              >
-                {t("applications.nav")}
-              </Link>
-              <Link
-                href="/profile"
-                className="inline-flex min-h-11 items-center px-2"
-              >
-                {t("profile.nav")}
-              </Link>
-              <LogoutButton />
-            </>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="inline-flex min-h-11 items-center px-2"
-              >
-                {t("nav.login")}
-              </Link>
-              <Link
-                href="/register"
-                className="inline-flex min-h-11 items-center px-2"
-              >
-                {t("nav.register")}
-              </Link>
-            </>
-          )}
-        </nav>
-        <nav aria-label={t("nav.language")} className="flex gap-1">
-          {routing.locales.map((locale) => (
+
+        <nav
+          aria-label={t("nav.main")}
+          className="ml-6 hidden flex-1 items-center gap-8 lg:flex"
+        >
+          {main.map((item) => (
             <Link
-              key={locale}
-              href="/"
-              locale={locale}
-              className="inline-flex min-h-11 items-center px-2"
+              key={item.href}
+              href={item.href}
+              className="t-nav inline-flex min-h-11 items-center text-fg-muted transition-colors hover:text-fg"
             >
-              {t(`locale.${locale}`)}
+              {item.label}
             </Link>
           ))}
         </nav>
-        <ThemeToggle />
+
+        <div className="ml-auto flex items-center gap-1">
+          <nav
+            aria-label={t("nav.account")}
+            className="flex items-center gap-1"
+          >
+            {signedIn ? (
+              <>
+                <Link
+                  href="/notifications"
+                  className={iconLink}
+                  title={t("notifications.nav")}
+                >
+                  <Icon icon={Bell} />
+                  <span className="sr-only">{t("notifications.nav")}</span>
+                  {unread > 0 && (
+                    <span className="t-data absolute top-1 right-0 min-w-4 bg-signal px-1 text-center text-[11px] leading-4 text-bg">
+                      {unread}
+                    </span>
+                  )}
+                </Link>
+                <Link
+                  href="/applications"
+                  className={cn(iconLink, "hidden lg:inline-flex")}
+                  title={t("applications.nav")}
+                >
+                  <Icon icon={Send} />
+                  <span className="sr-only">{t("applications.nav")}</span>
+                </Link>
+                <Link
+                  href="/profile"
+                  className={cn(iconLink, "hidden lg:inline-flex")}
+                  title={t("profile.nav")}
+                >
+                  <Icon icon={User} />
+                  <span className="sr-only">{t("profile.nav")}</span>
+                </Link>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className={cn(iconLink, "hidden lg:inline-flex")}
+                    title={t("nav.admin")}
+                  >
+                    <Icon icon={Shield} />
+                    <span className="sr-only">{t("nav.admin")}</span>
+                  </Link>
+                )}
+                <span className="hidden lg:inline-flex">
+                  <LogoutButton compact />
+                </span>
+              </>
+            ) : (
+              // A wrapper hides them: `hidden` on the link itself would lose
+              // to the button's own `inline-flex`.
+              <span className="hidden gap-1 sm:inline-flex">
+                <ButtonLink href="/login" variant="ghost">
+                  {t("nav.login")}
+                </ButtonLink>
+                <ButtonLink href="/register" variant="secondary">
+                  {t("nav.register")}
+                </ButtonLink>
+              </span>
+            )}
+          </nav>
+          <span className="hidden items-center lg:inline-flex">
+            <LocaleSwitch />
+            <ThemeToggle />
+          </span>
+          <MobileNav
+            items={[...main, ...account]}
+            label={t("nav.menu")}
+            openLabel={t("nav.menu")}
+            closeLabel={t("ui.close")}
+            signedIn={signedIn}
+          />
+        </div>
       </div>
     </header>
   );

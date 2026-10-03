@@ -105,7 +105,7 @@ export function JobForm({
       <label className="flex flex-col gap-1 text-sm" key={name}>
         {label}
         <input
-          className="rounded-md border border-zinc-300 px-3 py-2 text-zinc-950"
+          className="rounded-md border border-line-strong px-3 py-2 text-fg"
           type={type}
           value={form[name]}
           onChange={(event) => setForm({ ...form, [name]: event.target.value })}
@@ -120,7 +120,7 @@ export function JobForm({
       <label className="flex flex-col gap-1 text-sm">
         {text.description}
         <textarea
-          className="min-h-40 rounded-md border border-zinc-300 px-3 py-2 text-zinc-950"
+          className="min-h-40 rounded-md border border-line-strong px-3 py-2 text-fg"
           minLength={50}
           maxLength={20000}
           required
@@ -133,7 +133,7 @@ export function JobForm({
       <label className="flex flex-col gap-1 text-sm">
         {text.category}
         <select
-          className="rounded-md border border-zinc-300 px-3 py-2 text-zinc-950"
+          className="rounded-md border border-line-strong px-3 py-2 text-fg"
           value={form.category}
           onChange={(event) =>
             setForm({ ...form, category: event.target.value })
@@ -158,7 +158,7 @@ export function JobForm({
       <label className="flex flex-col gap-1 text-sm">
         {text.employmentType}
         <select
-          className="rounded-md border border-zinc-300 px-3 py-2 text-zinc-950"
+          className="rounded-md border border-line-strong px-3 py-2 text-fg"
           value={form.employmentType}
           onChange={(event) =>
             setForm({
@@ -175,7 +175,7 @@ export function JobForm({
       <label className="flex flex-col gap-1 text-sm">
         {text.workFormat}
         <select
-          className="rounded-md border border-zinc-300 px-3 py-2 text-zinc-950"
+          className="rounded-md border border-line-strong px-3 py-2 text-fg"
           value={form.workFormat}
           onChange={(event) =>
             setForm({
@@ -193,7 +193,7 @@ export function JobForm({
       <label className="flex flex-col gap-1 text-sm">
         {text.applicationMethod}
         <select
-          className="rounded-md border border-zinc-300 px-3 py-2 text-zinc-950"
+          className="rounded-md border border-line-strong px-3 py-2 text-fg"
           value={form.applicationMethod}
           onChange={(event) =>
             setForm({
@@ -219,7 +219,7 @@ export function JobForm({
       {field("salaryMax", text.salaryMax, "number")}
       {field("skills", text.skills)}
       <button
-        className="w-fit rounded-md bg-blue-700 px-4 py-2 font-medium text-white disabled:opacity-60"
+        className="w-fit rounded-md bg-accent px-4 py-2 font-medium text-accent-fg disabled:opacity-60"
         disabled={saving}
         type="submit"
       >
