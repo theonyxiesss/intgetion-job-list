@@ -56,8 +56,7 @@ export function scoreJobRisk(input: RiskInput): {
   if (input.applicationDomainMismatch)
     flags.push("application_domain_mismatch");
   if (input.scamPattern) flags.push("scam_pattern");
-  if (
-    input.salaryOutlier) flags.push("salary_outlier");
+  if (input.salaryOutlier) flags.push("salary_outlier");
   const weights: Record<string, number> = {
     new_creator: 2,
     free_email: 2,
