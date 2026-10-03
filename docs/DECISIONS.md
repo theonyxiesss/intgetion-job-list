@@ -554,3 +554,23 @@ Scam-паттерны (`src/config/scam-patterns.ts`) проверяются п�
 2. Авто-пауза (14.5): после подтверждения считаются подтверждённые жалобы на компанию и на любые её вакансии с `decided_at` за последние 30 дней. От 3 и выше все `published`-вакансии компании становятся `paused` (история с админом как actor, причина `auto_pause_reports`), компания встаёт в `moderation_queue` с причиной `reports_threshold` (одна `pending`-строка), пишется `company.auto_paused`. Отклонённые жалобы не считаются. Снять паузу работодатель может обычным `extend`, если админ не снимет вакансии или не заблокирует компанию.
 3. Trusted (D133): подсчёт жалоб теперь реальный — подтверждённые жалобы на компанию и её вакансии за 90 дней; fail closed больше не нужен.
 4. Уведомление `report.decided` жалобщику — точка вызова отмечена, отправка с 9A.
+
+## D125 — очередь писем это таблица, не pg-boss (9A)
+
+`notification_emails` нет в разделе 4.1. Строка: id, notification_id, batch_key, user_id, type, locale, status (`pending|sent|skipped|failed`), attempts, send_after, sent_at, error, payload. pg-boss отложен до 6B: ему нужна своя схема и права, которых нет у `app_rw`, а первый настоящий потребитель очереди — 6B. Рассылка — `GET /api/cron/notifications` с `Bearer CRON_SECRET` (без секрета 404), пачка до 50, `FOR UPDATE SKIP LOCKED`, пауза `2^(attempts-1)` минут, после 5 попыток `failed`. Состояние очереди только в таблице.
+
+## D126 — письма без React Email и без колонки email (9A)
+
+Тема и текст берутся из уже существующих ключей `notifications.types.*.email`, HTML собирается строкой. React Email не подключаем. `users` не хранит адрес входа (D7), модуль auth не меняем. Без `RESEND_API_KEY` или `EMAIL_FROM` отправитель — Noop и строка становится `skipped`, без сети. Если ключ есть, а адрес в `auth.users` не читается, строка `skipped` с `address_unavailable`, без повторных попыток. Пустой `UNSUBSCRIBE_SECRET` допустим только когда письмо реально не уходит (CI).
+
+## D127 — сбой уведомления не откатывает действие (9A)
+
+`safeNotify` вызывается после коммита отклика, смены статуса, reveal и закрытия вакансии. Ошибка пишется в лог и не пробрасывается. `failNextNotify` — только тестовый шов, чтобы проверить это в интеграции.
+
+## D128 — кому уходит событие (9A)
+
+Получатели — роли каталога 9A-lib. `application.created`: каждому событию своя строка in-app, а письмо — одно на получателя на час UTC. `matches.digest` письмо в 9A не ставится (это 9B). `job.closed` уходит кандидатам с живым откликом (`applied|viewed|shortlisted|interview|offer`), не `rejected`, `withdrawn` и `hired`. `job.expiring` — один раз на вакансию, пока до `expires_at` не больше трёх дней. Каталог `mutual_interest.revealed` шлёт кандидату и всем членам компании; формулировка D124 про recruiter+ относилась к 5C, до отправки.
+
+## D129 — граница 9A (9A)
+
+Миграция `0013_notifications.sql`. Продюсеры `job.moderation_decided`, `report.decided`, `company.verification_decided` и `matches.digest` в 9A не вызываются: `notify` только экспортируется. В шапке одна новая ссылка на ленту, с числом непрочитанных.

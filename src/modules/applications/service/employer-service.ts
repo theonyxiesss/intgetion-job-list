@@ -1,5 +1,6 @@
 import { validationError, notFound } from "@/lib/http";
 import { findMemberRole } from "@/modules/companies/service";
+import { safeNotify } from "@/modules/notifications/service";
 import {
   toEmployerApplicationDto,
   type EmployerApplicationDto,
@@ -105,8 +106,12 @@ export async function openApplication(
     via: "auto_view",
     actorId: userId,
   });
-  // 9A: enqueue employerNotification({ from: "applied", to: "viewed", via: "auto_view" }).
   employerNotification({ from: "applied", to: "viewed", via: "auto_view" });
+  await safeNotify("application.viewed", [row.candidateId], {
+    applicationId: row.id,
+    jobId: row.jobId,
+    jobTitle: row.jobTitle,
+  });
   return toEmployerApplicationDto({
     ...updated,
     jobTitle: row.jobTitle,

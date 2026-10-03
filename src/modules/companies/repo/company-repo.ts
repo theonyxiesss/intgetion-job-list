@@ -142,6 +142,22 @@ export async function findCompanyById(id: string): Promise<CompanyRow | null> {
   return rows[0] ?? null;
 }
 
+export async function listMemberUserIds(
+  companyId: string,
+  roles?: readonly ("owner" | "admin" | "recruiter" | "member")[],
+) {
+  const rows = await getDb()
+    .select({
+      userId: companyMembers.userId,
+      role: companyMembers.role,
+    })
+    .from(companyMembers)
+    .where(eq(companyMembers.companyId, companyId));
+  return rows
+    .filter((row) => !roles || roles.includes(row.role))
+    .map((row) => row.userId);
+}
+
 export async function findCompaniesForUser(userId: string) {
   return getDb()
     .select({

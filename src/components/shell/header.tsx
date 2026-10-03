@@ -3,13 +3,24 @@ import { headers } from "next/headers";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { requireUser } from "@/lib/auth-guards";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
+import { countUnread } from "@/modules/notifications/service";
 import { ThemeToggle } from "./theme-toggle";
 
 export async function Header() {
   const t = await getTranslations();
   // Set by the proxy, which already checked the session (D41).
   const signedIn = hasSessionMark(await headers());
+  let unread = 0;
+  if (signedIn) {
+    try {
+      const user = await requireUser();
+      unread = await countUnread(user.id);
+    } catch {
+      unread = 0;
+    }
+  }
 
   return (
     <header className="border-b border-current/15">
@@ -28,6 +39,13 @@ export async function Header() {
         <nav aria-label={t("nav.account")} className="flex gap-1">
           {signedIn ? (
             <>
+              <Link
+                href="/notifications"
+                className="inline-flex min-h-11 items-center px-2"
+              >
+                {t("notifications.nav")}
+                {unread > 0 ? ` (${unread})` : ""}
+              </Link>
               <Link
                 href="/applications"
                 className="inline-flex min-h-11 items-center px-2"

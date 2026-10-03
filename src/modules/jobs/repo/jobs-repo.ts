@@ -1,4 +1,4 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, gt, lte, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   companies,
@@ -418,6 +418,26 @@ export async function transitionOwnedJob(
     }
     return updated;
   });
+}
+
+/** Published jobs that expire within the next three days (section 15). */
+export async function listJobsExpiring(now = new Date()) {
+  const until = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+  return getDb()
+    .select({
+      id: jobs.id,
+      title: jobs.title,
+      createdBy: jobs.createdBy,
+      expiresAt: jobs.expiresAt,
+    })
+    .from(jobs)
+    .where(
+      and(
+        eq(jobs.status, "published"),
+        gt(jobs.expiresAt, now),
+        lte(jobs.expiresAt, until),
+      ),
+    );
 }
 
 export async function expireJobs(now = new Date()) {
