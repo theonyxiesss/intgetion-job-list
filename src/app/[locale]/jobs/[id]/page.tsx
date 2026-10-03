@@ -13,6 +13,8 @@ import { ExternalApplyLink } from "@/modules/feedback/ui/external-apply-link";
 import { JobFeedbackActions } from "@/modules/feedback/ui/job-feedback-actions";
 import { getJobForPublic } from "@/modules/jobs/service";
 
+export const dynamic = "force-dynamic";
+
 export default async function JobPage({
   params,
 }: {

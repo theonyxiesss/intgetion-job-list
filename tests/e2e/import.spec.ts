@@ -24,9 +24,8 @@ test("8A: fixture import publishes jobs that apply on the source site", async ({
   await page.goto("/en/jobs?q=Illustration%20Designer");
   const link = page.getByRole("link", { name: "Illustration Designer" });
   await expect(link.first()).toBeVisible();
-  // The card title stretches across the row. A coordinate click can land on
-  // the filter submit instead, so activate the link element itself.
-  await link.first().evaluate((node) => (node as HTMLAnchorElement).click());
+  const href = await link.first().getAttribute("href");
+  await page.goto(href ?? "/");
   await expect(page).toHaveURL(/\/en\/jobs\/[0-9a-f-]{36}$/);
   await expect(page.getByText("Imported from")).toBeVisible();
   await expect(page.getByRole("link", { name: "Apply" })).toHaveAttribute(
