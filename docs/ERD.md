@@ -1,6 +1,6 @@
 # ERD
 
-Generated from section 4.1 of `docs/TZ_INTGETION_v6.md`. Migrations 0001–0004 create users, infra, skills, and companies. Migration 0005 creates `candidate_profiles`, `candidate_skills`, `candidate_experience`, `candidate_languages`, `candidate_preferences`, and `candidate_contacts`. Later subphases add the remaining target model.
+Generated from section 4.1 of `docs/TZ_INTGETION_v6.md`. Migrations 0001–0004 create users, infra, skills, and companies. Migration 0005 creates `candidate_profiles`, `candidate_skills`, `candidate_experience`, `candidate_languages`, `candidate_preferences`, and `candidate_contacts`. Migration 0011 creates `saved_jobs`, `user_job_feedback`, and `reports`. Later subphases add the remaining target model.
 
 ```mermaid
 erDiagram

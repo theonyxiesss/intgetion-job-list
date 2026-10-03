@@ -1,10 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/modules/auth/service";
+import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 import {
   listPublishedJobsForCompany,
   getVisibleCompany,
 } from "@/modules/jobs/service";
+
+// Personalized: the viewer's hidden companies/jobs are filtered out (4B).
+export const dynamic = "force-dynamic";
 
 export default async function CompanyPage({
   params,
@@ -16,7 +22,19 @@ export default async function CompanyPage({
   const t = await getTranslations("companyPage");
   const company = await getVisibleCompany(slug);
   if (!company) notFound();
-  const jobs = await listPublishedJobsForCompany(company.id, locale);
+  let viewer: Parameters<typeof listPublishedJobsForCompany>[2] = {
+    hidden: null,
+  };
+  try {
+    const supabase = await createSupabaseServerClient();
+    const viewerUser = await getCurrentUser(supabase.auth);
+    if (viewerUser) {
+      viewer = { hidden: await getHiddenSetsForViewer(viewerUser.id) };
+    }
+  } catch {
+    // No request scope (prerender) → guest view.
+  }
+  const jobs = await listPublishedJobsForCompany(company.id, locale, viewer);
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-10">
       <header className="flex items-center gap-4">

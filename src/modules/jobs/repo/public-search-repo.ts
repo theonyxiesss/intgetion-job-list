@@ -226,3 +226,26 @@ export async function getPublicCompanyBySlug(slug: string) {
     .limit(1);
   return company ?? null;
 }
+
+/** Published rows for explicit ids, in arbitrary order (used by /saved-jobs). */
+export async function listPublicJobsByIds(ids: string[]) {
+  if (ids.length === 0) return [];
+  return getDb()
+    .select({
+      job: jobs,
+      company: companies,
+      sourceName: importSources.name,
+      sourceUrl: jobSources.sourceUrl,
+    })
+    .from(jobs)
+    .innerJoin(companies, eq(companies.id, jobs.companyId))
+    .leftJoin(jobSources, eq(jobSources.jobId, jobs.id))
+    .leftJoin(importSources, eq(importSources.id, jobSources.importSourceId))
+    .where(
+      and(
+        inArray(jobs.id, ids),
+        eq(jobs.status, "published"),
+        sql`${companies.status} not in ('suspended','rejected')`,
+      ),
+    );
+}
