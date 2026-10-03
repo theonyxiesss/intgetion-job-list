@@ -398,4 +398,4 @@ FTS использует сохранённый `tsvector` и GIN индекс. 
 
 ## D99 — ежедневные FX курсы и тестовые данные (4A)
 
-Курсы берутся из официального ECB SDMX CSV без ключа и записываются в `fx_rates` как units-per-USD по D66, преобразование quote values выполняется точным `numeric` в PostgreSQL. Seed 5k разрешён только для loopback DB и не запускается миграцией; perf harness измеряет HTTP p95 каталога отдельно.
+Курсы берутся из официального ECB SDMX CSV без ключа и записываются в `fx_rates` как units-per-USD по D66, преобразование quote values выполняется точным `numeric` в PostgreSQL. Seed 5k (`src/db/seed/jobs-4a.mjs`) разрешён только для loopback DB и не запускается миграцией; perf harness и integration check измеряют server-side p95 каталога отдельно.
