@@ -1,6 +1,6 @@
 # ERD
 
-Generated from section 4.1 of `docs/TZ_INTGETION_v6.md`. Migrations 0001–0004 create users, infra, skills, and companies; later subphases add the remaining target model.
+Generated from section 4.1 of `docs/TZ_INTGETION_v6.md`. Migrations 0001–0004 create users, infra, skills, and companies. Migration 0005 creates `candidate_profiles`, `candidate_skills`, `candidate_experience`, `candidate_languages`, `candidate_preferences`, and `candidate_contacts`. Later subphases add the remaining target model.
 
 ```mermaid
 erDiagram
@@ -111,6 +111,38 @@ erDiagram
     moderation_status status
     uuid mapped_skill_id FK
     timestamptz created_at
+  }
+  candidate_profiles {
+    uuid user_id PK
+    text full_name
+    text headline
+    text timezone
+    smallint completeness
+  }
+  candidate_skills {
+    uuid candidate_id PK
+    uuid skill_id PK
+    skill_level level
+  }
+  candidate_experience {
+    uuid id PK
+    uuid candidate_id FK
+    text company_name
+    date start_month
+  }
+  candidate_languages {
+    uuid candidate_id PK
+    char lang PK
+    cefr_level level
+  }
+  candidate_preferences {
+    uuid user_id PK
+    text categories
+  }
+  candidate_contacts {
+    uuid candidate_id PK
+    citext email
+    text phone
   }
 ```
 

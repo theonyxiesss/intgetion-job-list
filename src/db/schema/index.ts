@@ -1,3 +1,4 @@
+export * from "./candidates";
 export * from "./enums";
 export * from "./infra";
 export * from "./skills";
