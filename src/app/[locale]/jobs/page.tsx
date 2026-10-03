@@ -132,146 +132,145 @@ export default async function JobsPage({
     <main className="py-10 md:py-16">
       <Container className="flex flex-col gap-8">
         <PageHeader title={t("title")} intro={t("subtitle")} />
-        <form
-          action=""
-          className="flex flex-col gap-8 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start"
-        >
-          <FilterShell
-            count={activeCount(raw)}
-            filtersLabel={t("filters")}
-            closeLabel={t("closeFilters")}
-          >
-            <Select
-              aria-label={t("category")}
-              name="category"
-              defaultValue={text(raw, "category")}
+        <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
+          <form id="catalog-filters" action="" className="flex flex-col gap-4">
+            <FilterShell
+              count={activeCount(raw)}
+              filtersLabel={t("filters")}
+              closeLabel={t("closeFilters")}
             >
-              <option value="">{t("anyCategory")}</option>
-              {categories.map((id) => (
-                <option key={id} value={id}>
-                  {categoryNames(id)}
-                </option>
-              ))}
-            </Select>
-            <Select
-              aria-label={t("skillsFilter")}
-              name="skills"
-              multiple
-              size={3}
-              defaultValue={
-                typeof raw.skills === "string"
-                  ? raw.skills.split(",")
-                  : (raw.skills ?? [])
-              }
-            >
-              {skillOptions.map((skill) => (
-                <option key={skill.id} value={skill.id}>
-                  {skill.name}
-                </option>
-              ))}
-            </Select>
-            <Select
-              aria-label={t("format")}
-              name="workFormat"
-              defaultValue={text(raw, "workFormat")}
-            >
-              <option value="">{t("any")}</option>
-              <option value="remote">{t("remote")}</option>
-              <option value="hybrid">{t("hybrid")}</option>
-              <option value="onsite">{t("onsite")}</option>
-            </Select>
-            <Select
-              aria-label={t("employment")}
-              name="employmentType"
-              defaultValue={text(raw, "employmentType")}
-            >
-              <option value="">{t("anyEmployment")}</option>
-              <option value="full_time">{t("full_time")}</option>
-              <option value="part_time">{t("part_time")}</option>
-              <option value="contract">{t("contract")}</option>
-            </Select>
-            <Input
-              aria-label={t("country")}
-              name="country"
-              defaultValue={text(raw, "country")}
-              placeholder={t("country")}
-              maxLength={2}
-            />
-            <Input
-              aria-label={t("timezone")}
-              name="tzOverlapWith"
-              defaultValue={text(raw, "tzOverlapWith")}
-              placeholder={t("timezoneExample")}
-            />
-            <Input
-              aria-label={t("minimumOverlap")}
-              name="minOverlap"
-              type="number"
-              min="0"
-              max="12"
-              defaultValue={text(raw, "minOverlap") || "3"}
-            />
-            <Input
-              aria-label={t("salaryMin")}
-              name="salaryMin"
-              inputMode="numeric"
-              defaultValue={text(raw, "salaryMin")}
-              placeholder={t("salaryMin")}
-            />
-            <Input
-              aria-label={t("currency")}
-              name="currency"
-              defaultValue={text(raw, "currency")}
-              placeholder={t("currencyExample")}
-              maxLength={3}
-            />
-            <Select
-              aria-label={t("period")}
-              name="period"
-              defaultValue={text(raw, "period") || "month"}
-            >
-              <option value="hour">{t("hour")}</option>
-              <option value="month">{t("month")}</option>
-              <option value="year">{t("year")}</option>
-            </Select>
-            <Select
-              aria-label={t("basis")}
-              name="basis"
-              defaultValue={text(raw, "basis") || "gross"}
-            >
-              <option value="gross">{t("gross")}</option>
-              <option value="net">{t("net")}</option>
-            </Select>
-            <Select
-              aria-label={t("sourceFilter")}
-              name="source"
-              defaultValue={text(raw, "source")}
-            >
-              <option value="">{t("anySource")}</option>
-              <option value="internal">{t("internal")}</option>
-              <option value="imported">{t("imported")}</option>
-            </Select>
-            <Select
-              aria-label={t("postedWithinLabel")}
-              name="postedWithin"
-              defaultValue={text(raw, "postedWithin")}
-            >
-              <option value="">{t("anyDate")}</option>
-              <option value="1">{t("day")}</option>
-              <option value="7">{t("week")}</option>
-              <option value="30">{t("monthPosted")}</option>
-            </Select>
-            <Select
-              aria-label={t("sort")}
-              name="sort"
-              defaultValue={text(raw, "sort") || "newest"}
-            >
-              <option value="newest">{t("newest")}</option>
-              <option value="relevance">{t("relevance")}</option>
-              <option value="salary">{t("highestSalary")}</option>
-            </Select>
-            <Button type="submit">{t("applyFilters")}</Button>
-          </FilterShell>
+              <Select
+                aria-label={t("category")}
+                name="category"
+                defaultValue={text(raw, "category")}
+              >
+                <option value="">{t("anyCategory")}</option>
+                {categories.map((id) => (
+                  <option key={id} value={id}>
+                    {categoryNames(id)}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                aria-label={t("skillsFilter")}
+                name="skills"
+                multiple
+                size={3}
+                defaultValue={
+                  typeof raw.skills === "string"
+                    ? raw.skills.split(",")
+                    : (raw.skills ?? [])
+                }
+              >
+                {skillOptions.map((skill) => (
+                  <option key={skill.id} value={skill.id}>
+                    {skill.name}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                aria-label={t("format")}
+                name="workFormat"
+                defaultValue={text(raw, "workFormat")}
+              >
+                <option value="">{t("any")}</option>
+                <option value="remote">{t("remote")}</option>
+                <option value="hybrid">{t("hybrid")}</option>
+                <option value="onsite">{t("onsite")}</option>
+              </Select>
+              <Select
+                aria-label={t("employment")}
+                name="employmentType"
+                defaultValue={text(raw, "employmentType")}
+              >
+                <option value="">{t("anyEmployment")}</option>
+                <option value="full_time">{t("full_time")}</option>
+                <option value="part_time">{t("part_time")}</option>
+                <option value="contract">{t("contract")}</option>
+              </Select>
+              <Input
+                aria-label={t("country")}
+                name="country"
+                defaultValue={text(raw, "country")}
+                placeholder={t("country")}
+                maxLength={2}
+              />
+              <Input
+                aria-label={t("timezone")}
+                name="tzOverlapWith"
+                defaultValue={text(raw, "tzOverlapWith")}
+                placeholder={t("timezoneExample")}
+              />
+              <Input
+                aria-label={t("minimumOverlap")}
+                name="minOverlap"
+                type="number"
+                min="0"
+                max="12"
+                defaultValue={text(raw, "minOverlap") || "3"}
+              />
+              <Input
+                aria-label={t("salaryMin")}
+                name="salaryMin"
+                inputMode="numeric"
+                defaultValue={text(raw, "salaryMin")}
+                placeholder={t("salaryMin")}
+              />
+              <Input
+                aria-label={t("currency")}
+                name="currency"
+                defaultValue={text(raw, "currency")}
+                placeholder={t("currencyExample")}
+                maxLength={3}
+              />
+              <Select
+                aria-label={t("period")}
+                name="period"
+                defaultValue={text(raw, "period") || "month"}
+              >
+                <option value="hour">{t("hour")}</option>
+                <option value="month">{t("month")}</option>
+                <option value="year">{t("year")}</option>
+              </Select>
+              <Select
+                aria-label={t("basis")}
+                name="basis"
+                defaultValue={text(raw, "basis") || "gross"}
+              >
+                <option value="gross">{t("gross")}</option>
+                <option value="net">{t("net")}</option>
+              </Select>
+              <Select
+                aria-label={t("sourceFilter")}
+                name="source"
+                defaultValue={text(raw, "source")}
+              >
+                <option value="">{t("anySource")}</option>
+                <option value="internal">{t("internal")}</option>
+                <option value="imported">{t("imported")}</option>
+              </Select>
+              <Select
+                aria-label={t("postedWithinLabel")}
+                name="postedWithin"
+                defaultValue={text(raw, "postedWithin")}
+              >
+                <option value="">{t("anyDate")}</option>
+                <option value="1">{t("day")}</option>
+                <option value="7">{t("week")}</option>
+                <option value="30">{t("monthPosted")}</option>
+              </Select>
+              <Select
+                aria-label={t("sort")}
+                name="sort"
+                defaultValue={text(raw, "sort") || "newest"}
+              >
+                <option value="newest">{t("newest")}</option>
+                <option value="relevance">{t("relevance")}</option>
+                <option value="salary">{t("highestSalary")}</option>
+              </Select>
+              <Button type="submit">{t("applyFilters")}</Button>
+            </FilterShell>
+          </form>
           <div className="flex min-w-0 flex-col gap-4">
             <label className="sr-only" htmlFor="job-q">
               {t("search")}
@@ -279,6 +278,7 @@ export default async function JobsPage({
             <Input
               id="job-q"
               name="q"
+              form="catalog-filters"
               defaultValue={text(raw, "q")}
               placeholder={t("search")}
             />
@@ -314,7 +314,7 @@ export default async function JobsPage({
               </Link>
             ) : null}
           </div>
-        </form>
+        </div>
       </Container>
     </main>
   );
