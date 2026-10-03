@@ -42,7 +42,9 @@ export function ApplicationList({ items }: { items: ApplicationListItem[] }) {
           className="flex flex-col gap-2 border border-line p-4"
         >
           <h3 className="t-h3">{item.jobTitle}</h3>
-          <p className="t-label text-fg-muted">{t(`status.${item.status}`)}</p>
+          <h2 className="t-label text-fg-muted">
+            {t(`status.${item.status}`)}
+          </h2>
           {item.canWithdraw ? (
             <button
               type="button"
