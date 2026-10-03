@@ -2,13 +2,17 @@ import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { EmployerStatusActions } from "@/components/applications/employer-status-actions";
+import { ExpressInterestButton } from "@/components/applications/express-interest-button";
 import { HttpError } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import {
+  contactsOpen,
   employerMayOpen,
   employerPatchTargets,
+  expressInterestPlan,
   openApplication,
+  readApplicationContacts,
 } from "@/modules/applications/service";
 import { getCandidateForViewer } from "@/modules/candidates/service";
 
@@ -24,6 +28,8 @@ export default async function EmployerApplicationPage({
   if (!user) redirect(`/${locale}/login`);
 
   const t = await getTranslations("employerApplications");
+  const interest = await getTranslations("expressInterest");
+  const contactsText = await getTranslations("contacts");
   let application;
   try {
     application = await openApplication(user.id, id);
@@ -41,6 +47,14 @@ export default async function EmployerApplicationPage({
   }
 
   const targets = employerPatchTargets(application.status);
+  let contacts = null;
+  if (contactsOpen(application.status)) {
+    try {
+      contacts = await readApplicationContacts(user.id, application.id);
+    } catch (error) {
+      if (!(error instanceof HttpError) || error.status !== 404) throw error;
+    }
+  }
   const actions = t.raw("actions") as Record<
     (typeof targets)[number] | "processing" | "error",
     string
@@ -81,6 +95,24 @@ export default async function EmployerApplicationPage({
           <p>{t("noProfile")}</p>
         )}
       </section>
+      {expressInterestPlan(application.status, false) === "commit" ? (
+        <ExpressInterestButton
+          applicationId={application.id}
+          label={interest("button")}
+          processing={interest("processing")}
+          error={interest("error")}
+        />
+      ) : null}
+      {contacts ? (
+        <section className="flex flex-col gap-1">
+          <h2 className="text-xl font-semibold">{contactsText("title")}</h2>
+          <p>{contacts.email}</p>
+          {contacts.phone ? <p>{contacts.phone}</p> : null}
+          {contacts.telegram ? <p>{contacts.telegram}</p> : null}
+          {contacts.linkedinUrl ? <p>{contacts.linkedinUrl}</p> : null}
+          {contacts.websiteUrl ? <p>{contacts.websiteUrl}</p> : null}
+        </section>
+      ) : null}
       <EmployerStatusActions
         applicationId={application.id}
         targets={targets}
