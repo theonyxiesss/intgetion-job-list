@@ -239,7 +239,10 @@ export async function listPublicJobsByIds(ids: string[]) {
     })
     .from(jobs)
     .innerJoin(companies, eq(companies.id, jobs.companyId))
-    .leftJoin(jobSources, eq(jobSources.jobId, jobs.id))
+    .leftJoin(
+      jobSources,
+      and(eq(jobSources.jobId, jobs.id), eq(jobSources.isPrimary, true)),
+    )
     .leftJoin(importSources, eq(importSources.id, jobSources.importSourceId))
     .where(
       and(
