@@ -1,4 +1,5 @@
-import { expect, newContextWithIp, test, type Page } from "./fixtures";
+import { expect, newContextWithIp, test } from "./fixtures";
+import type { Page } from "@playwright/test";
 import { authLink, waitForMail } from "./mail";
 
 const sameOrigin = { origin: "http://127.0.0.1:3000" };

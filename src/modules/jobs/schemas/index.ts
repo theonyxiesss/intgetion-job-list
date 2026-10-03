@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidTimeZone } from "@/lib/tz";
 import { SKILL_CATEGORIES } from "@/modules/taxonomy/service";
 
 const minor = z
@@ -30,14 +31,7 @@ const ianaTimezone = z
   .string()
   .trim()
   .max(64)
-  .refine((value) => {
-    try {
-      new Intl.DateTimeFormat("en", { timeZone: value });
-      return true;
-    } catch {
-      return false;
-    }
-  }, "invalid_iana_timezone");
+  .refine(isValidTimeZone, "invalid_iana_timezone");
 
 export const jobFields = z.object({
   companyId: z.string().uuid(),

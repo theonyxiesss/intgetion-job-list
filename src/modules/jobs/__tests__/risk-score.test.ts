@@ -12,7 +12,7 @@ const clean = {
   similarDescriptionInOtherCompany: false,
   applicationDomainMismatch: false,
   scamPattern: false,
-  salaryOverCategoryMedianTimes: null,
+  salaryOutlier: false,
 };
 
 describe("job risk-score 14.3", () => {
@@ -26,7 +26,7 @@ describe("job risk-score 14.3", () => {
         similarDescriptionInOtherCompany: true,
         applicationDomainMismatch: true,
         scamPattern: true,
-        salaryOverCategoryMedianTimes: 3.1,
+        salaryOutlier: true,
       }),
     ).toEqual({
       score: 17,
@@ -48,7 +48,7 @@ describe("job risk-score 14.3", () => {
         ...clean,
         creatorAgeHours: 24,
         companyJobsLast24Hours: 4,
-        salaryOverCategoryMedianTimes: 3,
+        salaryOutlier: false,
       }),
     ).toEqual({ score: 0, flags: [] });
     expect(isFreeEmailDomain("person@GMAIL.com")).toBe(true);
