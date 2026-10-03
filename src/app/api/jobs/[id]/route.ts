@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { toJobDto } from "@/modules/jobs/api/dto";
 import { patchJobInput } from "@/modules/jobs/schemas";
+import { getJobForPublic } from "@/modules/jobs/service";
 import {
   findMemberRole,
   findOwnedJob,
@@ -11,6 +12,22 @@ import {
 } from "@/modules/jobs/service";
 
 const recruiterRoles = ["owner", "admin", "recruiter"] as const;
+
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await context.params;
+    let userId: string | undefined;
+    let isAdmin = false;
+    try {
+      const supabase = await createSupabaseServerClient();
+      const user = await getCurrentUser(supabase.auth);
+      userId = user?.id;
+      isAdmin = user?.platformRole === "admin";
+    } catch { /* Public listing remains available to guests. */ }
+    const job = await getJobForPublic(id, { userId, isAdmin, locale: request.headers.get("accept-language")?.startsWith("ru") ? "ru" : "en" });
+    return job ? Response.json({ job }) : Response.json({ error: { code: "NOT_FOUND", message: "Not found" } }, { status: 404 });
+  } catch (error) { return toErrorResponse(error); }
+}
 
 export async function PATCH(
   request: Request,

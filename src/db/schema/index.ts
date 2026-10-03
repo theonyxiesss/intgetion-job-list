@@ -6,3 +6,5 @@ export * from "./skills";
 export * from "./users";
 export * from "./companies";
 export * from "./jobs";
+export * from "./fx-rates";
+export * from "./import-sources";

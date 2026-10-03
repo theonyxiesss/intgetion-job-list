@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/expire-jobs",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/fx-rates",
+      "schedule": "15 16 * * *"
     }
   ]
 }

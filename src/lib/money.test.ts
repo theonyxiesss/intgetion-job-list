@@ -4,6 +4,7 @@ import {
   CURRENCY_PATTERN,
   divRoundHalfEven,
   formatRateToUsd,
+  formatMoneyDto,
   InvalidMoneyError,
   jobSalaryReference,
   parseMoneyDto,
@@ -93,6 +94,13 @@ describe("big amounts beyond 2^53 (D19)", () => {
       candMonthlyMinor: BigInt(1),
       currency: USD,
     });
+  });
+});
+
+describe("formatMoneyDto", () => {
+  it("formats minor units using locale currency precision without a number conversion", () => {
+    expect(formatMoneyDto({ amountMinor: "12345678", currency: "USD", period: "month", basis: "gross" }, "en-US")).toBe("$123,456.78");
+    expect(formatMoneyDto({ amountMinor: "12345", currency: "JPY", period: "month", basis: "net" }, "en-US")).toBe("¥12,345");
   });
 });
 
