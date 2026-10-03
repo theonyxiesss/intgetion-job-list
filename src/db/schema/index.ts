@@ -12,3 +12,4 @@ export * from "./import-sources";
 export * from "./import-runs";
 export * from "./verifications";
 export * from "./feedback";
+export * from "./matching";
