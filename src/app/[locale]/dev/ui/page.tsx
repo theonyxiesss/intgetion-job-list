@@ -6,8 +6,10 @@ import {
   Alert,
   Badge,
   Button,
+  ButtonLink,
   Choice,
   Container,
+  CountUp,
   EmptyState,
   ErrorState,
   Field,
@@ -17,6 +19,8 @@ import {
   LinkTabs,
   OrbitBackdrop,
   PageHeader,
+  Reveal,
+  navForward,
   Select,
   Skeleton,
   Stat,
@@ -312,6 +316,50 @@ export default async function UiShowcase({
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-6 w-2/3" />
             <Skeleton className="h-4 w-1/3" />
+          </div>
+        </Block>
+
+        <Block title="Motion">
+          <p className="text-fg-muted">
+            Scroll: these blocks fade in once, staggered; the numbers count up.
+          </p>
+          <dl className="flex gap-12">
+            <Stat
+              large
+              label="Jobs"
+              value={<CountUp value={5128} locale={locale} />}
+            />
+            <Stat
+              large
+              label="Companies"
+              value={<CountUp value={412} locale={locale} />}
+            />
+          </dl>
+          <div className="grid gap-4 md:grid-cols-3">
+            {["01", "02", "03", "04", "05", "06"].map((n, i) => (
+              <Reveal key={n} index={i} className="border border-line p-6">
+                <p className="t-data-l text-fg-muted">{n}</p>
+                <p className="t-h3 mt-4">Step {n}</p>
+              </Reveal>
+            ))}
+          </div>
+          <LinkTabs
+            label="Tab morph demo"
+            indicatorName="demo-tab-indicator"
+            items={[
+              { label: "Grid", href: "/dev/ui", active: true },
+              { label: "Jobs page", href: "/jobs", active: false },
+            ]}
+          />
+          <div className="flex gap-3">
+            <ButtonLink
+              href="/jobs"
+              variant="secondary"
+              trailingIcon={<Icon icon={ArrowRight} />}
+              {...navForward}
+            >
+              Forward slide
+            </ButtonLink>
           </div>
         </Block>
 

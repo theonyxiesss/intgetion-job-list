@@ -2,7 +2,9 @@ import { Bell, Send, Shield, User } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { LogoutButton } from "@/components/auth/logout-button";
-import { ButtonLink, Icon, Logo, cn } from "@/components/ui";
+import { ButtonLink, Icon, Logo, ScrollFrame, cn } from "@/components/ui";
+import { Suspense } from "react";
+import { NavProgress } from "./nav-progress";
 import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth-guards";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
@@ -49,7 +51,7 @@ export async function Header() {
       ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-bg/90 backdrop-blur-sm">
+    <ScrollFrame className="sticky top-0 z-40 border-b border-line bg-bg transition-colors duration-200 data-[scrolled]:bg-surface">
       <div className="mx-auto flex h-16 w-full max-w-[1376px] items-center gap-4 px-4 md:px-6 xl:px-12">
         <Link
           href="/"
@@ -150,6 +152,9 @@ export async function Header() {
           />
         </div>
       </div>
-    </header>
+      <Suspense>
+        <NavProgress />
+      </Suspense>
+    </ScrollFrame>
   );
 }

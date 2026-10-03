@@ -229,8 +229,187 @@
   }
 }
 
+/* ---------- Motion (DESIGN.md 6) ---------- */
+
+/*
+ * The CSP forbids inline style attributes, so stagger positions come from
+ * data-i and the header's transition name from a class.
+ */
+[data-i="1"] {
+  --i: 1;
+}
+[data-i="2"] {
+  --i: 2;
+}
+[data-i="3"] {
+  --i: 3;
+}
+[data-i="4"] {
+  --i: 4;
+}
+[data-i="5"] {
+  --i: 5;
+}
+.vt-site-header {
+  view-transition-name: site-header;
+}
+
+:root {
+  --d-instant: 80ms;
+  --d-fast: 120ms;
+  --d-base: 200ms;
+  --d-slow: 400ms;
+}
+
+@keyframes ui-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes ui-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes ui-rise {
+  from {
+    transform: translateY(16px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes ui-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@keyframes ui-fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes ui-slide {
+  from {
+    translate: var(--slide-offset) 0;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
 .ui-fade-up {
-  animation: ui-fade-up 400ms var(--ease-out-expo) both;
+  animation: ui-fade-up var(--d-slow) var(--ease-out-expo) both;
+}
+
+/* Hero lines: only movement, never opacity — the LCP text shows at once. */
+.ui-rise {
+  animation: ui-rise var(--d-slow) var(--ease-out-expo) both;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+/* Staggered entry for list items and menu items: set --i on each. */
+.ui-stagger {
+  animation: ui-fade-up var(--d-slow) var(--ease-out-expo) both;
+  animation-delay: calc(min(var(--i, 0), 5) * 60ms);
+}
+
+.ui-fade-down {
+  animation: ui-fade-down var(--d-base) var(--ease-out-quint) both;
+}
+
+/* Scroll reveal (ui/reveal.tsx): hidden until it enters the viewport. */
+[data-reveal="pending"] {
+  opacity: 0;
+  transform: translateY(8px);
+}
+[data-reveal="shown"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--d-slow) var(--ease-out-expo),
+    transform var(--d-slow) var(--ease-out-expo);
+  transition-delay: calc(min(var(--i, 0), 5) * 60ms);
+}
+
+/* Dialogs and the mobile menu (DESIGN.md 6.5). */
+dialog[open] {
+  animation: ui-scale-in var(--d-base) var(--ease-out-quint);
+}
+dialog[open]::backdrop {
+  animation: ui-fade-in var(--d-base) linear;
+}
+dialog[open] .ui-menu-item {
+  animation: ui-fade-up var(--d-base) var(--ease-out-quint) both;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Page transitions (React <ViewTransition>, DESIGN.md 6.2). */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(root) {
+  animation: ui-fade-out var(--d-fast) linear both;
+}
+::view-transition-new(root) {
+  animation: ui-fade-in var(--d-base) linear both;
+}
+
+/* The header is the fixed reference point: it never animates. */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+/* Into the hierarchy and back: a 24 px slide with a fade. */
+::view-transition-old(.nav-forward) {
+  --slide-offset: -24px;
+  animation:
+    var(--d-fast) linear both ui-fade-out,
+    var(--d-base) var(--ease-out-quint) both ui-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 24px;
+  animation:
+    var(--d-base) linear var(--d-fast) both ui-fade-in,
+    var(--d-base) var(--ease-out-quint) both ui-slide;
+}
+::view-transition-old(.nav-back) {
+  --slide-offset: 24px;
+  animation:
+    var(--d-fast) linear both ui-fade-out,
+    var(--d-base) var(--ease-out-quint) both ui-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -24px;
+  animation:
+    var(--d-base) linear var(--d-fast) both ui-fade-in,
+    var(--d-base) var(--ease-out-quint) both ui-slide;
+}
+
+/* Shared elements (job title, company logo, tab underline). */
+::view-transition-group(.morph) {
+  animation-duration: var(--d-base);
+  animation-timing-function: var(--ease-out-quint);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -238,8 +417,20 @@
   *::before,
   *::after {
     animation-duration: 0ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+  [data-reveal="pending"] {
+    opacity: 1;
+    transform: none;
   }
 }

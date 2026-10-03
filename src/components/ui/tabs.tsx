@@ -1,6 +1,7 @@
 import type { ComponentProps } from "react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "./cn";
+import { Morph } from "./page-transition";
 
 export type TabItem = {
   label: string;
@@ -16,9 +17,12 @@ export type TabItem = {
 export function LinkTabs({
   label,
   items,
+  indicatorName = "tab-indicator",
 }: {
   label: string;
   items: TabItem[];
+  /** Unique per tab group on a page; the underline morphs under it. */
+  indicatorName?: string;
 }) {
   return (
     <nav aria-label={label} className="border-b border-line">
@@ -29,15 +33,21 @@ export function LinkTabs({
               href={item.href}
               aria-current={item.active ? "page" : undefined}
               className={cn(
-                "t-nav inline-flex min-h-11 items-center gap-2 border-b-2 whitespace-nowrap transition-colors",
-                item.active
-                  ? "border-accent text-fg"
-                  : "border-transparent text-fg-muted hover:text-fg",
+                "t-nav relative inline-flex min-h-11 items-center gap-2 whitespace-nowrap transition-colors duration-[120ms]",
+                item.active ? "text-fg" : "text-fg-muted hover:text-fg",
               )}
             >
               {item.label}
               {item.count !== undefined && (
                 <span className="t-data text-fg-subtle">{item.count}</span>
+              )}
+              {item.active && (
+                <Morph name={indicatorName}>
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-x-0 bottom-0 h-0.5 bg-accent"
+                  />
+                </Morph>
               )}
             </Link>
           </li>

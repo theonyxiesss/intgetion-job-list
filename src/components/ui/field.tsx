@@ -58,7 +58,11 @@ export function Field({
         </p>
       )}
       {error && (
-        <p id={errorId} role="alert" className="t-caption text-danger">
+        <p
+          id={errorId}
+          role="alert"
+          className="t-caption ui-fade-down text-danger"
+        >
           {error}
         </p>
       )}

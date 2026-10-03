@@ -38,10 +38,7 @@ export default async function EmployerJobsPage({
           {rows.map(({ job }) => {
             const dto = toJobDto(job);
             return (
-              <li
-                className="rounded-lg border border-line p-4"
-                key={job.id}
-              >
+              <li className="rounded-lg border border-line p-4" key={job.id}>
                 <Link
                   className="text-lg font-medium underline"
                   href={`/${locale}/employer/jobs/${job.id}`}

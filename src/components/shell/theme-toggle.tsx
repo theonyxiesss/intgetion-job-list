@@ -40,7 +40,14 @@ export function ThemeToggle() {
       onClick={choose}
       aria-label={label}
       title={label}
-      icon={<Icon icon={theme === "dark" ? Sun : Moon} />}
+      icon={
+        <span
+          key={theme}
+          className="inline-flex animate-[ui-fade-in_200ms_linear] transition-transform duration-200 group-hover:rotate-90"
+        >
+          <Icon icon={theme === "dark" ? Sun : Moon} />
+        </span>
+      }
     />
   );
 }

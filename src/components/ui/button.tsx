@@ -6,7 +6,7 @@ export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "md" | "lg" | "icon";
 
 const base =
-  "relative inline-flex shrink-0 items-center justify-center gap-2 overflow-hidden border font-display text-[14px] leading-none font-medium tracking-[0.14em] uppercase transition-colors duration-[120ms] ease-[var(--ease-out-quint)] disabled:cursor-not-allowed disabled:opacity-40 aria-disabled:cursor-not-allowed aria-disabled:opacity-40";
+  "group relative inline-flex shrink-0 items-center justify-center gap-2 overflow-hidden border font-display text-[14px] leading-none font-medium tracking-[0.14em] uppercase transition-[color,background-color,border-color,transform] duration-[120ms] ease-[var(--ease-out-quint)] active:scale-[0.98] disabled:active:scale-100 disabled:cursor-not-allowed disabled:opacity-40 aria-disabled:cursor-not-allowed aria-disabled:opacity-40";
 
 const variants: Record<ButtonVariant, string> = {
   primary:
@@ -41,6 +41,15 @@ function Progress() {
       className="absolute inset-x-0 bottom-0 h-px overflow-hidden"
     >
       <span className="block h-px w-1/2 animate-[ui-progress_900ms_linear_infinite] bg-current" />
+    </span>
+  );
+}
+
+/** Arrows move 4 px right on hover (DESIGN.md 6.4). */
+function Trailing({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex transition-transform duration-[120ms] group-hover:translate-x-1">
+      {children}
     </span>
   );
 }
@@ -82,7 +91,7 @@ export function Button({
     >
       {icon}
       {children}
-      {trailingIcon}
+      {trailingIcon && <Trailing>{trailingIcon}</Trailing>}
       {loading && <Progress />}
     </button>
   );
@@ -102,7 +111,7 @@ export function ButtonLink({
     <Link className={buttonClass(variant, size, className)} {...rest}>
       {icon}
       {children}
-      {trailingIcon}
+      {trailingIcon && <Trailing>{trailingIcon}</Trailing>}
     </Link>
   );
 }

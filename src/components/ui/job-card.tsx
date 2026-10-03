@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { Tag } from "./badge";
+import { Morph, navForward } from "./page-transition";
 import { cn } from "./cn";
 
 export type JobCardStat = { label: string; value: ReactNode; muted?: boolean };
@@ -22,6 +23,7 @@ export function JobCard({
   moreSkillsLabel,
   actions,
   compact = false,
+  transitionName,
 }: {
   href: string;
   title: string;
@@ -36,7 +38,18 @@ export function JobCard({
   moreSkillsLabel?: (hidden: number) => string;
   actions?: ReactNode;
   compact?: boolean;
+  /** Same name as the job page H1, e.g. `job-title-<id>`: the title morphs. */
+  transitionName?: string;
 }) {
+  const titleLink = (
+    <Link
+      href={href}
+      {...navForward}
+      className="outline-none after:absolute after:inset-0 after:content-['']"
+    >
+      {title}
+    </Link>
+  );
   const shown = skills.slice(0, 5);
   const hidden = skills.length - shown.length;
   return (
@@ -56,12 +69,11 @@ export function JobCard({
       )}
       <div className="flex flex-col gap-1 pr-0 md:pr-28">
         <h3 className="t-h3">
-          <Link
-            href={href}
-            className="outline-none after:absolute after:inset-0 after:content-['']"
-          >
-            {title}
-          </Link>
+          {transitionName ? (
+            <Morph name={transitionName}>{titleLink}</Morph>
+          ) : (
+            titleLink
+          )}
         </h3>
         {companyHref ? (
           <Link

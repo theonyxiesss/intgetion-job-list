@@ -64,12 +64,13 @@ export function MobileNav({
           />
         </div>
         <nav aria-label={label} className="flex flex-col px-4 py-6">
-          {items.map((item) => (
+          {items.map((item, i) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="t-h2 flex min-h-14 items-center border-b border-line"
+              data-i={Math.min(i, 5)}
+              className="t-h2 ui-menu-item flex min-h-14 items-center border-b border-line"
             >
               {item.label}
             </Link>
