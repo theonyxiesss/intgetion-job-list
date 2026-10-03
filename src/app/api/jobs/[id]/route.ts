@@ -13,7 +13,10 @@ import {
 
 const recruiterRoles = ["owner", "admin", "recruiter"] as const;
 
-export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: Request,
+  context: { params: Promise<{ id: string }> },
+) {
   try {
     const { id } = await context.params;
     let userId: string | undefined;
@@ -23,10 +26,25 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
       const user = await getCurrentUser(supabase.auth);
       userId = user?.id;
       isAdmin = user?.platformRole === "admin";
-    } catch { /* Public listing remains available to guests. */ }
-    const job = await getJobForPublic(id, { userId, isAdmin, locale: request.headers.get("accept-language")?.startsWith("ru") ? "ru" : "en" });
-    return job ? Response.json({ job }) : Response.json({ error: { code: "NOT_FOUND", message: "Not found" } }, { status: 404 });
-  } catch (error) { return toErrorResponse(error); }
+    } catch {
+      /* Public listing remains available to guests. */
+    }
+    const job = await getJobForPublic(id, {
+      userId,
+      isAdmin,
+      locale: request.headers.get("accept-language")?.startsWith("ru")
+        ? "ru"
+        : "en",
+    });
+    return job
+      ? Response.json({ job })
+      : Response.json(
+          { error: { code: "NOT_FOUND", message: "Not found" } },
+          { status: 404 },
+        );
+  } catch (error) {
+    return toErrorResponse(error);
+  }
 }
 
 export async function PATCH(

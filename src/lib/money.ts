@@ -137,11 +137,16 @@ export function parseMoneyDto(value: unknown): ParsedMoney {
 /** Formats a money DTO for display without converting minor units through a JS number. */
 export function formatMoneyDto(value: unknown, locale: string): string {
   const money = parseMoneyDto(value);
-  const formatter = new Intl.NumberFormat(locale, { style: "currency", currency: money.currency });
+  const formatter = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: money.currency,
+  });
   const fractionDigits = formatter.resolvedOptions().maximumFractionDigits ?? 2;
   const scale = BigInt(10) ** BigInt(fractionDigits);
   const whole = money.amountMinor / scale;
-  const fraction = (money.amountMinor % scale).toString().padStart(fractionDigits, "0");
+  const fraction = (money.amountMinor % scale)
+    .toString()
+    .padStart(fractionDigits, "0");
   const decimal = fractionDigits ? `${whole}.${fraction}` : whole.toString();
   // Intl's string input path preserves the exact decimal value; avoid Number's 2^53 limit.
   const formatExact = formatter.format as unknown as (value: string) => string;
