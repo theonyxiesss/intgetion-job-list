@@ -18,6 +18,7 @@
 | 2     | 7-lib: `src/lib/llm/**`, `evals/**`                  | Antigravity | —          | `antigravity/llm-lib` | нет      | D85–D89        |
 | 3     | 6A-score: `src/modules/matching/score/**`            | GLM         | —          | `glm/matching-score`  | нет      | D90–D94        |
 | 3     | 5A-rules: `src/modules/applications/**` (без таблиц) | Cursor      | 2B         | `cursor/5a-rules`     | нет      | D75–D79        |
+| 4     | 9A-lib: `src/modules/notifications/**` (без таблиц)  | GLM         | —          | `glm/notify-lib`      | нет      | D100–D104      |
 | 4     | 4A                                                   | Codex       | 3B         | `codex/4a`            | `0007_*` | D95–D99        |
 | 4     | 8A                                                   | Antigravity | 3B, 2A     | `antigravity/8a`      | `0008_*` | D70–D74        |
 | 4     | 5A                                                   | Cursor      | 3B, 2B     | `cursor/5a`           | `0009_*` | D75–D79        |

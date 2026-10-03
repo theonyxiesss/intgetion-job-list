@@ -170,3 +170,10 @@
 - Отклонения от ТЗ: D75 (код `EXPRESS_INTEREST_REQUIRED` и 409 вместо 403 для чужого актора), D76 (трактовка «второй отмены» и `reapply_count`), D77 (59 недостижимо формулой 11.3; `missing[]` — ключи `profile.missing.*`), D78 (imported проверяется раньше статуса), D79 (срез без записи)
 - OPEN QUESTION: нет
 - Следующая подфаза: полная 5A (3B уже в `master`). Для этого агента — стоп до явной команды.
+
+## [2026-10-03] — интеграция 6A-score (GLM) и 5A-rules (Cursor) — DONE
+
+- Приняты после ревью: чистый скоринг matching v1 (`src/modules/matching/score/`, D90–D94; `toPublicMatch` отдаёт только округлённый score и до 4 пунктов explain — 5.3) и чистые правила откликов (`src/modules/applications/service/`, D75–D79). 5A-rules перебазирована на master после 6A-score (конфликты только в DECISIONS/MISSION_LOG).
+- Команды проверки: unit 278 passed; `gh run watch 37123697966` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37123697966 — e2e 25 passed, медиана LCP 1698 мс.
+- Замечание на 6A: снимок вакансии прикрепляется к результату через модульный `WeakMap` в `score/explain.ts` — передавать явно.
+- Следующее: GLM — 9A-lib; Cursor — 5A; Antigravity — 7-lib, затем 8A; Codex — 4A; Claude Code — 10A (вторая часть).
