@@ -248,3 +248,9 @@
 - Перебазирована на master с 8A (склейка D70–D74 и D120–D124, записей лога), CI 37132657467 → success, влито fast-forward. Миграция 0012 применена к облаку, `pnpm db:verify` → deny-all на 27 таблицах.
 - Замечание на 10C: `application_reveals.revealed_by` ссылается на `users` без `ON DELETE` — удаление/анонимизация пользователя должна это учесть.
 - Следующее: Cursor — 9A (ветка от `cursor/5c`, теперь можно сразу от `origin/master`).
+
+## [2026-10-03] — 10A, вторая часть: очередь модерации, снятие вакансий, панель импорта (Claude Code) — IN REVIEW
+
+- `/api/admin/queue` + decide, `/api/admin/jobs` + remove, `/api/admin/import/sources|runs`, страницы `/admin/moderation`, `/admin/jobs`, `/admin/import`, счётчик очереди на `/admin` (D82, D83). Миграции нет.
+- Тесты: unit `planDecision`/`isOverdue`; integration — порядок и overdue, отказ без причины, одобрение с закрытием дублей строки и 409 при повторе, возврат ложного scam-отклонения импорта, отказ компании-дубля, снятие вакансии с аудитом; e2e P7 расширен новыми страницами и API.
+- Осталось в 10A: жалобы и авто-пауза (D84) — после 4B.

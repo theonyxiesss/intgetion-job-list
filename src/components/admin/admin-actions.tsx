@@ -121,3 +121,91 @@ export function SuggestionActions({
     </span>
   );
 }
+
+export function QueueDecision({ itemId }: { itemId: string }) {
+  const t = useTranslations("admin");
+  const { pending, failed, run } = useAction();
+  const [note, setNote] = useState("");
+  const noteId = `note-${itemId}`;
+  return (
+    <span className="inline-flex flex-wrap items-center gap-2">
+      <label htmlFor={noteId} className="sr-only">
+        {t("decisionNote")}
+      </label>
+      <input
+        id={noteId}
+        value={note}
+        onChange={(event) => setNote(event.target.value)}
+        placeholder={t("decisionNote")}
+        maxLength={1000}
+        className="min-h-11 rounded-md border border-current/30 bg-transparent px-2"
+      />
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() =>
+          run(`/api/admin/queue/${itemId}/decide`, {
+            decision: "approved",
+            ...(note.trim() ? { note } : {}),
+          })
+        }
+        className="min-h-11 rounded-md border border-current px-3"
+      >
+        {t("approve")}
+      </button>
+      <button
+        type="button"
+        disabled={pending || !note.trim()}
+        onClick={() =>
+          run(`/api/admin/queue/${itemId}/decide`, {
+            decision: "rejected",
+            note,
+          })
+        }
+        className="min-h-11 rounded-md border border-current px-3"
+      >
+        {t("reject")}
+      </button>
+      {failed && (
+        <span role="alert" className="text-sm text-danger">
+          {t("actionFailed")}
+        </span>
+      )}
+    </span>
+  );
+}
+
+export function RemoveJobAction({ jobId }: { jobId: string }) {
+  const t = useTranslations("admin");
+  const { pending, failed, run } = useAction();
+  const [reason, setReason] = useState("");
+  const reasonId = `reason-${jobId}`;
+  return (
+    <span className="inline-flex flex-wrap items-center gap-2">
+      <label htmlFor={reasonId} className="sr-only">
+        {t("removeReason")}
+      </label>
+      <input
+        id={reasonId}
+        value={reason}
+        onChange={(event) => setReason(event.target.value)}
+        placeholder={t("removeReason")}
+        maxLength={500}
+        className="min-h-11 rounded-md border border-current/30 bg-transparent px-2"
+      />
+      <button
+        type="button"
+        disabled={pending || reason.trim().length < 3}
+        onClick={() => run(`/api/admin/jobs/${jobId}/remove`, { reason })}
+        className="min-h-11 rounded-md border border-current px-3"
+      >
+        {t("remove")}
+      </button>
+      {failed && (
+        <span role="alert" className="text-sm text-danger">
+          {t("actionFailed")}
+        </span>
+      )}
+    </span>
+  );
+}

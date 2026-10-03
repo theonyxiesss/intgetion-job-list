@@ -7,6 +7,13 @@ export {
   transitionOwnedJob,
   updateJob,
 } from "../repo/jobs-repo";
+export {
+  findJobsForAdmin,
+  listJobsForAdmin,
+  removeJobByAdmin,
+  republishImportedJob,
+} from "../repo/admin-jobs-repo";
+export type { AdminJobRow } from "../repo/admin-jobs-repo";
 export { findMemberRole } from "@/modules/companies/service";
 export { JOB_TRANSITIONS, transitionJob } from "./status-machine";
 export type { JobAction, JobActor, JobStatus } from "./status-machine";

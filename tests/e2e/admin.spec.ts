@@ -32,13 +32,26 @@ const adminApis = [
   ["GET", "/api/admin/audit"],
   ["GET", "/api/admin/companies"],
   ["GET", "/api/admin/taxonomy/suggestions"],
+  ["GET", "/api/admin/queue"],
+  ["GET", "/api/admin/jobs"],
+  ["GET", "/api/admin/import/sources"],
+  ["GET", "/api/admin/import/runs"],
+  ["POST", "/api/admin/queue/00000000-0000-4000-8000-000000000000/decide"],
+  ["POST", "/api/admin/jobs/00000000-0000-4000-8000-000000000000/remove"],
   ["POST", "/api/admin/users/00000000-0000-4000-8000-000000000000/suspend"],
 ] as const;
 
 test("P7: guests and regular users get 404 on admin pages and APIs", async ({
   page,
 }) => {
-  for (const path of ["/en/admin", "/en/admin/users", "/en/admin/audit"]) {
+  for (const path of [
+    "/en/admin",
+    "/en/admin/users",
+    "/en/admin/audit",
+    "/en/admin/moderation",
+    "/en/admin/jobs",
+    "/en/admin/import",
+  ]) {
     const response = await page.goto(path);
     expect(response?.status(), path).toBe(404);
   }
