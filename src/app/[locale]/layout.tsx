@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Inter, JetBrains_Mono, Roboto_Condensed } from "next/font/google";
+import { Roboto_Condensed } from "next/font/google";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
@@ -11,26 +11,15 @@ import { ToastProvider } from "@/components/ui";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
-// Fonts are self-hosted by next/font at build time (DESIGN.md 4.1, 12).
-// Variable fonts: one file per family. "optional" keeps the fallback when a
-// font misses the first ~100 ms, so the LCP text is never repainted (D144).
+// One web font, for display text only (DESIGN.md 4.1, D144): Roboto
+// Condensed 600, Latin preloaded, Cyrillic loaded by unicode-range on demand.
+// "optional" never repaints the LCP text. Body and figures use system fonts.
 const display = Roboto_Condensed({
-  subsets: ["latin", "cyrillic"],
+  subsets: ["latin"],
+  weight: "600",
   display: "optional",
   variable: "--font-roboto-condensed",
 });
-const text = Inter({
-  subsets: ["latin", "cyrillic"],
-  display: "optional",
-  variable: "--font-inter",
-});
-const mono = JetBrains_Mono({
-  subsets: ["latin", "cyrillic"],
-  display: "swap",
-  preload: false,
-  variable: "--font-jetbrains-mono",
-});
-
 // Only an explicit "light" choice changes the default dark theme (D141).
 const themeScript = `(function(){try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light";}catch(e){}})();`;
 
@@ -73,7 +62,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`h-full ${display.variable} ${text.variable} ${mono.variable}`}
+      className={`h-full ${display.variable}`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">
