@@ -324,7 +324,9 @@
 - Перебазирована на master (4B, 10A, 7-lib), склеены записи. Исправлено: без `UNSUBSCRIBE_SECRET` (≥ 32 символа) токены отписки отклоняются — иначе их можно было подделать; в CI секрет задаётся. CI 37142022857 → success, влито fast-forward. Миграция 0013 применена к облаку.
 - Открыто: письма не уходят, пока нет адреса входа (D126) — нужен `SUPABASE_SERVICE_ROLE_KEY` и Auth admin API; уведомления админ-действий (`job.moderation_decided`, `company.verification_decided`, `report.decided`) подключить в 10A/10B.
 
-## [2026-10-03] — UI-1: дизайн-фундамент (Claude Code) — IN REVIEW
+## [2026-10-03] — UI-1: дизайн-фундамент (Claude Code) — DONE
 
 - Токены и тёмная тема по умолчанию, шрифты, `lucide-react`, знак и favicon, UI-кит `src/components/ui/*`, новая шапка (мобильное меню), подвал, 404/500, витрина `/dev/ui`, правило `no-raw-colors` (D140–D142). Страницы пока на старой вёрстке — их переводят UI-2 (Cursor) и UI-3 (Claude Code).
 - Проверено в браузере: desktop 1440 и mobile 375 без горизонтальной прокрутки, меню открывается.
+- Движение (D143, D145), один веб-шрифт ради LCP (D144), прямые импорты кита в клиентских компонентах и медиана 5 прогонов Lighthouse (D41a). CI 37148637380 → success: 39 e2e, медиана LCP 1901 мс. Влито fast-forward.
+- Следующее: Cursor — UI-2 (`docs/prompts/cursor-ui-2.md`), Claude Code — UI-3.
