@@ -8,11 +8,11 @@ git clone https://github.com/theonyxiesss/intgetion-job-list.git "C:\Users\Admin
 
 В основную папку `C:\Users\Admin\Documents\Integetion jobs` и в папку `Integetion jobs 2A` не заходи и ничего там не запускай.
 
-Прочитай `docs/PARALLEL_WORK.md` (ветка `origin/claude/1b`), `docs/TZ_INTGETION_v6.md` (разделы 0, 2, 5, 6, 16, 19, 22–24), `docs/DECISIONS.md`.
+Прочитай `docs/PARALLEL_WORK.md` (в `origin/master`), `docs/TZ_INTGETION_v6.md` (разделы 0, 2, 5, 6, 16, 19, 22–24), `docs/DECISIONS.md`.
 
 Задача: ревью двух веток против `origin/master`.
 
-1. `origin/claude/1b` — подфаза 1B (guards, audit_logs, rate limits, CSRF, CSP). Смотри `git diff origin/master...origin/claude/1b`.
+1. `origin/claude/1b` — подфаза 1B (guards, audit_logs, rate limits, CSRF, CSP). Ветка уже влита в `master`, поэтому смотри диапазон её коммитов: `git diff 5196e9c..fb2bfd9` (код и тесты 1B; дальше только документы).
 2. `origin/cursor/2a` — подфаза 2A (таксономия навыков, normalizeSkill). Если ветки ещё нет на GitHub — напиши «2A: ветка ещё не опубликована» и сделай только 1B.
 
 Что искать (по убыванию важности):
