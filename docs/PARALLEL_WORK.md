@@ -29,6 +29,7 @@
 | 4     | 10A                                                  | Claude Code | 3B         | `claude/10a`         | `0010_*`                   | D80–D84        |
 | 7     | 10B                                                  | Claude Code | 10A        | `claude/10b`         | `0014_*`                   | D130–D134      |
 | 8     | UI-1: дизайн-фундамент (`docs/DESIGN.md`)            | Claude Code | —          | `claude/ui-1`        | нет                        | D140–D142      |
+| 8     | 6A: матчинг на сервере                               | Cursor      | 4B, 2B     | `cursor/6a`          | `0015_*`                   | D150–D154      |
 | 9     | UI-2: кандидатская и публичная часть                 | Cursor      | UI-1       | `cursor/ui-2`        | нет                        | D143–D145      |
 | 9     | UI-3: работодатель и админка                         | Claude Code | UI-1       | `claude/ui-3`        | нет                        | D146–D148      |
 
