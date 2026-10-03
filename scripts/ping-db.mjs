@@ -35,6 +35,10 @@ function describeUrlProblem(value) {
     return `unexpected scheme ${url.protocol}`;
   }
   if (!url.username || !url.password) return "user or password is missing";
+  // Host, port, database and query are not secret; they show truncation.
+  console.log(
+    `target ${url.hostname}:${url.port || "5432"}${url.pathname}${url.search} as ${url.username.split(".")[0]}`,
+  );
   return null;
 }
 
