@@ -42,8 +42,8 @@ if [[ -z "$chrome" ]]; then
 fi
 
 # Simulated LCP on a shared runner swings by several hundred ms between runs,
-# so the 2500 ms budget applies to the median of three runs (D41).
-for run in 1 2 3; do
+# so the 2500 ms budget applies to the median of five runs (D41, D145).
+for run in 1 2 3 4 5; do
   pnpm dlx lighthouse@12.8.2 "http://127.0.0.1:3000/en" \
     --quiet \
     --chrome-path="$chrome" \
@@ -56,7 +56,7 @@ done
 node --input-type=module <<'EOF'
 import fs from "node:fs";
 
-const runs = [1, 2, 3].map((run) => {
+const runs = [1, 2, 3, 4, 5].map((run) => {
   const report = JSON.parse(fs.readFileSync(`/tmp/lh-${run}.json`, "utf8"));
   const lcp = report.audits["largest-contentful-paint"].numericValue;
   const fcp = report.audits["first-contentful-paint"].numericValue;
@@ -72,7 +72,7 @@ const runs = [1, 2, 3].map((run) => {
   return lcp;
 });
 if (!runs.every((lcp) => typeof lcp === "number")) process.exit(1);
-const median = [...runs].sort((a, b) => a - b)[1];
+const median = [...runs].sort((a, b) => a - b)[Math.floor(runs.length / 2)];
 console.log(`lcp_ms ${median} (median of ${runs.length})`);
 if (!(median < 2500)) process.exit(1);
 EOF

@@ -3,7 +3,8 @@
 import { Moon, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useSyncExternalStore } from "react";
-import { Button, Icon } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 
 type Theme = "light" | "dark";
 

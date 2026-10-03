@@ -3,7 +3,8 @@
 import { LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { Button, Icon } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { useRouter } from "@/i18n/navigation";
 
 /** Sign out. `compact` shows only the icon (the name stays for AT). */

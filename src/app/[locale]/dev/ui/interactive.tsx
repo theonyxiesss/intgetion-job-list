@@ -2,7 +2,9 @@
 /* eslint-disable intgetion/no-hardcoded-jsx-text -- dev-only showcase (D142) */
 
 import { useState } from "react";
-import { Button, ConfirmCard, Dialog, useToast } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { ConfirmCard, Dialog } from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/toast";
 
 export function InteractiveDemo() {
   const [open, setOpen] = useState(false);

@@ -2,7 +2,10 @@
 
 import { RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button, Container, Icon, OrbitBackdrop } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
+import { Icon } from "@/components/ui/icon";
+import { OrbitBackdrop } from "@/components/ui/orbit-backdrop";
 
 export default function LocaleError({
   error,
