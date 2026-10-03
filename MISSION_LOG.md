@@ -177,3 +177,14 @@
 - Команды проверки: unit 278 passed; `gh run watch 37123697966` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37123697966 — e2e 25 passed, медиана LCP 1698 мс.
 - Замечание на 6A: снимок вакансии прикрепляется к результату через модульный `WeakMap` в `score/explain.ts` — передавать явно.
 - Следующее: GLM — 9A-lib; Cursor — 5A; Antigravity — 7-lib, затем 8A; Codex — 4A; Claude Code — 10A (вторая часть).
+
+## [2026-10-03] — 9A-lib — DONE
+
+- Сделано: чистые правила уведомлений в `src/modules/notifications/lib/`: `catalog.ts` — каталог из 11 событий раздела 15 как данные (получатели, политика, email-умолчания, zod-strictObject-схемы payload без контактов), `resolveDelivery` с переопределением из notification_preferences, auth-письма отдельным типом `AuthEmailType` вне каталога (D100, D102); `batch.ts` — `groupHourlyBatch` для application.created по UTC-часу, один получатель → одно письмо, дедупликация вакансий (D100); `digest.ts` — `nextDigestAt` (08:00 local через `localToUtc` из `src/lib/tz.ts`, ≥ 24 ч после lastSentAt, DST учтён) и `shouldSendDigest` с порогом score ≥ 0.65 (D101); `unsubscribe.ts` — `signUnsubscribe`/`verifyUnsubscribe`: HMAC-SHA256, base64url, сравнение за постоянное время, срок жизни (D103); `service/index.ts` — публичная поверхность. Ключи писем под `notifications` в en.json/ru.json (только этот ключ, +202 строки суммарно, файл не переформатирован).
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 313 passed (36 файлов; 33 новых теста: каталог/resolveDelivery 9, батч 4, дайджест 12, отписка 7), включая en/ru parity через существующий messages.test.ts; `pnpm format:check` на файлах подфазы → 0 (LF; локальный CRLF-артефакт — как раньше, в CI зелёный); `SWC_NATIVE_BINDING_CACHE='C:\Users\Admin\.swc-cache-glm' pnpm build` → 0.
+- P-тесты подфазы: нет (чистые функции; P-кейсы preferences — в полной 9A).
+- Миграции: нет.
+- Изменённые файлы: `src/modules/notifications/lib/{catalog,batch,digest,unsubscribe,index}.ts`, `src/modules/notifications/service/index.ts`, `src/modules/notifications/__tests__/{catalog,batch,digest,unsubscribe}.test.ts`, `src/messages/en.json`, `src/messages/ru.json`, `docs/DECISIONS.md` (D100–D104), `MISSION_LOG.md`.
+- Отклонения от ТЗ: D100–D104 — зафиксированы выборы, которых ТЗ не задаёт (UTC-граница батча, 08:00 local для дайджеста, семантика «не чаще раза в сутки» на инстантах, порядок проверок токена, сырые enum-значения в params). Замечание ревью по `score/explain.ts` (WeakMap) принято к сведению — правок не требует, отработаю в полной 6A.
+- OPEN QUESTION: нет.
+- Следующая подфаза: полная 9A (после 7A/7B — зависит от 5C, 6B, 7A).

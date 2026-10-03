@@ -336,5 +336,106 @@
       "neutral": "The job lists no language requirements.",
       "failed": "Does not meet the language requirements."
     }
+  },
+  "notifications": {
+    "unsubscribe": {
+      "link": "Unsubscribe from these emails"
+    },
+    "types": {
+      "applicationCreated": {
+        "inapp": {
+          "title": "New application",
+          "body": "A candidate applied for {jobTitle}."
+        },
+        "email": {
+          "subject": "New job applications",
+          "body": "You have {count, plural, one {# new application} other {# new applications}}: {jobs}."
+        }
+      },
+      "applicationViewed": {
+        "inapp": {
+          "title": "Application viewed",
+          "body": "The employer viewed your application for {jobTitle}."
+        }
+      },
+      "applicationStatusChanged": {
+        "inapp": {
+          "title": "Application status changed",
+          "body": "Your application for {jobTitle} is now “{status}”."
+        },
+        "email": {
+          "subject": "Your application status changed",
+          "body": "Your application for {jobTitle} moved to the “{status}” stage."
+        }
+      },
+      "applicationWithdrawn": {
+        "inapp": {
+          "title": "Application withdrawn",
+          "body": "A candidate withdrew their application for {jobTitle}."
+        }
+      },
+      "mutualInterestRevealed": {
+        "inapp": {
+          "title": "Contacts revealed",
+          "body": "Mutual interest on {jobTitle}: contacts are now available."
+        },
+        "email": {
+          "subject": "Contacts are now available",
+          "body": "There is mutual interest on {jobTitle}. Open the application to see the contacts."
+        }
+      },
+      "jobModerationDecided": {
+        "inapp": {
+          "title": "Job moderated",
+          "body": "Your job {jobTitle} was {decision}."
+        },
+        "email": {
+          "subject": "Your job was moderated",
+          "body": "Your job {jobTitle} was {decision} by moderation."
+        }
+      },
+      "jobExpiring": {
+        "inapp": {
+          "title": "Job expiring soon",
+          "body": "{jobTitle} expires on {date}."
+        },
+        "email": {
+          "subject": "Your job expires in 3 days",
+          "body": "{jobTitle} expires on {date}. Renew it to keep receiving applications."
+        }
+      },
+      "jobClosed": {
+        "inapp": {
+          "title": "Job closed",
+          "body": "{jobTitle} was closed by the employer."
+        }
+      },
+      "companyVerificationDecided": {
+        "inapp": {
+          "title": "Verification decided",
+          "body": "Your company {companyName} was {decision}."
+        },
+        "email": {
+          "subject": "Company verification decided",
+          "body": "Your company {companyName} was {decision}."
+        }
+      },
+      "matchesDigest": {
+        "inapp": {
+          "title": "New matches",
+          "body": "{count, plural, one {# new job matches you} other {# new jobs match you}}."
+        },
+        "email": {
+          "subject": "Your job matches",
+          "body": "{count, plural, one {# new job matches your profile} other {# new jobs match your profile}}. Open the digest to see them."
+        }
+      },
+      "reportDecided": {
+        "inapp": {
+          "title": "Report reviewed",
+          "body": "Your report was reviewed: {decision}."
+        }
+      }
+    }
   }
 }
