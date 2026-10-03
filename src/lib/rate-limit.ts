@@ -22,6 +22,8 @@ export const rateRules = {
   apply: { limit: 30, windowSeconds: 24 * 60 * 60 },
   /** job reports, keyed by user id (4B) */
   report: { limit: 10, windowSeconds: 24 * 60 * 60 },
+  /** verification requests (emails, DNS tokens), keyed by company id (10B) */
+  verificationRequest: { limit: 5, windowSeconds: 24 * 60 * 60 },
   /** bot messages from a guest, keyed by IP + bot session (7A) */
   botGuest: { limit: 30, windowSeconds: 24 * 60 * 60 },
   /** bot messages from a user, keyed by user id (7A) */

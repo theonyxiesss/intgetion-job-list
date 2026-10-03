@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
+import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
@@ -41,6 +42,11 @@ export default async function EmployerCompanyPage({
           <p>
             {t("status")}: {company.status}
           </p>
+          {company.origin !== "imported" && company.role === "owner" ? (
+            <Link href="/employer/company/verify" className="underline">
+              {t("verifyLink")}
+            </Link>
+          ) : null}
           {company.origin === "imported" ? (
             <p>{t("importedReadonly")}</p>
           ) : null}

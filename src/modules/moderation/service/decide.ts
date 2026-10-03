@@ -2,7 +2,7 @@
 
 export type QueueTarget =
   | { kind: "job"; source: "internal" | "imported"; status: string }
-  | { kind: "company"; status: string }
+  | { kind: "company"; status: string; reason?: string }
   | { kind: "missing" };
 
 export type QueueEffect =
@@ -11,6 +11,7 @@ export type QueueEffect =
   | "remove_job"
   | "republish_imported"
   | "reject_company"
+  | "verify_company"
   | "none";
 
 export function planDecision(
@@ -19,6 +20,14 @@ export function planDecision(
 ): QueueEffect {
   if (target.kind === "missing") return "none";
   if (target.kind === "company") {
+    // 10B: a verification request is approved into `verified` (D132).
+    if (
+      decision === "approved" &&
+      target.reason === "verification_review" &&
+      target.status === "pending_verification"
+    ) {
+      return "verify_company";
+    }
     // Approving a possible duplicate keeps the company as it is.
     return decision === "rejected" &&
       target.status !== "rejected" &&

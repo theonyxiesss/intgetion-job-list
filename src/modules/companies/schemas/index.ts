@@ -33,3 +33,16 @@ export const patchCompanyInput = createCompanyInput.partial().extend({
 
 export type CreateCompanyInput = z.infer<typeof createCompanyInput>;
 export type PatchCompanyInput = z.infer<typeof patchCompanyInput>;
+
+/** `POST /api/companies/:id/verification` (10B). */
+export const requestVerificationInput = z
+  .object({
+    method: z.enum(["corporate_email", "dns_txt"]),
+    target: z.string().trim().max(254).optional(),
+  })
+  .strict();
+
+/** `POST /api/companies/:id/verification/confirm` (10B). */
+export const confirmVerificationInput = z
+  .object({ token: z.string().trim().min(20).max(200) })
+  .strict();

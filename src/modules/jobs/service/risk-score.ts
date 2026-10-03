@@ -1,3 +1,4 @@
+import { isFreeEmailDomain as isFreeDomain } from "@/config/free-email-domains";
 export type RiskInput = {
   creatorAgeHours: number;
   freeEmailDomain: boolean;
@@ -8,19 +9,6 @@ export type RiskInput = {
   salaryOutlier: boolean;
 };
 
-const FREE_EMAIL_DOMAINS = new Set([
-  "gmail.com",
-  "googlemail.com",
-  "outlook.com",
-  "hotmail.com",
-  "live.com",
-  "yahoo.com",
-  "yandex.ru",
-  "yandex.com",
-  "mail.ru",
-  "proton.me",
-  "protonmail.com",
-]);
 const SCAM_PATTERNS = [
   /\bpay\s+to\s+apply\b/i,
   /\bcrypto\s+deposit\b/i,
@@ -35,8 +23,7 @@ const SCAM_PATTERNS = [
 ];
 
 export function isFreeEmailDomain(email: string | null | undefined): boolean {
-  const domain = email?.split("@").at(-1)?.trim().toLowerCase();
-  return Boolean(domain && FREE_EMAIL_DOMAINS.has(domain));
+  return isFreeDomain(email);
 }
 
 export function hasScamPattern(text: string): boolean {

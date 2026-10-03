@@ -22,3 +22,23 @@ export {
 export type { LogoStorage } from "./logo-service";
 export { SupabaseLogoStorage } from "./storage";
 export { isPossibleDuplicate } from "./duplicate";
+export {
+  approveCompanyVerification,
+  confirmVerification,
+  getVerificationState,
+  refreshTrustedFlags,
+  requestVerification,
+  submitIfReady,
+} from "./verification-service";
+export type {
+  TxtResolver,
+  VerificationMailer,
+  VerificationStateDto,
+} from "./verification-service";
+export {
+  belongsToDomain,
+  deservesTrusted,
+  requisitesComplete,
+  txtHasToken,
+  verificationTarget,
+} from "./verification-rules";

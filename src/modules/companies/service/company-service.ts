@@ -2,6 +2,7 @@ import { forbidden, HttpError, notFound } from "@/lib/http";
 import { recordAudit } from "@/lib/audit";
 import type { CurrentUser } from "@/modules/auth/service";
 import * as repo from "../repo/company-repo";
+import { submitIfReady } from "./verification-service";
 import type { CreateCompanyInput, PatchCompanyInput } from "../schemas";
 
 export type { CompanyRow, CompanySummary } from "../repo/company-repo";
@@ -62,6 +63,10 @@ export async function editCompany(
   assertCompanyEditable(company, role);
   const updated = await repo.updateCompany(companyId, input);
   if (!updated) throw notFound();
+  // Requisites may complete step 2 of 14.1 (10B).
+  if (await submitIfReady(companyId, user.id)) {
+    return (await repo.findCompanyById(companyId)) ?? updated;
+  }
   return updated;
 }
 

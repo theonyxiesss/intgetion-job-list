@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/import",
       "schedule": "30 * * * *"
+    },
+    {
+      "path": "/api/cron/trusted",
+      "schedule": "45 3 * * *"
     }
   ]
 }

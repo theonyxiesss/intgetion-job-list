@@ -42,6 +42,22 @@ describe("planDecision", () => {
     expect(planDecision(company("suspended"), "rejected")).toBe("none");
   });
 
+  it("verifies a company waiting for verification review only", () => {
+    const review = {
+      kind: "company",
+      status: "pending_verification",
+      reason: "verification_review",
+    } as const;
+    expect(planDecision(review, "approved")).toBe("verify_company");
+    expect(planDecision(review, "rejected")).toBe("reject_company");
+    expect(
+      planDecision({ ...review, reason: "possible_duplicate" }, "approved"),
+    ).toBe("none");
+    expect(planDecision({ ...review, status: "verified" }, "approved")).toBe(
+      "none",
+    );
+  });
+
   it("does nothing for an entity that no longer exists", () => {
     expect(planDecision({ kind: "missing" }, "rejected")).toBe("none");
   });

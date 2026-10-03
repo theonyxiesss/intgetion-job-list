@@ -1,7 +1,10 @@
 import { recordAudit } from "@/lib/audit";
 import { HttpError, notFound } from "@/lib/http";
 import type { CurrentUser } from "@/modules/auth/service";
-import { changeCompanyStatus } from "@/modules/companies/service";
+import {
+  approveCompanyVerification,
+  changeCompanyStatus,
+} from "@/modules/companies/service";
 import {
   findJobsForAdmin,
   removeJobByAdmin,
@@ -110,7 +113,7 @@ async function targetOf(item: repo.QueueRow): Promise<QueueTarget> {
   if (item.entityType === "company") {
     const [company] = await repo.findCompanies([item.entityId]);
     return company
-      ? { kind: "company", status: company.status }
+      ? { kind: "company", status: company.status, reason: item.reason }
       : { kind: "missing" };
   }
   return { kind: "missing" };
@@ -163,6 +166,9 @@ export async function decideQueueItem(
         break;
       case "republish_imported":
         await republishImportedJob(item.entityId, admin.id);
+        break;
+      case "verify_company":
+        await approveCompanyVerification(item.entityId, admin.id);
         break;
       case "reject_company":
         await changeCompanyStatus(item.entityId, admin.id, "rejected");
