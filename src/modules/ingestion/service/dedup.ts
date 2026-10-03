@@ -1,40 +1,66 @@
-import type { NormalizedImportedJob } from "./normalize";
+/** Dedup rules of 13.3, as pure functions over rows the repo returns. */
 
+export const TITLE_SIMILARITY = 0.85;
+export const DESCRIPTION_SIMILARITY = 0.8;
+
+/** lower + no accents + only letters and digits, as unaccent() would do. */
 export function normalizeDedupePart(value: string | null | undefined): string {
   return (value ?? "")
     .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[̀-ͯ]/g, "")
     .toLocaleLowerCase("en-US")
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
 }
 
-export function dedupeKey(
-  job: Pick<
-    NormalizedImportedJob,
-    "title" | "companyDomain" | "companyName" | "location" | "workFormat"
-  >,
-): string {
+type KeyParts = {
+  title: string;
+  companyDomain: string | null;
+  companyName: string;
+  location: string | null;
+};
+
+/** `lower(unaccent(title)) | company_domain||company_name | location|'remote'` */
+export function dedupeKey(job: KeyParts): string {
   return [
     normalizeDedupePart(job.title),
     normalizeDedupePart(job.companyDomain || job.companyName),
-    normalizeDedupePart(job.location) || (job.workFormat === "remote" ? "remote" : ""),
+    normalizeDedupePart(job.location) || "remote",
   ].join("|");
 }
 
-export function areNearDuplicates(
-  left: Pick<NormalizedImportedJob, "title" | "description" | "companyDomain" | "companyName">,
-  right: Pick<NormalizedImportedJob, "title" | "description" | "companyDomain" | "companyName">,
-  similarity: (a: string, b: string) => number,
+export type DuplicateCandidate = KeyParts & {
+  jobId: string;
+  source: "internal" | "imported";
+  titleSimilarity: number;
+  descriptionSimilarity: number;
+};
+
+export function isDuplicate(
+  incoming: KeyParts,
+  candidate: DuplicateCandidate,
 ): boolean {
-  const sameCompany =
-    left.companyDomain && right.companyDomain
-      ? left.companyDomain === right.companyDomain
-      : normalizeDedupePart(left.companyName) ===
-        normalizeDedupePart(right.companyName);
-  return Boolean(
-    sameCompany &&
-    similarity(left.title, right.title) >= 0.85 &&
-    similarity(left.description.slice(0, 500), right.description.slice(0, 500)) >= 0.8,
+  return (
+    dedupeKey(incoming) === dedupeKey(candidate) ||
+    (candidate.titleSimilarity >= TITLE_SIMILARITY &&
+      candidate.descriptionSimilarity >= DESCRIPTION_SIMILARITY)
+  );
+}
+
+/**
+ * The first matching candidate, preferring an internal job: an imported
+ * duplicate of an internal job is hidden (13.3), never merged into it.
+ */
+export function pickDuplicate(
+  incoming: KeyParts,
+  candidates: readonly DuplicateCandidate[],
+): DuplicateCandidate | null {
+  const matches = candidates.filter((candidate) =>
+    isDuplicate(incoming, candidate),
+  );
+  return (
+    matches.find((candidate) => candidate.source === "internal") ??
+    matches[0] ??
+    null
   );
 }

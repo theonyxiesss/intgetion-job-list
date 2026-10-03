@@ -212,3 +212,9 @@
 
 - 5B: пайплайн работодателя — список откликов по вакансии, auto-view через `transitionApplication`, rejected/interview/offer/hired, профиль кандидата для членов компании, на чью вакансию он откликнулся (D24), без ключа `contacts` (P3). Циклический импорт candidates ↔ applications обойдён динамическим импортом. Ветка основана на текущем master, влита fast-forward; CI ветки на `06767c0` → success. Записи 5B в MISSION_LOG от агента не было — попросили добавить в 5C.
 - Следующее: Cursor — 5C.
+
+## [2026-10-03] — 8A: импорт на фикстурах (Codex → Claude Code) — IN REVIEW
+
+- Codex ушёл на день с незаконченной 8A; Claude Code доделал её поверх WIP Codex в той же ветке.
+- Миграция 0008: `import_runs`; `job_sources` — PK `(import_source_id, external_id)` и `is_primary` (D71). Конвейер D70, нормализация D73, автомодерация D74, external apply D72 (запись feedback BLOCKED до 4B).
+- Тесты: unit (адаптеры, tz-алиасы, нормализация, дедуп, решения, истечение), integration (полный прогон: счётчики, пропуск в пределах часа, повторный прогон → `updated`, merge и primary, истечение после двух пропусков всех источников, P6, apply-external), e2e (cron 404/200, карточка «Imported from», ссылка Apply на внешний URL, scam не в каталоге).

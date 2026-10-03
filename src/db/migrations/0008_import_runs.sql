@@ -1,3 +1,6 @@
+-- 8A: import run metrics, and job_sources keyed by (source, external id)
+-- so a merged job keeps a row per source (13.3, D71).
+
 CREATE TABLE IF NOT EXISTS public.import_runs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   source_id uuid NOT NULL REFERENCES public.import_sources(id) ON DELETE CASCADE,
@@ -19,4 +22,15 @@ CREATE INDEX IF NOT EXISTS import_runs_retention_idx
   WHERE finished_at IS NOT NULL;
 
 SELECT public.enable_rls_deny_all('public.import_runs');
-GRANT SELECT, INSERT, UPDATE, DELETE ON public.import_runs TO app_rw;
+
+ALTER TABLE public.job_sources
+  ADD COLUMN IF NOT EXISTS is_primary boolean NOT NULL DEFAULT true;
+ALTER TABLE public.job_sources DROP CONSTRAINT IF EXISTS job_sources_pkey;
+ALTER TABLE public.job_sources
+  DROP CONSTRAINT IF EXISTS job_sources_import_source_id_external_id_key;
+ALTER TABLE public.job_sources
+  ADD CONSTRAINT job_sources_pkey PRIMARY KEY (import_source_id, external_id);
+CREATE INDEX IF NOT EXISTS job_sources_job_idx ON public.job_sources (job_id);
+CREATE UNIQUE INDEX IF NOT EXISTS job_sources_primary_idx
+  ON public.job_sources (job_id)
+  WHERE is_primary;

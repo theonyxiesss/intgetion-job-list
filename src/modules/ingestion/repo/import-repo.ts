@@ -1,4 +1,14 @@
-import { and, eq, gt, isNotNull, lt, sql } from "drizzle-orm";
+import {
+  and,
+  desc,
+  eq,
+  gt,
+  inArray,
+  isNotNull,
+  lt,
+  ne,
+  sql,
+} from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 import { getDb } from "@/db/client";
 import {
@@ -9,6 +19,11 @@ import {
   jobs,
 } from "@/db/schema";
 import type { ImportAdapter } from "../adapters/types";
+import type { DuplicateCandidate } from "../service/dedup";
+
+/** Queries only; the rules live in service/ (3.2). */
+
+export const COMPANY_NAME_SIMILARITY = 0.9;
 
 export async function ensureFixtureSource(adapter: ImportAdapter) {
   const [row] = await getDb()
@@ -23,39 +38,43 @@ export async function ensureFixtureSource(adapter: ImportAdapter) {
   return row;
 }
 
-export async function sourceStartedWithin(sourceId: string, since: Date) {
+export async function sourceStartedSince(sourceId: string, since: Date) {
   const [run] = await getDb()
     .select({ id: importRuns.id })
     .from(importRuns)
-    .where(and(eq(importRuns.sourceId, sourceId), gt(importRuns.startedAt, since)))
+    .where(
+      and(eq(importRuns.sourceId, sourceId), gt(importRuns.startedAt, since)),
+    )
     .limit(1);
   return Boolean(run);
 }
 
-export async function beginImportRun(sourceId: string) {
+export async function beginImportRun(sourceId: string, startedAt: Date) {
   const [run] = await getDb()
     .insert(importRuns)
-    .values({ sourceId })
+    .values({ sourceId, startedAt })
     .returning();
   if (!run) throw new Error("Could not create import run");
   return run;
 }
 
-export async function completeImportRun(
+export type RunCounters = {
+  fetched: number;
+  created: number;
+  updated: number;
+  merged: number;
+  rejected: number;
+  expired: number;
+};
+
+export async function finishImportRun(
   runId: string,
-  metrics: {
-    fetched: number;
-    created: number;
-    updated: number;
-    merged: number;
-    rejected: number;
-    expired: number;
-    error?: string | null;
-  },
+  counters: RunCounters,
+  error: string | null,
 ) {
   await getDb()
     .update(importRuns)
-    .set({ ...metrics, finishedAt: new Date() })
+    .set({ ...counters, error, finishedAt: new Date() })
     .where(eq(importRuns.id, runId));
 }
 
@@ -66,39 +85,48 @@ export async function markSourceRun(sourceId: string, status: string) {
     .where(eq(importSources.id, sourceId));
 }
 
+/**
+ * 13.2: an imported company by domain, then by name similarity ≥ 0.9 among
+ * imported companies; otherwise a new imported, unverified company. Internal
+ * companies are never matched, so an import cannot take one over.
+ */
 export async function findOrCreateImportedCompany(
   name: string,
   domain: string | null,
 ) {
-  const byDomain = domain
-    ? await getDb()
-        .select()
-        .from(companies)
-        .where(and(eq(companies.origin, "imported"), eq(companies.domain, domain)))
-        .limit(1)
-    : [];
-  const byName = byDomain.length
-    ? []
-    : await getDb()
-        .select()
-        .from(companies)
-        .where(
-          and(
-            eq(companies.origin, "imported"),
-            sql`lower(${companies.name}) = lower(${name})`,
-          ),
-        )
-        .limit(1);
-  const existing = byDomain[0] ?? byName[0];
-  if (existing) return existing;
-  const baseSlug = name
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 54) || "imported-company";
-  const [created] = await getDb()
+  const db = getDb();
+  if (domain) {
+    const [byDomain] = await db
+      .select()
+      .from(companies)
+      .where(
+        and(eq(companies.origin, "imported"), eq(companies.domain, domain)),
+      )
+      .limit(1);
+    if (byDomain) return byDomain;
+  }
+  const [byName] = await db
+    .select()
+    .from(companies)
+    .where(
+      and(
+        eq(companies.origin, "imported"),
+        sql`public.skill_similarity(${companies.name}, ${name}) >= ${COMPANY_NAME_SIMILARITY}`,
+      ),
+    )
+    .orderBy(desc(sql`public.skill_similarity(${companies.name}, ${name})`))
+    .limit(1);
+  if (byName) return byName;
+
+  const baseSlug =
+    name
+      .normalize("NFKD")
+      .replace(/[̀-ͯ]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 54) || "imported-company";
+  const [created] = await db
     .insert(companies)
     .values({
       name,
@@ -113,11 +141,13 @@ export async function findOrCreateImportedCompany(
   return created;
 }
 
-export async function findByExternalId(sourceId: string, externalId: string) {
+export async function findLinkedJobId(
+  sourceId: string,
+  externalId: string,
+): Promise<string | null> {
   const [row] = await getDb()
-    .select({ job: jobs, source: jobSources })
+    .select({ jobId: jobSources.jobId })
     .from(jobSources)
-    .innerJoin(jobs, eq(jobs.id, jobSources.jobId))
     .where(
       and(
         eq(jobSources.importSourceId, sourceId),
@@ -125,59 +155,67 @@ export async function findByExternalId(sourceId: string, externalId: string) {
       ),
     )
     .limit(1);
-  return row ?? null;
+  return row?.jobId ?? null;
 }
 
-export async function findDuplicateJob(input: {
-  companyId: string;
+/**
+ * Possible duplicates for 13.3: jobs of the same imported company, and
+ * internal jobs of internal companies with the same domain or a name
+ * similarity ≥ 0.9. Similarities come from pg_trgm; service/dedup decides.
+ */
+export async function findDuplicateCandidates(input: {
+  importedCompanyId: string;
+  companyName: string;
+  companyDomain: string | null;
   title: string;
   description: string;
-  sourceId: string;
-  externalId: string;
-}) {
-  const linked = await findByExternalId(input.sourceId, input.externalId);
-  if (linked) return { job: linked.job, exactSource: true, internal: false };
-  const [row] = await getDb()
-    .select({ job: jobs })
-    .from(jobs)
-    .where(
-      and(
-        eq(jobs.companyId, input.companyId),
-        sql`public.skill_similarity(${jobs.title}, ${input.title}) >= 0.85`,
-        sql`public.skill_similarity(left(${jobs.description}, 500), left(${input.description}, 500)) >= 0.8`,
-      ),
-    )
-    .limit(1);
-  if (row)
-    return {
-      job: row.job,
-      exactSource: false,
-      internal: row.job.source === "internal",
-    };
-
-  const [domainDuplicate] = await getDb()
-    .select({ job: jobs })
+}): Promise<DuplicateCandidate[]> {
+  const titleSimilarity = sql<number>`public.skill_similarity(${jobs.title}, ${input.title})`;
+  const descriptionSimilarity = sql<number>`public.skill_similarity(left(${jobs.description}, 500), left(${input.description}, 500))`;
+  const sameInternalCompany = input.companyDomain
+    ? sql`(${companies.domain} = ${input.companyDomain} or public.skill_similarity(${companies.name}, ${input.companyName}) >= ${COMPANY_NAME_SIMILARITY})`
+    : sql`public.skill_similarity(${companies.name}, ${input.companyName}) >= ${COMPANY_NAME_SIMILARITY}`;
+  const rows = await getDb()
+    .select({
+      jobId: jobs.id,
+      source: jobs.source,
+      title: jobs.title,
+      location: jobs.location,
+      companyName: companies.name,
+      companyDomain: companies.domain,
+      titleSimilarity,
+      descriptionSimilarity,
+    })
     .from(jobs)
     .innerJoin(companies, eq(companies.id, jobs.companyId))
     .where(
       and(
-        eq(jobs.source, "imported"),
-        eq(companies.origin, "imported"),
-        sql`lower(unaccent(${jobs.title})) = lower(unaccent(${input.title}))`,
-        sql`(companies.domain = (select domain from public.companies where id = ${input.companyId}) or lower(unaccent(companies.name)) = (select lower(unaccent(name)) from public.companies where id = ${input.companyId}))`,
+        ne(jobs.status, "removed"),
+        sql`(
+          (${jobs.companyId} = ${input.importedCompanyId} and ${jobs.source} = 'imported')
+          or (${jobs.source} = 'internal' and ${companies.origin} = 'internal' and ${sameInternalCompany})
+        )`,
       ),
     )
-    .limit(1);
-  return domainDuplicate
-    ? { job: domainDuplicate.job, exactSource: false, internal: false }
-    : null;
+    .orderBy(desc(titleSimilarity))
+    .limit(50);
+  return rows.map((row) => ({
+    ...row,
+    titleSimilarity: Number(row.titleSimilarity),
+    descriptionSimilarity: Number(row.descriptionSimilarity),
+  }));
 }
 
+/**
+ * Upserts the (source, external id) row. The first source row of a job is
+ * its primary one; later sources add non-primary rows (D71).
+ */
 export async function linkImportedSource(
   jobId: string,
   sourceId: string,
   externalId: string,
   sourceUrl: string,
+  seenAt: Date,
 ) {
   await getDb()
     .insert(jobSources)
@@ -186,15 +224,18 @@ export async function linkImportedSource(
       importSourceId: sourceId,
       externalId,
       sourceUrl,
+      lastSeenAt: seenAt,
+      isPrimary: sql`not exists (select 1 from public.job_sources s where s.job_id = ${jobId} and s.is_primary)`,
     })
     .onConflictDoUpdate({
-      target: jobSources.jobId,
-      set: { lastSeenAt: new Date(), sourceUrl },
+      target: [jobSources.importSourceId, jobSources.externalId],
+      set: { jobId, sourceUrl, lastSeenAt: seenAt },
     });
 }
 
-export async function staleLinkedJobs(sourceId: string, now = new Date()) {
-  const rows = await getDb()
+/** Source rows of published imported jobs from this source not seen at `since`. */
+export async function sourceRowsNotSeenSince(sourceId: string, since: Date) {
+  return getDb()
     .select({ jobId: jobSources.jobId, lastSeenAt: jobSources.lastSeenAt })
     .from(jobSources)
     .innerJoin(jobs, eq(jobs.id, jobSources.jobId))
@@ -203,28 +244,54 @@ export async function staleLinkedJobs(sourceId: string, now = new Date()) {
         eq(jobSources.importSourceId, sourceId),
         eq(jobs.source, "imported"),
         eq(jobs.status, "published"),
-        lt(jobSources.lastSeenAt, now),
+        lt(jobSources.lastSeenAt, since),
       ),
     );
-  const expired: string[] = [];
-  for (const row of rows) {
-    const [count] = await getDb()
-      .select({ count: sql<number>`count(*)::int` })
-      .from(importRuns)
-      .where(
-        and(
-          eq(importRuns.sourceId, sourceId),
-          isNotNull(importRuns.finishedAt),
-          gt(importRuns.startedAt, row.lastSeenAt),
-          lt(importRuns.startedAt, now),
-        ),
-      );
-    if ((count?.count ?? 0) >= 1) expired.push(row.jobId);
-  }
-  return expired;
 }
 
-export async function pruneImportRunHistory(now = new Date()) {
+/** Finished runs of a source that started after a moment. */
+export async function finishedRunsSince(sourceId: string, since: Date) {
+  const [row] = await getDb()
+    .select({ count: sql<number>`count(*)::int` })
+    .from(importRuns)
+    .where(
+      and(
+        eq(importRuns.sourceId, sourceId),
+        isNotNull(importRuns.finishedAt),
+        gt(importRuns.startedAt, since),
+      ),
+    );
+  return Number(row?.count ?? 0);
+}
+
+export async function sourceRowsOfJobs(jobIds: string[]) {
+  if (!jobIds.length) return [];
+  return getDb()
+    .select({
+      jobId: jobSources.jobId,
+      sourceId: jobSources.importSourceId,
+      lastSeenAt: jobSources.lastSeenAt,
+    })
+    .from(jobSources)
+    .where(inArray(jobSources.jobId, jobIds));
+}
+
+/**
+ * 13.4: rejected imports go to the admin queue for sample review; one
+ * pending row per job, so repeated runs do not pile up.
+ */
+export async function queueRejectedImport(jobId: string, reason: string) {
+  await getDb().execute(sql`
+    insert into public.moderation_queue (entity_type, entity_id, reason, risk_flags)
+    select 'job', ${jobId}, ${reason}, ${JSON.stringify([reason])}::jsonb
+    where not exists (
+      select 1 from public.moderation_queue
+      where entity_type = 'job' and entity_id = ${jobId} and status = 'pending'
+    )
+  `);
+}
+
+export async function pruneImportRunHistory(now: Date) {
   const before = new Date(now.getTime() - 180 * 86400000);
   await getDb().delete(importRuns).where(lt(importRuns.startedAt, before));
 }

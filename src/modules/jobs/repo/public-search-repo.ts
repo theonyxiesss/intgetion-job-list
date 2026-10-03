@@ -123,7 +123,11 @@ export async function searchPublicJobs(query: {
     })
     .from(jobs)
     .innerJoin(companies, eq(companies.id, jobs.companyId))
-    .leftJoin(jobSources, eq(jobSources.jobId, jobs.id))
+    .leftJoin(
+      jobSources,
+      // One source per job on public pages (D71).
+      and(eq(jobSources.jobId, jobs.id), eq(jobSources.isPrimary, true)),
+    )
     .leftJoin(importSources, eq(importSources.id, jobSources.importSourceId))
     .where(and(...predicates))
     .orderBy(order)
@@ -141,7 +145,11 @@ export async function getPublicJobById(id: string) {
     })
     .from(jobs)
     .innerJoin(companies, eq(companies.id, jobs.companyId))
-    .leftJoin(jobSources, eq(jobSources.jobId, jobs.id))
+    .leftJoin(
+      jobSources,
+      // One source per job on public pages (D71).
+      and(eq(jobSources.jobId, jobs.id), eq(jobSources.isPrimary, true)),
+    )
     .leftJoin(importSources, eq(importSources.id, jobSources.importSourceId))
     .where(
       and(
@@ -188,7 +196,11 @@ export async function listCompanyPublicJobs(companyId: string, limit = 20) {
     })
     .from(jobs)
     .innerJoin(companies, eq(companies.id, jobs.companyId))
-    .leftJoin(jobSources, eq(jobSources.jobId, jobs.id))
+    .leftJoin(
+      jobSources,
+      // One source per job on public pages (D71).
+      and(eq(jobSources.jobId, jobs.id), eq(jobSources.isPrimary, true)),
+    )
     .leftJoin(importSources, eq(importSources.id, jobSources.importSourceId))
     .where(
       and(

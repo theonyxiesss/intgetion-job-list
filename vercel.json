@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/fx-rates",
       "schedule": "15 16 * * *"
+    },
+    {
+      "path": "/api/cron/import",
+      "schedule": "30 * * * *"
     }
   ]
 }
