@@ -165,3 +165,103 @@ test("P15: the 11th report in 24 hours is limited with Retry-After", async ({
   ).toBe("RATE_LIMITED");
   expect(eleventh.headers()["retry-after"]).toBeTruthy();
 });
+
+test("apply-external records feedback for a signed-in user only", async ({
+  page,
+}) => {
+  const externalUrl = "https://example.com/jobs/4b-external";
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) throw new Error("DATABASE_URL is required.");
+  const companyId = randomUUID();
+  const jobId = randomUUID();
+  const sourceId = randomUUID();
+  const token = randomUUID().slice(0, 8);
+  const client = new pg.Client({ connectionString });
+  await client.connect();
+  try {
+    await client.query(
+      `insert into public.companies (id, name, slug, status)
+       values ($1, $2, $3, 'verified')`,
+      [
+        companyId,
+        `External E2E ${token}`,
+        `external-e2e-${companyId.slice(0, 8)}`,
+      ],
+    );
+    await client.query(
+      `insert into public.import_sources (id, name, kind)
+       values ($1, $2, 'api')`,
+      [sourceId, `external-e2e-${token}`],
+    );
+    await client.query(
+      `insert into public.jobs (
+         id, company_id, title, description, category, work_format,
+         employment_type, application_method, source, status, published_at, expires_at
+       ) values (
+         $1, $2, $3, $4, 'engineering', 'remote', 'full_time', 'external_url',
+         'imported', 'published', now(), now() + interval '30 days'
+       )`,
+      [jobId, companyId, `External e2e ${token}`, description],
+    );
+    await client.query(
+      `insert into public.job_sources (
+         job_id, import_source_id, external_id, source_url, is_primary
+       ) values ($1, $2, $3, $4, true)`,
+      [jobId, sourceId, `ext-${token}`, externalUrl],
+    );
+  } finally {
+    await client.end();
+  }
+
+  async function feedbackCount() {
+    const countClient = new pg.Client({ connectionString });
+    await countClient.connect();
+    try {
+      const result = await countClient.query(
+        `select count(*)::int as n from public.user_job_feedback
+         where job_id = $1 and action = 'applied_external'`,
+        [jobId],
+      );
+      return Number(result.rows[0]?.n ?? 0);
+    } finally {
+      await countClient.end();
+    }
+  }
+
+  const guest = await page.request.post(`/api/jobs/${jobId}/apply-external`, {
+    headers: sameOrigin,
+  });
+  expect(guest.status()).toBe(200);
+  expect(((await guest.json()) as { externalUrl: string }).externalUrl).toBe(
+    externalUrl,
+  );
+  expect(await feedbackCount()).toBe(0);
+
+  await signUp(page, uniqueEmail("feedback-external"));
+  const signedIn = await page.request.post(
+    `/api/jobs/${jobId}/apply-external`,
+    { headers: sameOrigin },
+  );
+  expect(signedIn.ok()).toBeTruthy();
+  expect(await feedbackCount()).toBe(1);
+  const repeat = await page.request.post(`/api/jobs/${jobId}/apply-external`, {
+    headers: sameOrigin,
+  });
+  expect(repeat.ok()).toBeTruthy();
+  expect(await feedbackCount()).toBe(1);
+
+  await page.goto(`/en/jobs/${jobId}`);
+  const link = page.getByRole("link", { name: "Apply" });
+  await expect(link).toHaveAttribute("href", externalUrl);
+  await page.route("https://example.com/**", (route) =>
+    route.fulfill({ status: 200, body: "external" }),
+  );
+  const posted = page.waitForResponse(
+    (response) =>
+      response.url().includes("/apply-external") &&
+      response.request().method() === "POST",
+  );
+  await link.click();
+  expect((await posted).ok()).toBeTruthy();
+  expect(await feedbackCount()).toBe(1);
+});

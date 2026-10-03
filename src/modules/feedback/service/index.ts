@@ -12,6 +12,7 @@ import {
   REPORT_UNIQUE_VIOLATION_CODE,
   isReportEntityType,
   isReportReason,
+  shouldRecordExternalApply,
   validateFeedbackEvent,
   type HiddenSets,
 } from "../rules";
@@ -60,6 +61,26 @@ export async function recordJobFeedback(
     companyId: input.companyId,
     action: event.action,
     reason: event.reason,
+  });
+}
+
+/** `ExternalApplyRecorder` for `applyExternal` (D72). A repeat writes nothing. */
+export async function recordAppliedExternal(event: {
+  userId: string;
+  jobId: string;
+}): Promise<void> {
+  const already = await repo.hasFeedback(
+    event.userId,
+    event.jobId,
+    "applied_external",
+  );
+  if (!shouldRecordExternalApply(already)) return;
+  const job = await getJobForPublic(event.jobId);
+  await recordJobFeedback({
+    userId: event.userId,
+    jobId: event.jobId,
+    companyId: job?.company.id ?? null,
+    action: "applied_external",
   });
 }
 

@@ -14,6 +14,7 @@ import {
   hideJobForUser,
   isJobSavedForUser,
   listSavedJobsForUser,
+  recordAppliedExternal,
   recordJobFeedback,
   reportJobForUser,
   saveJobForUser,
@@ -211,6 +212,17 @@ describe("recordJobFeedback contract for 5A/8A (D110)", () => {
       companyId,
       action: "applied_external",
     });
+  });
+
+  it("records applied_external once for the same user and job", async () => {
+    await recordAppliedExternal({ userId: reporterId, jobId: jobA1 });
+    await recordAppliedExternal({ userId: reporterId, jobId: jobA1 });
+    const rows = await getDb().execute<{ n: number }>(sql`
+      select count(*)::int as n from public.user_job_feedback
+      where user_id = ${reporterId} and job_id = ${jobA1}
+        and action = 'applied_external'
+    `);
+    expect(Number(rows[0]?.n)).toBe(1);
   });
 
   it("rejects invalid action/reason combinations", async () => {

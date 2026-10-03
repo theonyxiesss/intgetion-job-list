@@ -4,6 +4,7 @@ import { formatMoneyDto } from "@/lib/money";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { isJobSavedForUser } from "@/modules/feedback/service";
+import { ExternalApplyLink } from "@/modules/feedback/ui/external-apply-link";
 import { JobFeedbackActions } from "@/modules/feedback/ui/job-feedback-actions";
 import { getJobForPublic } from "@/modules/jobs/service";
 
@@ -108,15 +109,13 @@ export default async function JobPage({
           }}
         />
       )}
-      {job.applicationUrl && (
-        <a
-          className="min-h-11 self-start rounded bg-blue-700 px-4 py-3 text-white"
+      {job.applicationUrl && job.applicationMethod === "external_url" ? (
+        <ExternalApplyLink
+          jobId={job.id}
           href={job.applicationUrl}
-          rel="noreferrer"
-        >
-          {t("apply")}
-        </a>
-      )}
+          label={t("apply")}
+        />
+      ) : null}
     </main>
   );
 }
