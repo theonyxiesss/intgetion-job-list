@@ -299,7 +299,7 @@
     "navAudit": "Audit log",
     "navTaxonomy": "Skill suggestions",
     "pendingSuggestions": "Skill suggestions waiting for review: {count}",
-    "laterNote": "Reports and automatic pausing arrive with job feedback.",
+    "laterNote": "Every admin action is recorded in the audit log.",
     "usersTitle": "Users",
     "auditTitle": "Audit log",
     "taxonomyTitle": "Skill suggestions",
@@ -350,7 +350,13 @@
     "importSources": "Sources",
     "importRuns": "Recent runs",
     "importNote": "Only fixture sources run until a live source is approved; sources cannot be switched here yet.",
-    "runCounters": "fetched {fetched} · created {created} · updated {updated} · merged {merged} · rejected {rejected} · expired {expired}"
+    "runCounters": "fetched {fetched} · created {created} · updated {updated} · merged {merged} · rejected {rejected} · expired {expired}",
+    "navReports": "Reports",
+    "reportsTitle": "Reports",
+    "reportsEmpty": "No open reports.",
+    "reportsNote": "Three confirmed reports about a company within 30 days pause all its published jobs and put the company in the moderation queue.",
+    "confirmReport": "Confirm",
+    "dismissReport": "Dismiss"
   },
   "employerJobs": {
     "title": "Your jobs",

@@ -342,16 +342,13 @@ export async function approveCompanyVerification(
   // 9A: notify("company.verification_decided") to the owner.
 }
 
-/**
- * Daily `/api/cron/trusted` (14.2). `confirmedReports` returns null until
- * 4B adds reports, which keeps every company untrusted (D133).
- */
+/** Daily `/api/cron/trusted` (14.2); confirmed reports come from 4B (D84). */
 export async function refreshTrustedFlags(
   now = new Date(),
   confirmedReports: (
     companyId: string,
     since: Date,
-  ) => Promise<number | null> = async () => null,
+  ) => Promise<number | null> = repo.confirmedReportsSince,
 ) {
   const since = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
   let granted = 0;

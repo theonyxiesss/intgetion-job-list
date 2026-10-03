@@ -209,3 +209,41 @@ export function RemoveJobAction({ jobId }: { jobId: string }) {
     </span>
   );
 }
+
+export function ReportDecision({ reportId }: { reportId: string }) {
+  const t = useTranslations("admin");
+  const { pending, failed, run } = useAction();
+  return (
+    <span className="inline-flex flex-wrap items-center gap-2">
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() =>
+          run(`/api/admin/reports/${reportId}/decide`, {
+            decision: "confirmed",
+          })
+        }
+        className="min-h-11 rounded-md border border-current px-3"
+      >
+        {t("confirmReport")}
+      </button>
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() =>
+          run(`/api/admin/reports/${reportId}/decide`, {
+            decision: "dismissed",
+          })
+        }
+        className="min-h-11 rounded-md border border-current px-3"
+      >
+        {t("dismissReport")}
+      </button>
+      {failed && (
+        <span role="alert" className="text-sm text-danger">
+          {t("actionFailed")}
+        </span>
+      )}
+    </span>
+  );
+}

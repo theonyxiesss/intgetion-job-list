@@ -149,3 +149,33 @@ export async function republishImportedJob(jobId: string, adminId: string) {
     return { from: "removed" as const, to: "published" as const };
   });
 }
+
+/**
+ * 14.5 auto-pause: every published job of the company becomes `paused`,
+ * with history. Returns the paused job ids.
+ */
+export async function pausePublishedJobsOfCompany(
+  companyId: string,
+  actorId: string,
+  reason: string,
+): Promise<string[]> {
+  return getDb().transaction(async (tx) => {
+    const paused = await tx
+      .update(jobs)
+      .set({ status: "paused", updatedAt: new Date() })
+      .where(and(eq(jobs.companyId, companyId), eq(jobs.status, "published")))
+      .returning({ id: jobs.id });
+    if (paused.length) {
+      await tx.insert(jobStatusHistory).values(
+        paused.map((row) => ({
+          jobId: row.id,
+          fromStatus: "published" as const,
+          toStatus: "paused" as const,
+          actorId,
+          reason,
+        })),
+      );
+    }
+    return paused.map((row) => row.id);
+  });
+}

@@ -34,6 +34,9 @@ export async function AdminShell({
         <Link href="/admin/moderation" className="underline">
           {t("navModeration")}
         </Link>
+        <Link href="/admin/reports" className="underline">
+          {t("navReports")}
+        </Link>
         <Link href="/admin/jobs" className="underline">
           {t("navJobs")}
         </Link>

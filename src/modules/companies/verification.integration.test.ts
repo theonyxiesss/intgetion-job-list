@@ -226,8 +226,13 @@ describe("company verification (10B)", () => {
     `);
     await refreshTrustedFlags(new Date(), async () => 0);
     expect((await companyRow(emailCompanyId))?.is_trusted).toBe(true);
-    // Without a reports table the cron fails closed (D133).
+    // No confirmed reports in the database: the flag stays (D84).
     await refreshTrustedFlags(new Date());
+    expect((await companyRow(emailCompanyId))?.is_trusted).toBe(true);
+    // One confirmed report in 90 days drops it.
+    await refreshTrustedFlags(new Date(), async (id) =>
+      id === emailCompanyId ? 1 : 0,
+    );
     expect((await companyRow(emailCompanyId))?.is_trusted).toBe(false);
   });
 });

@@ -9,6 +9,7 @@ export {
 } from "../repo/jobs-repo";
 export {
   findJobsForAdmin,
+  pausePublishedJobsOfCompany,
   listJobsForAdmin,
   removeJobByAdmin,
   republishImportedJob,

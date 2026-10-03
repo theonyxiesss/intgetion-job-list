@@ -70,3 +70,11 @@ describe("isOverdue", () => {
     expect(isOverdue(new Date("2026-10-02T11:59:59Z"), now)).toBe(true);
   });
 });
+
+describe("reachesAutoPause", () => {
+  it("pauses from the third confirmed report on", async () => {
+    const { reachesAutoPause } = await import("../service/reports-service");
+    expect(reachesAutoPause(2)).toBe(false);
+    expect(reachesAutoPause(3)).toBe(true);
+  });
+});

@@ -33,6 +33,8 @@ const adminApis = [
   ["GET", "/api/admin/companies"],
   ["GET", "/api/admin/taxonomy/suggestions"],
   ["GET", "/api/admin/queue"],
+  ["GET", "/api/admin/reports"],
+  ["POST", "/api/admin/reports/00000000-0000-4000-8000-000000000000/decide"],
   ["GET", "/api/admin/jobs"],
   ["GET", "/api/admin/import/sources"],
   ["GET", "/api/admin/import/runs"],
@@ -49,6 +51,7 @@ test("P7: guests and regular users get 404 on admin pages and APIs", async ({
     "/en/admin/users",
     "/en/admin/audit",
     "/en/admin/moderation",
+    "/en/admin/reports",
     "/en/admin/jobs",
     "/en/admin/import",
   ]) {

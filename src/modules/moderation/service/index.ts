@@ -18,3 +18,11 @@ export {
   listQueueQuery,
   removeJobInput,
 } from "../schemas";
+export {
+  AUTO_PAUSE_THRESHOLD,
+  decideReport,
+  listReports,
+  reachesAutoPause,
+} from "./reports-service";
+export type { AdminReportDto } from "./reports-service";
+export { decideReportInput, listReportsQuery } from "../schemas";

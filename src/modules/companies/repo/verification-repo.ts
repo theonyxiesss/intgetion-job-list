@@ -214,3 +214,20 @@ export async function setTrusted(
     .set({ isTrusted: trusted, trustedAt: trusted ? now : null })
     .where(eq(companies.id, companyId));
 }
+
+/** 14.2: confirmed reports about the company or its jobs since `since`. */
+export async function confirmedReportsSince(
+  companyId: string,
+  since: Date,
+): Promise<number> {
+  const rows = await getDb().execute<{ n: number }>(sql`
+    select count(*)::int as n from public.reports r
+    where r.status = 'confirmed' and r.decided_at >= ${since.toISOString()}::timestamptz
+      and (
+        (r.entity_type = 'company' and r.entity_id = ${companyId})
+        or (r.entity_type = 'job' and r.entity_id in (
+          select id from public.jobs where company_id = ${companyId}))
+      )
+  `);
+  return Number(rows[0]?.n ?? 0);
+}

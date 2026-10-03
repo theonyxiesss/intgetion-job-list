@@ -41,3 +41,18 @@ export const listAdminJobsQuery = z.object({
 export const removeJobInput = z
   .object({ reason: z.string().trim().min(3).max(500) })
   .strict();
+
+/** `GET /api/admin/reports` */
+export const listReportsQuery = z.object({
+  cursor,
+  limit,
+  status: z.enum(["open", "confirmed", "dismissed"]).default("open"),
+});
+
+/** `POST /api/admin/reports/:id/decide` */
+export const decideReportInput = z
+  .object({
+    decision: z.enum(["confirmed", "dismissed"]),
+    note: z.string().trim().max(1000).optional(),
+  })
+  .strict();
