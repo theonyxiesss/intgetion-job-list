@@ -21,7 +21,15 @@ function describeUrlProblem(value) {
   try {
     url = new URL(value);
   } catch {
-    return "the value is not a URL";
+    // Shape only: length and character classes, never the characters.
+    const shape = [
+      `length ${value.length}`,
+      `starts with postgresql:// ${value.startsWith("postgresql://")}`,
+      `whitespace inside ${/\s/.test(value)}`,
+      `@ count ${(value.match(/@/g) ?? []).length}`,
+      `non-ASCII ${/[^\x20-\x7e]/.test(value)}`,
+    ].join(", ");
+    return `the value is not a URL (${shape})`;
   }
   if (!/^postgres(ql)?:$/.test(url.protocol)) {
     return `unexpected scheme ${url.protocol}`;
