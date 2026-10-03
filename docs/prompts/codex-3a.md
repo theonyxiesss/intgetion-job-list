@@ -10,7 +10,7 @@
 
 - Таблицы по разделу 4.1 (`companies`, `company_members`, `employer_profiles`), RLS через `public.enable_rls_deny_all()`. Для `gin_trgm(name)` нужен `pg_trgm` (его может создать миграция 2A — проверь `0003`; если нет — `CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA extensions`).
 - `moderation_queue` (раздел 4.1) создаёшь ты: 3A первым пишет в неё флаг `possible_duplicate`. Только таблица и запись; очередь и UI админа — 10A.
-- Модуль `src/modules/companies` (api/service/repo/schemas/**tests**). Экспортируй из сервиса `findMemberRole(companyId, userId)` — это функция для `requireMembership` (D38.2).
+- Модуль `src/modules/companies` (`api/`, `service/`, `repo/`, `schemas/`, `__tests__/`). Экспортируй из сервиса `findMemberRole(companyId, userId)` — это функция для `requireMembership` (D38.2).
 - API раздела 7 «Companies»: `POST /api/companies`, `GET /api/companies/:slug` (публичная часть; вакансий ещё нет — пустой список), `PATCH /api/companies/:id` (owner/admin), `POST /api/companies/:id/logo`.
 - Права по 5.1–5.2: чужая компания → 404, участник без роли → 403. `origin='imported'` нельзя редактировать и в неё нельзя вступить (D9). Последнего owner удалить нельзя.
 - Дубли: domain или `similarity(name) ≥ 0.8` → компания создаётся, плюс строка в `moderation_queue` с `possible_duplicate`.
