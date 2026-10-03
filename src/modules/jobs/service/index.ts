@@ -23,3 +23,5 @@ export {
   salaryDecision,
 } from "./public-search";
 export { parseEcbCsv, refreshFxRates } from "./fx-rates";
+export { expireImportedJobs, saveImportedJob } from "./imported-jobs";
+export type { ImportedJobWrite } from "./imported-jobs";
