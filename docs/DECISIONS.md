@@ -96,3 +96,15 @@ The workspace directory name is not a valid npm package name (spaces and capital
 5. `audit_logs` для `app_rw` только на добавление и чтение (UPDATE отозван); DELETE остаётся для retention-cron (10C).
 6. `/api/cron/rate-limit-gc` удаляет окна старше 48 часов. Расписание Vercel Cron настраивается при деплое (11B).
 7. Исправление 1A: matcher в `src/proxy.ts` содержал `\.` в обычной строке (то есть «любой символ»), и proxy работал только на `/`. Исправлено на `\\.`; `src/proxy.test.ts` проверяет matcher.
+
+## D42 — нормализация навыков (2A)
+
+Раздел 11.1 задаёт порядок поиска, но не механику строки. LLM-маппинг в 2A не делается.
+
+1. `toAliasNormalized` (так хранится `skills_aliases.alias_normalized`): lower, trim; `c++`→`cpp`, `c#`→`csharp`, `f#`→`fsharp`, `.net`→`dotnet`; суффикс `.js` снимается; прочая пунктуация становится пробелом; выбрасываются токены версий (`18`, `v18`, `3.11`) и версия, приклеенная к основе из не меньше чем 3 букв (`html5`, `react18`, `python3`); токены склеиваются без разделителя.
+2. `normalizeSkillText` — ключ поиска: форма из п.1, затем хвостовое `js`, если основа ещё не короче 2 символов (`reactjs`→`react`, `nodejs`→`node`). Голое `js` остаётся `js`.
+3. Поиск по активному навыку: точный алиас, затем точный `slug`, затем `public.skill_similarity` ≥ 0.85 и ровно один навык. Иначе `skill_suggestions`. Пустой ключ не пишется. Повтор того же `normalized` увеличивает `occurrences` и не меняет `raw_text`, `source` и `status`.
+4. `public.skill_similarity(text, text)` — SQL-обёртка над `similarity` из `pg_trgm`, чтобы роль `app_rw` не зависела от `search_path`. Расширение ставится как `CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA extensions`.
+5. `normalizeSkill(raw, source = "user")`. `source` — `user | bot | import`. В `raw_text` попадает trim не длиннее 500 символов.
+6. Повторный seed обновляет `name_en`, `name_ru`, `category` и цель алиаса. `is_active` не перезаписывается, лишние строки не удаляются. В миграции seed выполняется до RLS, чтобы роль миграции вставила строки без политики.
+7. `id` — uuid, как у `users`. `name_en` и `name_ru` — NOT NULL. Алиас удаляется вместе с навыком (`ON DELETE CASCADE`). `mapped_skill_id` при удалении навыка становится NULL.

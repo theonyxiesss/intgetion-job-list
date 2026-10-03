@@ -1,6 +1,6 @@
 # ERD
 
-Generated from section 4.1 of `docs/TZ_INTGETION_v6.md`. Migration 0001 creates `users` only. The other entities are the target model and are not tables yet.
+Generated from section 4.1 of `docs/TZ_INTGETION_v6.md`. Migration 0001 creates `users`. Migration 0002 creates `audit_logs` and `rate_limit_counters`. Migration 0003 creates `skills`, `skills_aliases`, and `skill_suggestions`. Other entities are the target model and are not tables yet.
 
 ```mermaid
 erDiagram
@@ -63,6 +63,26 @@ erDiagram
     text ip_hash
     timestamptz created_at
   }
+  skills {
+    uuid id PK
+    text slug UK
+    text name_en
+    text name_ru
+    text category
+    bool is_active
+  }
+  skills_aliases {
+    text alias_normalized PK
+    uuid skill_id FK
+  }
+  skill_suggestions {
+    uuid id PK
+    text raw_text
+    text normalized UK
+    text source
+    int occurrences
+    moderation_status status
+    uuid mapped_skill_id FK
+    timestamptz created_at
+  }
 ```
-
-Migration 0002 (1B) creates `audit_logs` and `rate_limit_counters`.
