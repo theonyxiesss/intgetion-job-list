@@ -22,7 +22,7 @@
 | 5     | 4B                                                   | GLM         | 4A         | `glm/4b`              | `0011_*`                   | D110–D114      |
 | 5     | 5B                                                   | Cursor      | 5A         | `cursor/5b`           | `0012_*` при необходимости | D115–D119      |
 | 4     | 4A                                                   | Codex       | 3B         | `codex/4a`            | `0007_*`                   | D95–D99        |
-| 4     | 8A                                                   | Antigravity | 3B, 2A     | `antigravity/8a`      | `0008_*`                   | D70–D74        |
+| 4     | 8A                                                   | Codex       | 3B, 2A     | `codex/8a`            | `0008_*`                   | D70–D74        |
 | 4     | 5A                                                   | Cursor      | 3B, 2B     | `cursor/5a`           | `0009_*`                   | D75–D79        |
 | 4     | 10A                                                  | Claude Code | 3B         | `claude/10a`          | `0010_*`                   | D80–D84        |
 
