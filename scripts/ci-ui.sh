@@ -41,19 +41,30 @@ if [[ -z "$chrome" ]]; then
   exit 1
 fi
 
-pnpm dlx lighthouse@12.8.2 "http://127.0.0.1:3000/en" \
-  --quiet \
-  --chrome-path="$chrome" \
-  --only-categories=performance \
-  --output=json \
-  --output-path=/tmp/lh.json \
-  --chrome-flags="--headless --no-sandbox"
+# Simulated LCP on a shared runner swings by several hundred ms between runs,
+# so the 2500 ms budget applies to the median of three runs (D41).
+for run in 1 2 3; do
+  pnpm dlx lighthouse@12.8.2 "http://127.0.0.1:3000/en" \
+    --quiet \
+    --chrome-path="$chrome" \
+    --only-categories=performance \
+    --output=json \
+    --output-path="/tmp/lh-${run}.json" \
+    --chrome-flags="--headless --no-sandbox"
+done
 
 node --input-type=module <<'EOF'
 import fs from "node:fs";
 
-const report = JSON.parse(fs.readFileSync("/tmp/lh.json", "utf8"));
-const lcp = report.audits["largest-contentful-paint"].numericValue;
-console.log(`lcp_ms ${lcp}`);
-if (!(typeof lcp === "number" && lcp < 2500)) process.exit(1);
+const runs = [1, 2, 3].map((run) => {
+  const report = JSON.parse(fs.readFileSync(`/tmp/lh-${run}.json`, "utf8"));
+  const lcp = report.audits["largest-contentful-paint"].numericValue;
+  const fcp = report.audits["first-contentful-paint"].numericValue;
+  console.log(`run ${run}: lcp_ms ${Math.round(lcp)} fcp_ms ${Math.round(fcp)}`);
+  return lcp;
+});
+if (!runs.every((lcp) => typeof lcp === "number")) process.exit(1);
+const median = [...runs].sort((a, b) => a - b)[1];
+console.log(`lcp_ms ${median} (median of ${runs.length})`);
+if (!(median < 2500)) process.exit(1);
 EOF

@@ -44,7 +44,7 @@ Claude Code между волнами сливает ветки, применя�
 
 ## Окружение (Windows)
 
-- Локальный `pnpm build` падает из-за ACL на `AppData\Local` для SWC. В bash: `SWC_NATIVE_BINDING_CACHE="$PWD/node_modules/.cache/swc" pnpm build`.
+- Локальный `pnpm build` падает: SWC отвергает кэш, если у папки-предка есть права записи для посторонних SID. Так сейчас и с `AppData\Local`, и с папками проектов (их права расширяют песочницы агентов). Кэш держи вне проекта, в своей папке под `C:\Users\Admin`. В bash: `SWC_NATIVE_BINDING_CACHE='C:\Users\Admin\.swc-cache-<агент>' pnpm build` (папку создай заранее). Права папок не меняй.
 - Локально нет Docker и не скачивается Chromium: миграции с нуля и e2e проверяются только в CI (job `database`).
 - Приложение локально открывать по `http://localhost:3000` (CSRF сверяет `Origin` с `NEXT_PUBLIC_SITE_URL`).
 - Файлы с обратными слешами (`\\`) не записывать через bash heredoc: оболочка схлопывает `\\` в `\`. Используй редактор или инструмент записи файла.

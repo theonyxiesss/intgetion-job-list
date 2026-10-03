@@ -5,6 +5,7 @@ import { isAllowedOrigin } from "./lib/origin";
 import { buildCsp, createNonce } from "./lib/security-headers";
 import { siteUrl, supabaseUrl } from "./lib/supabase/env";
 import { refreshSession } from "./lib/supabase/proxy";
+import { markSession } from "./lib/supabase/session-mark";
 
 const handleI18nRouting = createMiddleware(routing);
 
@@ -33,8 +34,9 @@ export async function proxy(request: NextRequest) {
   request.headers.set("content-security-policy", csp);
 
   // Refresh first: next-intl copies the request headers when it builds the response.
-  const applySession = await refreshSession(request);
-  const response = applySession(handleI18nRouting(request));
+  const session = await refreshSession(request);
+  markSession(request.headers, session.signedIn);
+  const response = session.apply(handleI18nRouting(request));
   response.headers.set("Content-Security-Policy", csp);
   return response;
 }

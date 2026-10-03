@@ -33,9 +33,10 @@ export async function refreshSession(request: NextRequest) {
     },
   });
 
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+  const signedIn = Boolean(data?.claims);
 
-  return function apply(response: NextResponse) {
+  function apply(response: NextResponse) {
     for (const { name, value, options } of pending) {
       response.cookies.set(name, value, options);
     }
@@ -43,5 +44,7 @@ export async function refreshSession(request: NextRequest) {
       response.headers.set(key, value);
     }
     return response;
-  };
+  }
+
+  return { apply, signedIn };
 }

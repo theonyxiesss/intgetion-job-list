@@ -1,19 +1,15 @@
 import { getTranslations } from "next-intl/server";
+import { headers } from "next/headers";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { ThemeToggle } from "./theme-toggle";
-
-async function hasSession() {
-  const supabase = await createSupabaseServerClient();
-  const { data } = await supabase.auth.getClaims();
-  return Boolean(data?.claims);
-}
 
 export async function Header() {
   const t = await getTranslations();
-  const signedIn = await hasSession();
+  // Set by the proxy, which already checked the session (D41).
+  const signedIn = hasSessionMark(await headers());
 
   return (
     <header className="border-b border-current/15">
