@@ -26,6 +26,7 @@ export {
   getJobForPublic,
   listPublicJobsByIds,
   listPublishedJobsForCompany,
+  countPublicCatalog,
   searchJobs,
   toPublicJobDto,
   getVisibleCompany,

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export function UnsaveButton({
   jobId,
@@ -32,14 +33,14 @@ export function UnsaveButton({
   }
   return (
     <span className="flex items-center gap-2">
-      <button
+      <Button
         type="button"
-        className="min-h-11 rounded border px-4 py-2"
+        variant="secondary"
         onClick={unsave}
         disabled={busy}
       >
         {label}
-      </button>
+      </Button>
       {failed && (
         <span role="alert" className="text-sm">
           {error}

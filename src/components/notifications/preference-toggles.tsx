@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Choice } from "@/components/ui/choice";
 
 type Preference = {
   type: string;
@@ -40,15 +41,11 @@ export function PreferenceToggles({
           key={`${item.type}:${item.channel}`}
           className="flex items-center gap-3"
         >
-          <label className="inline-flex min-h-11 items-center gap-2">
-            <input
-              type="checkbox"
-              defaultChecked={item.enabled}
-              aria-label={`${item.label} ${item.channelLabel}`}
-              onChange={(event) => toggle(item, event.target.checked)}
-            />
-            <span>{`${item.label} (${item.channelLabel})`}</span>
-          </label>
+          <Choice
+            label={`${item.label} (${item.channelLabel})`}
+            defaultChecked={item.enabled}
+            onChange={(event) => toggle(item, event.target.checked)}
+          />
         </li>
       ))}
       {message ? <li>{message}</li> : null}

@@ -4,9 +4,10 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { listSavedJobsForUser } from "@/modules/feedback/service";
 import { UnsaveButton } from "@/modules/feedback/ui/unsave-button";
-import Link from "next/link";
+import { Container, PageHeader } from "@/components/ui/container";
+import { EmptyState } from "@/components/ui/feedback";
+import { JobCard } from "@/components/ui/job-card";
 
-// Personal page of the signed-in user.
 export const dynamic = "force-dynamic";
 
 export default async function SavedJobsPage({
@@ -22,40 +23,46 @@ export default async function SavedJobsPage({
   const t = await getTranslations("savedJobs");
   const entries = await listSavedJobsForUser(user.id);
   return (
-    <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-10">
-      <h1 className="text-3xl font-semibold">{t("title")}</h1>
-      {entries.length ? (
-        <ul className="grid gap-3">
-          {entries.map(({ job, savedAt }) => (
-            <li
-              key={job.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded border p-4"
-            >
-              <div className="flex flex-col">
-                <Link
-                  className="font-semibold underline"
-                  href={`/${locale}/jobs/${job.id}`}
-                >
-                  {job.title}
-                </Link>
-                <span className="text-sm">
-                  {job.company.name} · {t("savedOn")}{" "}
-                  {new Date(savedAt).toLocaleDateString(
-                    locale === "ru" ? "ru-RU" : "en-US",
-                  )}
-                </span>
-              </div>
-              <UnsaveButton
-                jobId={job.id}
-                label={t("unsave")}
-                error={t("unsaveError")}
-              />
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>{t("empty")}</p>
-      )}
+    <main className="py-10 md:py-16">
+      <Container className="flex flex-col gap-8">
+        <PageHeader title={t("title")} />
+        {entries.length ? (
+          <ul className="grid gap-4">
+            {entries.map(({ job, savedAt }) => (
+              <li key={job.id}>
+                <JobCard
+                  href={`/jobs/${job.id}`}
+                  title={job.title}
+                  transitionName={`job-title-${job.id}`}
+                  companyName={job.company.name}
+                  companyHref={
+                    job.company.slug
+                      ? `/companies/${job.company.slug}`
+                      : undefined
+                  }
+                  stats={[
+                    {
+                      label: t("savedOn"),
+                      value: new Date(savedAt).toLocaleDateString(
+                        locale === "ru" ? "ru-RU" : "en-US",
+                      ),
+                    },
+                  ]}
+                  actions={
+                    <UnsaveButton
+                      jobId={job.id}
+                      label={t("unsave")}
+                      error={t("unsaveError")}
+                    />
+                  }
+                />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <EmptyState title={t("empty")} />
+        )}
+      </Container>
     </main>
   );
 }

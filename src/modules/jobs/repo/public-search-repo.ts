@@ -11,6 +11,32 @@ import {
   skills,
 } from "@/db/schema";
 
+/** Published jobs and the companies that have at least one (homepage telemetry). */
+export async function countPublicCatalog() {
+  const db = getDb();
+  const [jobsRow] = await db
+    .select({ n: sql<number>`count(*)::int` })
+    .from(jobs)
+    .innerJoin(companies, eq(companies.id, jobs.companyId))
+    .where(
+      and(
+        eq(jobs.status, "published"),
+        sql`${companies.status} not in ('suspended','rejected')`,
+      ),
+    );
+  const [companiesRow] = await db
+    .select({ n: sql<number>`count(distinct ${companies.id})::int` })
+    .from(companies)
+    .innerJoin(jobs, eq(jobs.companyId, companies.id))
+    .where(
+      and(
+        eq(jobs.status, "published"),
+        sql`${companies.status} not in ('suspended','rejected')`,
+      ),
+    );
+  return { jobs: jobsRow?.n ?? 0, companies: companiesRow?.n ?? 0 };
+}
+
 export async function getFxRates() {
   return getDb()
     .select({

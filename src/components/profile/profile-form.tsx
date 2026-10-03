@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { buttonClass } from "@/components/ui/button";
+import { controlClass } from "@/components/ui/field";
 
 export type ProfileFormValues = {
   fullName: string;
@@ -179,16 +181,14 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
       {error ? (
-        <p
-          role="alert"
-          className="rounded-md border border-danger/40 px-3 py-2 text-danger"
-        >
+        <p role="alert" className="border border-danger px-3 py-2 text-danger">
           {error === "timezone_confirm"
             ? t("errors.timezone_confirm")
             : t("errors.generic")}
         </p>
       ) : null}
 
+      <div id="basics" />
       <label className="flex flex-col gap-1 font-medium" htmlFor="full-name">
         {t("fields.fullName")}
         <input
@@ -196,7 +196,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           name="fullName"
           defaultValue={initial.fullName}
           maxLength={120}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
       <label className="flex flex-col gap-1 font-medium" htmlFor="headline">
@@ -206,7 +206,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           name="headline"
           defaultValue={initial.headline}
           maxLength={160}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
       <label
@@ -218,7 +218,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           id="desired-titles"
           name="desiredTitles"
           defaultValue={initial.desiredTitles}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
         <span className="text-sm font-normal opacity-80">
           {t("fields.desiredTitlesHint")}
@@ -231,7 +231,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           name="country"
           defaultValue={initial.country}
           maxLength={2}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
       <label className="flex flex-col gap-1 font-medium" htmlFor="city">
@@ -241,9 +241,10 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           name="city"
           defaultValue={initial.city}
           maxLength={80}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
+      <div id="preferences" />
       <label className="flex flex-col gap-1 font-medium" htmlFor="timezone">
         {t("fields.timezone")}
         <input
@@ -252,7 +253,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           name="timezone"
           defaultValue={initial.timezone}
           required
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
         <span className="text-sm font-normal opacity-80">
           {t("fields.timezoneHint")}
@@ -288,7 +289,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           type="time"
           defaultValue={initial.workHoursStart}
           required
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
       <label className="flex flex-col gap-1 font-medium" htmlFor="hours-end">
@@ -299,7 +300,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           type="time"
           defaultValue={initial.workHoursEnd}
           required
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
 
@@ -332,6 +333,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
         ))}
       </fieldset>
 
+      <div id="experience" />
       <label
         className="flex flex-col gap-1 font-medium"
         htmlFor="experience-years"
@@ -344,16 +346,17 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           min={0}
           max={60}
           defaultValue={initial.experienceYears}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
+      <div id="skills" />
       <label className="flex flex-col gap-1 font-medium" htmlFor="skills">
         {t("fields.skills")}
         <input
           id="skills"
           name="skills"
           defaultValue={initial.skills}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
         <span className="text-sm font-normal opacity-80">
           {t("fields.skillsHint")}
@@ -365,7 +368,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           id="skill-level"
           name="skillLevel"
           defaultValue={initial.skillLevel}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         >
           {LEVELS.map((level) => (
             <option key={level} value={level}>
@@ -374,6 +377,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           ))}
         </select>
       </label>
+      <div id="languages" />
       <label className="flex flex-col gap-1 font-medium" htmlFor="language">
         {t("fields.language")}
         <input
@@ -381,7 +385,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           name="language"
           defaultValue={initial.language}
           maxLength={2}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
       <label
@@ -393,7 +397,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           id="language-level"
           name="languageLevel"
           defaultValue={initial.languageLevel}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         >
           {CEFR.map((level) => (
             <option key={level} value={level}>
@@ -402,6 +406,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           ))}
         </select>
       </label>
+      <div id="salary" />
       <label className="flex flex-col gap-1 font-medium" htmlFor="salary-min">
         {t("fields.salaryMin")}
         <input
@@ -409,7 +414,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           name="salaryMin"
           inputMode="numeric"
           defaultValue={initial.salaryMin}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
       <label
@@ -422,7 +427,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           name="salaryCurrency"
           defaultValue={initial.salaryCurrency}
           maxLength={3}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
       <label
@@ -434,7 +439,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           id="salary-period"
           name="salaryPeriod"
           defaultValue={initial.salaryPeriod}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         >
           {PERIODS.map((period) => (
             <option key={period} value={period}>
@@ -449,7 +454,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           id="salary-basis"
           name="salaryBasis"
           defaultValue={initial.salaryBasis}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         >
           {BASIS.map((basis) => (
             <option key={basis} value={basis}>
@@ -472,7 +477,7 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           type="email"
           required
           defaultValue={initial.contactEmail}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
       <label className="flex flex-col gap-1 font-medium" htmlFor="phone">
@@ -481,14 +486,14 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
           id="phone"
           name="phone"
           defaultValue={initial.phone}
-          className="min-h-11 rounded-md border border-current/30 bg-transparent px-3 font-normal"
+          className={controlClass}
         />
       </label>
 
       <button
         type="submit"
         disabled={pending}
-        className="min-h-11 rounded-md bg-foreground px-4 text-background disabled:opacity-60"
+        className={buttonClass("primary")}
       >
         {t("fields.save")}
       </button>

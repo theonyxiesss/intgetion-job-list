@@ -2,6 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import type { InputHTMLAttributes, ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { controlClass } from "@/components/ui/field";
 
 /** Message for a zod or Supabase error code; unknown codes get the generic text. */
 export function useAuthError() {
@@ -25,18 +27,18 @@ export function Field({ id, label, hint, error, ...input }: FieldProps) {
     .join(" ");
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="font-medium">
+      <label htmlFor={id} className="t-label text-fg-muted">
         {label}
       </label>
       <input
         id={id}
         aria-invalid={error ? true : undefined}
         aria-describedby={described || undefined}
-        className="min-h-11 rounded-md border border-current/30 bg-transparent px-3"
+        className={controlClass}
         {...input}
       />
       {hint && (
-        <p id={`${id}-hint`} className="text-sm opacity-80">
+        <p id={`${id}-hint`} className="t-body-s text-fg-muted">
           {hint}
         </p>
       )}
@@ -52,10 +54,7 @@ export function Field({ id, label, hint, error, ...input }: FieldProps) {
 export function FormAlert({ children }: { children?: ReactNode }) {
   if (!children) return null;
   return (
-    <p
-      role="alert"
-      className="rounded-md border border-danger/40 px-3 py-2 text-danger"
-    >
+    <p role="alert" className="border border-danger px-3 py-2 text-danger">
       {children}
     </p>
   );
@@ -69,14 +68,9 @@ export function SubmitButton({
   children: ReactNode;
 }) {
   return (
-    <button
-      type="submit"
-      disabled={pending}
-      aria-busy={pending || undefined}
-      className="min-h-11 rounded-md bg-foreground px-4 text-background disabled:opacity-60"
-    >
+    <Button type="submit" disabled={pending} aria-busy={pending || undefined}>
       {children}
-    </button>
+    </Button>
   );
 }
 

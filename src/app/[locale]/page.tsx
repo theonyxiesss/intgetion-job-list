@@ -1,5 +1,13 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { Button, buttonClass } from "@/components/ui/button";
+import { Container, Section } from "@/components/ui/container";
+import { Input } from "@/components/ui/input";
+import { CountUp, Reveal } from "@/components/ui/motion";
+import { OrbitBackdrop } from "@/components/ui/orbit-backdrop";
+import { navForward } from "@/components/ui/page-transition";
+import { countPublicCatalog } from "@/modules/jobs/service";
 import { LatestJobs } from "@/modules/jobs/ui/latest-jobs";
 
 const categoryIds = [
@@ -14,6 +22,8 @@ const categoryIds = [
   "finance",
   "hr",
 ] as const;
+
+const steps = ["benefitBot", "benefitMatch", "benefitContacts"] as const;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -33,95 +43,115 @@ export default async function HomePage({
   const product = await getTranslations("product");
   const { q } = await searchParams;
   const query = q?.trim() ?? "";
+  const catalog = await countPublicCatalog();
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-12 px-4 py-10">
-      <section className="flex flex-col gap-4">
-        <p className="text-sm">{product("name")}</p>
-        <h1 className="text-4xl font-semibold tracking-tight">
-          {t("tagline")}
-        </h1>
-        <p className="text-lg">{t("subtitle")}</p>
-        <div className="flex flex-wrap gap-3">
-          <a
-            href="#search"
-            className="inline-flex min-h-11 items-center rounded-md bg-foreground px-4 text-background"
+    <main>
+      <section className="relative overflow-hidden border-b border-line">
+        <OrbitBackdrop />
+        <Container className="relative flex min-h-[70vh] flex-col justify-end gap-8 py-16 md:py-24">
+          <p className="t-label text-fg-muted">{product("name")}</p>
+          <h1 className="t-display-xl max-w-[16ch]">
+            <span className="ui-rise block">{t("line1")}</span>
+            <span className="ui-rise block [--i:1]">{t("line2")}</span>
+          </h1>
+          <p className="max-w-[52ch] text-fg-muted">{t("subtitle")}</p>
+          <form
+            id="search"
+            action={`/${locale}/jobs`}
+            method="get"
+            className="flex max-w-3xl flex-col gap-3 sm:flex-row"
           >
-            {t("findJob")}
-          </a>
-          <a
-            href="#post"
-            className="inline-flex min-h-11 items-center rounded-md border border-current px-4"
+            <label className="sr-only" htmlFor="q">
+              {t("searchLabel")}
+            </label>
+            <Input
+              id="q"
+              name="q"
+              defaultValue={query}
+              placeholder={t("searchPlaceholder")}
+              className="flex-1"
+            />
+            <Button type="submit" size="lg">
+              {t("searchSubmit")}
+            </Button>
+          </form>
+          <ul className="flex flex-wrap gap-2">
+            {categoryIds.map((id) => (
+              <li key={id}>
+                <Link
+                  id={`category-${id}`}
+                  href={`/jobs?category=${id}`}
+                  {...navForward}
+                  className={buttonClass("secondary")}
+                >
+                  {categories(id)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      {catalog.jobs > 0 ? (
+        <Section bordered>
+          <Container>
+            <dl className="grid grid-cols-2 gap-8">
+              <div className="flex flex-col gap-2">
+                <dt className="t-label text-fg-muted">{t("statJobs")}</dt>
+                <dd className="t-data-l">
+                  <CountUp value={catalog.jobs} locale={locale} />
+                </dd>
+              </div>
+              <div className="flex flex-col gap-2">
+                <dt className="t-label text-fg-muted">{t("statCompanies")}</dt>
+                <dd className="t-data-l">
+                  <CountUp value={catalog.companies} locale={locale} />
+                </dd>
+              </div>
+            </dl>
+          </Container>
+        </Section>
+      ) : null}
+
+      <Section>
+        <Container className="flex flex-col gap-8">
+          <h2 id="latest" className="t-h2">
+            {t("latestTitle")}
+          </h2>
+          <LatestJobs locale={locale} />
+        </Container>
+      </Section>
+
+      <Section bordered>
+        <Container className="flex flex-col gap-10">
+          <h2 className="t-h2">{t("benefitsTitle")}</h2>
+          <ol className="grid gap-8 md:grid-cols-3">
+            {steps.map((step, index) => (
+              <Reveal as="li" index={index} key={step}>
+                <p className="t-data text-fg-muted">0{index + 1}</p>
+                <h3 className="t-h3 mt-3">{t(`${step}Title`)}</h3>
+                <p className="mt-2 text-fg-muted">{t(`${step}Body`)}</p>
+              </Reveal>
+            ))}
+          </ol>
+        </Container>
+      </Section>
+
+      <section id="post" className="py-16 md:py-24">
+        <Container className="flex flex-col gap-4 border border-line p-6 md:flex-row md:items-center md:justify-between md:p-10">
+          <div className="flex flex-col gap-2">
+            <h2 className="t-h2">{t("postJob")}</h2>
+            <p className="text-fg-muted">{t("postNote")}</p>
+          </div>
+          <Link
+            href="/register"
+            {...navForward}
+            className={buttonClass("primary", "lg")}
           >
             {t("postJob")}
-          </a>
-        </div>
-      </section>
-
-      <section id="search" className="flex flex-col gap-3">
-        <h2 className="text-2xl font-semibold">{t("searchLabel")}</h2>
-        <form className="flex flex-wrap gap-2" action="" method="get">
-          <label className="sr-only" htmlFor="q">
-            {t("searchLabel")}
-          </label>
-          <input
-            id="q"
-            name="q"
-            defaultValue={query}
-            placeholder={t("searchPlaceholder")}
-            className="min-h-11 min-w-64 flex-1 rounded-md border border-current/30 bg-transparent px-3"
-          />
-          <button
-            type="submit"
-            className="min-h-11 rounded-md border border-current px-4"
-          >
-            {t("searchSubmit")}
-          </button>
-        </form>
-      </section>
-
-      <section id="categories" className="flex flex-col gap-3">
-        <h2 className="text-2xl font-semibold">{t("categoriesTitle")}</h2>
-        <ul className="flex flex-wrap gap-2">
-          {categoryIds.map((id) => (
-            <li key={id}>
-              <a
-                href={`#category-${id}`}
-                id={`category-${id}`}
-                className="inline-flex min-h-11 items-center rounded-md border border-current/30 px-3"
-              >
-                {categories(id)}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section id="latest" className="flex flex-col gap-3">
-        <h2 className="text-2xl font-semibold">{t("latestTitle")}</h2>
-        <LatestJobs locale={locale} />
-      </section>
-
-      <section id="benefits" className="flex flex-col gap-4">
-        <h2 className="text-2xl font-semibold">{t("benefitsTitle")}</h2>
-        <ul className="grid gap-4 md:grid-cols-3">
-          <li className="rounded-md border border-current/20 p-4">
-            <h3 className="font-semibold">{t("benefitBotTitle")}</h3>
-            <p>{t("benefitBotBody")}</p>
-          </li>
-          <li className="rounded-md border border-current/20 p-4">
-            <h3 className="font-semibold">{t("benefitMatchTitle")}</h3>
-            <p>{t("benefitMatchBody")}</p>
-          </li>
-          <li className="rounded-md border border-current/20 p-4">
-            <h3 className="font-semibold">{t("benefitContactsTitle")}</h3>
-            <p>{t("benefitContactsBody")}</p>
-          </li>
-        </ul>
-      </section>
-
-      <section id="post">
-        <p>{t("postNote")}</p>
+          </Link>
+        </Container>
       </section>
     </main>
   );

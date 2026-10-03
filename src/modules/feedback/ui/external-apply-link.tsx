@@ -1,5 +1,7 @@
 "use client";
 
+import { buttonClass } from "@/components/ui/button";
+
 /**
  * Imported jobs: a click records applied_external, then opens the posting.
  * Without JavaScript the same link still goes straight to the external URL.
@@ -32,7 +34,7 @@ export function ExternalApplyLink({
 
   return (
     <a
-      className="inline-flex min-h-11 items-center self-start rounded bg-accent px-4 py-3 text-accent-fg"
+      className={buttonClass("primary")}
       href={href}
       rel="noreferrer"
       onClick={onClick}

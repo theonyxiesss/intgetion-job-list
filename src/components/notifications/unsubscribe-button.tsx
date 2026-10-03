@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export function UnsubscribeButton({
   token,
@@ -24,13 +25,9 @@ export function UnsubscribeButton({
 
   return (
     <div className="flex flex-col gap-3">
-      <button
-        type="button"
-        className="inline-flex min-h-11 items-center border border-current px-3"
-        onClick={run}
-      >
+      <Button type="button" variant="secondary" onClick={run}>
         {label}
-      </button>
+      </Button>
       {message ? <p>{message}</p> : null}
     </div>
   );
