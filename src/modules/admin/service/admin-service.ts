@@ -1,6 +1,7 @@
 import { recordAudit } from "@/lib/audit";
 import { HttpError, notFound } from "@/lib/http";
 import type { CurrentUser } from "@/modules/auth/service";
+import { changeCompanyStatus } from "@/modules/companies/service";
 import {
   listSkillSuggestions,
   mapSkillSuggestion,
@@ -9,6 +10,7 @@ import {
 import * as repo from "../repo/admin-repo";
 import type {
   ListAuditQuery,
+  ListCompaniesQuery,
   ListUsersQuery,
   UserActionInput,
 } from "../schemas";
@@ -199,4 +201,85 @@ export async function rejectSuggestion(
     ip,
   });
   return suggestion;
+}
+
+export type AdminCompanyDto = {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+  origin: string;
+  createdAt: string;
+};
+
+function companyDto(row: repo.AdminCompanyRow): AdminCompanyDto {
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    status: row.status,
+    origin: row.origin,
+    createdAt: row.createdAt.toISOString(),
+  };
+}
+
+export async function listCompanies(query: ListCompaniesQuery) {
+  const rows = await repo.listCompanies({
+    limit: query.limit + 1,
+    cursor: query.cursor ? decodeCursor(query.cursor) : undefined,
+    status: query.status,
+    q: query.q,
+  });
+  return page(rows, query.limit, companyDto);
+}
+
+type CompanyStatus =
+  "unverified" | "pending_verification" | "verified" | "rejected" | "suspended";
+
+const restorable = new Set<CompanyStatus>([
+  "unverified",
+  "pending_verification",
+  "verified",
+  "rejected",
+]);
+
+/**
+ * Suspends a company (10A). The companies service records the status change
+ * in audit_logs with the admin as actor (P16); public pages and listings
+ * hide suspended companies and their jobs (D81).
+ */
+export async function suspendCompany(
+  admin: CurrentUser,
+  companyId: string,
+): Promise<AdminCompanyDto> {
+  const company = await repo.findCompany(companyId);
+  if (!company) throw notFound();
+  if (company.status === "suspended") {
+    throw new HttpError(409, "INVALID_TRANSITION", "Company is suspended");
+  }
+  await changeCompanyStatus(companyId, admin.id, "suspended");
+  return companyDto({ ...company, status: "suspended" });
+}
+
+/**
+ * Lifts a suspension and restores the status the company had before it, as
+ * recorded in audit_logs; without a record it falls back to `unverified`,
+ * which asks for verification again (D81).
+ */
+export async function unsuspendCompany(
+  admin: CurrentUser,
+  companyId: string,
+): Promise<AdminCompanyDto> {
+  const company = await repo.findCompany(companyId);
+  if (!company) throw notFound();
+  if (company.status !== "suspended") {
+    throw new HttpError(409, "INVALID_TRANSITION", "Company is not suspended");
+  }
+  const previous = await repo.findStatusBeforeSuspension(companyId);
+  const status: CompanyStatus =
+    previous && restorable.has(previous as CompanyStatus)
+      ? (previous as CompanyStatus)
+      : "unverified";
+  await changeCompanyStatus(companyId, admin.id, status);
+  return companyDto({ ...company, status });
 }

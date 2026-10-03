@@ -8,7 +8,12 @@ import {
   normalizeSkill,
   rejectSkillSuggestion,
 } from "@/modules/taxonomy/service";
-import { listAudit, listUsers } from "../service/admin-service";
+import {
+  listAudit,
+  listUsers,
+  suspendCompany,
+  unsuspendCompany,
+} from "../service/admin-service";
 
 // Letters only: normalizeSkillText drops digits that look like versions (D42).
 const marker = `zz${randomUUID()
@@ -98,5 +103,48 @@ describe("admin lists", () => {
     const result = await listAudit({ limit: 5, action: "no-such-action" });
     expect(result.items).toEqual([]);
     expect(result.nextCursor).toBeNull();
+  });
+});
+
+describe("company suspension on the database (D81)", () => {
+  it("suspends, audits, and restores the previous status", async () => {
+    const db = getDb();
+    const [adminRow] = await db.execute<{ id: string }>(sql`
+      insert into users (auth_uid, terms_accepted_at, terms_version, platform_role)
+      values (gen_random_uuid(), now(), 'admin-it', 'admin') returning id
+    `);
+    userIds.push(adminRow!.id);
+    const slug = `${marker}-co`;
+    const [company] = await db.execute<{ id: string }>(sql`
+      insert into companies (name, slug, status) values ('IT Co', ${slug}, 'verified')
+      returning id
+    `);
+    const companyId = company!.id;
+    const admin = { id: adminRow!.id } as Parameters<typeof suspendCompany>[0];
+
+    try {
+      expect((await suspendCompany(admin, companyId)).status).toBe("suspended");
+      expect((await unsuspendCompany(admin, companyId)).status).toBe(
+        "verified",
+      );
+
+      const audit = await db.execute<{
+        diff: { from: string; to: string };
+      }>(sql`
+        select diff from audit_logs
+        where entity_type = 'company' and entity_id = ${companyId}
+          and actor_id = ${adminRow!.id}
+        order by created_at
+      `);
+      expect(audit.map((row) => row.diff)).toEqual([
+        { from: "verified", to: "suspended" },
+        { from: "suspended", to: "verified" },
+      ]);
+    } finally {
+      await db.execute(
+        sql`delete from audit_logs where entity_id = ${companyId}`,
+      );
+      await db.execute(sql`delete from companies where id = ${companyId}`);
+    }
   });
 });

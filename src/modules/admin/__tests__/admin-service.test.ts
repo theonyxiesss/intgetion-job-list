@@ -1,13 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as audit from "@/lib/audit";
 import type { CurrentUser } from "@/modules/auth/service";
+import * as companiesService from "@/modules/companies/service";
 import * as taxonomy from "@/modules/taxonomy/service";
 import * as repo from "../repo/admin-repo";
 import {
   listAudit,
   mapSuggestion,
   rejectSuggestion,
+  suspendCompany,
   suspendUser,
+  unsuspendCompany,
   unsuspendUser,
 } from "../service/admin-service";
 
@@ -16,6 +19,9 @@ vi.mock("../repo/admin-repo", () => ({
   setUserStatus: vi.fn(),
   listUsers: vi.fn(),
   listAudit: vi.fn(),
+  listCompanies: vi.fn(),
+  findCompany: vi.fn(),
+  findStatusBeforeSuspension: vi.fn(),
 }));
 vi.mock("@/lib/audit", () => ({ recordAudit: vi.fn() }));
 vi.mock("@/modules/taxonomy/service", () => ({
@@ -23,10 +29,14 @@ vi.mock("@/modules/taxonomy/service", () => ({
   mapSkillSuggestion: vi.fn(),
   rejectSkillSuggestion: vi.fn(),
 }));
+vi.mock("@/modules/companies/service", () => ({
+  changeCompanyStatus: vi.fn(),
+}));
 
 const r = vi.mocked(repo);
 const recordAudit = vi.mocked(audit.recordAudit);
 const tx = vi.mocked(taxonomy);
+const changeCompanyStatus = vi.mocked(companiesService.changeCompanyStatus);
 
 const at = new Date("2026-10-03T10:00:00Z");
 const admin: CurrentUser = {
@@ -199,5 +209,72 @@ describe("listAudit", () => {
     await expect(
       listAudit({ limit: 2, cursor: "not-a-cursor" }),
     ).rejects.toMatchObject({ status: 400 });
+  });
+});
+
+describe("company suspension (D81)", () => {
+  const company = {
+    id: "ffffffff-ffff-4fff-8fff-ffffffffffff",
+    name: "Acme",
+    slug: "acme",
+    status: "verified" as const,
+    origin: "internal" as const,
+    createdAt: at,
+  };
+
+  it("suspends through the companies service with the admin as actor", async () => {
+    r.findCompany.mockResolvedValue(company);
+    const dto = await suspendCompany(admin, company.id);
+    expect(changeCompanyStatus).toHaveBeenCalledWith(
+      company.id,
+      admin.id,
+      "suspended",
+    );
+    expect(dto.status).toBe("suspended");
+  });
+
+  it("answers 404 for an unknown company and 409 when already suspended", async () => {
+    r.findCompany.mockResolvedValue(undefined);
+    await expect(suspendCompany(admin, company.id)).rejects.toMatchObject({
+      status: 404,
+    });
+    r.findCompany.mockResolvedValue({ ...company, status: "suspended" });
+    await expect(suspendCompany(admin, company.id)).rejects.toMatchObject({
+      status: 409,
+    });
+    expect(changeCompanyStatus).not.toHaveBeenCalled();
+  });
+
+  it("restores the status the company had before the suspension", async () => {
+    r.findCompany.mockResolvedValue({ ...company, status: "suspended" });
+    r.findStatusBeforeSuspension.mockResolvedValue("verified");
+    const dto = await unsuspendCompany(admin, company.id);
+    expect(changeCompanyStatus).toHaveBeenCalledWith(
+      company.id,
+      admin.id,
+      "verified",
+    );
+    expect(dto.status).toBe("verified");
+  });
+
+  it("falls back to unverified without a usable record", async () => {
+    r.findCompany.mockResolvedValue({ ...company, status: "suspended" });
+    for (const previous of [undefined, "suspended", "nonsense"]) {
+      changeCompanyStatus.mockClear();
+      r.findStatusBeforeSuspension.mockResolvedValue(previous);
+      await unsuspendCompany(admin, company.id);
+      expect(changeCompanyStatus).toHaveBeenCalledWith(
+        company.id,
+        admin.id,
+        "unverified",
+      );
+    }
+  });
+
+  it("refuses to unsuspend a company that is not suspended", async () => {
+    r.findCompany.mockResolvedValue(company);
+    await expect(unsuspendCompany(admin, company.id)).rejects.toMatchObject({
+      status: 409,
+    });
   });
 });

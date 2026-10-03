@@ -12,6 +12,23 @@ export const listUsersQuery = z.object({
 });
 export type ListUsersQuery = z.infer<typeof listUsersQuery>;
 
+/** `GET /api/admin/companies` */
+export const listCompaniesQuery = z.object({
+  cursor,
+  limit,
+  status: z
+    .enum([
+      "unverified",
+      "pending_verification",
+      "verified",
+      "rejected",
+      "suspended",
+    ])
+    .optional(),
+  q: z.string().trim().min(1).max(100).optional(),
+});
+export type ListCompaniesQuery = z.infer<typeof listCompaniesQuery>;
+
 /** `GET /api/admin/audit` */
 export const listAuditQuery = z.object({
   cursor,

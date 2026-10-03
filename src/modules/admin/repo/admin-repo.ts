@@ -1,6 +1,6 @@
-import { and, desc, eq, lt, or, type SQL } from "drizzle-orm";
+import { and, desc, eq, ilike, lt, or, sql, type SQL } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { auditLogs, users } from "@/db/schema";
+import { auditLogs, companies, users } from "@/db/schema";
 
 export type AdminUserRow = Pick<
   typeof users.$inferSelect,
@@ -97,4 +97,83 @@ export async function listAudit(input: {
     .where(filters.length ? and(...filters) : undefined)
     .orderBy(desc(auditLogs.createdAt), desc(auditLogs.id))
     .limit(input.limit);
+}
+
+export type AdminCompanyRow = Pick<
+  typeof companies.$inferSelect,
+  "id" | "name" | "slug" | "status" | "origin" | "createdAt"
+>;
+
+const companyColumns = {
+  id: companies.id,
+  name: companies.name,
+  slug: companies.slug,
+  status: companies.status,
+  origin: companies.origin,
+  createdAt: companies.createdAt,
+};
+
+/** Newest companies first; optional status filter and name search. */
+export async function listCompanies(input: {
+  limit: number;
+  cursor?: TimeCursor;
+  status?: AdminCompanyRow["status"];
+  q?: string;
+}): Promise<AdminCompanyRow[]> {
+  const filters = [
+    input.status ? eq(companies.status, input.status) : undefined,
+    input.q ? ilike(companies.name, `%${escapeLike(input.q)}%`) : undefined,
+    input.cursor
+      ? or(
+          lt(companies.createdAt, input.cursor.createdAt),
+          and(
+            eq(companies.createdAt, input.cursor.createdAt),
+            lt(companies.id, input.cursor.id),
+          ),
+        )
+      : undefined,
+  ].filter((filter): filter is SQL => filter !== undefined);
+  return getDb()
+    .select(companyColumns)
+    .from(companies)
+    .where(filters.length ? and(...filters) : undefined)
+    .orderBy(desc(companies.createdAt), desc(companies.id))
+    .limit(input.limit);
+}
+
+export async function findCompany(
+  id: string,
+): Promise<AdminCompanyRow | undefined> {
+  const [row] = await getDb()
+    .select(companyColumns)
+    .from(companies)
+    .where(eq(companies.id, id))
+    .limit(1);
+  return row;
+}
+
+/** The status a company had right before its latest suspension, from audit_logs. */
+export async function findStatusBeforeSuspension(
+  companyId: string,
+): Promise<string | undefined> {
+  const [row] = await getDb()
+    .select({ diff: auditLogs.diff })
+    .from(auditLogs)
+    .where(
+      and(
+        eq(auditLogs.action, "company.status_changed"),
+        eq(auditLogs.entityType, "company"),
+        eq(auditLogs.entityId, companyId),
+        sql`${auditLogs.diff}->>'to' = 'suspended'`,
+      ),
+    )
+    .orderBy(desc(auditLogs.createdAt), desc(auditLogs.id))
+    .limit(1);
+  const from = (row?.diff as { from?: unknown } | null | undefined)?.from;
+  return typeof from === "string" ? from : undefined;
+}
+
+/** Escapes LIKE wildcards so a search for "50%" is literal. */
+function escapeLike(value: string): string {
+  return value.replace(/[\\%_]/g, (char) => `\\${char}`);
 }

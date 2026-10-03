@@ -30,6 +30,7 @@ async function signUp(page: Page, email: string) {
 const adminApis = [
   ["GET", "/api/admin/users"],
   ["GET", "/api/admin/audit"],
+  ["GET", "/api/admin/companies"],
   ["GET", "/api/admin/taxonomy/suggestions"],
   ["POST", "/api/admin/users/00000000-0000-4000-8000-000000000000/suspend"],
 ] as const;
