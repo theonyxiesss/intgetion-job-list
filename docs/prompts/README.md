@@ -16,4 +16,5 @@
 | `codex-4a.md`            | Codex       | сейчас (вместо `glm-4a.md`)        |
 | `antigravity-8a.md`      | Antigravity | после слияния 3B (и 2A) в `master` |
 | `cursor-5a-rules.md`     | Cursor      | сдано                              |
-| `cursor-5a.md`           | Cursor      | после слияния 3B и 2B в `master`   |
+| `cursor-5a.md`           | Cursor      | сдано                              |
+| `cursor-5b.md`           | Cursor      | сейчас                             |
