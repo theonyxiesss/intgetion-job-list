@@ -504,7 +504,7 @@ Scam-паттерны (`src/config/scam-patterns.ts`) проверяются п�
 
 ## D126 — письма без React Email и без колонки email (9A)
 
-Тема и текст берутся из уже существующих ключей `notifications.types.*.email`, HTML собирается строкой. React Email не подключаем. `users` не хранит адрес входа (D7), модуль auth не меняем. Без `RESEND_API_KEY` или `EMAIL_FROM` отправитель — Noop и строка становится `skipped`, без сети. Если ключ есть, а адрес в `auth.users` не читается, строка `skipped` с `address_unavailable`, без повторных попыток. Пустой `UNSUBSCRIBE_SECRET` допустим только когда письмо реально не уходит (CI).
+Тема и текст берутся из уже существующих ключей `notifications.types.*.email`, HTML собирается строкой. React Email не подключаем. `users` не хранит адрес входа (D7), модуль auth не меняем. Без `RESEND_API_KEY` или `EMAIL_FROM` отправитель — Noop и строка становится `skipped`, без сети. `app_rw` не читает `auth.users`, поэтому адрес в 9A не запрашивается: при включённом Resend строка `skipped` с `address_unavailable`, без повторных попыток. Пустой `UNSUBSCRIBE_SECRET` допустим только когда письмо реально не уходит (CI).
 
 ## D127 — сбой уведомления не откатывает действие (9A)
 

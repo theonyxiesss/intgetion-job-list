@@ -136,7 +136,7 @@ describe("notification queue", () => {
     `);
     expect(Number(queued[0]?.n)).toBe(1);
 
-    await writePreferences(employerId, [
+    await writePreferences(candidateId, [
       { type: "application.status_changed", channel: "email", enabled: false },
     ]);
     await notify("application.status_changed", [candidateId], {
@@ -193,15 +193,22 @@ describe("notification queue", () => {
 
   it("does not send one mail twice and skips when there is no sender", async () => {
     const later = new Date(Date.now() + 2 * 60 * 60 * 1000);
+    const due = await getDb().execute<{ n: number }>(sql`
+      select count(*)::int as n from public.notification_emails
+      where status = 'pending' and send_after <= ${later.toISOString()}::timestamptz
+    `);
+    let calls = 0;
     const sender = {
       async send() {
+        calls += 1;
         return "sent" as const;
       },
     };
-    const first = dispatchEmails({ now: later, sender });
-    const second = dispatchEmails({ now: later, sender });
-    const [a, b] = await Promise.all([first, second]);
-    expect(a.sent + b.sent).toBeLessThanOrEqual(1);
+    await Promise.all([
+      dispatchEmails({ now: later, sender }),
+      dispatchEmails({ now: later, sender }),
+    ]);
+    expect(calls).toBe(Number(due[0]?.n ?? 0));
     const pending = await getDb().execute<{ n: number }>(sql`
       select count(*)::int as n from public.notification_emails
       where user_id = ${employerId} and status = 'pending'
