@@ -1,5 +1,9 @@
 import pg from "pg";
-import { isLoopback, loadLocalEnv, pgConfig } from "./db-url.mjs";
+import {
+  isLoopback,
+  loadLocalEnv,
+  pgConfig,
+} from "../../../scripts/db-url.mjs";
 
 loadLocalEnv();
 const url = process.env.DATABASE_MIGRATION_URL;
