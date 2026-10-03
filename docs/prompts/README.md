@@ -17,4 +17,5 @@
 | `codex-8a.md`            | Codex       | сейчас (вместо `antigravity-8a.md`) |
 | `cursor-5a-rules.md`     | Cursor      | сдано                               |
 | `cursor-5a.md`           | Cursor      | сдано                               |
-| `cursor-5b.md`           | Cursor      | сейчас                              |
+| `cursor-5b.md`           | Cursor      | сдано                               |
+| `cursor-5c.md`           | Cursor      | сейчас                              |

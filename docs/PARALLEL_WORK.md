@@ -21,6 +21,7 @@
 | 4     | 9A-lib: `src/modules/notifications/**` (без таблиц)  | GLM         | —          | `glm/notify-lib`      | нет                        | D100–D104      |
 | 5     | 4B                                                   | GLM         | 4A         | `glm/4b`              | `0011_*`                   | D110–D114      |
 | 5     | 5B                                                   | Cursor      | 5A         | `cursor/5b`           | `0012_*` при необходимости | D115–D119      |
+| 6     | 5C                                                   | Cursor      | 5B         | `cursor/5c`           | `0012_*`                   | D120–D124      |
 | 4     | 4A                                                   | Codex       | 3B         | `codex/4a`            | `0007_*`                   | D95–D99        |
 | 4     | 8A                                                   | Codex       | 3B, 2A     | `codex/8a`            | `0008_*`                   | D70–D74        |
 | 4     | 5A                                                   | Cursor      | 3B, 2B     | `cursor/5a`           | `0009_*`                   | D75–D79        |
