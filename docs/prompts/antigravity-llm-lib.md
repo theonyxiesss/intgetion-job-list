@@ -1,7 +1,7 @@
-Ты — Kimi K3. Задача: безопасный LLM-слой и набор evals для бота проекта INTGETION JOB LIST. Это выделенная заранее часть подфаз 7A/7B: только чистый код и данные, без базы, API, UI и без сетевых вызовов к LLM.
-Агент: `kimi`, ветка `kimi/llm-lib`, папка `C:\Users\Admin\Documents\Integetion jobs llm`, решения D85–D89. Миграций нет.
+Ты — Antigravity. Задача: безопасный LLM-слой и набор evals для бота проекта INTGETION JOB LIST. Это выделенная заранее часть подфаз 7A/7B: только чистый код и данные, без базы, API, UI и без сетевых вызовов к LLM.
+Агент: `antigravity`, ветка `antigravity/llm-lib`, папка `C:\Users\Admin\Documents\Integetion jobs llm`, решения D85–D89. Миграций нет.
 
-Сначала прочитай `docs/prompts/_common.md` и `docs/PARALLEL_WORK.md` из `origin/master` (клон: https://github.com/theonyxiesss/intgetion-job-list) и действуй по ним: свой worktree, план, DoD, отчёт, в `master` не пушить. Зависимостей нет — можно начинать сразу.
+Сначала прочитай `docs/prompts/_common.md` и `docs/PARALLEL_WORK.md` из `origin/master` (клон: https://github.com/theonyxiesss/intgetion-job-list) и действуй по ним: свой worktree, план, DoD, отчёт, в `master` не пушить. Зависимостей нет — можно начинать сразу. Папку `Integetion jobs review` для этой задачи не используй — она только для ревью.
 
 Прочитай в `docs/TZ_INTGETION_v6.md`: 12 целиком (особенно 12.1, 12.3, 12.4, 12.5), 16.2, 19.3; решения D11, D14, D17, D29, D30 в `docs/DECISIONS.md`; каталог навыков `src/db/seed/skills.ts` и `src/modules/taxonomy/service/index.ts` (слаги навыков для evals).
 
@@ -24,7 +24,7 @@
 ## Правила
 
 - Меняешь только: `src/lib/llm/**`, `evals/**` (можно удалить `evals/.gitkeep`), их тесты, `docs/DECISIONS.md` (D85–D89, в конец), `MISSION_LOG.md` (своя запись в конец). Больше ничего: `package.json`, `src/messages/*`, `src/modules/**` не трогай. Новых npm-зависимостей нет (zod уже есть).
-- Сборка локально: `SWC_NATIVE_BINDING_CACHE='C:\Users\Admin\.swc-cache-kimi' pnpm build` (папку создай заранее).
+- Сборка локально: `SWC_NATIVE_BINDING_CACHE='C:\Users\Admin\.swc-cache-antigravity' pnpm build` (папку создай заранее).
 - Vitest ищет тесты по `src/**/*.test.ts`. Тест, который проверяет файлы `evals/`, положи в `src/lib/llm/evals.test.ts`.
 
 ## Тесты (unit, vitest)
@@ -36,4 +36,4 @@
 - `FakeLLMProvider` + structured output: невалидный ответ отклоняется.
 - evals: все файлы проходят zod-схему; каждый слаг навыка есть в каталоге 2A; каждая таймзона валидна через `Intl`; golden ровно 20, adversarial не меньше 15; покрыты все 6 типов атак из 19.3.
 
-Отчёт по шаблону раздела 0 ТЗ (код подфазы — `7-lib`), с выводом команд, ссылкой на зелёный CI ветки `kimi/llm-lib`, решениями D85+ и выводом `git log --oneline origin/master..origin/kimi/llm-lib`. Не пиши «готово», пока коммиты не запушены и CI ветки не зелёный.
+Отчёт по шаблону раздела 0 ТЗ (код подфазы — `7-lib`), с выводом команд, ссылкой на зелёный CI ветки `antigravity/llm-lib`, решениями D85+ и выводом `git log --oneline origin/master..origin/antigravity/llm-lib`. Не пиши «готово», пока коммиты не запушены и CI ветки не зелёный.
