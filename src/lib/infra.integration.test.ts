@@ -100,10 +100,17 @@ describe("audit_logs", () => {
     expect(rows[0]?.ip_hash).toBe(privacyHash("203.0.113.7"));
     expect(rows[0]?.ip_hash).not.toContain("203.0.113");
 
-    await expect(
-      getDb().execute(
+    // Drizzle wraps the driver error; the Postgres error is the cause.
+    const error = await getDb()
+      .execute(
         sql`update audit_logs set action = 'tampered' where actor_id = ${actorId}`,
-      ),
-    ).rejects.toThrow(/permission denied/);
+      )
+      .then(
+        () => undefined,
+        (caught: unknown) => caught,
+      );
+    expect(error).toBeInstanceOf(Error);
+    const cause = (error as Error).cause as { code?: string } | undefined;
+    expect(cause?.code).toBe("42501"); // insufficient_privilege
   });
 });
