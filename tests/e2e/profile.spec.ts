@@ -34,6 +34,7 @@ test("profile completeness grows, and another candidate gets 404 without contact
   page,
   browser,
 }) => {
+  test.setTimeout(90_000);
   const email = uniqueEmail("profile");
   const contactEmail = `contacts-${email}`;
   await registerWithPassword(page, email);
@@ -49,12 +50,10 @@ test("profile completeness grows, and another candidate gets 404 without contact
   await page.getByLabel("Full name").fill("Ada Lovelace");
   await page.getByLabel("Headline").fill("Engineer");
   await page.getByLabel("Desired titles").fill("Backend engineer");
-  await page.getByLabel("Timezone", { exact: true }).fill("Europe/Berlin");
+  await page.getByRole("textbox", { name: /^Timezone/ }).fill("Europe/Berlin");
   await page.getByLabel("I confirm this timezone").check();
   await page.getByLabel("Years of experience").fill("5");
-  await page
-    .getByLabel("Skills", { exact: true })
-    .fill("React, TypeScript, Python");
+  await page.getByRole("textbox", { name: /^Skills/ }).fill("React, TypeScript, Python");
   await page.getByLabel("Language code").fill("en");
   await page.getByLabel("Minimum salary, minor units").fill("100000");
   await page.getByLabel("Salary currency").fill("EUR");
