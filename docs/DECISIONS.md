@@ -224,8 +224,6 @@ The workspace directory name is not a valid npm package name (spaces and capital
 5. Разбор навыков: `map` одобряет предложение и добавляет его нормализованный текст алиасом навыка в одной транзакции, после этого `normalizeSkill` находит навык сам; алиас, уже указывающий на другой навык, — 409 `ALIAS_TAKEN`; повторное решение — 409 `ALREADY_DECIDED`. Новые коды ошибок — `ADMIN_PROTECTED`, `ALIAS_TAKEN`, `ALREADY_DECIDED`.
 6. Каждое действие админа пишет `audit_logs` с админом как actor и хешем IP (P16); в выдаче журнала `ip_hash` нет. Назначение админа — только скриптом `pnpm admin:grant <email>` (D21), запись `admin.granted` без actor.
 
-## D60 — временный DTO денег до 4A-lib (3B)
-
 ## D60 — деньги и временные зоны вакансий (3B)
 
 После появления `src/lib/money.ts` в `origin/master` 3B использует `toMoneyDto` для зарплат; временный адаптер удалён. Зарплатный outlier считается exact numeric в SQL при сравнении зарплаты с медианой той же категории/валюты/периода/базы (порог > 3×), чтобы не переводить bigint minor units в number. Проверка `timezoneRequired` использует `isValidTimeZone` из `src/lib/tz.ts`, включая отказ фиксированным смещениям.
@@ -399,3 +397,7 @@ FTS использует сохранённый `tsvector` и GIN индекс. 
 ## D99 — ежедневные FX курсы и тестовые данные (4A)
 
 Курсы берутся из официального ECB SDMX CSV без ключа и записываются в `fx_rates` как units-per-USD по D66, преобразование quote values выполняется точным `numeric` в PostgreSQL. Seed 5k (`src/db/seed/jobs-4a.mjs`) разрешён только для loopback DB и не запускается миграцией; perf harness и integration check измеряют server-side p95 каталога отдельно.
+
+## D49 — источники импорта создаются в 4A
+
+`import_sources` и `job_sources` (4.1) созданы миграцией 0007 (4A, Codex): публичная карточка импортированной вакансии отдаёт `source{name,url}` (раздел 7), и 4A первой читает эти таблицы. Подфаза 8A использует их как есть и добавляет только `import_runs`; менять их структуру — с записью в своём диапазоне D.
