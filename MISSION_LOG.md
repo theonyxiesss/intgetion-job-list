@@ -264,7 +264,8 @@
 - CI 37138580768 → success (первый прогон падал: `Date` в сыром SQL и неотформатированный промпт 4B — исправлено). Влито fast-forward, миграция 0014 применена к облаку.
 - Следующее: при вливании 4B подключить подсчёт подтверждённых жалоб в `refreshTrustedFlags` (D133).
 
-## [2026-10-03] — 7-lib: LLM-слой и evals (Claude Code, задача Antigravity) — IN REVIEW
+## [2026-10-03] — 7-lib: LLM-слой и evals (Claude Code, задача Antigravity) — DONE
 
 - Antigravity задачу не начал; сделал Claude Code. `src/lib/llm/` (провайдер и структурированный вывод, `wrapUntrusted`, `redactPii`, `pickLlmFields`, бюджеты и circuit breaker), `evals/` (20 golden, 18 adversarial, zod-схемы). Миграций и сетевых вызовов нет (D85–D89).
 - Тесты: 28 unit, в том числе проверка всех файлов evals по схемам, слагам каталога 2A и IANA.
+- CI 37140761754 → success, влито fast-forward. Миграции нет.
