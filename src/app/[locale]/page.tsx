@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { LatestJobs } from "@/modules/jobs/ui/latest-jobs";
 
 const categoryIds = [
   "engineering",
@@ -98,7 +99,7 @@ export default async function HomePage({
 
       <section id="latest" className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">{t("latestTitle")}</h2>
-        <p>{t("latestEmpty")}</p>
+        <LatestJobs locale={locale} />
       </section>
 
       <section id="benefits" className="flex flex-col gap-4">
