@@ -334,3 +334,14 @@
 ## [2026-10-03] — UI-3: работодатель и админка в новом дизайне (Claude Code) — IN REVIEW
 
 - Админка-пульт (D146), кабинет работодателя: вакансии, вкладки статусов, отклики, карточка кандидата, форма вакансии (D147), компания, верификация, контакты (D148). Клиентские компоненты импортируют кит по файлам (D41a). Миграций нет.
+
+## [2026-10-03] — 6A — DONE (ветка `cursor/6a`)
+
+- Сделано: миграция `0015_matching_results.sql`. SQL-префильтр (видимые published-компании, формат, занятость, страна, скрытия, активный отклик, общий навык или категория, лимит 500). Скоринг функциями `score/*` без переписывания формул. Feedback за 90 дней, порог 0.55, top-200 одной транзакцией. `getMatches` отдаёт кэш, если он не старше 6 часов, профиль не новее и `algo_version` совпадает. `computeMatchesForJob` считает до 2000 кандидатов без очереди. Explain пишется в момент скоринга.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm test` → 0 (50 files, 428 tests). Интеграция и e2e локально не запускались. `gh run watch 37145640895` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37145640895 — `check` 1m22s и `database` 7m37s success на `4aa6005`.
+- P-тесты подфазы: нет. DoD 6A (нейтральная зарплата, gross/net, DST, полночь, скрытия, suspended/removed, кэш, p95) прошёл в job `database`.
+- Миграции: `0015_matching_results.sql` (на облако не применялась).
+- Изменённые файлы: `src/db/migrations/0015_matching_results.sql`, `src/db/schema/matching.ts`, `src/modules/matching/repo/matching-repo.ts`, `src/modules/matching/service/{cache-rules,compute,index}.ts`, `src/modules/matching/__tests__/cache-rules.test.ts`, `src/modules/matching/matching.integration.test.ts`, `docs/DECISIONS.md`, `docs/ERD.md`.
+- Отклонения от ТЗ: D150 (что считается в SQL), D151 (свежесть и `lowData` ответа), D152 (что пишется в кэш), D153 (пересчёт одной вакансии без pg-boss), D154 (граница bigint/time и текст вместо `Date` в сыром SQL).
+- OPEN QUESTION: нет
+- Следующая подфаза: не начинать. UI-2 ждёт UI-1 в `master`. 6B не начата.
