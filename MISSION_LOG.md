@@ -263,3 +263,8 @@
 - Тесты: unit (правила домена, повторная заявка, реквизиты, TXT, Trusted, `verify_company`), integration (права, email-ссылка и хеш, очередь, 409 без первой вакансии → verified, DNS, срок 72 ч, Trusted), e2e (бесплатная почта 422, DNS-заявка, чужой 404, страница).
 - CI 37138580768 → success (первый прогон падал: `Date` в сыром SQL и неотформатированный промпт 4B — исправлено). Влито fast-forward, миграция 0014 применена к облаку.
 - Следующее: при вливании 4B подключить подсчёт подтверждённых жалоб в `refreshTrustedFlags` (D133).
+
+## [2026-10-03] — 7-lib: LLM-слой и evals (Claude Code, задача Antigravity) — IN REVIEW
+
+- Antigravity задачу не начал; сделал Claude Code. `src/lib/llm/` (провайдер и структурированный вывод, `wrapUntrusted`, `redactPii`, `pickLlmFields`, бюджеты и circuit breaker), `evals/` (20 golden, 18 adversarial, zod-схемы). Миграций и сетевых вызовов нет (D85–D89).
+- Тесты: 28 unit, в том числе проверка всех файлов evals по схемам, слагам каталога 2A и IANA.

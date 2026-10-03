@@ -15,7 +15,7 @@
 | 2     | 2B                                                   | Cursor      | 2A, 1B     | `cursor/2b`           | `0005_*`                   | D55–D59        |
 | 3     | 3B                                                   | Codex       | 3A, 2A     | `codex/3b`            | `0006_*`                   | D60–D64        |
 | 2     | 4A-lib: `src/lib/money.ts`, `src/lib/tz.ts`          | GLM         | —          | `glm/lib`             | нет                        | D65–D69        |
-| 2     | 7-lib: `src/lib/llm/**`, `evals/**`                  | Antigravity | —          | `antigravity/llm-lib` | нет                        | D85–D89        |
+| 2     | 7-lib: `src/lib/llm/**`, `evals/**`                  | Claude Code | —          | `claude/llm-lib`      | нет                        | D85–D89        |
 | 3     | 6A-score: `src/modules/matching/score/**`            | GLM         | —          | `glm/matching-score`  | нет                        | D90–D94        |
 | 3     | 5A-rules: `src/modules/applications/**` (без таблиц) | Cursor      | 2B         | `cursor/5a-rules`     | нет                        | D75–D79        |
 | 4     | 9A-lib: `src/modules/notifications/**` (без таблиц)  | GLM         | —          | `glm/notify-lib`      | нет                        | D100–D104      |
