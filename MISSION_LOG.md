@@ -128,12 +128,13 @@
 - Отклонения от ТЗ: D55 (что считать подтверждёнными часами и форматом), D56 (до 5A профиль виден только владельцу; страницы открыты любому подтверждённому пользователю), D57 (длины и `candidate_titles_valid`), D58 (навыки через `normalizeSkill`, максимум 30), D59 (две транзакции без цикла импортов; `GET /api/me` не переключался)
 - OPEN QUESTION: нет
 - Следующая подфаза: 5A после 3B. Для этого агента — стоп до явной команды.
+
 ## [2026-10-03] — 3B — CI pending (ветка `codex/3b`)
 
 - Сделано: миграция `0006_jobs.sql` и Drizzle-схема вакансий; сервис CRUD, skills/languages и история статусов; единая машина переходов 4.3, publish по D12, risk-score 14.3; API работодателя, cron истечения и страницы `/employer/jobs*` с en/ru строками. Очередь модерации получает publish/risk flags; UI очереди остаётся 10A.
-- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (22 files, 172 tests); сборка с `SWC_NATIVE_BINDING_CACHE=C:\Users\Admin\.swc-cache-codex` → 0; Prettier по изменённым TS/JS/JSON/MD → 0. Полный локальный `pnpm format:check` на Windows затронут CRLF в базовых файлах; первый CI выявил форматирование секции журнала 3B, исправлено и отправлено.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (25 files, 187 tests); сборка с `SWC_NATIVE_BINDING_CACHE=C:\Users\Admin\.swc-cache-codex` → 0; Prettier по изменённым TS/JS/JSON/MD → 0. Полный локальный `pnpm format:check` на Windows затронут CRLF базовых файлов. Первый CI выявил недопустимый параметр `Date` в DB seed; заменён на ISO строку.
 - P-тесты подфазы: P2 добавлен (чужой работодатель PATCH draft-вакансии → 404); интеграционный CRUD/status history и e2e публикации ожидают CI с БД.
 - Миграции: `src/db/migrations/0006_jobs.sql` (deny-all RLS; CI применит с нуля и повторно; облако не менялось).
 - Отклонения от ТЗ: нет. После появления `src/lib/money.ts` во время rebase 3B подключила `toMoneyDto`; outlier сравнивается с медианой exact numeric без floating point. D60–D64 — схема, статусная машина, risk-score и лимиты/cron.
-- BLOCKED до CI: ссылка на зелёный GitHub Actions будет добавлена после завершения прогона.
+- CI на актуальном `origin/master` запущен после исправления seed; ссылка и итог будут добавлены по завершении.
 - Следующая подфаза: 4A / 4A-lib.
