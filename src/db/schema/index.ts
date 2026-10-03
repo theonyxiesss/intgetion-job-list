@@ -4,3 +4,4 @@ export * from "./infra";
 export * from "./skills";
 export * from "./users";
 export * from "./companies";
+export * from "./jobs";

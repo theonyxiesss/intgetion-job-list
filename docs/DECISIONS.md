@@ -214,3 +214,22 @@ The workspace directory name is not a valid npm package name (spaces and capital
 1. `PATCH /api/candidates/me` считает полноту по уже сохранённому email и пишет профиль вместе с `completeness` в одной транзакции.
 2. `PUT /api/candidates/me/contacts` в одной транзакции пишет контакт и затем `completeness`. Счётчик собирает маршрут из `scoreStoredProfile` и `storeCompleteness`, чтобы модули не импортировали друг друга по кругу.
 3. `GET /api/me` по-прежнему отдаёт `hasCandidateProfile: false`. После D46 это строка в `meContext` (`src/app/api/me/route.ts`): модуль auth кандидатов не импортирует. Её подставляет Claude Code вызовом `hasCandidateProfile(user.id)` из `@/modules/candidates/service`.
+## D60 — временный DTO денег до 4A-lib (3B)
+
+`src/lib/money.ts` отсутствует в `origin/master`. В 3B сериализация сумм вынесена в `src/modules/jobs/api/money-dto.ts`, без округлений и арифметики: `bigint` minor units превращаются в десятичную строку DTO. Заменить адаптер и подключить сравнение зарплат к `src/lib/money.ts` после его появления в `master`; собственная money-логика в общем `src/lib` запрещена.
+
+## D61 — схема вакансий (3B)
+
+`0006_jobs.sql` создаёт jobs, job_skills, job_languages и job_status_history с deny-all RLS. Суммы — bigint minor units, валюта ISO 4217, период и gross/net отдельно. `application_email` хранится в `text` и приводится к lowercase сервисом: в миграциях нет citext, а установка нового extension потребовала бы отдельной ручной операции владельца базы. Imported-вакансии не создаются и не открываются работодателю этим модулем.
+
+## D62 — статусная машина вакансии (3B)
+
+Таблица переходов и проверка актёра находятся в одной `transitionJob`. Изменения через сервис атомарно добавляют `job_status_history`; rejected требует причину. Publish/extend отправляют unverified/pending компании и любую вакансию с risk-score ≥ 4 на `pending_moderation`; edit опубликованной вакансии переводит её туда при unverified компании или риске ≥ 4.
+
+## D63 — risk-score v1 (3B)
+
+Вес флагов раздела 14.3 реализован в `scoreJobRisk`: 2/2/3/3/1/4/2. Создание и изменение вакансии вычисляет возраст аккаунта, бесплатный email, темп вакансий компании, сходство описаний, домен ссылки отклика, scam-паттерны и выброс зарплаты внутри той же категории/валюты/периода/базы. Сравнение денежных диапазонов и FX сюда не входит.
+
+## D64 — квоты, публикация и интерфейс вакансий (3B)
+
+Квоты создания 5 вакансий/сутки для непроверенной компании и 50/сутки для verified используют общие `enforceRateLimit` buckets `jobCreateUnverified` / `jobCreateVerified` и company id как subject. Они добавлены Claude Code в `src/lib/rate-limit.ts` до старта 3B. Cron `expire-jobs` запускается ежечасно по `vercel.json`; moderation queue здесь только принимает publish/risk флаги, обработчик очереди остаётся 10A.

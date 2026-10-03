@@ -147,3 +147,50 @@ erDiagram
 ```
 
 Migration 0004 (3A) creates companies, company_members, employer_profiles, and the moderation_queue table used for possible_duplicate records.
+
+Migration 0006 (3B) creates jobs, job_skills, job_languages, and job_status_history. All use deny-all RLS; jobs reference companies and users, job_skills reference taxonomy skills, and job status changes are recorded in job_status_history.
+
+```mermaid
+erDiagram
+  companies ||--o{ jobs : posts
+  users ||--o{ jobs : creates
+  jobs ||--o{ job_skills : requires
+  skills ||--o{ job_skills : matches
+  jobs ||--o{ job_languages : requires
+  jobs ||--o{ job_status_history : records
+  jobs {
+    uuid id PK
+    uuid company_id FK
+    uuid created_by FK
+    text title
+    text description
+    job_status status
+    bigint salary_min
+    bigint salary_max
+    char(3) salary_currency
+    salary_period salary_period
+    salary_basis salary_basis
+    smallint risk_score
+    jsonb risk_flags
+    timestamptz expires_at
+  }
+  job_skills {
+    uuid job_id PK, FK
+    uuid skill_id PK, FK
+    smallint weight
+    skill_level min_level
+  }
+  job_languages {
+    uuid job_id PK, FK
+    char(2) lang PK
+    cefr_level min_level
+  }
+  job_status_history {
+    uuid id PK
+    uuid job_id FK
+    job_status from_status
+    job_status to_status
+    uuid actor_id FK
+    text reason
+  }
+```
