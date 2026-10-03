@@ -126,5 +126,108 @@
       "error": "The company could not be saved. Check the fields and try again.",
       "saved": "Company profile saved."
     }
+  },
+  "profile": {
+    "nav": "Profile",
+    "title": "Profile",
+    "editTitle": "Edit profile",
+    "empty": "You do not have a profile yet.",
+    "create": "Create profile",
+    "edit": "Edit profile",
+    "completenessLabel": "Profile completeness",
+    "completenessValue": "{score}%",
+    "missingTitle": "What to add",
+    "missing": {
+      "full_name": "Add your name (+5%)",
+      "headline": "Add a headline (+10%)",
+      "desired_titles": "Add a desired title (+10%)",
+      "timezone": "Confirm your timezone (+10%)",
+      "work_schedule": "Confirm work hours and days (+5%)",
+      "skills": "Add at least 3 skills (+15%)",
+      "experience_years": "Add years of experience (+10%)",
+      "languages": "Add a language (+10%)",
+      "salary": "Add salary expectations (+10%)",
+      "work_preferences": "Confirm work format and employment type (+5%)",
+      "contact_email": "Add a contact email (+10%)"
+    },
+    "contactsTitle": "Contacts",
+    "contactsHint": "A company sees these only after it expresses interest in your application.",
+    "noContacts": "No contact email yet.",
+    "fields": {
+      "fullName": "Full name",
+      "headline": "Headline",
+      "desiredTitles": "Desired titles",
+      "desiredTitlesHint": "Up to five, separated by commas.",
+      "country": "Country code",
+      "city": "City",
+      "timezone": "Timezone",
+      "timezoneHint": "Filled from your browser. Confirm it before saving.",
+      "confirmTimezone": "I confirm this timezone",
+      "workHoursStart": "Work day starts",
+      "workHoursEnd": "Work day ends",
+      "workDays": "Work days",
+      "workFormats": "Work format",
+      "employmentTypes": "Employment type",
+      "experienceYears": "Years of experience",
+      "skills": "Skills",
+      "skillsHint": "Up to 30, separated by commas. Unknown names are saved as suggestions.",
+      "skillLevel": "Skill level",
+      "language": "Language code",
+      "languageLevel": "Language level",
+      "salaryMin": "Minimum salary, minor units",
+      "salaryCurrency": "Salary currency",
+      "salaryPeriod": "Salary period",
+      "salaryBasis": "Salary basis",
+      "contactEmail": "Contact email",
+      "phone": "Phone",
+      "save": "Save profile"
+    },
+    "weekdays": {
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday",
+      "7": "Sunday"
+    },
+    "formats": {
+      "remote": "Remote",
+      "hybrid": "Hybrid",
+      "onsite": "On-site"
+    },
+    "employment": {
+      "full_time": "Full time",
+      "part_time": "Part time",
+      "contract": "Contract"
+    },
+    "levels": {
+      "novice": "Novice",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "expert": "Expert"
+    },
+    "cefr": {
+      "A1": "A1",
+      "A2": "A2",
+      "B1": "B1",
+      "B2": "B2",
+      "C1": "C1",
+      "C2": "C2",
+      "native": "Native"
+    },
+    "periods": {
+      "hour": "Hour",
+      "month": "Month",
+      "year": "Year"
+    },
+    "basis": {
+      "gross": "Gross",
+      "net": "Net"
+    },
+    "errors": {
+      "generic": "The profile could not be saved. Check the fields and try again.",
+      "timezone_confirm": "Confirm the timezone before saving."
+    }
   }
 }

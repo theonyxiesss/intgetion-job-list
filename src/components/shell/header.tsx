@@ -27,7 +27,15 @@ export async function Header() {
         </nav>
         <nav aria-label={t("nav.account")} className="flex gap-1">
           {signedIn ? (
-            <LogoutButton />
+            <>
+              <Link
+                href="/profile"
+                className="inline-flex min-h-11 items-center px-2"
+              >
+                {t("profile.nav")}
+              </Link>
+              <LogoutButton />
+            </>
           ) : (
             <>
               <Link
