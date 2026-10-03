@@ -226,7 +226,6 @@ The workspace directory name is not a valid npm package name (spaces and capital
 
 ## D60 — временный DTO денег до 4A-lib (3B)
 
-
 ## D60 — деньги и временные зоны вакансий (3B)
 
 После появления `src/lib/money.ts` в `origin/master` 3B использует `toMoneyDto` для зарплат; временный адаптер удалён. Зарплатный outlier считается exact numeric в SQL при сравнении зарплаты с медианой той же категории/валюты/периода/базы (порог > 3×), чтобы не переводить bigint minor units в number. Проверка `timezoneRequired` использует `isValidTimeZone` из `src/lib/tz.ts`, включая отказ фиксированным смещениям.
