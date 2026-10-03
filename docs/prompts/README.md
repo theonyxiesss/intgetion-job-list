@@ -11,7 +11,8 @@
 | `antigravity-llm-lib.md` | Antigravity | сейчас                             |
 | `glm-lib.md`             | GLM         | сдано                              |
 | `glm-matching-score.md`  | GLM         | сдано                              |
-| `glm-notify-lib.md`      | GLM         | сейчас                             |
+| `glm-notify-lib.md`      | GLM         | сдано                              |
+| `glm-4b.md`              | GLM         | после слияния 4A в `master`        |
 | `codex-4a.md`            | Codex       | сейчас (вместо `glm-4a.md`)        |
 | `antigravity-8a.md`      | Antigravity | после слияния 3B (и 2A) в `master` |
 | `cursor-5a-rules.md`     | Cursor      | сдано                              |
