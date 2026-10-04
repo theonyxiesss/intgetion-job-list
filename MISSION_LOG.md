@@ -457,3 +457,14 @@
 - Отклонения от ТЗ: D203, D205, D206.
 - OPEN QUESTION: нет
 - Следующая подфаза: 7B (Cursor, D180–D184). Затем 9B, затем P1. 8B и 11A не начинать.
+
+## [2026-10-04] — 7B — DONE, влито в master
+
+- Сделано: fast-forward `b7cac51..02518a2` в `master`. Сценарии бота: экстракция черновика (навыки через справочник без записи предложения, часовой пояс, часы, зарплата с валютой/периодом/gross-net, сферы и уровень), карточка сохранения только после подтверждения, `get_matches` со score ≥ 0.55 и explain, отклик через сервис 5A с 422 и списком недостающих полей, привязка гостевой беседы по cookie `bot_session` с предложением сохранить черновик. `pnpm eval` — записанный провайдер (инструменты, подтверждение, редакция PII, отказы на adversarial, пороги 19.3). `pnpm eval:live` — живой прогон при `ANTHROPIC_API_KEY`, в `pnpm test` пропускается. Решения D180–D184. Миграции нет. Перед вливанием ветка перебазирована на `b7cac51` (D214, D215); правку `0019` Claude Code не переписывал.
+- Команды проверки: локально `pnpm exec tsc --noEmit` → 0; `pnpm test` → 0 (60 files, 474 passed, 1 skipped — live eval); eslint по файлам 7B → 0. Интеграция и e2e локально не запускались. `gh run watch 37220330319` → 0 на `6c0a62f` до rebase. После rebase: `gh run watch 37220879643` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37220879643 — `check` 1m27s и `database` 7m20s на `02518a2`. `git push origin cursor/7b:master` → `b7cac51..02518a2`.
+- P-тесты подфазы: P8 (отклик и запись профиля без подтверждения — 422), P10 (инструкция из вакансии не выполняется, PII не попадает в контекст модели), P11 (гость не вызывает `get_matches` и запись). Прошли в unit и в job `database`.
+- Миграции: нет. `0019_markers.sql` уже в master; по D215 первый прогон в облаке упал на FORCE RLS, файл поправлен. Применить к облаку должен Claude Code: `pnpm db:migrate` и `pnpm db:verify` (подхватит 0019 и 0016, если они ещё не применены).
+- Изменённые файлы: `src/modules/bot/**`, `src/components/bot/chat.tsx`, `src/app/api/bot/conversation/route.ts`, `src/modules/candidates/service/profile-patch.ts`, `src/modules/taxonomy/service/{taxonomy-service,index}.ts`, `src/messages/{en,ru}.json`, `src/app/[locale]/layout.tsx`, `package.json`, `scripts/eval-live.mjs`, `docs/DECISIONS.md`.
+- Отклонения от ТЗ: D180–D184. Живая экстракция вызывается только у Anthropic, чтобы не ломать записанные ходы 7A. Неизвестный навык не пишет suggestion.
+- OPEN QUESTION: нет
+- Следующая подфаза: 9B (дайджест, D185–D189). Затем P1. 8B и 11A не начинать.
