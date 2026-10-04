@@ -10,6 +10,7 @@ import { reportError } from "@/lib/logger";
 import { computeMatchesForJob } from "./compute";
 import {
   MATCH_CRON_BUDGET_MS,
+  MATCH_LOCK_MS,
   budgetExhausted,
   retryPlan,
 } from "./recalc-rules";
@@ -28,10 +29,18 @@ export async function enqueueMatchJob(jobId: string): Promise<void> {
   `);
 }
 
-/** One due row, or none. The update is the lock: a second caller skips it. */
+/**
+ * One due row, or none. The update is the lock: a second caller skips it.
+ * Without an explicit clock, due-ness uses the database clock. `run_after`
+ * is written with `now()`, and a slightly slow app clock would skip the row.
+ */
 export async function claimMatchJob(
-  now = new Date(),
+  now?: Date,
 ): Promise<ClaimedMatchJob | null> {
+  const clock = now ? sql`${now.toISOString()}::timestamptz` : sql`now()`;
+  const staleBefore = now
+    ? sql`${new Date(now.getTime() - MATCH_LOCK_MS).toISOString()}::timestamptz`
+    : sql`now() - make_interval(secs => ${MATCH_LOCK_MS / 1000})`;
   const rows = await getDb().execute<{
     id: string;
     job_id: string;
@@ -40,17 +49,17 @@ export async function claimMatchJob(
     update public.matching_jobs
     set status = 'running',
         attempts = attempts + 1,
-        locked_at = ${now.toISOString()}::timestamptz
+        locked_at = ${clock}
     where id = (
       select id from public.matching_jobs
       where (
           status = 'pending'
-          and run_after <= ${now.toISOString()}::timestamptz
+          and run_after <= ${clock}
           and attempts < 5
         )
         or (
           status = 'running'
-          and locked_at <= ${new Date(now.getTime() - 2 * 60 * 1000).toISOString()}::timestamptz
+          and locked_at <= ${staleBefore}
           and attempts < 5
         )
       order by run_after, id
@@ -107,7 +116,7 @@ export async function runMatchingCron(input?: {
   let retried = 0;
   let failed = 0;
   while (!budgetExhausted(started, Date.now(), budgetMs)) {
-    const job = await claimMatchJob(now);
+    const job = await claimMatchJob(input?.now);
     if (!job) break;
     claimed += 1;
     try {
