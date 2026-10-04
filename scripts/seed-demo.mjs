@@ -22,6 +22,9 @@ if (!isLoopback(url) && !args.has("--cloud")) {
   throw new Error("Not a local database: pass --cloud to seed it on purpose");
 }
 
+// City for hybrid and onsite jobs: the jobs table requires a location then.
+const cities = { NL: "Amsterdam", CZ: "Prague" };
+
 const companies = [
   [
     "orbit-labs",
@@ -543,13 +546,13 @@ try {
            application_method, status, published_at, expires_at,
            salary_min, salary_max, salary_currency, salary_period, salary_basis,
            timezone_required, work_hours_start, work_hours_end, min_overlap_hours,
-           location_country
+           location_country, location
          ) values (
            md5($1)::uuid, md5('demo-company-' || $2)::uuid, $3, $4, $5,
            $6::work_format, $7::employment_type, 'internal', 'published',
            now() - ($8 || ' hours')::interval, now() + interval '30 days',
            $9, $10, $11, $12::salary_period, $13::salary_basis,
-           $14, $15::time, $16::time, $17, $18
+           $14, $15::time, $16::time, $17, $18, $19
          ) on conflict (id) do nothing`,
         [
           id,
@@ -572,6 +575,9 @@ try {
           format === "remote"
             ? null
             : companies.find(([slug]) => slug === company)[3],
+          format === "remote"
+            ? null
+            : cities[companies.find(([slug]) => slug === company)[3]],
         ],
       );
       await client.query(
