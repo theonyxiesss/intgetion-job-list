@@ -11,7 +11,18 @@ export function testIp(): string {
   return `198.${18 + randomInt(2)}.${randomInt(256)}.${1 + randomInt(254)}`;
 }
 
+/** Tests start with the cookie choice made, so the banner covers nothing (D201). */
+export const consentCookie = {
+  name: "cookie_consent",
+  value: "necessary",
+  url: "http://127.0.0.1:3000",
+};
+
 export const test = base.extend({
+  context: async ({ context }, provide) => {
+    await context.addCookies([consentCookie]);
+    await provide(context);
+  },
   // Playwright calls the second argument `use`; another name keeps the React
   // hooks lint rule from mistaking it for a hook.
   extraHTTPHeaders: async ({ extraHTTPHeaders }, provide) => {
@@ -21,10 +32,12 @@ export const test = base.extend({
 
 /** A second browser context that acts as another user from another IP. */
 export async function newContextWithIp(browser: Browser) {
-  return browser.newContext({
+  const context = await browser.newContext({
     baseURL: "http://127.0.0.1:3000",
     extraHTTPHeaders: { "x-forwarded-for": testIp() },
   });
+  await context.addCookies([consentCookie]);
+  return context;
 }
 
 export { expect } from "@playwright/test";

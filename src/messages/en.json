@@ -958,5 +958,12 @@
       "declined": "Cancelled.",
       "failed": "Could not complete this. The card may have expired; ask again."
     }
+  },
+  "cookies": {
+    "label": "Cookie choice",
+    "title": "Cookies",
+    "text": "The site uses only the cookies it needs to work: sign-in, language and the chat session. With “Accept all” you also allow optional cookies, such as analytics, if we add them later. You can change your choice by clearing cookies.",
+    "acceptAll": "Accept all",
+    "necessaryOnly": "Necessary only"
   }
 }

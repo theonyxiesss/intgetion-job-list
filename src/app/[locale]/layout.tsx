@@ -10,6 +10,7 @@ import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { Footer } from "@/components/shell/footer";
+import { CookieBanner } from "@/components/shell/cookie-banner";
 import { Header } from "@/components/shell/header";
 import { ToastProvider } from "@/components/ui";
 import { routing } from "@/i18n/routing";
@@ -112,6 +113,15 @@ export default async function LocaleLayout({
               {children}
             </div>
             <Footer />
+            <CookieBanner
+              text={{
+                label: t("cookies.label"),
+                title: t("cookies.title"),
+                text: t("cookies.text"),
+                acceptAll: t("cookies.acceptAll"),
+                necessaryOnly: t("cookies.necessaryOnly"),
+              }}
+            />
           </ToastProvider>
         </NextIntlClientProvider>
       </body>
