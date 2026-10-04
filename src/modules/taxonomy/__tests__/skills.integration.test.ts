@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import pg from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { MARKER_SKILLS } from "@/config/markers";
 import { expandCatalog } from "@/db/seed/skills";
 import { getDb } from "@/db/client";
 import { hostedSsl, withoutSslMode } from "@/db/ssl";
@@ -45,6 +46,16 @@ afterAll(async () => {
 describe("skill seed and normalizeSkill", () => {
   it("seeds an idempotent catalog and resolves the React examples", async () => {
     const catalog = expandCatalog();
+    const catalogSlugs = new Set(catalog.map((entry) => entry.slug));
+    const bootstrapAliases = new Set(catalog.flatMap((entry) => entry.aliases));
+    const extraSkills = MARKER_SKILLS.filter(
+      (skill) => !catalogSlugs.has(skill.slug),
+    );
+    const extraAliases = new Set(
+      MARKER_SKILLS.flatMap((skill) => skill.aliases).filter(
+        (alias) => !bootstrapAliases.has(alias),
+      ),
+    );
     const aliasCount = catalog.reduce(
       (total, entry) => total + entry.aliases.length,
       0,
@@ -60,10 +71,10 @@ describe("skill seed and normalizeSkill", () => {
     await seedSkills();
     const second = await getSkillCatalogStats();
 
-    expect(first.skills).toBe(catalog.length);
-    expect(first.skills).toBeGreaterThanOrEqual(80);
-    expect(first.skills).toBeLessThanOrEqual(120);
-    expect(first.aliases).toBe(aliasCount);
+    expect(catalog.length).toBeGreaterThanOrEqual(80);
+    expect(catalog.length).toBeLessThanOrEqual(120);
+    expect(first.skills).toBe(catalog.length + extraSkills.length);
+    expect(first.aliases).toBe(aliasCount + extraAliases.size);
     expect(first.minAliases).toBeGreaterThanOrEqual(2);
     expect(first.categories).toEqual([...SKILL_CATEGORIES].sort());
     expect(second).toEqual(first);
