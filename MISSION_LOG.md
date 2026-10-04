@@ -468,3 +468,12 @@
 - Отклонения от ТЗ: D180–D184. Живая экстракция вызывается только у Anthropic, чтобы не ломать записанные ходы 7A. Неизвестный навык не пишет suggestion.
 - OPEN QUESTION: нет
 - Следующая подфаза: 9B (дайджест, D185–D189). Затем P1. 8B и 11A не начинать.
+
+## [2026-10-04] — D210–D213 и деплой Vercel — DONE, влито в master
+
+- Сделано: fast-forward `038e408..a5ef3c3` в `master` одной веткой `claude/integrate-batch`: `cursor/vercel-deploy` (две ежедневные cron-задачи для Vercel Hobby), `claude/seo` (D210–D211: sitemap, robots, метаданные, JobPosting только для своих вакансий), `claude/demo-seed` (D212), `claude/openrouter` (D213). Конфликты с M1 и 7B: одна карта сайта (статические страницы, вакансии, компании и страницы тегов M1 с hreflang); один `generateMetadata` каталога (canonical D211 и RSS M1); в боте возвращены импорты `AnthropicProvider` и `modelsFromEnv`, извлечение черновика 7B по-прежнему только у Anthropic.
+- Команды проверки: локально `pnpm exec tsc --noEmit` → 0; `pnpm exec eslint src scripts --quiet` → 0; `pnpm exec vitest run` → 0 (62 files, 487 passed, 1 skipped). `gh run watch 37230249834` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37230249834 — `check` и `database` success на `a5ef3c3`. `git push origin claude/integrate-batch:master` → `038e408..a5ef3c3`.
+- Миграции: нет.
+- Прод: проект онлайн на https://intgetion.com (Vercel). В Supabase Auth нужно поставить Site URL `https://intgetion.com` и redirect `https://intgetion.com/**`.
+- OPEN QUESTION: нет
+- Следующее: Cursor — 9B (дайджест, письма); Hermes — довести `hermes/runbook` (11B) до зелёного CI после rebase.
