@@ -356,3 +356,13 @@
 - Отклонения от ТЗ: D155–D159. Тест откликов после Withdraw открывает вкладку Archive (статус иначе не на экране). Доступное имя чипа фильтра — «Clear filter», видимый текст по-прежнему значение фильтра: иначе селектор названия вакансии совпадал с чипом. Ассерт «Imported from» и переход на карточку не ослаблялись.
 - OPEN QUESTION: нет
 - Следующая подфаза: не начинать. UI-3 — зона Claude Code.
+
+## [2026-10-04] — интеграция 6A и UI-2, передача дел (Claude Code)
+
+- 6A (Cursor): перебазирована на master с UI-1/UI-3, CI 37197660813 → success (39 e2e), влито. Миграция 0015 применена к облаку, `pnpm db:verify` → deny-all на 35 таблицах.
+- UI-2 (Cursor): проверена (нет `style={...}`, клиентские строки в `CLIENT_NAMESPACES`, импорты кита по файлам, en/ru паритет), перебазирована поверх 6A, CI на ветке `claude/integrate-ui2`; вливается вместе с этой записью.
+- Ключи: `SUPABASE_SERVICE_ROLE_KEY` добавлен в `.env.local` пользователем (Auth Admin API отвечает 200); `UNSUBSCRIBE_SECRET` сгенерирован локально. **Resend отложен** по решению пользователя: `RESEND_API_KEY`/`EMAIL_FROM` пустые, письма помечаются `skipped`.
+- Следующее:
+  - Cursor — 6B (`docs/prompts/cursor-6b.md`).
+  - Claude Code — 10C (приватность, миграция 0017, D165–D169), затем: адрес получателя писем через Auth Admin API с service role (заглушка `lookupLoginEmail` из 9A), уведомления админ-действий (`job.moderation_decided`, `company.verification_decided`, `report.decided`), затем 7A.
+  - Позже: Resend (домен + ключ), ключи в Vercel, `ANTHROPIC_API_KEY` к 7A, настройки Auth в Supabase, удалить старые worktree-папки агентов.

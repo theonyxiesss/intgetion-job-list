@@ -6,32 +6,37 @@
 
 Порядок задаёт колонка «Зависит от» раздела 22 ТЗ. Подфазу можно начинать, только когда все её зависимости **влиты в `master`** (запись DONE в `MISSION_LOG.md` на `master`).
 
-| Волна | Подфаза                                              | Агент       | Зависит от | Ветка                | Миграция                   | Номера решений |
-| ----- | ---------------------------------------------------- | ----------- | ---------- | -------------------- | -------------------------- | -------------- |
-| 1     | 1B                                                   | Claude Code | 1A         | `claude/1b`          | `0002_*`                   | D38–D41        |
-| 1     | 2A                                                   | Cursor      | 0B         | `cursor/2a`          | `0003_*`                   | D42–D45        |
-| 1     | ревью 1B и 2A                                        | Antigravity | —          | без изменений кода   | —                          | —              |
-| 2     | 3A                                                   | Codex       | 1B         | `codex/3a`           | `0004_*`                   | D50–D54        |
-| 2     | 2B                                                   | Cursor      | 2A, 1B     | `cursor/2b`          | `0005_*`                   | D55–D59        |
-| 3     | 3B                                                   | Codex       | 3A, 2A     | `codex/3b`           | `0006_*`                   | D60–D64        |
-| 2     | 4A-lib: `src/lib/money.ts`, `src/lib/tz.ts`          | GLM         | —          | `glm/lib`            | нет                        | D65–D69        |
-| 2     | 7-lib: `src/lib/llm/**`, `evals/**`                  | Claude Code | —          | `claude/llm-lib`     | нет                        | D85–D89        |
-| 3     | 6A-score: `src/modules/matching/score/**`            | GLM         | —          | `glm/matching-score` | нет                        | D90–D94        |
-| 3     | 5A-rules: `src/modules/applications/**` (без таблиц) | Cursor      | 2B         | `cursor/5a-rules`    | нет                        | D75–D79        |
-| 4     | 9A-lib: `src/modules/notifications/**` (без таблиц)  | GLM         | —          | `glm/notify-lib`     | нет                        | D100–D104      |
-| 5     | 4B (передана от GLM)                                 | Cursor      | 4A         | `cursor/4b`          | `0011_*`                   | D110–D114      |
-| 5     | 5B                                                   | Cursor      | 5A         | `cursor/5b`          | `0012_*` при необходимости | D115–D119      |
-| 6     | 5C                                                   | Cursor      | 5B         | `cursor/5c`          | `0012_*`                   | D120–D124      |
-| 7     | 9A                                                   | Cursor      | 5C         | `cursor/9a`          | `0013_*`                   | D125–D129      |
-| 4     | 4A                                                   | Codex       | 3B         | `codex/4a`           | `0007_*`                   | D95–D99        |
-| 4     | 8A                                                   | Codex       | 3B, 2A     | `codex/8a`           | `0008_*`                   | D70–D74        |
-| 4     | 5A                                                   | Cursor      | 3B, 2B     | `cursor/5a`          | `0009_*`                   | D75–D79        |
-| 4     | 10A                                                  | Claude Code | 3B         | `claude/10a`         | `0010_*`                   | D80–D84        |
-| 7     | 10B                                                  | Claude Code | 10A        | `claude/10b`         | `0014_*`                   | D130–D134      |
-| 8     | UI-1: дизайн-фундамент (`docs/DESIGN.md`)            | Claude Code | —          | `claude/ui-1`        | нет                        | D140–D145      |
-| 8     | 6A: матчинг на сервере                               | Cursor      | 4B, 2B     | `cursor/6a`          | `0015_*`                   | D150–D154      |
-| 9     | UI-2: кандидатская и публичная часть                 | Cursor      | UI-1       | `cursor/ui-2`        | нет                        | D155–D159      |
-| 9     | UI-3: работодатель и админка                         | Claude Code | UI-1       | `claude/ui-3`        | нет                        | D146–D148      |
+| Волна | Подфаза                                               | Агент       | Зависит от | Ветка                | Миграция                   | Номера решений |
+| ----- | ----------------------------------------------------- | ----------- | ---------- | -------------------- | -------------------------- | -------------- |
+| 1     | 1B                                                    | Claude Code | 1A         | `claude/1b`          | `0002_*`                   | D38–D41        |
+| 1     | 2A                                                    | Cursor      | 0B         | `cursor/2a`          | `0003_*`                   | D42–D45        |
+| 1     | ревью 1B и 2A                                         | Antigravity | —          | без изменений кода   | —                          | —              |
+| 2     | 3A                                                    | Codex       | 1B         | `codex/3a`           | `0004_*`                   | D50–D54        |
+| 2     | 2B                                                    | Cursor      | 2A, 1B     | `cursor/2b`          | `0005_*`                   | D55–D59        |
+| 3     | 3B                                                    | Codex       | 3A, 2A     | `codex/3b`           | `0006_*`                   | D60–D64        |
+| 2     | 4A-lib: `src/lib/money.ts`, `src/lib/tz.ts`           | GLM         | —          | `glm/lib`            | нет                        | D65–D69        |
+| 2     | 7-lib: `src/lib/llm/**`, `evals/**`                   | Claude Code | —          | `claude/llm-lib`     | нет                        | D85–D89        |
+| 3     | 6A-score: `src/modules/matching/score/**`             | GLM         | —          | `glm/matching-score` | нет                        | D90–D94        |
+| 3     | 5A-rules: `src/modules/applications/**` (без таблиц)  | Cursor      | 2B         | `cursor/5a-rules`    | нет                        | D75–D79        |
+| 4     | 9A-lib: `src/modules/notifications/**` (без таблиц)   | GLM         | —          | `glm/notify-lib`     | нет                        | D100–D104      |
+| 5     | 4B (передана от GLM)                                  | Cursor      | 4A         | `cursor/4b`          | `0011_*`                   | D110–D114      |
+| 5     | 5B                                                    | Cursor      | 5A         | `cursor/5b`          | `0012_*` при необходимости | D115–D119      |
+| 6     | 5C                                                    | Cursor      | 5B         | `cursor/5c`          | `0012_*`                   | D120–D124      |
+| 7     | 9A                                                    | Cursor      | 5C         | `cursor/9a`          | `0013_*`                   | D125–D129      |
+| 4     | 4A                                                    | Codex       | 3B         | `codex/4a`           | `0007_*`                   | D95–D99        |
+| 4     | 8A                                                    | Codex       | 3B, 2A     | `codex/8a`           | `0008_*`                   | D70–D74        |
+| 4     | 5A                                                    | Cursor      | 3B, 2B     | `cursor/5a`          | `0009_*`                   | D75–D79        |
+| 4     | 10A                                                   | Claude Code | 3B         | `claude/10a`         | `0010_*`                   | D80–D84        |
+| 7     | 10B                                                   | Claude Code | 10A        | `claude/10b`         | `0014_*`                   | D130–D134      |
+| 8     | UI-1: дизайн-фундамент (`docs/DESIGN.md`)             | Claude Code | —          | `claude/ui-1`        | нет                        | D140–D145      |
+| 8     | 6A: матчинг на сервере                                | Cursor      | 4B, 2B     | `cursor/6a`          | `0015_*`                   | D150–D154      |
+| 9     | UI-2: кандидатская и публичная часть                  | Cursor      | UI-1       | `cursor/ui-2`        | нет                        | D155–D159      |
+| 9     | UI-3: работодатель и админка                          | Claude Code | UI-1       | `claude/ui-3`        | нет                        | D146–D148      |
+| 10    | 6B: рекомендации, `/matches`, пересчёт при публикации | Cursor      | 6A         | `cursor/6b`          | `0016_*`                   | D160–D164      |
+| 10    | 10C: приватность, экспорт, удаление, retention        | Claude Code | 9A         | `claude/10c`         | `0017_*`                   | D165–D169      |
+| 11    | 7A: каркас бота                                       | Claude Code | 7-lib, 5A  | `claude/7a`          | `0018_*`                   | D170–D179      |
+| 12    | 7B: сценарии бота и evals                             | Cursor      | 7A, 6B     | `cursor/7b`          | нет                        | D180–D184      |
+| 12    | 9B: дайджест совпадений                               | —           | 9A, 6B, 7A | —                    | —                          | D185–D189      |
 
 Claude Code между волнами сливает ветки, применяет миграции к облачной БД и чинит конфликты. Для своей инфраструктурной работы вне подфаз Claude Code использует номера D46–D49.
 
