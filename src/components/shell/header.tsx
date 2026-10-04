@@ -59,7 +59,12 @@ export async function Header() {
         { href: "/applications", label: t("applications.nav") },
         { href: "/saved-jobs", label: t("nav.saved") },
         { href: "/profile", label: t("profile.nav") },
-        ...(isAdmin ? [{ href: "/admin", label: t("nav.admin") }] : []),
+        ...(isAdmin
+          ? [
+              { href: "/admin", label: t("nav.admin") },
+              { href: "/admin/metrics", label: t("metrics.title") },
+            ]
+          : []),
       ]
     : [
         { href: "/login", label: t("nav.login") },
