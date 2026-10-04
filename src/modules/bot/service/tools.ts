@@ -25,6 +25,11 @@ import {
   saveJobForUser,
 } from "@/modules/feedback/service";
 import { getJobForPublic, searchJobs } from "@/modules/jobs/service";
+import {
+  SHOW_THRESHOLD,
+  listMatchPage,
+  topExplain,
+} from "@/modules/matching/service";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 
 /**
@@ -36,6 +41,8 @@ import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 export type BotState = {
   /** Guest profile draft (12.2); a user's draft is saved only on confirm. */
   draft?: Record<string, unknown>;
+  /** Set when a guest conversation is attached and its draft can be saved. */
+  needsDraftOffer?: boolean;
 };
 
 export type ToolContext = {
@@ -256,6 +263,56 @@ export const TOOLS: readonly BotTool[] = [
       return {
         llm: `Applied. Application status: ${application.status}.`,
         client: { kind: "applied", data: { jobId: input.jobId } },
+      };
+    },
+  }),
+  tool({
+    name: "get_matches",
+    description:
+      "List the signed-in user's matching jobs, best first. Only jobs at or above the show threshold are returned, with a short explanation.",
+    input: z.object({}).strict(),
+    access: "user",
+    confirm: never,
+    async run(ctx) {
+      const page = await listMatchPage(ctx.userId!, {
+        limit: MAX_JOBS,
+        locale: ctx.locale,
+      });
+      const items = page.items.filter((item) => item.score >= SHOW_THRESHOLD);
+      if (page.lowData || items.length === 0) {
+        return {
+          llm: page.lowData
+            ? "The user has no profile yet, so there are no matches."
+            : "No jobs are at or above the match threshold.",
+        };
+      }
+      return {
+        llm: items
+          .map((item) =>
+            wrapUntrusted(
+              `job:${item.job.id}`,
+              JSON.stringify({
+                title: item.job.title,
+                company: item.job.company.name,
+                score: item.score,
+                explain: topExplain(item.explain).map(
+                  (entry) => entry.detail.key,
+                ),
+              }),
+            ),
+          )
+          .join("\n"),
+        client: {
+          kind: "matches",
+          data: items.map((item) => ({
+            id: item.job.id,
+            title: item.job.title,
+            companyName: item.job.company.name,
+            workFormat: item.job.workFormat,
+            score: item.score,
+            explain: topExplain(item.explain),
+          })),
+        },
       };
     },
   }),

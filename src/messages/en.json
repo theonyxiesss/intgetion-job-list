@@ -967,6 +967,7 @@
     "agent": "Agent",
     "emptyGuest": "Try: “remote backend jobs with Python”. As a guest you can search; sign up to save jobs and apply.",
     "emptySignedIn": "Try: “find remote design jobs” or “what is the status of my applications?”",
+    "score": "{score}% match",
     "placeholder": "Write a message",
     "send": "Send",
     "guestHint": "Saving jobs, applying and keeping a profile need an account.",
@@ -986,7 +987,8 @@
       "decline": "Cancel",
       "accepted": "Confirmed.",
       "declined": "Cancelled.",
-      "failed": "Could not complete this. The card may have expired; ask again."
+      "failed": "Could not complete this. The card may have expired; ask again.",
+      "missing": "The profile is still missing: {fields}"
     }
   },
   "cookies": {

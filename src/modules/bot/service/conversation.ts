@@ -20,8 +20,11 @@ import {
 } from "@/lib/llm";
 import { logger } from "@/lib/logger";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { candidatePatchInput } from "@/modules/candidates/service";
+import { matchSkillSlug } from "@/modules/taxonomy/service";
 import { systemPrompt, SYSTEM_PROMPT_VERSION } from "../prompts/system";
 import * as repo from "../repo/bot-repo";
+import { draftFromExtraction, extractDraft } from "./extract";
 import {
   hashArgs,
   runTool,
@@ -92,9 +95,35 @@ export function hashSessionToken(token: string): string {
 }
 
 /**
+ * A guest conversation (no user) becomes this user's when they sign in
+ * (D182). A conversation that already belongs to someone else is left
+ * alone. Returns the claimed row, or undefined when there was nothing to claim.
+ */
+async function claimGuestConversation(input: {
+  userId: string | null;
+  token: string | undefined;
+}): Promise<repo.ConversationRow | undefined> {
+  if (!input.userId || !input.token) return undefined;
+  const found = await repo.findConversationByToken(
+    hashSessionToken(input.token),
+  );
+  if (!found || found.userId !== null) return undefined;
+  const state = (found.state ?? {}) as BotState;
+  const draft = state.draft;
+  const canOffer =
+    !!draft &&
+    Object.keys(draft).length > 0 &&
+    candidatePatchInput.safeParse(draft).success;
+  return repo.claimConversation(found.id, input.userId, {
+    ...state,
+    needsDraftOffer: canOffer,
+  });
+}
+
+/**
  * The conversation behind the `bot_session` cookie. A cookie that belongs
- * to someone else (a guest session after sign-in, another user) starts a new
- * conversation; linking a guest session is 7B. Returns the token to set.
+ * to another user starts a new conversation. A guest cookie is attached
+ * to the signed-in user (D182). Returns the token to set.
  */
 export async function resolveConversation(input: {
   userId: string | null;
@@ -102,9 +131,10 @@ export async function resolveConversation(input: {
   locale: string;
 }): Promise<{ conversation: repo.ConversationRow; token: string }> {
   if (input.token) {
-    const found = await repo.findConversationByToken(
-      hashSessionToken(input.token),
-    );
+    const claimed = await claimGuestConversation(input);
+    const found =
+      claimed ??
+      (await repo.findConversationByToken(hashSessionToken(input.token)));
     if (found && found.userId === input.userId) {
       return { conversation: found, token: input.token };
     }
@@ -116,6 +146,62 @@ export async function resolveConversation(input: {
     locale: input.locale,
   });
   return { conversation, token };
+}
+
+/**
+ * One confirmation card for a claimed guest draft. The flag is cleared in
+ * the same update that wins, so a second request does not create another card.
+ */
+export async function takeDraftOffer(
+  conversation: repo.ConversationRow,
+  userId: string | null,
+  now = new Date(),
+): Promise<Extract<BotEvent, { type: "confirm_request" }> | null> {
+  if (!userId) return null;
+  const won = await repo.takeDraftOfferFlag(conversation.id);
+  if (!won) return null;
+  const draft = ((won.state ?? {}) as BotState).draft;
+  const parsed = candidatePatchInput.safeParse(draft);
+  if (!parsed.success) return null;
+  const confirmation = await repo.createConfirmation({
+    conversationId: won.id,
+    userId,
+    tool: "propose_profile_update",
+    args: parsed.data,
+    argsHash: hashArgs("propose_profile_update", parsed.data),
+    expiresAt: new Date(now.getTime() + CONFIRMATION_TTL_MS),
+  });
+  return {
+    type: "confirm_request",
+    confirmationId: confirmation.id,
+    tool: "propose_profile_update",
+    args: parsed.data,
+    expiresAt: confirmation.expiresAt.toISOString(),
+  };
+}
+
+/**
+ * History for the current cookie. Claims a guest conversation when the
+ * caller is signed in, and may include one draft-save card (D182).
+ * Does not create a conversation.
+ */
+export async function resumeConversation(input: {
+  userId: string | null;
+  token: string | undefined;
+}): Promise<{
+  conversation: repo.ConversationRow | null;
+  offer: Extract<BotEvent, { type: "confirm_request" }> | null;
+}> {
+  if (!input.token) return { conversation: null, offer: null };
+  const claimed = await claimGuestConversation(input);
+  const found =
+    claimed ??
+    (await repo.findConversationByToken(hashSessionToken(input.token)));
+  if (!found || found.userId !== input.userId) {
+    return { conversation: null, offer: null };
+  }
+  const offer = await takeDraftOffer(found, input.userId, new Date());
+  return { conversation: found, offer };
 }
 
 /** Existing conversation only (history, confirmations); null when none. */
@@ -217,6 +303,58 @@ export function startAtUser(messages: readonly LLMMessage[]): LLMMessage[] {
   return first === -1 ? [] : messages.slice(first);
 }
 
+/**
+ * Live extraction (D181). The test provider is not Anthropic, so scripted
+ * conversations stay one model call. Unknown skills are matched read-only.
+ */
+async function absorbExtraction(
+  input: MessageInput,
+  llm: BotLLM,
+  state: BotState,
+  emit: Emit,
+  now: Date,
+): Promise<BotState> {
+  try {
+    const rows = await repo.listMessages(input.conversation.id, HISTORY_READ);
+    const messages = startAtUser(toLLMMessages(rows)).filter(
+      (message) => message.role !== "tool",
+    );
+    const models = modelsFromEnv();
+    const model = llm.prices[models.extract] ? models.extract : llm.model;
+    const extracted = await extractDraft(llm.provider, model, messages);
+    const cost = costMicroUsd(model, extracted.usage, llm.prices);
+    await repo.insertMessage({
+      conversationId: input.conversation.id,
+      role: "assistant",
+      content: "",
+      tokensIn: extracted.usage.tokensIn,
+      tokensOut: extracted.usage.tokensOut,
+      costMicroUsd: cost,
+    });
+    const { patch } = await draftFromExtraction(extracted.data, matchSkillSlug);
+    if (!patch) return state;
+    const next: BotState = {
+      ...state,
+      draft: { ...(state.draft ?? {}), ...patch },
+    };
+    if (!input.userId) {
+      emit({
+        type: "tool_result",
+        name: "propose_profile_update",
+        kind: "draft",
+        data: next.draft,
+      });
+      return next;
+    }
+    next.needsDraftOffer = true;
+    await repo.updateConversation(input.conversation.id, { state: next }, now);
+    return next;
+  } catch (error) {
+    logger.warn({ err: error }, "bot: profile extraction skipped");
+    return state;
+  }
+}
+
 // ---- one user message -----------------------------------------------------
 
 export type MessageInput = {
@@ -250,17 +388,32 @@ export async function handleMessage(
     content: redactPii(input.text),
   });
 
+  let state = conversation.state as BotState;
+  const offer = await takeDraftOffer(conversation, userId, now);
+  if (offer) {
+    emit(offer);
+    state = { ...state, needsDraftOffer: false };
+  }
+
   const llm = botLLM();
   if (!llm) {
     emit({ type: "error", code: "BOT_UNAVAILABLE" });
-    return finish(input, conversation.state as BotState, emit, now);
+    return finish(input, state, emit, now);
   }
   if (await breakerOpen(now)) {
     emit({ type: "error", code: "BOT_BUDGET_EXCEEDED" });
-    return finish(input, conversation.state as BotState, emit, now);
+    return finish(input, state, emit, now);
   }
 
-  let state = conversation.state as BotState;
+  if (llm.provider instanceof AnthropicProvider) {
+    state = await absorbExtraction(input, llm, state, emit, now);
+    const again = await takeDraftOffer({ ...conversation, state }, userId, now);
+    if (again) {
+      emit(again);
+      state = { ...state, needsDraftOffer: false };
+    }
+  }
+
   const system = systemPrompt({
     locale: input.locale,
     signedIn: userId !== null,
@@ -371,7 +524,11 @@ async function callTool(
     }
     return { llm: outcome.llm, state: outcome.state };
   } catch (error) {
-    if (error instanceof HttpError) return { llm: `Error: ${error.code}` };
+    if (error instanceof HttpError) {
+      const details =
+        error.details === undefined ? "" : ` ${JSON.stringify(error.details)}`;
+      return { llm: `Error: ${error.code}${details}` };
+    }
     throw error;
   }
 }
@@ -451,7 +608,9 @@ export async function confirmAction(
       await repo.insertMessage({
         conversationId: input.conversation.id,
         role: "system_event",
-        content: `The user confirmed ${row.tool}, but it failed: ${error.code}.`,
+        content: `The user confirmed ${row.tool}, but it failed: ${error.code}${
+          error.details === undefined ? "" : ` ${JSON.stringify(error.details)}`
+        }.`,
       });
     }
     throw error;

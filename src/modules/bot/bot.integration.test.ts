@@ -283,6 +283,38 @@ describe("bot conversation (7A)", () => {
     });
   });
 
+  it("binds a guest draft to the signed-in user and offers a save card", async () => {
+    useModel(
+      new FakeLLMProvider([
+        fakeToolCall("propose_profile_update", {
+          headline: "Backend engineer",
+          timezone: "Europe/Berlin",
+        }),
+      ]),
+    );
+    const guest = await send(null, "I am a backend engineer in Berlin");
+    expect(guest.events.some((event) => event.type === "tool_result")).toBe(
+      true,
+    );
+    setBotLLMForTests(null);
+    const bound = await send(userId, "I signed in", guest.session);
+    expect(bound.events).toContainEqual(
+      expect.objectContaining({
+        type: "confirm_request",
+        tool: "propose_profile_update",
+      }),
+    );
+    expect(bound.events).toContainEqual({
+      type: "error",
+      code: "BOT_UNAVAILABLE",
+    });
+    expect(bound.conversation.id).toBe(guest.conversation.id);
+    const [row] = await rowsOf<{ user_id: string }>(
+      sql`select user_id from public.bot_conversations where id = ${guest.conversation.id}`,
+    );
+    expect(row?.user_id).toBe(userId);
+  });
+
   it("retention removes old guest conversations and old messages", async () => {
     const db = getDb();
     setBotLLMForTests(null);

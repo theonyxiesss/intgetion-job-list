@@ -29,6 +29,7 @@ const display = Roboto_Condensed({
 const CLIENT_NAMESPACES = [
   "nav",
   "chat",
+  "explain",
   "ui",
   "locale",
   "error",

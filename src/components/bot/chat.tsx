@@ -10,16 +10,22 @@ import { Icon } from "@/components/ui/icon";
 import { Textarea } from "@/components/ui/input";
 import { Link } from "@/i18n/navigation";
 
+type ExplainLine = {
+  detail: { key: string; params: Record<string, string | number> };
+};
+
 type JobCard = {
   id: string;
   title: string;
   companyName: string;
   workFormat: string;
+  score?: number;
+  explain?: ExplainLine[];
 };
 
 type Entry =
   | { key: string; kind: "user" | "assistant" | "event"; text: string }
-  | { key: string; kind: "jobs"; jobs: JobCard[] }
+  | { key: string; kind: "jobs" | "matches"; jobs: JobCard[] }
   | { key: string; kind: "notice"; code: string }
   | {
       key: string;
@@ -70,6 +76,7 @@ async function* readEvents(body: ReadableStream<Uint8Array>) {
  */
 export function Chat({ signedIn }: { signedIn: boolean }) {
   const t = useTranslations("chat");
+  const explain = useTranslations("explain");
   const locale = useLocale();
   const [entries, setEntries] = useState<Entry[]>([]);
   const [text, setText] = useState("");
@@ -79,10 +86,18 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
   useEffect(() => {
     fetch("/api/bot/conversation")
       .then((response) => (response.ok ? response.json() : null))
-      .then((body: { messages: HistoryMessage[] } | null) => {
-        if (!body?.messages.length) return;
-        setEntries(
-          body.messages.map((message) => ({
+      .then(
+        (
+          body: {
+            messages: HistoryMessage[];
+            draftOffer?: {
+              confirmationId: string;
+              tool: string;
+            } | null;
+          } | null,
+        ) => {
+          if (!body) return;
+          const history: Entry[] = body.messages.map((message) => ({
             key: message.id,
             kind:
               message.role === "user"
@@ -91,9 +106,19 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
                   ? "assistant"
                   : "event",
             text: message.content,
-          })),
-        );
-      })
+          }));
+          if (body.draftOffer) {
+            history.push({
+              key: body.draftOffer.confirmationId,
+              kind: "confirm",
+              confirmationId: body.draftOffer.confirmationId,
+              tool: body.draftOffer.tool,
+              state: "open",
+            });
+          }
+          if (history.length) setEntries(history);
+        },
+      )
       .catch(() => undefined);
   }, []);
 
@@ -127,8 +152,15 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
       for await (const data of readEvents(response.body)) {
         if (data.type === "token") {
           add({ key: nextKey(), kind: "assistant", text: String(data.text) });
-        } else if (data.type === "tool_result" && data.kind === "jobs") {
-          add({ key: nextKey(), kind: "jobs", jobs: data.data as JobCard[] });
+        } else if (
+          data.type === "tool_result" &&
+          (data.kind === "jobs" || data.kind === "matches")
+        ) {
+          add({
+            key: nextKey(),
+            kind: data.kind,
+            jobs: data.data as JobCard[],
+          });
         } else if (data.type === "confirm_request") {
           add({
             key: nextKey(),
@@ -163,7 +195,22 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ confirmationId, accept }),
     }).catch(() => null);
-    if (!response?.ok) return setState("failed");
+    if (!response?.ok) {
+      const body = response
+        ? ((await response.json().catch(() => null)) as {
+            error?: { details?: { missing?: string[] } };
+          } | null)
+        : null;
+      const missing = body?.error?.details?.missing;
+      if (missing?.length) {
+        add({
+          key: nextKey(),
+          kind: "notice",
+          code: `missing:${missing.join(", ")}`,
+        });
+      }
+      return setState("failed");
+    }
     setState(accept ? "accepted" : "declined");
   }
 
@@ -205,7 +252,7 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
               </p>
             );
           }
-          if (entry.kind === "jobs") {
+          if (entry.kind === "jobs" || entry.kind === "matches") {
             return (
               <ul key={entry.key} className="grid gap-2">
                 {entry.jobs.map((job) => (
@@ -216,7 +263,23 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
                     >
                       {job.title}
                     </Link>
-                    <p className="t-body-s text-fg-muted">{job.companyName}</p>
+                    <p className="t-body-s text-fg-muted">
+                      {job.companyName}
+                      {job.score !== undefined
+                        ? ` · ${t("score", { score: Math.round(job.score * 100) })}`
+                        : ""}
+                    </p>
+                    {job.explain?.slice(0, 4).map((line) => (
+                      <p
+                        key={line.detail.key}
+                        className="t-body-s text-fg-muted"
+                      >
+                        {explain(
+                          line.detail.key.replace(/^explain\./, ""),
+                          line.detail.params,
+                        )}
+                      </p>
+                    ))}
                   </li>
                 ))}
               </ul>
@@ -225,9 +288,11 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
           if (entry.kind === "notice") {
             return (
               <Alert key={entry.key} tone="warning">
-                {ERROR_CODES.has(entry.code)
-                  ? t(`errors.${entry.code}`)
-                  : t("errors.generic")}
+                {entry.code.startsWith("missing:")
+                  ? t("confirm.missing", { fields: entry.code.slice(8) })
+                  : ERROR_CODES.has(entry.code)
+                    ? t(`errors.${entry.code}`)
+                    : t("errors.generic")}
               </Alert>
             );
           }

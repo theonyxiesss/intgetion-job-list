@@ -22,7 +22,12 @@ describe("bot tool layer (7A)", () => {
     const names = toolsFor(null).map((tool) => tool.name);
     expect(names).toEqual(["search_jobs", "get_job", "propose_profile_update"]);
     expect(toolsFor("user-1").map((tool) => tool.name)).toEqual(
-      expect.arrayContaining(["apply_to_job", "save_job", "hide_job"]),
+      expect.arrayContaining([
+        "apply_to_job",
+        "save_job",
+        "hide_job",
+        "get_matches",
+      ]),
     );
   });
 
@@ -32,6 +37,7 @@ describe("bot tool layer (7A)", () => {
     ["hide_job", { jobId, scope: "job" }],
     ["get_my_profile", {}],
     ["get_my_applications", {}],
+    ["get_matches", {}],
   ])(
     "P11: a guest calling %s gets 403 before anything runs",
     async (name, args) => {

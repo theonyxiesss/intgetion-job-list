@@ -33,6 +33,42 @@ export async function createConversation(input: {
   return row!;
 }
 
+/** Attaches a guest conversation to a user. Loses if another request already did. */
+export async function claimConversation(
+  id: string,
+  userId: string,
+  state: ConversationRow["state"],
+): Promise<ConversationRow | undefined> {
+  const [row] = await getDb()
+    .update(botConversations)
+    .set({ userId, state })
+    .where(and(eq(botConversations.id, id), isNull(botConversations.userId)))
+    .returning();
+  return row;
+}
+
+/**
+ * Clears `needsDraftOffer` only when it is still set, so two requests
+ * cannot both create a confirmation card.
+ */
+export async function takeDraftOfferFlag(
+  id: string,
+): Promise<ConversationRow | undefined> {
+  const [row] = await getDb()
+    .update(botConversations)
+    .set({
+      state: sql`${botConversations.state} || '{"needsDraftOffer":false}'::jsonb`,
+    })
+    .where(
+      and(
+        eq(botConversations.id, id),
+        sql`${botConversations.state}->>'needsDraftOffer' = 'true'`,
+      ),
+    )
+    .returning();
+  return row;
+}
+
 export async function updateConversation(
   id: string,
   patch: Partial<Pick<ConversationRow, "state" | "summary" | "locale">>,

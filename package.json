@@ -11,6 +11,8 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "eval": "vitest run src/modules/bot/__tests__/eval-ci.test.ts",
+    "eval:live": "node scripts/eval-live.mjs",
     "test:integration": "vitest run --config vitest.integration.config.mts",
     "test:e2e": "playwright test",
     "db:migrate": "node scripts/apply-migrations.mjs",

@@ -1,4 +1,9 @@
 import { z } from "zod";
+import {
+  MAX_CANDIDATE_SECTORS,
+  SECTORS,
+  SENIORITY_LEVELS,
+} from "@/config/markers";
 import { HttpError } from "@/lib/http";
 import {
   SKILL_CATEGORIES,
@@ -85,6 +90,8 @@ export const candidatePatchInput = z
       .nullable(),
     city: z.string().trim().min(1).max(80).nullable(),
     categories: z.array(skillCategorySchema).max(SKILL_CATEGORIES.length),
+    sectors: z.array(z.enum(SECTORS)).max(MAX_CANDIDATE_SECTORS),
+    seniority: z.enum(SENIORITY_LEVELS).nullable(),
   })
   .partial()
   .strict()
@@ -161,7 +168,7 @@ export async function patchCandidateProfile(
   const base: Record<string, unknown> = current
     ? toInput(current)
     : { ...EMPTY_PROFILE };
-  const { skills, categories, ...plain } = patch;
+  const { skills, categories, sectors, seniority, ...plain } = patch;
   const merged: Record<string, unknown> = { ...base, ...plain };
   if (skills) {
     merged.skills = skills.map((skill) => ({
@@ -170,13 +177,33 @@ export async function patchCandidateProfile(
       years: skill.years ?? null,
     }));
   }
-  if (categories) {
+  if (categories || sectors || seniority !== undefined) {
     const preferences = (base.preferences as
-      { companySizes: string[]; notes: string | null } | undefined) ?? {
+      | {
+          categories?: string[];
+          sectors?: string[];
+          seniority?: string | null;
+          companySizes?: string[];
+          notes?: string | null;
+        }
+      | undefined) ?? {
+      categories: [],
+      sectors: [],
+      seniority: null,
       companySizes: [],
       notes: null,
     };
-    merged.preferences = { ...preferences, categories };
+    merged.preferences = {
+      categories: [],
+      sectors: [],
+      seniority: null,
+      companySizes: [],
+      notes: null,
+      ...preferences,
+      ...(categories ? { categories } : {}),
+      ...(sectors ? { sectors } : {}),
+      ...(seniority !== undefined ? { seniority } : {}),
+    };
   }
   const parsed = updateCandidateInput.safeParse(merged);
   if (!parsed.success) {

@@ -13,6 +13,7 @@ export type { SkillCategory, SkillSource } from "../schemas";
 export { normalizeSkillText, toAliasNormalized } from "./normalize-skill-text";
 export {
   getSkillCatalogStats,
+  matchSkillSlug,
   normalizeSkill,
   seedSkills,
 } from "./taxonomy-service";
