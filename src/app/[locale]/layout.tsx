@@ -116,7 +116,6 @@ export default async function LocaleLayout({
             <CookieBanner
               text={{
                 label: t("cookies.label"),
-                title: t("cookies.title"),
                 text: t("cookies.text"),
                 acceptAll: t("cookies.acceptAll"),
                 necessaryOnly: t("cookies.necessaryOnly"),
