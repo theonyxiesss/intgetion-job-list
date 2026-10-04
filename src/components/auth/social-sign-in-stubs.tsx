@@ -2,10 +2,11 @@ import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-const PROVIDERS = ["google", "x"] as const;
+const PROVIDERS = ["google", "x", "telegram"] as const;
 
 /**
- * Sign-in with Google and X — placeholders only (D200). OAuth is V2 (D7):
+ * Sign-in with Google, X and Telegram — placeholders only (D200). OAuth is
+ * V2 (D7); Telegram needs its Login Widget and a bot token, not Supabase:
  * the buttons are disabled and send nothing.
  */
 export async function SocialSignInStubs() {
