@@ -25,6 +25,11 @@ export UNSUBSCRIBE_SECRET="$(openssl rand -hex 32)"
 pnpm db:migrate
 pnpm db:migrate
 pnpm db:verify
+# Demo seed smoke (D212): seed twice (no duplicates), verify, remove.
+node scripts/seed-demo.mjs
+node scripts/seed-demo.mjs
+node scripts/seed-demo.mjs --verify
+node scripts/seed-demo.mjs --remove
 pnpm test:integration
 
 # Auth for the app and the e2e run (1A). NEXT_PUBLIC_* are inlined at build time.
