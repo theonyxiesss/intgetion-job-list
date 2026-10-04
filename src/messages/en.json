@@ -989,7 +989,8 @@
       "BOT_BUDGET_EXCEEDED": "Daily budget exceeded. Try again tomorrow.",
       "BOT_TRY_LATER": "The agent is busy. Try again in a moment.",
       "generic": "Something went wrong. Please try again."
-    }
+    },
+    "intro": "How can I help you today?"
   },
   "cookies": {
     "label": "Cookie choice",
