@@ -387,3 +387,21 @@
 - Сделано: D190. Отправляются `job.moderation_decided` (создателю), `company.verification_decided` (владельцам) и `report.decided` (автору жалобы). Заглушки `// 9A: notify(...)` в очереди, жалобах и верификации заменены вызовами.
 - Тесты: `moderation.integration.test.ts` проверяет payload уведомлений об одобрении вакансии и отклонении компании, `reports.integration.test.ts` — решения `confirmed` и `dismissed` у авторов жалоб.
 - Миграции: нет. Ветка стоит поверх `claude/10c`.
+
+## [2026-10-04] — 7A — каркас бота (ветка `claude/7a`, Claude Code)
+
+- Сделано (D170–D179):
+  - миграция `0018_bot.sql`: `bot_conversations`, `bot_messages`, `bot_confirmations`;
+  - адаптер Anthropic через `fetch`; цены в `LLM_PRICES_MICRO_USD`;
+  - ConversationManager: сессия по cookie, лимиты 30/200, circuit breaker, аномалия стоимости, история ≤ 12 с редакцией PII;
+  - слой инструментов с правами и одноразовыми подтверждениями на 10 минут;
+  - API: `POST /api/bot/message` (SSE), `POST /api/bot/confirm`, `GET /api/bot/conversation`;
+  - страница `/chat`;
+  - данные бота в экспорте, удалении и retention.
+- P-тесты:
+  - P8 — `runTool` без подтверждения даёт 422; в интеграции отклик появляется только после `confirmAction`; повтор и просроченное подтверждение дают 410;
+  - P11 — гостю не предлагаются пользовательские инструменты, `runTool` даёт гостю 403, гостевая модель с `apply_to_job` отклик не создаёт, `/api/bot/confirm` гостю отвечает 401.
+- Лимиты и breaker проверены интеграционным тестом (`BOT_BUDGET_EXCEEDED`, `BOT_UNAVAILABLE`). Email из сообщения не попадает ни в базу, ни к модели.
+- Миграции: `0018_bot.sql`.
+- Для включения бота пользователю нужны `ANTHROPIC_API_KEY` и `LLM_PRICES_MICRO_USD` (цены модели). Без них чат честно отвечает «недоступен».
+- Следующее: 7B (Cursor) — сценарии, привязка гостя, `get_matches`, evals. Ссылка на `/chat` в шапке — после слияния 6B.

@@ -27,6 +27,7 @@ export async function readUserData(userId: string) {
     reports,
     notifications,
     notificationPreferences,
+    botMessages,
   ] = await Promise.all([
     rows(
       sql`select id, platform_role, status, locale, terms_accepted_at, terms_version, marketing_opt_in, last_active_at, created_at from public.users where id = ${userId}`,
@@ -73,6 +74,9 @@ export async function readUserData(userId: string) {
     rows(
       sql`select type, channel, enabled from public.notification_preferences where user_id = ${userId}`,
     ),
+    rows(
+      sql`select m.conversation_id, m.role, m.content, m.created_at from public.bot_messages m join public.bot_conversations c on c.id = m.conversation_id where c.user_id = ${userId} and m.role in ('user', 'assistant', 'system_event') order by m.created_at`,
+    ),
   ]);
   return {
     user: user[0] ?? null,
@@ -90,6 +94,7 @@ export async function readUserData(userId: string) {
     reports,
     notifications,
     notificationPreferences,
+    botMessages,
   };
 }
 
@@ -184,6 +189,10 @@ export async function anonymizeUser(userId: string, now: Date) {
     await tx.execute(
       sql`delete from public.matching_results where user_id = ${userId}`,
     );
+    // Messages and confirmations go with the conversation (cascade).
+    await tx.execute(
+      sql`delete from public.bot_conversations where user_id = ${userId}`,
+    );
     return { companyIds, closedJobs };
   });
 }
@@ -211,5 +220,9 @@ export async function purgeExpired(now: Date) {
       delete from public.matching_results where computed_at < ${days(30)}::timestamptz returning 1`),
     readNotifications: await count(sql`
       delete from public.notifications where read_at is not null and read_at < ${days(90)}::timestamptz returning 1`),
+    botMessages: await count(sql`
+      delete from public.bot_messages where created_at < ${days(180)}::timestamptz returning 1`),
+    guestConversations: await count(sql`
+      delete from public.bot_conversations where user_id is null and last_message_at < ${days(30)}::timestamptz returning 1`),
   };
 }

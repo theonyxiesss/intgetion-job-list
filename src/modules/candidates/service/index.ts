@@ -29,3 +29,8 @@ export {
   storeCompleteness,
 } from "./candidate-service";
 export type { AppTx } from "../repo/profiles";
+export {
+  candidatePatchInput,
+  patchCandidateProfile,
+  type CandidatePatch,
+} from "./profile-patch";

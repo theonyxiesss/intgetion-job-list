@@ -13,3 +13,4 @@ export * from "./import-runs";
 export * from "./verifications";
 export * from "./feedback";
 export * from "./matching";
+export * from "./bot";

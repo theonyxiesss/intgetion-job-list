@@ -75,6 +75,15 @@ beforeAll(async () => {
     sql`insert into public.saved_jobs (user_id, job_id) values (${candidateId}, ${employerJobId})`,
   );
   await db.execute(sql`
+    with c as (
+      insert into public.bot_conversations (user_id, session_token_hash, locale)
+      values (${candidateId}, ${`privacy-${token}`}, 'en')
+      returning id
+    )
+    insert into public.bot_messages (conversation_id, role, content)
+    select id, 'user', 'find me a job' from c
+  `);
+  await db.execute(sql`
     insert into public.notifications (user_id, type, payload)
     values (${candidateId}, 'application.viewed', '{}'::jsonb)
   `);
@@ -105,6 +114,9 @@ describe("privacy (10C)", () => {
     expect(data.savedJobs).toHaveLength(1);
     expect(data.notifications).toHaveLength(1);
     expect(data.companyMemberships).toHaveLength(1);
+    expect(data.botMessages).toMatchObject([
+      { role: "user", content: "find me a job" },
+    ]);
   });
 
   it("limits exports per day", async () => {
@@ -149,6 +161,7 @@ describe("privacy (10C)", () => {
     expect(await count("saved_jobs")).toBe(0);
     expect(await count("notifications")).toBe(0);
     expect(await count("company_members")).toBe(0);
+    expect(await count("bot_conversations")).toBe(0);
 
     const [application] = (await db.execute(
       sql`select status, cover_note from public.applications where id = ${applicationId}`,

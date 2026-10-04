@@ -867,5 +867,35 @@
     "deleteConfirm": "Delete for good",
     "deleteFailed": "Could not delete the account. Try again later.",
     "adminCannotDelete": "An admin account cannot delete itself. Ask another admin to remove your admin role first."
+  },
+  "chat": {
+    "title": "Career agent",
+    "intro": "Tell the agent what work you want. It finds jobs, keeps your profile up to date and asks before it changes anything.",
+    "log": "Conversation",
+    "you": "You",
+    "agent": "Agent",
+    "emptyGuest": "Try: “remote backend jobs with Python”. As a guest you can search; sign up to save jobs and apply.",
+    "emptySignedIn": "Try: “find remote design jobs” or “what is the status of my applications?”",
+    "placeholder": "Write a message",
+    "send": "Send",
+    "guestHint": "Saving jobs, applying and keeping a profile need an account.",
+    "signUp": "Sign up",
+    "errors": {
+      "BOT_UNAVAILABLE": "The agent is not available right now. Use the job search meanwhile.",
+      "BOT_BUDGET_EXCEEDED": "The agent has reached today's limit. Use the job search; the agent is back tomorrow.",
+      "BOT_TRY_LATER": "The agent could not answer. Try again in a minute.",
+      "RATE_LIMITED": "You have sent too many messages today. Try again tomorrow.",
+      "generic": "Something went wrong. Try again."
+    },
+    "confirm": {
+      "applyTitle": "Apply to this job?",
+      "profileTitle": "Save these profile changes?",
+      "text": "Nothing happens until you confirm.",
+      "accept": "Confirm",
+      "decline": "Cancel",
+      "accepted": "Confirmed.",
+      "declined": "Cancelled.",
+      "failed": "Could not complete this. The card may have expired; ask again."
+    }
   }
 }

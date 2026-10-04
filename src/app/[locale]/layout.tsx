@@ -27,6 +27,7 @@ const display = Roboto_Condensed({
 /** Namespaces used by "use client" components; add one when a client component needs it. */
 const CLIENT_NAMESPACES = [
   "nav",
+  "chat",
   "ui",
   "locale",
   "error",

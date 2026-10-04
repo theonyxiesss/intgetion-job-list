@@ -38,6 +38,8 @@ erDiagram
   applications ||--o{ application_status_history : history
   applications ||--o| application_reveals : reveal
   bot_conversations ||--o{ bot_messages : messages
+  bot_conversations ||--o{ bot_confirmations : confirms
+  users ||--o{ bot_confirmations : decides
   fx_rates {
     char currency
     numeric rate_to_usd

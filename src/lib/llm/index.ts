@@ -1,5 +1,6 @@
-/** LLM safety layer for the bot (7-lib): pure code, no network, no DB. */
+/** LLM layer for the bot: safety helpers (7-lib) and the Anthropic adapter (7A). */
 export * from "./budget";
 export * from "./provider";
 export * from "./redact";
 export * from "./untrusted";
+export * from "./anthropic";
