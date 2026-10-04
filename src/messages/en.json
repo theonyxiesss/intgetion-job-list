@@ -961,34 +961,34 @@
   },
   "chat": {
     "title": "Career agent",
-    "intro": "Tell the agent what work you want. It finds jobs, keeps your profile up to date and asks before it changes anything.",
+    "placeholder": "Describe what you're looking for…",
+    "send": "Send",
     "log": "Conversation",
+    "emptySignedIn": "Start a conversation — tell me what you're looking for.",
+    "emptyGuest": "Sign in to save your draft and apply to jobs.",
     "you": "You",
     "agent": "Agent",
-    "emptyGuest": "Try: “remote backend jobs with Python”. As a guest you can search; sign up to save jobs and apply.",
-    "emptySignedIn": "Try: “find remote design jobs” or “what is the status of my applications?”",
-    "score": "{score}% match",
-    "placeholder": "Write a message",
-    "send": "Send",
-    "guestHint": "Saving jobs, applying and keeping a profile need an account.",
+    "guestHint": "Create an account to save the conversation and apply to jobs.",
     "signUp": "Sign up",
-    "errors": {
-      "BOT_UNAVAILABLE": "The agent is not available right now. Use the job search meanwhile.",
-      "BOT_BUDGET_EXCEEDED": "The agent has reached today's limit. Use the job search; the agent is back tomorrow.",
-      "BOT_TRY_LATER": "The agent could not answer. Try again in a minute.",
-      "RATE_LIMITED": "You have sent too many messages today. Try again tomorrow.",
-      "generic": "Something went wrong. Try again."
-    },
     "confirm": {
+      "missing": "Please add: {fields}",
       "applyTitle": "Apply to this job?",
-      "profileTitle": "Save these profile changes?",
-      "text": "Nothing happens until you confirm.",
+      "profileTitle": "Save these changes to your profile?",
       "accept": "Confirm",
       "decline": "Cancel",
+      "text": "The agent wants to perform this action. Do you allow it?",
+      "open": "Awaiting your confirmation…",
+      "busy": "Processing…",
       "accepted": "Confirmed.",
       "declined": "Cancelled.",
-      "failed": "Could not complete this. The card may have expired; ask again.",
-      "missing": "The profile is still missing: {fields}"
+      "failed": "Something went wrong."
+    },
+    "errors": {
+      "RATE_LIMITED": "Too many messages. Try again later.",
+      "BOT_UNAVAILABLE": "The agent is not available right now. You can still search jobs manually.",
+      "BOT_BUDGET_EXCEEDED": "Daily budget exceeded. Try again tomorrow.",
+      "BOT_TRY_LATER": "The agent is busy. Try again in a moment.",
+      "generic": "Something went wrong. Please try again."
     }
   },
   "cookies": {
@@ -1226,8 +1226,5 @@
       "skipped": "Skipped",
       "failed": "Failed"
     }
-  },
-  "chat": {
-    "title": "Career agent"
   }
 }
