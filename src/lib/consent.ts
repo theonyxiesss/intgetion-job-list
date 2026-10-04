@@ -38,3 +38,11 @@ export function consentCookie(consent: Consent, secure: boolean): string {
     ...(secure ? ["Secure"] : []),
   ].join("; ");
 }
+
+/** Browser only: stores the choice for a year. */
+export function writeConsent(consent: Consent): void {
+  document.cookie = consentCookie(
+    consent,
+    window.location.protocol === "https:",
+  );
+}

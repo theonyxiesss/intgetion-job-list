@@ -929,6 +929,13 @@
         "title": "Crypto wallet",
         "text": "Link a wallet to your account."
       }
+    },
+    "cookies": {
+      "title": "Cookies",
+      "text": "Necessary cookies keep you signed in and remember your language. Optional ones (analytics) are used only if you allow them — there are none yet.",
+      "necessary": "Necessary only",
+      "all": "Allow all",
+      "saved": "Saved."
     }
   },
   "chat": {

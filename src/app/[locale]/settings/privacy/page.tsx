@@ -1,10 +1,13 @@
 import { Download } from "lucide-react";
+import { cookies } from "next/headers";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { CookieChoice } from "@/components/settings/cookie-choice";
 import {
   MarketingOptIn,
   ProfileVisibility,
 } from "@/components/settings/settings-controls";
 import { Container, Icon, PageHeader, buttonClass } from "@/components/ui";
+import { CONSENT_COOKIE, parseConsent } from "@/lib/consent";
 import { getOwnCandidate } from "@/modules/candidates/service";
 import { requireSettingsUser } from "../require-settings-user";
 import { SettingsTabs } from "../settings-tabs";
@@ -19,6 +22,7 @@ export default async function PrivacySettingsPage({
   const user = await requireSettingsUser(locale);
   const t = await getTranslations("settings");
   const profile = await getOwnCandidate(user.id);
+  const consent = parseConsent((await cookies()).get(CONSENT_COOKIE)?.value);
 
   return (
     <main className="py-10 md:py-16">
@@ -29,6 +33,16 @@ export default async function PrivacySettingsPage({
           {profile && <ProfileVisibility hidden={profile.isHidden} />}
           <MarketingOptIn enabled={user.marketingOptIn} />
         </section>
+        <CookieChoice
+          initial={consent}
+          text={{
+            title: t("cookies.title"),
+            text: t("cookies.text"),
+            necessary: t("cookies.necessary"),
+            all: t("cookies.all"),
+            saved: t("cookies.saved"),
+          }}
+        />
         <section
           aria-labelledby="export-title"
           className="flex flex-col gap-3 border border-line p-6"
