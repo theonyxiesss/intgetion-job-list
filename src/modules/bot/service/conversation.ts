@@ -1,15 +1,13 @@
 import { createHash, randomBytes } from "node:crypto";
 import { HttpError } from "@/lib/http";
 import {
-  AnthropicProvider,
   chat,
   circuitBreakerOpen,
   costMicroUsd,
   isCostAnomaly,
   LLMOutputError,
+  llmFromEnv,
   MAX_OUTPUT_TOKENS,
-  modelsFromEnv,
-  pricesFromEnv,
   redactPii,
   trimContext,
   wrapUntrusted,
@@ -73,15 +71,19 @@ export function setBotLLMForTests(value: BotLLM | null | undefined) {
 
 /**
  * The bot works only with a key and a price for the chat model: without a
- * price the circuit breaker could not count (D171). Otherwise null.
+ * price the circuit breaker could not count (D171); free OpenRouter models
+ * count as zero (D213). Otherwise null.
  */
 export function botLLM(env = process.env): BotLLM | null {
   if (providerOverride !== undefined) return providerOverride;
-  const key = env.ANTHROPIC_API_KEY?.trim();
-  const model = modelsFromEnv(env).chat;
-  const prices = pricesFromEnv(env);
-  if (!key || !prices[model]) return null;
-  return { provider: new AnthropicProvider(key), model, prices };
+  // Anthropic or OpenRouter, chosen by LLM_PROVIDER (D213).
+  const setup = llmFromEnv(env);
+  if (!setup) return null;
+  return {
+    provider: setup.provider,
+    model: setup.models.chat,
+    prices: setup.prices,
+  };
 }
 
 // ---- session --------------------------------------------------------------
