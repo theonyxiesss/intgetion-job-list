@@ -2,12 +2,15 @@ import { sql } from "drizzle-orm";
 import {
   check,
   index,
+  integer,
   jsonb,
   numeric,
   pgTable,
   primaryKey,
   smallint,
+  text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import { jobs } from "./jobs";
@@ -34,6 +37,36 @@ export const matchingResults = pgTable(
     check(
       "matching_results_score_check",
       sql`${table.score} >= 0 and ${table.score} <= 1`,
+    ),
+  ],
+);
+
+/** One open row per job (pending or running). Done rows stay for audit. */
+export const matchingJobs = pgTable(
+  "matching_jobs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    jobId: uuid("job_id")
+      .notNull()
+      .references(() => jobs.id, { onDelete: "cascade" }),
+    status: text("status").notNull().default("pending"),
+    attempts: integer("attempts").notNull().default(0),
+    runAfter: timestamp("run_after", { withTimezone: true }).notNull(),
+    lockedAt: timestamp("locked_at", { withTimezone: true }),
+    error: text("error"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    finishedAt: timestamp("finished_at", { withTimezone: true }),
+  },
+  (table) => [
+    index("matching_jobs_due_idx").on(table.status, table.runAfter),
+    uniqueIndex("matching_jobs_open_job_idx")
+      .on(table.jobId)
+      .where(sql`${table.status} in ('pending', 'running')`),
+    check(
+      "matching_jobs_status_check",
+      sql`${table.status} in ('pending', 'running', 'done', 'failed')`,
     ),
   ],
 );

@@ -12,6 +12,7 @@ import {
   republishImportedJob,
   transitionOwnedJob,
 } from "@/modules/jobs/service";
+import { enqueueMatchJob } from "@/modules/matching/service";
 import { safeNotify } from "@/modules/notifications/service";
 import * as repo from "../repo/queue-repo";
 import { isOverdue, planDecision, type QueueTarget } from "./decide";
@@ -153,6 +154,7 @@ export async function decideQueueItem(
     switch (effect) {
       case "approve_job":
         await transitionOwnedJob(item.entityId, "approve", admin.id, "admin");
+        await enqueueMatchJob(item.entityId);
         break;
       case "reject_job":
         await transitionOwnedJob(

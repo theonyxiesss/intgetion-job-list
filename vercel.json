@@ -27,6 +27,10 @@
     {
       "path": "/api/cron/retention",
       "schedule": "20 3 * * *"
+    },
+    {
+      "path": "/api/cron/matching",
+      "schedule": "* * * * *"
     }
   ]
 }

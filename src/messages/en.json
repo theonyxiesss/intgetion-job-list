@@ -90,6 +90,7 @@
     "skip": "Skip to content",
     "menu": "Menu",
     "jobs": "Jobs",
+    "matches": "Matches",
     "employers": "For employers",
     "saved": "Saved jobs",
     "admin": "Administration"
@@ -502,6 +503,44 @@
       "expired": "Expired",
       "closed": "Closed",
       "removed": "Removed"
+    }
+  },
+  "matches": {
+    "title": "Matches",
+    "tabsLabel": "Match lists",
+    "tabAll": "All",
+    "tabNew": "New",
+    "tabHidden": "Hidden",
+    "new": "New",
+    "more": "More",
+    "dismiss": "Not a fit",
+    "dismissTitle": "Why is this not a fit?",
+    "dismissConfirm": "Hide this job",
+    "dismissCancel": "Cancel",
+    "dismissClose": "Close",
+    "dismissError": "Could not save that.",
+    "emptyProfileTitle": "Fill in your profile",
+    "emptyProfileText": "Matches need skills, a timezone and work preferences.",
+    "emptyProfileAction": "Edit profile",
+    "whyTitle": "Why this fits",
+    "hintTitle": "Update your profile",
+    "hints": {
+      "salary": "Salary",
+      "format": "Work format",
+      "timezone": "Timezone"
+    },
+    "empty": {
+      "all": "No matches yet.",
+      "new": "No new matches.",
+      "hidden": "Nothing hidden."
+    },
+    "reasons": {
+      "salary": "Salary",
+      "format": "Format",
+      "timezone": "Timezone",
+      "company": "Company",
+      "role": "Role",
+      "other": "Other"
     }
   },
   "explain": {

@@ -12,6 +12,7 @@ import { isJobSavedForUser } from "@/modules/feedback/service";
 import { ExternalApplyLink } from "@/modules/feedback/ui/external-apply-link";
 import { JobFeedbackActions } from "@/modules/feedback/ui/job-feedback-actions";
 import { getJobForPublic } from "@/modules/jobs/service";
+import { WhyItFits } from "@/modules/matching/ui/why-it-fits";
 
 export const dynamic = "force-dynamic";
 
@@ -167,6 +168,7 @@ export default async function JobPage({
                   }}
                 />
               ) : null}
+              {user ? <WhyItFits userId={user.id} jobId={job.id} /> : null}
             </div>
           </aside>
         </div>

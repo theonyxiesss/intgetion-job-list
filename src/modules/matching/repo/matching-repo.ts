@@ -600,3 +600,34 @@ export async function readCompanyVisible(jobId: string): Promise<boolean> {
     .limit(1);
   return row !== undefined;
 }
+
+/** Drop the user's cache so the next getMatches recomputes (6B feedback). */
+export async function deleteUserResults(userId: string): Promise<void> {
+  await getDb()
+    .delete(matchingResults)
+    .where(eq(matchingResults.userId, userId));
+}
+
+export async function listDismissedJobIds(userId: string): Promise<string[]> {
+  const rows = await getDb().execute<{ job_id: string }>(sql`
+    select distinct on (job_id) job_id
+    from public.user_job_feedback
+    where user_id = ${userId} and action = 'dismissed'
+    order by job_id, created_at desc
+  `);
+  return rows.map((row) => row.job_id);
+}
+
+export async function countDismissedSince(
+  userId: string,
+  since: Date,
+): Promise<number> {
+  const rows = await getDb().execute<{ n: number }>(sql`
+    select count(*)::int as n
+    from public.user_job_feedback
+    where user_id = ${userId}
+      and action = 'dismissed'
+      and created_at >= ${since.toISOString()}::timestamptz
+  `);
+  return rows[0]?.n ?? 0;
+}

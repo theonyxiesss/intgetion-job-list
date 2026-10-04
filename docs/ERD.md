@@ -197,7 +197,7 @@ erDiagram
   }
 ```
 
-Migration 0009 creates `applications` and `application_status_history`. Migration 0012 creates `application_reveals` (one row per application, `via = shortlisted`). Migration 0013 creates `notifications`, `notification_preferences`, and `notification_emails` (the mail queue, D125). Migration 0015 creates `matching_results` (one row per user and job, D150). One active row per job and candidate (`status <> withdrawn`). A status change is an update of `applications` plus a history row; the first row is an insert with `from_status` null. The reveal row is inserted in the same transaction as the move to `shortlisted`.
+Migration 0009 creates `applications` and `application_status_history`. Migration 0012 creates `application_reveals` (one row per application, `via = shortlisted`). Migration 0013 creates `notifications`, `notification_preferences`, and `notification_emails` (the mail queue, D125). Migration 0015 creates `matching_results` (one row per user and job, D150). Migration 0016 creates `matching_jobs` (the publish recalc queue, D161). One active row per job and candidate (`status <> withdrawn`). A status change is an update of `applications` plus a history row; the first row is an insert with `from_status` null. The reveal row is inserted in the same transaction as the move to `shortlisted`.
 
 ```mermaid
 erDiagram

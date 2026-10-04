@@ -75,3 +75,34 @@ export {
   type MatchItem,
   type MatchList,
 } from "./compute";
+export {
+  dismissMatch,
+  listMatchPage,
+  loadMatchScreen,
+  matchForJob,
+  type MatchCard,
+  type MatchPage,
+  type MatchScreen,
+  type ScreenCard,
+} from "./feed";
+export {
+  DISMISS_LIMIT_PER_HOUR,
+  MATCH_PAGE_DEFAULT,
+  MATCH_PAGE_MAX,
+  decodeMatchCursor,
+  dismissLimited,
+  encodeMatchCursor,
+  isNewMatch,
+  parseMatchTab,
+  profileHintAnchor,
+  profileHintsFromCounts,
+  sliceShown,
+  type MatchTab,
+  type ProfileHint,
+} from "./feed-rules";
+export { enqueueMatchJob, claimMatchJob, runMatchingCron } from "./recalc";
+export {
+  MATCH_ATTEMPT_LIMIT,
+  MATCH_CRON_BUDGET_MS,
+  retryPlan,
+} from "./recalc-rules";

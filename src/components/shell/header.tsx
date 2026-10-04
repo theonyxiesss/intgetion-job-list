@@ -15,6 +15,7 @@ import { NavProgress } from "./nav-progress";
 import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth-guards";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
+import { hasCandidateProfile } from "@/modules/candidates/service";
 import { countUnread } from "@/modules/notifications/service";
 import { LocaleSwitch } from "./locale-switch";
 import { MobileNav, type NavItem } from "./mobile-nav";
@@ -30,11 +31,13 @@ export async function Header() {
   const signedIn = hasSessionMark(await headers());
   let unread = 0;
   let isAdmin = false;
+  let candidate = false;
   if (signedIn) {
     try {
       const user = await requireUser();
       isAdmin = user.platformRole === "admin";
       unread = await countUnread(user.id);
+      candidate = await hasCandidateProfile(user.id);
     } catch {
       unread = 0;
     }
@@ -42,6 +45,7 @@ export async function Header() {
 
   const main: NavItem[] = [
     { href: "/jobs", label: t("nav.jobs") },
+    ...(candidate ? [{ href: "/matches", label: t("nav.matches") }] : []),
     { href: "/employer/jobs", label: t("nav.employers") },
   ];
   const account: NavItem[] = signedIn

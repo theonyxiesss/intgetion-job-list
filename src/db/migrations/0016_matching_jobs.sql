@@ -1,0 +1,27 @@
+-- 6B: recalc queue for a job that just became published (D161).
+-- Replaces pg-boss for MVP. Claimed with FOR UPDATE SKIP LOCKED.
+
+CREATE TABLE IF NOT EXISTS public.matching_jobs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  job_id uuid NOT NULL REFERENCES public.jobs(id) ON DELETE CASCADE,
+  status text NOT NULL DEFAULT 'pending',
+  attempts integer NOT NULL DEFAULT 0,
+  run_after timestamptz NOT NULL DEFAULT now(),
+  locked_at timestamptz,
+  error text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  finished_at timestamptz,
+  CONSTRAINT matching_jobs_status_check
+    CHECK (status IN ('pending', 'running', 'done', 'failed'))
+);
+
+CREATE INDEX IF NOT EXISTS matching_jobs_due_idx
+  ON public.matching_jobs (status, run_after);
+
+CREATE UNIQUE INDEX IF NOT EXISTS matching_jobs_open_job_idx
+  ON public.matching_jobs (job_id)
+  WHERE status IN ('pending', 'running');
+
+SELECT public.enable_rls_deny_all('public.matching_jobs');
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.matching_jobs TO app_rw;
