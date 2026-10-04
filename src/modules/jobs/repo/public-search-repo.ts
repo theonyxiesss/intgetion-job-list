@@ -278,3 +278,37 @@ export async function listPublicJobsByIds(ids: string[]) {
       ),
     );
 }
+
+/** Sitemap rows (D210): published jobs of visible companies, and those companies. */
+export async function listSitemapRows(limit: number) {
+  const jobRows = await getDb().execute<{ id: string; updated_at: string }>(sql`
+    select j.id, j.updated_at
+    from public.jobs j
+    join public.companies c on c.id = j.company_id
+    where j.status = 'published'
+      and c.status not in ('suspended', 'rejected')
+    order by j.published_at desc nulls last
+    limit ${limit}
+  `);
+  const companyRows = await getDb().execute<{
+    slug: string;
+    updated_at: string;
+  }>(sql`
+    select c.slug, max(j.updated_at) as updated_at
+    from public.companies c
+    join public.jobs j on j.company_id = c.id and j.status = 'published'
+    where c.status not in ('suspended', 'rejected')
+    group by c.slug
+    limit ${limit}
+  `);
+  return {
+    jobs: jobRows.map((row) => ({
+      id: row.id,
+      updatedAt: new Date(row.updated_at),
+    })),
+    companies: companyRows.map((row) => ({
+      slug: row.slug,
+      updatedAt: new Date(row.updated_at),
+    })),
+  };
+}

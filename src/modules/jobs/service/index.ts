@@ -31,6 +31,7 @@ export {
   toPublicJobDto,
   getVisibleCompany,
   listSearchSkillOptions,
+  listSitemapEntries,
   salaryDecision,
 } from "./public-search";
 export { parseEcbCsv, refreshFxRates } from "./fx-rates";

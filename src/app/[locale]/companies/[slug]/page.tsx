@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Container, PageHeader } from "@/components/ui/container";
@@ -11,8 +12,36 @@ import {
   getVisibleCompany,
 } from "@/modules/jobs/service";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
+import {
+  languageAlternates,
+  metaDescription,
+  siteUrl,
+} from "@/modules/seo/site";
 
 export const dynamic = "force-dynamic";
+
+/** Company title, description and canonical for search (D211). */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const company = await getVisibleCompany(slug);
+  if (!company) return {};
+  const description = company.description
+    ? metaDescription(company.description)
+    : undefined;
+  return {
+    title: company.name,
+    ...(description ? { description } : {}),
+    alternates: {
+      canonical: `${siteUrl()}/${locale}/companies/${company.slug}`,
+      languages: languageAlternates(`/companies/${company.slug}`),
+    },
+    openGraph: { type: "website", title: company.name, description },
+  };
+}
 
 export default async function CompanyPage({
   params,

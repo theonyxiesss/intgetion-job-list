@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { languageAlternates, siteUrl } from "@/modules/seo/site";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Button, buttonClass } from "@/components/ui/button";
@@ -72,6 +74,24 @@ function without(
   }
   const query = params.toString();
   return query ? `?${query}` : "/jobs";
+}
+
+/** Catalog title and description for search (D211). */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "jobs" });
+  return {
+    title: t("title"),
+    description: t("subtitle"),
+    alternates: {
+      canonical: `${siteUrl()}/${locale}/jobs`,
+      languages: languageAlternates("/jobs"),
+    },
+  };
 }
 
 export default async function JobsPage({

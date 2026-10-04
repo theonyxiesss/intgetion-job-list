@@ -125,6 +125,7 @@ export function toPublicJobDto(
     skillsMore: Math.max(0, requirements.skills.length - 6),
     languages: requirements.languages,
     publishedAt: job.publishedAt?.toISOString() ?? null,
+    expiresAt: job.expiresAt?.toISOString() ?? null,
   };
 }
 
@@ -359,4 +360,9 @@ export async function getVisibleCompany(slug: string) {
 }
 export async function listSearchSkillOptions(locale: string) {
   return repo.listSearchSkillOptions(locale);
+}
+
+/** Sitemap entries (D210); a sitemap file holds at most 50 000 URLs. */
+export async function listSitemapEntries(limit = 20_000) {
+  return repo.listSitemapRows(limit);
 }

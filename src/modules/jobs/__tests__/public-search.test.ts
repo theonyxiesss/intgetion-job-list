@@ -157,6 +157,8 @@ describe("public job search contract", () => {
         "locationCountry",
         "minOverlapHours",
         "publishedAt",
+        // Public end date, Google JobPosting validThrough (D211).
+        "expiresAt",
         "salaryComparable",
         "salaryMax",
         "salaryMin",
