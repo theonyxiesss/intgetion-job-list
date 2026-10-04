@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { SECTORS, SENIORITY_LEVELS } from "@/config/markers";
 import {
   ProfileForm,
   type ProfileFormValues,
@@ -34,6 +35,11 @@ function emptyForm(): ProfileFormValues {
     languageLevel: "B2",
     contactEmail: "",
     phone: "",
+    categories: [],
+    companySizes: [],
+    notes: null,
+    sectors: [],
+    seniority: "",
   };
 }
 
@@ -55,6 +61,7 @@ export default async function EditProfilePage({
   }
 
   const t = await getTranslations("profile");
+  const markers = await getTranslations("markers");
   const profile = await getOwnCandidate(user.id);
   const contacts = profile ? await getOwnContacts(user.id) : null;
   const initial = emptyForm();
@@ -80,6 +87,11 @@ export default async function EditProfilePage({
     initial.skillLevel = profile.skills[0]?.level ?? "intermediate";
     initial.language = profile.languages[0]?.lang ?? "";
     initial.languageLevel = profile.languages[0]?.level ?? "B2";
+    initial.categories = profile.preferences.categories;
+    initial.companySizes = profile.preferences.companySizes;
+    initial.notes = profile.preferences.notes;
+    initial.sectors = profile.preferences.sectors;
+    initial.seniority = profile.preferences.seniority ?? "";
   }
   if (contacts) {
     initial.contactEmail = contacts.email;
@@ -111,7 +123,17 @@ export default async function EditProfilePage({
               ))}
             </ul>
           </nav>
-          <ProfileForm initial={initial} />
+          <ProfileForm
+            initial={initial}
+            sectors={SECTORS.map((value) => ({
+              value,
+              label: markers(`sectors.${value}`),
+            }))}
+            seniority={SENIORITY_LEVELS.map((value) => ({
+              value,
+              label: markers(`seniority.${value}`),
+            }))}
+          />
         </div>
       </Container>
     </main>

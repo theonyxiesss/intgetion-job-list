@@ -1,4 +1,10 @@
 import { and, eq, inArray } from "drizzle-orm";
+import {
+  isSensitiveSector,
+  type Perk,
+  type Sector,
+  type Seniority,
+} from "@/config/markers";
 import { getDb } from "@/db/client";
 import { jobSkills, jobStatusHistory, jobs } from "@/db/schema";
 
@@ -14,6 +20,9 @@ export type ImportedJobWrite = {
   employmentType: NonNullable<(typeof jobs.$inferInsert)["employmentType"]>;
   timeZone: string | null;
   skillIds: string[];
+  sectors?: Sector[];
+  seniority?: Seniority | null;
+  perks?: Perk[];
   applyUrl: string;
   expiresAt: Date | null;
   status: ImportedJobStatus;
@@ -34,20 +43,28 @@ export async function saveImportedJob(input: ImportedJobWrite) {
     }
     const now = new Date();
     const removed = input.status === "removed";
+    const sensitive =
+      input.status === "published" && isSensitiveSector(input.sectors ?? []);
+    const status: ImportedJobStatus | "pending_moderation" = sensitive
+      ? "pending_moderation"
+      : input.status;
     const values = {
       companyId: input.companyId,
       title: input.title,
       description: input.description,
       category: input.category,
       employmentType: input.employmentType,
+      sectors: input.sectors ?? [],
+      seniority: input.seniority ?? null,
+      perks: input.perks ?? [],
       workFormat: "remote" as const,
       timezoneRequired: input.timeZone,
       applicationMethod: "external_url" as const,
       applicationUrl: input.applyUrl,
       source: "imported" as const,
-      status: input.status,
+      status,
       publishedAt:
-        input.status === "published" ? (previous?.publishedAt ?? now) : null,
+        status === "published" ? (previous?.publishedAt ?? now) : null,
       expiresAt: input.expiresAt,
       importedAt: now,
       createdBy: null,

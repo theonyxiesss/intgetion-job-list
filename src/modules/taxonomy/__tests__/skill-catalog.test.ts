@@ -14,13 +14,28 @@ function normalizeNewlines(value: string): string {
 describe("skill catalog", () => {
   const catalog = expandCatalog();
 
-  it("bootstraps 80 to 120 skills across the ten categories", () => {
+  it("bootstraps 80 to 120 skills across the original ten categories", () => {
+    const original = [
+      "engineering",
+      "data",
+      "design",
+      "product",
+      "marketing",
+      "sales",
+      "support",
+      "operations",
+      "finance",
+      "hr",
+    ];
     expect(SKILL_CATALOG.length).toBeGreaterThanOrEqual(80);
     expect(SKILL_CATALOG.length).toBeLessThanOrEqual(120);
     expect(catalog).toHaveLength(SKILL_CATALOG.length);
     expect(new Set(catalog.map((entry) => entry.category))).toEqual(
-      new Set(SKILL_CATEGORIES),
+      new Set(original),
     );
+    for (const category of original) {
+      expect(SKILL_CATEGORIES).toContain(category);
+    }
   });
 
   it("gives every skill both names and at least two distinct aliases", () => {

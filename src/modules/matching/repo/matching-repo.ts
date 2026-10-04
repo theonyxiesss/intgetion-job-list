@@ -91,7 +91,11 @@ export async function readProfile(
     .from(candidateLanguages)
     .where(eq(candidateLanguages.candidateId, userId));
   const preferences = await db
-    .select({ categories: candidatePreferences.categories })
+    .select({
+      categories: candidatePreferences.categories,
+      sectors: candidatePreferences.sectors,
+      seniority: candidatePreferences.seniority,
+    })
     .from(candidatePreferences)
     .where(eq(candidatePreferences.userId, userId))
     .limit(1);
@@ -119,6 +123,8 @@ export async function readProfile(
       experienceYears: profile.experienceYears,
       desiredTitles: profile.desiredTitles,
       categories: preferences[0]?.categories ?? [],
+      sectors: preferences[0]?.sectors ?? [],
+      seniority: preferences[0]?.seniority ?? null,
       salaryMinMinor: profile.salaryMin,
       salaryMaxMinor: profile.salaryMax,
       salaryCurrency: trimCode(profile.salaryCurrency),
@@ -426,6 +432,8 @@ export async function readJobs(
       companyId: row.companyId,
       title: row.title,
       category: row.category,
+      sectors: row.sectors,
+      seniority: row.seniority,
       status: row.status,
       workFormat: row.workFormat,
       employmentType: row.employmentType,

@@ -1,17 +1,7 @@
 import { z } from "zod";
+import { JOB_CATEGORIES } from "@/config/markers";
 
-export const SKILL_CATEGORIES = [
-  "engineering",
-  "data",
-  "design",
-  "product",
-  "marketing",
-  "sales",
-  "support",
-  "operations",
-  "finance",
-  "hr",
-] as const;
+export const SKILL_CATEGORIES = JOB_CATEGORIES;
 
 export const skillCategorySchema = z.enum(SKILL_CATEGORIES);
 export type SkillCategory = z.infer<typeof skillCategorySchema>;

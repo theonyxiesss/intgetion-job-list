@@ -1,4 +1,11 @@
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  JOB_CATEGORIES,
+  SECTORS,
+  SENIORITY_LEVELS,
+  PERKS,
+} from "@/config/markers";
 import { Link } from "@/i18n/navigation";
 import { Button, buttonClass } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -14,21 +21,26 @@ import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import { listSearchSkillOptions, searchJobs } from "@/modules/jobs/service";
 import { FilterShell } from "@/modules/jobs/ui/filter-shell";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
+import { QuickFilters } from "@/modules/jobs/ui/quick-filters";
 
 export const dynamic = "force-dynamic";
 
-const categories = [
-  "engineering",
-  "data",
-  "design",
-  "product",
-  "marketing",
-  "sales",
-  "support",
-  "operations",
-  "finance",
-  "hr",
-] as const;
+const categories = JOB_CATEGORIES;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return {
+    alternates: {
+      types: {
+        "application/rss+xml": `/${locale}/jobs/rss.xml`,
+      },
+    },
+  };
+}
 
 function text(raw: Record<string, string | string[] | undefined>, key: string) {
   const value = raw[key];
@@ -48,6 +60,9 @@ function activeCount(raw: Record<string, string | string[] | undefined>) {
     "currency",
     "source",
     "postedWithin",
+    "sector",
+    "seniority",
+    "perk",
   ];
   let count = keys.filter(
     (key) => text(raw, key) || Array.isArray(raw[key]),
@@ -85,6 +100,8 @@ export default async function JobsPage({
   setRequestLocale(locale);
   const t = await getTranslations("jobs");
   const categoryNames = await getTranslations("categories");
+  const markers = await getTranslations("markers");
+  let signedIn = false;
   const raw = await searchParams;
   const parsed = jobSearchQuery.safeParse(raw);
   let viewer: Parameters<typeof searchJobs>[2] = { hidden: null };
@@ -92,6 +109,7 @@ export default async function JobsPage({
     const supabase = await createSupabaseServerClient();
     const viewerUser = await getCurrentUser(supabase.auth);
     if (viewerUser) {
+      signedIn = true;
       viewer = { hidden: await getHiddenSetsForViewer(viewerUser.id) };
     }
   } catch {
@@ -131,7 +149,19 @@ export default async function JobsPage({
   return (
     <main className="py-10 md:py-16">
       <Container className="flex flex-col gap-8">
-        <PageHeader title={t("title")} intro={t("subtitle")} />
+        <PageHeader
+          title={t("title")}
+          intro={t("subtitle")}
+          actions={
+            <a
+              className="t-label text-fg-muted"
+              href={`/${locale}/jobs/rss.xml`}
+            >
+              {markers("rss")}
+            </a>
+          }
+        />
+        <QuickFilters signedIn={signedIn} />
         <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
           <form id="catalog-filters" action="" className="flex flex-col gap-4">
             <FilterShell
@@ -187,6 +217,44 @@ export default async function JobsPage({
                 <option value="full_time">{t("full_time")}</option>
                 <option value="part_time">{t("part_time")}</option>
                 <option value="contract">{t("contract")}</option>
+                <option value="freelance">{t("freelance")}</option>
+                <option value="internship">{t("internship")}</option>
+              </Select>
+              <Select
+                aria-label={markers("sector")}
+                name="sector"
+                defaultValue={text(raw, "sector")}
+              >
+                <option value="">{markers("anySector")}</option>
+                {SECTORS.map((id) => (
+                  <option key={id} value={id}>
+                    {markers(`sectors.${id}`)}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                aria-label={markers("seniorityLabel")}
+                name="seniority"
+                defaultValue={text(raw, "seniority")}
+              >
+                <option value="">{markers("anySeniority")}</option>
+                {SENIORITY_LEVELS.map((id) => (
+                  <option key={id} value={id}>
+                    {markers(`seniority.${id}`)}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                aria-label={markers("perk")}
+                name="perk"
+                defaultValue={text(raw, "perk")}
+              >
+                <option value="">{markers("anyPerk")}</option>
+                {PERKS.map((id) => (
+                  <option key={id} value={id}>
+                    {markers(`perks.${id}`)}
+                  </option>
+                ))}
               </Select>
               <Input
                 aria-label={t("country")}

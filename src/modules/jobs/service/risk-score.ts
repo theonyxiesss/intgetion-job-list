@@ -7,6 +7,7 @@ export type RiskInput = {
   applicationDomainMismatch: boolean;
   scamPattern: boolean;
   salaryOutlier: boolean;
+  sensitiveSector?: boolean;
 };
 
 const SCAM_PATTERNS = [
@@ -44,6 +45,7 @@ export function scoreJobRisk(input: RiskInput): {
     flags.push("application_domain_mismatch");
   if (input.scamPattern) flags.push("scam_pattern");
   if (input.salaryOutlier) flags.push("salary_outlier");
+  if (input.sensitiveSector) flags.push("sensitive_sector");
   const weights: Record<string, number> = {
     new_creator: 2,
     free_email: 2,
@@ -52,6 +54,7 @@ export function scoreJobRisk(input: RiskInput): {
     application_domain_mismatch: 1,
     scam_pattern: 4,
     salary_outlier: 2,
+    sensitive_sector: 2,
   };
   return { score: flags.reduce((sum, flag) => sum + weights[flag]!, 0), flags };
 }

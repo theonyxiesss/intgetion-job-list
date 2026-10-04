@@ -1,3 +1,4 @@
+import { HIGH_PAY_USD_YEAR } from "@/config/markers";
 import {
   compareSalaries,
   jobSalaryReference,
@@ -124,8 +125,53 @@ export function toPublicJobDto(
     })),
     skillsMore: Math.max(0, requirements.skills.length - 6),
     languages: requirements.languages,
+    seniority: job.seniority,
+    sectors: job.sectors ?? [],
+    perks: job.perks ?? [],
     publishedAt: job.publishedAt?.toISOString() ?? null,
   };
+}
+
+const HIGH_PAY_MINOR = BigInt(HIGH_PAY_USD_YEAR) * BigInt(100);
+
+/** Upper bound of a gross year/month range, in USD, at or above the preset. */
+export function meetsHighPay(
+  row: PublicRow,
+  rates: readonly FxRate[],
+  now: Date,
+): boolean {
+  const { job } = row;
+  const amount = job.salaryMax ?? job.salaryMin;
+  const currency = job.salaryCurrency?.trim();
+  if (
+    amount === null ||
+    !currency ||
+    !job.salaryPeriod ||
+    job.salaryBasis !== "gross" ||
+    job.salaryPeriod === "hour"
+  ) {
+    return false;
+  }
+  const comparison = compareSalaries(
+    {
+      amountMinor: amount,
+      currency,
+      period: job.salaryPeriod,
+      basis: "gross",
+    },
+    {
+      amountMinor: HIGH_PAY_MINOR,
+      currency: "USD",
+      period: "year",
+      basis: "gross",
+    },
+    rates,
+    now,
+  );
+  return (
+    comparison.comparable &&
+    comparison.jobMonthlyMinor >= comparison.candMonthlyMinor
+  );
 }
 
 export function salaryDecision(
@@ -184,14 +230,17 @@ export async function searchJobs(
     throw new Error("invalid_cursor");
   const fetchLimit = Math.min(
     250,
-    query.limit * (query.tzOverlapWith || query.salaryMin ? 5 : 1) + 1,
+    query.limit *
+      (query.tzOverlapWith || query.salaryMin || query.highPay ? 5 : 1) +
+      1,
   );
   const rows = await repo.searchPublicJobs({
     ...query,
+    nonTechnical: query.nonTechnical !== undefined,
     cursor,
     limit: fetchLimit,
   });
-  const fx = query.salaryMin ? await repo.getFxRates() : [];
+  const fx = query.salaryMin || query.highPay ? await repo.getFxRates() : [];
   const rates: FxRate[] = fx.map((r) => ({
     currency: r.currency.trim(),
     rateToUsd: r.rateToUsd,
@@ -208,6 +257,7 @@ export async function searchJobs(
     }
     const salary = salaryDecision(row, query, rates, now);
     if (!salary.include) continue;
+    if (query.highPay && !meetsHighPay(row, rates, now)) continue;
     if (query.tzOverlapWith) {
       const overlap = workHoursOverlap({
         candidate: {

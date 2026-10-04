@@ -28,7 +28,13 @@ describe("candidate DTO", () => {
       skills: [],
       experience: [],
       languages: [],
-      preferences: { categories: [], companySizes: [], notes: null },
+      preferences: {
+        categories: [],
+        sectors: [],
+        seniority: null,
+        companySizes: [],
+        notes: null,
+      },
       unrecognizedSkills: [],
     } satisfies CandidateDto;
 

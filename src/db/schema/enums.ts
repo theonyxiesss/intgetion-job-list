@@ -14,6 +14,16 @@ export const employmentType = pgEnum("employment_type", [
   "full_time",
   "part_time",
   "contract",
+  "freelance",
+  "internship",
+]);
+
+export const jobSeniority = pgEnum("job_seniority", [
+  "internship",
+  "entry",
+  "mid",
+  "senior",
+  "lead",
 ]);
 
 export const salaryPeriod = pgEnum("salary_period", ["hour", "month", "year"]);

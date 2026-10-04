@@ -1,22 +1,17 @@
+import {
+  EMPLOYMENT_TYPES,
+  inferImportedMarkers,
+  JOB_CATEGORIES,
+  type EmploymentType,
+  type JobCategory,
+  type Sector,
+  type Seniority,
+} from "@/config/markers";
 import { resolveTimeZone } from "@/lib/tz-aliases";
 import type { RawImportedJob } from "../adapters/types";
 
-export const JOB_CATEGORIES = [
-  "engineering",
-  "data",
-  "design",
-  "product",
-  "marketing",
-  "sales",
-  "support",
-  "operations",
-  "finance",
-  "hr",
-] as const;
-export type JobCategory = (typeof JOB_CATEGORIES)[number];
-
-const EMPLOYMENT_TYPES = ["full_time", "part_time", "contract"] as const;
-export type EmploymentType = (typeof EMPLOYMENT_TYPES)[number];
+export { JOB_CATEGORIES };
+export type { EmploymentType, JobCategory };
 
 export type NormalizedImportedJob = Omit<
   RawImportedJob,
@@ -26,6 +21,8 @@ export type NormalizedImportedJob = Omit<
   employmentType: EmploymentType;
   timeZone: string | null;
   skillIds: string[];
+  sectors: Sector[];
+  seniority: Seniority | null;
   location: string | null;
   workFormat: "remote";
   expired: boolean;
@@ -53,16 +50,19 @@ export async function normalizeImportedJob(
     const id = await resolveSkill(skill);
     if (id && !skillIds.includes(id)) skillIds.push(id);
   }
+  const title = squash(raw.title);
+  const description = squash(raw.description);
+  const markers = inferImportedMarkers(
+    `${title}\n${description}\n${raw.category}`,
+  );
   const category = (JOB_CATEGORIES as readonly string[]).includes(raw.category)
     ? (raw.category as JobCategory)
-    : "operations";
+    : (markers.category ?? "operations");
   const employmentType = (EMPLOYMENT_TYPES as readonly string[]).includes(
     raw.employmentType ?? "",
   )
     ? (raw.employmentType as EmploymentType)
     : "full_time";
-  const title = squash(raw.title);
-  const description = squash(raw.description);
   const applyUrl = raw.applyUrl.trim();
   return {
     externalId: raw.externalId.trim(),
@@ -74,6 +74,8 @@ export async function normalizeImportedJob(
     employmentType,
     timeZone: resolveTimeZone(raw.timeZone),
     skillIds,
+    sectors: markers.sectors,
+    seniority: markers.seniority,
     applyUrl,
     expiresAt: raw.expiresAt,
     location: null,

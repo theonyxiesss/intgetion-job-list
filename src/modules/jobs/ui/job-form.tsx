@@ -3,6 +3,15 @@
 import { Save } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  EMPLOYMENT_TYPES,
+  JOB_CATEGORIES,
+  MAX_JOB_PERKS,
+  MAX_JOB_SECTORS,
+  PERKS,
+  SECTOR_GROUPS,
+  SENIORITY_LEVELS,
+} from "@/config/markers";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Icon } from "@/components/ui/icon";
@@ -16,6 +25,9 @@ type Text = {
   description: string;
   category: string;
   employmentType: string;
+  seniority: string;
+  sectors: string;
+  perks: string;
   workFormat: string;
   location: string;
   applicationMethod: string;
@@ -35,6 +47,7 @@ type Text = {
     application: string;
     salary: string;
     skills: string;
+    markers: string;
   };
   methods: Record<"internal" | "external_url" | "email", string>;
 };
@@ -44,20 +57,11 @@ export type JobFormOptions = {
   categories: Record<string, string>;
   employment: Record<string, string>;
   formats: Record<string, string>;
+  seniority: Record<string, string>;
+  sectors: Record<string, string>;
+  perks: Record<string, string>;
+  groups: Record<string, string>;
 };
-
-const CATEGORIES = [
-  "engineering",
-  "data",
-  "design",
-  "product",
-  "marketing",
-  "sales",
-  "support",
-  "operations",
-  "finance",
-  "hr",
-] as const;
 
 export function JobForm({
   companyId,
@@ -79,6 +83,9 @@ export function JobForm({
     description: initial?.description ?? "",
     category: initial?.category ?? "engineering",
     employmentType: initial?.employmentType ?? "full_time",
+    seniority: initial?.seniority ?? "",
+    sectors: initial?.sectors ?? [],
+    perks: initial?.perks ?? [],
     workFormat: initial?.workFormat ?? "remote",
     location: initial?.location ?? "",
     applicationMethod: initial?.applicationMethod ?? "internal",
@@ -108,6 +115,9 @@ export function JobForm({
       salaryCurrency: form.salaryCurrency || null,
       salaryPeriod: form.salaryCurrency ? "month" : null,
       salaryBasis: form.salaryCurrency ? "gross" : null,
+      seniority: form.seniority || null,
+      sectors: form.sectors.slice(0, MAX_JOB_SECTORS),
+      perks: form.perks.slice(0, MAX_JOB_PERKS),
       skills:
         initial && !form.skills.trim()
           ? undefined
@@ -160,7 +170,7 @@ export function JobForm({
         <div className="grid gap-4 md:grid-cols-3">
           <Field label={text.category}>
             <Select value={form.category} onChange={set("category")}>
-              {CATEGORIES.map((value) => (
+              {JOB_CATEGORIES.map((value) => (
                 <option key={value} value={value}>
                   {options.categories[value] ?? value}
                 </option>
@@ -172,7 +182,7 @@ export function JobForm({
               value={form.employmentType}
               onChange={set("employmentType")}
             >
-              {["full_time", "part_time", "contract"].map((value) => (
+              {EMPLOYMENT_TYPES.map((value) => (
                 <option key={value} value={value}>
                   {options.employment[value] ?? value}
                 </option>
@@ -192,6 +202,63 @@ export function JobForm({
         <Field label={text.location}>
           <Input value={form.location} onChange={set("location")} />
         </Field>
+        <Field label={text.seniority}>
+          <Select value={form.seniority} onChange={set("seniority")}>
+            <option value="">{options.seniority.any ?? ""}</option>
+            {SENIORITY_LEVELS.map((value) => (
+              <option key={value} value={value}>
+                {options.seniority[value] ?? value}
+              </option>
+            ))}
+          </Select>
+        </Field>
+      </FieldGroup>
+
+      <FieldGroup legend={text.groups.markers}>
+        {SECTOR_GROUPS.map((group) => (
+          <fieldset key={group.id} className="flex flex-col gap-2">
+            <legend className="t-label text-fg-muted">
+              {options.groups[group.id] ?? group.id}
+            </legend>
+            <div className="flex flex-wrap gap-3">
+              {group.sectors.map((sector) => (
+                <label key={sector} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={form.sectors.includes(sector)}
+                    onChange={(event) => {
+                      const next = event.target.checked
+                        ? [...form.sectors, sector].slice(0, MAX_JOB_SECTORS)
+                        : form.sectors.filter((item) => item !== sector);
+                      setForm({ ...form, sectors: next });
+                    }}
+                  />
+                  {options.sectors[sector] ?? sector}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+        <fieldset className="flex flex-col gap-2">
+          <legend className="t-label text-fg-muted">{text.perks}</legend>
+          <div className="flex flex-wrap gap-3">
+            {PERKS.map((perk) => (
+              <label key={perk} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={form.perks.includes(perk)}
+                  onChange={(event) => {
+                    const next = event.target.checked
+                      ? [...form.perks, perk].slice(0, MAX_JOB_PERKS)
+                      : form.perks.filter((item) => item !== perk);
+                    setForm({ ...form, perks: next });
+                  }}
+                />
+                {options.perks[perk] ?? perk}
+              </label>
+            ))}
+          </div>
+        </fieldset>
       </FieldGroup>
 
       <FieldGroup legend={text.groups.application}>

@@ -1,5 +1,13 @@
 import { z } from "zod";
 import { isValidTimeZone } from "@/lib/tz";
+import {
+  EMPLOYMENT_TYPES,
+  MAX_JOB_PERKS,
+  MAX_JOB_SECTORS,
+  PERKS,
+  SECTORS,
+  SENIORITY_LEVELS,
+} from "@/config/markers";
 import { SKILL_CATEGORIES } from "@/modules/taxonomy/service";
 
 const minor = z
@@ -39,7 +47,10 @@ export const jobFields = z.object({
   description: z.string().trim().min(50).max(20000),
   category: z.enum(SKILL_CATEGORIES),
   workFormat: z.enum(["remote", "hybrid", "onsite"]).default("remote"),
-  employmentType: z.enum(["full_time", "part_time", "contract"]),
+  employmentType: z.enum(EMPLOYMENT_TYPES),
+  seniority: z.enum(SENIORITY_LEVELS).nullable().optional(),
+  sectors: z.array(z.enum(SECTORS)).max(MAX_JOB_SECTORS).optional(),
+  perks: z.array(z.enum(PERKS)).max(MAX_JOB_PERKS).optional(),
   experienceMin: z.number().int().min(0).max(60).nullable().optional(),
   experienceMax: z.number().int().min(0).max(60).nullable().optional(),
   location: optionalText(200),

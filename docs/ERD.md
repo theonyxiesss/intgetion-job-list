@@ -222,3 +222,5 @@ erDiagram
     uuid actor_id FK
   }
 ```
+
+Migration `0019_markers.sql` adds `jobs.sectors`, `jobs.perks`, `jobs.seniority`, `candidate_preferences.sectors` and `candidate_preferences.seniority`, and widens `employment_type` with `freelance` and `internship`.

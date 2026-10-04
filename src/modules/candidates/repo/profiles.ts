@@ -212,6 +212,8 @@ export async function saveProfile(
     .values({
       userId,
       categories: [...input.preferences.categories],
+      sectors: [...(input.preferences.sectors ?? [])],
+      seniority: input.preferences.seniority ?? null,
       companySizes: [...input.preferences.companySizes],
       notes: input.preferences.notes,
     })
@@ -219,6 +221,8 @@ export async function saveProfile(
       target: candidatePreferences.userId,
       set: {
         categories: [...input.preferences.categories],
+        sectors: [...(input.preferences.sectors ?? [])],
+        seniority: input.preferences.seniority ?? null,
         companySizes: [...input.preferences.companySizes],
         notes: input.preferences.notes,
       },
@@ -290,6 +294,8 @@ export function presentProfile(
     })),
     preferences: {
       categories: loaded.preferences?.categories ?? [],
+      sectors: loaded.preferences?.sectors ?? [],
+      seniority: loaded.preferences?.seniority ?? null,
       companySizes: loaded.preferences?.companySizes ?? [],
       notes: loaded.preferences?.notes ?? null,
     },

@@ -3,6 +3,7 @@
  * { neutral: true, reason } — neutral components are excluded from the
  * weighted sum and their weight is redistributed (10.3, D91, D92).
  */
+import { SECTOR_ROLE_FLOOR } from "@/config/markers";
 import {
   compareSalaries,
   jobSalaryReference,
@@ -58,8 +59,10 @@ export function skillsComponent({
 export interface RoleInput {
   jobTitle: string;
   jobCategory: string;
+  jobSectors?: readonly string[];
   desiredTitles: readonly string[];
   categories: readonly string[];
+  candidateSectors?: readonly string[];
   titleSimilarity: ScoringContext["titleSimilarity"];
 }
 
@@ -67,19 +70,24 @@ export interface RoleInput {
 export function roleComponent({
   jobTitle,
   jobCategory,
+  jobSectors = [],
   desiredTitles,
   categories,
+  candidateSectors = [],
   titleSimilarity,
 }: RoleInput): ComponentResult {
-  if (desiredTitles.length === 0 && categories.length === 0) {
+  const sectorMatch = jobSectors.some((sector) =>
+    candidateSectors.includes(sector),
+  );
+  if (desiredTitles.length === 0 && categories.length === 0 && !sectorMatch) {
     return { neutral: true, reason: "no_preferences" };
   }
   let similarity = 0;
   for (const title of desiredTitles) {
     similarity = Math.max(similarity, titleSimilarity(title, jobTitle));
   }
-  if (categories.includes(jobCategory)) {
-    similarity = Math.max(similarity, 0.7);
+  if (categories.includes(jobCategory) || sectorMatch) {
+    similarity = Math.max(similarity, SECTOR_ROLE_FLOOR);
   }
   return { score: similarity };
 }

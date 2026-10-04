@@ -9,6 +9,7 @@ import {
   jobs,
   moderationQueue,
 } from "@/db/schema";
+import { isSensitiveSector } from "@/config/markers";
 import { notFound } from "@/lib/http";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import type { CurrentUser } from "@/modules/auth/service";
@@ -55,6 +56,7 @@ async function getRisk(
     | "salaryPeriod"
     | "salaryBasis"
     | "category"
+    | "sectors"
   >,
   tx = getDb(),
   newJob = false,
@@ -101,6 +103,7 @@ async function getRisk(
     applicationDomainMismatch: mismatch,
     scamPattern: hasScamPattern(`${input.title}\n${input.description}`),
     salaryOutlier,
+    sensitiveSector: isSensitiveSector(input.sectors ?? []),
   });
 }
 
@@ -321,6 +324,7 @@ export async function updateJob(
       actor: "member",
       companyStatus: existing.company.status,
       riskScore: risk.score,
+      sensitiveSector: isSensitiveSector(input.sectors ?? existing.job.sectors),
       source: existing.job.source,
     });
     const [updated] = await tx
@@ -383,6 +387,7 @@ export async function transitionOwnedJob(
       actor: role,
       companyStatus: row.company.status,
       riskScore: row.job.riskScore,
+      sensitiveSector: isSensitiveSector(row.job.sectors),
       source: row.job.source,
       reason,
     });

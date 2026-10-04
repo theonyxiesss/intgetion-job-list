@@ -1,6 +1,7 @@
 /**
  * RSS 2.0 feed of the newest published jobs (D204, MARKERS.md 7a). Pure:
- * the route reads the jobs and passes plain items here.
+ * the route reads the jobs and passes plain items here. `selfPath` lets a
+ * tag feed point at itself; the catalog feed keeps `/jobs/rss.xml`.
  */
 
 export interface RssJob {
@@ -19,6 +20,8 @@ export interface RssChannel {
   /** Absolute site origin without a trailing slash. */
   siteUrl: string;
   locale: string;
+  /** Path after `/{locale}`. Defaults to the catalog feed. */
+  selfPath?: string;
 }
 
 const XML_ESCAPES: Record<string, string> = {
@@ -56,7 +59,8 @@ function item(job: RssJob, channel: RssChannel): string {
 }
 
 export function buildRss(channel: RssChannel, jobs: readonly RssJob[]): string {
-  const self = `${channel.siteUrl}/${channel.locale}/jobs/rss.xml`;
+  const selfPath = channel.selfPath ?? "/jobs/rss.xml";
+  const self = `${channel.siteUrl}/${channel.locale}${selfPath}`;
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',

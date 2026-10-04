@@ -42,6 +42,13 @@ describe("job risk-score 14.3", () => {
     });
   });
 
+  it("adds two points for a sensitive sector without changing the other weights", () => {
+    expect(scoreJobRisk({ ...clean, sensitiveSector: true })).toEqual({
+      score: 2,
+      flags: ["sensitive_sector"],
+    });
+  });
+
   it("leaves boundary values unflagged and detects common free email domains", () => {
     expect(
       scoreJobRisk({

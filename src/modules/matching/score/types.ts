@@ -6,7 +6,8 @@
 import type { FxRate, SalaryBasis, SalaryPeriod } from "@/lib/money";
 
 export type WorkFormat = "remote" | "hybrid" | "onsite";
-export type EmploymentType = "full_time" | "part_time" | "contract";
+export type EmploymentType =
+  "full_time" | "part_time" | "contract" | "freelance" | "internship";
 export type SkillLevel = "novice" | "intermediate" | "advanced" | "expert";
 export type CefrLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | "native";
 
@@ -65,6 +66,9 @@ export interface CandidateForScoring {
   desiredTitles: readonly string[];
   /** candidate_preferences.categories */
   categories: readonly string[];
+  /** candidate_preferences.sectors (M1). Absent on older fixtures. */
+  sectors?: readonly string[];
+  seniority?: string | null;
   salaryMinMinor: bigint | null;
   salaryMaxMinor: bigint | null;
   salaryCurrency: string | null;
@@ -94,6 +98,8 @@ export interface JobForScoring {
   companyId: string;
   title: string;
   category: string;
+  sectors?: readonly string[];
+  seniority?: string | null;
   status: JobStatusForScoring;
   workFormat: WorkFormat;
   employmentType: EmploymentType;
@@ -194,6 +200,8 @@ export interface MatchResult {
     mustHaveMultiplier: number;
     /** ×0.95 when the job posts no (complete) salary */
     noSalaryMultiplier: number;
+    /** ×0.9 when seniority differs by more than one step (D203). */
+    seniorityMultiplier: number;
     multiplier: number;
   };
   feedback: {
@@ -202,8 +210,10 @@ export interface MatchResult {
     multiplier: number;
     suggestProfileUpdate: "salary" | "format" | "timezone" | null;
   };
-  /** clamp(base × penalties × feedback, 0, 1) */
+  /** clamp(base × penalties × feedback × seniority, 0, 1) */
   score: number;
+  /** A shared sector raised the role component (D203). */
+  sectorOverlap: boolean;
   /** score ≥ 0.55 */
   shown: boolean;
 }

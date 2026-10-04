@@ -4,6 +4,7 @@
  * multiplier, clamp and the 0.55 show threshold. ALGO_VERSION invalidates
  * matching_results caches when formulas change (10.1).
  */
+import { seniorityPenalty } from "@/config/markers";
 import type {
   CandidateForScoring,
   ComponentBreakdown,
@@ -27,7 +28,7 @@ import { feedbackMultiplier } from "./feedback";
 import { hardFilter } from "./hard-filter";
 import { attachJobSnapshot } from "./explain";
 
-export const ALGO_VERSION = 1;
+export const ALGO_VERSION = 2;
 export const SHOW_THRESHOLD = 0.55;
 /** Below this sum of active weights the result is flagged lowData (10.3). */
 export const LOW_DATA_WEIGHT_SUM = 0.4;
@@ -68,8 +69,10 @@ function computeComponents(
     role: roleComponent({
       jobTitle: job.title,
       jobCategory: job.category,
+      jobSectors: job.sectors,
       desiredTitles: candidate.desiredTitles,
       categories: candidate.categories,
+      candidateSectors: candidate.sectors,
       titleSimilarity: context.titleSimilarity,
     }),
     salary: salaryComponent({
@@ -136,10 +139,14 @@ export function buildMatch(
   const penaltyMultiplier = mustHaveMultiplier * noSalaryMultiplier;
 
   const feedback = feedbackMultiplier(job, context.feedback);
+  const levelMultiplier = seniorityPenalty(candidate.seniority, job.seniority);
 
   const score = Math.min(
     1,
-    Math.max(0, base * penaltyMultiplier * feedback.multiplier),
+    Math.max(
+      0,
+      base * penaltyMultiplier * feedback.multiplier * levelMultiplier,
+    ),
   );
 
   const components = {} as Record<ComponentKey, ComponentBreakdown>;
@@ -159,6 +166,7 @@ export function buildMatch(
       missingMustHaves,
       mustHaveMultiplier,
       noSalaryMultiplier,
+      seniorityMultiplier: levelMultiplier,
       multiplier: penaltyMultiplier,
     },
     feedback: {
@@ -169,6 +177,9 @@ export function buildMatch(
     },
     score,
     shown: score >= SHOW_THRESHOLD,
+    sectorOverlap: (job.sectors ?? []).some((sector) =>
+      (candidate.sectors ?? []).includes(sector),
+    ),
   };
   attachJobSnapshot(match, job);
   return match;

@@ -120,6 +120,20 @@ function buildEntries(result: MatchResult): ExplainEntry[] {
       params: role.score === null ? {} : { percent: percent(role.score) },
     },
   });
+  if (result.sectorOverlap) {
+    entries.push({
+      criterion: "role",
+      verdict: "matched",
+      detail: { key: "explain.role.sector", params: {} },
+    });
+  }
+  if (result.penalties.seniorityMultiplier < 1) {
+    entries.push({
+      criterion: "role",
+      verdict: "partial",
+      detail: { key: "explain.seniority.partial", params: {} },
+    });
+  }
 
   const salary = componentVerdict(result, "salary");
   entries.push({

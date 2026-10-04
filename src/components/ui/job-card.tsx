@@ -20,6 +20,7 @@ export function JobCard({
   companyHref,
   stats,
   skills = [],
+  tagLimit = 5,
   moreSkillsLabel,
   actions,
   compact = false,
@@ -34,6 +35,8 @@ export function JobCard({
   companyHref?: string;
   stats: JobCardStat[];
   skills?: string[];
+  /** How many skill and perk tags to show before "+N". */
+  tagLimit?: number;
   /** e.g. "+3" when more skills are hidden. */
   moreSkillsLabel?: (hidden: number) => string;
   actions?: ReactNode;
@@ -50,7 +53,7 @@ export function JobCard({
       {title}
     </Link>
   );
-  const shown = skills.slice(0, 5);
+  const shown = skills.slice(0, tagLimit);
   const hidden = skills.length - shown.length;
   return (
     <article

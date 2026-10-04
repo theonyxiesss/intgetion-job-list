@@ -20,6 +20,7 @@ import {
   cefrLevel,
   companySize,
   employmentType,
+  jobSeniority,
   salaryBasis,
   salaryPeriod,
   skillLevel,
@@ -210,13 +211,15 @@ export const candidatePreferences = pgTable(
       .primaryKey()
       .references(() => users.id, { onDelete: "cascade" }),
     categories: text("categories").array().notNull().default([]),
+    sectors: text("sectors").array().notNull().default([]),
+    seniority: jobSeniority("seniority"),
     companySizes: companySize("company_sizes").array().notNull().default([]),
     notes: text("notes"),
   },
   (table) => [
     check(
       "candidate_preferences_categories_check",
-      sql`${table.categories} <@ array['engineering','data','design','product','marketing','sales','support','operations','finance','hr']::text[]`,
+      sql`${table.categories} <@ array['engineering','data','design','product','marketing','sales','support','operations','finance','hr','legal','content','community','research']::text[]`,
     ),
     check(
       "candidate_preferences_notes_check",

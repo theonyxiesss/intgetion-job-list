@@ -46,6 +46,8 @@
     "full_time": "Полная занятость",
     "part_time": "Частичная занятость",
     "contract": "Контракт",
+    "freelance": "Фриланс",
+    "internship": "Стажировка",
     "applyFilters": "Найти",
     "empty": "По этим фильтрам вакансий нет.",
     "next": "Следующая страница",
@@ -55,7 +57,10 @@
     "worldwide": "Весь мир",
     "timezone": "Пересечение рабочих часов",
     "salaryMissing": "Зарплата не указана",
-    "apply": "Откликнуться"
+    "apply": "Откликнуться",
+    "sector": "Сфера",
+    "seniority": "Уровень",
+    "perk": "Условия"
   },
   "companyPage": {
     "trusted": "Надёжный работодатель",
@@ -138,7 +143,11 @@
     "support": "Поддержка",
     "operations": "Операции",
     "finance": "Финансы",
-    "hr": "HR"
+    "hr": "HR",
+    "legal": "Юридическое",
+    "content": "Контент",
+    "community": "Сообщество",
+    "research": "Исследования"
   },
   "notFound": {
     "title": "Страница не найдена",
@@ -299,7 +308,9 @@
       "salaryBasis": "База зарплаты",
       "contactEmail": "Контактный email",
       "phone": "Телефон",
-      "save": "Сохранить профиль"
+      "save": "Сохранить профиль",
+      "sectors": "Сферы (до 5)",
+      "seniority": "Уровень"
     },
     "weekdays": {
       "1": "Понедельник",
@@ -318,7 +329,9 @@
     "employment": {
       "full_time": "Полная занятость",
       "part_time": "Частичная занятость",
-      "contract": "Контракт"
+      "contract": "Контракт",
+      "freelance": "Фриланс",
+      "internship": "Стажировка"
     },
     "levels": {
       "novice": "Начальный",
@@ -452,6 +465,9 @@
       "description": "Описание (не менее 50 символов)",
       "category": "Категория",
       "employmentType": "Тип занятости",
+      "seniority": "Уровень",
+      "sectors": "Сферы",
+      "perks": "Условия",
       "workFormat": "Формат работы",
       "location": "Место работы (обязательно для гибридного и офисного формата)",
       "applicationMethod": "Способ отклика",
@@ -470,7 +486,8 @@
         "details": "Условия",
         "application": "Как откликнуться",
         "salary": "Зарплата",
-        "skills": "Навыки"
+        "skills": "Навыки",
+        "markers": "Сферы и условия"
       },
       "methods": {
         "internal": "На этой платформе",
@@ -562,7 +579,11 @@
       "matched": "Роль соответствует желаемой должности.",
       "partial": "Частично соответствует желаемым должностям ({percent}% сходства).",
       "neutral": "В профиле нет желаемых должностей и категорий.",
-      "failed": "Роль не соответствует желаемым должностям."
+      "failed": "Роль не соответствует желаемым должностям.",
+      "sector": "На вакансии есть сфера, которую вы указали."
+    },
+    "seniority": {
+      "partial": "Уровень отличается от вашего больше чем на одну ступень."
     },
     "salary": {
       "matched": "Зарплата соответствует ожиданиям ({job}).",
@@ -1052,5 +1073,113 @@
     "title": "INTGETION JOB LIST — новые удалённые вакансии",
     "description": "50 последних опубликованных удалённых вакансий.",
     "feed": "RSS-лента"
+  },
+  "markers": {
+    "showMore": "Показать ещё ({count})",
+    "forYou": "Для вас",
+    "anySeniority": "Любой уровень",
+    "anySector": "Любая сфера",
+    "anyPerk": "Любые условия",
+    "sector": "Сфера",
+    "seniorityLabel": "Уровень",
+    "perk": "Условия",
+    "tagTitle": "Вакансии: {name}",
+    "tagIntro": "Опубликованные вакансии с меткой {name}.",
+    "highPayTitle": "Высокая зарплата",
+    "highPayIntro": "Гросс от {threshold} в год.",
+    "highPayThreshold": "100000 USD",
+    "rss": "RSS",
+    "groups": {
+      "web3": "Web3",
+      "ai": "ИИ",
+      "finance": "Финансы",
+      "products": "Продукты",
+      "games": "Игры",
+      "health": "Здоровье",
+      "society": "Общество",
+      "industry": "Индустрия"
+    },
+    "sectors": {
+      "web3": "Web3",
+      "defi": "DeFi",
+      "nft": "NFT",
+      "gamefi": "GameFi",
+      "metaverse": "Метавселенная",
+      "zk": "Zero knowledge",
+      "dao": "DAO",
+      "infra-l1l2": "L1 / L2",
+      "exchange": "Биржа",
+      "memecoins": "Мемкоины",
+      "crypto-vc": "Крипто-VC",
+      "eco-ethereum": "Ethereum",
+      "eco-solana": "Solana",
+      "eco-fantom": "Fantom",
+      "eco-polkadot": "Polkadot",
+      "ai-ml": "ИИ / ML",
+      "genai": "Генеративный ИИ",
+      "computer-vision": "Компьютерное зрение",
+      "robotics": "Робототехника",
+      "data-analytics": "Аналитика данных",
+      "fintech": "Финтех",
+      "banking": "Банки",
+      "payments": "Платежи",
+      "insurtech": "Страхование",
+      "quant-trading": "Квант-трейдинг",
+      "accounting-tax": "Бухгалтерия",
+      "saas-b2b": "B2B SaaS",
+      "devtools": "Инструменты разработчика",
+      "cloud-infra": "Облако",
+      "open-source": "Open source",
+      "cybersecurity": "Кибербезопасность",
+      "ecommerce": "Электронная коммерция",
+      "marketplaces": "Маркетплейсы",
+      "adtech-martech": "Рекламные технологии",
+      "hr-tech": "HR-технологии",
+      "gamedev": "Разработка игр",
+      "igaming": "iGaming",
+      "ar-vr": "AR / VR",
+      "media-streaming": "Медиа",
+      "creator-economy": "Экономика авторов",
+      "music": "Музыка",
+      "healthtech": "Здоровье",
+      "medtech": "Медтех",
+      "biotech": "Биотех",
+      "mental-health": "Ментальное здоровье",
+      "fitness": "Фитнес",
+      "edtech": "Образование",
+      "govtech": "Гостех",
+      "legaltech": "Юртех",
+      "nonprofit": "НКО",
+      "climatetech": "Климат",
+      "energy": "Энергетика",
+      "logistics": "Логистика",
+      "proptech": "Недвижимость",
+      "autotech": "Авто",
+      "agritech": "Агро",
+      "foodtech": "Фудтех",
+      "travel": "Путешествия",
+      "space": "Космос",
+      "hardware-iot": "Железо / IoT",
+      "telecom": "Телеком"
+    },
+    "perks": {
+      "crypto-pay": "Оплата в крипте",
+      "token-equity": "Токены как доля",
+      "async": "Асинхронно",
+      "four-day-week": "Четыре дня в неделю",
+      "visa-support": "Визовая поддержка",
+      "relocation": "Релокация",
+      "no-degree": "Диплом не нужен",
+      "junior-friendly": "Подходит джунам",
+      "own-timezone": "Свой часовой пояс"
+    },
+    "seniority": {
+      "internship": "Стажировка",
+      "entry": "Начальный",
+      "mid": "Мидл",
+      "senior": "Сеньор",
+      "lead": "Лид"
+    },
+    "nonTechnical": "Не технические"
   }
 }

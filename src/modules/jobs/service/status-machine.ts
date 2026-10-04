@@ -58,6 +58,8 @@ export function transitionJob(input: {
     | "rejected"
     | "suspended";
   riskScore?: number;
+  /** igaming / memecoins stay in the queue even for a verified company (D205). */
+  sensitiveSector?: boolean;
   source?: "internal" | "imported";
   reason?: string;
 }): JobStatus {
@@ -100,13 +102,19 @@ export function transitionJob(input: {
       input.companyStatus === "suspended"
     )
       throw new HttpError(403, "FORBIDDEN", "This company cannot publish jobs");
-    if (input.companyStatus !== "verified" || (input.riskScore ?? 0) >= 4)
+    if (
+      input.sensitiveSector ||
+      input.companyStatus !== "verified" ||
+      (input.riskScore ?? 0) >= 4
+    )
       return "pending_moderation";
   }
   if (
     input.action === "edit" &&
     input.status === "published" &&
-    (input.companyStatus !== "verified" || (input.riskScore ?? 0) >= 4)
+    (input.sensitiveSector ||
+      input.companyStatus !== "verified" ||
+      (input.riskScore ?? 0) >= 4)
   )
     return "pending_moderation";
   return next;

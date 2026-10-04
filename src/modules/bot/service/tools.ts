@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
+import { EMPLOYMENT_TYPES } from "@/config/markers";
 import { HttpError } from "@/lib/http";
 import {
   JOB_LLM_FIELDS,
@@ -101,7 +102,7 @@ const searchInput = z
     q: z.string().trim().max(200).optional(),
     category: jobSearchQuery.shape.category,
     workFormat: z.enum(["remote", "hybrid", "onsite"]).optional(),
-    employmentType: z.enum(["full_time", "part_time", "contract"]).optional(),
+    employmentType: z.enum(EMPLOYMENT_TYPES).optional(),
     limit: z.number().int().min(1).max(MAX_JOBS).optional(),
   })
   .strict();

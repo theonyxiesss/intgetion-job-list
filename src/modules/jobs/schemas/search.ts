@@ -1,4 +1,11 @@
 import { z } from "zod";
+import {
+  EMPLOYMENT_TYPES,
+  JOB_CATEGORIES,
+  PERKS,
+  SECTORS,
+  SENIORITY_LEVELS,
+} from "@/config/markers";
 import { isValidTimeZone } from "@/lib/tz";
 
 const csv = (schema: z.ZodType<string>) =>
@@ -7,26 +14,30 @@ const csv = (schema: z.ZodType<string>) =>
       typeof value === "string" ? value.split(",").filter(Boolean) : value,
     z.array(schema).max(20).optional(),
   );
+
+/** Repeated query keys (`sector=web3&sector=defi`) or one comma list. */
+const repeated = (schema: z.ZodType<string>) =>
+  z.preprocess((value) => {
+    if (value === undefined || value === null || value === "") return undefined;
+    const source = Array.isArray(value) ? value : [value];
+    const items = source
+      .flatMap((item) => (typeof item === "string" ? item.split(",") : []))
+      .map((item) => item.trim())
+      .filter(Boolean);
+    return items.length > 0 ? items : undefined;
+  }, z.array(schema).max(20).optional());
 export const jobSearchQuery = z
   .object({
     q: z.string().trim().max(200).optional(),
-    category: z
-      .enum([
-        "engineering",
-        "data",
-        "design",
-        "product",
-        "marketing",
-        "sales",
-        "support",
-        "operations",
-        "finance",
-        "hr",
-      ])
-      .optional(),
+    category: z.enum(JOB_CATEGORIES).optional(),
+    sector: repeated(z.enum(SECTORS)),
+    seniority: repeated(z.enum(SENIORITY_LEVELS)),
+    perk: repeated(z.enum(PERKS)),
+    highPay: z.enum(["1", "true"]).optional(),
+    nonTechnical: z.enum(["1", "true"]).optional(),
     skills: csv(z.string().uuid()),
     workFormat: csv(z.enum(["remote", "hybrid", "onsite"])),
-    employmentType: csv(z.enum(["full_time", "part_time", "contract"])),
+    employmentType: csv(z.enum(EMPLOYMENT_TYPES)),
     tzOverlapWith: z.string().refine(isValidTimeZone).optional(),
     minOverlap: z.coerce.number().int().min(0).max(12).default(3),
     salaryMin: z

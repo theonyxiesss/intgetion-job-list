@@ -1,5 +1,11 @@
 import { z } from "zod";
 import {
+  EMPLOYMENT_TYPES,
+  MAX_CANDIDATE_SECTORS,
+  SECTORS,
+  SENIORITY_LEVELS,
+} from "@/config/markers";
+import {
   SKILL_CATEGORIES,
   skillCategorySchema,
 } from "@/modules/taxonomy/service";
@@ -9,11 +15,7 @@ export const SKILL_LIMIT = 30;
 export const TITLE_LIMIT = 5;
 
 export const workFormatSchema = z.enum(["remote", "hybrid", "onsite"]);
-export const employmentTypeSchema = z.enum([
-  "full_time",
-  "part_time",
-  "contract",
-]);
+export const employmentTypeSchema = z.enum(EMPLOYMENT_TYPES);
 export const salaryPeriodSchema = z.enum(["hour", "month", "year"]);
 export const salaryBasisSchema = z.enum(["gross", "net"]);
 export const skillLevelSchema = z.enum([
@@ -96,6 +98,8 @@ export const candidateLanguageInput = z.object({
 
 export const candidatePreferencesInput = z.object({
   categories: z.array(skillCategorySchema).max(SKILL_CATEGORIES.length),
+  sectors: z.array(z.enum(SECTORS)).max(MAX_CANDIDATE_SECTORS).default([]),
+  seniority: z.enum(SENIORITY_LEVELS).nullable().optional(),
   companySizes: z.array(companySizeSchema),
   notes: optionalText(500),
 });
@@ -180,6 +184,8 @@ export const updateCandidateInput = z
     isHidden: value.isHidden ?? false,
     preferences: value.preferences ?? {
       categories: [],
+      sectors: [],
+      seniority: null,
       companySizes: [],
       notes: null,
     },

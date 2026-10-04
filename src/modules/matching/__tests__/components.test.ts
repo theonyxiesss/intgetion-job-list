@@ -98,6 +98,19 @@ describe("roleComponent (10.3)", () => {
     ).toEqual({ score: 0.9 });
   });
 
+  it("floors at 0.7 when a sector overlaps and titles are empty", () => {
+    expect(
+      roleComponent({
+        ...base,
+        jobSectors: ["web3"],
+        desiredTitles: [],
+        categories: [],
+        candidateSectors: ["web3", "fintech"],
+        titleSimilarity: () => 0,
+      }),
+    ).toEqual({ score: 0.7 });
+  });
+
   it("is neutral without desired titles and categories", () => {
     expect(
       roleComponent({

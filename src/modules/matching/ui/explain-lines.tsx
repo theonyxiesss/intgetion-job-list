@@ -33,7 +33,10 @@ export async function ExplainLines({
       {entries.slice(0, 4).map((entry) => {
         const path = entry.detail.key.replace(/^explain\./, "");
         return (
-          <li key={entry.criterion} className="t-body-s flex items-start gap-2">
+          <li
+            key={entry.detail.key}
+            className="t-body-s flex items-start gap-2"
+          >
             <span className={verdictClass[entry.verdict]}>
               <Icon icon={verdictIcon[entry.verdict]} size={16} />
             </span>

@@ -34,6 +34,8 @@ export type CandidateLanguageDto = {
 
 export type CandidatePreferencesDto = {
   categories: string[];
+  sectors: string[];
+  seniority: string | null;
   companySizes: string[];
   notes: string | null;
 };
@@ -54,7 +56,9 @@ export type CandidateDto = {
   workHoursEnd: string;
   workDays: number[];
   workFormats: ("remote" | "hybrid" | "onsite")[];
-  employmentTypes: ("full_time" | "part_time" | "contract")[];
+  employmentTypes: (
+    "full_time" | "part_time" | "contract" | "freelance" | "internship"
+  )[];
   experienceYears: number | null;
   availabilityDate: string | null;
   salaryMin: MoneyDto | null;

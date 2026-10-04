@@ -143,6 +143,8 @@ async function importSource(
         employmentType: job.employmentType,
         timeZone: job.timeZone,
         skillIds: job.skillIds,
+        sectors: job.sectors,
+        seniority: job.seniority,
         applyUrl: job.applyUrl,
         expiresAt: job.expiresAt ? new Date(job.expiresAt) : null,
         status: outcome.status,

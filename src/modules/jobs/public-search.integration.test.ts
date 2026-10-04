@@ -12,6 +12,7 @@ const suspendedCompanyId = randomUUID();
 const jobId = randomUUID();
 const secondJobId = randomUUID();
 const hiddenJobId = randomUUID();
+const web3JobId = randomUUID();
 const searchToken = companyId.slice(0, 8);
 beforeAll(async () => {
   const dbUrl = process.env.DATABASE_URL;
@@ -36,7 +37,11 @@ beforeAll(async () => {
   await db.execute(sql`insert into public.jobs(id,company_id,title,description,category,work_format,employment_type,application_method,status,published_at,expires_at) values
     (${jobId},${companyId},${`Integration search ${searchToken} engineer`},'Integration test role description long enough for all schema constraints and public full-text search.','engineering','remote','full_time','internal','published',now(),now()+interval '30 days'),
     (${secondJobId},${companyId},${`Integration search ${searchToken} engineer two`},'Integration test role description long enough for all schema constraints and public full-text search.','engineering','remote','full_time','internal','published',now()-interval '1 second',now()+interval '30 days'),
-    (${hiddenJobId},${suspendedCompanyId},${`Integration search ${searchToken} hidden`},'Integration test role description long enough for all schema constraints and public full-text search.','engineering','remote','full_time','internal','published',now(),now()+interval '30 days')`);
+    (${hiddenJobId},${suspendedCompanyId},${`Integration search ${searchToken} hidden`},'Integration test role description long enough for all schema constraints and public full-text search.','engineering','remote','full_time','internal','published',now(),now()+interval '30 days'),
+    (${web3JobId},${companyId},${`Integration search ${searchToken} web3`},'Integration test role description long enough for all schema constraints and public full-text search.','engineering','remote','full_time','internal','published',now(),now()+interval '30 days')`);
+  await db.execute(
+    sql`update public.jobs set sectors = '{web3}' where id = ${web3JobId}`,
+  );
   await db.execute(sql`
     insert into public.jobs(id,company_id,title,description,category,work_format,employment_type,application_method,status,published_at,expires_at)
     select md5('4a-perf-' || ${companyId}::text || '-' || n)::uuid, ${companyId}, ${`4aperf${companyId.slice(0, 8)}`} || ' engineer ' || n,
@@ -89,6 +94,29 @@ describe("public search database integration", () => {
     samples.sort((left, right) => left - right);
     const p95 = samples[Math.ceil(samples.length * 0.95) - 1];
     console.info(`GET /api/jobs seeded-5000 server p95=${p95.toFixed(1)}ms`);
+    expect(p95).toBeLessThan(500);
+  });
+
+  it("returns a web3 job for sector=web3 within the same p95 budget", async () => {
+    const found = await searchJobs(
+      jobSearchQuery.parse({ sector: "web3", limit: 20 }),
+    );
+    expect(found.items.map((job) => job.id)).toContain(web3JobId);
+    const samples: number[] = [];
+    for (let attempt = 0; attempt < 40; attempt += 1) {
+      const response = await listPublicJobs(
+        new Request("http://127.0.0.1:3000/api/jobs?sector=web3&limit=20"),
+      );
+      expect(response.status).toBe(200);
+      const metric = response.headers
+        .get("server-timing")
+        ?.match(/jobs;dur=([\d.]+)/)?.[1];
+      expect(metric).toBeDefined();
+      samples.push(Number(metric));
+    }
+    samples.sort((left, right) => left - right);
+    const p95 = samples[Math.ceil(samples.length * 0.95) - 1];
+    console.info(`GET /api/jobs sector=web3 server p95=${p95.toFixed(1)}ms`);
     expect(p95).toBeLessThan(500);
   });
 });

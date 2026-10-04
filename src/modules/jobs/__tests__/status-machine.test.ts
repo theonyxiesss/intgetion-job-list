@@ -65,6 +65,16 @@ describe("job transition table from TZ 4.3", () => {
         riskScore: 0,
       }),
     ).toBe("pending_moderation");
+    expect(
+      transitionJob({
+        status: "draft",
+        action: "publish",
+        actor: "member",
+        companyStatus: "verified",
+        riskScore: 0,
+        sensitiveSector: true,
+      }),
+    ).toBe("pending_moderation");
   });
 
   it("enforces actor, import, and rejection reason rules for every transition", () => {

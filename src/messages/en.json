@@ -46,6 +46,8 @@
     "full_time": "Full time",
     "part_time": "Part time",
     "contract": "Contract",
+    "freelance": "Freelance",
+    "internship": "Internship",
     "applyFilters": "Search",
     "empty": "No jobs match these filters.",
     "next": "Next page",
@@ -55,7 +57,10 @@
     "worldwide": "Worldwide",
     "timezone": "Working hours overlap",
     "salaryMissing": "Salary not specified",
-    "apply": "Apply"
+    "apply": "Apply",
+    "sector": "Sector",
+    "seniority": "Seniority",
+    "perk": "Perks"
   },
   "companyPage": {
     "trusted": "Trusted employer",
@@ -138,7 +143,11 @@
     "support": "Support",
     "operations": "Operations",
     "finance": "Finance",
-    "hr": "HR"
+    "hr": "HR",
+    "legal": "Legal",
+    "content": "Content",
+    "community": "Community",
+    "research": "Research"
   },
   "notFound": {
     "title": "Page not found",
@@ -299,7 +308,9 @@
       "salaryBasis": "Salary basis",
       "contactEmail": "Contact email",
       "phone": "Phone",
-      "save": "Save profile"
+      "save": "Save profile",
+      "sectors": "Sectors (up to 5)",
+      "seniority": "Seniority"
     },
     "weekdays": {
       "1": "Monday",
@@ -318,7 +329,9 @@
     "employment": {
       "full_time": "Full time",
       "part_time": "Part time",
-      "contract": "Contract"
+      "contract": "Contract",
+      "freelance": "Freelance",
+      "internship": "Internship"
     },
     "levels": {
       "novice": "Novice",
@@ -452,6 +465,9 @@
       "description": "Description (at least 50 characters)",
       "category": "Category",
       "employmentType": "Employment type",
+      "seniority": "Seniority",
+      "sectors": "Sectors",
+      "perks": "Perks",
       "workFormat": "Work format",
       "location": "Location (required for hybrid or onsite)",
       "applicationMethod": "Application method",
@@ -470,7 +486,8 @@
         "details": "Details",
         "application": "How to apply",
         "salary": "Salary",
-        "skills": "Skills"
+        "skills": "Skills",
+        "markers": "Sectors and perks"
       },
       "methods": {
         "internal": "On this platform",
@@ -562,7 +579,11 @@
       "matched": "The role matches the desired title.",
       "partial": "Partially matches the desired titles ({percent}% similarity).",
       "neutral": "No desired titles or categories in the profile.",
-      "failed": "The role does not match the desired titles."
+      "failed": "The role does not match the desired titles.",
+      "sector": "A sector you follow is on this job."
+    },
+    "seniority": {
+      "partial": "The seniority level is more than one step away from yours."
     },
     "salary": {
       "matched": "Salary meets your expectations ({job}).",
@@ -1052,5 +1073,113 @@
     "title": "INTGETION JOB LIST — newest remote jobs",
     "description": "The 50 newest published remote jobs.",
     "feed": "RSS feed"
+  },
+  "markers": {
+    "showMore": "Show more ({count})",
+    "forYou": "For you",
+    "anySeniority": "Any seniority",
+    "anySector": "Any sector",
+    "anyPerk": "Any perk",
+    "sector": "Sector",
+    "seniorityLabel": "Seniority",
+    "perk": "Perks",
+    "tagTitle": "{name} jobs",
+    "tagIntro": "Published roles tagged {name}.",
+    "highPayTitle": "High-paying jobs",
+    "highPayIntro": "Gross pay at or above {threshold} a year.",
+    "highPayThreshold": "100000 USD",
+    "rss": "RSS",
+    "groups": {
+      "web3": "Web3",
+      "ai": "AI",
+      "finance": "Finance",
+      "products": "Products",
+      "games": "Games",
+      "health": "Health",
+      "society": "Society",
+      "industry": "Industry"
+    },
+    "sectors": {
+      "web3": "Web3",
+      "defi": "DeFi",
+      "nft": "NFT",
+      "gamefi": "GameFi",
+      "metaverse": "Metaverse",
+      "zk": "Zero knowledge",
+      "dao": "DAO",
+      "infra-l1l2": "L1 / L2",
+      "exchange": "Exchange",
+      "memecoins": "Memecoins",
+      "crypto-vc": "Crypto VC",
+      "eco-ethereum": "Ethereum",
+      "eco-solana": "Solana",
+      "eco-fantom": "Fantom",
+      "eco-polkadot": "Polkadot",
+      "ai-ml": "AI / ML",
+      "genai": "Generative AI",
+      "computer-vision": "Computer vision",
+      "robotics": "Robotics",
+      "data-analytics": "Data analytics",
+      "fintech": "Fintech",
+      "banking": "Banking",
+      "payments": "Payments",
+      "insurtech": "Insurtech",
+      "quant-trading": "Quant trading",
+      "accounting-tax": "Accounting",
+      "saas-b2b": "B2B SaaS",
+      "devtools": "Developer tools",
+      "cloud-infra": "Cloud",
+      "open-source": "Open source",
+      "cybersecurity": "Cybersecurity",
+      "ecommerce": "E-commerce",
+      "marketplaces": "Marketplaces",
+      "adtech-martech": "Adtech",
+      "hr-tech": "HR tech",
+      "gamedev": "Game development",
+      "igaming": "iGaming",
+      "ar-vr": "AR / VR",
+      "media-streaming": "Media",
+      "creator-economy": "Creator economy",
+      "music": "Music",
+      "healthtech": "Healthtech",
+      "medtech": "Medtech",
+      "biotech": "Biotech",
+      "mental-health": "Mental health",
+      "fitness": "Fitness",
+      "edtech": "Edtech",
+      "govtech": "Govtech",
+      "legaltech": "Legaltech",
+      "nonprofit": "Nonprofit",
+      "climatetech": "Climate",
+      "energy": "Energy",
+      "logistics": "Logistics",
+      "proptech": "Proptech",
+      "autotech": "Autotech",
+      "agritech": "Agritech",
+      "foodtech": "Foodtech",
+      "travel": "Travel",
+      "space": "Space",
+      "hardware-iot": "Hardware / IoT",
+      "telecom": "Telecom"
+    },
+    "perks": {
+      "crypto-pay": "Paid in crypto",
+      "token-equity": "Token equity",
+      "async": "Async",
+      "four-day-week": "Four-day week",
+      "visa-support": "Visa support",
+      "relocation": "Relocation",
+      "no-degree": "No degree required",
+      "junior-friendly": "Junior friendly",
+      "own-timezone": "Your timezone"
+    },
+    "seniority": {
+      "internship": "Internship",
+      "entry": "Entry",
+      "mid": "Mid",
+      "senior": "Senior",
+      "lead": "Lead"
+    },
+    "nonTechnical": "Non-technical"
   }
 }

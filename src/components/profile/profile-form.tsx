@@ -29,11 +29,24 @@ export type ProfileFormValues = {
   languageLevel: string;
   contactEmail: string;
   phone: string;
+  categories: string[];
+  companySizes: string[];
+  notes: string | null;
+  sectors: string[];
+  seniority: string;
 };
+
+export type ProfileMarkerOption = { value: string; label: string };
 
 const WEEKDAYS = [1, 2, 3, 4, 5, 6, 7] as const;
 const FORMATS = ["remote", "hybrid", "onsite"] as const;
-const EMPLOYMENT = ["full_time", "part_time", "contract"] as const;
+const EMPLOYMENT = [
+  "full_time",
+  "part_time",
+  "contract",
+  "freelance",
+  "internship",
+] as const;
 const LEVELS = ["novice", "intermediate", "advanced", "expert"] as const;
 const CEFR = ["A1", "A2", "B1", "B2", "C1", "C2", "native"] as const;
 const PERIODS = ["hour", "month", "year"] as const;
@@ -60,7 +73,15 @@ async function errorCode(response: Response): Promise<string> {
   }
 }
 
-export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
+export function ProfileForm({
+  initial,
+  sectors,
+  seniority,
+}: {
+  initial: ProfileFormValues;
+  sectors: readonly ProfileMarkerOption[];
+  seniority: readonly ProfileMarkerOption[];
+}) {
   const t = useTranslations("profile");
   const router = useRouter();
   const timezoneRef = useRef<HTMLInputElement>(null);
@@ -144,6 +165,13 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
             },
           ]
         : [],
+      preferences: {
+        categories: initial.categories,
+        companySizes: initial.companySizes,
+        notes: initial.notes,
+        sectors: form.getAll("sectors").map(String).slice(0, 5),
+        seniority: blank(String(form.get("seniority") ?? "")),
+      },
     };
 
     setPending(true);
@@ -245,6 +273,38 @@ export function ProfileForm({ initial }: { initial: ProfileFormValues }) {
         />
       </label>
       <div id="preferences" />
+      <fieldset className="flex flex-col gap-2">
+        <legend className="font-medium">{t("fields.sectors")}</legend>
+        <div className="flex max-h-48 flex-col gap-2 overflow-y-auto">
+          {sectors.map((option) => (
+            <label key={option.value} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="sectors"
+                value={option.value}
+                defaultChecked={initial.sectors.includes(option.value)}
+              />
+              {option.label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      <label className="flex flex-col gap-1 font-medium" htmlFor="seniority">
+        {t("fields.seniority")}
+        <select
+          id="seniority"
+          name="seniority"
+          defaultValue={initial.seniority}
+          className={controlClass}
+        >
+          <option value="" />
+          {seniority.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
       <label className="flex flex-col gap-1 font-medium" htmlFor="timezone">
         {t("fields.timezone")}
         <input

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildMatch } from "../score/assemble";
+import { ALGO_VERSION, buildMatch } from "../score/assemble";
 import { emptyFeedback } from "../score/types";
 import {
   CACHE_MAX_AGE_MS,
@@ -14,7 +14,7 @@ describe("matching cache and cutoff", () => {
   it("treats a cache as stale when it is empty, older than 6h, behind the profile, or on another algo version", () => {
     const computedAt = new Date(NOW.getTime() - CACHE_MAX_AGE_MS);
     const fresh = {
-      rows: [{ computedAt, algoVersion: 1 }],
+      rows: [{ computedAt, algoVersion: ALGO_VERSION }],
       profileUpdatedAt: new Date(computedAt.getTime() - 1000),
       now: NOW,
     };
@@ -35,7 +35,7 @@ describe("matching cache and cutoff", () => {
     expect(
       isCacheFresh({
         ...fresh,
-        rows: [{ computedAt, algoVersion: 2 }],
+        rows: [{ computedAt, algoVersion: ALGO_VERSION + 1 }],
       }),
     ).toBe(false);
   });

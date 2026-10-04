@@ -62,6 +62,10 @@ export async function listSearchSkillOptions(locale: string) {
 export async function searchPublicJobs(query: {
   q?: string;
   category?: string;
+  sector?: string[];
+  seniority?: string[];
+  perk?: string[];
+  nonTechnical?: boolean;
   workFormat?: string[];
   employmentType?: string[];
   country?: string;
@@ -83,6 +87,24 @@ export async function searchPublicJobs(query: {
     sql`${companies.status} not in ('suspended','rejected')`,
   ];
   if (query.category) predicates.push(eq(jobs.category, query.category));
+  if (query.nonTechnical)
+    predicates.push(sql`${jobs.category} not in ('engineering', 'data')`);
+  if (query.sector?.length)
+    predicates.push(
+      sql`${jobs.sectors} && array[${sql.join(
+        query.sector.map((sector) => sql`${sector}`),
+        sql`, `,
+      )}]::text[]`,
+    );
+  if (query.seniority?.length)
+    predicates.push(inArray(jobs.seniority, query.seniority as never[]));
+  if (query.perk?.length)
+    predicates.push(
+      sql`${jobs.perks} && array[${sql.join(
+        query.perk.map((perk) => sql`${perk}`),
+        sql`, `,
+      )}]::text[]`,
+    );
   if (query.workFormat?.length)
     predicates.push(inArray(jobs.workFormat, query.workFormat as never[]));
   if (query.employmentType?.length)
