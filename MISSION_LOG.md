@@ -507,3 +507,18 @@
 - Миграции: нет. `0016` и `0019` на облаке уже применены.
 - Для Cursor: незакоммиченные правки в `Integetion jobs 7B` теперь в master, их можно сбросить; ветку `cursor/vercel-deploy` больше не использовать.
 - OPEN QUESTION: нет
+
+## [2026-10-04] — prod-check — NOT DONE
+
+- Сделано: код не менялся. Рабочая копия `Integetion jobs 7B` сброшена (`checkout -- .` и `clean -fd`), ветка `cursor/prod-check` от `origin/master` `46cce28`. `cursor/vercel-deploy` больше не используется.
+- Supabase Auth (`hwcdscobnmxatmjbmect`): не настроено. Панель открывается только после входа, в браузере сессии нет (страница входа GitHub). Site URL, redirect, минимальная длина пароля и SMTP Resend не менялись. Письма входа по-прежнему шлёт Supabase.
+- Vercel Production, проект intgetion-job-list. Есть: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL` (`https://intgetion.com`, без слэша), `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`, `CRON_SECRET`, `PRIVACY_HASH_SECRET`, `UNSUBSCRIBE_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM`. Нет: `LLM_PROVIDER`, `OPENROUTER_API_KEY` (ключ основатель не передал), `TELEGRAM_BOT_TOKEN` (токен бота не передан). Относительно `.env.example` на проде также нет `DATABASE_MIGRATION_URL`, `ANTHROPIC_API_KEY`, `LLM_PRICES_MICRO_USD`, `SENTRY_DSN`. Env не менялся, redeploy не делался. Текущий прод — `dpl_EeZaHM44283tdixhU1ANmEE1RJW3`, коммит master `46cce28`.
+- Cron: в `vercel.json` этого коммита 8 задач. В логах за сегодня 200: `matching` (каждую минуту), `import`, `notifications`, `expire-jobs`. 401 нет. Вызовов `fx-rates`, `trusted`, `job-expiring`, `retention` в окне логов нет. `GET /api/cron/matching` один раз 500 в 19:25 UTC на старом деплое: `update public.matching_jobs`, код `XX000`. Позже `matching` снова 200.
+- Живая проверка: `GET` 200 у `/en/jobs`, `/en/jobs/b71d30f4-1ed7-43da-aed6-6653ae17b2c7`, `/en/jobs/t/web3`, `/en/jobs/rss.xml`, `/sitemap.xml`, `/robots.txt`, `/en/chat`. В HTML каталога есть фильтры, Web3 и баннер куки. Чат в разметке содержит `BOT_UNAVAILABLE` («The agent is not available right now») — ключа OpenRouter нет. Регистрация, письмо, вход, сброс пароля, удаление аккаунта, ширина телефона и консоль CSP не проверены: без входа в Supabase SMTP не подключить, а браузер после этого перестал отвечать. В 20:15 UTC на деплое `621d301` пачка 500: `(EMAXCONNSESSION) max clients reached in session mode - max clients are limited to pool_size: 15` на `/en/jobs/...`, `/en/jobs/t/entry`, `/en/companies/imp-bluprynt`. Повторный запрос вакансии сейчас 200.
+- Команды проверки: HTTP-запросы к перечисленным адресам → 200. Логи Vercel Runtime Logs, окно около суток.
+- P-тесты подфазы: нет.
+- Миграции: нет.
+- Изменённые файлы: только эта запись.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет. Чтобы закрыть Auth, нужен один вход в панель Supabase (пароль в чат не присылать) и ключ OpenRouter, если бот должен отвечать.
+- Следующая подфаза: не эта. В master не вливать из этой сессии.
