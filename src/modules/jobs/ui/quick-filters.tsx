@@ -12,7 +12,7 @@ function chipClass(active: boolean) {
     : "t-label shrink-0 border border-line px-3 py-2 text-fg-muted";
 }
 
-/** Two rows of tag links, then «Show more». «For you» is first and is not a filter. */
+/** First chips stay visible. The rest sit inside details, because a closed details element hides every child except summary. «For you» is first and is not a filter. */
 export async function QuickFilters({
   signedIn,
   activeSlug,
@@ -23,7 +23,8 @@ export async function QuickFilters({
   const markers = await getTranslations("markers");
   const categories = await getTranslations("categories");
   const jobs = await getTranslations("jobs");
-  const hidden = Math.max(0, QUICK_FILTERS.length - QUICK_FILTER_VISIBLE);
+  const visible = QUICK_FILTERS.slice(0, QUICK_FILTER_VISIBLE);
+  const hidden = QUICK_FILTERS.slice(QUICK_FILTER_VISIBLE);
 
   function label(tag: CatalogTag): string {
     switch (tag.kind) {
@@ -48,34 +49,42 @@ export async function QuickFilters({
     }
   }
 
+  function chips(tags: readonly CatalogTag[]) {
+    return tags.map((tag) => {
+      const href =
+        tag.kind === "for-you"
+          ? signedIn
+            ? "/matches"
+            : "/login"
+          : `/jobs/t/${tag.slug}`;
+      const active = tag.slug === activeSlug;
+      return (
+        <Link
+          key={tag.slug}
+          href={active ? "/jobs" : href}
+          aria-current={active ? "page" : undefined}
+          className={chipClass(active)}
+        >
+          {label(tag)}
+        </Link>
+      );
+    });
+  }
+
+  const row =
+    "flex min-w-0 max-w-full gap-2 overflow-x-auto md:flex-wrap md:overflow-visible";
+
   return (
-    <details className="group flex flex-col gap-3">
-      <div className="order-1 flex gap-2 overflow-x-auto md:max-h-[4.75rem] md:flex-wrap md:overflow-hidden group-open:md:max-h-none">
-        {QUICK_FILTERS.map((tag) => {
-          const href =
-            tag.kind === "for-you"
-              ? signedIn
-                ? "/matches"
-                : "/login"
-              : `/jobs/t/${tag.slug}`;
-          const active = tag.slug === activeSlug;
-          return (
-            <Link
-              key={tag.slug}
-              href={active ? "/jobs" : href}
-              aria-current={active ? "page" : undefined}
-              className={chipClass(active)}
-            >
-              {label(tag)}
-            </Link>
-          );
-        })}
-      </div>
-      {hidden > 0 ? (
-        <summary className="t-label order-2 w-fit cursor-pointer text-fg-muted">
-          {markers("showMore", { count: hidden })}
-        </summary>
+    <div className="flex min-w-0 flex-col gap-3">
+      <div className={row}>{chips(visible)}</div>
+      {hidden.length > 0 ? (
+        <details>
+          <summary className="t-label w-fit cursor-pointer text-fg-muted">
+            {markers("showMore", { count: hidden.length })}
+          </summary>
+          <div className={`${row} mt-3`}>{chips(hidden)}</div>
+        </details>
       ) : null}
-    </details>
+    </div>
   );
 }
