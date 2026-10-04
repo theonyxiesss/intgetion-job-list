@@ -46,6 +46,7 @@ export async function Header() {
   const main: NavItem[] = [
     { href: "/jobs", label: t("nav.jobs") },
     ...(candidate ? [{ href: "/matches", label: t("nav.matches") }] : []),
+    { href: "/chat", label: t("nav.chat") },
     { href: "/employer/jobs", label: t("nav.employers") },
   ];
   const account: NavItem[] = signedIn

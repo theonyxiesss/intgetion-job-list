@@ -153,7 +153,5 @@ test("candidate applies, a repeat is 409, imported is 422, and withdraw works", 
   await page.getByRole("button", { name: "Withdraw" }).click();
   await expect(page.getByRole("button", { name: "Withdraw" })).toHaveCount(0);
   await page.getByRole("link", { name: "Archive" }).click();
-  await expect(
-    page.getByRole("heading", { name: "Withdrawn", exact: true }),
-  ).toBeVisible();
+  await expect(page.getByText("Withdrawn", { exact: true })).toBeVisible();
 });

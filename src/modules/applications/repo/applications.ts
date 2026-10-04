@@ -4,6 +4,7 @@ import {
   applicationReveals,
   applications,
   candidateProfiles,
+  companies,
   companyMembers,
   jobs,
 } from "@/db/schema";
@@ -85,6 +86,8 @@ export async function listForCandidate(
       id: applications.id,
       jobId: applications.jobId,
       jobTitle: jobs.title,
+      companyName: companies.name,
+      companySlug: companies.slug,
       status: applications.status,
       coverNote: applications.coverNote,
       reapplyCount: applications.reapplyCount,
@@ -92,6 +95,7 @@ export async function listForCandidate(
     })
     .from(applications)
     .innerJoin(jobs, eq(jobs.id, applications.jobId))
+    .innerJoin(companies, eq(companies.id, jobs.companyId))
     .where(eq(applications.candidateId, candidateId))
     .orderBy(desc(applications.createdAt));
 }

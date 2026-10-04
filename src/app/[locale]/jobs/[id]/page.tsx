@@ -25,6 +25,7 @@ export default async function JobPage({
   setRequestLocale(locale);
   const t = await getTranslations("jobs");
   const actions = await getTranslations("jobActions");
+  const categories = await getTranslations("categories");
   const job = await getJobForPublic(id, { locale });
   if (!job) notFound();
   const supabase = await createSupabaseServerClient();
@@ -53,7 +54,13 @@ export default async function JobPage({
         <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
           <article className="flex flex-col gap-8 pb-28 lg:pb-0">
             <header className="flex flex-col gap-4">
-              <p className="t-label text-fg-muted">{source}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="t-label text-fg-muted">
+                  {categories(job.category as "engineering")}
+                </p>
+                <Badge>{t(job.workFormat)}</Badge>
+                <Badge>{t(job.employmentType)}</Badge>
+              </div>
               <Morph name={`job-title-${job.id}`}>
                 <h1 className="t-display-l">{job.title}</h1>
               </Morph>
@@ -64,10 +71,17 @@ export default async function JobPage({
               >
                 {job.company.name}
               </Link>
-              <div className="flex flex-wrap gap-2">
-                <Badge>{t(job.workFormat)}</Badge>
-                <Badge>{t(job.employmentType)}</Badge>
-              </div>
+              {job.publishedAt ? (
+                <time
+                  dateTime={job.publishedAt}
+                  className="t-data text-fg-muted"
+                >
+                  {new Intl.DateTimeFormat(locale, {
+                    dateStyle: "medium",
+                  }).format(new Date(job.publishedAt))}
+                </time>
+              ) : null}
+              <p className="t-label text-fg-muted">{source}</p>
             </header>
             <StatRow>
               <Stat
@@ -75,11 +89,7 @@ export default async function JobPage({
                 value={salary}
                 muted={!job.salaryMin}
               />
-              <Stat
-                label={t("country")}
-                value={job.locationCountry ?? t("worldwide")}
-                muted={!job.locationCountry}
-              />
+              <Stat label={t("format")} value={t(job.workFormat)} />
               <Stat
                 label={t("timezone")}
                 value={
@@ -89,7 +99,11 @@ export default async function JobPage({
                 }
                 muted={!job.timezoneRequired}
               />
+              <Stat label={t("employment")} value={t(job.employmentType)} />
             </StatRow>
+            <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
+              {job.description}
+            </div>
             {job.skills.length > 0 ? (
               <ul className="flex flex-wrap gap-2">
                 {job.skills.map((skill) => (
@@ -111,7 +125,6 @@ export default async function JobPage({
                   .join(" · ")}
               </p>
             ) : null}
-            <div className="whitespace-pre-wrap">{job.description}</div>
           </article>
           <aside className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg p-4 lg:sticky lg:top-24 lg:border lg:p-5">
             <div className="flex flex-col gap-3">

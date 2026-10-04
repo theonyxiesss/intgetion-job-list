@@ -38,6 +38,7 @@ export type {
 export {
   applyToJob,
   getOwnApplication,
+  listOwnApplicationCards,
   listOwnApplications,
   patchApplicationStatus,
   withdrawOwnApplication,

@@ -9,7 +9,7 @@ import { LinkTabs } from "@/components/ui/tabs";
 import { navForward } from "@/components/ui/page-transition";
 import { hasCandidateProfile } from "@/modules/candidates/service";
 import {
-  listOwnApplications,
+  listOwnApplicationCards,
   TERMINAL_APPLICATION_STATUSES,
   type ApplicationStatus,
 } from "@/modules/applications/service";
@@ -45,7 +45,7 @@ export default async function ApplicationsPage({
 
   const t = await getTranslations("applications");
   const profile = await hasCandidateProfile(user.id);
-  const rows = profile ? await listOwnApplications(user.id) : [];
+  const rows = profile ? await listOwnApplicationCards(user.id) : [];
   const selected = view === "progress" || view === "archive" ? view : "active";
   const visible = rows.filter((row) => bucket(row.status) === selected);
 
@@ -90,13 +90,31 @@ export default async function ApplicationsPage({
               ]}
             />
             {visible.length === 0 ? (
-              <EmptyState title={t("empty")} />
+              <EmptyState
+                title={
+                  rows.length === 0
+                    ? t("empty")
+                    : t(
+                        selected === "progress"
+                          ? "emptyProgress"
+                          : selected === "archive"
+                            ? "emptyArchive"
+                            : "emptyActive",
+                      )
+                }
+              />
             ) : (
               <ApplicationList
                 items={visible.map((item) => ({
                   id: item.id,
                   jobTitle: item.jobTitle,
+                  companyName: item.companyName,
+                  companySlug: item.companySlug,
                   status: item.status,
+                  createdAt: item.createdAt,
+                  createdLabel: new Intl.DateTimeFormat(locale, {
+                    dateStyle: "medium",
+                  }).format(new Date(item.createdAt)),
                   canWithdraw: !terminal.has(item.status),
                 }))}
               />

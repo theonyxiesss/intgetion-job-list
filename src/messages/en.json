@@ -93,7 +93,8 @@
     "matches": "Matches",
     "employers": "For employers",
     "saved": "Saved jobs",
-    "admin": "Administration"
+    "admin": "Administration",
+    "chat": "Agent"
   },
   "locale": {
     "en": "English",
@@ -721,7 +722,10 @@
       "hired": "Hired",
       "rejected": "Rejected",
       "withdrawn": "Withdrawn"
-    }
+    },
+    "emptyActive": "No active applications.",
+    "emptyProgress": "No interviews or offers.",
+    "emptyArchive": "Nothing in the archive."
   },
   "employerApplications": {
     "open": "Applications",

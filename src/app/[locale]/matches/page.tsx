@@ -5,6 +5,7 @@ import { HttpError } from "@/lib/http";
 import { Alert, EmptyState } from "@/components/ui/feedback";
 import { Container, PageHeader } from "@/components/ui/container";
 import { navForward } from "@/components/ui/page-transition";
+import { buttonClass } from "@/components/ui/button";
 import { LinkTabs } from "@/components/ui/tabs";
 import { hasCandidateProfile } from "@/modules/candidates/service";
 import {
@@ -166,7 +167,7 @@ export default async function MatchesPage({
                     cursor: screen.nextCursor,
                   },
                 }}
-                className="t-nav self-start text-fg-muted"
+                className={buttonClass("secondary", "md", "self-start")}
               >
                 {t("more")}
               </Link>

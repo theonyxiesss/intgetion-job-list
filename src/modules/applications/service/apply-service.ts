@@ -146,6 +146,16 @@ export async function listOwnApplications(
   return rows.map((row) => toApplicationDto(row));
 }
 
+/** Page row for `/applications` (DESIGN 9.8): company sits beside the job. */
+export async function listOwnApplicationCards(candidateId: string) {
+  const rows = await listForCandidate(candidateId);
+  return rows.map((row) => ({
+    ...toApplicationDto(row),
+    companyName: row.companyName,
+    companySlug: row.companySlug,
+  }));
+}
+
 export async function getOwnApplication(
   candidateId: string,
   applicationId: string,
