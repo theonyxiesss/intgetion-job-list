@@ -82,7 +82,7 @@ async function deliverOne(
     });
     return "skipped";
   }
-  const address = await lookupLoginEmail(row.user_id);
+  const address = await lookupLoginEmail(row.user_id, tx);
   if (process.env.RESEND_API_KEY?.trim() && !address) {
     await mark(tx, row.id, {
       status: "skipped",
@@ -148,9 +148,14 @@ async function mark(
  * Login email lives in Supabase Auth, not in `users` (D7, D126). It is
  * read through the Auth Admin API with the service-role key (D166); only
  * active users get mail. Null without the key or for a deleted user.
+ * Inside dispatch it reads through the open transaction: the pool has one
+ * connection, so a second one would wait forever.
  */
-export async function lookupLoginEmail(userId: string): Promise<string | null> {
-  const rows = await getDb().execute<{ auth_uid: string; status: string }>(
+export async function lookupLoginEmail(
+  userId: string,
+  db: Pick<ReturnType<typeof getDb>, "execute"> = getDb(),
+): Promise<string | null> {
+  const rows = await db.execute<{ auth_uid: string; status: string }>(
     sql`select auth_uid, status from public.users where id = ${userId}`,
   );
   const user = rows[0];
