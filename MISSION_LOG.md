@@ -499,3 +499,11 @@
 - Отклонения от ТЗ: D216. Оболочка писем — своя HTML-таблица в цветах сайта, не React Email.
 - OPEN QUESTION: нет.
 - Следующая подфаза: не начинать. 9B, P1, SEO, работодатели, куки, 11A, 11B — Hermes. 8B только после записи основателя. Claude не трогает env Vercel и не перевыкладывает прод. Ключ Resend не пересоздавать.
+
+## [2026-10-04] — D216 и оболочка писем — DONE, влито в master и на intgetion.com
+
+- Сделано: локальные правки Cursor из папки `Integetion jobs 7B` (D216 без кнопок EN/RU, HTML-оболочка писем `src/lib/email-html.ts`) перенесены на `claude/publish-d216` от master и влиты fast-forward `56ec7c2..621d301` по просьбе основателя. Перед этим `56ec7c2` вернул все 8 cron в `vercel.json`: в `a5ef3c3` по ошибке попала урезанная Hobby-версия из `cursor/vercel-deploy`, а прод на Vercel Pro.
+- Команды проверки: локально `tsc --noEmit` → 0, `eslint src --quiet` → 0, `vitest run` → 0 (63 files, 488 passed, 1 skipped). `gh run watch 37231157026` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37231157026 — `check` и `database` success.
+- Миграции: нет. `0016` и `0019` на облаке уже применены.
+- Для Cursor: незакоммиченные правки в `Integetion jobs 7B` теперь в master, их можно сбросить; ветку `cursor/vercel-deploy` больше не использовать.
+- OPEN QUESTION: нет
