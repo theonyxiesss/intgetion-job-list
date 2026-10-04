@@ -840,5 +840,47 @@
     "next": "Next",
     "copy": "Copy",
     "copied": "Copied"
+  },
+  "matches": {
+    "nav": "Matches",
+    "title": "Matches",
+    "lead": "Jobs picked for your skills, salary and time zone.",
+    "tabsLabel": "Match views",
+    "tabs": {
+      "all": "All",
+      "new": "New",
+      "hidden": "Hidden"
+    },
+    "score": "Match",
+    "scoreValue": "{percent}% match",
+    "whyTitle": "Why it fits",
+    "dismiss": "Not a fit",
+    "dismissTitle": "Why doesn't it fit?",
+    "dismissLead": "We will show fewer jobs like this one.",
+    "reasonLabel": "Reason",
+    "reasonNone": "Prefer not to say",
+    "confirm": "Hide job",
+    "cancel": "Cancel",
+    "close": "Close",
+    "dismissError": "Could not hide the job. Try again.",
+    "rateLimited": "Too many requests. Try again later.",
+    "next": "Next",
+    "hiddenNote": "Hidden by you",
+    "lowDataTitle": "Fill in your profile",
+    "lowDataText": "Add skills, salary and working hours so we can match jobs to you.",
+    "lowDataAction": "Edit profile",
+    "noProfileTitle": "Create your profile first",
+    "noProfileText": "Matches are built from your candidate profile.",
+    "emptyAll": "No matches yet",
+    "emptyAllText": "We will add jobs here as soon as new ones fit your profile.",
+    "emptyNew": "No new matches in the last 48 hours",
+    "emptyHidden": "You have not hidden any jobs",
+    "hintTitle": "Update your profile?",
+    "hints": {
+      "salary": "You often hide jobs because of the salary. Check your salary expectation.",
+      "format": "You often hide jobs because of the work format. Check your preferred formats.",
+      "timezone": "You often hide jobs because of the time zone. Check your working hours."
+    },
+    "hintAction": "Open the profile"
   }
 }

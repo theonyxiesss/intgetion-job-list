@@ -366,3 +366,11 @@
   - Cursor — 6B (`docs/prompts/cursor-6b.md`).
   - Claude Code — 10C (приватность, миграция 0017, D165–D169), затем: адрес получателя писем через Auth Admin API с service role (заглушка `lookupLoginEmail` из 9A), уведомления админ-действий (`job.moderation_decided`, `company.verification_decided`, `report.decided`), затем 7A.
   - Позже: Resend (домен + ключ), ключи в Vercel, `ANTHROPIC_API_KEY` к 7A, настройки Auth в Supabase, удалить старые worktree-папки агентов.
+
+## [2026-10-04] — 6B — IN REVIEW (ветка `claude/6b`, Claude Code)
+
+- Сделано: `GET /api/matches` (вкладки all/new/hidden, курсор, `lowData`, `profileHints`, счётчики), `POST /api/matches/:jobId/feedback` (`dismissed` через сервис 4B, лимит `matchFeedback`), сброс кэша после скрытий, «Не подходит» исключает вакансию (D162). Очередь пересчёта `matching_jobs` (миграция 0016) и cron `/api/cron/matching` вместо pg-boss (D161); задача ставится при публикации, одобрении, продлении, правке опубликованной, переиздании и первом импорте. UI: `/matches`, «Почему подходит» на `/jobs/[id]`, пункт «Подходящие» в шапке (D164). Тексты `matches` en/ru.
+- Проверка локально: `pnpm typecheck` → 0, `pnpm lint` → 0, `pnpm test` → 0 (53 files, 445 tests), prettier на изменённых файлах чист, `pnpm build` → 0. Интеграция и e2e — только в CI (job `database`).
+- Тесты: unit `queue-rules` (повтор, отказ после 5 попыток, бюджет времени, два параллельных прогона не берут задачу дважды) и `feed-rules` (порог 0.55, курсор, подсказки, «новые»). Интеграция `matches.integration.test.ts`: dismissed понижает следующую вакансию категории; hidden_company исключает все вакансии компании; одобрение ставит задачу, два cron одновременно считают её один раз, вакансия появляется в свежем кэше без пересчёта; бюджет 1500/300 мс. e2e `matches.spec.ts`: гость → `/login`; кандидат видит карточку с explain, axe без critical/serious, «Почему подходит» есть у кандидата и нет у гостя, 360 px без прокрутки, «Не подходит» переносит вакансию в «Скрытые».
+- Миграции: `0016_matching_jobs.sql` (на облако не применялась).
+- Отклонения от ТЗ: D160–D164. Перф на seed 5k не мерился: интеграционный тест мерит бюджет на данных теста.

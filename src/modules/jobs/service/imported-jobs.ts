@@ -1,6 +1,7 @@
 import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { jobSkills, jobStatusHistory, jobs } from "@/db/schema";
+import { enqueueMatchingForJob } from "@/modules/matching/service";
 
 export type ImportedJobStatus = "published" | "expired" | "removed";
 
@@ -25,7 +26,8 @@ export type ImportedJobWrite = {
  * job is never overwritten, and employers cannot edit these (D9).
  */
 export async function saveImportedJob(input: ImportedJobWrite) {
-  return getDb().transaction(async (tx) => {
+  let becamePublished = false;
+  const saved = await getDb().transaction(async (tx) => {
     const [previous] = input.jobId
       ? await tx.select().from(jobs).where(eq(jobs.id, input.jobId)).limit(1)
       : [];
@@ -81,8 +83,13 @@ export async function saveImportedJob(input: ImportedJobWrite) {
         reason: input.reason,
       });
     }
+    becamePublished =
+      job.status === "published" && previous?.status !== "published";
     return job;
   });
+  // Hourly re-imports of an unchanged job do not requeue it (D161).
+  if (becamePublished) await enqueueMatchingForJob(saved.id);
+  return saved;
 }
 
 /** 13.4: published imported jobs missing from their sources become expired. */

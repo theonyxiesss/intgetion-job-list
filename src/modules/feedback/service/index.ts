@@ -5,6 +5,7 @@
  */
 import { HttpError, notFound, validationError } from "@/lib/http";
 import { getJobForPublic, listPublicJobsByIds } from "@/modules/jobs/service";
+import { invalidateUserMatches } from "@/modules/matching/service";
 import * as repo from "../repo/feedback-repo";
 import {
   InvalidFeedbackError,
@@ -62,6 +63,14 @@ export async function recordJobFeedback(
     action: event.action,
     reason: event.reason,
   });
+  // 10.5: the next /api/matches recomputes with the new multipliers (6B).
+  if (
+    event.action === "hidden" ||
+    event.action === "hidden_company" ||
+    event.action === "dismissed"
+  ) {
+    await invalidateUserMatches(input.userId);
+  }
 }
 
 /** `ExternalApplyRecorder` for `applyExternal` (D72). A repeat writes nothing. */
@@ -149,6 +158,23 @@ export async function hideJobForUser(
     reason: input.reason,
   });
   return { hidden: true };
+}
+
+/** "Not a fit" from /matches (6B, 10.5): lowers the category, drops the job. */
+export async function dismissJobForUser(
+  userId: string,
+  jobId: string,
+  input: { reason?: string },
+): Promise<{ dismissed: true }> {
+  const job = await visibleJobOr404(jobId, userId);
+  await recordJobFeedback({
+    userId,
+    jobId,
+    companyId: job.company.id,
+    action: "dismissed",
+    reason: input.reason,
+  });
+  return { dismissed: true };
 }
 
 export interface ReportInput {

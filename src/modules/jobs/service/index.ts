@@ -5,15 +5,14 @@ export {
   findOwnedJob,
   listJobsExpiring,
   listJobsForUser,
-  updateJob,
 } from "../repo/jobs-repo";
 export {
   findJobsForAdmin,
   pausePublishedJobsOfCompany,
   listJobsForAdmin,
   removeJobByAdmin,
-  republishImportedJob,
 } from "../repo/admin-jobs-repo";
+export { republishImportedJob, updateJob } from "./publish-hooks";
 export type { AdminJobRow } from "../repo/admin-jobs-repo";
 export { transitionOwnedJob } from "./notify-job";
 export { findMemberRole } from "@/modules/companies/service";

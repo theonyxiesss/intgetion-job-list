@@ -137,13 +137,14 @@ export async function readFeedback(
 ): Promise<FeedbackForScoring> {
   const db = getDb();
   const since = new Date(now.getTime() - FEEDBACK_WINDOW_MS).toISOString();
+  // "Not a fit" on /matches removes the job like a hide does (D162).
   const hiddenJobs = await db
     .select({ jobId: userJobFeedback.jobId })
     .from(userJobFeedback)
     .where(
       and(
         eq(userJobFeedback.userId, userId),
-        eq(userJobFeedback.action, "hidden"),
+        inArray(userJobFeedback.action, ["hidden", "dismissed"]),
       ),
     );
   const hiddenCompanies = await db
@@ -281,7 +282,7 @@ export async function prefilterJobIds(
       and not exists (
         select 1 from public.user_job_feedback f
         where f.user_id = ${candidate.userId}
-          and f.action = 'hidden'
+          and f.action in ('hidden', 'dismissed')
           and f.job_id = j.id
       )
       and not exists (
@@ -339,7 +340,7 @@ export async function prefilterCandidateIds(
       and not exists (
         select 1 from public.user_job_feedback f
         where f.user_id = p.user_id
-          and f.action = 'hidden'
+          and f.action in ('hidden', 'dismissed')
           and f.job_id = j.id
       )
       and not exists (
@@ -518,6 +519,12 @@ export interface ResultWrite {
   algoVersion: number;
 }
 
+export async function clearUserResults(userId: string): Promise<void> {
+  await getDb()
+    .delete(matchingResults)
+    .where(eq(matchingResults.userId, userId));
+}
+
 export async function replaceUserResults(
   userId: string,
   rows: readonly ResultWrite[],
@@ -599,4 +606,82 @@ export async function readCompanyVisible(jobId: string): Promise<boolean> {
     )
     .limit(1);
   return row !== undefined;
+}
+
+export interface HiddenJobRow {
+  jobId: string;
+  hiddenAt: Date;
+}
+
+/** Jobs the user dismissed or hid, newest first: the "Hidden" tab. */
+export async function readHiddenJobs(
+  userId: string,
+  limit: number,
+): Promise<HiddenJobRow[]> {
+  const rows = await getDb().execute<{ job_id: string; hidden_at: string }>(sql`
+    select job_id, max(created_at) as hidden_at
+    from public.user_job_feedback
+    where user_id = ${userId} and action in ('hidden', 'dismissed')
+    group by job_id
+    order by hidden_at desc, job_id
+    limit ${limit}
+  `);
+  return rows.map((row) => ({
+    jobId: row.job_id,
+    hiddenAt: new Date(row.hidden_at),
+  }));
+}
+
+/** Jobs and companies the user excluded, to drop cached rows hidden since. */
+export async function readExcludedSets(
+  userId: string,
+): Promise<{ jobIds: Set<string>; companyIds: Set<string> }> {
+  const rows = await getDb().execute<{
+    job_id: string;
+    company_id: string | null;
+    action: string;
+  }>(sql`
+    select distinct job_id, company_id, action::text as action
+    from public.user_job_feedback
+    where user_id = ${userId}
+      and action in ('hidden', 'dismissed', 'hidden_company')
+  `);
+  const jobIds = new Set<string>();
+  const companyIds = new Set<string>();
+  for (const row of rows) {
+    if (row.action === "hidden_company") {
+      if (row.company_id) companyIds.add(row.company_id);
+    } else {
+      jobIds.add(row.job_id);
+    }
+  }
+  return { jobIds, companyIds };
+}
+
+/** hidden/dismissed counts by reason within 90 days (10.5 hints). */
+export async function readHideReasonCounts(
+  userId: string,
+  now: Date,
+): Promise<{ salary: number; format: number; timezone: number }> {
+  const since = new Date(now.getTime() - FEEDBACK_WINDOW_MS).toISOString();
+  const rows = await getDb().execute<{ reason: string; n: number }>(sql`
+    select reason, count(*)::int as n
+    from public.user_job_feedback
+    where user_id = ${userId}
+      and action in ('hidden', 'dismissed')
+      and reason in ('salary', 'format', 'timezone')
+      and created_at >= ${since}::timestamptz
+    group by reason
+  `);
+  const counts = { salary: 0, format: 0, timezone: 0 };
+  for (const row of rows) {
+    if (
+      row.reason === "salary" ||
+      row.reason === "format" ||
+      row.reason === "timezone"
+    ) {
+      counts[row.reason] = row.n;
+    }
+  }
+  return counts;
 }

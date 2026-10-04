@@ -75,3 +75,42 @@ export {
   type MatchItem,
   type MatchList,
 } from "./compute";
+export {
+  enqueueMatchingForJob,
+  invalidateUserMatches,
+  runMatchingCron,
+} from "./queue";
+export {
+  QUEUE_BUDGET_MS,
+  QUEUE_LOCK_MS,
+  QUEUE_MAX_ATTEMPTS,
+  failureOutcome,
+  retryDelayMs,
+  runQueue,
+  type ClaimedTask,
+  type QueueRunResult,
+  type QueueStore,
+} from "./queue-rules";
+export {
+  FEED_DEFAULT_LIMIT,
+  FEED_MAX_LIMIT,
+  HIDDEN_TAB_LIMIT,
+  MATCH_TABS,
+  NEW_JOB_MS,
+  clampLimit,
+  decodeCursor,
+  encodeCursor,
+  isMatchTab,
+  isNewJob,
+  pageOf,
+  profileHints,
+  sortByScore,
+  visibleMatches,
+  type MatchTab,
+  type ProfileHint,
+} from "./feed-rules";
+export {
+  readExcludedSetsForUser,
+  readHiddenJobsForUser,
+  readHideReasonCountsForUser,
+} from "./reads";

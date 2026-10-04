@@ -11,6 +11,16 @@ export const hideJobInput = z
 
 export type HideJobInput = z.infer<typeof hideJobInput>;
 
+/** POST /api/matches/:jobId/feedback (6B, section 7). */
+export const matchFeedbackInput = z
+  .object({
+    action: z.literal("dismissed"),
+    reason: z.enum(HIDE_REASONS).optional(),
+  })
+  .strict();
+
+export type MatchFeedbackInput = z.infer<typeof matchFeedbackInput>;
+
 export const reportJobInput = z
   .object({
     reason: z.enum(REPORT_REASONS),

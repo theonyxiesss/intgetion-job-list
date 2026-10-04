@@ -12,6 +12,9 @@ import { isJobSavedForUser } from "@/modules/feedback/service";
 import { ExternalApplyLink } from "@/modules/feedback/ui/external-apply-link";
 import { JobFeedbackActions } from "@/modules/feedback/ui/job-feedback-actions";
 import { getJobForPublic } from "@/modules/jobs/service";
+import { hasCandidateProfile } from "@/modules/candidates/service";
+import { getMatchForJob } from "@/modules/matching/feed";
+import { WhyItFits } from "@/modules/matching/ui/why-it-fits";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +32,11 @@ export default async function JobPage({
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
   const initialSaved = user ? await isJobSavedForUser(user.id, job.id) : false;
+  // 6B: only a signed-in candidate sees "why it fits", and only at ≥ 0.55.
+  const match =
+    user && (await hasCandidateProfile(user.id))
+      ? await getMatchForJob(user.id, job.id)
+      : null;
   const money = locale === "ru" ? "ru-RU" : "en-US";
   const salary = job.salaryMin
     ? `${formatMoneyDto(job.salaryMin, money)}${job.salaryMax ? ` – ${formatMoneyDto(job.salaryMax, money)}` : ""} / ${t(job.salaryMin.period)} (${t(job.salaryMin.basis)})`
@@ -112,63 +120,72 @@ export default async function JobPage({
             ) : null}
             <div className="whitespace-pre-wrap">{job.description}</div>
           </article>
-          <aside className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg p-4 lg:sticky lg:top-24 lg:border lg:p-5">
-            <div className="flex flex-col gap-3">
-              {job.applicationUrl &&
-              job.applicationMethod === "external_url" ? (
-                <ExternalApplyLink
-                  jobId={job.id}
-                  href={job.applicationUrl}
-                  label={t("apply")}
-                />
-              ) : null}
-              {user ? (
-                <JobFeedbackActions
-                  jobId={job.id}
-                  initialSaved={initialSaved}
-                  text={{
-                    save: actions("save"),
-                    saved: actions("saved"),
-                    unsave: actions("unsave"),
-                    saveError: actions("saveError"),
-                    hide: actions("hide"),
-                    hideTitle: actions("hideTitle"),
-                    hideScopeJob: actions("hideScopeJob"),
-                    hideScopeCompany: actions("hideScopeCompany"),
-                    reasonLabel: actions("reasonLabel"),
-                    reasonNone: actions("reasonNone"),
-                    confirm: actions("confirm"),
-                    cancel: actions("cancel"),
-                    hideError: actions("hideError"),
-                    report: actions("report"),
-                    reportTitle: actions("reportTitle"),
-                    detailsLabel: actions("detailsLabel"),
-                    reportSuccess: actions("reportSuccess"),
-                    alreadyReported: actions("alreadyReported"),
-                    rateLimited: actions("rateLimited"),
-                    reportError: actions("reportError"),
-                    hideReasons: {
-                      salary: actions("reasons.salary"),
-                      format: actions("reasons.format"),
-                      timezone: actions("reasons.timezone"),
-                      company: actions("reasons.company"),
-                      role: actions("reasons.role"),
-                      other: actions("reasons.other"),
-                    },
-                    reportReasons: {
-                      scam: actions("reportReasons.scam"),
-                      spam: actions("reportReasons.spam"),
-                      fake_company: actions("reportReasons.fake_company"),
-                      discrimination: actions("reportReasons.discrimination"),
-                      wrong_info: actions("reportReasons.wrong_info"),
-                      inappropriate: actions("reportReasons.inappropriate"),
-                      other: actions("reportReasons.other"),
-                    },
-                  }}
-                />
-              ) : null}
-            </div>
-          </aside>
+          <div className="flex flex-col gap-4 lg:sticky lg:top-24">
+            <aside className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg p-4 lg:static lg:border lg:p-5">
+              <div className="flex flex-col gap-3">
+                {job.applicationUrl &&
+                job.applicationMethod === "external_url" ? (
+                  <ExternalApplyLink
+                    jobId={job.id}
+                    href={job.applicationUrl}
+                    label={t("apply")}
+                  />
+                ) : null}
+                {user ? (
+                  <JobFeedbackActions
+                    jobId={job.id}
+                    initialSaved={initialSaved}
+                    text={{
+                      save: actions("save"),
+                      saved: actions("saved"),
+                      unsave: actions("unsave"),
+                      saveError: actions("saveError"),
+                      hide: actions("hide"),
+                      hideTitle: actions("hideTitle"),
+                      hideScopeJob: actions("hideScopeJob"),
+                      hideScopeCompany: actions("hideScopeCompany"),
+                      reasonLabel: actions("reasonLabel"),
+                      reasonNone: actions("reasonNone"),
+                      confirm: actions("confirm"),
+                      cancel: actions("cancel"),
+                      hideError: actions("hideError"),
+                      report: actions("report"),
+                      reportTitle: actions("reportTitle"),
+                      detailsLabel: actions("detailsLabel"),
+                      reportSuccess: actions("reportSuccess"),
+                      alreadyReported: actions("alreadyReported"),
+                      rateLimited: actions("rateLimited"),
+                      reportError: actions("reportError"),
+                      hideReasons: {
+                        salary: actions("reasons.salary"),
+                        format: actions("reasons.format"),
+                        timezone: actions("reasons.timezone"),
+                        company: actions("reasons.company"),
+                        role: actions("reasons.role"),
+                        other: actions("reasons.other"),
+                      },
+                      reportReasons: {
+                        scam: actions("reportReasons.scam"),
+                        spam: actions("reportReasons.spam"),
+                        fake_company: actions("reportReasons.fake_company"),
+                        discrimination: actions("reportReasons.discrimination"),
+                        wrong_info: actions("reportReasons.wrong_info"),
+                        inappropriate: actions("reportReasons.inappropriate"),
+                        other: actions("reportReasons.other"),
+                      },
+                    }}
+                  />
+                ) : null}
+              </div>
+            </aside>
+            {match ? (
+              <WhyItFits
+                score={match.score}
+                explain={match.explain}
+                className="mb-28 flex lg:mb-0"
+              />
+            ) : null}
+          </div>
         </div>
       </Container>
     </main>
