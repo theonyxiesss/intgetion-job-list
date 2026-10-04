@@ -30,11 +30,11 @@ async function confirmEmail(page: Page, email: string) {
   await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
 }
 
-async function fillProfile(page: Page, contactEmail: string) {
+async function fillProfile(page: Page, contactEmail: string, title: string) {
   await page.goto("/en/profile/edit");
   await page.getByLabel("Full name").fill("Ada Lovelace");
   await page.getByLabel("Headline").fill("Engineer");
-  await page.getByLabel("Desired titles").fill("Backend engineer");
+  await page.getByLabel("Desired titles").fill(title);
   await page.getByRole("textbox", { name: /^Timezone/ }).fill("Europe/Berlin");
   await page.getByLabel("I confirm this timezone").check();
   await page.getByLabel("Years of experience").fill("5");
@@ -51,7 +51,7 @@ async function fillProfile(page: Page, contactEmail: string) {
   await expect(page).toHaveURL(/\/en\/profile$/);
 }
 
-async function insertMatchJob(userId: string) {
+async function insertMatchJob(userId: string, title: string) {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL is required");
   const companyId = randomUUID();
@@ -85,7 +85,7 @@ async function insertMatchJob(userId: string) {
          'internal', 'published', now(), now() + interval '30 days',
          500000, 700000, 'EUR', 'month', 'gross', 1
        )`,
-      [jobId, companyId, userId, "Backend engineer", description],
+      [jobId, companyId, userId, title, description],
     );
     await client.query(
       `insert into public.job_skills (job_id, skill_id, weight, min_level)
@@ -109,20 +109,24 @@ test("a candidate sees matches, explain, dismiss, and the job reason", async ({
 }) => {
   test.setTimeout(120_000);
   const email = uniqueEmail("matches");
+  const title = `Backend engineer ${randomUUID().slice(0, 8)}`;
   await registerWithPassword(page, email);
   await confirmEmail(page, email);
-  await fillProfile(page, `contacts-${email}`);
+  await fillProfile(page, `contacts-${email}`, title);
   const me = await page.request.get("/api/me");
   expect(me.status()).toBe(200);
   const meBody = (await me.json()) as { id: string };
-  const jobId = await insertMatchJob(meBody.id);
+  const jobId = await insertMatchJob(meBody.id, title);
+  const card = page.locator("div.flex.flex-col.gap-3").filter({
+    has: page.getByRole("link", { name: title, exact: true }),
+  });
 
   await page.goto("/en/matches");
   await expect(page.getByRole("heading", { name: "Matches" })).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Backend engineer" }),
+    card.getByRole("link", { name: title, exact: true }),
   ).toBeVisible();
-  await expect(page.getByText("Has the required skills.")).toBeVisible();
+  await expect(card.getByText("Has the required skills.")).toBeVisible();
 
   await page.goto(`/en/jobs/${jobId}`);
   await expect(
@@ -139,14 +143,14 @@ test("a candidate sees matches, explain, dismiss, and the job reason", async ({
   await guest.close();
 
   await page.goto("/en/matches");
-  await page.getByRole("button", { name: "Not a fit" }).click();
+  await card.getByRole("button", { name: "Not a fit" }).click();
   await page.getByRole("button", { name: "Hide this job" }).click();
   await expect(
-    page.getByRole("link", { name: "Backend engineer" }),
+    page.getByRole("link", { name: title, exact: true }),
   ).toHaveCount(0);
   await page.goto("/en/matches?tab=hidden");
   await expect(
-    page.getByRole("link", { name: "Backend engineer" }),
+    page.getByRole("link", { name: title, exact: true }),
   ).toBeVisible();
 
   await page.setViewportSize({ width: 360, height: 800 });
