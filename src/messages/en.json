@@ -961,7 +961,7 @@
   },
   "chat": {
     "title": "Career agent",
-    "placeholder": "Describe what you're looking for…",
+    "placeholder": "Write a message",
     "send": "Send",
     "log": "Conversation",
     "emptySignedIn": "Start a conversation — tell me what you're looking for.",
