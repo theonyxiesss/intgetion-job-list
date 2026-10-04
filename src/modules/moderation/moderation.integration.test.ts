@@ -42,10 +42,13 @@ beforeAll(async () => {
     (${companyId},${`Moderation Co ${token}`},${`mod-${token}`},'unverified','internal',${adminId}),
     (${importedCompanyId},${`Imported Co ${token}`},${`mod-imp-${token}`},'unverified','imported',null),
     (${duplicateCompanyId},${`Duplicate Co ${token}`},${`mod-dup-${token}`},'unverified','internal',${adminId})`);
-  await db.execute(sql`insert into public.jobs(id,company_id,title,description,category,work_format,employment_type,application_method,application_url,source,status,published_at,expires_at,risk_score,risk_flags) values
-    (${pendingJobId},${companyId},${`Pending role ${token}`},${description},'engineering','remote','full_time','internal',null,'internal','pending_moderation',null,null,0,'[]'),
-    (${importedJobId},${importedCompanyId},${`Imported role ${token}`},${description},'support','remote','full_time','external_url','https://imported.invalid/apply','imported','removed',null,now()+interval '30 days',4,'["scam_pattern_rejected"]'),
-    (${liveJobId},${companyId},${`Live role ${token}`},${description},'engineering','remote','full_time','internal',null,'internal','published',now(),now()+interval '30 days',0,'[]')`);
+  await db.execute(sql`insert into public.jobs(id,company_id,title,description,category,work_format,employment_type,application_method,application_url,source,status,published_at,expires_at,risk_score,risk_flags,created_by) values
+    (${pendingJobId},${companyId},${`Pending role ${token}`},${description},'engineering','remote','full_time','internal',null,'internal','pending_moderation',null,null,0,'[]',${adminId}),
+    (${importedJobId},${importedCompanyId},${`Imported role ${token}`},${description},'support','remote','full_time','external_url','https://imported.invalid/apply','imported','removed',null,now()+interval '30 days',4,'["scam_pattern_rejected"]',null),
+    (${liveJobId},${companyId},${`Live role ${token}`},${description},'engineering','remote','full_time','internal',null,'internal','published',now(),now()+interval '30 days',0,'[]',${adminId})`);
+  await db.execute(
+    sql`insert into public.company_members(company_id,user_id,role) values (${duplicateCompanyId},${adminId},'owner')`,
+  );
   await db.execute(sql`insert into public.moderation_queue(id,entity_type,entity_id,reason,created_at) values
     (${queue.pending},'job',${pendingJobId},'job_publish_review',now()),
     (${queue.pendingSibling},'job',${pendingJobId},'unverified_company_job_edit',now()),
@@ -73,6 +76,13 @@ async function jobStatus(id: string) {
     sql`select status, risk_score from public.jobs where id = ${id}`,
   );
   return rows[0];
+}
+
+async function notices(type: string) {
+  const rows = await getDb().execute<{ payload: Record<string, unknown> }>(
+    sql`select payload from public.notifications where user_id = ${adminId} and type = ${type}`,
+  );
+  return rows.map((row) => row.payload);
 }
 
 async function itemStatus(id: string) {
@@ -107,6 +117,11 @@ describe("moderation queue (10A)", () => {
     ).resolves.toMatchObject({ effect: "approve_job" });
     expect((await jobStatus(pendingJobId))?.status).toBe("published");
     expect(await itemStatus(queue.pendingSibling)).toBe("approved");
+    expect(await notices("job.moderation_decided")).toContainEqual({
+      jobId: pendingJobId,
+      jobTitle: `Pending role ${token}`,
+      decision: "approved",
+    });
     await expect(
       decideQueueItem(admin, queue.pending, { decision: "approved" }, "ip"),
     ).rejects.toMatchObject({ status: 409, code: "ALREADY_DECIDED" });
@@ -136,6 +151,11 @@ describe("moderation queue (10A)", () => {
       sql`select status from public.companies where id = ${duplicateCompanyId}`,
     );
     expect(rows[0]?.status).toBe("rejected");
+    expect(await notices("company.verification_decided")).toContainEqual({
+      companyId: duplicateCompanyId,
+      companyName: `Duplicate Co ${token}`,
+      decision: "rejected",
+    });
   });
 
   it("removes a live job once and records it in the audit log", async () => {

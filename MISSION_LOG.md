@@ -381,3 +381,9 @@
 - CI: `scripts/ci-db.sh` экспортирует `SUPABASE_SERVICE_ROLE_KEY` из `supabase status` (`SERVICE_ROLE_KEY` или `SECRET_KEY`).
 - Миграции: нет, номер 0017 свободен.
 - Следующее: уведомления админ-действий, затем 7A. Cursor — 6B.
+
+## [2026-10-04] — уведомления о решениях админа (ветка `claude/admin-notify`, Claude Code)
+
+- Сделано: D190. Отправляются `job.moderation_decided` (создателю), `company.verification_decided` (владельцам) и `report.decided` (автору жалобы). Заглушки `// 9A: notify(...)` в очереди, жалобах и верификации заменены вызовами.
+- Тесты: `moderation.integration.test.ts` проверяет payload уведомлений об одобрении вакансии и отклонении компании, `reports.integration.test.ts` — решения `confirmed` и `dismissed` у авторов жалоб.
+- Миграции: нет. Ветка стоит поверх `claude/10c`.

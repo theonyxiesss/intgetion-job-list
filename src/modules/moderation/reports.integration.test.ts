@@ -98,6 +98,17 @@ describe("reports and auto-pause (10A, 14.5)", () => {
     await decideReport(admin, reportIds[1]!, { decision: "dismissed" }, "ip");
     await decideReport(admin, reportIds[2]!, { decision: "confirmed" }, "ip");
     expect(Object.values(await statuses())).not.toContain("paused");
+    const notices = await getDb().execute<{
+      user_id: string;
+      payload: { decision: string };
+    }>(
+      sql`select user_id, payload from public.notifications where type = 'report.decided' and user_id in (${reporters[0]!}, ${reporters[1]!})`,
+    );
+    expect(
+      Object.fromEntries(
+        notices.map((row) => [row.user_id, row.payload.decision]),
+      ),
+    ).toEqual({ [reporters[0]!]: "confirmed", [reporters[1]!]: "dismissed" });
     await expect(
       decideReport(admin, reportIds[0]!, { decision: "dismissed" }, "ip"),
     ).rejects.toMatchObject({ status: 409, code: "ALREADY_DECIDED" });

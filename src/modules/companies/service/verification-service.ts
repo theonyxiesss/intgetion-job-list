@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { siteUrl } from "@/lib/supabase/env";
 import type { CurrentUser } from "@/modules/auth/service";
+import { safeNotify } from "@/modules/notifications/service";
 import * as companyRepo from "../repo/company-repo";
 import * as repo from "../repo/verification-repo";
 import { changeCompanyStatus, findMemberRole } from "./company-service";
@@ -339,7 +340,22 @@ export async function approveCompanyVerification(
     );
   }
   await changeCompanyStatus(companyId, adminId, "verified");
-  // 9A: notify("company.verification_decided") to the owner.
+  await notifyVerificationDecided(companyId, "verified");
+}
+
+/** Section 15: the owners learn the verification outcome (D127: never fails the caller). */
+export async function notifyVerificationDecided(
+  companyId: string,
+  decision: "verified" | "rejected",
+) {
+  const company = await companyRepo.findCompanyById(companyId);
+  if (!company) return;
+  const owners = await companyRepo.listMemberUserIds(companyId, ["owner"]);
+  await safeNotify("company.verification_decided", owners, {
+    companyId,
+    companyName: company.name,
+    decision,
+  });
 }
 
 /** Daily `/api/cron/trusted` (14.2); confirmed reports come from 4B (D84). */

@@ -25,6 +25,7 @@ const adminJobColumns = {
   companyName: companies.name,
   companyStatus: companies.status,
   createdAt: jobs.createdAt,
+  createdBy: jobs.createdBy,
 };
 
 export type AdminJobRow = {
@@ -38,6 +39,7 @@ export type AdminJobRow = {
   companyName: string;
   companyStatus: (typeof companies.$inferSelect)["status"];
   createdAt: Date;
+  createdBy: string | null;
 };
 
 const escapeLike = (value: string) => value.replace(/[\\%_]/g, (c) => `\\${c}`);

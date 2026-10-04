@@ -2,7 +2,11 @@ import { recordAudit } from "@/lib/audit";
 import { HttpError, notFound } from "@/lib/http";
 import type { CurrentUser } from "@/modules/auth/service";
 import { pausePublishedJobsOfCompany } from "@/modules/jobs/service";
+import { safeNotify } from "@/modules/notifications/service";
 import * as repo from "../repo/reports-repo";
+
+const reportedEntity = (type: string): type is "job" | "company" | "user" =>
+  type === "job" || type === "company" || type === "user";
 
 /** 14.5: this many confirmed reports in the window pause the company. */
 export const AUTO_PAUSE_THRESHOLD = 3;
@@ -94,7 +98,13 @@ export async function decideReport(
     diff: { reportId: report.id, decision: input.decision, note },
     ip,
   });
-  // 9A: notify("report.decided") to the reporter.
+  if (reportedEntity(report.entityType)) {
+    await safeNotify("report.decided", [report.reporterId], {
+      reportId: report.id,
+      entityType: report.entityType,
+      decision: input.decision,
+    });
+  }
 
   let pausedJobs: string[] = [];
   const companyId =

@@ -4,6 +4,7 @@ import type { CurrentUser } from "@/modules/auth/service";
 import {
   approveCompanyVerification,
   changeCompanyStatus,
+  notifyVerificationDecided,
 } from "@/modules/companies/service";
 import {
   findJobsForAdmin,
@@ -11,6 +12,7 @@ import {
   republishImportedJob,
   transitionOwnedJob,
 } from "@/modules/jobs/service";
+import { safeNotify } from "@/modules/notifications/service";
 import * as repo from "../repo/queue-repo";
 import { isOverdue, planDecision, type QueueTarget } from "./decide";
 
@@ -189,8 +191,28 @@ export async function decideQueueItem(
     diff: { itemId: item.id, decision: input.decision, effect, note },
     ip,
   });
-  // 9A: notify("job.moderation_decided") to the job creator for job effects.
+  await notifyDecision(item.entityId, effect);
   return { id: item.id, status: item.status, effect };
+}
+
+/**
+ * Section 15: the job creator hears about approval, rejection or takedown;
+ * owners hear about a rejected verification (approval notifies inside
+ * `approveCompanyVerification`). Imported jobs have no creator.
+ */
+async function notifyDecision(entityId: string, effect: string) {
+  if (effect === "reject_company") {
+    await notifyVerificationDecided(entityId, "rejected");
+    return;
+  }
+  if (!["approve_job", "reject_job", "remove_job"].includes(effect)) return;
+  const [job] = await findJobsForAdmin([entityId]);
+  if (!job?.createdBy) return;
+  await safeNotify("job.moderation_decided", [job.createdBy], {
+    jobId: job.id,
+    jobTitle: job.title,
+    decision: effect === "approve_job" ? "approved" : "rejected",
+  });
 }
 
 /** `POST /api/admin/jobs/:id/remove`, any source (section 7). */

@@ -25,6 +25,7 @@ export { SupabaseLogoStorage } from "./storage";
 export { isPossibleDuplicate } from "./duplicate";
 export {
   approveCompanyVerification,
+  notifyVerificationDecided,
   confirmVerification,
   getVerificationState,
   refreshTrustedFlags,
