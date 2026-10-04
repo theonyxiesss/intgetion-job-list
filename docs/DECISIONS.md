@@ -723,9 +723,11 @@ Scam-паттерны (`src/config/scam-patterns.ts`) проверяются п�
   - `reject_job` или `remove_job` (снятие живой вакансии) → `rejected`.
 
   У импортированных вакансий создателя нет, им уведомление не отправляется. `admin_jobs` теперь отдаёт `createdBy`.
+
 - `company.verification_decided` получают все владельцы компании:
   - `verified` отправляется из `approveCompanyVerification`;
   - `rejected` — из очереди при `reject_company`.
 
   Блокировка (`suspended`) этим событием не сообщается: в каталоге его решения только `verified` и `rejected`.
+
 - `report.decided` получает автор жалобы, решение `confirmed` или `dismissed`. Жалоба на сущность вне `job | company | user` не уведомляется.
