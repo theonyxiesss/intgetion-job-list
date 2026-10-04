@@ -90,8 +90,8 @@ export function JobCard({
         <dl className="flex flex-wrap gap-x-6 gap-y-3">
           {stats.map((stat) => (
             <div key={stat.label} className="flex flex-col gap-1">
-              <dt className="t-label text-fg-subtle">{stat.label}</dt>
-              <dd className={cn("t-data", stat.muted ? "text-fg-subtle" : "")}>
+              <dt className="t-label text-fg-muted">{stat.label}</dt>
+              <dd className={cn("t-data", stat.muted ? "text-fg-muted" : "")}>
                 {stat.value}
               </dd>
             </div>

@@ -16,7 +16,7 @@ const verdictIcon: Record<ExplainVerdict, LucideIcon> = {
 const verdictClass: Record<ExplainVerdict, string> = {
   matched: "text-success",
   partial: "text-warning",
-  neutral: "text-fg-subtle",
+  neutral: "text-fg-muted",
   failed: "text-danger",
 };
 

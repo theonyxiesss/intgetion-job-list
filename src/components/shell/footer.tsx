@@ -47,7 +47,7 @@ export function Footer() {
             aria-label={t(column.title)}
             className="flex flex-col gap-3"
           >
-            <p className="t-label text-fg-subtle">{t(column.title)}</p>
+            <p className="t-label text-fg-muted">{t(column.title)}</p>
             {column.links.map((link) => (
               <Link
                 {...navFade}
@@ -63,7 +63,7 @@ export function Footer() {
       </div>
       <div className="border-t border-line">
         <div className="mx-auto flex w-full max-w-[1376px] flex-wrap items-center justify-between gap-4 px-4 py-6 md:px-6 xl:px-12">
-          <p className="t-caption text-fg-subtle">
+          <p className="t-caption text-fg-muted">
             <span className="t-data">© {year}</span> {t("product.name")}.{" "}
             {t("footer.rights")}
           </p>

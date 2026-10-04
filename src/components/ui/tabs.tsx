@@ -40,7 +40,7 @@ export function LinkTabs({
             >
               {item.label}
               {item.count !== undefined && (
-                <span className="t-data text-fg-subtle">{item.count}</span>
+                <span className="t-data text-fg-muted">{item.count}</span>
               )}
               {item.active && (
                 <Morph name={indicatorName}>

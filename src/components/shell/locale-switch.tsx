@@ -31,7 +31,7 @@ export function LocaleSwitch({
           aria-current={locale === current ? "true" : undefined}
           className={cn(
             "t-nav inline-flex min-h-11 min-w-11 items-center justify-center",
-            locale === current ? "text-fg" : "text-fg-subtle hover:text-fg",
+            locale === current ? "text-fg" : "text-fg-muted hover:text-fg",
           )}
         >
           {t(`locale.short.${locale}`)}
