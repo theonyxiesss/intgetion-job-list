@@ -2,35 +2,11 @@
   "crons": [
     {
       "path": "/api/cron/expire-jobs",
-      "schedule": "0 * * * *"
-    },
-    {
-      "path": "/api/cron/fx-rates",
-      "schedule": "15 16 * * *"
-    },
-    {
-      "path": "/api/cron/import",
-      "schedule": "30 * * * *"
-    },
-    {
-      "path": "/api/cron/trusted",
-      "schedule": "45 3 * * *"
-    },
-    {
-      "path": "/api/cron/notifications",
-      "schedule": "5 * * * *"
-    },
-    {
-      "path": "/api/cron/job-expiring",
-      "schedule": "10 4 * * *"
-    },
-    {
-      "path": "/api/cron/retention",
-      "schedule": "20 3 * * *"
+      "schedule": "0 3 * * *"
     },
     {
       "path": "/api/cron/matching",
-      "schedule": "* * * * *"
+      "schedule": "30 3 * * *"
     }
   ]
 }
