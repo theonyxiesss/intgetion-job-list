@@ -119,6 +119,12 @@ ALTER TABLE public.skills
     )
   );
 
+-- skills and skills_aliases have FORCE ROW LEVEL SECURITY (enable_rls_deny_all),
+-- so even their owner is filtered; the cloud migration role is not a superuser.
+-- Lift FORCE for the seed and restore it in the same transaction (D215).
+ALTER TABLE public.skills NO FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.skills_aliases NO FORCE ROW LEVEL SECURITY;
+
 INSERT INTO public.skills (slug, name_en, name_ru, category) VALUES
   ('solidity', 'Solidity', 'Solidity', 'engineering'),
   ('smartcontracts', 'Smart Contracts', 'Смарт-контракты', 'engineering'),
@@ -230,3 +236,6 @@ FROM (VALUES
 JOIN public.skills s ON s.slug = v.slug
 ON CONFLICT (alias_normalized) DO UPDATE SET
   skill_id = EXCLUDED.skill_id;
+
+ALTER TABLE public.skills FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.skills_aliases FORCE ROW LEVEL SECURITY;
