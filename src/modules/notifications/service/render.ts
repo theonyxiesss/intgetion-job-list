@@ -1,3 +1,4 @@
+import { siteEmailHtml } from "@/lib/email-html";
 import en from "@/messages/en.json";
 import ru from "@/messages/ru.json";
 import { NOTIFICATION_CATALOG, type NotificationType } from "../lib/catalog";
@@ -40,14 +41,6 @@ export function fillTemplate(
   );
 }
 
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
-}
-
 export function renderEmail(input: {
   locale: "en" | "ru";
   type: NotificationType;
@@ -60,7 +53,10 @@ export function renderEmail(input: {
   const body = fillTemplate(copy.body, input.values);
   const link = unsubscribeLabel(input.locale);
   const text = `${subject}\n\n${body}\n\n${link}: ${input.unsubscribeUrl}`;
-  const html = `<p>${escapeHtml(body)}</p><p><a href="${escapeHtml(input.unsubscribeUrl)}">${escapeHtml(link)}</a></p>`;
+  const html = siteEmailHtml({
+    body,
+    footer: { href: input.unsubscribeUrl, label: link },
+  });
   return { subject, text, html };
 }
 

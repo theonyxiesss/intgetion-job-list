@@ -1,8 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Logo, navFade } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { LocaleSwitch } from "./locale-switch";
-
 const columns = [
   {
     title: "footer.candidates",
@@ -68,7 +66,6 @@ export function Footer() {
             <span className="t-data">© {year}</span> {t("product.name")}.{" "}
             {t("footer.rights")}
           </p>
-          <LocaleSwitch label={t("footer.language")} />
         </div>
       </div>
     </footer>

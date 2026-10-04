@@ -7,7 +7,6 @@ import { Icon } from "@/components/ui/icon";
 import { navFade } from "@/components/ui/page-transition";
 import { Link } from "@/i18n/navigation";
 import { LogoutButton } from "@/components/auth/logout-button";
-import { LocaleSwitch } from "./locale-switch";
 import { ThemeToggle } from "./theme-toggle";
 
 export type NavItem = { href: string; label: string };
@@ -80,7 +79,6 @@ export function MobileNav({
           ))}
         </nav>
         <div className="flex items-center gap-2 px-4">
-          <LocaleSwitch />
           <ThemeToggle />
           {signedIn && <LogoutButton />}
         </div>

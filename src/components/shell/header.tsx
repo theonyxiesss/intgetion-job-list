@@ -17,7 +17,6 @@ import { requireUser } from "@/lib/auth-guards";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { hasCandidateProfile } from "@/modules/candidates/service";
 import { countUnread } from "@/modules/notifications/service";
-import { LocaleSwitch } from "./locale-switch";
 import { MobileNav, type NavItem } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -161,7 +160,6 @@ export async function Header() {
             )}
           </nav>
           <span className="hidden items-center lg:inline-flex">
-            <LocaleSwitch />
             <ThemeToggle />
           </span>
           <MobileNav

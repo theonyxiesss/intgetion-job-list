@@ -4,6 +4,7 @@ import { recordAudit } from "@/lib/audit";
 import { forbidden, HttpError, notFound } from "@/lib/http";
 import { logger } from "@/lib/logger";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { siteEmailHtml } from "@/lib/email-html";
 import { siteUrl } from "@/lib/supabase/env";
 import type { CurrentUser } from "@/modules/auth/service";
 import { safeNotify } from "@/modules/notifications/service";
@@ -37,15 +38,10 @@ const BODY: Record<string, string> = {
   en: "Open this link within 72 hours to confirm that you work at",
   ru: "Откройте ссылку в течение 72 часов, чтобы подтвердить, что вы работаете в",
 };
-
-const escapeHtml = (value: string) =>
-  value.replace(
-    /[&<>"']/g,
-    (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
-        c
-      ]!,
-  );
+const ACTION: Record<string, string> = {
+  en: "Confirm domain",
+  ru: "Подтвердить домен",
+};
 
 /**
  * Resend over plain fetch when RESEND_API_KEY and EMAIL_FROM are set (15);
@@ -68,7 +64,10 @@ export const resendVerificationMailer: VerificationMailer = async (message) => {
       to: [message.to],
       subject: SUBJECT[locale],
       text,
-      html: `<p>${escapeHtml(BODY[locale]!)} ${escapeHtml(message.companyName)}:</p><p><a href="${escapeHtml(message.link)}">${escapeHtml(message.link)}</a></p>`,
+      html: siteEmailHtml({
+        body: `${BODY[locale]} ${message.companyName}.`,
+        action: { href: message.link, label: ACTION[locale]! },
+      }),
     }),
     signal: AbortSignal.timeout(10_000),
   });

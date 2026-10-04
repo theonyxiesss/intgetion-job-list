@@ -477,3 +477,25 @@
 - Прод: проект онлайн на https://intgetion.com (Vercel). В Supabase Auth нужно поставить Site URL `https://intgetion.com` и redirect `https://intgetion.com/**`.
 - OPEN QUESTION: нет
 - Следующее: Cursor — 9B (дайджест, письма); Hermes — довести `hermes/runbook` (11B) до зелёного CI после rebase.
+
+## [2026-10-04] — D216 — локально, на intgetion.com не выложено
+
+- Сделано: кнопки EN/RU убраны из шапки, подвала и мобильного меню. Язык выбирает кука `NEXT_LOCALE`, затем язык браузера, затем английский. Адреса `/en` и `/ru` остаются. В `docs/PLANS.md` добавлен P-LANG: позже испанский и португальский, переключатель вернётся вместе с ними. Решение D216.
+- Команды проверки: `pnpm exec eslint` по `header.tsx`, `footer.tsx`, `mobile-nav.tsx` → 0. Интеграция и e2e не запускались.
+- P-тесты подфазы: нет.
+- Миграции: нет.
+- Изменённые файлы: `src/components/shell/{header,footer,mobile-nav}.tsx`, удалён `src/components/shell/locale-switch.tsx`, `docs/DECISIONS.md`, `docs/PLANS.md`.
+- Отклонения от ТЗ: D216.
+- OPEN QUESTION: нет. Набор из двух следующих языков записан как испанский и португальский, его можно сменить до подфазы.
+- Следующая подфаза: не эта. 9B у Hermes. На https://intgetion.com переключатель ещё виден, пока правка не опубликована.
+
+## [2026-10-04] — запуск — для Claude Code, не подфаза
+
+- Сделано: прод https://intgetion.com на Vercel Pro, команда marks-projects, проект intgetion-job-list. Выкладка — master `038e408` (все cron). Домен куплен на Vercel, DNS у Vercel. Resend: домен `intgetion.com` проверен, `RESEND_API_KEY` и `EMAIL_FROM` (`noreply@intgetion.com`) стоят в production и preview. Письма входа и сброса пароля всё ещё шлёт Supabase, не Resend. Локально и не в git: D216 (кнопки языка убраны) и HTML-оболочка писем уведомлений и подтверждения домена (`src/lib/email-html.ts`). На прод это не выкладывать, пока основатель не скажет публиковать пачку. Публиковать с `origin/master`, не с ветки `cursor/vercel-deploy`: там урезанные cron под старый Hobby.
+- Команды проверки: `pnpm exec vitest run src/lib/email-html.test.ts src/modules/notifications/__tests__/delivery.test.ts` → 0 (2 файла, 6 тестов). `pnpm exec eslint` по оболочке писем и трём файлам шапки → 0.
+- P-тесты подфазы: нет.
+- Миграции: нет новых. `0016` и `0019` на облако по-прежнему применяет Claude Code: `pnpm db:migrate` и `pnpm db:verify`. Cursor это не делает.
+- Изменённые файлы: не закоммичены. Плюс к D216: `src/lib/email-html.ts`, `src/lib/email-html.test.ts`, `src/modules/notifications/service/render.ts`, `src/modules/notifications/__tests__/delivery.test.ts`, `src/modules/companies/service/verification-service.ts`.
+- Отклонения от ТЗ: D216. Оболочка писем — своя HTML-таблица в цветах сайта, не React Email.
+- OPEN QUESTION: нет.
+- Следующая подфаза: не начинать. 9B, P1, SEO, работодатели, куки, 11A, 11B — Hermes. 8B только после записи основателя. Claude не трогает env Vercel и не перевыкладывает прод. Ключ Resend не пересоздавать.
