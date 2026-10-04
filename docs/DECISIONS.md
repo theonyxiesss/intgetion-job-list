@@ -753,7 +753,7 @@ Scam-паттерны (`src/config/scam-patterns.ts`) проверяются п�
 
 ## D172 — сессия бота (7A)
 
-Cookie `bot_session` хранит 32 случайных байта (base64url), в базе лежит только sha256 (`session_token_hash`). Свойства cookie: HttpOnly, `SameSite=Lax`, `Path=/api/bot`, 30 дней.
+Cookie `bot_session` хранит 32 случайных байта (base64url), в базе лежит только sha256 (`session_token_hash`). Свойства cookie: HttpOnly, `SameSite=Lax`, `Path=/api/bot`, 30 дней; `Secure` — когда `NEXT_PUBLIC_SITE_URL` на https (production-сборка CI работает по http).
 
 Беседа выбирается только по cookie. `conversationId` из тела запроса принимается ради формы из ТЗ, но не используется. Если cookie указывает на чужую беседу (гостевую после входа или другого пользователя), начинается новая. Привязка гостевой беседы при регистрации — в 7B.
 
