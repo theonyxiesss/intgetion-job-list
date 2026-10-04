@@ -435,3 +435,14 @@
 - Отклонения от ТЗ: те же D160–D164.
 - OPEN QUESTION: нет
 - Следующая подфаза: 7B (Cursor, D180–D184). 8B и 11A не начинать.
+
+## [2026-10-04] — M1 — NOT DONE
+
+- Сделано: сферы, уровень и условия из `src/config/markers.ts`; миграция `0019_markers.sql`; форма вакансии и предпочтения профиля; словарь импорта; фильтры каталога; лента быстрых кнопок; страницы `/jobs/t/[slug]`; «Высокая зарплата»; RSS тегов поверх общей ленты; подбор `algo_version` 2 (сфера → роль ≥ 0.7, уровень × 0.9); `igaming` и `memecoins` остаются на ручной модерации. Решения D203, D205, D206. Ветка `cursor/m1`, коммит `3dfd16e`, перебазирована на `origin/master` (`b8145db`, страница работодателей и RSS каталога). В master не влита.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0; `pnpm exec vitest run` → 1 на первом прогоне (таймаут `eslint-rules/no-foreign-repo-import.test.mjs`, 5000 мс), повтор этого файла → 0 (6 tests). Интеграция и e2e локально не запускались. `gh run view 37216968211` → failure за 3–5 с: jobs `check` и `database` без runner и без шагов. `gh run rerun 37216968211 --failed` → тот же отказ. Так же падают чужие пуши с 16:22 UTC, включая `master` `37216550193` (D204a). Последний зелёный прогон репозитория — `37215888869` (16:12 UTC).
+- P-тесты подфазы: unit-список MARKERS.md прогнан локально (маркеры, риск, статус, роль). p95 `sector=web3` и e2e — только в CI, CI не стартовал.
+- Миграции: `0019_markers.sql` в ветке. На облако не применять, пока ветка не в master.
+- Изменённые файлы: `src/config/markers.ts`, `src/db/migrations/0019_markers.sql`, `src/db/schema/{enums,jobs,candidates}.ts`, `src/modules/jobs/**`, `src/modules/matching/**`, `src/modules/candidates/**`, `src/modules/ingestion/service/{normalize,ingest-fixtures}.ts`, `src/app/[locale]/jobs/**`, `src/app/sitemap.ts`, `src/messages/{en,ru}.json`, `tests/e2e/markers.spec.ts`, `docs/DECISIONS.md`, `docs/ERD.md`.
+- Отклонения от ТЗ: D203, D205, D206 (нет точки «для вас»: нет отметки последнего визита).
+- OPEN QUESTION: нет нового. Обязательная вилка зарплаты по-прежнему отложена (D204).
+- Следующая подфаза: дождаться живого CI, повторить прогон `cursor/m1` и влить fast-forward. P1 не начинать, пока M1 не в master.
