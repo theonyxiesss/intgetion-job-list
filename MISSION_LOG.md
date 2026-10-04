@@ -424,3 +424,14 @@
 - Отклонения от ТЗ: D160 (нет профиля — пустой `lowData`, не 404), D161 (таблица вместо pg-boss), D162 (импорт и republish не ставят задачу), D163 (вкладки фильтруют dismissed, API — нет), D164 (курсор, 60 отказов в час вне `rateRules`, `--fg-muted` вместо `--fg-subtle` на подписях 12–14 px).
 - OPEN QUESTION: нет
 - Следующая подфаза: не начинать. 10C уже в master. 7A — зона Claude Code. После rebase на origin/master (10C и D190): `gh run watch 37202189660` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37202189660 — `check` 2m5s и `database` 9m3s (21 integration file, e2e 46 passed) на `01922af`. Прогон `37202761442` упал на захвате очереди: `run_after` пишется часами базы, а захват сравнивал их с часами процесса. Без явных часов захват смотрит `now()` базы. После этого `gh run watch 37203118956` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37203118956 — `check` 1m47s и `database` 9m47s на `feb007e`. Ветка ещё раз перебазирована на `origin/master` с 7A (`9485400`): записи 7A сохранены, код 6B не переписывался.
+
+## [2026-10-04] — 6B — влито в master
+
+- Сделано: fast-forward `9485400..f958a63` в `master`. В тот же кончик вошла доводка страниц кандидата по DESIGN: строка отклика (компания, StatusBadge, дата, отзыв `danger`), вакансия (категория, дата, телеметрия, описание `body-l`), профиль (имя, телеметрия, навыки, языки, ссылки «что добавить»), ссылка «Агент» на `/chat`, кнопка «Далее» на `/matches`. Gitleaks на `37206827596` был красным из-за коммита `557039a` на `hermes/runbook` (`git log --all`); Hermes заменил его на `d608ca6`. Повтор упавших job и прогон кончика оба зелёные.
+- Команды проверки: `gh run watch 37206827596` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37206827596 (`4c7d872`, повтор `--failed`). `gh run watch 37212895132` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37212895132 — `check` 1m57s и `database` 9m51s на `f958a63`. `git push origin cursor/6b:master` → `9485400..f958a63`.
+- P-тесты подфазы: те же DoD 6B, плюс e2e отклика смотрит статус «Withdrawn» как текст бейджа, не как заголовок.
+- Миграции: `0016_matching_jobs.sql` в репозитории. На облако не применялась. Это делает Claude Code: `pnpm db:migrate` и `pnpm db:verify`.
+- Изменённые файлы: см. запись 6B выше и `f958a63`.
+- Отклонения от ТЗ: те же D160–D164.
+- OPEN QUESTION: нет
+- Следующая подфаза: 7B (Cursor, D180–D184). 8B и 11A не начинать.
