@@ -446,3 +446,14 @@
 - Отклонения от ТЗ: D203, D205, D206 (нет точки «для вас»: нет отметки последнего визита).
 - OPEN QUESTION: нет нового. Обязательная вилка зарплаты по-прежнему отложена (D204).
 - Следующая подфаза: дождаться живого CI, повторить прогон `cursor/m1` и влить fast-forward. P1 не начинать, пока M1 не в master.
+
+## [2026-10-04] — M1 — DONE, влито в master
+
+- Сделано: fast-forward `ae4884f..1e251c8` в `master`. Каталог навыков в интеграционном тесте считает bootstrap плюс 28 навыков из `0019` (128 строк; прежний потолок 120 относился только к bootstrap). Быстрые кнопки: первые 12 чипов вне `<details>`, потому что закрытый `details` прячет всех детей кроме `summary` и ссылка «For you» не попадала в e2e. Перед вливанием ветка перебазирована на `ae4884f` (дополнение D201 про смену куки в `/settings/privacy`); `src/lib/consent.ts` и баннер не переписывались.
+- Команды проверки: `gh run watch 37216968211` — `check` success, `database` failure: `skills.integration.test.ts` ожидал 100 навыков, в базе 128. `gh run watch 37217811535` → `check` success, `database` failure: e2e `markers.spec.ts` не нашёл ссылку «For you». `gh run watch 37218276345` → 0 на `567d499` до rebase. После rebase на `ae4884f`: `gh run watch 37218802272` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37218802272 — `check` 1m24s и `database` 7m38s на `1e251c8`. `git push origin cursor/m1:master` → `ae4884f..1e251c8`.
+- P-тесты подфазы: нет отдельного номера P. DoD M1 (маркеры, риск, модерация, подбор, p95, e2e чипов и узкого экрана) прошёл в job `database` прогона 37218802272.
+- Миграции: `0019_markers.sql` в master. На облако не применялась. Это делает Claude Code: `pnpm db:migrate` и `pnpm db:verify`. Миграция `0016` тоже могла остаться неприменённой — тот же прогон её подхватит.
+- Изменённые файлы: см. запись M1 NOT DONE и коммиты `1b3efd0`, `567d499` (после rebase — `1e251c8`).
+- Отклонения от ТЗ: D203, D205, D206.
+- OPEN QUESTION: нет
+- Следующая подфаза: 7B (Cursor, D180–D184). Затем 9B, затем P1. 8B и 11A не начинать.
