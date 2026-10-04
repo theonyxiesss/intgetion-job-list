@@ -73,8 +73,11 @@ export default async function JobPage({
 
   return (
     <main className="py-10 md:py-16">
-      {/* getJobForPublic without a user returns published jobs only. */}
-      <JsonLd data={jobPostingJsonLd(job, siteUrl(), locale)} />
+      {/* Our own published jobs only: imported ones belong to their source,
+          and feeds such as Remotive forbid passing them to Google Jobs (D211). */}
+      {job.source.type === "internal" ? (
+        <JsonLd data={jobPostingJsonLd(job, siteUrl(), locale)} />
+      ) : null}
       <Container className="flex flex-col gap-8">
         <Link
           href="/jobs"
