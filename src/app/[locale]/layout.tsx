@@ -39,6 +39,7 @@ const CLIENT_NAMESPACES = [
   "notificationSettings",
   "jobActions",
   "savedJobs",
+  "settings",
 ] as const;
 
 // Only an explicit "light" choice changes the default dark theme (D141).

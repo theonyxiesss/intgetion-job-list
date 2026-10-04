@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PreferenceToggles } from "@/components/notifications/preference-toggles";
+import { SettingsTabs } from "../settings-tabs";
 import { Container, PageHeader } from "@/components/ui/container";
 import { redirect } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth-guards";
@@ -27,6 +28,7 @@ export default async function NotificationSettingsPage({
   }
 
   const t = await getTranslations("notificationSettings");
+  const settings = await getTranslations("settings");
   const types = await getTranslations("notifications.types");
   const preferences = await readPreferences(user.id);
   const items = preferences.map((item) => {
@@ -43,7 +45,8 @@ export default async function NotificationSettingsPage({
   return (
     <main className="py-10 md:py-16">
       <Container narrow className="flex flex-col gap-8">
-        <PageHeader title={t("title")} />
+        <PageHeader title={settings("title")} />
+        <SettingsTabs active="notifications" />
         <PreferenceToggles
           items={items}
           saved={t("saved")}

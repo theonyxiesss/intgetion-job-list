@@ -9,7 +9,22 @@ const root = path.resolve(
 );
 
 const statusUpdate =
-  /update\s*\(\s*applications\s*\)|update\s+public\.applications/i;
+  /update\s*\(\s*applications\s*\)|update\s+public\.applications/gi;
+
+/**
+ * True when an update of applications sets `status`. The SET clause runs to
+ * `where` (raw SQL) or to the closing brace of `.set({...})` (Drizzle), so
+ * other columns (10C clears `cover_note`) do not trip the rule.
+ */
+function writesStatus(text: string): boolean {
+  for (const match of text.matchAll(statusUpdate)) {
+    const rest = text.slice(match.index + match[0].length);
+    const end = rest.search(/\bwhere\b|\}\s*\)/i);
+    const clause = end === -1 ? rest : rest.slice(0, end);
+    if (/\bstatus\b/.test(clause)) return true;
+  }
+  return false;
+}
 
 function sourceFiles(dir: string): string[] {
   const found: string[] = [];
@@ -39,8 +54,22 @@ describe("application status writes", () => {
         continue;
       }
       const text = readFileSync(file, "utf8");
-      if (statusUpdate.test(text)) hits.push(rel);
+      if (writesStatus(text)) hits.push(rel);
     }
     expect(hits).toEqual([]);
+  });
+
+  it("flags status in a SET clause and ignores other columns", () => {
+    expect(
+      writesStatus("update public.applications set status = 'x' where id = 1"),
+    ).toBe(true);
+    expect(writesStatus("db.update(applications).set({ status: next })")).toBe(
+      true,
+    );
+    expect(
+      writesStatus(
+        "update public.applications set cover_note = null where status = 'x'",
+      ),
+    ).toBe(false);
   });
 });

@@ -176,3 +176,12 @@ export function scoreStoredProfile(
 ) {
   return profileCompleteness(completenessInput(profile, contactEmail));
 }
+
+/** Hides or shows the profile to employers without touching other fields (10C). */
+export async function setProfileHidden(
+  userId: string,
+  hidden: boolean,
+): Promise<boolean> {
+  if (!(await profiles.setHidden(userId, hidden))) throw notFound();
+  return hidden;
+}

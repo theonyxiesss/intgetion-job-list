@@ -295,3 +295,13 @@ export function presentProfile(
     },
   };
 }
+
+/** Flips `is_hidden` only; false when the user has no profile. */
+export async function setHidden(userId: string, hidden: boolean) {
+  const rows = await getDb()
+    .update(candidateProfiles)
+    .set({ isHidden: hidden, updatedAt: new Date() })
+    .where(eq(candidateProfiles.userId, userId))
+    .returning({ userId: candidateProfiles.userId });
+  return rows.length > 0;
+}

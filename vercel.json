@@ -23,6 +23,10 @@
     {
       "path": "/api/cron/job-expiring",
       "schedule": "10 4 * * *"
+    },
+    {
+      "path": "/api/cron/retention",
+      "schedule": "20 3 * * *"
     }
   ]
 }

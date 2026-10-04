@@ -366,3 +366,18 @@
   - Cursor — 6B (`docs/prompts/cursor-6b.md`).
   - Claude Code — 10C (приватность, миграция 0017, D165–D169), затем: адрес получателя писем через Auth Admin API с service role (заглушка `lookupLoginEmail` из 9A), уведомления админ-действий (`job.moderation_decided`, `company.verification_decided`, `report.decided`), затем 7A.
   - Позже: Resend (домен + ключ), ключи в Vercel, `ANTHROPIC_API_KEY` к 7A, настройки Auth в Supabase, удалить старые worktree-папки агентов.
+
+## [2026-10-04] — 10C — приватность (ветка `claude/10c`, Claude Code)
+
+- Сделано (D165–D169):
+  - выгрузка `GET /api/me/export` с лимитом 5 в сутки;
+  - удаление `DELETE /api/me { confirm: "DELETE" }`: анонимизация в одной транзакции, компании единственного владельца блокируются, их вакансии закрываются с историей, затем удаляются Auth-пользователь и сессия;
+  - retention-cron `/api/cron/retention` в 03:20 UTC;
+  - `PUT /api/candidates/me/visibility`;
+  - `/settings/privacy` и `/settings/account` с вкладками;
+  - Auth Admin API через `fetch` (`src/lib/supabase/admin.ts`); 9A теперь берёт адрес письма из Auth и пишет только активным пользователям.
+- P13: `src/modules/privacy/privacy.integration.test.ts` — контакты дают 404 после удаления, `cover_note` пуст, статус отклика сохранён, компания `suspended`, вакансия `closed` с `from_status = published`, админ получает 422, повторное удаление — 404, retention удаляет только просроченное. E2E: `tests/e2e/privacy.spec.ts`.
+- `no-direct-status-update.test.ts` теперь ловит только UPDATE, который пишет `status`: 10C обнуляет `cover_note` и статус не трогает. Добавлен тест на само правило.
+- CI: `scripts/ci-db.sh` экспортирует `SUPABASE_SERVICE_ROLE_KEY` из `supabase status` (`SERVICE_ROLE_KEY` или `SECRET_KEY`).
+- Миграции: нет, номер 0017 свободен.
+- Следующее: уведомления админ-действий, затем 7A. Cursor — 6B.

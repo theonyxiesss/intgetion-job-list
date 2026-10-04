@@ -23,6 +23,7 @@ export {
   getCandidateForViewer,
   getOwnCandidate,
   hasCandidateProfile,
+  setProfileHidden,
   saveCandidateProfile,
   scoreStoredProfile,
   storeCompleteness,

@@ -840,5 +840,32 @@
     "next": "Next",
     "copy": "Copy",
     "copied": "Copied"
+  },
+  "settings": {
+    "title": "Settings",
+    "tabNotifications": "Notifications",
+    "tabPrivacy": "Privacy",
+    "tabAccount": "Account",
+    "saved": "Saved.",
+    "failed": "Could not save. Try again.",
+    "cancel": "Cancel",
+    "hideProfile": "Hide my profile from employers",
+    "hideProfileText": "Companies you applied to still see your application; nobody else finds your profile.",
+    "marketing": "Product news by email",
+    "marketingText": "Rare emails about new features. Off by default.",
+    "exportTitle": "Download your data",
+    "exportText": "One JSON file with your profile, contacts, applications, saved jobs, feedback, reports and notifications.",
+    "exportButton": "Download JSON",
+    "emailLanguage": "Email language",
+    "emailLanguageText": "Notifications are sent in this language.",
+    "deleteTitle": "Delete account",
+    "deleteText": "Your profile, contacts, saved jobs and notifications are deleted at once and your sign-in is removed. Applications stay with employers as an anonymous candidate without contacts. Companies where you are the only owner are suspended and their jobs closed. This cannot be undone.",
+    "deleteType": "Type DELETE to continue",
+    "deleteButton": "Delete account",
+    "deleteConfirmTitle": "Delete your account for good?",
+    "deleteConfirmText": "You will be signed out right away.",
+    "deleteConfirm": "Delete for good",
+    "deleteFailed": "Could not delete the account. Try again later.",
+    "adminCannotDelete": "An admin account cannot delete itself. Ask another admin to remove your admin role first."
   }
 }

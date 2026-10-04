@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { getAuthUserEmail } from "@/lib/supabase/admin";
 import { notificationEmails } from "@/db/schema";
 import { isNotificationType, type NotificationType } from "../lib/catalog";
 import { nextSendAfter } from "./batch-mail";
@@ -81,7 +82,7 @@ async function deliverOne(
     });
     return "skipped";
   }
-  const address = await lookupLoginEmail();
+  const address = await lookupLoginEmail(row.user_id);
   if (process.env.RESEND_API_KEY?.trim() && !address) {
     await mark(tx, row.id, {
       status: "skipped",
@@ -144,12 +145,17 @@ async function mark(
 }
 
 /**
- * Login email lives in Supabase Auth, not in `users` (D7, D126).
- * `app_rw` cannot read `auth.users`, and a failed query aborts the
- * send transaction, so this returns null until that grant exists.
+ * Login email lives in Supabase Auth, not in `users` (D7, D126). It is
+ * read through the Auth Admin API with the service-role key (D166); only
+ * active users get mail. Null without the key or for a deleted user.
  */
-export async function lookupLoginEmail(): Promise<string | null> {
-  return null;
+export async function lookupLoginEmail(userId: string): Promise<string | null> {
+  const rows = await getDb().execute<{ auth_uid: string; status: string }>(
+    sql`select auth_uid, status from public.users where id = ${userId}`,
+  );
+  const user = rows[0];
+  if (!user || user.status !== "active") return null;
+  return getAuthUserEmail(user.auth_uid);
 }
 
 export async function hasJobExpiringNotice(jobId: string): Promise<boolean> {

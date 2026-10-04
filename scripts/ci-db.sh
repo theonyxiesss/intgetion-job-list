@@ -40,5 +40,9 @@ if [[ -z "$NEXT_PUBLIC_SUPABASE_URL" || -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]]; 
   exit 1
 fi
 
+# Auth Admin API for account deletion and mail recipients (10C, D166).
+service_key="$(value SERVICE_ROLE_KEY)"
+export SUPABASE_SERVICE_ROLE_KEY="${service_key:-$(value SECRET_KEY)}"
+
 pnpm build
 bash scripts/ci-ui.sh
