@@ -159,12 +159,34 @@ curl -X GET "https://<домен>/api/cron/expire-jobs" \
 | **Письма не уходят**            | Уведомления в UI есть, email — нет; в логах `skipped`          | `src/modules/notifications/service/email-sender.ts:45–48`; Vercel Function Logs для `/api/cron/notifications` | 1) Проверить `RESEND_API_KEY` и `EMAIL_FROM` в Vercel env. 2) Проверить домен в Resend (verified, SPF/DKIM). 3) Проверить `SUPABASE_SERVICE_ROLE_KEY` — без него `lookupLoginEmail` не находит email получателя (9A/10C).                                                  |
 | **Рекомендации не обновляются** | `/api/matches` отдаёт старый кэш; новые вакансии не появляются | `src/modules/matching/service/cache-rules.ts`; `matching_results.computed_at`; `algo_version`                 | 1) Проверить кэш: `computed_at` старше 6 часов или `candidate_profiles.updated_at > computed_at` → пересчёт. 2) Публикация вакансии должна ставить задачу pg-boss (6B) — проверить очередь. 3) `algo_version` инкрементится при изменении формул — проверить DECISIONS.md. |
 | **429 и лимиты**                | Ответы 429 с `Retry-After`                                     | `src/lib/rate-limit.ts`; `rate_limit_counters` таблица; Sentry алерты                                         | 1) Проверить `rateRules` в rate-limit.ts — лимиты по разделам 6. 2) Для cron — `/api/cron/rate-limit-gc` чистит старые окна. 3) Если ложные срабатывания — увеличить лимиты в коде и задеплоить.                                                                           |
-| **Cron отвечает 404**           | Ручной curl даёт 404                                           | Любой `src/app/api/cron/*/route.ts` → `authorized()`                                                          | 1) Проверить, что заголовок `Authorization: Bearer <CRON_SECRET>` передан именно так. 2) Проверить `CRON_SECRET` в env Vercel/локально. 3) Секрет не должен содержать переносов строк.                                                                                     |
+| **Cron отвечает 404**           | Ручной curl даёт 404                                           | Любой `src/app/api/cron/*/route.ts` → `authorized()`                                                          | 1) Проверить, что заголовок `Authorization: Bearer *** передан именно так. 2) Проверить `CRON_SECRET` в env Vercel/локально. 3) Секрет не должен содержать переносов строк.                                                                                                |
 | **Ошибка 500 и x-request-id**   | 500 на любом API; в ответе заголовок `x-request-id`            | Sentry (по `x-request-id`); Vercel Function Logs; `src/lib/http/handler.ts` (если есть)                       | 1) Найти в Sentry по `x-request-id`. 2) Стек-трейс покажет модуль. 3) Если повторяемо — создать issue, откатить деплой при критическом.                                                                                                                                    |
 
 ---
 
-## 8. Ротация секретов
+## 8. Алерты (раздел 18.1 ТЗ)
+
+> Настройка алертов в Sentry / Better Stack / UptimeRobot. Пороги и действия ниже.
+
+| Сигнал (как в 18.1)                           | Порог алерта                                                                                        | Где смотреть (дашборд/лог)                         | Что делать (runbook-действие)                                                                                                                                                                                |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Ошибки фронт/бэк (Sentry)                     | error rate > 2% за 5 мин                                                                            | Sentry Issues / Alerts                             | 1) Открыть алерт в Sentry. 2) Найти последнюю ошибку по `x-request-id`. 3) Если новый деплой — откатить. 4) Если повторяемо — создать issue с приоритетом P1.                                                |
+| Латентность API p95 (`/api/jobs`)             | p95 > 800 ms за 15 мин                                                                              | Sentry Performance / Vercel Analytics              | 1) Проверить, не упал ли репликатор. 2) `EXPLAIN ANALYZE` на медленных запросах. 3) Если FTS — проверить индексы. 4) При необходимости — масштабировать Vercel (Pro → Enterprise) или добавить read-replica. |
+| Медленные запросы (pg_stat_statements)        | запрос > 500 ms в топ-10                                                                            | Supabase Dashboard → Database → Query performance  | 1) Найти запрос в pg_stat_statements. 2) Добавить недостающий индекс или переписать запрос. 3) Проверить `work_mem` / `effective_cache_size`.                                                                |
+| Неудачные отклики (5xx на POST /applications) | ≥ 5 за 10 мин                                                                                       | Sentry / Vercel Function Logs                      | 1) Проверить, не упал ли Supabase. 2) Стек-трейс в Sentry покажет модуль. 3) Если миграция — откатить. 4) Если race condition — проверить `transitionApplication` транзакционность.                          |
+| Бот: таймауты/ошибки LLM                      | > 5% за 15 мин                                                                                      | Sentry (bot_messages.cost_micro_usd, ошибки)       | 1) Проверить Anthropic status page. 2) Если превышен `LLM_DAILY_BUDGET_USD` — бот уже в circuit breaker (12.5). 3) Увеличить бюджет или подождать сутки.                                                     |
+| Стоимость LLM                                 | > 80% `LLM_DAILY_BUDGET_USD`                                                                        | Sentry (bot_messages.cost_micro_usd суммарно)      | 1) Проверить аномальные диалоги (один юзер > 3× медианы). 2) При необходимости — временно снизить лимит сообщений в `rateRules.botUser`.                                                                     |
+| Импорт                                        | 2 неудачных прогона подряд; дубли > 30% или rejected > 50% прогона                                  | Supabase Dashboard → `import_runs` таблица; Sentry | 1) Проверить `import_runs.last_status` и `error`. 2) Если источник недоступен — отключить в админке. 3) Если дубли — проверить дедуп-логику. 4) Если rejected > 50% — проверить scam-patterns.               |
+| Очередь pg-boss                               | задачи старше 15 мин                                                                                | Supabase Dashboard → `pgboss` таблицы              | 1) Проверить, не завис ли worker. 2) `SELECT * FROM pgboss.job WHERE state = 'active' AND started_at < now() - interval '15 min'`. 3) Перезапустить worker при необходимости.                                |
+| Подозрительная активность                     | регистрации > 5× медианы часа; > 20 откликов/час с одного аккаунта; ≥ 3 жалобы на компанию за сутки | Sentry / Supabase Auth logs / `reports` таблица    | 1) Заблокировать подозрительные IP в Supabase Auth (rate limit). 2) При ≥ 3 жалобах на компанию — авто-пауза её вакансий (уже реализовано). 3) Проверить `rateRules` — возможно, нужно ужесточить.           |
+| Auth                                          | > 50 неудачных входов с IP за 10 мин                                                                | Supabase Auth logs / Sentry                        | 1) Временный бан IP в Supabase Dashboard. 2) Проверить, не атака ли это (credential stuffing). 3) Ужесточить `rateRules.login` при необходимости.                                                            |
+| Uptime                                        | `/api/health` недоступен 2 мин                                                                      | Better Stack / UptimeRobot / Sentry                | 1) Проверить Vercel Status Page. 2) Если Vercel down — ждать восстановления. 3) Если свой код — откатить последний деплой. 4) Проверить DNS.                                                                 |
+
+> **Важно:** Все алерты должны приходить в общий канал оповещений (Telegram/Slack/email дежурного). Настроить эскалацию: если не квитирован за 15 мин → следующий дежурный.
+
+---
+
+## 10. Ротация секретов
 
 | Секрет                                                        | Как ротировать                                                                                                               | Последствия ротации                                                                                                                                                                                                           |
 | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -178,7 +200,7 @@ curl -X GET "https://<домен>/api/cron/expire-jobs" \
 
 ---
 
-## 9. Чек-лист перед запуском (pre-launch)
+## 11. Чек-лист перед запуском (pre-launch)
 
 - [ ] Все переменные из раздела 2 заданы в Vercel (Production/Preview/Development).
 - [ ] `pnpm lint` → 0
@@ -195,11 +217,11 @@ curl -X GET "https://<домен>/api/cron/expire-jobs" \
 - [ ] Sentry DSN задан, алерты 18.1 настроены.
 - [ ] Cron jobs в Vercel Dashboard видны и соответствуют `vercel.json`.
 - [ ] Проверен restore-тест БД (пункт 6) — успешно восстановлено на тестовом проекте.
-- [ ] `MISSION_LOG.md` и `docs/DECISIONS.md` актуальны (D191–D194 записаны).
+- [ ] `MISSION_LOG.md` и `docs/DECISIONS.md` актуальны (D191–D196 записаны).
 
 ---
 
-## 10. Формат:check на Windows
+## 12. Формат:check на Windows
 
 > Prettier на Windows ругается на CRLF во **всех** файлах. Проверять только **свои** файлы:
 

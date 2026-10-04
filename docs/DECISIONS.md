@@ -850,6 +850,7 @@ Cookie `bot_session` хранит 32 случайных байта (base64url), 
 
 Дополнение D204 (2026-10-04, по разбору Remote3 — `docs/research/remote3.md`): быстрая кнопка и страница тега «Высокая зарплата» (`/jobs/t/high-paying`, порог 100 000 USD в год по сравнимым вилкам) и RSS-ленты каталога и тегов (`MARKERS.md` п. 7 и 7a, DESIGN 9.13).
 
+
 ## D200 — заглушки входа через Google и X, 2FA и кошелька
 
 По просьбе основателя в интерфейсе видны будущие способы входа, но ничего не подключено. На `/login` и `/register` под формой — неактивные кнопки «Войти через Google» и «Войти через X» с меткой «Скоро». В `/settings/account` — блок «Безопасность»: «Двухфакторный вход» и «Криптокошелёк», тоже «Скоро». Кнопки ничего не отправляют, маршрутов и таблиц нет. OAuth остаётся V2 (D7, раздел 21). 2FA и кошелёк в ТЗ не описаны — это OPEN QUESTION основателю; когда дойдёт, Supabase Auth умеет TOTP и вход через Web3-кошелёк. Куки: без изменений, только необходимые (раздел 17), баннера согласия нет.
@@ -909,3 +910,29 @@ Cookie `bot_session` хранит 32 случайных байта (base64url), 
 ## D184 — P10 в записанном прогоне (7B)
 
 Инструкция внутри описания вакансии не становится действием: записанный ответ её не выполняет и не повторяет адрес из этого текста. Текст пользователя проходит `redactPii` до модели. Отклик, который модель просит сделать сразу, останавливается на `CONFIRMATION_REQUIRED`.
+
+- `scripts/env-rules.mjs` — чистые функции валидации переменных окружения: какие обязательны в dev/prod, проверки формата (URL парсится, в prod NEXT_PUBLIC_SITE_URL — https, CRON_SECRET/UNSUBSCRIBE_SECRET/PRIVACY_HASH_SECRET ≥ 32 символа, DATABASE_URL — postgres-URL, LLM_DAILY_BUDGET_USD — число > 0). Кросс-валидация пары RESEND_API_KEY + EMAIL_FROM (оба заданы или оба пусты). Никогда не возвращает значения секретов.
+- `scripts/env-rules.d.mts` — TypeScript декларации для импорта в тесты.
+- `scripts/check-env.mjs` — CLI: `node scripts/check-env.mjs --mode dev|prod`. Читает env через `loadLocalEnv` из `scripts/db-url.mjs` + `process.env`. Вывод: только имя и статус OK/MISSING/INVALID (+ причина без значения). Код выхода 1 при отсутствующих обязательных.
+- `src/lib/env-rules.test.ts` — 37 unit-тестов, импортирует `../../scripts/env-rules.mjs`. Покрывает dev/prod режимы, парные проверки, секреты не попадают в вывод, неизвестные переменные, порядок сортировки.
+- В `package.json` добавлена строка `"env:check": "node scripts/check-env.mjs"`.
+
+## D195 — /admin/metrics (подфаза 11B)
+
+Добавлена страница метрик только для админа (`/admin/metrics`, `GET /api/admin/metrics`). Новый модуль `src/modules/metrics/{repo,service}` с SQL-запросами:
+
+- регистрации (total, last 7d, by role — placeholder);
+- вакансии (published, internal, imported);
+- отклики (24h, 7d, mutual interest = shortlisted);
+- очередь модерации (pending/approved/rejected + total);
+- письма (по статусам pending/sent/skipped/failed, по типам);
+- матчинг (avg score, total pairs, threshold pairs ≥ 0.55 — если есть данные).
+  Нет миграций, нет новых таблиц. Вёрстка — Stat, Table из `@/components/ui`. Навигация в админке — пункт «Метрики». i18n ключи под `metrics` в en.json/ru.json. Integration-тест по образцу matching.integration.test.ts (read-only, убирает за себя).
+
+## D196 — Alerts & backups in RUNBOOK (подфаза 11B)
+
+В `docs/RUNBOOK.md` добавлены:
+
+- **Раздел 8 «Алерты»** (по 18.1 ТЗ): таблица 13 сигналов с порогом, где смотреть (дашборд/лог), runbook-действие (1–4 шага). Покрыты: ошибки Sentry, латентность p95, медленные запросы pg, 5xx на откликах, бот LLM таймауты/бюджет, импорт, pg-boss очередь, подозрительная активность, Auth брутфорс, uptime. Добавлено требование канала оповещений и эскалации 15 мин.
+- **Раздел 10 «Бэкапы и восстановление»**: честно указано, что restore на проде **не проверялся** — только описание процедуры (PITR, drill на тестовом проекте перед запуском).
+- Нумерация разделов RUNBOOK обновлена (Инциденты → 9, Алерты → 8, Бэкапы → 10, Ротация → 11, Чек-лист → 12, Format:check → 13).
