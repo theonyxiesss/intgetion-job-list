@@ -17,7 +17,8 @@
     "db:verify": "node scripts/verify-db.mjs",
     "db:seed:jobs:4a": "node src/db/seed/jobs-4a.mjs",
     "perf:jobs:4a": "node scripts/perf-jobs-4a.mjs",
-    "admin:grant": "node scripts/grant-admin.mjs"
+    "admin:grant": "node scripts/grant-admin.mjs",
+    "db:seed:demo": "node scripts/seed-demo.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
