@@ -1,16 +1,36 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClass } from "@/components/ui/button";
+import { authAdminAvailable } from "@/lib/supabase/admin";
+import { siteUrl } from "@/lib/supabase/env";
+import {
+  telegramAuthUrl,
+  telegramBotId,
+  telegramBotToken,
+} from "@/modules/auth/service";
 
-const PROVIDERS = ["google", "x", "telegram"] as const;
+const STUBS = ["google", "x"] as const;
+
+/** Telegram works when the bot token and the Auth admin key are set (D217). */
+async function telegramHref(): Promise<string | null> {
+  const token = telegramBotToken();
+  if (!token || !authAdminAvailable()) return null;
+  const origin = siteUrl();
+  const locale = await getLocale();
+  return telegramAuthUrl({
+    botId: telegramBotId(token),
+    origin,
+    returnTo: `${origin}/${locale}/auth/telegram`,
+  });
+}
 
 /**
- * Sign-in with Google, X and Telegram — placeholders only (D200). OAuth is
- * V2 (D7); Telegram needs its Login Widget and a bot token, not Supabase:
- * the buttons are disabled and send nothing.
+ * Sign-in with Google and X — placeholders only (D200); OAuth is V2 (D7).
+ * Telegram is real once configured (D217), otherwise a placeholder too.
  */
 export async function SocialSignInStubs() {
   const t = await getTranslations("auth.social");
+  const telegram = await telegramHref();
   return (
     <section aria-labelledby="social-sign-in" className="flex flex-col gap-3">
       <div className="flex items-center gap-3 text-fg-muted">
@@ -20,14 +40,27 @@ export async function SocialSignInStubs() {
         </h2>
         <span aria-hidden="true" className="h-px flex-1 bg-line" />
       </div>
-      {PROVIDERS.map((provider) => (
-        <div key={provider} className="flex items-center gap-3">
-          <Button variant="secondary" disabled className="flex-1">
-            {t(provider)}
-          </Button>
-          <Badge>{t("soon")}</Badge>
+      {telegram && (
+        <div className="flex flex-col gap-1">
+          <a
+            href={telegram}
+            className={buttonClass("secondary", "md", "w-full")}
+          >
+            {t("telegram")}
+          </a>
+          <p className="t-caption text-fg-muted">{t("telegramTerms")}</p>
         </div>
-      ))}
+      )}
+      {[...STUBS, ...(telegram ? [] : (["telegram"] as const))].map(
+        (provider) => (
+          <div key={provider} className="flex items-center gap-3">
+            <Button variant="secondary" disabled className="flex-1">
+              {t(provider)}
+            </Button>
+            <Badge>{t("soon")}</Badge>
+          </div>
+        ),
+      )}
     </section>
   );
 }

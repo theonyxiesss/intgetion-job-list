@@ -3,6 +3,10 @@ import { TERMS_VERSION } from "@/config/legal";
 import type { AppLocale } from "@/i18n/routing";
 import { recordAudit } from "@/lib/audit";
 import { logger } from "@/lib/logger";
+import {
+  createConfirmedAuthUser,
+  magicLinkTokenHash,
+} from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/supabase/env";
 import {
   HttpError,
@@ -21,6 +25,11 @@ import {
   type SignupMetadata,
   type UpdateMeInput,
 } from "../schemas";
+import {
+  decodeTelegramResult,
+  telegramEmail,
+  verifyTelegramAuth,
+} from "./telegram";
 
 export type AuthClient = Pick<
   SupabaseClient["auth"],
@@ -137,7 +146,7 @@ export async function sendMagicLink(
 /** Section 16.1: admin sign-ins are audited. Others are not recorded. */
 export async function auditSignIn(
   user: CurrentUser,
-  method: "password" | "email_link",
+  method: "password" | "email_link" | "telegram",
   ip: string,
 ): Promise<void> {
   if (user.platformRole !== "admin") return;
@@ -260,6 +269,71 @@ export async function changePassword(
   await requireCurrentUser(auth);
   const { error } = await auth.updateUser({ password: input.password });
   if (error) throw authFailure(error);
+}
+
+function telegramFailed(): HttpError {
+  return new HttpError(401, errorCodes.unauthenticated, "Sign-in failed", {
+    reason: "telegram_failed",
+  });
+}
+
+/**
+ * Telegram sign-in (D217): checks the signed `tgAuthResult`, creates the
+ * auth user on the first visit (placeholder email, terms accepted by
+ * continuing) and opens a session through a one-time magic-link token.
+ */
+export async function signInWithTelegram(
+  auth: AuthClient,
+  input: { result: string; locale: AppLocale },
+  botToken: string,
+  now: Date = new Date(),
+): Promise<CurrentUser> {
+  const telegram = verifyTelegramAuth(
+    decodeTelegramResult(input.result),
+    botToken,
+    now,
+  );
+  if (!telegram) throw telegramFailed();
+
+  const email = telegramEmail(telegram.id);
+  const metadata: SignupMetadata = {
+    terms_version: TERMS_VERSION,
+    terms_accepted_at: now.toISOString(),
+    locale: input.locale,
+  };
+  const created = await createConfirmedAuthUser(email, {
+    ...metadata,
+    telegram_id: telegram.id,
+    telegram_username: telegram.username ?? null,
+  });
+  if (created === "unavailable" || created === "failed") {
+    throw new HttpError(502, "AUTH_PROVIDER_ERROR", "Auth provider error");
+  }
+  const tokenHash = await magicLinkTokenHash(email);
+  if (!tokenHash) {
+    throw new HttpError(502, "AUTH_PROVIDER_ERROR", "Auth provider error");
+  }
+  const { error } = await auth.verifyOtp({
+    token_hash: tokenHash,
+    type: "magiclink",
+  });
+  if (error) throw telegramFailed();
+
+  const { data } = await auth.getUser();
+  if (!data.user) throw telegramFailed();
+  const existing = await usersRepo.findUserByAuthUid(data.user.id);
+  const stored = signupMetadata.safeParse(data.user.user_metadata);
+  const row =
+    existing ??
+    (await usersRepo.insertUserIfMissing(
+      data.user.id,
+      stored.success ? stored.data : metadata,
+    ));
+  if (row.status !== "active") {
+    await auth.signOut();
+    throw telegramFailed();
+  }
+  return row;
 }
 
 export async function logout(auth: AuthClient): Promise<void> {

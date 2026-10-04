@@ -201,14 +201,18 @@
       "missing_terms": "Registration is not finished. Register again and accept the terms.",
       "rate_limited": "Too many attempts. Try again later.",
       "session_missing": "The reset link has expired. Request a new one.",
-      "generic": "Something went wrong. Try again."
+      "generic": "Something went wrong. Try again.",
+      "telegram_failed": "Telegram sign-in did not work. Try again or use email."
     },
     "social": {
       "title": "Or continue with",
       "google": "Continue with Google",
       "x": "Continue with X",
       "telegram": "Continue with Telegram",
-      "soon": "Soon"
+      "soon": "Soon",
+      "telegramTitle": "Signing in with Telegram",
+      "telegramProgress": "Checking the Telegram confirmation…",
+      "telegramTerms": "By continuing with Telegram you accept the terms of use and the privacy policy."
     }
   },
   "onboarding": {

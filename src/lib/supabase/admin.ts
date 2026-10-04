@@ -7,6 +7,16 @@ import { supabaseUrl } from "./env";
  * "unavailable" instead of throwing, so callers degrade predictably (D166).
  */
 
+/**
+ * Login emails on this domain are placeholders for users without an email
+ * (Telegram sign-in, D217). No mail is sent there: the lookup returns null.
+ */
+export const PLACEHOLDER_EMAIL_DOMAIN = "telegram.intgetion.com";
+
+export function isPlaceholderEmail(email: string): boolean {
+  return email.toLowerCase().endsWith(`@${PLACEHOLDER_EMAIL_DOMAIN}`);
+}
+
 function serviceKey(): string | null {
   return process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() || null;
 }
@@ -38,7 +48,8 @@ export async function getAuthUserEmail(
     const response = await adminFetch(`/users/${encodeURIComponent(authUid)}`);
     if (!response?.ok) return null;
     const body = (await response.json()) as { email?: string | null };
-    return body.email?.trim() || null;
+    const email = body.email?.trim() || null;
+    return email && !isPlaceholderEmail(email) ? email : null;
   } catch (error) {
     logger.warn({ err: error }, "auth admin: email lookup failed");
     return null;
@@ -68,5 +79,65 @@ export async function deleteAuthUser(
   } catch (error) {
     logger.warn({ err: error }, "auth admin: user delete failed");
     return "failed";
+  }
+}
+
+/**
+ * Creates an auth user with a confirmed email and no password (D217).
+ * "exists" when the email is already taken: the caller signs that user in.
+ */
+export async function createConfirmedAuthUser(
+  email: string,
+  userMetadata: Record<string, unknown>,
+): Promise<"created" | "exists" | "unavailable" | "failed"> {
+  try {
+    const response = await adminFetch("/users", {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        email_confirm: true,
+        user_metadata: userMetadata,
+      }),
+    });
+    if (!response) return "unavailable";
+    if (response.ok) return "created";
+    const body = (await response.json().catch(() => ({}))) as {
+      error_code?: string;
+      code?: string;
+    };
+    const code = body.error_code ?? body.code;
+    if (response.status === 422 && code === "email_exists") return "exists";
+    logger.warn(
+      { status: response.status, code },
+      "auth admin: create refused",
+    );
+    return "failed";
+  } catch (error) {
+    logger.warn({ err: error }, "auth admin: create failed");
+    return "failed";
+  }
+}
+
+/**
+ * A one-time sign-in token for an existing user, without sending an email.
+ * The server turns it into a session with `verifyOtp` (D217).
+ */
+export async function magicLinkTokenHash(
+  email: string,
+): Promise<string | null> {
+  try {
+    const response = await adminFetch("/generate_link", {
+      method: "POST",
+      body: JSON.stringify({ type: "magiclink", email }),
+    });
+    if (!response?.ok) {
+      logger.warn({ status: response?.status }, "auth admin: link refused");
+      return null;
+    }
+    const body = (await response.json()) as { hashed_token?: string };
+    return body.hashed_token || null;
+  } catch (error) {
+    logger.warn({ err: error }, "auth admin: link failed");
+    return null;
   }
 }
