@@ -67,6 +67,14 @@ export async function generateMetadata({
   return {
     title: { default: product("name"), template: `%s · ${product("name")}` },
     description: t("description"),
+    // RSS of the newest jobs for feed readers and bots (D204).
+    alternates: {
+      types: {
+        "application/rss+xml": [
+          { url: `/${locale}/jobs/rss.xml`, title: product("name") },
+        ],
+      },
+    },
   };
 }
 

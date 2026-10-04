@@ -879,7 +879,8 @@
     "contacts": "Open contacts",
     "settings": "Notification settings",
     "rights": "All rights reserved.",
-    "language": "Footer language"
+    "language": "Footer language",
+    "employerJobs": "Company jobs"
   },
   "ui": {
     "close": "Close",
@@ -965,5 +966,84 @@
     "text": "Necessary cookies only. Analytics only with your consent.",
     "acceptAll": "Accept all",
     "necessaryOnly": "Necessary only"
+  },
+  "forEmployers": {
+    "title": "For employers",
+    "metaDescription": "Post remote jobs for free and reach people whose skills, salary expectations and working hours match.",
+    "label": "For employers",
+    "heroTitle": "Hire remote people who fit your time zone",
+    "heroText": "Post jobs for free. We show them to candidates whose skills, salary expectations and working hours match.",
+    "cta": "Post a job",
+    "stepsTitle": "How it works",
+    "steps": {
+      "company": {
+        "title": "Company",
+        "text": "Create your company and verify it with a corporate email or a DNS record."
+      },
+      "job": {
+        "title": "Job",
+        "text": "Describe the job: skills, salary range, format, required overlap of working hours."
+      },
+      "match": {
+        "title": "Matching",
+        "text": "We show it to matching candidates and tell them why it fits."
+      },
+      "contacts": {
+        "title": "Contacts",
+        "text": "Review applications and mark the ones you like — that is when their contacts open."
+      }
+    },
+    "whyTitle": "Why here",
+    "why": {
+      "match": "Matching by skills and time zone, not keywords.",
+      "salary": "Candidates see your range with currency and taxes taken into account — fewer off-target applications.",
+      "both": "Web3 and regular remote work in one place, in English and Russian.",
+      "trust": "A verified badge builds trust and gets more replies."
+    },
+    "verifyTitle": "Verification levels",
+    "verify": {
+      "unverified": {
+        "title": "Unverified",
+        "text": "Jobs are moderated, up to 5 posts per day."
+      },
+      "verified": {
+        "title": "Verified",
+        "text": "Corporate email or DNS plus business details. Up to 50 posts per day and a badge."
+      },
+      "trusted": {
+        "title": "Trusted",
+        "text": "Granted automatically after steady activity without complaints."
+      }
+    },
+    "faqTitle": "Employer questions",
+    "faq": {
+      "price": {
+        "q": "How much does it cost?",
+        "a": "Posting is free for now."
+      },
+      "limit": {
+        "q": "How many jobs can I post?",
+        "a": "5 per day unverified, 50 once verified."
+      },
+      "review": {
+        "q": "Why is my job under review?",
+        "a": "The company is not verified yet or the post looks risky. Review usually takes up to a day."
+      },
+      "contacts": {
+        "q": "When do I see a candidate's contacts?",
+        "a": "After you mark the application as interesting: it moves to the shortlist and the contacts open."
+      },
+      "salary": {
+        "q": "Can I leave the salary out?",
+        "a": "Yes, but such jobs rank lower in candidates' matches."
+      }
+    },
+    "finalTitle": "Ready to hire?",
+    "finalText": "Post your first job — it takes 5 minutes."
+  },
+  "rss": {
+    "title": "INTGETION JOB LIST — newest remote jobs",
+    "description": "The 50 newest published remote jobs.",
+    "feed": "RSS feed"
   }
 }

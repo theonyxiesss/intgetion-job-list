@@ -16,7 +16,8 @@ const columns = [
   {
     title: "footer.employers",
     links: [
-      { href: "/employer/jobs", label: "nav.employers" },
+      { href: "/for-employers", label: "nav.employers" },
+      { href: "/employer/jobs", label: "footer.employerJobs" },
       { href: "/employer/company", label: "footer.company" },
       { href: "/contacts", label: "footer.contacts" },
     ],

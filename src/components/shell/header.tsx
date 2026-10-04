@@ -47,7 +47,11 @@ export async function Header() {
     { href: "/jobs", label: t("nav.jobs") },
     ...(candidate ? [{ href: "/matches", label: t("nav.matches") }] : []),
     { href: "/chat", label: t("nav.chat") },
-    { href: "/employer/jobs", label: t("nav.employers") },
+    // A guest reads about hiring first (D204); a member goes to their jobs.
+    {
+      href: signedIn ? "/employer/jobs" : "/for-employers",
+      label: t("nav.employers"),
+    },
   ];
   const account: NavItem[] = signedIn
     ? [
