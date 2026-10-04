@@ -48,6 +48,8 @@ fi
 # Auth Admin API for account deletion and mail recipients (10C, D166).
 service_key="$(value SERVICE_ROLE_KEY)"
 export SUPABASE_SERVICE_ROLE_KEY="${service_key:-$(value SECRET_KEY)}"
+# Tests that need Supabase Auth itself; the run above skips them (D217).
+pnpm test:integration src/modules/auth/__tests__/telegram.integration.test.ts
 
 pnpm build
 bash scripts/ci-ui.sh

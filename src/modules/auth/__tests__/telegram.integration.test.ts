@@ -41,43 +41,53 @@ afterAll(async () => {
   }
 });
 
-describe("Telegram sign-in against Supabase Auth (D217)", () => {
-  it("creates the user once and signs the same user in again", async () => {
-    const now = new Date();
-    const first = browserAuth();
-    const user = await signInWithTelegram(
-      first,
-      { result: signedResult(now), locale: "ru" },
-      botToken,
-      now,
-    );
-    authUids.add(user.authUid);
-    expect(user.locale).toBe("ru");
-    expect(user.status).toBe("active");
-    const { data } = await first.getUser();
-    expect(data.user?.email).toBe(`tg${telegramId}@telegram.intgetion.com`);
-    // Placeholder addresses are never handed to the mailer.
-    expect(await getAuthUserEmail(user.authUid)).toBeNull();
+// Needs Supabase Auth and its admin key: ci-db.sh runs it once they are set.
+const authReady = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL &&
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
+);
 
-    const again = await signInWithTelegram(
-      browserAuth(),
-      { result: signedResult(now), locale: "en" },
-      botToken,
-      now,
-    );
-    expect(again.id).toBe(user.id);
-    expect(again.locale).toBe("ru");
-  });
+describe.skipIf(!authReady)(
+  "Telegram sign-in against Supabase Auth (D217)",
+  () => {
+    it("creates the user once and signs the same user in again", async () => {
+      const now = new Date();
+      const first = browserAuth();
+      const user = await signInWithTelegram(
+        first,
+        { result: signedResult(now), locale: "ru" },
+        botToken,
+        now,
+      );
+      authUids.add(user.authUid);
+      expect(user.locale).toBe("ru");
+      expect(user.status).toBe("active");
+      const { data } = await first.getUser();
+      expect(data.user?.email).toBe(`tg${telegramId}@telegram.intgetion.com`);
+      // Placeholder addresses are never handed to the mailer.
+      expect(await getAuthUserEmail(user.authUid)).toBeNull();
 
-  it("refuses a forged payload without touching Supabase", async () => {
-    const now = new Date();
-    await expect(
-      signInWithTelegram(
+      const again = await signInWithTelegram(
         browserAuth(),
         { result: signedResult(now), locale: "en" },
-        "777000:another-bot",
+        botToken,
         now,
-      ),
-    ).rejects.toMatchObject({ status: 401 });
-  });
-});
+      );
+      expect(again.id).toBe(user.id);
+      expect(again.locale).toBe("ru");
+    });
+
+    it("refuses a forged payload without touching Supabase", async () => {
+      const now = new Date();
+      await expect(
+        signInWithTelegram(
+          browserAuth(),
+          { result: signedResult(now), locale: "en" },
+          "777000:another-bot",
+          now,
+        ),
+      ).rejects.toMatchObject({ status: 401 });
+    });
+  },
+);

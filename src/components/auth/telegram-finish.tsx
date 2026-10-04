@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 
 /**
  * oauth.telegram.org returns to `/auth/telegram#tgAuthResult=…`. The
@@ -11,6 +11,7 @@ import { Link } from "@/i18n/navigation";
 export function TelegramFinish() {
   const t = useTranslations("auth");
   const locale = useLocale();
+  const router = useRouter();
   const [failed, setFailed] = useState(false);
   const started = useRef(false);
 
@@ -31,11 +32,11 @@ export function TelegramFinish() {
     request
       .then((response) => {
         if (!response.ok) throw new Error(String(response.status));
-        // A full load so the header reads the new session cookie.
-        window.location.assign(`/${locale}`);
+        router.replace("/");
+        router.refresh();
       })
       .catch(() => setFailed(true));
-  }, [locale]);
+  }, [locale, router]);
 
   if (!failed) return <p role="status">{t("social.telegramProgress")}</p>;
   return (
