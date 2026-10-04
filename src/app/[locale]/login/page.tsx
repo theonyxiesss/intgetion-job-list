@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthPage } from "@/components/auth/auth-page";
 import { LoginForm } from "@/components/auth/login-form";
+import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
 import { Link } from "@/i18n/navigation";
 
 const callbackErrors = new Set(["invalid_link", "missing_terms"]);
@@ -37,6 +38,7 @@ export default async function LoginPage({
       <LoginForm
         initialError={error && callbackErrors.has(error) ? error : undefined}
       />
+      <SocialSignInStubs />
     </AuthPage>
   );
 }

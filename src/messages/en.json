@@ -193,6 +193,12 @@
       "rate_limited": "Too many attempts. Try again later.",
       "session_missing": "The reset link has expired. Request a new one.",
       "generic": "Something went wrong. Try again."
+    },
+    "social": {
+      "title": "Or continue with",
+      "google": "Continue with Google",
+      "x": "Continue with X",
+      "soon": "Soon"
     }
   },
   "onboarding": {
@@ -909,7 +915,19 @@
     "deleteConfirmText": "You will be signed out right away.",
     "deleteConfirm": "Delete for good",
     "deleteFailed": "Could not delete the account. Try again later.",
-    "adminCannotDelete": "An admin account cannot delete itself. Ask another admin to remove your admin role first."
+    "adminCannotDelete": "An admin account cannot delete itself. Ask another admin to remove your admin role first.",
+    "security": {
+      "title": "Security",
+      "soon": "Soon",
+      "twoFactor": {
+        "title": "Two-factor sign-in",
+        "text": "A one-time code from an authenticator app at every sign-in."
+      },
+      "wallet": {
+        "title": "Crypto wallet",
+        "text": "Link a wallet to your account."
+      }
+    }
   },
   "chat": {
     "title": "Career agent",

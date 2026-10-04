@@ -3,6 +3,7 @@ import {
   DeleteAccount,
   EmailLanguage,
 } from "@/components/settings/settings-controls";
+import { SecurityStubs } from "@/components/settings/security-stubs";
 import { Alert, Container, PageHeader } from "@/components/ui";
 import { requireSettingsUser } from "../require-settings-user";
 import { SettingsTabs } from "../settings-tabs";
@@ -23,6 +24,7 @@ export default async function AccountSettingsPage({
         <PageHeader title={t("title")} />
         <SettingsTabs active="account" />
         <EmailLanguage locale={user.locale} />
+        <SecurityStubs />
         {user.platformRole === "admin" ? (
           <Alert tone="warning" title={t("adminCannotDelete")} />
         ) : (
