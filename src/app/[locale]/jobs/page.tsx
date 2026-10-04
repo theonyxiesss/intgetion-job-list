@@ -28,21 +28,6 @@ export const dynamic = "force-dynamic";
 
 const categories = JOB_CATEGORIES;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  return {
-    alternates: {
-      types: {
-        "application/rss+xml": `/${locale}/jobs/rss.xml`,
-      },
-    },
-  };
-}
-
 function text(raw: Record<string, string | string[] | undefined>, key: string) {
   const value = raw[key];
   return typeof value === "string" ? value : "";
@@ -104,6 +89,9 @@ export async function generateMetadata({
     alternates: {
       canonical: `${siteUrl()}/${locale}/jobs`,
       languages: languageAlternates("/jobs"),
+      types: {
+        "application/rss+xml": `/${locale}/jobs/rss.xml`,
+      },
     },
   };
 }

@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { HttpError } from "@/lib/http";
 import {
+  AnthropicProvider,
   chat,
   circuitBreakerOpen,
   costMicroUsd,
@@ -8,6 +9,7 @@ import {
   LLMOutputError,
   llmFromEnv,
   MAX_OUTPUT_TOKENS,
+  modelsFromEnv,
   redactPii,
   trimContext,
   wrapUntrusted,
