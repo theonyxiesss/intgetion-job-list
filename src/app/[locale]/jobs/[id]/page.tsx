@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -13,8 +14,37 @@ import { ExternalApplyLink } from "@/modules/feedback/ui/external-apply-link";
 import { JobFeedbackActions } from "@/modules/feedback/ui/job-feedback-actions";
 import { getJobForPublic } from "@/modules/jobs/service";
 import { WhyItFits } from "@/modules/matching/ui/why-it-fits";
+import { jobPostingJsonLd } from "@/modules/seo/job-posting";
+import { JsonLd } from "@/modules/seo/json-ld";
+import {
+  languageAlternates,
+  metaDescription,
+  siteUrl,
+} from "@/modules/seo/site";
 
 export const dynamic = "force-dynamic";
+
+/** Title, description, canonical and share card for search (D211). */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}): Promise<Metadata> {
+  const { locale, id } = await params;
+  const job = await getJobForPublic(id, { locale });
+  if (!job) return {};
+  const title = `${job.title} — ${job.company.name}`;
+  const description = metaDescription(job.description);
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${siteUrl()}/${locale}/jobs/${job.id}`,
+      languages: languageAlternates(`/jobs/${job.id}`),
+    },
+    openGraph: { type: "website", title, description },
+  };
+}
 
 export default async function JobPage({
   params,
@@ -43,6 +73,8 @@ export default async function JobPage({
 
   return (
     <main className="py-10 md:py-16">
+      {/* getJobForPublic without a user returns published jobs only. */}
+      <JsonLd data={jobPostingJsonLd(job, siteUrl(), locale)} />
       <Container className="flex flex-col gap-8">
         <Link
           href="/jobs"
