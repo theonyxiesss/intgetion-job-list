@@ -42,9 +42,16 @@ async function axeClean(page: Page) {
     (violation) =>
       violation.impact === "critical" || violation.impact === "serious",
   );
-  expect(bad.map((violation) => `${violation.impact}:${violation.id}`)).toEqual(
-    [],
-  );
+  expect(
+    bad.flatMap((violation) =>
+      violation.nodes
+        .slice(0, 3)
+        .map(
+          (node) =>
+            `${page.url()} ${violation.impact}:${violation.id} ${node.html.slice(0, 180)}`,
+        ),
+    ),
+  ).toEqual([]);
 }
 
 test("phone pages do not scroll sideways and controls are at least 44px", async ({
