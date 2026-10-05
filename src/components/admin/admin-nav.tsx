@@ -1,15 +1,40 @@
 "use client";
 
-import { useRouter } from "@/i18n/navigation";
+import {
+  Briefcase,
+  ChartColumn,
+  Download,
+  Flag,
+  LayoutGrid,
+  ListChecks,
+  ScrollText,
+  SlidersHorizontal,
+  Tags,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
+import type { AdminIconName } from "@/admin/registry";
 import { Icon, Select, cn, navFade } from "@/components/ui";
-import { Link } from "@/i18n/navigation";
-import type { LucideIcon } from "lucide-react";
+import { Link, useRouter } from "@/i18n/navigation";
+
+const icons: Record<AdminIconName, LucideIcon> = {
+  "layout-grid": LayoutGrid,
+  "list-checks": ListChecks,
+  flag: Flag,
+  briefcase: Briefcase,
+  users: Users,
+  download: Download,
+  tags: Tags,
+  "scroll-text": ScrollText,
+  "chart-column": ChartColumn,
+  sliders: SlidersHorizontal,
+};
 
 export type AdminNavItem = {
   key: string;
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: AdminIconName;
   count?: number;
   current: boolean;
 };
@@ -57,7 +82,7 @@ export function AdminNav({
                   : "border-transparent text-fg-muted hover:text-fg",
               )}
             >
-              <Icon icon={item.icon} size={16} />
+              <Icon icon={icons[item.icon]} size={16} />
               <span className="min-w-0 flex-1">{item.label}</span>
               {item.count !== undefined && item.count > 0 && (
                 <span className="t-data text-signal">{item.count}</span>

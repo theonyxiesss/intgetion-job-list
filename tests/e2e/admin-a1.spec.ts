@@ -3,7 +3,7 @@ import { execFileSync } from "node:child_process";
 import AxeBuilder from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
 import { authLink, waitForMail } from "./mail";
-import { expect, test } from "./fixtures";
+import { consentCookie, expect, test, testIp } from "./fixtures";
 
 const password = "orbit-lantern-42";
 const adminHost = "http://admin.localhost:3000";
@@ -64,8 +64,7 @@ async function signInAdmin(page: Page, email: string) {
   const secret = await page.getByTestId("totp-secret-value").innerText();
   await page.getByLabel("Код").fill(totp(secret));
   await page.getByRole("button", { name: "Подтвердить" }).click();
-  const cont = page.getByRole("link", { name: "Продолжить" });
-  if (await cont.isVisible().catch(() => false)) await cont.click();
+  await page.getByRole("link", { name: "Продолжить" }).click();
   await expect(page).toHaveURL(/\/ru\/admin$/);
 }
 
@@ -132,7 +131,11 @@ test("ADMIN_HOST_ONLY hides /admin on the main host", async ({ browser }) => {
   test.skip(!process.env.CI, "the flagged server is started in CI");
   const context = await browser.newContext({
     baseURL: "http://127.0.0.1:3100",
+    extraHTTPHeaders: { "x-forwarded-for": testIp() },
   });
+  await context.addCookies([
+    { ...consentCookie, url: "http://127.0.0.1:3100" },
+  ]);
   const page = await context.newPage();
   const email = uniqueEmail("flag");
   await signUp(page, email);

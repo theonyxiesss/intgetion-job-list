@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { adminPathStatus, hostOrigin, isAdminHost } from "./host";
+import { adminPathStatus, csrfSite, hostOrigin, isAdminHost } from "./host";
 
 describe("admin host routing", () => {
   it("recognises the production and local admin hosts", () => {
@@ -77,6 +77,18 @@ describe("admin host routing", () => {
     );
     expect(hostOrigin("admin.intgetion.com")).toBe(
       "https://admin.intgetion.com",
+    );
+  });
+
+  it("lets a loopback port match its own origin", () => {
+    expect(csrfSite("127.0.0.1:3100", "http://127.0.0.1:3000")).toBe(
+      "http://127.0.0.1:3100",
+    );
+    expect(csrfSite("intgetion.com", "https://intgetion.com")).toBe(
+      "https://intgetion.com",
+    );
+    expect(csrfSite("admin.localhost:3000", "https://intgetion.com")).toBe(
+      "http://admin.localhost:3000",
     );
   });
 });

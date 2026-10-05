@@ -49,3 +49,16 @@ export function hostOrigin(host: string): string {
     name !== "admin.localhost" && name !== "localhost" && name !== "127.0.0.1";
   return `${secure ? "https" : "http"}://${host}`;
 }
+
+/**
+ * CSRF site. The admin host and loopback (any port) must match the request
+ * host, so a second local server can sign in. Public production stays on the
+ * configured site URL.
+ */
+export function csrfSite(host: string | null, configuredSite: string): string {
+  if (!host) return configuredSite;
+  if (isAdminHost(host)) return hostOrigin(host);
+  const name = host.split(":")[0]?.toLowerCase() ?? "";
+  if (name === "127.0.0.1" || name === "localhost") return `http://${host}`;
+  return configuredSite;
+}
