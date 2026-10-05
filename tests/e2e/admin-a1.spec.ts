@@ -91,8 +91,9 @@ test("owner signs in with TOTP and sees every section", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Overview");
 
   await signInAdmin(page, email);
+  const nav = page.getByRole("navigation", { name: "Администрирование" });
   for (const name of ownerSections) {
-    await expect(page.getByRole("link", { name })).toBeVisible();
+    await expect(nav.getByRole("link", { name, exact: true })).toBeVisible();
   }
 
   await page.setViewportSize({ width: 360, height: 800 });
@@ -112,8 +113,9 @@ test("a moderator does not see Team or Flags", async ({ page }) => {
   await signUp(page, email);
   grant(email, "moderator");
   await signInAdmin(page, email);
-  await expect(page.getByRole("link", { name: "Команда" })).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Флаги" })).toHaveCount(0);
+  const nav = page.getByRole("navigation", { name: "Администрирование" });
+  await expect(nav.getByRole("link", { name: "Команда" })).toHaveCount(0);
+  await expect(nav.getByRole("link", { name: "Флаги" })).toHaveCount(0);
   const team = await page.goto(`${adminHost}/ru/admin/team`);
   expect(team?.status()).toBe(404);
 });
