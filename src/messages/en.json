@@ -769,7 +769,8 @@
     "inapp": "In the app",
     "email": "Email",
     "saved": "Saved",
-    "error": "Could not save this setting."
+    "error": "Could not save this setting.",
+    "telegram": "Telegram"
   },
   "applications": {
     "nav": "Applications",

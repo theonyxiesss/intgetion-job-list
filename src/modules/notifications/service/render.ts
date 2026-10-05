@@ -108,3 +108,45 @@ export function templateValues(
     jobs,
   };
 }
+
+/** Where a notification leads, per type (D237). */
+const NOTIFICATION_PATHS: Record<NotificationType, string> = {
+  "application.created": "/employer/jobs",
+  "application.viewed": "/applications",
+  "application.status_changed": "/applications",
+  "application.withdrawn": "/employer/jobs",
+  "mutual_interest.revealed": "/contacts",
+  "job.moderation_decided": "/employer/jobs",
+  "job.expiring": "/employer/jobs",
+  "job.closed": "/applications",
+  "company.verification_decided": "/employer/company",
+  "matches.digest": "/matches",
+  "report.decided": "/notifications",
+  "search.alert": "/saved-searches",
+};
+
+/**
+ * The in-app title and text of a notification as a Telegram message, with
+ * a link to the page it is about (D237). Plain text, no markup.
+ */
+export function telegramText(input: {
+  locale: "en" | "ru";
+  type: NotificationType;
+  payload: Record<string, unknown>;
+  siteUrl: string;
+}): string | null {
+  const key = NOTIFICATION_CATALOG[input.type]
+    .i18nKey as keyof typeof en.notifications.types;
+  const block = catalogs[input.locale].notifications.types[key] as {
+    inapp?: { title: string; body: string };
+  };
+  if (!block.inapp) return null;
+  const values = templateValues(input.payload);
+  const title = fillTemplate(block.inapp.title, values);
+  const body = fillTemplate(block.inapp.body, values);
+  const link = `${input.siteUrl}/${input.locale}${NOTIFICATION_PATHS[input.type]}`;
+  return `${title}
+${body}
+
+${link}`;
+}

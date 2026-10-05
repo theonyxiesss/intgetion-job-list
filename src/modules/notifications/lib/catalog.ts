@@ -7,7 +7,8 @@
  */
 import { z } from "zod";
 
-export const NOTIFICATION_CHANNELS = ["inapp", "email"] as const;
+/** "telegram": a message from the platform bot to a linked account (D236). */
+export const NOTIFICATION_CHANNELS = ["inapp", "email", "telegram"] as const;
 export type NotificationChannel = (typeof NOTIFICATION_CHANNELS)[number];
 
 export type DeliveryPolicy = "immediate" | "hourly_batch" | "daily_digest";
@@ -306,7 +307,7 @@ export function resolveDelivery(
   preferences: readonly NotificationPreferenceRow[],
 ): ResolveDeliveryResult {
   const definition = NOTIFICATION_CATALOG[assertNotificationType(type)];
-  if (channel !== "inapp" && channel !== "email") {
+  if (!(NOTIFICATION_CHANNELS as readonly string[]).includes(channel)) {
     throw new Error(`unknown notification channel: ${channel}`);
   }
   const row = preferences.find(
@@ -320,6 +321,7 @@ export function resolveDelivery(
   if (channel === "inapp") {
     return { allowed: true };
   }
+  // Telegram follows the email default: the same events are worth a push (D236).
   return definition.emailDefault
     ? { allowed: true }
     : { allowed: false, reason: "disabled_by_default" };

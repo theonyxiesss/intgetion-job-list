@@ -73,3 +73,5 @@ export {
   type DigestJobLoader,
 } from "./digest";
 export { deliverInTransaction } from "./deliver";
+export { runTelegramDispatch } from "./telegram-dispatch";
+export { telegramText } from "./render";

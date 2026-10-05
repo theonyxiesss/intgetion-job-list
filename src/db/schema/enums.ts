@@ -137,6 +137,7 @@ export const moderationStatus = pgEnum("moderation_status", [
 export const notificationChannel = pgEnum("notification_channel", [
   "inapp",
   "email",
+  "telegram",
 ]);
 
 export const verificationMethod = pgEnum("verification_method", [

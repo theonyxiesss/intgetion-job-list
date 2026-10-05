@@ -5,7 +5,7 @@ import { Choice } from "@/components/ui/choice";
 
 type Preference = {
   type: string;
-  channel: "inapp" | "email";
+  channel: "inapp" | "email" | "telegram";
   enabled: boolean;
   label: string;
   channelLabel: string;

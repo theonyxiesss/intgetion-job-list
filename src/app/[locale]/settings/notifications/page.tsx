@@ -5,6 +5,7 @@ import { Container, PageHeader } from "@/components/ui/container";
 import { redirect } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth-guards";
 import { HttpError } from "@/lib/http";
+import { telegramLinkOf } from "@/modules/auth/service";
 import {
   catalogTitleKey,
   readPreferences,
@@ -30,17 +31,23 @@ export default async function NotificationSettingsPage({
   const t = await getTranslations("notificationSettings");
   const settings = await getTranslations("settings");
   const types = await getTranslations("notifications.types");
-  const preferences = await readPreferences(user.id);
-  const items = preferences.map((item) => {
-    const key = catalogTitleKey(item.type);
-    return {
-      type: item.type,
-      channel: item.channel,
-      enabled: item.enabled,
-      label: key ? types(`${key}.inapp.title`) : item.type,
-      channelLabel: item.channel === "email" ? t("email") : t("inapp"),
-    };
-  });
+  const [preferences, telegram] = await Promise.all([
+    readPreferences(user.id),
+    telegramLinkOf(user),
+  ]);
+  // Telegram switches only for an account with Telegram linked (D236).
+  const items = preferences
+    .filter((item) => item.channel !== "telegram" || telegram)
+    .map((item) => {
+      const key = catalogTitleKey(item.type);
+      return {
+        type: item.type,
+        channel: item.channel,
+        enabled: item.enabled,
+        label: key ? types(`${key}.inapp.title`) : item.type,
+        channelLabel: t(item.channel),
+      };
+    });
 
   return (
     <main className="py-10 md:py-16">

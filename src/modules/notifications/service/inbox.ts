@@ -91,11 +91,13 @@ export async function writePreferences(
 ) {
   for (const item of items) {
     if (!isNotificationType(item.type)) throw notFound();
-    if (item.channel !== "inapp" && item.channel !== "email") throw notFound();
+    if (!(NOTIFICATION_CHANNELS as readonly string[]).includes(item.channel)) {
+      throw notFound();
+    }
     await upsertPreference({
       userId,
       type: item.type,
-      channel: item.channel,
+      channel: item.channel as NotificationChannel,
       enabled: item.enabled,
     });
   }

@@ -15,7 +15,7 @@ export const writePreferencesInput = z.object({
     .array(
       z.object({
         type: z.string().min(1),
-        channel: z.enum(["inapp", "email"]),
+        channel: z.enum(["inapp", "email", "telegram"]),
         enabled: z.boolean(),
       }),
     )

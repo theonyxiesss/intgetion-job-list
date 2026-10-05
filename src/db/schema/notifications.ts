@@ -25,6 +25,8 @@ export const notifications = pgTable(
     type: text("type").notNull(),
     payload: jsonb("payload").notNull(),
     readAt: timestamp("read_at", { withTimezone: true }),
+    /** When the Telegram dispatcher looked at it, sent or not (D237). */
+    telegramCheckedAt: timestamp("telegram_checked_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
