@@ -354,6 +354,26 @@ export function compareSalaries(
   };
 }
 
+/**
+ * One salary as USD minor units per month, with the same rules as
+ * compareSalaries: hour → null (D5), no fresh rate → null (D4). Basis is kept
+ * by the caller, which must only mix amounts of one basis.
+ */
+export function toUsdMonthlyMinor(
+  amount: SalaryAmount,
+  fxRates: readonly FxRate[],
+  now: Date,
+): bigint | null {
+  validateSalaryAmount(amount);
+  const monthly = toMonthlyMinor(amount.amountMinor, amount.period);
+  if (monthly === null) return null;
+  if (amount.currency === USD) return monthly;
+  const rate = selectFreshestRates(fxRates).get(amount.currency);
+  if (!rate || !isFreshRate(rate, now)) return null;
+  const scaled = new Map([[amount.currency, parseRateToUsd(rate.rateToUsd)]]);
+  return convertToUsd(monthly, amount.currency, scaled);
+}
+
 function validateSalaryAmount(amount: SalaryAmount): void {
   assertCurrency(amount.currency);
   assertPeriod(amount.period);

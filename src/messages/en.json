@@ -1479,5 +1479,32 @@
     "terms": "Terms of Use",
     "privacy": "Privacy Policy",
     "cookies": "Cookie settings"
+  },
+  "salaries": {
+    "title": "Web3 salaries by skill",
+    "intro": "Typical yearly pay in USD from salary ranges of jobs published on INTGETION over the last {days} days.",
+    "method": "How we count: the midpoint of each job range, gross pay only, monthly and yearly ranges converted to USD at the European Central Bank rate. Hourly and net ranges are left out. A skill appears once it has at least {min} such jobs; a seniority row needs {row}.",
+    "emptyTitle": "Not enough salary data yet",
+    "emptyText": "Salary figures appear once a skill has at least {min} jobs with a published range. Meanwhile, browse the open jobs.",
+    "browseJobs": "Browse jobs",
+    "skill": "Skill",
+    "jobs": "Jobs",
+    "p25": "25th percentile",
+    "median": "Median",
+    "p75": "75th percentile",
+    "perYear": "USD per year",
+    "skillTitle": "{skill} salaries",
+    "skillIntro": "Yearly pay for {skill} roles in USD, from {count} jobs published on INTGETION over the last {days} days.",
+    "skillEmptyTitle": "Not enough {skill} salary data yet",
+    "skillJobs": "{skill} jobs",
+    "bySeniority": "By seniority",
+    "allSalaries": "All salaries",
+    "seniority": {
+      "internship": "Internship",
+      "entry": "Entry",
+      "mid": "Mid",
+      "senior": "Senior",
+      "lead": "Lead"
+    }
   }
 }

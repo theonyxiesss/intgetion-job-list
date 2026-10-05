@@ -5,6 +5,7 @@ import { getDb } from "@/db/client";
 import { logger } from "@/lib/logger";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import { listSitemapEntries, searchJobs } from "@/modules/jobs/service";
+import { listSalarySkillSlugs } from "@/modules/salaries/service";
 import { languageAlternates, siteUrl } from "@/modules/seo/site";
 
 // Read the database per request, never at build time (D210).
@@ -71,6 +72,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // One after the other: parallel queries on one pooled connection hang (D247).
     const { jobs, companies } = await listSitemapEntries();
     const present = await presentTagSlugs();
+    // Salary pages only once they show numbers (D260).
+    const salarySkills = await listSalarySkillSlugs();
     return [
       ...pages,
       ...jobs.map((job) => entry(`/jobs/${job.id}`, job.updatedAt)),
@@ -80,6 +83,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...CATALOG_TAGS.filter(
         (tag) => tag.kind !== "for-you" && present.has(tag.slug),
       ).map((tag) => entry(`/jobs/t/${tag.slug}`)),
+      ...(salarySkills.length ? [entry("/salaries")] : []),
+      ...salarySkills.map((slug) => entry(`/salaries/${slug}`)),
     ];
   } catch (error) {
     // A database hiccup still yields the static pages, not a 500.
