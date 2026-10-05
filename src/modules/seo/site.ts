@@ -34,6 +34,28 @@ export const ROBOTS_DISALLOW = [
   "/*/dev/",
 ] as const;
 
+/**
+ * SEO-tool crawlers that copy whole sites into their databases; they bring
+ * no visitors (P-SCRAPE, D218). Search engines are not on this list.
+ */
+export const BLOCKED_CRAWLERS = [
+  "AhrefsBot",
+  "SemrushBot",
+  "MJ12bot",
+  "DotBot",
+  "BLEXBot",
+  "DataForSeoBot",
+  "serpstatbot",
+  "Barkrowler",
+  "PetalBot",
+] as const;
+
+/**
+ * A link no person sees (hidden in the footer) and every honest crawler is
+ * told to skip: whoever requests it is a scraper ignoring robots.txt (D218).
+ */
+export const SCRAPER_TRAP_PATH = "/api/catalog-export";
+
 /** First sentence-sized slice of a job description for <meta description>. */
 export function metaDescription(text: string, max = 160): string {
   const flat = text.replace(/\s+/g, " ").trim();

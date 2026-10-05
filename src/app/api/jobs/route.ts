@@ -1,5 +1,7 @@
 import { HttpError, readJson, toErrorResponse } from "@/lib/http";
 import { requireMembership, requireUser } from "@/lib/auth-guards";
+import { enforceRateLimit } from "@/lib/rate-limit";
+import { clientIp } from "@/lib/request-ip";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { toJobDto } from "@/modules/jobs/api/dto";
@@ -43,6 +45,10 @@ export async function GET(request: Request) {
       }
     } catch {
       // No request scope → guest view.
+    }
+    // Guests read the JSON API under a per-IP limit; pages are unaffected (D218).
+    if (!viewer.hidden) {
+      await enforceRateLimit("publicApi", clientIp(request.headers));
     }
     const result = await searchJobs(
       parsed.data,

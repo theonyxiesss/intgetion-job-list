@@ -30,6 +30,8 @@ export const rateRules = {
   botGuest: { limit: 30, windowSeconds: 24 * 60 * 60 },
   /** bot messages from a user, keyed by user id (7A) */
   botUser: { limit: 200, windowSeconds: 24 * 60 * 60 },
+  /** guest JSON reads of jobs, keyed by IP (P-SCRAPE, D218) */
+  publicApi: { limit: 120, windowSeconds: 60 },
 } as const satisfies Record<string, RateRule>;
 
 /** Fixed window (D26): windows start at multiples of the window length. */

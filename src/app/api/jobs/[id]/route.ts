@@ -1,5 +1,7 @@
 import { readJson, toErrorResponse, HttpError } from "@/lib/http";
 import { requireMembership, requireUser } from "@/lib/auth-guards";
+import { enforceRateLimit } from "@/lib/rate-limit";
+import { clientIp } from "@/lib/request-ip";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { toJobDto } from "@/modules/jobs/api/dto";
@@ -28,6 +30,10 @@ export async function GET(
       isAdmin = user?.platformRole === "admin";
     } catch {
       /* Public listing remains available to guests. */
+    }
+    // Guests read the JSON API under a per-IP limit (D218).
+    if (!userId) {
+      await enforceRateLimit("publicApi", clientIp(request.headers));
     }
     const job = await getJobForPublic(id, {
       userId,

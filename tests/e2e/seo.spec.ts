@@ -9,6 +9,7 @@ test("robots and sitemap are served", async ({ request }) => {
   const robotsText = await robots.text();
   expect(robotsText).toContain("Disallow: /*/admin");
   expect(robotsText).toContain("Sitemap: ");
+  expect(robotsText).toContain("User-Agent: AhrefsBot");
   const sitemap = await request.get("/sitemap.xml");
   expect(sitemap.status()).toBe(200);
   expect(await sitemap.text()).toContain('hreflang="ru"');
@@ -73,4 +74,16 @@ test("a job page has a title, a canonical URL and JobPosting data", async ({
     hiringOrganization: { name: "SEO Co" },
     baseSalary: { currency: "EUR", value: { minValue: 5000, maxValue: 7000 } },
   });
+});
+
+// D218: the hidden footer link is a trap; requesting it is a plain 404.
+test("the scraper trap is hidden and answers 404", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/en/jobs");
+  const trap = page.locator('a[href="/api/catalog-export"]');
+  await expect(trap).toHaveCount(1);
+  await expect(trap).toBeHidden();
+  expect((await request.get("/api/catalog-export")).status()).toBe(404);
 });

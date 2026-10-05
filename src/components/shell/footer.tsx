@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Logo, navFade } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
+import { SCRAPER_TRAP_PATH } from "@/modules/seo/site";
 const columns = [
   {
     title: "footer.candidates",
@@ -66,6 +67,10 @@ export function Footer() {
             <span className="t-data">© {year}</span> {t("product.name")}.{" "}
             {t("footer.rights")}
           </p>
+          {/* Scraper trap: never rendered, disallowed in robots.txt (D218). */}
+          <a href={SCRAPER_TRAP_PATH} hidden rel="nofollow" tabIndex={-1}>
+            {t("product.name")}
+          </a>
         </div>
       </div>
     </footer>
