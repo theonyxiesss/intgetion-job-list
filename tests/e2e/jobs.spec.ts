@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import pg from "pg";
 import { expect, newContextWithIp, test } from "./fixtures";
 import type { Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
@@ -152,4 +154,63 @@ test("a guest cannot read an unpublished job", async ({ page }) => {
   } finally {
     await otherContext.close();
   }
+});
+
+// D292: a job that is gone answers 404 but offers something else.
+test("a closed job explains itself and offers similar jobs", async ({
+  page,
+  request,
+}) => {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) throw new Error("DATABASE_URL is required.");
+  const userId = randomUUID();
+  const companyId = randomUUID();
+  const closedId = randomUUID();
+  const openId = randomUUID();
+  const client = new pg.Client({ connectionString });
+  await client.connect();
+  try {
+    await client.query(
+      `insert into public.users (id, auth_uid, terms_accepted_at, terms_version)
+       values ($1, $2, now(), 'closed')`,
+      [userId, randomUUID()],
+    );
+    await client.query(
+      `insert into public.companies (id, name, slug, status, created_by)
+       values ($1, 'Closed Co', $2, 'verified', $3)`,
+      [companyId, `closed-${companyId.slice(0, 8)}`, userId],
+    );
+    for (const [id, status] of [
+      [closedId, "closed"],
+      [openId, "published"],
+    ] as const) {
+      await client.query(
+        `insert into public.jobs (
+           id, company_id, created_by, title, description, category,
+           work_format, employment_type, application_method, source, status,
+           published_at, expires_at
+         ) values ($1, $2, $3, $4,
+           'Build reliable backend services with a collaborative remote team.',
+           'engineering', 'remote', 'full_time', 'internal', 'internal', $5,
+           now(), now() + interval '30 days')`,
+        [id, companyId, userId, `Closed e2e ${status}`, status],
+      );
+    }
+  } finally {
+    await client.end();
+  }
+
+  expect((await request.get(`/en/jobs/${closedId}`)).status()).toBe(404);
+  await page.goto(`/en/jobs/${closedId}`);
+  await expect(page.getByText("no longer open")).toBeVisible();
+  await expect(page.getByRole("link", { name: "All jobs" })).toBeVisible();
+  // The open job of the same category is offered instead.
+  await expect(
+    page.locator(`a[href="/en/jobs/${openId}"]`).first(),
+  ).toBeVisible();
+
+  // A job that was never public is not acknowledged at all.
+  const draftId = randomUUID();
+  await page.goto(`/en/jobs/${draftId}`);
+  await expect(page.getByText("not found")).toBeVisible();
 });
