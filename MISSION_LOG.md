@@ -522,3 +522,17 @@
 - Отклонения от ТЗ: нет.
 - OPEN QUESTION: нет. Чтобы закрыть Auth, нужен один вход в панель Supabase (пароль в чат не присылать) и ключ OpenRouter, если бот должен отвечать.
 - Следующая подфаза: не эта. В master не вливать из этой сессии.
+
+## [2026-10-05] — прод: пулер и Telegram (D217) — NOT DONE
+
+- Сделано: код не менялся. Домен `intgetion.com` на проекте `intgetion-job-list` (команда marks-projects-a1f8edb6). Чужой проект `intgetion` (`intgetion.vercel.app`, репозиторий Intgetion) не деплоился: из него удалены `SUPABASE_SERVICE_ROLE_KEY` и `TELEGRAM_BOT_TOKEN`, других переменных там не осталось.
+- `intgetion-job-list` Production: `SUPABASE_SERVICE_ROLE_KEY` уже был. `TELEGRAM_BOT_TOKEN` добавлен только в Production, тип Secret, формат `цифры:строка` без кавычек и пробелов. Значение в журнал не писалось. `DATABASE_URL` уже был переведён 2026-10-05 08:13 UTC на transaction pooler, порт 6543, роль приложения (не postgres); цель Production и Preview, в этой записи не менялся.
+- Redeploy текущего прода master `497ef3b` (D218): новый деплой привязан к https://intgetion.com, Ready.
+- Проверено вживую: `POST /api/auth/telegram` с телом `{}` и `origin: https://intgetion.com` → 400 `VALIDATION_ERROR`, не 503 `TELEGRAM_DISABLED`. На https://intgetion.com/ru/login «Войти через Telegram» — ссылка на `oauth.telegram.org` (`origin` https://intgetion.com, `return_to` https://intgetion.com/ru/auth/telegram), под ней строка про условия. Google и X по-прежнему серые. Клик открыл окно Telegram «Log in to use your Telegram account with intgetion.com». Подтверждение телефона основателем не закончено, возврат на сайт вошедшим не проверен.
+- Команды проверки: `curl.exe -s -D - -X POST https://intgetion.com/api/auth/telegram -H "content-type: application/json" -H "origin: https://intgetion.com" -d "{}"` → HTTP 400, код `VALIDATION_ERROR`. `vercel redeploy` текущего прода → 0, Ready, alias https://intgetion.com.
+- P-тесты подфазы: нет.
+- Миграции: нет.
+- Изменённые файлы: только эта запись.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет. Нужно, чтобы основатель в открытом окне Telegram ввёл номер и подтвердил вход. Пароль и токен в чат больше не присылать.
+- Следующая подфаза: не эта. В master не вливать.
