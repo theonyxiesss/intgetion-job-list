@@ -506,7 +506,7 @@ describe("rate direction and currency exponents (D275)", () => {
   const ecb = [
     // 1 EUR = 1.1204 USD, 1 EUR = 177.28 JPY → USD per 1 JPY = 0.00632038.
     rate("EUR", "1.12040000", NOW),
-    rate("JPY", "0.00632038", NOW),
+    rate("JPY", "0.00631994", NOW),
     rate("USD", "1", NOW),
   ];
 
@@ -534,7 +534,7 @@ describe("rate direction and currency exponents (D275)", () => {
   });
 
   it("scales a currency without minor units", () => {
-    // 500 000 JPY a month (no minor units) ≈ 3 160.19 USD.
+    // 500 000 JPY a month (no minor units) ≈ 3 159.97 USD.
     expect(
       toUsdMonthlyMinor(
         {
@@ -546,7 +546,7 @@ describe("rate direction and currency exponents (D275)", () => {
         ecb,
         NOW,
       ),
-    ).toBe(BigInt(316019));
+    ).toBe(BigInt(315997));
   });
 
   it("converts two hourly amounts in different currencies", () => {

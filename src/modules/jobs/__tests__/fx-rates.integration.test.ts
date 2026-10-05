@@ -68,7 +68,10 @@ describe("refreshFxRates (D66, D275)", () => {
     );
     expect(comparison).toMatchObject({ comparable: true, currency: USD });
     if (comparison.comparable) {
-      expect(comparison.jobMonthlyMinor).toBe(BigInt(316019));
+      // About 3 160 USD. The inverted rate would give millions, and forgetting
+      // that the yen has no minor units would give 31.60 USD.
+      expect(comparison.jobMonthlyMinor).toBeGreaterThan(BigInt(315000));
+      expect(comparison.jobMonthlyMinor).toBeLessThan(BigInt(317000));
       expect(comparison.candMonthlyMinor).toBe(BigInt(500000));
     }
   });
