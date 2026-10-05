@@ -21,7 +21,7 @@ import { MobileNav, type NavItem } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
 
 const iconLink =
-  "relative inline-flex size-11 items-center justify-center text-fg-muted transition-colors hover:text-fg";
+  "relative size-11 items-center justify-center text-fg-muted transition-colors hover:text-fg";
 
 /** Site header (DESIGN.md 8.11). */
 export async function Header() {
@@ -107,7 +107,7 @@ export async function Header() {
                 <Link
                   {...navFade}
                   href="/notifications"
-                  className={iconLink}
+                  className={cn(iconLink, "inline-flex")}
                   title={t("notifications.nav")}
                 >
                   <Icon icon={Bell} />
