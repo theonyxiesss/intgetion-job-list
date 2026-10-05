@@ -1,7 +1,13 @@
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { expandCatalog } from "@/db/seed/skills";
-import { skillSuggestions, skills, skillsAliases } from "@/db/schema";
+import {
+  jobSkills,
+  jobs,
+  skillSuggestions,
+  skills,
+  skillsAliases,
+} from "@/db/schema";
 import type { SkillCatalogStats } from "../api/dto";
 import type { SkillSource } from "../schemas";
 
@@ -175,4 +181,49 @@ export async function readSkillCatalogStats(): Promise<SkillCatalogStats> {
     minAliases: Number(row?.min_aliases ?? 0),
     categories: asStringArray(row?.categories),
   };
+}
+
+/** Every alias of an active skill, as a lookup map (D290). */
+export async function listActiveSkillAliases(): Promise<Map<string, string>> {
+  const rows = await getDb()
+    .select({
+      alias: skillsAliases.aliasNormalized,
+      skillId: skillsAliases.skillId,
+    })
+    .from(skillsAliases)
+    .innerJoin(skills, eq(skills.id, skillsAliases.skillId))
+    .where(eq(skills.isActive, true));
+  return new Map(rows.map((row) => [row.alias, row.skillId]));
+}
+
+/** Published jobs that have no skills yet, oldest first (D290). */
+export async function listJobsWithoutSkills(
+  limit: number,
+): Promise<{ id: string; text: string }[]> {
+  return getDb()
+    .select({
+      id: jobs.id,
+      text: sql<string>`${jobs.title} || ' ' || ${jobs.description}`,
+    })
+    .from(jobs)
+    .where(
+      and(
+        eq(jobs.status, "published"),
+        sql`not exists (select 1 from public.job_skills js where js.job_id = ${jobs.id})`,
+      ),
+    )
+    .orderBy(jobs.createdAt)
+    .limit(limit);
+}
+
+/** Attaches the found skills. Weight 2 — guessed from text, not stated (D290). */
+export async function attachJobSkills(
+  jobId: string,
+  skillIds: readonly string[],
+): Promise<void> {
+  if (skillIds.length === 0) return;
+  await getDb()
+    .insert(jobSkills)
+    .values(skillIds.map((skillId) => ({ jobId, skillId, weight: 2 })))
+    .onConflictDoNothing();
 }

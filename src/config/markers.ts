@@ -540,8 +540,13 @@ export const QUICK_FILTERS: readonly CatalogTag[] = [
   { slug: "smartcontracts", kind: "skill", skillSlug: "smartcontracts" },
   { slug: "internship", kind: "seniority", seniority: "internship" },
   { slug: "entry", kind: "seniority", seniority: "entry" },
+  { slug: "mid", kind: "seniority", seniority: "mid" },
+  { slug: "senior", kind: "seniority", seniority: "senior" },
+  { slug: "lead", kind: "seniority", seniority: "lead" },
   { slug: "freelance", kind: "employment", employment: "freelance" },
   { slug: "contract", kind: "employment", employment: "contract" },
+  { slug: "full-time", kind: "employment", employment: "full_time" },
+  { slug: "part-time", kind: "employment", employment: "part_time" },
   { slug: "high-paying", kind: "high-paying" },
 ];
 
