@@ -43,14 +43,29 @@ fi
 
 # Simulated LCP on a shared runner swings by several hundred ms between runs,
 # so the 2500 ms budget applies to the median of five runs (D41, D145).
+# Chrome on the runner sometimes exits before the debugging port is ready; retry once.
+lh() {
+  local out="$1"
+  shift
+  local attempt
+  for attempt in 1 2; do
+    if pnpm dlx lighthouse@12.8.2 "$@" \
+      --quiet \
+      --chrome-path="$chrome" \
+      --only-categories=performance \
+      --output=json \
+      --output-path="$out" \
+      --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"; then
+      return 0
+    fi
+    echo "lighthouse failed (attempt ${attempt}): ${out}" >&2
+    sleep 3
+  done
+  return 1
+}
+
 for run in 1 2 3 4 5; do
-  pnpm dlx lighthouse@12.8.2 "http://127.0.0.1:3000/en" \
-    --quiet \
-    --chrome-path="$chrome" \
-    --only-categories=performance \
-    --output=json \
-    --output-path="/tmp/lh-${run}.json" \
-    --chrome-flags="--headless --no-sandbox"
+  lh "/tmp/lh-${run}.json" "http://127.0.0.1:3000/en"
 done
 
 node --input-type=module <<'EOF'
@@ -90,14 +105,7 @@ measure_mobile() {
   local name="$1"
   local url="$2"
   for run in 1 2 3 4 5; do
-    pnpm dlx lighthouse@12.8.2 "$url" \
-      --quiet \
-      --chrome-path="$chrome" \
-      --form-factor=mobile \
-      --only-categories=performance \
-      --output=json \
-      --output-path="/tmp/lh-${name}-${run}.json" \
-      --chrome-flags="--headless --no-sandbox"
+    lh "/tmp/lh-${name}-${run}.json" "$url" --form-factor=mobile
   done
   NAME="$name" node --input-type=module <<'EOF'
 import fs from "node:fs";
