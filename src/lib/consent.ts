@@ -2,7 +2,8 @@
  * Cookie consent by category (D201, D219, D220). Necessary cookies (session,
  * language, bot session, this choice) are always on. Optional ones:
  * "preferences" — remembering things like the last catalog filters;
- * "analytics" — our own usage statistics (none are collected yet).
+ * "analytics" — the `_ia` visitor id of our own statistics (D226);
+ * cookieless daily counts need no consent (D225).
  * Anything optional must check `consentAllows` and write nothing without it.
  */
 export const CONSENT_COOKIE = "cookie_consent";
@@ -27,8 +28,8 @@ export const ACCEPT_ALL: Consent = { preferences: true, analytics: true };
  * deletes them (D219).
  */
 export const OPTIONAL_COOKIES: Record<ConsentCategory, readonly string[]> = {
-  preferences: ["last_catalog_query"],
-  analytics: [],
+  preferences: ["last_catalog_query", "recent_jobs"],
+  analytics: ["_ia"],
 };
 
 /**
@@ -169,6 +170,16 @@ export function writeConsent(
     id: crypto.randomUUID(),
   };
   document.cookie = consentCookie(entry, window.location.protocol === "https:");
+  const visitorId = readCookie(document.cookie, "_ia");
+  if (!consent.analytics && visitorId) {
+    // Past analytics events of this browser lose their id (D226).
+    void fetch("/api/a/forget", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ visitorId }),
+      keepalive: true,
+    }).catch(() => undefined);
+  }
   for (const name of cookiesToDelete(consent)) {
     document.cookie = `${name}=; Path=/; Max-Age=0; SameSite=Lax`;
   }

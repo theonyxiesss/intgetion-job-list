@@ -61,7 +61,8 @@
     "sector": "Sector",
     "seniority": "Seniority",
     "perk": "Perks",
-    "restoreFilters": "Bring back your last filters"
+    "restoreFilters": "Bring back your last filters",
+    "recentlyViewed": "You viewed"
   },
   "companyPage": {
     "trusted": "Trusted employer",
@@ -1242,6 +1243,72 @@
       "sent": "Sent",
       "skipped": "Skipped",
       "failed": "Failed"
+    },
+    "analytics": {
+      "title": "Visitors, last {days} days",
+      "note": "Our own statistics, no third parties. Visitors are counted for everyone without cookies (unique per day). Returning visitors and the cross-visit funnel cover only people who allowed analytics cookies.",
+      "visitors": "Visitors",
+      "views": "Page views",
+      "consented": "With analytics consent",
+      "returning": "Returning",
+      "funnel": "Funnel",
+      "step": "Step",
+      "sameDay": "Visitors (same day)",
+      "acrossVisits": "Across visits (consented)",
+      "steps": {
+        "page_view": "Visited",
+        "search": "Searched",
+        "job_view": "Opened a job",
+        "signup": "Registered",
+        "apply": "Applied"
+      },
+      "daily": "By day",
+      "day": "Day",
+      "pages": "Top pages",
+      "page": "Page",
+      "searches": "Top searches",
+      "term": "Search",
+      "count": "Count",
+      "jobs": "Most viewed jobs",
+      "job": "Job",
+      "sources": "Sources",
+      "source": "Source",
+      "direct": "Direct or unknown",
+      "devices": "Devices",
+      "device": "Device",
+      "deviceNames": {
+        "mobile": "Phone",
+        "tablet": "Tablet",
+        "desktop": "Computer"
+      }
+    },
+    "env": {
+      "title": "Production settings",
+      "note": "What the server is configured with. Values are never shown, only whether they are set.",
+      "setting": "Setting",
+      "state": "State",
+      "detail": "Detail",
+      "states": {
+        "ok": "Set",
+        "warning": "Check",
+        "missing": "Not set"
+      },
+      "keys": {
+        "database": "Database connection",
+        "siteUrl": "Site address",
+        "supabaseAdmin": "Supabase admin key",
+        "email": "Email (Resend)",
+        "telegram": "Telegram sign-in",
+        "bot": "Agent model",
+        "secrets": "Server secrets",
+        "sentry": "Error reports (Sentry)"
+      },
+      "details": {
+        "session": "Session pooler ({value}): runs out of connections, use the transaction pooler (6543)",
+        "transaction": "Transaction pooler ({value})",
+        "direct": "Direct connection",
+        "format": "The token is set but its format is wrong"
+      }
     }
   },
   "digest": {

@@ -5,6 +5,7 @@ import {
   validationError,
 } from "@/lib/http";
 import { requireCandidate, requireUser } from "@/lib/auth-guards";
+import { trackServerEvent } from "@/modules/analytics/service";
 import { hasCandidateProfile } from "@/modules/candidates/service";
 import {
   applyToJob,
@@ -44,6 +45,7 @@ export async function POST(request: Request) {
       jobId: input.jobId,
       coverNote: input.coverNote ?? null,
     });
+    await trackServerEvent(request, "apply");
     return Response.json({ application }, { status: 201 });
   } catch (error) {
     return toErrorResponse(error);

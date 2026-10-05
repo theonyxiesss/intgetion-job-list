@@ -76,7 +76,14 @@ describe("cookie consent by category (D201, D219, D220)", () => {
   });
 
   it("deletes the cookies of a withdrawn category", () => {
-    expect(cookiesToDelete(NECESSARY_ONLY)).toEqual(["last_catalog_query"]);
+    expect(cookiesToDelete(NECESSARY_ONLY)).toEqual([
+      "last_catalog_query",
+      "recent_jobs",
+      "_ia",
+    ]);
+    expect(cookiesToDelete({ preferences: true, analytics: false })).toEqual([
+      "_ia",
+    ]);
     expect(cookiesToDelete(ACCEPT_ALL)).toEqual([]);
   });
 

@@ -3,6 +3,7 @@ import { HttpError, notFound } from "@/lib/http";
 import { logger } from "@/lib/logger";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { deleteAuthUser, getAuthUserEmail } from "@/lib/supabase/admin";
+import { purgeAnalytics } from "@/modules/analytics/service";
 import type { CurrentUser } from "@/modules/auth/service";
 import * as repo from "../repo/privacy-repo";
 
@@ -82,6 +83,7 @@ export const AUTH_DELETE_RETRY_DAYS = 7;
  */
 export async function runRetention(now = new Date()) {
   const purged = await repo.purgeExpired(now);
+  const analyticsEvents = await purgeAnalytics(now);
   const since = new Date(
     now.getTime() - AUTH_DELETE_RETRY_DAYS * 24 * 60 * 60 * 1000,
   );
@@ -93,5 +95,5 @@ export async function runRetention(now = new Date()) {
       logger.warn("retention: auth user delete still failing");
     }
   }
-  return { ...purged, authRetried };
+  return { ...purged, analyticsEvents, authRetried };
 }

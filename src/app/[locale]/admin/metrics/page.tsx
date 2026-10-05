@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireAdminPage } from "@/components/admin/admin-page";
-import { getMetrics } from "@/modules/metrics/service";
+import { analyticsReport } from "@/modules/analytics/service";
+import { AnalyticsReportView } from "@/modules/analytics/ui/analytics-report";
+import { envStatus, getMetrics } from "@/modules/metrics/service";
+import { EnvStatusView } from "@/modules/metrics/ui/env-status";
+
+const ANALYTICS_DAYS = 30;
 import { Table, Th, Tr, Td, Stat } from "@/components/ui";
 
 export const metadata: Metadata = {
@@ -18,7 +23,10 @@ export default async function AdminMetricsPage({
   // Anyone but an admin gets 404, like the other /admin pages.
   await requireAdminPage();
   const t = await getTranslations("metrics");
-  const data = await getMetrics();
+  const [data, report] = await Promise.all([
+    getMetrics(),
+    analyticsReport(ANALYTICS_DAYS),
+  ]);
 
   return (
     <div className="space-y-6 p-4 md:p-6">
@@ -168,6 +176,8 @@ export default async function AdminMetricsPage({
           </Table>
         </div>
       </section>
+      <AnalyticsReportView report={report} days={ANALYTICS_DAYS} />
+      <EnvStatusView checks={envStatus()} />
     </div>
   );
 }

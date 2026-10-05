@@ -10,6 +10,7 @@ import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { Footer } from "@/components/shell/footer";
+import { AnalyticsTracker } from "@/components/shell/analytics-tracker";
 import { CookieBanner } from "@/components/shell/cookie-banner";
 import { Header } from "@/components/shell/header";
 import { ToastProvider } from "@/components/ui";
@@ -122,6 +123,7 @@ export default async function LocaleLayout({
               {children}
             </div>
             <Footer />
+            <AnalyticsTracker />
             <CookieBanner
               text={{
                 label: t("cookies.label"),

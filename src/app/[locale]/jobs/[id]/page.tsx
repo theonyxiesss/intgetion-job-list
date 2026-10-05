@@ -21,6 +21,7 @@ import {
   metaDescription,
   siteUrl,
 } from "@/modules/seo/site";
+import { RememberViewedJob } from "@/modules/jobs/ui/remember-viewed-job";
 
 export const dynamic = "force-dynamic";
 
@@ -73,6 +74,7 @@ export default async function JobPage({
 
   return (
     <main className="py-10 md:py-16">
+      <RememberViewedJob jobId={job.id} />
       {/* Our own published jobs only: imported ones belong to their source,
           and feeds such as Remotive forbid passing them to Google Jobs (D211). */}
       {job.source.type === "internal" ? (

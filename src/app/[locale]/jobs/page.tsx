@@ -24,6 +24,13 @@ import { FilterShell } from "@/modules/jobs/ui/filter-shell";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
 import { QuickFilters } from "@/modules/jobs/ui/quick-filters";
 import { RememberFilters } from "@/modules/jobs/ui/remember-filters";
+import {
+  RECENT_JOBS_COOKIE,
+  parseRecentJobs,
+} from "@/modules/jobs/ui/recent-jobs";
+import { RecentlyViewed } from "@/modules/jobs/ui/recently-viewed";
+import { cookies } from "next/headers";
+import { CONSENT_COOKIE, consentAllows, consentInForce } from "@/lib/consent";
 
 export const dynamic = "force-dynamic";
 
@@ -111,6 +118,14 @@ export default async function JobsPage({
   const markers = await getTranslations("markers");
   let signedIn = false;
   const raw = await searchParams;
+  // "You viewed" exists only with preferences consent (D228).
+  const jar = await cookies();
+  const recentIds = consentAllows(
+    consentInForce(jar.get(CONSENT_COOKIE)?.value),
+    "preferences",
+  )
+    ? parseRecentJobs(jar.get(RECENT_JOBS_COOKIE)?.value)
+    : [];
   const parsed = jobSearchQuery.safeParse(raw);
   let viewer: Parameters<typeof searchJobs>[2] = { hidden: null };
   try {
@@ -178,6 +193,9 @@ export default async function JobsPage({
           }
           label={t("restoreFilters")}
         />
+        {activeCount(raw) === 0 ? (
+          <RecentlyViewed ids={recentIds} locale={locale} />
+        ) : null}
         <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
           <form id="catalog-filters" action="" className="flex flex-col gap-4">
             <FilterShell
