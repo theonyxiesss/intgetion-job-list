@@ -1,11 +1,13 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthPage } from "@/components/auth/auth-page";
-import { Link } from "@/i18n/navigation";
-import { confirmEmailAdd } from "@/modules/auth/service";
+import { ConfirmEmail } from "@/components/settings/confirm-email";
 
 export const dynamic = "force-dynamic";
 
-/** The link from the "add email" mail (D231). */
+/**
+ * The link from the "add email" mail (D231). Opening it only shows a
+ * button; the email changes on the click.
+ */
 export default async function ConfirmEmailPage({
   params,
   searchParams,
@@ -17,18 +19,14 @@ export default async function ConfirmEmailPage({
   setRequestLocale(locale);
   const t = await getTranslations("settings.email");
   const { token } = await searchParams;
-  const result = token
-    ? await confirmEmailAdd(token)
-    : ({ ok: false, reason: "invalid_link" } as const);
 
   return (
     <AuthPage title={t("confirmTitle")}>
-      <p role={result.ok ? "status" : "alert"}>
-        {result.ok ? t("confirmed") : t(`errors.${result.reason}`)}
-      </p>
-      <Link href="/settings/account" className="underline">
-        {t("toAccount")}
-      </Link>
+      {token ? (
+        <ConfirmEmail token={token} />
+      ) : (
+        <p role="alert">{t("errors.invalid_link")}</p>
+      )}
     </AuthPage>
   );
 }

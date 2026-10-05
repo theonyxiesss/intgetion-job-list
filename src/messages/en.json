@@ -1019,7 +1019,9 @@
         "invalid_link": "The link is invalid or expired. Add the email again in account settings.",
         "taken": "This email already belongs to another account. Sign in with that account and link Telegram there.",
         "failed": "Could not add the email. Try again later."
-      }
+      },
+      "confirmText": "Add this email to your account?",
+      "confirmButton": "Confirm email"
     },
     "signIn": {
       "title": "Sign-in methods",
