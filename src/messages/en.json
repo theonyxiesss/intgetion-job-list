@@ -1187,5 +1187,48 @@
       "lead": "Lead"
     },
     "nonTechnical": "Non-technical"
+  },
+  "metrics": {
+    "title": "Platform metrics",
+    "description": "Key counters updated on each visit. Overdue items (>24h) are highlighted in the moderation queue.",
+    "registrations": {
+      "total": "Total registrations",
+      "last7d": "Last 7 days"
+    },
+    "jobs": {
+      "published": "Published jobs",
+      "internal": "Internal jobs",
+      "imported": "Imported jobs"
+    },
+    "applications": {
+      "last24h": "Applications (24h)",
+      "last7d": "Applications (7d)",
+      "mutualInterest": "Mutual interest"
+    },
+    "matching": {
+      "avgScore": "Avg match score",
+      "totalPairs": "Total candidate-job pairs",
+      "thresholdPairs": "Pairs above threshold"
+    },
+    "moderation": {
+      "title": "Moderation queue",
+      "status": "Status",
+      "count": "Count",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "total": "Total",
+      "queueSize": "Queue size"
+    },
+    "emails": {
+      "title": "Emails",
+      "status": "Status",
+      "type": "Type",
+      "count": "Count",
+      "pending": "Pending",
+      "sent": "Sent",
+      "skipped": "Skipped",
+      "failed": "Failed"
+    }
   }
 }

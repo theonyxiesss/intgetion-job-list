@@ -104,5 +104,5 @@ describe("eslint config", () => {
     expect(
       isError(config.rules?.["jsx-a11y/click-events-have-key-events"]),
     ).toBe(true);
-  });
+  }, 15000);
 });

@@ -507,3 +507,41 @@
 - Миграции: нет. `0016` и `0019` на облаке уже применены.
 - Для Cursor: незакоммиченные правки в `Integetion jobs 7B` теперь в master, их можно сбросить; ветку `cursor/vercel-deploy` больше не использовать.
 - OPEN QUESTION: нет
+- Сделано: D191–D192.
+  - D191: `docs/RUNBOOK.md` — эксплуатационная инструкция на русском. Окружения, таблица 18 переменных (назначение, источник, dev/prod, поведение при пустоте), миграции (порядок, нет 0010, кто применяет), cron из vercel.json (пути, расписание, curl с Bearer CRON_SECRET), деплой Vercel по шагам, бэкапы/восстановление Supabase (описание), инциденты (5 кейсов: симптом/где смотреть/что делать), ротация секретов (6 секретов + последствия), чек-лист перед запуском. Все факты сверены с кодом, файлы-источники в скобках, отсутствующие — OPEN QUESTION, секреты не записаны.
+  - D192: `scripts/env-rules.mjs` (чистые функции), `scripts/env-rules.d.mts` (типы), `scripts/check-env.mjs` (CLI --mode dev|prod, loadLocalEnv из db-url.mjs), `src/lib/env-rules.test.ts` (37 тестов, импорт ../../scripts/env-rules.mjs, секреты не в выводе), package.json + `"env:check": "node scripts/check-env.mjs"`.
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 0 (472 passed); `npx prettier --check` на своих 6 файлах → 0.
+- CI статус: `database` job зелёный; `check` job падает на `pnpm format:check` из-за CRLF в чужих файлах репо (проблема Windows, задокументирована в D193 RUNBOOK). Дописал DECISIONS.md / MISSION_LOG.md после проверки gitleaks.
+- Миграции: нет.
+- Изменённые файлы: `docs/RUNBOOK.md`, `scripts/env-rules.mjs`, `scripts/env-rules.d.mts`, `scripts/check-env.mjs`, `src/lib/env-rules.test.ts`, `scripts/env-rules.d.mts`, `package.json`, `docs/DECISIONS.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет (все отмечены в RUNBOOK).
+- Следующая подфаза: пуш ветки, CI зелёный, отчёт.
+
+## [2026-10-04] — 11B: /admin/metrics (ветка `hermes/runbook`, Hermes)
+
+- Сделано: D195.
+  - Новый модуль `src/modules/metrics/{repo,service}` с SQL-запросами (registrations, jobs, applications, moderation, emails, matching).
+  - `GET /api/admin/metrics` + страница `/admin/metrics` (requireAdmin, 404 для не-админа).
+  - Вёрстка: Stat, Table из `@/components/ui`. Навигация: пункт «Метрики».
+  - i18n: верхний ключ `metrics` в en.json/ru.json.
+  - Нет миграций, нет новых таблиц.
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 0 (472 passed).
+- Миграции: нет.
+- Изменённые файлы: `src/modules/metrics/**`, `src/app/api/admin/metrics/route.ts`, `src/app/[locale]/admin/metrics/page.tsx`, `src/components/shell/header.tsx`, `src/messages/en.json`, `src/messages/ru.json`, `docs/DECISIONS.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет.
+- Следующая подфаза: алерты и бэкапы в RUNBOOK, затем Sentry.
+
+## [2026-10-04] — 11B: Alerts & backups in RUNBOOK (ветка `hermes/runbook`, Hermes)
+
+- Сделано: D196.
+  - RUNBOOK раздел 8 «Алерты» (13 сигналов из 18.1 ТЗ): таблица с порогом, дашбордом, runbook-действием (1–4 шага). Покрыты все сигналы 18.1.
+  - RUNBOOK раздел 10 «Бэкапы»: честно — restore на проде **не проверялся**, только процедура PITR + drill.
+  - Нумерация RUNBOOK: Инциденты=9, Алерты=8, Бэкапы=10, Ротация=11, Чек-лист=12, Format=13.
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 0 (472 passed).
+- Миграции: нет.
+- Изменённые файлы: `docs/RUNBOOK.md`, `docs/DECISIONS.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет (restore не проверялся — отмечено в RUNBOOK).
+- Следующая подфаза: Sentry (instrumentation.ts, D197–D199).
