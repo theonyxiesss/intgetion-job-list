@@ -4,6 +4,8 @@
  */
 export {
   analyticsReport,
+  trafficReport,
+  type TrafficReport,
   forgetVisitor,
   jobViews,
   purgeAnalytics,

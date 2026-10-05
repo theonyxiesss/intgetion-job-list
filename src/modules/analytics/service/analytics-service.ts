@@ -17,6 +17,12 @@ import {
 } from "../lib/events";
 import * as repo from "../repo/analytics-repo";
 import type { BeaconInput } from "../schemas";
+import {
+  CHANNELS,
+  channelOf,
+  searchEngineOf,
+  type Channel,
+} from "../lib/channel";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
@@ -151,3 +157,60 @@ export async function jobViews(jobId: string, days: number, now = new Date()) {
     new Date(now.getTime() - days * 24 * 60 * 60 * 1000),
   );
 }
+
+/**
+ * Where visits come from, and how search traffic moves day by day (D293).
+ * Everything is counted from events we already store; nothing new is logged.
+ */
+export async function trafficReport(days: number, now = new Date()) {
+  const since = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+  // One after the other on the pooled connection (D247).
+  const sources = await repo.readTrafficSources(since);
+  const landings = await repo.readLandingPages(since);
+
+  const byChannel = new Map<Channel, number>();
+  const byEngine = new Map<string, number>();
+  const byDay = new Map<string, { search: number; total: number }>();
+  for (const row of sources) {
+    const channel = channelOf(row);
+    byChannel.set(channel, (byChannel.get(channel) ?? 0) + row.visitors);
+    const day = byDay.get(row.day) ?? { search: 0, total: 0 };
+    day.total += row.visitors;
+    if (channel === "search") {
+      day.search += row.visitors;
+      const engine =
+        searchEngineOf(row.referrerHost) ??
+        searchEngineOf(row.utmSource) ??
+        "other";
+      byEngine.set(engine, (byEngine.get(engine) ?? 0) + row.visitors);
+    }
+    byDay.set(row.day, day);
+  }
+
+  const byLanding = new Map<string, number>();
+  for (const row of landings) {
+    if (channelOf(row) !== "search") continue;
+    byLanding.set(row.path, (byLanding.get(row.path) ?? 0) + row.visitors);
+  }
+
+  const descending = (a: { count: number }, b: { count: number }) =>
+    b.count - a.count;
+  return {
+    channels: CHANNELS.map((channel) => ({
+      channel,
+      count: byChannel.get(channel) ?? 0,
+    })),
+    engines: [...byEngine]
+      .map(([label, count]) => ({ label, count }))
+      .sort(descending),
+    daily: [...byDay]
+      .map(([day, counts]) => ({ day, ...counts }))
+      .sort((a, b) => a.day.localeCompare(b.day)),
+    landings: [...byLanding]
+      .map(([label, count]) => ({ label, count }))
+      .sort(descending)
+      .slice(0, 10),
+  };
+}
+
+export type TrafficReport = Awaited<ReturnType<typeof trafficReport>>;

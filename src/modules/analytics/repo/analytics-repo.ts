@@ -207,3 +207,53 @@ export async function readJobViews(jobId: string, since: Date) {
 }
 
 export type JobViews = Awaited<ReturnType<typeof readJobViews>>;
+
+export type SourceRow = {
+  day: string;
+  referrerHost: string | null;
+  utmSource: string | null;
+  utmMedium: string | null;
+  visitors: number;
+};
+
+/** Visits by day and by where they came from; the channel is worked out in
+ * TypeScript so one list of search engines serves the whole app (D293). */
+export async function readTrafficSources(since: Date): Promise<SourceRow[]> {
+  const rows = await getDb().execute<SourceRow>(sql`
+    select to_char(date_trunc('day', occurred_at), 'YYYY-MM-DD') as day,
+           referrer_host as "referrerHost",
+           utm_source as "utmSource",
+           utm_medium as "utmMedium",
+           count(distinct day_visitor)::int as visitors
+    from public.analytics_events
+    where occurred_at >= ${since.toISOString()}::timestamptz
+    group by 1, 2, 3, 4
+  `);
+  return [...rows];
+}
+
+export type LandingRow = {
+  path: string;
+  referrerHost: string | null;
+  utmSource: string | null;
+  utmMedium: string | null;
+  visitors: number;
+};
+
+/** Which pages a visit started on, by source (D293). */
+export async function readLandingPages(since: Date): Promise<LandingRow[]> {
+  const rows = await getDb().execute<LandingRow>(sql`
+    select path,
+           referrer_host as "referrerHost",
+           utm_source as "utmSource",
+           utm_medium as "utmMedium",
+           count(distinct day_visitor)::int as visitors
+    from public.analytics_events
+    where occurred_at >= ${since.toISOString()}::timestamptz
+      and name = 'page_view'
+    group by 1, 2, 3, 4
+    order by visitors desc
+    limit 500
+  `);
+  return [...rows];
+}
