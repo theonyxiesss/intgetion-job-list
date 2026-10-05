@@ -1,4 +1,9 @@
-import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import {
+  createHash,
+  createHmac,
+  randomBytes,
+  timingSafeEqual,
+} from "node:crypto";
 import { z } from "zod";
 import { PLACEHOLDER_EMAIL_DOMAIN } from "@/lib/supabase/admin";
 
@@ -93,4 +98,64 @@ export function verifyTelegramAuth(
 /** Login email of a Telegram user; nothing is ever sent to it. */
 export function telegramEmail(telegramId: number): string {
   return `tg${telegramId}@${PLACEHOLDER_EMAIL_DOMAIN}`;
+}
+
+/**
+ * Bot sign-in (D256). The browser gets a one-time code in an httpOnly cookie
+ * and opens the bot with the same code; the database keeps only its hash, so
+ * a database read cannot be replayed as a sign-in.
+ */
+export const TELEGRAM_LOGIN_TTL_SECONDS = 10 * 60;
+
+/** `/start` payload: letters, digits, `_` and `-`, at most 64 characters. */
+const LOGIN_CODE_RE = /^[A-Za-z0-9_-]{22,43}$/;
+
+export function newTelegramLoginCode(): string {
+  return randomBytes(24).toString("base64url");
+}
+
+export function telegramLoginCodeHash(code: string): string {
+  return createHash("sha256").update(`tg-login:${code}`).digest("hex");
+}
+
+/** Reads the code out of a `login_<code>` payload, or null when it is not one. */
+export function parseTelegramLoginCode(payload: string): string | null {
+  if (!payload.startsWith("login_")) return null;
+  const code = payload.slice("login_".length);
+  return LOGIN_CODE_RE.test(code) ? code : null;
+}
+
+/**
+ * `/start` and its payload: returns the payload (empty string for a bare
+ * `/start`), or null when the message is not a start command at all.
+ */
+export function parseTelegramStartCommand(text: string): string | null {
+  const match = /^\/start(?:@\w+)?(?:\s+(\S+))?\s*$/.exec(text.trim());
+  if (!match) return null;
+  return match[1] ?? "";
+}
+
+export function telegramBotStartUrl(username: string, code: string): string {
+  return `https://t.me/${username}?start=login_${code}`;
+}
+
+/**
+ * Secret for the `X-Telegram-Bot-Api-Secret-Token` header: derived from the
+ * bot token, so it needs no separate variable and never leaves the server.
+ */
+export function telegramWebhookSecret(botToken: string): string {
+  return createHash("sha256")
+    .update(`tg-webhook:${botToken}`)
+    .digest("hex")
+    .slice(0, 48);
+}
+
+export function telegramWebhookSecretMatches(
+  botToken: string,
+  given: string | null,
+): boolean {
+  if (!given) return false;
+  const expected = Buffer.from(telegramWebhookSecret(botToken));
+  const actual = Buffer.from(given);
+  return expected.length === actual.length && timingSafeEqual(expected, actual);
 }

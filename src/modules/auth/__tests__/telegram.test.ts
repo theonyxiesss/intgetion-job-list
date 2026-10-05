@@ -8,6 +8,13 @@ import {
   telegramBotToken,
   telegramEmail,
   verifyTelegramAuth,
+  newTelegramLoginCode,
+  parseTelegramLoginCode,
+  parseTelegramStartCommand,
+  telegramBotStartUrl,
+  telegramLoginCodeHash,
+  telegramWebhookSecret,
+  telegramWebhookSecretMatches,
 } from "../service/telegram";
 
 const token = "123456:test-bot-token";
@@ -98,5 +105,59 @@ describe("Telegram sign-in (D217)", () => {
     expect(telegramEmail(42)).toBe("tg42@telegram.intgetion.com");
     expect(isPlaceholderEmail("TG42@telegram.intgetion.com")).toBe(true);
     expect(isPlaceholderEmail("ann@example.com")).toBe(false);
+  });
+});
+
+describe("bot sign-in codes (D256)", () => {
+  const token = "123:abc";
+
+  it("makes a fresh code every time and hashes it one way", () => {
+    const a = newTelegramLoginCode();
+    const b = newTelegramLoginCode();
+    expect(a).not.toBe(b);
+    expect(a).toMatch(/^[A-Za-z0-9_-]+$/);
+    expect(telegramLoginCodeHash(a)).toBe(telegramLoginCodeHash(a));
+    expect(telegramLoginCodeHash(a)).not.toBe(telegramLoginCodeHash(b));
+    expect(telegramLoginCodeHash(a)).not.toContain(a);
+  });
+
+  it("reads back only its own payloads", () => {
+    const code = newTelegramLoginCode();
+    expect(parseTelegramLoginCode(`login_${code}`)).toBe(code);
+    expect(parseTelegramLoginCode(code)).toBeNull();
+    expect(parseTelegramLoginCode("login_short")).toBeNull();
+    expect(parseTelegramLoginCode("login_../../etc")).toBeNull();
+    expect(parseTelegramLoginCode(`login_${"a".repeat(80)}`)).toBeNull();
+  });
+
+  it("tells a start command from ordinary chatter", () => {
+    expect(parseTelegramStartCommand("/start login_abc")).toBe("login_abc");
+    expect(parseTelegramStartCommand("/start@mybot login_abc")).toBe(
+      "login_abc",
+    );
+    expect(parseTelegramStartCommand("  /start  ")).toBe("");
+    expect(parseTelegramStartCommand("hello")).toBeNull();
+    expect(parseTelegramStartCommand("/started")).toBeNull();
+  });
+
+  it("builds a t.me link for the bot", () => {
+    expect(telegramBotStartUrl("intgetion_bot", "code1")).toBe(
+      "https://t.me/intgetion_bot?start=login_code1",
+    );
+  });
+
+  it("accepts only the webhook secret derived from the bot token", () => {
+    const secret = telegramWebhookSecret(token);
+    expect(secret).toHaveLength(48);
+    expect(secret).not.toContain(token);
+    expect(telegramWebhookSecretMatches(token, secret)).toBe(true);
+    expect(telegramWebhookSecretMatches(token, null)).toBe(false);
+    expect(telegramWebhookSecretMatches(token, "")).toBe(false);
+    expect(telegramWebhookSecretMatches(token, secret.slice(0, 47))).toBe(
+      false,
+    );
+    expect(
+      telegramWebhookSecretMatches(token, telegramWebhookSecret("999:other")),
+    ).toBe(false);
   });
 });

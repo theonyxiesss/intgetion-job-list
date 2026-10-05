@@ -319,6 +319,19 @@ export async function signInWithTelegram(
   now: Date = new Date(),
 ): Promise<CurrentUser> {
   const telegram = verifiedTelegram(input.result, botToken, now);
+  return signInWithTelegramProfile(auth, telegram, input.locale, now);
+}
+
+/**
+ * Signs in a Telegram user whose identity is already proven — by the widget
+ * signature (D217) or by a bot tap on a one-time code (D256).
+ */
+export async function signInWithTelegramProfile(
+  auth: AuthClient,
+  telegram: { id: number; username?: string | null },
+  locale: AppLocale,
+  now: Date = new Date(),
+): Promise<CurrentUser> {
   const username = telegram.username ?? null;
 
   const linked = await telegramAccounts.findByTelegramId(telegram.id);
@@ -335,7 +348,7 @@ export async function signInWithTelegram(
   const metadata: SignupMetadata = {
     terms_version: TERMS_VERSION,
     terms_accepted_at: now.toISOString(),
-    locale: input.locale,
+    locale,
   };
   const created = await createConfirmedAuthUser(email, {
     ...metadata,
