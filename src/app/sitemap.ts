@@ -68,10 +68,9 @@ async function presentTagSlugs(): Promise<Set<string>> {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pages = STATIC_PATHS.map((path) => entry(path));
   try {
-    const [{ jobs, companies }, present] = await Promise.all([
-      listSitemapEntries(),
-      presentTagSlugs(),
-    ]);
+    // One after the other: parallel queries on one pooled connection hang (D247).
+    const { jobs, companies } = await listSitemapEntries();
+    const present = await presentTagSlugs();
     return [
       ...pages,
       ...jobs.map((job) => entry(`/jobs/${job.id}`, job.updatedAt)),
