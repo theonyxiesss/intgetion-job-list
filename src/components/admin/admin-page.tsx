@@ -1,4 +1,6 @@
 import {
+  Building2,
+  ChartColumn,
   Download,
   Flag,
   LayoutGrid,
@@ -12,6 +14,7 @@ import {
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import { AdminSectionMenu } from "@/components/admin/admin-section-menu";
 import { Container, Icon, PageHeader, cn, navFade } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -39,10 +42,12 @@ export type AdminSection =
   | "moderation"
   | "reports"
   | "jobs"
+  | "companies"
   | "users"
   | "import"
   | "taxonomy"
-  | "audit";
+  | "audit"
+  | "metrics";
 
 const sections: {
   key: AdminSection;
@@ -59,6 +64,12 @@ const sections: {
   },
   { key: "reports", href: "/admin/reports", label: "navReports", icon: Flag },
   { key: "jobs", href: "/admin/jobs", label: "navJobs", icon: Briefcase },
+  {
+    key: "companies",
+    href: "/admin/companies",
+    label: "navCompanies",
+    icon: Building2,
+  },
   { key: "users", href: "/admin/users", label: "navUsers", icon: Users },
   { key: "import", href: "/admin/import", label: "navImport", icon: Download },
   {
@@ -68,6 +79,12 @@ const sections: {
     icon: Tags,
   },
   { key: "audit", href: "/admin/audit", label: "navAudit", icon: ScrollText },
+  {
+    key: "metrics",
+    href: "/admin/metrics",
+    label: "navMetrics",
+    icon: ChartColumn,
+  },
 ];
 
 /**
@@ -105,12 +122,25 @@ export async function AdminShell({
       <Container className="flex flex-col gap-8 lg:flex-row lg:gap-12">
         <nav
           aria-label={t("navLabel")}
-          className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:w-56 lg:shrink-0 lg:overflow-visible lg:px-0"
+          className="w-full shrink-0 lg:w-[220px]"
         >
           <p className="t-label mb-3 hidden text-fg-subtle lg:block">
             {t("title")}
           </p>
-          <ul className="flex gap-1 lg:flex-col lg:gap-0 lg:border-l lg:border-line">
+          <AdminSectionMenu
+            label={t("navLabel")}
+            active={active}
+            sections={sections.map((section) => {
+              const count = counts[section.key];
+              const name = t(section.label);
+              return {
+                key: section.key,
+                href: section.href,
+                label: count === undefined ? name : `${name} (${count})`,
+              };
+            })}
+          />
+          <ul className="hidden lg:flex lg:flex-col lg:gap-0 lg:border-l lg:border-line">
             {sections.map((section) => {
               const current = section.key === active;
               const count = counts[section.key];
@@ -121,16 +151,24 @@ export async function AdminShell({
                     href={section.href}
                     aria-current={current ? "page" : undefined}
                     className={cn(
-                      "t-nav flex min-h-11 items-center gap-3 border-b-2 px-3 whitespace-nowrap transition-colors duration-[120ms] lg:-ml-px lg:border-b-0 lg:border-l-2 lg:pl-4",
+                      "t-nav flex min-h-11 items-center gap-3 px-3 transition-colors duration-[120ms] lg:-ml-px lg:border-l-2 lg:pl-4",
                       current
                         ? "border-accent text-fg"
                         : "border-transparent text-fg-muted hover:text-fg",
                     )}
                   >
                     <Icon icon={section.icon} size={16} />
-                    <span className="flex-1">{t(section.label)}</span>
-                    {count !== undefined && count > 0 && (
-                      <span className="t-data text-signal">{count}</span>
+                    <span className="min-w-0 flex-1">{t(section.label)}</span>
+                    {count !== undefined && (
+                      <span
+                        className={
+                          count > 0
+                            ? "t-data shrink-0 text-signal"
+                            : "t-data shrink-0 text-fg-muted"
+                        }
+                      >
+                        {count}
+                      </span>
                     )}
                   </Link>
                 </li>

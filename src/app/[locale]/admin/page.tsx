@@ -1,12 +1,26 @@
-import { ArrowRight } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AdminShell, requireAdminPage } from "@/components/admin/admin-page";
-import { CountUp, Icon, navForward } from "@/components/ui";
+import {
+  EmptyState,
+  Stat,
+  StatRow,
+  StatusDot,
+  Table,
+  Td,
+  Th,
+  Tr,
+} from "@/components/ui";
 import { Link } from "@/i18n/navigation";
-import { countPendingSkillSuggestions } from "@/modules/admin/service";
+import {
+  countNewUsers,
+  countPendingSkillSuggestions,
+  countPublishedJobs,
+  listAudit,
+} from "@/modules/admin/service";
 import {
   countOpenReports,
   countPendingQueue,
+  listQueue,
 } from "@/modules/moderation/service";
 
 export default async function AdminHomePage({
@@ -18,12 +32,18 @@ export default async function AdminHomePage({
   setRequestLocale(locale);
   await requireAdminPage();
   const t = await getTranslations("admin");
-  const [suggestions, queue, reports] = await Promise.all([
-    countPendingSkillSuggestions(),
-    countPendingQueue(),
-    countOpenReports(),
-  ]);
-  const tiles = [
+  const [suggestions, queue, reports, newUsers, published, overduePage, audit] =
+    await Promise.all([
+      countPendingSkillSuggestions(),
+      countPendingQueue(),
+      countOpenReports(),
+      countNewUsers(),
+      countPublishedJobs(),
+      listQueue({ limit: 50 }),
+      listAudit({ limit: 10 }),
+    ]);
+  const overdue = overduePage.items.filter((item) => item.overdue).slice(0, 10);
+  const stats = [
     { label: t("statQueue"), value: queue, href: "/admin/moderation" },
     { label: t("statReports"), value: reports, href: "/admin/reports" },
     {
@@ -31,38 +51,83 @@ export default async function AdminHomePage({
       value: suggestions,
       href: "/admin/taxonomy",
     },
+    { label: t("statNewUsers"), value: newUsers, href: "/admin/users" },
+    { label: t("statPublished"), value: published, href: "/admin/jobs" },
   ];
 
   return (
     <AdminShell title={t("overviewTitle")} active="home" intro={t("laterNote")}>
-      <ul className="grid gap-px border border-line bg-line sm:grid-cols-3">
-        {tiles.map((tile) => (
-          <li key={tile.href} className="bg-bg">
-            <Link
-              {...navForward}
-              href={tile.href}
-              className="group flex h-full flex-col gap-6 p-6 transition-colors duration-[120ms] hover:bg-surface-2"
-            >
-              <span className="t-label text-fg-muted">{tile.label}</span>
-              <span
-                className={
-                  tile.value > 0
-                    ? "t-data-l text-fg"
-                    : "t-data-l text-fg-subtle"
-                }
-              >
-                <CountUp value={tile.value} locale={locale} />
-              </span>
-              <span className="t-nav inline-flex items-center gap-2 text-fg-muted group-hover:text-fg">
-                {t("open")}
-                <span className="transition-transform duration-[120ms] group-hover:translate-x-1">
-                  <Icon icon={ArrowRight} size={16} />
-                </span>
-              </span>
-            </Link>
-          </li>
+      <StatRow>
+        {stats.map((stat) => (
+          <Link key={stat.href} href={stat.href} className="block min-w-0">
+            <Stat large label={stat.label} value={stat.value} />
+          </Link>
         ))}
-      </ul>
+      </StatRow>
+      <section className="flex flex-col gap-4">
+        <h2 className="t-h3">{t("overdueTitle")}</h2>
+        {overdue.length === 0 ? (
+          <EmptyState title={t("overdueEmpty")} />
+        ) : (
+          <ul className="flex flex-col border border-line">
+            {overdue.map((item) => (
+              <li
+                key={item.id}
+                className="border-b border-line last:border-b-0"
+              >
+                <Link
+                  href={{
+                    pathname: "/admin/moderation",
+                    query: { entityType: item.entityType },
+                  }}
+                  className="flex min-h-11 items-center gap-3 px-4 py-3 hover:bg-surface-2"
+                >
+                  <StatusDot tone="warning" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-medium">
+                      {item.subject?.title ?? t("entityMissing")}
+                    </span>
+                    <span className="t-label text-warning">{t("overdue")}</span>
+                  </span>
+                  <span className="t-data shrink-0 text-fg-muted">
+                    {item.createdAt.slice(0, 16).replace("T", " ")}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+      <section className="flex flex-col gap-4">
+        <h2 className="t-h3">{t("recentAudit")}</h2>
+        {audit.items.length === 0 ? (
+          <EmptyState title={t("auditEmpty")} />
+        ) : (
+          <Table caption={t("recentAudit")}>
+            <thead>
+              <tr>
+                <Th>{t("colTime")}</Th>
+                <Th>{t("colAction")}</Th>
+                <Th>{t("colEntity")}</Th>
+              </tr>
+            </thead>
+            <tbody>
+              {audit.items.map((entry) => (
+                <Tr key={entry.id}>
+                  <Td mono className="whitespace-nowrap">
+                    {entry.createdAt.slice(0, 16).replace("T", " ")}
+                  </Td>
+                  <Td className="break-all">{entry.action}</Td>
+                  <Td className="break-all">
+                    {entry.entityType}
+                    {entry.entityId ? ` ${entry.entityId.slice(0, 8)}` : ""}
+                  </Td>
+                </Tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </section>
     </AdminShell>
   );
 }

@@ -12,16 +12,34 @@ import {
   EmptyState,
   Icon,
   Input,
+  Select,
   StatusBadge,
   Table,
   Td,
   Th,
   Tr,
 } from "@/components/ui";
-import {
-  listAdminJobs,
-  listAdminJobsQuery,
-} from "@/modules/moderation/service";
+import { Link } from "@/i18n/navigation";
+import { listJobsPanel } from "@/modules/admin/service";
+import { listAdminJobsQuery } from "@/modules/moderation/service";
+
+const statuses = [
+  "draft",
+  "pending_moderation",
+  "published",
+  "paused",
+  "expired",
+  "closed",
+  "removed",
+] as const;
+
+function filled(raw: Record<string, string | undefined>) {
+  return Object.fromEntries(
+    Object.entries(raw).filter((entry): entry is [string, string] =>
+      Boolean(entry[1]),
+    ),
+  );
+}
 
 export default async function AdminJobsPage({
   params,
@@ -35,14 +53,23 @@ export default async function AdminJobsPage({
   await requireAdminPage();
   const t = await getTranslations("admin");
   const raw = await searchParams;
-  const query = listAdminJobsQuery.safeParse(raw);
-  const { items, nextCursor } = await listAdminJobs(
-    query.success ? query.data : listAdminJobsQuery.parse({}),
-  );
+  const parsed = listAdminJobsQuery.safeParse(filled(raw));
+  const query = parsed.success ? parsed.data : listAdminJobsQuery.parse({});
+  const company = raw.company?.trim().slice(0, 100) || undefined;
+  const { items, nextCursor } = await listJobsPanel({ ...query, company });
+  const filters = {
+    ...(raw.q ? { q: raw.q } : {}),
+    ...(raw.status ? { status: raw.status } : {}),
+    ...(raw.source ? { source: raw.source } : {}),
+    ...(company ? { company } : {}),
+  };
 
   return (
     <AdminShell title={t("jobsTitle")} active="jobs">
-      <form role="search" className="flex max-w-xl gap-2">
+      <form
+        role="search"
+        className="flex flex-col gap-2 sm:flex-row sm:flex-wrap"
+      >
         <label htmlFor="admin-jobs-q" className="sr-only">
           {t("searchTitle")}
         </label>
@@ -51,6 +78,46 @@ export default async function AdminJobsPage({
           name="q"
           defaultValue={raw.q ?? ""}
           placeholder={t("searchTitle")}
+          className="sm:max-w-xs"
+        />
+        <label htmlFor="admin-jobs-status" className="sr-only">
+          {t("colStatus")}
+        </label>
+        <Select
+          id="admin-jobs-status"
+          name="status"
+          defaultValue={raw.status ?? ""}
+          className="sm:w-auto"
+        >
+          <option value="">{t("anyStatus")}</option>
+          {statuses.map((status) => (
+            <option key={status} value={status}>
+              {status}
+            </option>
+          ))}
+        </Select>
+        <label htmlFor="admin-jobs-source" className="sr-only">
+          {t("colSource")}
+        </label>
+        <Select
+          id="admin-jobs-source"
+          name="source"
+          defaultValue={raw.source ?? ""}
+          className="sm:w-auto"
+        >
+          <option value="">{t("anySource")}</option>
+          <option value="internal">{t("internal")}</option>
+          <option value="imported">{t("imported")}</option>
+        </Select>
+        <label htmlFor="admin-jobs-company" className="sr-only">
+          {t("filterCompany")}
+        </label>
+        <Input
+          id="admin-jobs-company"
+          name="company"
+          defaultValue={raw.company ?? ""}
+          placeholder={t("filterCompany")}
+          className="sm:max-w-xs"
         />
         <Button
           type="submit"
@@ -77,10 +144,18 @@ export default async function AdminJobsPage({
             {items.map((job) => (
               <Tr key={job.id}>
                 <Td>
-                  <span className="font-medium">{job.title}</span>
-                  <span className="t-caption block text-fg-muted">
+                  <Link
+                    href={`/jobs/${job.id}`}
+                    className="font-medium underline-offset-4 hover:underline"
+                  >
+                    {job.title}
+                  </Link>
+                  <Link
+                    href={`/admin/companies/${job.companyId}`}
+                    className="t-caption block text-fg-muted underline-offset-4 hover:underline"
+                  >
                     {job.companyName}
-                  </span>
+                  </Link>
                 </Td>
                 <Td>
                   {job.source === "imported" ? (
@@ -107,7 +182,7 @@ export default async function AdminJobsPage({
         <NextPageLink
           href={{
             pathname: "/admin/jobs",
-            query: { ...(raw.q ? { q: raw.q } : {}), cursor: nextCursor },
+            query: { ...filters, cursor: nextCursor },
           }}
         />
       )}

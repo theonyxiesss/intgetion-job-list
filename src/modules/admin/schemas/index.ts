@@ -9,6 +9,7 @@ export const listUsersQuery = z.object({
   limit,
   id: z.uuid().optional(),
   status: z.enum(["active", "suspended", "deleted"]).optional(),
+  role: z.enum(["user", "admin"]).optional(),
 });
 export type ListUsersQuery = z.infer<typeof listUsersQuery>;
 

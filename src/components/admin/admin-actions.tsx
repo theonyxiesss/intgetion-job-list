@@ -4,6 +4,7 @@ import { Ban, Check, Trash2, Undo2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmCard } from "@/components/ui/dialog";
 import { Icon } from "@/components/ui/icon";
 import { Input, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -45,18 +46,73 @@ export function UserStatusAction({
 }) {
   const t = useTranslations("admin");
   const { pending, run } = useAction();
+  const [confirming, setConfirming] = useState(false);
   if (status !== "active" && status !== "suspended") return null;
   const suspend = status === "active";
+  if (confirming) {
+    return (
+      <ConfirmCard
+        title={t("confirmSuspend")}
+        confirmLabel={t("suspend")}
+        cancelLabel={t("cancel")}
+        danger
+        loading={pending === "status"}
+        onConfirm={() => run("status", `/api/admin/users/${userId}/suspend`)}
+        onCancel={() => setConfirming(false)}
+      />
+    );
+  }
   return (
     <Button
       variant={suspend ? "danger" : "secondary"}
       loading={pending === "status"}
       icon={<Icon icon={suspend ? Ban : Undo2} size={16} />}
       onClick={() =>
-        run(
-          "status",
-          `/api/admin/users/${userId}/${suspend ? "suspend" : "unsuspend"}`,
-        )
+        suspend
+          ? setConfirming(true)
+          : run("status", `/api/admin/users/${userId}/unsuspend`)
+      }
+    >
+      {suspend ? t("suspend") : t("unsuspend")}
+    </Button>
+  );
+}
+
+export function CompanyStatusAction({
+  companyId,
+  status,
+}: {
+  companyId: string;
+  status: string;
+}) {
+  const t = useTranslations("admin");
+  const { pending, run } = useAction();
+  const [confirming, setConfirming] = useState(false);
+  const suspend = status !== "suspended";
+  if (confirming) {
+    return (
+      <ConfirmCard
+        title={t("confirmSuspend")}
+        confirmLabel={t("suspend")}
+        cancelLabel={t("cancel")}
+        danger
+        loading={pending === "company"}
+        onConfirm={() =>
+          run("company", `/api/admin/companies/${companyId}/suspend`)
+        }
+        onCancel={() => setConfirming(false)}
+      />
+    );
+  }
+  return (
+    <Button
+      variant={suspend ? "danger" : "secondary"}
+      loading={pending === "company"}
+      icon={<Icon icon={suspend ? Ban : Undo2} size={16} />}
+      onClick={() =>
+        suspend
+          ? setConfirming(true)
+          : run("company", `/api/admin/companies/${companyId}/unsuspend`)
       }
     >
       {suspend ? t("suspend") : t("unsuspend")}
@@ -176,7 +232,25 @@ export function RemoveJobAction({ jobId }: { jobId: string }) {
   const t = useTranslations("admin");
   const { pending, run } = useAction();
   const [reason, setReason] = useState("");
+  const [confirming, setConfirming] = useState(false);
   const reasonId = useId();
+  if (confirming) {
+    return (
+      <ConfirmCard
+        title={t("confirmRemove")}
+        confirmLabel={t("remove")}
+        cancelLabel={t("cancel")}
+        danger
+        loading={pending === "remove"}
+        onConfirm={() =>
+          run("remove", `/api/admin/jobs/${jobId}/remove`, { reason })
+        }
+        onCancel={() => setConfirming(false)}
+      >
+        {reason}
+      </ConfirmCard>
+    );
+  }
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
       <label htmlFor={reasonId} className="sr-only">
@@ -193,11 +267,8 @@ export function RemoveJobAction({ jobId }: { jobId: string }) {
       <Button
         variant="danger"
         disabled={reason.trim().length < 3}
-        loading={pending === "remove"}
         icon={<Icon icon={Trash2} size={16} />}
-        onClick={() =>
-          run("remove", `/api/admin/jobs/${jobId}/remove`, { reason })
-        }
+        onClick={() => setConfirming(true)}
       >
         {t("remove")}
       </Button>
@@ -208,17 +279,30 @@ export function RemoveJobAction({ jobId }: { jobId: string }) {
 export function ReportDecision({ reportId }: { reportId: string }) {
   const t = useTranslations("admin");
   const { pending, run } = useAction();
-  return (
-    <div className="flex gap-2">
-      <Button
-        variant="danger"
+  const [confirming, setConfirming] = useState(false);
+  if (confirming) {
+    return (
+      <ConfirmCard
+        title={t("confirmReportTitle")}
+        confirmLabel={t("confirmReport")}
+        cancelLabel={t("cancel")}
+        danger
         loading={pending === "confirm"}
-        icon={<Icon icon={Check} size={16} />}
-        onClick={() =>
+        onConfirm={() =>
           run("confirm", `/api/admin/reports/${reportId}/decide`, {
             decision: "confirmed",
           })
         }
+        onCancel={() => setConfirming(false)}
+      />
+    );
+  }
+  return (
+    <div className="flex gap-2">
+      <Button
+        variant="danger"
+        icon={<Icon icon={Check} size={16} />}
+        onClick={() => setConfirming(true)}
       >
         {t("confirmReport")}
       </Button>

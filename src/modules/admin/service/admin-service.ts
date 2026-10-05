@@ -97,6 +97,7 @@ export async function listUsers(query: ListUsersQuery) {
     cursor: query.cursor ? decodeCursor(query.cursor) : undefined,
     id: query.id,
     status: query.status,
+    role: query.role,
   });
   return page(rows, query.limit, userDto);
 }

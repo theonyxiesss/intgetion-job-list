@@ -16,6 +16,14 @@ export {
 } from "./admin-service";
 export type { AdminCompanyDto, AdminUserDto, AuditDto } from "./admin-service";
 export {
+  countNewUsers,
+  countPublishedJobs,
+  getCompanyPanel,
+  getUserPanel,
+  listCompaniesPanel,
+  listJobsPanel,
+} from "./panel";
+export {
   countPendingSkillSuggestions,
   listActiveSkills,
 } from "@/modules/taxonomy/service";

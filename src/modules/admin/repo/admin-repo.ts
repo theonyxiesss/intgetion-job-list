@@ -41,10 +41,12 @@ export async function listUsers(input: {
   cursor?: TimeCursor;
   id?: string;
   status?: AdminUserRow["status"];
+  role?: AdminUserRow["platformRole"];
 }): Promise<AdminUserRow[]> {
   const filters = [
     input.id ? eq(users.id, input.id) : undefined,
     input.status ? eq(users.status, input.status) : undefined,
+    input.role ? eq(users.platformRole, input.role) : undefined,
     before(users.createdAt, users.id, input.cursor),
   ].filter((filter): filter is SQL => filter !== undefined);
   return getDb()
