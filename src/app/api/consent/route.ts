@@ -1,7 +1,6 @@
 import { readJson, toErrorResponse } from "@/lib/http";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/request-ip";
-import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import {
@@ -12,9 +11,17 @@ import {
 
 export const dynamic = "force-dynamic";
 
+/** Supabase keeps the session in `sb-<project>-auth-token` cookies. */
+function hasAuthCookie(request: Request): boolean {
+  return /(?:^|;\s*)sb-[^=;]*-auth-token/.test(
+    request.headers.get("cookie") ?? "",
+  );
+}
+
 async function currentUserId(request: Request): Promise<string | null> {
-  // Guests skip the auth round trip entirely.
-  if (!hasSessionMark(request.headers)) return null;
+  // Guests skip the auth round trip entirely; the proxy does not mark
+  // sessions on /api/*, and getCurrentUser stays the real check.
+  if (!hasAuthCookie(request)) return null;
   const supabase = await createSupabaseServerClient();
   return (await getCurrentUser(supabase.auth))?.id ?? null;
 }
