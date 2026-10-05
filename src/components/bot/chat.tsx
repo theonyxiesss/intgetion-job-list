@@ -215,12 +215,12 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="chat-shell flex flex-col gap-6 max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:gap-3 max-md:bg-bg max-md:px-4 max-md:pt-3">
       <div
         role="log"
         aria-live="polite"
         aria-label={t("log")}
-        className="flex min-h-80 flex-col gap-4 border border-line bg-surface p-5"
+        className="flex min-h-80 flex-col gap-4 border border-line bg-surface p-5 max-md:min-h-0 max-md:flex-1 max-md:overflow-y-auto"
       >
         {entries.length === 0 && (
           <p className="t-body-s text-fg-muted">
@@ -326,7 +326,7 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
       </div>
       <form
         onSubmit={send}
-        className="flex flex-col gap-3 sm:flex-row sm:items-end"
+        className="flex flex-col gap-3 sm:flex-row sm:items-end max-md:shrink-0 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       >
         <label className="sr-only" htmlFor="chat-input">
           {t("placeholder")}

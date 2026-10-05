@@ -57,7 +57,7 @@ test("a candidate on a phone gets the tab bar; a guest does not", async ({
   page,
 }) => {
   test.setTimeout(120_000);
-  await page.setViewportSize({ width: 375, height: 812 });
+  await page.setViewportSize({ width: 360, height: 800 });
   await page.goto("/en/jobs");
   await expect(
     page.getByRole("navigation", { name: "Main sections" }),
@@ -68,6 +68,11 @@ test("a candidate on a phone gets the tab bar; a guest does not", async ({
   const tabs = page.getByRole("navigation", { name: "Main sections" });
   await expect(tabs).toBeVisible();
   await expect(tabs.getByRole("link")).toHaveCount(5);
+  for (const link of await tabs.getByRole("link").all()) {
+    const box = await link.boundingBox();
+    expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+  }
   await expect(tabs.getByRole("link", { name: "Jobs" })).toHaveAttribute(
     "aria-current",
     "page",
