@@ -11,6 +11,7 @@ import {
   type SkillSource,
 } from "../schemas";
 import { normalizeSkillText } from "./normalize-skill-text";
+import { extractSkillIds } from "./extract-skills";
 
 const RAW_TEXT_MAX = 500;
 
@@ -82,4 +83,25 @@ export async function getSkillCatalogStats(): Promise<SkillCatalogStats> {
   return skillCatalogStatsSchema.parse(
     await skillsRepo.readSkillCatalogStats(),
   );
+}
+
+/**
+ * Fills in skills for published jobs that have none (D290). Imported jobs
+ * arrive without a skill list, which leaves skill pages, filters and the
+ * match score blind. Returns how much was done, so a cron can stop early.
+ */
+export async function backfillJobSkills(
+  batch = 200,
+): Promise<{ jobs: number; attached: number }> {
+  const pending = await skillsRepo.listJobsWithoutSkills(batch);
+  if (pending.length === 0) return { jobs: 0, attached: 0 };
+  const aliases = await skillsRepo.listActiveSkillAliases();
+  let attached = 0;
+  for (const job of pending) {
+    const skillIds = extractSkillIds(job.text, aliases);
+    if (skillIds.length === 0) continue;
+    await skillsRepo.attachJobSkills(job.id, skillIds);
+    attached += skillIds.length;
+  }
+  return { jobs: pending.length, attached };
 }

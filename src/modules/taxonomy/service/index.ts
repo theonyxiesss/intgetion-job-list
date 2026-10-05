@@ -15,6 +15,7 @@ export {
   getSkillCatalogStats,
   matchSkillSlug,
   normalizeSkill,
+  backfillJobSkills,
   seedSkills,
 } from "./taxonomy-service";
 export {
