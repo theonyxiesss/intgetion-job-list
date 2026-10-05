@@ -25,11 +25,13 @@ const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
   ["report.decided", false],
   // D234: saved-search alerts, added after section 15.
   ["search.alert", true],
+  // D240: new jobs of a followed company.
+  ["company.new_jobs", true],
 ];
 
 describe("notification catalog (15, D100)", () => {
   it("contains the 11 types of section 15 in table order, then D234", () => {
-    expect(NOTIFICATION_TYPES).toHaveLength(12);
+    expect(NOTIFICATION_TYPES).toHaveLength(13);
     expect([...NOTIFICATION_TYPES]).toEqual(
       SECTION_15_EMAIL_DEFAULTS.map(([type]) => type),
     );
@@ -48,7 +50,12 @@ describe("notification catalog (15, D100)", () => {
     expect(NOTIFICATION_CATALOG["matches.digest"].policy).toBe("daily_digest");
     // D234: saved-search alerts are scheduled by their own cron.
     expect(NOTIFICATION_CATALOG["search.alert"].policy).toBe("daily_digest");
-    const scheduled = ["application.created", "matches.digest", "search.alert"];
+    const scheduled = [
+      "application.created",
+      "matches.digest",
+      "search.alert",
+      "company.new_jobs",
+    ];
     for (const type of NOTIFICATION_TYPES) {
       if (!scheduled.includes(type)) {
         expect(NOTIFICATION_CATALOG[type].policy).toBe("immediate");

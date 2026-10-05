@@ -5,7 +5,7 @@ import { notificationEmails } from "@/db/schema";
 import { isNotificationType, type NotificationType } from "../lib/catalog";
 import { nextSendAfter } from "./batch-mail";
 import { senderFromEnv, type EmailSender } from "./email-sender";
-import { renderEmail, templateValues } from "./render";
+import { notificationPath, renderEmail, templateValues } from "./render";
 import { unsubscribeUrl } from "./notify";
 import { deleteReadOlderThan } from "../repo/notifications";
 
@@ -73,8 +73,7 @@ async function deliverOne(
     type,
     values: templateValues(row.payload ?? {}),
     unsubscribeUrl: unsubscribeUrl(locale, row.user_id, type, now),
-    query:
-      typeof row.payload?.query === "string" ? row.payload.query : undefined,
+    actionPath: notificationPath(type, row.payload ?? {}),
   });
   if (!rendered) {
     await mark(tx, row.id, {

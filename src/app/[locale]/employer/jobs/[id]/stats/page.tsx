@@ -17,6 +17,7 @@ import {
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { jobViews } from "@/modules/analytics/service";
 import { countByStatusForJob } from "@/modules/applications/service";
+import { countFollowers } from "@/modules/follows/service";
 import { getCurrentUser } from "@/modules/auth/service";
 import { findOwnedJob } from "@/modules/jobs/service";
 import { EmployerJobTabs } from "../job-tabs";
@@ -56,16 +57,18 @@ export default async function EmployerJobStatsPage({
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
   if (!user) redirect(`/${locale}/login`);
+  let companyId: string;
   try {
-    await findOwnedJob(id, user.id);
+    companyId = (await findOwnedJob(id, user.id)).companyId;
   } catch {
     notFound();
   }
   const t = await getTranslations("employerJobs");
   const statusNames = await getTranslations("employerApplications.status");
-  const [views, byStatus] = await Promise.all([
+  const [views, byStatus, followers] = await Promise.all([
     jobViews(id, DAYS),
     countByStatusForJob(id),
+    countFollowers(companyId),
   ]);
   const applications = Object.values(byStatus).reduce((a, b) => a + b, 0);
   const conversion = views.visitors
@@ -98,6 +101,7 @@ export default async function EmployerJobStatsPage({
           <Stat label={t("stats.visitors")} value={views.visitors} />
           <Stat label={t("stats.applications")} value={applications} />
           <Stat label={t("stats.conversion")} value={conversion} />
+          <Stat label={t("stats.followers")} value={followers} />
         </StatRow>
 
         {views.views === 0 ? (

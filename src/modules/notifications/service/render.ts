@@ -46,8 +46,8 @@ export function renderEmail(input: {
   type: NotificationType;
   values: Record<string, string | number>;
   unsubscribeUrl: string;
-  /** Catalog query of a saved-search alert, for its button (D234). */
-  query?: string;
+  /** Page the email button opens, without locale (D188, D234, D240). */
+  actionPath?: string;
 }): { subject: string; text: string; html: string } | null {
   const copy = emailCopy(input.locale, input.type);
   if (!copy) return null;
@@ -56,18 +56,21 @@ export function renderEmail(input: {
   const link = unsubscribeLabel(input.locale);
   const text = `${subject}\n\n${body}\n\n${link}: ${input.unsubscribeUrl}`;
   const origin = new URL(input.unsubscribeUrl).origin;
-  const action =
+  const actionLabel =
     input.type === "matches.digest"
-      ? {
-          href: `${origin}/${input.locale}/matches`,
-          label: catalogs[input.locale].digest.openMatches,
-        }
+      ? catalogs[input.locale].digest.openMatches
       : input.type === "search.alert"
-        ? {
-            href: `${origin}/${input.locale}/jobs${input.query ? `?${input.query}` : ""}`,
-            label: catalogs[input.locale].savedSearches.openSearch,
-          }
-        : undefined;
+        ? catalogs[input.locale].savedSearches.openSearch
+        : input.type === "company.new_jobs"
+          ? catalogs[input.locale].follows.openCompany
+          : null;
+  const action =
+    actionLabel && input.actionPath
+      ? {
+          href: `${origin}/${input.locale}${input.actionPath}`,
+          label: actionLabel,
+        }
+      : undefined;
   const html = siteEmailHtml({
     body,
     ...(action ? { action } : {}),
@@ -109,21 +112,42 @@ export function templateValues(
   };
 }
 
-/** Where a notification leads, per type (D237). */
-const NOTIFICATION_PATHS: Record<NotificationType, string> = {
-  "application.created": "/employer/jobs",
-  "application.viewed": "/applications",
-  "application.status_changed": "/applications",
-  "application.withdrawn": "/employer/jobs",
-  "mutual_interest.revealed": "/contacts",
-  "job.moderation_decided": "/employer/jobs",
-  "job.expiring": "/employer/jobs",
-  "job.closed": "/applications",
-  "company.verification_decided": "/employer/company",
-  "matches.digest": "/matches",
-  "report.decided": "/notifications",
-  "search.alert": "/saved-searches",
-};
+/**
+ * Where a notification leads, without locale (D237): the email button and
+ * the Telegram link. Payload fields refine it where the type allows.
+ */
+export function notificationPath(
+  type: NotificationType,
+  payload: Record<string, unknown>,
+): string {
+  switch (type) {
+    case "application.viewed":
+    case "application.status_changed":
+    case "job.closed":
+      return "/applications";
+    case "application.created":
+    case "application.withdrawn":
+    case "job.moderation_decided":
+    case "job.expiring":
+      return "/employer/jobs";
+    case "mutual_interest.revealed":
+      return "/contacts";
+    case "company.verification_decided":
+      return "/employer/company";
+    case "matches.digest":
+      return "/matches";
+    case "search.alert":
+      return typeof payload.query === "string" && payload.query
+        ? `/jobs?${payload.query}`
+        : "/saved-searches";
+    case "company.new_jobs":
+      return typeof payload.companySlug === "string"
+        ? `/companies/${encodeURIComponent(payload.companySlug)}?tab=jobs`
+        : "/saved-searches";
+    default:
+      return "/notifications";
+  }
+}
 
 /**
  * The in-app title and text of a notification as a Telegram message, with
@@ -144,7 +168,7 @@ export function telegramText(input: {
   const values = templateValues(input.payload);
   const title = fillTemplate(block.inapp.title, values);
   const body = fillTemplate(block.inapp.body, values);
-  const link = `${input.siteUrl}/${input.locale}${NOTIFICATION_PATHS[input.type]}`;
+  const link = `${input.siteUrl}/${input.locale}${notificationPath(input.type, input.payload)}`;
   return `${title}
 ${body}
 

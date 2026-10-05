@@ -560,7 +560,8 @@
       },
       "pipeline": "Applications by status",
       "status": "Status",
-      "empty": "No views yet. Share the link to the job to get the first visitors."
+      "empty": "No views yet. Share the link to the job to get the first visitors.",
+      "followers": "Following the company"
     }
   },
   "matches": {
@@ -760,6 +761,16 @@
         "email": {
           "subject": "New jobs: {searchName}",
           "body": "{count, plural, one {# new job matches} other {# new jobs match}} your saved search “{searchName}”: {jobs}."
+        }
+      },
+      "companyNewJobs": {
+        "inapp": {
+          "title": "New jobs at a company you follow",
+          "body": "{companyName}: {count, plural, one {# new job} other {# new jobs}}."
+        },
+        "email": {
+          "subject": "New jobs at {companyName}",
+          "body": "{companyName} published {count, plural, one {# new job} other {# new jobs}}: {jobs}."
         }
       }
     }
@@ -1391,7 +1402,7 @@
     "openMatches": "Open matches"
   },
   "savedSearches": {
-    "title": "Saved searches",
+    "title": "Saved searches and companies",
     "intro": "Searches you saved in the catalog. With the alert on, we send the new jobs once a day.",
     "empty": "No saved searches yet. Set filters in the catalog and press “Save search”.",
     "open": "Open",
@@ -1405,5 +1416,17 @@
     "limit": "You have 10 saved searches. Delete one to save another.",
     "failed": "Could not save. Try again.",
     "signIn": "Sign in to save searches"
+  },
+  "follows": {
+    "follow": "Follow",
+    "following": "Following",
+    "unfollow": "Unfollow",
+    "hint": "New jobs of this company once a day, in the app, by email or in Telegram, as set in notifications.",
+    "limit": "You follow 50 companies. Unfollow one to follow another.",
+    "failed": "Could not change. Try again.",
+    "title": "Followed companies",
+    "empty": "You do not follow any company yet. Press “Follow” on a company page.",
+    "openCompany": "Open the company",
+    "signIn": "Sign in to follow"
   }
 }

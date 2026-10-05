@@ -23,7 +23,9 @@ export type RecipientRole =
   | "reporter"
   | "candidateAndCompanyMembers"
   /** The owner of a saved search (D234). */
-  | "searchOwner";
+  | "searchOwner"
+  /** A user following the company (D240). */
+  | "companyFollower";
 
 export const APPLICATION_STATUSES = [
   "applied",
@@ -97,6 +99,13 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
     matchCount: z.number().int().min(1),
     sampleJobIds: z.array(idSchema).max(5),
   }),
+  companyNewJobs: strict({
+    companyId: idSchema,
+    companySlug: z.string().min(1).max(120),
+    companyName: z.string().min(1).max(200),
+    matchCount: z.number().int().min(1),
+    sampleJobIds: z.array(idSchema).max(5),
+  }),
   reportDecided: strict({
     reportId: idSchema,
     entityType: z.enum(["job", "company", "user"]),
@@ -117,6 +126,7 @@ export const NOTIFICATION_TYPES = [
   "matches.digest",
   "report.decided",
   "search.alert",
+  "company.new_jobs",
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
@@ -238,6 +248,15 @@ export const NOTIFICATION_CATALOG: Readonly<
     policy: "daily_digest",
     emailDefault: true,
     payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.searchAlert,
+  },
+  // Not in section 15: new jobs of a followed company (D240).
+  "company.new_jobs": {
+    type: "company.new_jobs",
+    i18nKey: "companyNewJobs",
+    recipients: "companyFollower",
+    policy: "daily_digest",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.companyNewJobs,
   },
 };
 

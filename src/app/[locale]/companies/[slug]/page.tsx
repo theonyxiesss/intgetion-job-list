@@ -12,6 +12,8 @@ import {
   getVisibleCompany,
 } from "@/modules/jobs/service";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
+import { isFollowing } from "@/modules/follows/service";
+import { FollowButton } from "@/modules/follows/ui/follow-button";
 import {
   languageAlternates,
   metaDescription,
@@ -59,16 +61,21 @@ export default async function CompanyPage({
   let viewer: Parameters<typeof listPublishedJobsForCompany>[2] = {
     hidden: null,
   };
+  let viewerId: string | null = null;
   try {
     const supabase = await createSupabaseServerClient();
     const viewerUser = await getCurrentUser(supabase.auth);
     if (viewerUser) {
+      viewerId = viewerUser.id;
       viewer = { hidden: await getHiddenSetsForViewer(viewerUser.id) };
     }
   } catch {
     // No request scope (prerender) → guest view.
   }
-  const jobs = await listPublishedJobsForCompany(company.id, locale, viewer);
+  const [jobs, following] = await Promise.all([
+    listPublishedJobsForCompany(company.id, locale, viewer),
+    viewerId ? isFollowing(viewerId, company.id) : false,
+  ]);
   const jobsTab = tab === "jobs";
   const initials = company.name
     .split(/\s+/)
@@ -79,7 +86,7 @@ export default async function CompanyPage({
   return (
     <main className="py-10 md:py-16">
       <Container className="flex flex-col gap-8">
-        <header className="flex items-end gap-4">
+        <header className="flex flex-wrap items-end gap-4">
           <span
             role={company.logoPath ? "img" : undefined}
             aria-label={company.logoPath ? t("companyLogo") : undefined}
@@ -98,6 +105,13 @@ export default async function CompanyPage({
                   : undefined
             }
           />
+          <div className="ml-auto">
+            <FollowButton
+              slug={slug}
+              initial={following}
+              signedIn={viewerId !== null}
+            />
+          </div>
         </header>
         <LinkTabs
           label={t("tabsLabel")}
