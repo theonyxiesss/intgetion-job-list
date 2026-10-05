@@ -40,14 +40,15 @@ export function TelegramLoginButton({
         method: "POST",
       });
       if (cancelled) return;
-      if (response.ok) {
-        routerRef.current.replace("/");
-        routerRef.current.refresh();
-        return;
-      }
+      // 202 is still `ok` in fetch. It means the bot has not confirmed yet.
       if (response.status === 202) {
         setPhase("waiting");
         timer = window.setTimeout(() => void tick(), 2000);
+        return;
+      }
+      if (response.ok) {
+        routerRef.current.replace("/");
+        routerRef.current.refresh();
         return;
       }
       if (afterClick) setPhase("failed");
