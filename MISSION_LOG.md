@@ -562,13 +562,13 @@
 - Не сделано в коде (по D218): лимит на HTML-страницы каталога — правило Vercel Firewall в панели.
 - OPEN QUESTION: нет
 
-## [2026-10-05] — админ-панель (hermes/admin-panel) — DONE, ждёт CI
+## [2026-10-05] — админ-панель (hermes/admin-panel) — DONE
 
 - Сделано: D221–D224. Навигация с компаниями и метриками, счётчики модерации, жалоб и навыков, на телефоне выпадающее меню. Обзор: Stat, просроченная очередь, 10 событий аудита. Список и карточка компаний, карточка пользователя (почта только там), фильтры вакансий. Разрушительные действия — danger и ConfirmCard. `hermes/mobile-e2e` запушен как есть (`656f538`), e2e там не закончен.
-- Команды проверки: `pnpm exec tsc --noEmit` → 0; `pnpm lint` → 0; `pnpm test` → 0 (541 passed, 1 skipped). CI `37296394812`, `37297815360`, `37299534242`: `check` зелёный, на 360 px `/en/admin` был 401 px. Лишние 41 px — иконка щита в шапке: `hidden` проигрывал `inline-flex` из `iconLink`, потому что `cn` не сливает классы Tailwind. На телефоне щит, отклики и профиль снова только в меню.
-- P-тесты подфазы: e2e `tests/e2e/admin-panel.spec.ts` написан, в этом прогоне CI unit-тестов его нет.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0; `pnpm lint` → 0; `pnpm test` → 0 (541 passed, 1 skipped). `gh run watch 37300520562` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37300520562 — `check` и `database` success. До этого `37296394812`, `37297815360`, `37299534242`: на 360 px `/en/admin` был 401 px. Лишние 41 px — иконка щита в шапке: `hidden` проигрывал `inline-flex` из `iconLink`, потому что `cn` не сливает классы Tailwind. На телефоне щит, отклики и профиль снова только в меню.
+- P-тесты подфазы: e2e `tests/e2e/admin-panel.spec.ts` зелёный в прогоне `37300520562`.
 - Миграции: нет.
-- Изменённые файлы: `src/app/[locale]/admin/**` кроме metrics, `src/components/admin/**`, чтения в `src/modules/admin/**`, ключ `admin` в сообщениях, `tests/e2e/admin-panel.spec.ts`, `docs/DECISIONS.md`.
+- Изменённые файлы: `src/app/[locale]/admin/**` кроме metrics, `src/components/admin/**`, `src/components/shell/header.tsx` (класс `hidden` у иконок шапки), чтения в `src/modules/admin/**`, ключ `admin` в сообщениях, `tests/e2e/admin-panel.spec.ts`, `docs/DECISIONS.md`.
 - Отклонения от ТЗ: нет. D221: страница метрик не обёрнута в оболочку — её нельзя было менять.
 - Чего нет в API, кнопок нет: выдать или снять trusted; решить попытку верификации с карточки компании; сменить роль пользователя. Фильтр компании на странице вакансий — чтение в модуле admin, не новое поле `GET /api/admin/jobs`.
 - OPEN QUESTION: нет.
