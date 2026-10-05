@@ -688,11 +688,11 @@
 
 ## [2026-10-05] — P-MOBILE — на ветке cursor/p-mobile
 
-- Сделано: e2e на 360 и 390 для главной, каталога, вакансии, зарплат, входа и чата (без горизонтальной прокрутки, зоны нажатия кнопок и полей ≥ 44 px, axe без critical и serious). Нижнее меню кандидата проверено на 360. Чат на телефоне занимает экран между шапкой и меню, поле ввода не уезжает под клавиатуру (`interactive-widget: resizes-content`). В `scripts/ci-ui.sh` мобильный Lighthouse каталога и вакансии, медиана пяти прогонов, потолок 4500 мс (D288). «Не указано» в телеметрии красится `--fg-muted` (D286): `#71717A` на чёрном — 4.35:1.
-- Команды проверки: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37363382897 — `serious:color-contrast` на вакансии. https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37365038039 — контраст прошёл, радиокнопки входа 13×13. https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37365887816 — e2e 72 passed, затем Chrome не открыл порт отладки; повторные попытки `database` 15 минут ждали раннер и были отменены. Lighthouse теперь повторяет запуск один раз.
+- Сделано: e2e на 360 и 390 для главной, каталога, вакансии, зарплат, входа и чата (без горизонтальной прокрутки, зоны нажатия кнопок и полей ≥ 44 px, axe без critical и serious). Нижнее меню кандидата проверено на 360. Чат на телефоне занимает экран между шапкой и меню, поле ввода не уезжает под клавиатуру (`interactive-widget: resizes-content`). В `scripts/ci-ui.sh` мобильный Lighthouse каталога и вакансии, медиана пяти прогонов, потолок 4000 мс (D288). «Не указано» в телеметрии красится `--fg-muted` (D286): `#71717A` на чёрном — 4.35:1.
+- Команды проверки: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37372773588 — `check` и `database` success, head `665c0a9`. Lighthouse: главная медиана 1898 мс (2650, 1898, 1874, 1876, 1916); каталог 2749 мс; вакансия 1868 мс. Потолок каталога и вакансии снижен до 4000 мс. Ранние прогоны: `37363382897` контраст, `37365038039` радиокнопки, `37365887816` Chrome и отмены раннера.
 - P-тесты подфазы: phone.spec.ts, правка mobile-app.spec.ts.
 - Миграции: нет.
 - Изменённые файлы: `src/components/bot/chat.tsx`, `src/app/[locale]/chat/page.tsx`, `src/app/[locale]/chat/layout.tsx`, `src/app/globals.css`, `tests/e2e/phone.spec.ts`, `tests/e2e/mobile-app.spec.ts`, `scripts/ci-ui.sh`, `docs/DECISIONS.md`, `MISSION_LOG.md`.
 - Отклонения от ТЗ: D285–D288. `scripts/ci-ui.sh` обычно меняет только Claude Code; правка здесь, потому что задание прямо кладёт туда замер.
-- OPEN QUESTION: нет. Потолок 4500 мс — первый, его можно снизить по медиане этого CI.
+- OPEN QUESTION: нет. Потолок 4000 мс держит измеренные медианы с запасом на медленный раннер.
 - Следующая подфаза: Claude Code вливает после зелёного CI. В master не вливалось.
