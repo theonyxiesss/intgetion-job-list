@@ -18,6 +18,7 @@ import {
   Th,
   Tr,
 } from "@/components/ui";
+import { Link } from "@/i18n/navigation";
 import {
   listAdminJobs,
   listAdminJobsQuery,
@@ -77,7 +78,12 @@ export default async function AdminJobsPage({
             {items.map((job) => (
               <Tr key={job.id}>
                 <Td>
-                  <span className="font-medium">{job.title}</span>
+                  <Link
+                    href={`/admin/jobs/${job.id}`}
+                    className="font-medium underline-offset-4 hover:underline"
+                  >
+                    {job.title}
+                  </Link>
                   <span className="t-caption block text-fg-muted">
                     {job.companyName}
                   </span>

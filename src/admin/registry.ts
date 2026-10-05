@@ -6,6 +6,7 @@ export type AdminIconName =
   | "list-checks"
   | "flag"
   | "briefcase"
+  | "building"
   | "users"
   | "download"
   | "tags"
@@ -18,6 +19,7 @@ export type AdminSectionKey =
   | "moderation"
   | "reports"
   | "jobs"
+  | "companies"
   | "users"
   | "import"
   | "taxonomy"
@@ -68,6 +70,13 @@ export const adminSections: readonly AdminSectionDef[] = [
     labelKey: "navJobs",
     icon: "briefcase",
     permission: "jobs.read",
+  },
+  {
+    key: "companies",
+    href: "/admin/companies",
+    labelKey: "navCompanies",
+    icon: "building",
+    permission: "companies.read",
   },
   {
     key: "users",

@@ -122,7 +122,13 @@ export async function listCompanies(input: {
 }): Promise<AdminCompanyRow[]> {
   const filters = [
     input.status ? eq(companies.status, input.status) : undefined,
-    input.q ? ilike(companies.name, `%${escapeLike(input.q)}%`) : undefined,
+    input.q
+      ? or(
+          ilike(companies.name, `%${escapeLike(input.q)}%`),
+          ilike(companies.slug, `%${escapeLike(input.q)}%`),
+          ilike(companies.domain, `%${escapeLike(input.q)}%`),
+        )
+      : undefined,
     input.cursor
       ? or(
           lt(companies.createdAt, input.cursor.createdAt),

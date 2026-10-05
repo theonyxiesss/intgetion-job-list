@@ -61,6 +61,51 @@ export async function getAuthUserEmail(
  * "unavailable" (no key) or "failed" — the caller has already anonymised
  * the profile, so a failure is logged and retried by the retention cron.
  */
+/** Ends every refresh session for this auth user (A2 sign-out). */
+export async function signOutAuthUser(
+  authUid: string,
+): Promise<"ok" | "unavailable" | "failed"> {
+  try {
+    const response = await adminFetch(
+      `/users/${encodeURIComponent(authUid)}/logout`,
+      { method: "POST" },
+    );
+    if (!response) return "unavailable";
+    if (response.ok || response.status === 404) return "ok";
+    logger.warn({ status: response.status }, "auth admin: logout refused");
+    return "failed";
+  } catch (error) {
+    logger.warn({ err: error }, "auth admin: logout failed");
+    return "failed";
+  }
+}
+
+/** Sends the normal password-reset letter. The admin never sees the password. */
+export async function sendPasswordRecovery(
+  email: string,
+): Promise<"sent" | "unavailable" | "failed"> {
+  const key = serviceKey();
+  if (!key) return "unavailable";
+  try {
+    const response = await fetch(`${supabaseUrl()}/auth/v1/recover`, {
+      method: "POST",
+      headers: {
+        apikey: key,
+        authorization: `Bearer ${key}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (response.ok) return "sent";
+    logger.warn({ status: response.status }, "auth admin: recovery refused");
+    return "failed";
+  } catch (error) {
+    logger.warn({ err: error }, "auth admin: recovery failed");
+    return "failed";
+  }
+}
+
 export async function deleteAuthUser(
   authUid: string,
 ): Promise<"deleted" | "missing" | "unavailable" | "failed"> {
