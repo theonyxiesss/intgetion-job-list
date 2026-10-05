@@ -545,3 +545,11 @@
 - Отклонения от ТЗ: нет.
 - OPEN QUESTION: нет (restore не проверялся — отмечено в RUNBOOK).
 - Следующая подфаза: Sentry (instrumentation.ts, D197–D199).
+
+## [2026-10-05] — 11B — DONE, влито в master и на intgetion.com
+
+- Сделано: `hermes/runbook` (RUNBOOK, `pnpm env:check`, `/admin/metrics`, Sentry, тексты для маркеров и черновики юридических страниц, D191–D199) одним коммитом поверх master: fast-forward `625bdb6..57de25f`. Правки при интеграции: файлы сообщений — из master плюс блок `metrics` (ветка переписывала чужие строки `chat.*` и удаляла `chat.score`); отправка в Sentry переписана под форму `request` в `onRequestError` Next (путь, метод, заголовки), валидный envelope с `x-sentry-auth` и таймаутом 3 с, без заголовков и query; `/admin/metrics` отвечает 404 не-админу через `requireAdminPage`, как остальные `/admin`. Правка `tsconfig.json` (`allowImportingTsExtensions`) не вошла.
+- Команды проверки: локально `tsc --noEmit` → 0, `eslint . --max-warnings 0` → 0, `vitest run` → 0 (66 files, 538 passed, 1 skipped). `gh run watch 37280133265` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37280133265 — `check` и `database` success.
+- Миграции: нет. Env: необязательный `SENTRY_DSN`; без него отправка выключена.
+- OPEN QUESTION: нет
+- Следующее: Hermes — 9B (`hermes/9b`, черновик в работе); Cursor — прод (пулер БД, Telegram-токен, Supabase Auth, ключ OpenRouter).
