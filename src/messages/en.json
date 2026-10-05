@@ -88,7 +88,10 @@
     "wordmarkSub": "Job list"
   },
   "meta": {
-    "description": "Remote work. Real matches."
+    "description": "Remote work. Real matches.",
+    "homeTitle": "Remote Web3 & Crypto Jobs",
+    "homeDescription": "Find remote jobs in Web3, crypto and blockchain: engineering, design, marketing and support. Salary ranges, time-zone overlap and matches to your profile.",
+    "ogAlt": "INTGETION Job List — remote work in Web3"
   },
   "nav": {
     "home": "Home",

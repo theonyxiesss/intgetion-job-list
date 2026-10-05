@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -9,6 +10,7 @@ import { OrbitBackdrop } from "@/components/ui/orbit-backdrop";
 import { navForward } from "@/components/ui/page-transition";
 import { countPublicCatalog } from "@/modules/jobs/service";
 import { LatestJobs } from "@/modules/jobs/ui/latest-jobs";
+import { languageAlternates, siteUrl } from "@/modules/seo/site";
 
 const categoryIds = [
   "engineering",
@@ -27,6 +29,32 @@ const steps = ["benefitBot", "benefitMatch", "benefitContacts"] as const;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
+}
+
+/** The home page carries the words people search for (D277). */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+  const product = await getTranslations({ locale, namespace: "product" });
+  const title = `${t("homeTitle")} — ${product("wordmark")}`;
+  return {
+    // Absolute: the layout template would append the product name again.
+    title: { absolute: title },
+    description: t("homeDescription"),
+    alternates: {
+      canonical: `${siteUrl()}/${locale}`,
+      languages: languageAlternates(""),
+    },
+    openGraph: {
+      type: "website",
+      title,
+      description: t("homeDescription"),
+    },
+  };
 }
 
 export default async function HomePage({

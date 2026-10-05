@@ -87,3 +87,41 @@ test("the scraper trap is hidden and answers 404", async ({
   await expect(trap).toBeHidden();
   expect((await request.get("/api/catalog-export")).status()).toBe(404);
 });
+
+// D276–D278: x-default, the home page title and the generated social image.
+test("the home page carries search wording, x-default and a social image", async ({
+  page,
+  request,
+}) => {
+  await page.goto("/en");
+  await expect(page).toHaveTitle(/Remote Web3 & Crypto Jobs — INTGETION/);
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    "content",
+    /Web3, crypto and blockchain/,
+  );
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    /\/en$/,
+  );
+  await expect(
+    page.locator('link[rel="alternate"][hreflang="x-default"]'),
+  ).toHaveAttribute("href", /\/en$/);
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+    "content",
+    "summary_large_image",
+  );
+
+  const image = page.locator('meta[property="og:image"]');
+  await expect(image).toHaveCount(1);
+  const url = await image.getAttribute("content");
+  const response = await request.get(url ?? "");
+  expect(response.status()).toBe(200);
+  expect(response.headers()["content-type"]).toContain("image/png");
+
+  // Job pages inherit the image and get x-default too.
+  await page.goto("/en/jobs");
+  await expect(
+    page.locator('link[rel="alternate"][hreflang="x-default"]'),
+  ).toHaveAttribute("href", /\/en\/jobs$/);
+  await expect(page.locator('meta[property="og:image"]')).toHaveCount(1);
+});

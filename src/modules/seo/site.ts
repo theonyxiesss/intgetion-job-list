@@ -8,12 +8,18 @@ export function siteUrl(): string {
 
 export const SEO_LOCALES = ["en", "ru"] as const;
 
-/** hreflang alternates for one path, e.g. "/jobs". */
+/**
+ * hreflang alternates for one path, e.g. "/jobs". English also answers as
+ * "x-default" — the page a visitor from any other language gets (D276).
+ */
 export function languageAlternates(path: string): Record<string, string> {
   const base = siteUrl();
-  return Object.fromEntries(
-    SEO_LOCALES.map((locale) => [locale, `${base}/${locale}${path}`]),
-  );
+  return {
+    ...Object.fromEntries(
+      SEO_LOCALES.map((locale) => [locale, `${base}/${locale}${path}`]),
+    ),
+    "x-default": `${base}/en${path}`,
+  };
 }
 
 /** Private and service areas search engines should not crawl. */

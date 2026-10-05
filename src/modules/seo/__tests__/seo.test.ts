@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { jobPostingJsonLd, serializeJsonLd } from "../job-posting";
-import { metaDescription } from "../site";
+import { languageAlternates, metaDescription } from "../site";
 
 const job = {
   id: "00000000-0000-4000-8000-000000000001",
@@ -74,5 +74,15 @@ describe("meta description", () => {
     const long = metaDescription("word ".repeat(60));
     expect(long.length).toBeLessThanOrEqual(160);
     expect(long.endsWith("…")).toBe(true);
+  });
+});
+
+describe("languageAlternates (D276)", () => {
+  it("answers for both languages and for everyone else", () => {
+    expect(languageAlternates("/jobs")).toEqual({
+      en: "http://localhost:3000/en/jobs",
+      ru: "http://localhost:3000/ru/jobs",
+      "x-default": "http://localhost:3000/en/jobs",
+    });
   });
 });

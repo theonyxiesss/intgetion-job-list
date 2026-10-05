@@ -21,6 +21,16 @@ if (!url) throw new Error("DATABASE_MIGRATION_URL is not set");
 if (!isLoopback(url) && !args.has("--cloud")) {
   throw new Error("Not a local database: pass --cloud to seed it on purpose");
 }
+// Made-up jobs must never reach the live site: search engines treat them as
+// fake content and visitors as a lie (D279).
+if (
+  !args.has("--remove") &&
+  !args.has("--verify") &&
+  (process.env.VERCEL_ENV === "production" ||
+    process.env.NODE_ENV === "production")
+) {
+  throw new Error("Refusing to seed demo content in production");
+}
 
 // City for hybrid and onsite jobs: the jobs table requires a location then.
 const cities = { NL: "Amsterdam", CZ: "Prague" };
