@@ -21,14 +21,18 @@ async function tapTargets(page: Page) {
       ),
     ];
     return nodes.flatMap((node) => {
-      const box = node.getBoundingClientRect();
-      const style = getComputedStyle(node);
+      const choice =
+        node instanceof HTMLInputElement &&
+        (node.type === "radio" || node.type === "checkbox");
+      const target = (choice && node.closest("label")) || node;
+      const box = target.getBoundingClientRect();
+      const style = getComputedStyle(target);
       if (style.visibility === "hidden" || box.width === 0 || box.height === 0)
         return [];
       if (box.width >= 44 && box.height >= 44) return [];
       const name =
-        node.getAttribute("aria-label") ||
-        node.textContent?.trim().slice(0, 40) ||
+        target.getAttribute("aria-label") ||
+        target.textContent?.trim().slice(0, 40) ||
         node.tagName;
       return [`${name} ${Math.round(box.width)}x${Math.round(box.height)}`];
     });
