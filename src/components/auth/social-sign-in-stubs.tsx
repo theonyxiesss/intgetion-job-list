@@ -3,8 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonClass } from "@/components/ui/button";
 import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
+import { TelegramLoginButton } from "./telegram-login-button";
 import { authAdminAvailable } from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/supabase/env";
+import type { AppLocale } from "@/i18n/routing";
 import {
   telegramAuthUrl,
   telegramBotId,
@@ -13,7 +15,12 @@ import {
 
 const STUBS = ["google", "x"] as const;
 
-/** Telegram works when the bot token and the Auth admin key are set (D217). */
+/** Bot sign-in needs the bot token and the Auth admin key (D256). */
+function telegramReady(): boolean {
+  return Boolean(telegramBotToken() && authAdminAvailable());
+}
+
+/** The frozen widget sign-in, still behind its flag (D217, D246). */
 async function telegramHref(): Promise<string | null> {
   const token = telegramBotToken();
   if (!flags.telegramLoginEnabled || !token || !authAdminAvailable()) {
@@ -34,7 +41,10 @@ async function telegramHref(): Promise<string | null> {
  */
 export async function SocialSignInStubs() {
   const t = await getTranslations("auth.social");
-  const telegram = await telegramHref();
+  const locale = await getLocale();
+  const ready = telegramReady();
+  // The widget only when its flag is on; otherwise the bot does the signing in.
+  const telegram = ready ? await telegramHref() : null;
   return (
     <section aria-labelledby="social-sign-in" className="flex flex-col gap-3">
       <div className="flex items-center gap-3 text-fg-muted">
@@ -44,7 +54,7 @@ export async function SocialSignInStubs() {
         </h2>
         <span aria-hidden="true" className="h-px flex-1 bg-line" />
       </div>
-      {telegram && (
+      {telegram ? (
         <div className="flex flex-col gap-1">
           <a
             href={telegram}
@@ -67,17 +77,37 @@ export async function SocialSignInStubs() {
             })}
           </p>
         </div>
-      )}
-      {[...STUBS, ...(telegram ? [] : (["telegram"] as const))].map(
-        (provider) => (
-          <div key={provider} className="flex items-center gap-3">
-            <Button variant="secondary" disabled className="flex-1">
-              {t(provider)}
-            </Button>
-            <Badge>{t("soon")}</Badge>
-          </div>
-        ),
-      )}
+      ) : ready ? (
+        <TelegramLoginButton
+          locale={locale as AppLocale}
+          label={t("telegram")}
+          waiting={t("telegramWaiting")}
+          failed={t("telegramFailed")}
+        >
+          <p className="t-caption text-fg-muted">
+            {t.rich("telegramTerms", {
+              terms: (chunks) => (
+                <Link href="/terms" className="underline">
+                  {chunks}
+                </Link>
+              ),
+              privacy: (chunks) => (
+                <Link href="/privacy" className="underline">
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
+        </TelegramLoginButton>
+      ) : null}
+      {[...STUBS, ...(ready ? [] : (["telegram"] as const))].map((provider) => (
+        <div key={provider} className="flex items-center gap-3">
+          <Button variant="secondary" disabled className="flex-1">
+            {t(provider)}
+          </Button>
+          <Badge>{t("soon")}</Badge>
+        </div>
+      ))}
     </section>
   );
 }
