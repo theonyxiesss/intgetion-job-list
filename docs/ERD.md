@@ -115,12 +115,13 @@ erDiagram
     timestamptz created_at
   }
   candidate_profiles {
-    uuid user_id PK
-    text full_name
-    text headline
-    text timezone
-    smallint completeness
-  }
+      uuid user_id PK
+      text full_name
+      text headline
+      text timezone
+      smallint completeness
+      timestamptz last_digest_at
+    }
   candidate_skills {
     uuid candidate_id PK
     uuid skill_id PK

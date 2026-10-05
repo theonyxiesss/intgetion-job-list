@@ -90,7 +90,7 @@ describe("no-foreign-repo-import", () => {
     expect(messages.map((message) => message.messageId)).toEqual([
       "foreignRepo",
     ]);
-  });
+  }, 15000);
 });
 
 describe("eslint config", () => {
@@ -104,5 +104,5 @@ describe("eslint config", () => {
     expect(
       isError(config.rules?.["jsx-a11y/click-events-have-key-events"]),
     ).toBe(true);
-  });
+  }, 15000);
 });

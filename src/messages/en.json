@@ -1187,5 +1187,11 @@
       "lead": "Lead"
     },
     "nonTechnical": "Non-technical"
+  },
+  "digest": {
+    "title": "New matches for you",
+    "empty": "No new matches since your last digest.",
+    "matchPrefix": "Match",
+    "openLink": "Open matches"
   }
 }
