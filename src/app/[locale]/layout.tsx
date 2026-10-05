@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { Footer } from "@/components/shell/footer";
 import { AnalyticsTracker } from "@/components/shell/analytics-tracker";
+import { ServiceWorker } from "@/components/shell/service-worker";
 import { CookieBanner } from "@/components/shell/cookie-banner";
 import { Header } from "@/components/shell/header";
 import { ToastProvider } from "@/components/ui";
@@ -107,7 +108,7 @@ export default async function LocaleLayout({
       className={`h-full ${display.variable}`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col has-[[data-bottom-nav]]:pb-16 md:has-[[data-bottom-nav]]:pb-0">
         <script
           nonce={nonce}
           dangerouslySetInnerHTML={{ __html: themeScript }}
@@ -126,6 +127,7 @@ export default async function LocaleLayout({
             </div>
             <Footer />
             <AnalyticsTracker />
+            <ServiceWorker />
             <CookieBanner
               text={{
                 label: t("cookies.label"),

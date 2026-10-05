@@ -17,6 +17,7 @@ import { requireUser } from "@/lib/auth-guards";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { hasCandidateProfile } from "@/modules/candidates/service";
 import { countUnread } from "@/modules/notifications/service";
+import { BottomNav } from "./bottom-nav";
 import { MobileNav, type NavItem } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -179,6 +180,18 @@ export async function Header() {
       <Suspense>
         <NavProgress />
       </Suspense>
+      {candidate ? (
+        <BottomNav
+          label={t("nav.bottom")}
+          items={[
+            { href: "/jobs", label: t("nav.jobs") },
+            { href: "/matches", label: t("nav.matches") },
+            { href: "/applications", label: t("applications.nav") },
+            { href: "/chat", label: t("nav.chat") },
+            { href: "/profile", label: t("profile.nav") },
+          ]}
+        />
+      ) : null}
     </ScrollFrame>
   );
 }
