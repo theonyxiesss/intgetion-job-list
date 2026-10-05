@@ -578,3 +578,12 @@
 - Решения: D250–D255.
 - OPEN QUESTION: адрес `admin.intgetion.com` основатель ещё не подтвердил в DNS; периметр (IP / Cloudflare Access / только MFA); состав команды и роли; сверка пароля админки со списком утёкших (HIBP) не делалась. Панель Supabase Auth (Site URL, SMTP Resend, TOTP) в этой сессии не открылась — нужен вход основателя. Порт `DATABASE_URL` в этой сессии заново не читался.
 - Следующее: Claude Code вливает в master. После проверки хоста можно включать `ADMIN_HOST_ONLY`.
+
+## [2026-10-05] — A1 дом админки влит — DONE, на intgetion.com
+
+- Сделано: master `c7d0a54..8df0fcc` (4 коммита Cursor, перебазированы на `c7d0a54`, плюс правка формата `docs/DECISIONS.md`). Конфликты только в MISSION_LOG и DECISIONS, обе стороны сохранены.
+- Миграции: `0027_admin_core.sql` применена к облачной базе до вливания (`pnpm db:migrate`, `pnpm db:verify`); `admin_members`, `admin_sessions`, `admin_recovery_codes` и 3 столбца `audit_logs` на месте.
+- Команды проверки: CI `37320497810` — `check` и `database` success (повтор `database`: первый раз LCP 2506 мс при бюджете 2500, повтор 2474 мс). Прод после деплоя: `/en`, `/ru`, `/sitemap.xml`, `/robots.txt` — 200; `/en/admin` гостю — 404 (как задумано), `/en/admin/login` и `/ru/admin/login` — 200.
+- Инцидент: около 15:23 общий `.git` получил обнулённый `packed-refs` (CRLF) и лишний `.git/shallow`; ссылки восстановлены из reflog, `git fsck` чистый.
+- OPEN QUESTION: LCP главной близко к бюджету 2500 мс (медианы 2474–2506), нужен запас. Номера Cursor: админка заняла D250–D255 и миграцию `0027`, новому входу через Telegram (`cursor/telegram-login-rescue`) — миграция `0028` и решения с D256.
+- Следующее: основатель — DNS и домен `admin.intgetion.com` в Vercel, затем `ADMIN_HOST_ONLY=1`; Cursor — Telegram-вход на новых номерах.
