@@ -29,6 +29,7 @@ import {
   parseRecentJobs,
 } from "@/modules/jobs/ui/recent-jobs";
 import { RecentlyViewed } from "@/modules/jobs/ui/recently-viewed";
+import { SaveSearchButton } from "@/modules/saved-searches/ui/save-search-button";
 import { cookies } from "next/headers";
 import { CONSENT_COOKIE, consentAllows, consentInForce } from "@/lib/consent";
 
@@ -195,6 +196,16 @@ export default async function JobsPage({
         />
         {activeCount(raw) === 0 ? (
           <RecentlyViewed ids={recentIds} locale={locale} />
+        ) : signedIn ? (
+          <SaveSearchButton
+            query={without(raw, "cursor").replace(/^\?/, "")}
+            name={
+              chips
+                .map((chip) => chip.label)
+                .join(", ")
+                .slice(0, 80) || t("title")
+            }
+          />
         ) : null}
         <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
           <form id="catalog-filters" action="" className="flex flex-col gap-4">

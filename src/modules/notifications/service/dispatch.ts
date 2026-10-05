@@ -73,6 +73,8 @@ async function deliverOne(
     type,
     values: templateValues(row.payload ?? {}),
     unsubscribeUrl: unsubscribeUrl(locale, row.user_id, type, now),
+    query:
+      typeof row.payload?.query === "string" ? row.payload.query : undefined,
   });
   if (!rendered) {
     await mark(tx, row.id, {

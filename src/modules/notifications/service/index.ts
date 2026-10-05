@@ -72,3 +72,4 @@ export {
   type DigestCandidateJob,
   type DigestJobLoader,
 } from "./digest";
+export { deliverInTransaction } from "./deliver";

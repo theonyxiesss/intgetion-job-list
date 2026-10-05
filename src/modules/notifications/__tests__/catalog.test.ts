@@ -23,11 +23,13 @@ const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
   ["company.verification_decided", true],
   ["matches.digest", true],
   ["report.decided", false],
+  // D234: saved-search alerts, added after section 15.
+  ["search.alert", true],
 ];
 
 describe("notification catalog (15, D100)", () => {
-  it("contains exactly the 11 types of section 15, in table order", () => {
-    expect(NOTIFICATION_TYPES).toHaveLength(11);
+  it("contains the 11 types of section 15 in table order, then D234", () => {
+    expect(NOTIFICATION_TYPES).toHaveLength(12);
     expect([...NOTIFICATION_TYPES]).toEqual(
       SECTION_15_EMAIL_DEFAULTS.map(([type]) => type),
     );
@@ -39,13 +41,16 @@ describe("notification catalog (15, D100)", () => {
     }
   });
 
-  it("batches application.created and digests matches.digest", () => {
+  it("batches application.created; matches.digest and search.alert are daily", () => {
     expect(NOTIFICATION_CATALOG["application.created"].policy).toBe(
       "hourly_batch",
     );
     expect(NOTIFICATION_CATALOG["matches.digest"].policy).toBe("daily_digest");
+    // D234: saved-search alerts are scheduled by their own cron.
+    expect(NOTIFICATION_CATALOG["search.alert"].policy).toBe("daily_digest");
+    const scheduled = ["application.created", "matches.digest", "search.alert"];
     for (const type of NOTIFICATION_TYPES) {
-      if (type !== "application.created" && type !== "matches.digest") {
+      if (!scheduled.includes(type)) {
         expect(NOTIFICATION_CATALOG[type].policy).toBe("immediate");
       }
     }

@@ -25,6 +25,7 @@ export const ROBOTS_DISALLOW = [
   "/*/profile",
   "/*/applications",
   "/*/saved-jobs",
+  "/*/saved-searches",
   "/*/notifications",
   "/*/matches",
   "/*/contacts",

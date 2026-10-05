@@ -751,6 +751,16 @@
           "title": "Report reviewed",
           "body": "Your report was reviewed: {decision}."
         }
+      },
+      "searchAlert": {
+        "inapp": {
+          "title": "New jobs for a saved search",
+          "body": "{count, plural, one {# new job} other {# new jobs}} for “{searchName}”."
+        },
+        "email": {
+          "subject": "New jobs: {searchName}",
+          "body": "{count, plural, one {# new job matches} other {# new jobs match}} your saved search “{searchName}”: {jobs}."
+        }
       }
     }
   },
@@ -1376,5 +1386,21 @@
   "digest": {
     "chatEvent": "Your morning digest is ready: {count} new matching jobs. They are on the Matches page.",
     "openMatches": "Open matches"
+  },
+  "savedSearches": {
+    "title": "Saved searches",
+    "intro": "Searches you saved in the catalog. With the alert on, we send the new jobs once a day.",
+    "empty": "No saved searches yet. Set filters in the catalog and press “Save search”.",
+    "open": "Open",
+    "alert": "Daily alert",
+    "delete": "Delete",
+    "deleted": "Deleted.",
+    "save": "Save search",
+    "saved": "Search saved. New jobs will come once a day.",
+    "manage": "Saved searches",
+    "openSearch": "Open the search",
+    "limit": "You have 10 saved searches. Delete one to save another.",
+    "failed": "Could not save. Try again.",
+    "signIn": "Sign in to save searches"
   }
 }

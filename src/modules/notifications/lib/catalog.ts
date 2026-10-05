@@ -1,5 +1,6 @@
 /**
- * Notification event catalog (spec 15) as data: the 11 event types, who
+ * Notification event catalog (spec 15) as data: the 11 event types of
+ * section 15 plus saved-search alerts (D234), who
  * receives them, channels with defaults, delivery policy and zod payload
  * schemas. Payloads carry ids and short fields only — no contacts, no email
  * addresses, no phone numbers (D16, D23, D100).
@@ -19,7 +20,9 @@ export type RecipientRole =
   | "jobCreator"
   | "companyOwner"
   | "reporter"
-  | "candidateAndCompanyMembers";
+  | "candidateAndCompanyMembers"
+  /** The owner of a saved search (D234). */
+  | "searchOwner";
 
 export const APPLICATION_STATUSES = [
   "applied",
@@ -87,6 +90,12 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
     matchCount: z.number().int().min(0),
     sampleJobIds: z.array(idSchema).max(5),
   }),
+  searchAlert: strict({
+    savedSearchId: idSchema,
+    searchName: z.string().min(1).max(80),
+    matchCount: z.number().int().min(1),
+    sampleJobIds: z.array(idSchema).max(5),
+  }),
   reportDecided: strict({
     reportId: idSchema,
     entityType: z.enum(["job", "company", "user"]),
@@ -106,6 +115,7 @@ export const NOTIFICATION_TYPES = [
   "company.verification_decided",
   "matches.digest",
   "report.decided",
+  "search.alert",
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
@@ -218,6 +228,15 @@ export const NOTIFICATION_CATALOG: Readonly<
     policy: "immediate",
     emailDefault: false,
     payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.reportDecided,
+  },
+  // Not in section 15: saved-search alerts (D234).
+  "search.alert": {
+    type: "search.alert",
+    i18nKey: "searchAlert",
+    recipients: "searchOwner",
+    policy: "daily_digest",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.searchAlert,
   },
 };
 

@@ -7,6 +7,7 @@ import { UnsaveButton } from "@/modules/feedback/ui/unsave-button";
 import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
 import { JobCard } from "@/components/ui/job-card";
+import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -21,11 +22,19 @@ export default async function SavedJobsPage({
   const user = await getCurrentUser(supabase.auth);
   if (!user) redirect(`/${locale}/login`);
   const t = await getTranslations("savedJobs");
+  const searches = await getTranslations("savedSearches");
   const entries = await listSavedJobsForUser(user.id);
   return (
     <main className="py-10 md:py-16">
       <Container className="flex flex-col gap-8">
-        <PageHeader title={t("title")} />
+        <PageHeader
+          title={t("title")}
+          actions={
+            <Link href="/saved-searches" className="t-label underline">
+              {searches("manage")}
+            </Link>
+          }
+        />
         {entries.length ? (
           <ul className="grid gap-4">
             {entries.map(({ job, savedAt }) => (

@@ -84,6 +84,7 @@ export default async function NotificationsPage({
                           status: payload.status ?? "",
                           decision: payload.decision ?? "",
                           companyName: payload.companyName ?? "",
+                          searchName: payload.searchName ?? "",
                           date: payload.expiresAt?.slice(0, 10) ?? "",
                           count: Number(
                             payload.applicationCount ?? payload.matchCount ?? 0,

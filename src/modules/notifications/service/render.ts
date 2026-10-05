@@ -46,6 +46,8 @@ export function renderEmail(input: {
   type: NotificationType;
   values: Record<string, string | number>;
   unsubscribeUrl: string;
+  /** Catalog query of a saved-search alert, for its button (D234). */
+  query?: string;
 }): { subject: string; text: string; html: string } | null {
   const copy = emailCopy(input.locale, input.type);
   if (!copy) return null;
@@ -53,13 +55,19 @@ export function renderEmail(input: {
   const body = fillTemplate(copy.body, input.values);
   const link = unsubscribeLabel(input.locale);
   const text = `${subject}\n\n${body}\n\n${link}: ${input.unsubscribeUrl}`;
+  const origin = new URL(input.unsubscribeUrl).origin;
   const action =
     input.type === "matches.digest"
       ? {
-          href: `${new URL(input.unsubscribeUrl).origin}/${input.locale}/matches`,
+          href: `${origin}/${input.locale}/matches`,
           label: catalogs[input.locale].digest.openMatches,
         }
-      : undefined;
+      : input.type === "search.alert"
+        ? {
+            href: `${origin}/${input.locale}/jobs${input.query ? `?${input.query}` : ""}`,
+            label: catalogs[input.locale].savedSearches.openSearch,
+          }
+        : undefined;
   const html = siteEmailHtml({
     body,
     ...(action ? { action } : {}),
@@ -94,6 +102,7 @@ export function templateValues(
     status: String(payload.status ?? ""),
     decision: String(payload.decision ?? ""),
     companyName: String(payload.companyName ?? ""),
+    searchName: String(payload.searchName ?? ""),
     date: expires,
     count,
     jobs,
