@@ -939,19 +939,25 @@ Cookie `bot_session` хранит 32 случайных байта (base64url), 
 Кнопка активна только при `TELEGRAM_BOT_TOKEN` и `SUPABASE_SERVICE_ROLE_KEY`, иначе остаётся заглушкой «Скоро». У бота в @BotFather нужен `/setdomain` на домен сайта; локально (localhost) Telegram вход не отдаёт, проверка — на проде или preview с доменом.
 
 ## D185 — утро для дайджеста (9B)
+
 Морновой диапазон — 08:00–09:59 по часовому поясу кандидата (`candidate_profiles.timezone` → `Intl` через `src/lib/tz.ts`). Проверка — `timeZoneOffsetMinutes(now, tz)` + `getUTCHours()`. Вне диапазона дайджест не шлётся, cron молчит.
 
 ## D186 — порог и лимит (9B)
+
 В дайджест попадают только совпадения с `score >= 0.65` (из `DIGEST_MIN_SCORE` в `src/modules/notifications/lib/digest.ts`). Максимум 5 вакансий, по убыванию score. Скрытые, dismissed и `hidden_company` исключаются сервисом `getMatches` (6B).
 
 ## D187 — «не показанные раньше» и идемпотентность (9B)
+
 Дайджест шлётся только если есть совпадения, которые кандидат ещё не видел в дайджесте. Критерий: `matching_results.computed_at` (или `jobs.published_at`) > `candidate_profiles.last_digest_at` (или `last_digest_at` is null). Если новых нет — дайджест не шлётся, `last_digest_at` не обновляется. Обновление `last_digest_at` происходит в той же транзакции, что и вставка in-app уведомления (через `safeNotify`), с условием `last_digest_at is null or last_digest_at < now() - interval '20 hours'`. Повторный запуск cron в тот же час — не шлёт второй дайджест.
 
 ## D188 — каналы и system_event (9B)
+
 Каналы: in-app — всегда (через `safeNotify`); email — только если в preferences включён и `getAuthUserEmail` вернул настоящий адрес (для `@telegram.intgetion.com` — null, так и надо). Письмо через `siteEmailHtml` (тело собирается строкой, заголовки/компании/«почему подходит» — в `action`/`footer` — `siteEmailHtml` экранирует сам). Отписка — как в 9A (`unsubscribeUrl`). Если у кандидата есть веб-беседа бота (`bot_conversations.channel='web'`), пишется `system_event` в `bot_messages` с текстом на языке пользователя и ссылкой на `/matches`. Модель не вызывается.
 
 ## D189 — локаль и i18n (9B)
+
 Язык дайджеста — `users.locale` (en/ru). Тексты в `src/messages/{en,ru}.json`:
+
 - `notifications.types.matchesDigest.{inapp,email}.{subject,body}` — каталог 9A;
 - свой ключ `digest` с под-ключами `title`, `empty`, `matchPrefix`, `openLink`.
-Файлы сообщений не переформатируются, чужие ключи не трогаются.
+  Файлы сообщений не переформатируются, чужие ключи не трогаются.

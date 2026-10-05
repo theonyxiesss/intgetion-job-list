@@ -66,11 +66,11 @@ export const candidateProfiles = pgTable(
     salaryPeriod: salaryPeriod("salary_period"),
     salaryBasis: salaryBasis("salary_basis"),
     minOverlapHours: smallint("min_overlap_hours").notNull().default(3),
-        summary: text("summary"),
-        isHidden: boolean("is_hidden").notNull().default(false),
-        completeness: smallint("completeness").notNull().default(0),
-        lastDigestAt: timestamp("last_digest_at", { withTimezone: true }),
-        createdAt: timestamp("created_at", { withTimezone: true })
+    summary: text("summary"),
+    isHidden: boolean("is_hidden").notNull().default(false),
+    completeness: smallint("completeness").notNull().default(0),
+    lastDigestAt: timestamp("last_digest_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true })
