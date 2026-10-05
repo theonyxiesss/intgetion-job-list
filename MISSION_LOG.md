@@ -553,3 +553,11 @@
 - Миграции: нет. Env: необязательный `SENTRY_DSN`; без него отправка выключена.
 - OPEN QUESTION: нет
 - Следующее: Hermes — 9B (`hermes/9b`, черновик в работе); Cursor — прод (пулер БД, Telegram-токен, Supabase Auth, ключ OpenRouter).
+
+## [2026-10-05] — D218 (P-SCRAPE, часть 1) — DONE, влито в master и на intgetion.com
+
+- Сделано: fast-forward `f3a6e9b..9a0d710`. `robots.txt` закрывает весь сайт для краулеров SEO-сервисов и, по решению основателя, для краулеров обучения ИИ (GPTBot, ClaudeBot, anthropic-ai, Google-Extended, CCBot); поисковики и OAI-SearchBot не закрыты. Гостевые `GET /api/jobs` и `GET /api/jobs/:id` — 120 запросов в минуту на IP (корзина `publicApi`). Скрытая ссылка-ловушка в подвале на `/api/catalog-export` (под `Disallow: /api/`) пишет `scrape.trap` с хешем IP и отвечает 404.
+- Команды проверки: локально `tsc --noEmit` → 0, `eslint . --max-warnings 0` → 0, `vitest run` → 0 (67 files, 541 passed). `gh run watch 37282362069` → 0 и после добавления ИИ-краулеров `gh run watch 37286598806` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37286598806 — `check` и `database` success.
+- Миграции: нет. Env: нет.
+- Не сделано в коде (по D218): лимит на HTML-страницы каталога — правило Vercel Firewall в панели.
+- OPEN QUESTION: нет
