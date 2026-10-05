@@ -92,6 +92,27 @@ async function checkMenuButton(page: Page): Promise<boolean | null> {
 }
 
 /**
+ * Helper to wait for the API to be ready by polling an endpoint
+ */
+async function waitForApiReady(page: Page, maxRetries = 10) {
+  let lastError: Error | null = null;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await page.request.get('/api/jobs?limit=1');
+      if (response.ok()) {
+        return;
+      }
+      lastError = new Error(`API returned status ${response.status()}`);
+    } catch (err) {
+      lastError = err as Error;
+    }
+    // Wait before retrying (exponential backoff)
+    await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+  }
+  throw lastError;
+}
+
+/**
  * Helper to retry page.goto in case of connection issues (e.g., database not ready yet)
  */
 async function gotoWithRetry(page: Page, path: string, maxRetries = 3) {
@@ -114,7 +135,7 @@ async function gotoWithRetry(page: Page, path: string, maxRetries = 3) {
       }
     }
   }
-  // If we exhausted retries, throw the last error
+  // If we exhausted reties, throw the last error
   throw lastError;
 }
 
@@ -127,6 +148,8 @@ function testMobileResponsiveness(path: string) {
     test.use({ viewport: { width: 360, height: 640 } });
     
     test(`passes at 360px width`, async ({ page }: { page: Page }) => {
+      // Wait for API to be ready before navigating
+      await waitForApiReady(page);
       await gotoWithRetry(page, path);
       await page.waitForLoadState('networkidle');
       
@@ -136,9 +159,8 @@ function testMobileResponsiveness(path: string) {
       // Check menu button - if present, expect it to open the menu (but mark as expected failure if it doesn't)
       const isVisible = await checkMenuButton(page);
       if (isVisible !== null) {
-        test.fail(async () => {
-          expect(isVisible).toBeTruthy();
-        }, 'Mobile menu does not open when button is clicked - UI bug');
+        test.fail(!isVisible, 'Mobile menu does not open when button is clicked - UI bug');
+        expect(isVisible).toBeTruthy();
       }
       
       const axeResults = await new AxeBuilder({ page }).analyze();
@@ -152,6 +174,8 @@ function testMobileResponsiveness(path: string) {
     test.use({ viewport: { width: 390, height: 640 } });
     
     test(`passes at 390px width`, async ({ page }: { page: Page }) => {
+      // Wait for API to be ready before navigating
+      await waitForApiReady(page);
       await gotoWithRetry(page, path);
       await page.waitForLoadState('networkidle');
       
@@ -161,9 +185,8 @@ function testMobileResponsiveness(path: string) {
       // Check menu button - if present, expect it to open the menu (but mark as expected failure if it doesn't)
       const isVisible = await checkMenuButton(page);
       if (isVisible !== null) {
-        test.fail(async () => {
-          expect(isVisible).toBeTruthy();
-        }, 'Mobile menu does not open when button is clicked - UI bug');
+        test.fail(!isVisible, 'Mobile menu does not open when button is clicked - UI bug');
+        expect(isVisible).toBeTruthy();
       }
       
       const axeResults = await new AxeBuilder({ page }).analyze();
@@ -177,6 +200,9 @@ function testMobileResponsiveness(path: string) {
  * Special test for job detail page that needs to fetch a real job
  */
 test('mobile responsiveness: job detail page', async ({ page }: { page: Page }) => {
+  // Wait for API to be ready
+  await waitForApiReady(page);
+  
   // Get a job ID from the API
   let jobResponse;
   try {
@@ -199,7 +225,7 @@ test('mobile responsiveness: job detail page', async ({ page }: { page: Page }) 
   // Test at 360px
   test.use({ viewport: { width: 360, height: 640 } });
   
-  await page.goto(jobPath);
+  await gotoWithRetry(page, jobPath);
   await page.waitForLoadState('networkidle');
   
   await checkNoHorizontalScroll(page);
@@ -208,9 +234,8 @@ test('mobile responsiveness: job detail page', async ({ page }: { page: Page }) 
   // Check menu button - if present, expect it to open the menu (but mark as expected failure if it doesn't)
   const isVisible = await checkMenuButton(page);
   if (isVisible !== null) {
-    test.fail(async () => {
-      expect(isVisible).toBeTruthy();
-    }, 'Mobile menu does not open when button is clicked - UI bug');
+    test.fail(!isVisible, 'Mobile menu does not open when button is clicked - UI bug');
+    expect(isVisible).toBeTruthy();
   }
   
   const axeResults = await new AxeBuilder({ page }).analyze();
@@ -220,7 +245,7 @@ test('mobile responsiveness: job detail page', async ({ page }: { page: Page }) 
   // Test at 390px
   test.use({ viewport: { width: 390, height: 640 } });
   
-  await page.goto(jobPath);
+  await gotoWithRetry(page, jobPath);
   await page.waitForLoadState('networkidle');
   
   await checkNoHorizontalScroll(page);
@@ -229,9 +254,8 @@ test('mobile responsiveness: job detail page', async ({ page }: { page: Page }) 
   // Check menu button - if present, expect it to open the menu (but mark as expected failure if it doesn't)
   const isVisible2 = await checkMenuButton(page);
   if (isVisible2 !== null) {
-    test.fail(async () => {
-      expect(isVisible2).toBeTruthy();
-    }, 'Mobile menu does not open when button is clicked - UI bug');
+    test.fail(!isVisible2, 'Mobile menu does not open when button is clicked - UI bug');
+    expect(isVisible2).toBeTruthy();
   }
   
   const axeResults2 = await new AxeBuilder({ page }).analyze();
