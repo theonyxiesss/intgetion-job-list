@@ -12,7 +12,9 @@ test("legal pages render and are linked where people consent", async ({
 
   await page.goto("/en/privacy");
   await expect(page.locator("#cookies")).toBeVisible();
-  await expect(page.getByRole("cell", { name: "_ia" })).toBeVisible();
+  await expect(
+    page.getByRole("cell", { name: "_ia", exact: true }),
+  ).toBeVisible();
   // The cookie choice works here for guests too.
   await expect(
     page

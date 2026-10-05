@@ -22,6 +22,9 @@ import {
   siteUrl,
 } from "@/modules/seo/site";
 import { RememberViewedJob } from "@/modules/jobs/ui/remember-viewed-job";
+import { ShareJob } from "@/modules/jobs/ui/share-job";
+import { SimilarJobs } from "@/modules/jobs/ui/similar-jobs";
+import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 
 export const dynamic = "force-dynamic";
 
@@ -219,9 +222,40 @@ export default async function JobPage({
                 />
               ) : null}
               {user ? <WhyItFits userId={user.id} jobId={job.id} /> : null}
+              <div className="hidden lg:block">
+                <ShareJob
+                  url={`${siteUrl()}/${locale}/jobs/${job.id}`}
+                  title={job.title}
+                  text={{
+                    title: t("share.title"),
+                    copy: t("share.copy"),
+                    copied: t("share.copied"),
+                    more: t("share.more"),
+                  }}
+                />
+              </div>
             </div>
           </aside>
         </div>
+        <div className="lg:hidden">
+          <ShareJob
+            url={`${siteUrl()}/${locale}/jobs/${job.id}`}
+            title={job.title}
+            text={{
+              title: t("share.title"),
+              copy: t("share.copy"),
+              copied: t("share.copied"),
+              more: t("share.more"),
+            }}
+          />
+        </div>
+        <SimilarJobs
+          job={job}
+          locale={locale}
+          viewer={{
+            hidden: user ? await getHiddenSetsForViewer(user.id) : null,
+          }}
+        />
       </Container>
     </main>
   );

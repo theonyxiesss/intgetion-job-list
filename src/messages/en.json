@@ -62,7 +62,14 @@
     "seniority": "Seniority",
     "perk": "Perks",
     "restoreFilters": "Bring back your last filters",
-    "recentlyViewed": "You viewed"
+    "recentlyViewed": "You viewed",
+    "similar": "Similar jobs",
+    "share": {
+      "title": "Share",
+      "copy": "Copy link",
+      "copied": "Link copied",
+      "more": "More"
+    }
   },
   "companyPage": {
     "trusted": "Trusted employer",

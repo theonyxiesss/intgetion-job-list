@@ -62,7 +62,14 @@
     "seniority": "Уровень",
     "perk": "Условия",
     "restoreFilters": "Вернуть последние фильтры",
-    "recentlyViewed": "Вы смотрели"
+    "recentlyViewed": "Вы смотрели",
+    "similar": "Похожие вакансии",
+    "share": {
+      "title": "Поделиться",
+      "copy": "Скопировать ссылку",
+      "copied": "Ссылка скопирована",
+      "more": "Ещё"
+    }
   },
   "companyPage": {
     "trusted": "Надёжный работодатель",
