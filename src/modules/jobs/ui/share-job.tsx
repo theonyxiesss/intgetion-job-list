@@ -4,17 +4,10 @@ import { Check, Link2, Send, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { buttonClass } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { shareUrl } from "./share-url";
 
 /** Brand names, the same in every language. */
 const NETWORKS = { telegram: "Telegram", linkedin: "LinkedIn" } as const;
-
-/** Share link with UTM tags, so the own analytics shows the channel (D243). */
-export function shareUrl(base: string, medium: string): string {
-  const url = new URL(base);
-  url.searchParams.set("utm_source", "share");
-  url.searchParams.set("utm_medium", medium);
-  return url.toString();
-}
 
 /**
  * Share a job (D243): Telegram, LinkedIn, copy link and the phone's own

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { shareUrl } from "../ui/share-job";
+import { shareUrl } from "../ui/share-url";
 
 describe("job share links (D243)", () => {
   it("tags the channel so the own analytics shows it", () => {
