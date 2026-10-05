@@ -4,6 +4,7 @@ export const userStatus = pgEnum("user_status", [
   "active",
   "suspended",
   "deleted",
+  "banned",
 ]);
 
 export const platformRole = pgEnum("platform_role", ["user", "admin"]);

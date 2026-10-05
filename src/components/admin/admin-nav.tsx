@@ -2,6 +2,7 @@
 
 import {
   Briefcase,
+  Building2,
   ChartColumn,
   Download,
   Flag,
@@ -22,6 +23,7 @@ const icons: Record<AdminIconName, LucideIcon> = {
   "list-checks": ListChecks,
   flag: Flag,
   briefcase: Briefcase,
+  building: Building2,
   users: Users,
   download: Download,
   tags: Tags,

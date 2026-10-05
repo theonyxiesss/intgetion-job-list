@@ -15,4 +15,5 @@ export * from "./feedback";
 export * from "./matching";
 export * from "./bot";
 export * from "./admin-core";
+export * from "./admin-people";
 export * from "./telegram-login";

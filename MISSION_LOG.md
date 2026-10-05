@@ -705,3 +705,14 @@
 - Команды проверки: `pnpm exec tsc --noEmit` → 0, `pnpm exec eslint src tests` → 0, `pnpm exec vitest run` → 659 passed. Паритет `en.json` / `ru.json` — 1223 ключа с обеих сторон. Красный `legal.test.ts` — артефакт CRLF рабочей копии Windows.
 - Миграции: нет. Решения: D285–D288 (Cursor).
 - Следующее: зелёный CI → ff master, затем `cursor/admin-a2` с миграцией 0029.
+
+## [2026-10-05] — A2 — на ветке cursor/admin-a2
+
+- Сделано: списки и карточки людей, компаний и вакансий. Почта, телефон и Telegram на карточке в маске; «Показать» только с правом `users.pii.read` и причиной, в аудит пишется `pii.read`. Приостановка, завершение сессий и сброс пароля — сразу. Бан и удаление — запрос на 24 часа, подтверждает второй администратор; свой запрос отвечает 422 `FOUR_EYES`. Заметки только добавляются. Бан пишет хэш почты и Telegram id в `blocklist` и ставит статус `banned`; вход уже отклоняет любой статус кроме `active`.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0. eslint по файлам A2 → 0. `pnpm exec vitest run src/modules/admin-console/service/people-service.test.ts src/messages/messages.test.ts` → 0 (2 файла, 5 тестов). e2e `tests/e2e/admin-a2.spec.ts` локально не запускался: его гоняет job `database` в CI. Миграция на облако не применялась.
+- P-тесты подфазы: e2e каждого действия, отказа без права, строк аудита, входа забаненного и запрета подтвердить свой запрос.
+- Миграции: `src/db/migrations/0029_admin_people.sql` (в репозитории, не на облаке).
+- Изменённые файлы: миграция 0029, `src/db/schema/admin-people.ts`, `src/db/schema/enums.ts`, `src/modules/admin-console/people-repo.ts`, `src/modules/admin-console/service/people-service.ts`, маршруты `api/admin/users/[id]/*` и `api/admin/approvals/[id]`, страницы users/companies/jobs, `src/admin/registry.ts`, `src/components/admin/people-actions.tsx`, `src/lib/supabase/admin.ts`, сообщения en/ru, `tests/e2e/admin-a2.spec.ts`, `docs/DECISIONS.md`.
+- Отклонения от ТЗ: D304–D310 (номера перенумерованы при вливании: D293–D299 уже заняты). Карточки компании и вакансии только для чтения (D310).
+- OPEN QUESTION: повторная регистрация после удаления. `registrationBlocked` уже есть, но `src/modules/auth/**` в этой задаче менять нельзя. Нужны два вызова, их добавит Claude в том же слиянии: в `register()` до `signUp` / `signInWithOtp` — если `registrationBlocked({ email })`, вернуть тот же ответ, что и при существующей почте; в `signInWithTelegramProfile`, когда привязки ещё нет, до `createConfirmedAuthUser` — если `registrationBlocked({ telegramId: String(telegram.id) })`, бросить `telegramFailed()`. Бан и приостановка существующего аккаунта вход уже закрывают без этих правок. Рекомендация: влить оба вызова вместе с A2, не откладывать.
+- Следующая подфаза: Claude Code вливает после зелёного CI. В master не вливалось.
