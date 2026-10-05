@@ -56,7 +56,9 @@ export async function refreshFxRates(fetcher: typeof fetch = fetch) {
   await getDb().execute(sql`
     with ecb(currency, per_eur, as_of) as (values ${rates})
     insert into public.fx_rates(currency, rate_to_usd, as_of)
-    select ecb.currency, case when ecb.currency='USD' then 1::numeric else ecb.per_eur / usd.per_eur end, ecb.as_of
+    -- rate_to_usd is USD per 1 unit of the currency (D275): the ECB feed gives
+    -- units per 1 EUR, so USD per 1 X = per_eur(USD) / per_eur(X).
+    select ecb.currency, case when ecb.currency='USD' then 1::numeric else round(usd.per_eur / ecb.per_eur, 8) end, ecb.as_of
     from ecb join lateral (select per_eur from ecb u where u.currency='USD' and u.as_of <= ecb.as_of order by u.as_of desc limit 1) usd on true
     where ecb.per_eur > 0
     on conflict(currency, as_of) do update set rate_to_usd=excluded.rate_to_usd

@@ -12,7 +12,9 @@ import {
   salaryScore,
   toMoneyDto,
   toMonthlyMinor,
+  toUsdMonthlyMinor,
   USD,
+  currencyExponent,
   type FxRate,
   type SalaryAmount,
 } from "./money";
@@ -26,7 +28,7 @@ function salary(
   return { amountMinor, currency, period, basis };
 }
 
-/** rate: 1 USD = `units` of the currency. */
+/** rate: 1 unit of the currency = `units` USD (D275). */
 function rate(currency: string, units: string, asOf: Date): FxRate {
   return { currency, rateToUsd: units, asOf };
 }
@@ -497,5 +499,68 @@ describe("jobSalaryReference (10.4.4)", () => {
     expect(jobSalaryReference(BigInt(1000), BigInt(2000))).toBe(BigInt(2000));
     expect(jobSalaryReference(BigInt(1000), null)).toBe(BigInt(1000));
     expect(jobSalaryReference(null, null)).toBeNull();
+  });
+});
+
+describe("rate direction and currency exponents (D275)", () => {
+  const ecb = [
+    // 1 EUR = 1.1204 USD, 1 EUR = 177.28 JPY → USD per 1 JPY = 0.00632038.
+    rate("EUR", "1.12040000", NOW),
+    rate("JPY", "0.00632038", NOW),
+    rate("USD", "1", NOW),
+  ];
+
+  it("reads rateToUsd as USD per one unit", () => {
+    // 1 000.00 EUR a month → 1 120.40 USD.
+    const result = compareSalaries(
+      salary(BigInt(100000), "EUR", "month", "gross"),
+      salary(BigInt(112040), "USD", "month", "gross"),
+      ecb,
+      NOW,
+    );
+    expect(result).toEqual({
+      comparable: true,
+      jobMonthlyMinor: BigInt(112040),
+      candMonthlyMinor: BigInt(112040),
+      currency: USD,
+    });
+  });
+
+  it("knows how many minor units a currency has", () => {
+    expect(currencyExponent("USD")).toBe(2);
+    expect(currencyExponent("JPY")).toBe(0);
+    expect(currencyExponent("BHD")).toBe(3);
+    expect(currencyExponent("ZZZ")).toBe(2);
+  });
+
+  it("scales a currency without minor units", () => {
+    // 500 000 JPY a month (no minor units) ≈ 3 160.19 USD.
+    expect(
+      toUsdMonthlyMinor(
+        {
+          amountMinor: BigInt(500000),
+          currency: "JPY",
+          period: "month",
+          basis: "gross",
+        },
+        ecb,
+        NOW,
+      ),
+    ).toBe(BigInt(316019));
+  });
+
+  it("converts two hourly amounts in different currencies", () => {
+    const result = compareSalaries(
+      salary(BigInt(5000), "EUR", "hour", "gross"),
+      salary(BigInt(5000), "USD", "hour", "gross"),
+      ecb,
+      NOW,
+    );
+    expect(result).toEqual({
+      comparable: true,
+      jobMonthlyMinor: BigInt(5602),
+      candMonthlyMinor: BigInt(5000),
+      currency: USD,
+    });
   });
 });

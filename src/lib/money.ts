@@ -204,8 +204,8 @@ export function jobSalaryReference(
 export interface FxRate {
   /** ISO 4217 code the rate belongs to. */
   currency: string;
-  /** fx_rates.rate_to_usd, numeric(18,8) as a string: units of `currency`
-   * per 1 USD (D66). String, not number — floats are forbidden for money. */
+  /** fx_rates.rate_to_usd, numeric(18,8) as a string: USD per 1 unit of
+   * `currency` (D66, D275). String, not number — floats are forbidden. */
   rateToUsd: string;
   asOf: Date;
 }
@@ -275,13 +275,43 @@ export type SalaryComparison =
     }
   | { comparable: false; reason: SalaryComparisonReason };
 
+const exponentCache = new Map<string, number>();
+
+/**
+ * Minor units per major unit as a power of ten: 2 for USD, 0 for JPY, 3 for
+ * BHD. Minor units of two currencies are only comparable once this difference
+ * is taken out (D275).
+ */
+export function currencyExponent(currency: string): number {
+  const cached = exponentCache.get(currency);
+  if (cached !== undefined) return cached;
+  let exponent = 2;
+  try {
+    exponent =
+      new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency,
+      }).resolvedOptions().maximumFractionDigits ?? 2;
+  } catch {
+    // An unknown code keeps the two-decimal default.
+  }
+  exponentCache.set(currency, exponent);
+  return exponent;
+}
+
+const USD_EXPONENT = 2;
+
 function convertToUsd(
   amountMinor: bigint,
   currency: string,
   rates: Map<string, bigint>,
 ): bigint {
   // Every involved currency has an entry; USD carries the identity rate.
-  return divRoundHalfEven(amountMinor * rates.get(currency)!, RATE_SCALE);
+  const shift = USD_EXPONENT - currencyExponent(currency);
+  const numerator = amountMinor * rates.get(currency)!;
+  return shift >= 0
+    ? divRoundHalfEven(numerator * BigInt(10) ** BigInt(shift), RATE_SCALE)
+    : divRoundHalfEven(numerator, RATE_SCALE * BigInt(10) ** BigInt(-shift));
 }
 
 /**
@@ -302,26 +332,24 @@ export function compareSalaries(
     return { comparable: false, reason: "basis" };
   }
 
-  const jobMonthly = toMonthlyMinor(job.amountMinor, job.period);
-  const candMonthly = toMonthlyMinor(candidate.amountMinor, candidate.period);
-  // Exactly one side is "hour" → periods can never meet (D5).
-  if (jobMonthly === null || candMonthly === null) {
-    if (jobMonthly === null && candMonthly === null) {
-      return {
-        comparable: true,
-        jobMonthlyMinor: job.amountMinor,
-        candMonthlyMinor: candidate.amountMinor,
-        currency: job.currency,
-      };
-    }
+  const bothHourly = job.period === "hour" && candidate.period === "hour";
+  // Exactly one side is "hour" → periods can never meet (D5). Two hourly
+  // amounts stay hourly and are compared against each other.
+  if (!bothHourly && (job.period === "hour" || candidate.period === "hour")) {
     return { comparable: false, reason: "period" };
   }
+  const jobNormalized = bothHourly
+    ? job.amountMinor
+    : toMonthlyMinor(job.amountMinor, job.period)!;
+  const candNormalized = bothHourly
+    ? candidate.amountMinor
+    : toMonthlyMinor(candidate.amountMinor, candidate.period)!;
 
   if (job.currency === candidate.currency) {
     return {
       comparable: true,
-      jobMonthlyMinor: jobMonthly,
-      candMonthlyMinor: candMonthly,
+      jobMonthlyMinor: jobNormalized,
+      candMonthlyMinor: candNormalized,
       currency: job.currency,
     };
   }
@@ -344,8 +372,8 @@ export function compareSalaries(
     }
   }
 
-  const jobUsd = convertToUsd(jobMonthly, job.currency, scaledRates);
-  const candUsd = convertToUsd(candMonthly, candidate.currency, scaledRates);
+  const jobUsd = convertToUsd(jobNormalized, job.currency, scaledRates);
+  const candUsd = convertToUsd(candNormalized, candidate.currency, scaledRates);
   return {
     comparable: true,
     jobMonthlyMinor: jobUsd,
