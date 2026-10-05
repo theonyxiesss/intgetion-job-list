@@ -23,6 +23,7 @@ export { hasScamPattern, isFreeEmailDomain, scoreJobRisk } from "./risk-score";
 export type { RiskInput } from "./risk-score";
 export {
   cursorDecode,
+  getClosedJobContext,
   getJobForPublic,
   listPublicJobsByIds,
   listPublishedJobsForCompany,

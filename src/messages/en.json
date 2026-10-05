@@ -69,7 +69,12 @@
       "copy": "Copy link",
       "copied": "Link copied",
       "more": "More"
-    }
+    },
+    "closedTitle": "This job is no longer open",
+    "closedIntro": "The employer has closed it or it has expired. Here are jobs of the same kind.",
+    "missingTitle": "Job not found",
+    "missingIntro": "The link may be wrong, or the job was removed.",
+    "browseAll": "All jobs"
   },
   "companyPage": {
     "trusted": "Trusted employer",

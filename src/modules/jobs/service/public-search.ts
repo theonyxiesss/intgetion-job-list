@@ -416,3 +416,23 @@ export async function listSearchSkillOptions(locale: string) {
 export async function listSitemapEntries(limit = 20_000) {
   return repo.listSitemapRows(limit);
 }
+
+/**
+ * A job that was public and is not any more (D292): what is needed to offer
+ * the visitor something else. Null for a job that was never published, so a
+ * draft never leaks through the 404 page.
+ */
+export async function getClosedJobContext(
+  id: string,
+): Promise<{ category: string; skillIds: string[] } | null> {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+  const row = await repo.getPublicJobById(id);
+  if (!row || row.job.status === "published" || !row.job.publishedAt) {
+    return null;
+  }
+  const { skillRows } = await repo.getJobRequirements([row.job.id]);
+  return {
+    category: row.job.category,
+    skillIds: skillRows.map((skill) => skill.id),
+  };
+}
