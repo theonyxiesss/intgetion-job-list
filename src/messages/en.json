@@ -1403,7 +1403,8 @@
         "session": "Session pooler ({value}): runs out of connections, use the transaction pooler (6543)",
         "transaction": "Transaction pooler ({value})",
         "direct": "Direct connection",
-        "format": "The token is set but its format is wrong"
+        "format": "The token is set but its format is wrong",
+        "frozen": "Token is set; sign-in is frozen (D246), notifications work"
       }
     }
   },

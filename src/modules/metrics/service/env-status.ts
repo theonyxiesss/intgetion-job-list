@@ -1,5 +1,6 @@
 import { authAdminAvailable } from "@/lib/supabase/admin";
 import { llmFromEnv } from "@/lib/llm";
+import { flags } from "@/config/flags";
 import { telegramBotToken } from "@/modules/auth/service";
 
 export type EnvCheck = {
@@ -66,7 +67,9 @@ export function envStatus(env = process.env): EnvCheck[] {
       detail:
         present(env.TELEGRAM_BOT_TOKEN) && !telegramBotToken(env)
           ? "format"
-          : undefined,
+          : !flags.telegramLoginEnabled
+            ? "frozen"
+            : undefined,
     },
     {
       key: "bot",

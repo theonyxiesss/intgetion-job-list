@@ -6,4 +6,10 @@ function envFlag(name: string): boolean {
 export const flags = {
   embeddingsEnabled: envFlag("EMBEDDINGS_ENABLED"),
   importLiveEnabled: envFlag("IMPORT_LIVE_ENABLED"),
+  /**
+   * Sign-in and linking through the Telegram widget (D217, D230). Frozen
+   * while a new Telegram sign-in is built (D246): on only with
+   * TELEGRAM_LOGIN_ENABLED=true.
+   */
+  telegramLoginEnabled: envFlag("TELEGRAM_LOGIN_ENABLED"),
 } as const;

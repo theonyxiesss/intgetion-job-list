@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonClass } from "@/components/ui/button";
+import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
 import { authAdminAvailable } from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/supabase/env";
@@ -15,7 +16,9 @@ const STUBS = ["google", "x"] as const;
 /** Telegram works when the bot token and the Auth admin key are set (D217). */
 async function telegramHref(): Promise<string | null> {
   const token = telegramBotToken();
-  if (!token || !authAdminAvailable()) return null;
+  if (!flags.telegramLoginEnabled || !token || !authAdminAvailable()) {
+    return null;
+  }
   const origin = siteUrl();
   const locale = await getLocale();
   return telegramAuthUrl({

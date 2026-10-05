@@ -10,6 +10,7 @@ import {
   getAuthUserLoginEmail,
   isPlaceholderEmail,
 } from "@/lib/supabase/admin";
+import { flags } from "@/config/flags";
 import { siteUrl } from "@/lib/supabase/env";
 import {
   telegramAuthUrl,
@@ -37,7 +38,7 @@ export default async function AccountSettingsPage({
   const token = telegramBotToken();
   // Linking returns to the same page Telegram sign-in uses, in "link" mode (D230).
   const linkHref =
-    token && authAdminAvailable()
+    flags.telegramLoginEnabled && token && authAdminAvailable()
       ? telegramAuthUrl({
           botId: telegramBotId(token),
           origin: siteUrl(),

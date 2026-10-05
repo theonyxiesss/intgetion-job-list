@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { flags } from "@/config/flags";
 import { HttpError, readJson, toErrorResponse } from "@/lib/http";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/request-ip";
@@ -24,7 +25,8 @@ const telegramInput = z.object({
 export async function POST(request: Request) {
   try {
     const botToken = telegramBotToken();
-    if (!botToken) {
+    // Frozen while the new Telegram sign-in is built (D246).
+    if (!flags.telegramLoginEnabled || !botToken) {
       throw new HttpError(503, "TELEGRAM_DISABLED", "Telegram is not set up");
     }
     const input = await readJson(request, telegramInput);
