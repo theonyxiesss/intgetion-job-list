@@ -56,7 +56,7 @@ export default async function AdminCompanyPage({
         {members.length === 0 ? (
           <EmptyState title={t("membersEmpty")} />
         ) : (
-          <Table caption={t("colMembers")}>
+          <Table className="min-w-0" caption={t("colMembers")}>
             <thead>
               <tr>
                 <Th>{t("colId")}</Th>
@@ -89,7 +89,7 @@ export default async function AdminCompanyPage({
         {jobs.length === 0 ? (
           <EmptyState title={t("companyJobsEmpty")} />
         ) : (
-          <Table caption={t("companyJobs")}>
+          <Table className="min-w-0" caption={t("companyJobs")}>
             <thead>
               <tr>
                 <Th>{t("colTitle")}</Th>
@@ -124,7 +124,7 @@ export default async function AdminCompanyPage({
         {verifications.length === 0 ? (
           <EmptyState title={t("verificationEmpty")} />
         ) : (
-          <Table caption={t("verificationHistory")}>
+          <Table className="min-w-0" caption={t("verificationHistory")}>
             <thead>
               <tr>
                 <Th>{t("colTime")}</Th>

@@ -38,7 +38,7 @@ export default async function AdminImportPage({
         {sources.length === 0 ? (
           <EmptyState title={t("importEmpty")} />
         ) : (
-          <Table caption={t("importSources")}>
+          <Table className="min-w-0" caption={t("importSources")}>
             <thead>
               <tr>
                 <Th>{t("colSource")}</Th>
@@ -81,7 +81,7 @@ export default async function AdminImportPage({
         {runs.length === 0 ? (
           <EmptyState title={t("importEmpty")} />
         ) : (
-          <Table caption={t("importRuns")}>
+          <Table className="min-w-0" caption={t("importRuns")}>
             <thead>
               <tr>
                 <Th>{t("colTime")}</Th>

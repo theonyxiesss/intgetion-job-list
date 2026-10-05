@@ -40,31 +40,33 @@ export default async function AdminModerationPage({
       active="moderation"
       intro={t("moderationIntro")}
     >
-      <LinkTabs
-        label={t("moderationTitle")}
-        items={[
-          {
-            label: t("tabJobs"),
-            href: {
-              pathname: "/admin/moderation",
-              query: { entityType: "job" },
+      <div className="min-w-0 max-w-full">
+        <LinkTabs
+          label={t("moderationTitle")}
+          items={[
+            {
+              label: t("tabJobs"),
+              href: {
+                pathname: "/admin/moderation",
+                query: { entityType: "job" },
+              },
+              active: entityType === "job",
             },
-            active: entityType === "job",
-          },
-          {
-            label: t("tabCompanies"),
-            href: {
-              pathname: "/admin/moderation",
-              query: { entityType: "company" },
+            {
+              label: t("tabCompanies"),
+              href: {
+                pathname: "/admin/moderation",
+                query: { entityType: "company" },
+              },
+              active: entityType === "company",
             },
-            active: entityType === "company",
-          },
-        ]}
-      />
+          ]}
+        />
+      </div>
       {items.length === 0 ? (
         <EmptyState title={t("queueEmpty")} />
       ) : (
-        <Table caption={t("moderationTitle")}>
+        <Table className="min-w-0" caption={t("moderationTitle")}>
           <thead>
             <tr>
               <Th>{t("colTime")}</Th>

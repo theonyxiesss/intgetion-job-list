@@ -115,7 +115,7 @@ export default async function AdminUsersPage({
       {items.length === 0 ? (
         <EmptyState title={t("usersEmpty")} />
       ) : (
-        <Table caption={t("usersTitle")}>
+        <Table className="min-w-0" caption={t("usersTitle")}>
           <thead>
             <tr>
               <Th>{t("colId")}</Th>

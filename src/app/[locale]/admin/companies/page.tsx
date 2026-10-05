@@ -103,7 +103,7 @@ export default async function AdminCompaniesPage({
       {items.length === 0 ? (
         <EmptyState title={t("companiesEmpty")} />
       ) : (
-        <Table caption={t("companiesTitle")}>
+        <Table className="min-w-0" caption={t("companiesTitle")}>
           <thead>
             <tr>
               <Th>{t("colName")}</Th>

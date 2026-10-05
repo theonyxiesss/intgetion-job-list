@@ -57,7 +57,7 @@ export default async function AdminHomePage({
 
   return (
     <AdminShell title={t("overviewTitle")} active="home" intro={t("laterNote")}>
-      <StatRow>
+      <StatRow className="min-w-0">
         {stats.map((stat) => (
           <Link key={stat.href} href={stat.href} className="block min-w-0">
             <Stat large label={stat.label} value={stat.value} />
@@ -103,7 +103,7 @@ export default async function AdminHomePage({
         {audit.items.length === 0 ? (
           <EmptyState title={t("auditEmpty")} />
         ) : (
-          <Table caption={t("recentAudit")}>
+          <Table className="min-w-0" caption={t("recentAudit")}>
             <thead>
               <tr>
                 <Th>{t("colTime")}</Th>

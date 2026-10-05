@@ -40,18 +40,20 @@ export default async function AdminReportsPage({
       active="reports"
       intro={t("reportsNote")}
     >
-      <LinkTabs
-        label={t("reportsTitle")}
-        items={statuses.map((status) => ({
-          label: t(`reportStatus.${status}`),
-          href: { pathname: "/admin/reports", query: { status } },
-          active: query.status === status,
-        }))}
-      />
+      <div className="min-w-0 max-w-full">
+        <LinkTabs
+          label={t("reportsTitle")}
+          items={statuses.map((status) => ({
+            label: t(`reportStatus.${status}`),
+            href: { pathname: "/admin/reports", query: { status } },
+            active: query.status === status,
+          }))}
+        />
+      </div>
       {items.length === 0 ? (
         <EmptyState title={t("reportsEmpty")} />
       ) : (
-        <Table caption={t("reportsTitle")}>
+        <Table className="min-w-0" caption={t("reportsTitle")}>
           <thead>
             <tr>
               <Th>{t("colTime")}</Th>

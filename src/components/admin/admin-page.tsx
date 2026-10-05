@@ -118,7 +118,7 @@ export async function AdminShell({
   };
 
   return (
-    <main className="min-w-0 flex-1 overflow-x-clip py-10">
+    <main className="min-w-0 flex-1 overflow-x-hidden py-10">
       <Container className="flex flex-col gap-8 lg:flex-row lg:gap-12">
         <nav
           aria-label={t("navLabel")}
@@ -176,7 +176,7 @@ export async function AdminShell({
             })}
           </ul>
         </nav>
-        <div className="flex min-w-0 flex-1 flex-col gap-8">
+        <div className="flex min-w-0 max-w-full flex-1 flex-col gap-8 overflow-x-hidden">
           <PageHeader
             label={t("title")}
             title={title}

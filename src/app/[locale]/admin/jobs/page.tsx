@@ -130,7 +130,7 @@ export default async function AdminJobsPage({
       {items.length === 0 ? (
         <EmptyState title={t("jobsEmpty")} />
       ) : (
-        <Table caption={t("jobsTitle")}>
+        <Table className="min-w-0" caption={t("jobsTitle")}>
           <thead>
             <tr>
               <Th>{t("colTitle")}</Th>

@@ -58,11 +58,31 @@ async function expectNoCriticalAxe(page: Page) {
 }
 
 async function expectNoHorizontalScroll(page: Page, path: string) {
-  const widths = await page.evaluate(() => ({
-    scroll: document.documentElement.scrollWidth,
-    inner: window.innerWidth,
-  }));
-  expect(widths.scroll, path).toBeLessThanOrEqual(widths.inner);
+  const report = await page.evaluate(() => {
+    const inner = window.innerWidth;
+    const found: { cls: string; right: number; width: number }[] = [];
+    document.querySelectorAll("body *").forEach((node) => {
+      const el = node as HTMLElement;
+      const rect = el.getBoundingClientRect();
+      if (rect.right > inner + 1) {
+        found.push({
+          cls: String(el.className).slice(0, 90),
+          right: Math.round(rect.right),
+          width: Math.round(rect.width),
+        });
+      }
+    });
+    found.sort((a, b) => b.right - a.right);
+    return {
+      scroll: document.documentElement.scrollWidth,
+      inner,
+      found: found.slice(0, 6),
+    };
+  });
+  expect(
+    report.scroll,
+    `${path} ${JSON.stringify(report.found)}`,
+  ).toBeLessThanOrEqual(report.inner);
 }
 
 test("non-admins get 404 on every admin page", async ({ page }) => {

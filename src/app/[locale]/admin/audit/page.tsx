@@ -28,7 +28,7 @@ export default async function AdminAuditPage({
       {items.length === 0 ? (
         <EmptyState title={t("auditEmpty")} />
       ) : (
-        <Table caption={t("auditTitle")}>
+        <Table className="min-w-0" caption={t("auditTitle")}>
           <thead>
             <tr>
               <Th>{t("colTime")}</Th>

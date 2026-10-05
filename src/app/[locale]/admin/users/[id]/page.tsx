@@ -67,7 +67,7 @@ export default async function AdminUserPage({
         {memberships.length === 0 ? (
           <EmptyState title={t("userCompaniesEmpty")} />
         ) : (
-          <Table caption={t("userCompanies")}>
+          <Table className="min-w-0" caption={t("userCompanies")}>
             <thead>
               <tr>
                 <Th>{t("colName")}</Th>
@@ -104,7 +104,7 @@ export default async function AdminUserPage({
         {audit.length === 0 ? (
           <EmptyState title={t("auditEmpty")} />
         ) : (
-          <Table caption={t("userAudit")}>
+          <Table className="min-w-0" caption={t("userAudit")}>
             <thead>
               <tr>
                 <Th>{t("colTime")}</Th>

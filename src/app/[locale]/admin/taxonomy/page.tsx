@@ -40,7 +40,7 @@ export default async function AdminTaxonomyPage({
       {items.length === 0 ? (
         <EmptyState title={t("noSuggestions")} />
       ) : (
-        <Table caption={t("taxonomyTitle")}>
+        <Table className="min-w-0" caption={t("taxonomyTitle")}>
           <thead>
             <tr>
               <Th>{t("colText")}</Th>
