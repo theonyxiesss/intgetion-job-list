@@ -69,6 +69,7 @@ export const candidateProfiles = pgTable(
     summary: text("summary"),
     isHidden: boolean("is_hidden").notNull().default(false),
     completeness: smallint("completeness").notNull().default(0),
+    lastDigestAt: timestamp("last_digest_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

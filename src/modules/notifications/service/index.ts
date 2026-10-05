@@ -64,3 +64,11 @@ export { mergeApplicationBatch, utcHourStart } from "./batch-mail";
 export { noopEmailSender, senderFromEnv } from "./email-sender";
 export type { EmailSender } from "./email-sender";
 export { emailCopy, renderEmail } from "./render";
+export {
+  DIGEST_MAX_JOBS,
+  isDigestDue,
+  pickDigestJobs,
+  runDigestCron,
+  type DigestCandidateJob,
+  type DigestJobLoader,
+} from "./digest";

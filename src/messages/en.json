@@ -714,7 +714,7 @@
         },
         "email": {
           "subject": "Your job matches",
-          "body": "{count, plural, one {# new job matches your profile} other {# new jobs match your profile}}. Open the digest to see them."
+          "body": "{count, plural, one {# new job matches your profile} other {# new jobs match your profile}}: {jobs}."
         }
       },
       "reportDecided": {
@@ -1230,5 +1230,9 @@
       "skipped": "Skipped",
       "failed": "Failed"
     }
+  },
+  "digest": {
+    "chatEvent": "Your morning digest is ready: {count} new matching jobs. They are on the Matches page.",
+    "openMatches": "Open matches"
   }
 }

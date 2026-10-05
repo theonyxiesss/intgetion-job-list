@@ -29,3 +29,4 @@ export {
   type BotState,
   type ToolContext,
 } from "./tools";
+export { postSystemEvent } from "./system-event";

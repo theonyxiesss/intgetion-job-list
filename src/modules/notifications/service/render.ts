@@ -53,8 +53,16 @@ export function renderEmail(input: {
   const body = fillTemplate(copy.body, input.values);
   const link = unsubscribeLabel(input.locale);
   const text = `${subject}\n\n${body}\n\n${link}: ${input.unsubscribeUrl}`;
+  const action =
+    input.type === "matches.digest"
+      ? {
+          href: `${new URL(input.unsubscribeUrl).origin}/${input.locale}/matches`,
+          label: catalogs[input.locale].digest.openMatches,
+        }
+      : undefined;
   const html = siteEmailHtml({
     body,
+    ...(action ? { action } : {}),
     footer: { href: input.unsubscribeUrl, label: link },
   });
   return { subject, text, html };

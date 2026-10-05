@@ -188,3 +188,16 @@ export async function decideConfirmation(input: {
     .returning();
   return row;
 }
+
+/** The user's most recent web conversation, if any (9B system events). */
+export async function latestConversationForUser(
+  userId: string,
+): Promise<ConversationRow | undefined> {
+  const [row] = await getDb()
+    .select()
+    .from(botConversations)
+    .where(eq(botConversations.userId, userId))
+    .orderBy(desc(botConversations.lastMessageAt))
+    .limit(1);
+  return row;
+}

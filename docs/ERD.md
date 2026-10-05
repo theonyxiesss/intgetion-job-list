@@ -120,6 +120,7 @@ erDiagram
     text headline
     text timezone
     smallint completeness
+    timestamptz last_digest_at
   }
   candidate_skills {
     uuid candidate_id PK
