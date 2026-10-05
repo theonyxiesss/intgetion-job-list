@@ -234,4 +234,16 @@ npx prettier --check docs/RUNBOOK.md scripts/check-env.mjs scripts/env-rules.mjs
 
 ---
 
+## 13. Включение admin.intgetion.com
+
+Флаг `ADMIN_HOST_ONLY` в проде пока выключен. Этот раздел — что сделать, когда основатель готов закрыть админку на отдельном хосте (D251). DNS и домен в Vercel добавляет основатель, не агент.
+
+1. DNS: CNAME `admin` на Vercel (обычно `cname.vercel-dns.com`). Пока периметр не выбран, не проксировать запись через Cloudflare.
+2. В проекте `intgetion-job-list` добавить домен `admin.intgetion.com`. Те же переменные Production, **не** ставить `ADMIN_HOST_ONLY`.
+3. Проверить руками: `https://admin.intgetion.com/en/admin/login` и `/en/admin/mfa` отвечают 200 без сессии; `https://admin.intgetion.com/en` и `/en/jobs` — 404; `https://admin.intgetion.com/robots.txt` содержит `Disallow: /`. Публичный сайт `https://intgetion.com/en/admin` при этом ещё открыт.
+4. Поставить в Production `ADMIN_HOST_ONLY=1` и перевыкатить. Затем `pnpm admin:check-host https://admin.intgetion.com`. Скрипт ждёт 404 и на админ-хосте вне админки, и на публичном `/en/admin`.
+5. Откат: удалить `ADMIN_HOST_ONLY` и перевыкатить. Публичный `/admin` снова откроется.
+
+---
+
 _Документ актуален на момент подфазы 11B (ветка `hermes/runbook`). Обновлять при изменениях инфраструктуры._

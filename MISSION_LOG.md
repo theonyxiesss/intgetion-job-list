@@ -587,3 +587,14 @@
 - Инцидент: около 15:23 общий `.git` получил обнулённый `packed-refs` (CRLF) и лишний `.git/shallow`; ссылки восстановлены из reflog, `git fsck` чистый.
 - OPEN QUESTION: LCP главной близко к бюджету 2500 мс (медианы 2474–2506), нужен запас. Номера Cursor: админка заняла D250–D255 и миграцию `0027`, новому входу через Telegram (`cursor/telegram-login-rescue`) — миграция `0028` и решения с D256.
 - Следующее: основатель — DNS и домен `admin.intgetion.com` в Vercel, затем `ADMIN_HOST_ONLY=1`; Cursor — Telegram-вход на новых номерах.
+
+## [2026-10-05] — подготовка admin.intgetion.com — DONE на ветке cursor/admin-enable
+
+- Сделано: раздел 13 в `docs/RUNBOOK.md` (DNS, домен в Vercel, проверка, включение флага, откат) и `pnpm admin:check-host`. Флаг `ADMIN_HOST_ONLY` в проде не включался. DNS и домен не трогались.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0. `pnpm exec eslint scripts/check-admin-host.mjs src/admin/host-check.test.ts` → 0. `pnpm exec vitest run src/admin/host-check.test.ts src/admin/host.test.ts` → 0 (2 files, 8 passed).
+- P-тесты подфазы: нет.
+- Миграции: нет.
+- Изменённые файлы: `docs/RUNBOOK.md`, `package.json`, `scripts/check-admin-host.mjs`, `src/admin/host-check.test.ts`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: периметр — рекомендую Cloudflare Access (бесплатно до 50 человек), MFA остаётся обязательной. Одного IP мало: основатель уезжает, и адрес домашний. Если Access сегодня слишком, первую неделю только MFA, Access — до того, как в админку позовут кого-то кроме основателя. Команда — один owner, это основатель; другие роли не заводить, пока нет второго человека; поддержке — самую узкую роль, которой хватает читать тикеты. HIBP — проверка k-anonymity (уходит только префикс хеша, не пароль) перед вторым админом; для первого длинного уникального пароля основателя это не блокер.
+- Следующая подфаза: основатель добавляет DNS и домен, затем `ADMIN_HOST_ONLY=1` и `pnpm admin:check-host https://admin.intgetion.com`. В master не вливалось.
