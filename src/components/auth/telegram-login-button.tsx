@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { buttonClass } from "@/components/ui/button";
 import { useRouter } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
@@ -23,37 +23,43 @@ export function TelegramLoginButton({
   children?: ReactNode;
 }) {
   const router = useRouter();
+  const routerRef = useRef(router);
   const [phase, setPhase] = useState<"idle" | "waiting" | "failed">("idle");
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    routerRef.current = router;
+  }, [router]);
+
+  useEffect(() => {
     let cancelled = false;
     let timer = 0;
-    async function tick(afterClick: boolean) {
+    const afterClick = attempt > 0;
+    async function tick() {
       const response = await fetch("/api/auth/telegram/pending", {
         method: "POST",
       });
       if (cancelled) return;
       if (response.ok) {
-        router.replace("/");
-        router.refresh();
+        routerRef.current.replace("/");
+        routerRef.current.refresh();
         return;
       }
       if (response.status === 202) {
         setPhase("waiting");
-        timer = window.setTimeout(() => void tick(true), 2000);
+        timer = window.setTimeout(() => void tick(), 2000);
         return;
       }
       if (afterClick) setPhase("failed");
     }
-    void tick(attempt > 0).catch(() => {
-      if (!cancelled && attempt > 0) setPhase("failed");
+    void tick().catch(() => {
+      if (!cancelled && afterClick) setPhase("failed");
     });
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [attempt, router]);
+  }, [attempt]);
 
   async function onClick() {
     setPhase("waiting");
