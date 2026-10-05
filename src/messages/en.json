@@ -1448,6 +1448,26 @@
         "format": "The token is set but its format is wrong",
         "frozen": "Token is set; sign-in is frozen (D246), notifications work"
       }
+    },
+    "traffic": {
+      "title": "Where visits come from ({days} days)",
+      "note": "Worked out from the referrer we already store, with no third-party tracker. A tagged campaign link counts as what we tagged it.",
+      "channel": {
+        "search": "From search",
+        "social": "Social and messengers",
+        "referral": "Other sites",
+        "direct": "Direct"
+      },
+      "searchShare": "Search share",
+      "engines": "Search engines",
+      "engine": "Engine",
+      "visitors": "Visitors",
+      "landings": "Pages search sends people to",
+      "page": "Page",
+      "byDay": "By day",
+      "day": "Day",
+      "fromSearch": "From search",
+      "allVisitors": "All visitors"
     }
   },
   "digest": {

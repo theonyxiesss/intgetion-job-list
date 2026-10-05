@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requireAdminPage, AdminShell } from "@/components/admin/admin-page";
-import { analyticsReport } from "@/modules/analytics/service";
+import { analyticsReport, trafficReport } from "@/modules/analytics/service";
 import { AnalyticsReportView } from "@/modules/analytics/ui/analytics-report";
+import { TrafficReportView } from "@/modules/analytics/ui/traffic-report";
 import { envStatus, getMetrics } from "@/modules/metrics/service";
 import { EnvStatusView } from "@/modules/metrics/ui/env-status";
 
@@ -27,6 +28,8 @@ export default async function AdminMetricsPage({
     getMetrics(),
     analyticsReport(ANALYTICS_DAYS),
   ]);
+  // After the others: parallel queries on one pooled connection hang (D247).
+  const traffic = await trafficReport(ANALYTICS_DAYS);
 
   return (
     <AdminShell title={t("title")} active="metrics">
@@ -180,6 +183,7 @@ export default async function AdminMetricsPage({
           </div>
         </section>
         <AnalyticsReportView report={report} days={ANALYTICS_DAYS} />
+        <TrafficReportView report={traffic} days={ANALYTICS_DAYS} />
         <EnvStatusView checks={envStatus()} />
       </div>
     </AdminShell>
