@@ -15,6 +15,9 @@ import { searchJobs } from "@/modules/jobs/service";
 import { tagSearchOverrides } from "@/modules/jobs/service/tag-query";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
 import { QuickFilters } from "@/modules/jobs/ui/quick-filters";
+import { JsonLd } from "@/modules/seo/json-ld";
+import { breadcrumbListJsonLd } from "@/modules/seo/markup";
+import { siteUrl } from "@/modules/seo/site";
 
 export const dynamic = "force-dynamic";
 
@@ -55,6 +58,7 @@ export default async function TagPage({
   const overrides = await tagSearchOverrides(tag);
   if (!overrides) notFound();
   const markers = await getTranslations("markers");
+  const seo = await getTranslations("seo");
   const jobs = await getTranslations("jobs");
   const categories = await getTranslations("categories");
   const raw = await searchParams;
@@ -104,6 +108,16 @@ export default async function TagPage({
 
   return (
     <main className="py-10 md:py-16">
+      <JsonLd
+        data={breadcrumbListJsonLd([
+          { name: seo("home"), url: `${siteUrl()}/${locale}` },
+          { name: seo("jobs"), url: `${siteUrl()}/${locale}/jobs` },
+          {
+            name: title,
+            url: `${siteUrl()}/${locale}/jobs/t/${slug}`,
+          },
+        ])}
+      />
       <Container className="flex flex-col gap-8">
         <PageHeader
           title={title}

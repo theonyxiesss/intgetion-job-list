@@ -10,6 +10,8 @@ import { OrbitBackdrop } from "@/components/ui/orbit-backdrop";
 import { navForward } from "@/components/ui/page-transition";
 import { countPublicCatalog } from "@/modules/jobs/service";
 import { LatestJobs } from "@/modules/jobs/ui/latest-jobs";
+import { JsonLd } from "@/modules/seo/json-ld";
+import { homeGraphJsonLd } from "@/modules/seo/markup";
 import { languageAlternates, siteUrl } from "@/modules/seo/site";
 
 const categoryIds = [
@@ -75,6 +77,14 @@ export default async function HomePage({
 
   return (
     <main>
+      <JsonLd
+        data={homeGraphJsonLd({
+          name: product("name"),
+          url: siteUrl(),
+          logoUrl: `${siteUrl()}/icon.svg`,
+          locale,
+        })}
+      />
       <section className="relative overflow-hidden border-b border-line">
         <OrbitBackdrop />
         <Container className="relative flex min-h-[70vh] flex-col justify-end gap-8 py-16 md:py-24">

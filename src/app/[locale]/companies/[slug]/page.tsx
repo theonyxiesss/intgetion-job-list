@@ -14,6 +14,8 @@ import {
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
 import { isFollowing } from "@/modules/follows/service";
 import { FollowButton } from "@/modules/follows/ui/follow-button";
+import { JsonLd } from "@/modules/seo/json-ld";
+import { breadcrumbListJsonLd } from "@/modules/seo/markup";
 import {
   languageAlternates,
   metaDescription,
@@ -56,6 +58,7 @@ export default async function CompanyPage({
   const { tab } = await searchParams;
   setRequestLocale(locale);
   const t = await getTranslations("companyPage");
+  const seo = await getTranslations("seo");
   const company = await getVisibleCompany(slug);
   if (!company) notFound();
   let viewer: Parameters<typeof listPublishedJobsForCompany>[2] = {
@@ -85,6 +88,15 @@ export default async function CompanyPage({
 
   return (
     <main className="py-10 md:py-16">
+      <JsonLd
+        data={breadcrumbListJsonLd([
+          { name: seo("home"), url: `${siteUrl()}/${locale}` },
+          {
+            name: company.name,
+            url: `${siteUrl()}/${locale}/companies/${company.slug}`,
+          },
+        ])}
+      />
       <Container className="flex flex-col gap-8">
         <header className="flex flex-wrap items-end gap-4">
           <span

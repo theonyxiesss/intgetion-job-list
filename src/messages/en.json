@@ -1511,5 +1511,11 @@
       "senior": "Senior",
       "lead": "Lead"
     }
+  },
+  "seo": {
+    "home": "Home",
+    "jobs": "Jobs",
+    "inOurWords": "In our words",
+    "originalOn": "Original posting on {source}"
   }
 }

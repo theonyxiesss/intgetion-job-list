@@ -16,6 +16,7 @@ import { getJobForPublic } from "@/modules/jobs/service";
 import { WhyItFits } from "@/modules/matching/ui/why-it-fits";
 import { jobPostingJsonLd } from "@/modules/seo/job-posting";
 import { JsonLd } from "@/modules/seo/json-ld";
+import { breadcrumbListJsonLd, importedJobSummary } from "@/modules/seo/markup";
 import {
   languageAlternates,
   metaDescription,
@@ -58,6 +59,7 @@ export default async function JobPage({
   const { locale, id } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("jobs");
+  const seo = await getTranslations("seo");
   const actions = await getTranslations("jobActions");
   const categories = await getTranslations("categories");
   const job = await getJobForPublic(id, { locale });
@@ -83,6 +85,16 @@ export default async function JobPage({
       {job.source.type === "internal" ? (
         <JsonLd data={jobPostingJsonLd(job, siteUrl(), locale)} />
       ) : null}
+      <JsonLd
+        data={breadcrumbListJsonLd([
+          { name: seo("home"), url: `${siteUrl()}/${locale}` },
+          { name: seo("jobs"), url: `${siteUrl()}/${locale}/jobs` },
+          {
+            name: job.title,
+            url: `${siteUrl()}/${locale}/jobs/${job.id}`,
+          },
+        ])}
+      />
       <Container className="flex flex-col gap-8">
         <Link
           href="/jobs"
@@ -141,6 +153,43 @@ export default async function JobPage({
               />
               <Stat label={t("employment")} value={t(job.employmentType)} />
             </StatRow>
+            {job.source.type === "imported" ? (
+              <section className="flex flex-col gap-4 border border-line p-4">
+                <h2 className="t-h3">{seo("inOurWords")}</h2>
+                <p className="max-w-[68ch]">
+                  {importedJobSummary({
+                    title: job.title,
+                    company: job.company.name,
+                    format: t(job.workFormat),
+                    employment: t(job.employmentType),
+                    timezone: job.timezoneRequired
+                      ? `${job.timezoneRequired} · ${job.minOverlapHours}h`
+                      : t("worldwide"),
+                    salary,
+                    skills: job.skills.map((skill) => skill.name),
+                  })}
+                </p>
+                <div className="flex flex-col gap-1 border border-line p-4">
+                  <p className="t-label text-fg-muted">{t("company")}</p>
+                  <Link
+                    href={`/companies/${job.company.slug}`}
+                    {...navForward}
+                    className="t-body-s self-start underline-offset-4 hover:underline"
+                  >
+                    {job.company.name}
+                  </Link>
+                </div>
+                {job.source.url ? (
+                  <a
+                    href={job.source.url}
+                    rel="noopener noreferrer"
+                    className="t-body-s self-start underline-offset-4 hover:underline"
+                  >
+                    {seo("originalOn", { source: job.source.name ?? "" })}
+                  </a>
+                ) : null}
+              </section>
+            ) : null}
             <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
               {job.description}
             </div>

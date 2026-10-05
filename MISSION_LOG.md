@@ -587,3 +587,14 @@
 - Инцидент: около 15:23 общий `.git` получил обнулённый `packed-refs` (CRLF) и лишний `.git/shallow`; ссылки восстановлены из reflog, `git fsck` чистый.
 - OPEN QUESTION: LCP главной близко к бюджету 2500 мс (медианы 2474–2506), нужен запас. Номера Cursor: админка заняла D250–D255 и миграцию `0027`, новому входу через Telegram (`cursor/telegram-login-rescue`) — миграция `0028` и решения с D256.
 - Следующее: основатель — DNS и домен `admin.intgetion.com` в Vercel, затем `ADMIN_HOST_ONLY=1`; Cursor — Telegram-вход на новых номерах.
+
+## [2026-10-05] — SEO-разметка D281–D283 — DONE на ветке cursor/seo-markup
+
+- Сделано: на импортированной вакансии короткий текст из наших полей (не из описания источника), карточка компании и ссылка на оригинал с именем источника. `canonical` остаётся на нашу страницу, `JobPosting` для импорта не добавлялся. На главной `Organization` и `WebSite` с `SearchAction` на `/{locale}/jobs?q={search_term_string}`. `BreadcrumbList` на вакансии, компании и `/jobs/t/*`. Везде существующий `JsonLd`. Соцсети в `sameAs` не выдуманы.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0. `pnpm exec eslint` по изменённым tsx/ts → 0. `pnpm exec vitest run src/modules/seo/__tests__/seo.test.ts src/messages/messages.test.ts` → 0 (2 files, 9 passed).
+- P-тесты подфазы: нет.
+- Миграции: нет.
+- Изменённые файлы: `src/modules/seo/markup.ts`, `src/modules/seo/__tests__/seo.test.ts`, `src/app/[locale]/page.tsx`, `src/app/[locale]/jobs/[id]/page.tsx`, `src/app/[locale]/companies/[slug]/page.tsx`, `src/app/[locale]/jobs/t/[slug]/page.tsx`, `src/messages/en.json`, `src/messages/ru.json`, `docs/DECISIONS.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: D281–D283. У компании нет отдельного списка, поэтому крошки — главная и название компании, без шага на несуществующий `/companies`.
+- OPEN QUESTION: адреса соцсетей (LinkedIn, X, Telegram) для `Organization.sameAs`. Пока поле не ставится.
+- Следующая подфаза: Claude Code вливает после зелёного CI. Rich Results Test — по публичному URL ветки. В master не вливалось.

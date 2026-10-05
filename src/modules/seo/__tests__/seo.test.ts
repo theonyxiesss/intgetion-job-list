@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { jobPostingJsonLd, serializeJsonLd } from "../job-posting";
+import {
+  breadcrumbListJsonLd,
+  homeGraphJsonLd,
+  importedJobSummary,
+} from "../markup";
 import { languageAlternates, metaDescription } from "../site";
 
 const job = {
@@ -74,6 +79,61 @@ describe("meta description", () => {
     const long = metaDescription("word ".repeat(60));
     expect(long.length).toBeLessThanOrEqual(160);
     expect(long.endsWith("…")).toBe(true);
+  });
+});
+
+describe("homepage graph (D282)", () => {
+  it("names the product, points search at /jobs, and skips empty social links", () => {
+    const graph = homeGraphJsonLd({
+      name: "INTGETION JOB LIST",
+      url: "https://intgetion.com",
+      logoUrl: "https://intgetion.com/icon.svg",
+      locale: "en",
+    });
+    const organization = graph["@graph"][0] as Record<string, unknown>;
+    const website = graph["@graph"][1] as {
+      potentialAction: { target: { urlTemplate: string } };
+    };
+    expect(organization.name).toBe("INTGETION JOB LIST");
+    expect(organization.logo).toBe("https://intgetion.com/icon.svg");
+    expect(organization.sameAs).toBeUndefined();
+    expect(website.potentialAction.target.urlTemplate).toBe(
+      "https://intgetion.com/en/jobs?q={search_term_string}",
+    );
+  });
+});
+
+describe("BreadcrumbList (D283)", () => {
+  it("numbers every step and keeps the current page url", () => {
+    const list = breadcrumbListJsonLd([
+      { name: "Home", url: "https://intgetion.com/en" },
+      { name: "Jobs", url: "https://intgetion.com/en/jobs" },
+      { name: "Engineer", url: "https://intgetion.com/en/jobs/1" },
+    ]);
+    expect(list.itemListElement.map((item) => item.position)).toEqual([
+      1, 2, 3,
+    ]);
+    expect(list.itemListElement[2]?.item).toBe(
+      "https://intgetion.com/en/jobs/1",
+    );
+  });
+});
+
+describe("imported job summary (D281)", () => {
+  it("is built from our fields and cannot repeat the source description", () => {
+    const summary = importedJobSummary({
+      title: "Solidity Engineer",
+      company: "Acme",
+      format: "Remote",
+      employment: "Contract",
+      timezone: "Worldwide",
+      salary: "Salary not specified",
+      skills: ["Solidity", "TypeScript"],
+    });
+    expect(summary).toBe(
+      "Solidity Engineer — Acme. Remote. Contract. Worldwide. Salary not specified. Solidity, TypeScript.",
+    );
+    expect(summary).not.toContain("Build contracts.");
   });
 });
 
