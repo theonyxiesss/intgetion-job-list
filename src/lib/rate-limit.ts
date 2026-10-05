@@ -36,6 +36,8 @@ export const rateRules = {
   beacon: { limit: 600, windowSeconds: 60 * 60 },
   /** guest JSON reads of jobs, keyed by IP (P-SCRAPE, D218) */
   publicApi: { limit: 120, windowSeconds: 60 },
+  /** admin host sign-in failures, keyed by account and by IP (D252) */
+  adminLogin: { limit: 5, windowSeconds: 15 * 60 },
 } as const satisfies Record<string, RateRule>;
 
 /** Fixed window (D26): windows start at multiples of the window length. */
@@ -67,6 +69,23 @@ export async function hit(
     on conflict (key, window_start)
     do update set count = rate_limit_counters.count + 1
     returning count
+  `);
+  return Number(rows[0]?.count ?? 0);
+}
+
+/** Hits already recorded in the current window, without adding one. */
+export async function windowCount(
+  bucket: keyof typeof rateRules,
+  subject: string,
+  now: Date = new Date(),
+): Promise<number> {
+  const rule = rateRules[bucket];
+  const start = windowStart(now, rule.windowSeconds);
+  const rows = await getDb().execute<{ count: number }>(sql`
+    select count
+    from rate_limit_counters
+    where key = ${rateKey(bucket, subject)}
+      and window_start = ${start.toISOString()}
   `);
   return Number(rows[0]?.count ?? 0);
 }

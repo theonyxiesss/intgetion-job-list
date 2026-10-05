@@ -185,6 +185,9 @@ describe("listAudit", () => {
       entityId: target.id,
       diff: null,
       ipHash: "secret-hash",
+      reason: null,
+      requestId: null,
+      deviceClass: null,
       createdAt: new Date(at.getTime() - i * 1000),
     }));
     r.listAudit.mockResolvedValue(rows);

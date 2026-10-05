@@ -9,8 +9,9 @@ const source = fs.readFileSync(
   path.join(process.cwd(), "src/proxy.ts"),
   "utf8",
 );
-const literal = /matcher:\s*("(?:[^"\\]|\\.)*")/.exec(source)?.[1] ?? '""';
-const matcher = JSON.parse(literal) as string;
+const literal = /matcher:\s*(\[[\s\S]*?\])/.exec(source)?.[1] ?? "[]";
+const matchers = JSON.parse(literal) as string[];
+const matcher = matchers[0] ?? "";
 const lookahead = /^\/\(\(\?!(.*)\)\.\*\)$/.exec(matcher)?.[1] ?? "";
 const excluded = new RegExp(`^(?:${lookahead})`);
 
@@ -25,7 +26,7 @@ describe("proxy matcher", () => {
     }
   });
 
-  it("skips Next.js internals and files", () => {
+  it("skips Next.js internals and files with the first pattern", () => {
     for (const route of [
       "_next/static/chunk.js",
       "favicon.ico",
@@ -33,5 +34,9 @@ describe("proxy matcher", () => {
     ]) {
       expect(excluded.test(route), route).toBe(true);
     }
+  });
+
+  it("also matches robots.txt so the admin host can refuse crawlers", () => {
+    expect(matchers).toContain("/robots.txt");
   });
 });

@@ -561,3 +561,12 @@
 - Миграции: нет. Env: нет.
 - Не сделано в коде (по D218): лимит на HTML-страницы каталога — правило Vercel Firewall в панели.
 - OPEN QUESTION: нет
+
+## [2026-10-05] — A1 дом админки — локальные проверки зелёные, CI после пуша
+
+- Сделано: хост `admin.intgetion.com` / `admin.localhost` (всё прочее на нём — 404, `robots.txt` `Disallow: /`, `X-Robots-Tag`). Кука `__Host-admin_session` (30 мин / 8 ч). Вход почта+пароль и TOTP Supabase, ключ доступа через MFA `webauthn` того же клиента, 10 кодов восстановления только хешами. Роли и права 4.2, `requireAdminPermission`, обёртка POST, реестр и каркас. `ADMIN_HOST_ONLY` по умолчанию выключен. Миграция не применялась к облаку.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0; `pnpm lint` → 0; `pnpm test` → 0 (76 files, 584 passed, 1 skipped). CI — дописать номер после `gh run watch`.
+- Миграции: `0027_admin_core.sql` (в репозитории, не на облаке).
+- Решения: D250–D255.
+- OPEN QUESTION: адрес `admin.intgetion.com` основатель ещё не подтвердил в DNS; периметр (IP / Cloudflare Access / только MFA); состав команды и роли; сверка пароля админки со списком утёкших (HIBP) не делалась. Панель Supabase Auth (Site URL, SMTP Resend, TOTP) в этой сессии не открылась — нужен вход основателя.
+- Следующее: не вливать в master. После зелёного CI можно включать `ADMIN_HOST_ONLY`.
