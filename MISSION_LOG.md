@@ -587,3 +587,14 @@
 - Инцидент: около 15:23 общий `.git` получил обнулённый `packed-refs` (CRLF) и лишний `.git/shallow`; ссылки восстановлены из reflog, `git fsck` чистый.
 - OPEN QUESTION: LCP главной близко к бюджету 2500 мс (медианы 2474–2506), нужен запас. Номера Cursor: админка заняла D250–D255 и миграцию `0027`, новому входу через Telegram (`cursor/telegram-login-rescue`) — миграция `0028` и решения с D256.
 - Следующее: основатель — DNS и домен `admin.intgetion.com` в Vercel, затем `ADMIN_HOST_ONLY=1`; Cursor — Telegram-вход на новых номерах.
+
+## [2026-10-05] — P-SCRAPE часть 2 — DONE на ветке cursor/p-scrape
+
+- Сделано: в `docs/RUNBOOK.md` раздел 13 — как основателю поставить в Vercel Firewall пропуск проверенных поисковых ботов и лимит на обход `/(en|ru)/jobs`. Ловушку и лимит API (D218) не дублировал. В соглашении запрет сбора вне API уже есть в разделе 5.1 на обоих языках, текст не копировал, `pnpm legal:sync` не нужен.
+- Команды проверки: `pnpm exec prettier --check docs/RUNBOOK.md docs/DECISIONS.md MISSION_LOG.md`.
+- P-тесты подфазы: нет, настройка в панели.
+- Миграции: нет.
+- Изменённые файлы: `docs/RUNBOOK.md`, `docs/DECISIONS.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: D289.
+- OPEN QUESTION: есть ли YandexBot в списке verified bots Vercel. Если нет, в RUNBOOK временный Bypass по User-Agent — его можно подделать, это не обратный DNS.
+- Следующая подфаза: основатель ставит правила в панели. В master не вливалось.
