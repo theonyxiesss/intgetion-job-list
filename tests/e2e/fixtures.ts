@@ -1,5 +1,6 @@
 import { test as base, type Browser } from "@playwright/test";
 import { randomInt } from "node:crypto";
+import { CONSENT_POLICY_VERSION } from "../../src/lib/consent";
 
 /**
  * Every test gets its own client IP (D46). CI requests carry no proxy
@@ -14,7 +15,8 @@ export function testIp(): string {
 /** Tests start with the cookie choice made, so the banner covers nothing (D201). */
 export const consentCookie = {
   name: "cookie_consent",
-  value: "necessary",
+  // Choice, policy version and journal id (D220).
+  value: `necessary~${CONSENT_POLICY_VERSION}~00000000-0000-4000-8000-000000000000`,
   url: "http://127.0.0.1:3000",
 };
 

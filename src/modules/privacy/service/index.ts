@@ -9,4 +9,5 @@ export {
   exportMyData,
   runRetention,
 } from "./privacy-service";
-export { deleteAccountInput } from "../schemas";
+export { recordConsent, storedConsent } from "./consent-service";
+export { consentInput, deleteAccountInput } from "../schemas";

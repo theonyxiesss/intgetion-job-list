@@ -1,5 +1,5 @@
 import { Download } from "lucide-react";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CookieChoice } from "@/components/settings/cookie-choice";
 import {
@@ -7,7 +7,7 @@ import {
   ProfileVisibility,
 } from "@/components/settings/settings-controls";
 import { Container, Icon, PageHeader, buttonClass } from "@/components/ui";
-import { CONSENT_COOKIE, parseConsent } from "@/lib/consent";
+import { CONSENT_COOKIE, consentInForce } from "@/lib/consent";
 import { getOwnCandidate } from "@/modules/candidates/service";
 import { requireSettingsUser } from "../require-settings-user";
 import { SettingsTabs } from "../settings-tabs";
@@ -22,7 +22,9 @@ export default async function PrivacySettingsPage({
   const user = await requireSettingsUser(locale);
   const t = await getTranslations("settings");
   const profile = await getOwnCandidate(user.id);
-  const consent = parseConsent((await cookies()).get(CONSENT_COOKIE)?.value);
+  const consent = consentInForce((await cookies()).get(CONSENT_COOKIE)?.value);
+  // Global Privacy Control keeps analytics off whatever is chosen (D220).
+  const gpc = (await headers()).get("sec-gpc") === "1";
 
   return (
     <main className="py-10 md:py-16">
@@ -35,6 +37,7 @@ export default async function PrivacySettingsPage({
         </section>
         <CookieChoice
           initial={consent}
+          gpc={gpc}
           text={{
             title: t("cookies.title"),
             text: t("cookies.text"),
@@ -44,6 +47,7 @@ export default async function PrivacySettingsPage({
             preferencesHint: t("cookies.preferencesHint"),
             analytics: t("cookies.analytics"),
             analyticsHint: t("cookies.analyticsHint"),
+            gpcHint: t("cookies.gpcHint"),
             saved: t("cookies.saved"),
           }}
         />

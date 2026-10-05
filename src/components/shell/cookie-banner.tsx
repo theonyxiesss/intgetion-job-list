@@ -6,7 +6,10 @@ import { Choice } from "@/components/ui/choice";
 import {
   ACCEPT_ALL,
   NECESSARY_ONLY,
+  browserGpc,
+  parseChoice,
   readConsent,
+  serializeChoice,
   writeConsent,
   type Consent,
 } from "@/lib/consent";
@@ -22,10 +25,11 @@ export interface CookieBannerText {
   preferencesHint: string;
   analytics: string;
   analyticsHint: string;
+  gpcHint: string;
 }
 
 /**
- * Cookie choice (D201, D219). Rendered only after hydration; the text stays
+ * Cookie choice (D201, D219, D220). Rendered only after hydration; the text stays
  * one short line so it never outgrows the hero as the LCP element. The three
  * buttons have equal weight; "Customize" opens the two optional categories.
  */
@@ -33,15 +37,35 @@ export function CookieBanner({ text }: { text: CookieBannerText }) {
   const [open, setOpen] = useState(false);
   const [custom, setCustom] = useState(false);
   const [draft, setDraft] = useState<Consent>(NECESSARY_ONLY);
+  const [gpc, setGpc] = useState(false);
 
   useEffect(() => {
-    // Reading document.cookie is only possible after hydration.
+    // Cookies and navigator are only readable after hydration.
+    if (readConsent(document.cookie) !== null) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOpen(readConsent(document.cookie) === null);
+    setGpc(browserGpc());
+    let cancelled = false;
+    // A signed-in user may have chosen on another device (D220).
+    fetch("/api/consent", { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body: { consent?: Consent | null } | null) => {
+        if (cancelled) return;
+        const stored = body?.consent
+          ? parseChoice(serializeChoice(body.consent))
+          : null;
+        if (stored) writeConsent(stored, "banner", { record: false });
+        else setOpen(true);
+      })
+      .catch(() => {
+        if (!cancelled) setOpen(true);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   function choose(consent: Consent) {
-    writeConsent(consent);
+    writeConsent(consent, "banner");
     setOpen(false);
   }
 
@@ -88,8 +112,9 @@ export function CookieBanner({ text }: { text: CookieBannerText }) {
             />
             <Choice
               label={text.analytics}
-              hint={text.analyticsHint}
-              checked={draft.analytics}
+              hint={gpc ? text.gpcHint : text.analyticsHint}
+              checked={draft.analytics && !gpc}
+              disabled={gpc}
               onChange={(event) =>
                 setDraft({ ...draft, analytics: event.target.checked })
               }

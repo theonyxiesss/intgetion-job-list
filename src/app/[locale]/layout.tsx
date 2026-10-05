@@ -134,6 +134,7 @@ export default async function LocaleLayout({
                 preferencesHint: t("cookies.preferencesHint"),
                 analytics: t("cookies.analytics"),
                 analyticsHint: t("cookies.analyticsHint"),
+                gpcHint: t("cookies.gpcHint"),
               }}
             />
           </ToastProvider>

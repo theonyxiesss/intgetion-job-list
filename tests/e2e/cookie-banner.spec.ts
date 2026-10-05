@@ -22,7 +22,7 @@ for (const [button, value] of [
     const cookies = await context.cookies();
     expect(
       cookies.find((cookie) => cookie.name === "cookie_consent")?.value,
-    ).toBe(value);
+    ).toMatch(new RegExp(`^${value}~`));
     await page.reload();
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(banner).toHaveCount(0);
@@ -48,7 +48,7 @@ test("customize stores preferences only and brings back the last filters", async
   const consent = (await context.cookies()).find(
     (cookie) => cookie.name === "cookie_consent",
   );
-  expect(consent?.value).toBe("preferences");
+  expect(consent?.value).toMatch(/^preferences~/);
 
   await page.goto("/en/jobs?workFormat=remote");
   await expect

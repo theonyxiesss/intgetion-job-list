@@ -19,28 +19,30 @@ export interface CookieChoiceText {
   preferencesHint: string;
   analytics: string;
   analyticsHint: string;
+  gpcHint: string;
   saved: string;
 }
 
 /**
- * Change the cookie choice made in the banner (D201, D219): withdrawing
+ * Change the cookie choice made in the banner (D201, D219, D220): withdrawing
  * consent must be as easy as giving it. Each switch applies at once and a
  * withdrawn category deletes its cookies.
  */
 export function CookieChoice({
   initial,
+  gpc,
   text,
 }: {
   initial: Consent | null;
+  /** The browser sends Global Privacy Control: analytics stays off (D220). */
+  gpc: boolean;
   text: CookieChoiceText;
 }) {
   const [value, setValue] = useState<Consent>(initial ?? NECESSARY_ONLY);
   const [saved, setSaved] = useState(false);
 
   function toggle(category: ConsentCategory, allowed: boolean) {
-    const next = { ...value, [category]: allowed };
-    writeConsent(next);
-    setValue(next);
+    setValue(writeConsent({ ...value, [category]: allowed }, "settings"));
     setSaved(true);
   }
 
@@ -66,8 +68,13 @@ export function CookieChoice({
           <Choice
             key={category}
             label={text[category]}
-            hint={text[`${category}Hint`]}
-            checked={value[category]}
+            hint={
+              category === "analytics" && gpc
+                ? text.gpcHint
+                : text[`${category}Hint`]
+            }
+            checked={value[category] && !(category === "analytics" && gpc)}
+            disabled={category === "analytics" && gpc}
             onChange={(event) => toggle(category, event.target.checked)}
           />
         ))}

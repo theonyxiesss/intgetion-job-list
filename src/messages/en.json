@@ -965,7 +965,8 @@
       "preferences": "Preferences",
       "preferencesHint": "Remember your last catalog filters.",
       "analytics": "Analytics",
-      "analyticsHint": "Our own anonymous usage statistics. Nothing is collected yet."
+      "analyticsHint": "Our own anonymous usage statistics. Nothing is collected yet.",
+      "gpcHint": "Your browser sends Global Privacy Control, so analytics stays off."
     }
   },
   "chat": {
@@ -1010,7 +1011,8 @@
     "preferences": "Preferences",
     "preferencesHint": "Remember your last catalog filters.",
     "analytics": "Analytics",
-    "analyticsHint": "Our own anonymous usage statistics. Nothing is collected yet."
+    "analyticsHint": "Our own anonymous usage statistics. Nothing is collected yet.",
+    "gpcHint": "Your browser sends Global Privacy Control, so analytics stays off."
   },
   "forEmployers": {
     "title": "For employers",

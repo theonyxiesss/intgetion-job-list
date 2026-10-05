@@ -28,6 +28,7 @@ export async function readUserData(userId: string) {
     notifications,
     notificationPreferences,
     botMessages,
+    consentRecords,
   ] = await Promise.all([
     rows(
       sql`select id, platform_role, status, locale, terms_accepted_at, terms_version, marketing_opt_in, last_active_at, created_at from public.users where id = ${userId}`,
@@ -77,6 +78,9 @@ export async function readUserData(userId: string) {
     rows(
       sql`select m.conversation_id, m.role, m.content, m.created_at from public.bot_messages m join public.bot_conversations c on c.id = m.conversation_id where c.user_id = ${userId} and m.role in ('user', 'assistant', 'system_event') order by m.created_at`,
     ),
+    rows(
+      sql`select choice, policy_version, gpc, source, created_at from public.consent_records where user_id = ${userId} order by created_at`,
+    ),
   ]);
   return {
     user: user[0] ?? null,
@@ -95,6 +99,7 @@ export async function readUserData(userId: string) {
     notifications,
     notificationPreferences,
     botMessages,
+    cookieConsents: consentRecords,
   };
 }
 
@@ -224,5 +229,37 @@ export async function purgeExpired(now: Date) {
       delete from public.bot_messages where created_at < ${days(180)}::timestamptz returning 1`),
     guestConversations: await count(sql`
       delete from public.bot_conversations where user_id is null and last_message_at < ${days(30)}::timestamptz returning 1`),
+    consentRecords: await count(sql`
+      delete from public.consent_records where created_at < ${days(3 * 365)}::timestamptz returning 1`),
   };
+}
+
+/** One cookie choice for the journal (D220); a repeated id is ignored. */
+export async function insertConsentRecord(input: {
+  id: string;
+  userId: string | null;
+  choice: string;
+  version: string;
+  gpc: boolean;
+  source: "banner" | "settings";
+  ipHash: string;
+}) {
+  await getDb().execute(sql`
+    insert into public.consent_records
+      (id, user_id, choice, policy_version, gpc, source, ip_hash)
+    values (${input.id}, ${input.userId}, ${input.choice}, ${input.version},
+            ${input.gpc}, ${input.source}, ${input.ipHash})
+    on conflict (id) do nothing
+  `);
+}
+
+/** A signed-in user's latest choice under the given policy version. */
+export async function readStoredConsent(userId: string, version: string) {
+  const found = await rows(sql`
+    select choice from public.consent_records
+    where user_id = ${userId} and policy_version = ${version}
+    order by created_at desc
+    limit 1
+  `);
+  return (found[0]?.choice as string | undefined) ?? null;
 }
