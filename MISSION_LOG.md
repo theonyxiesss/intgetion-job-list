@@ -507,3 +507,39 @@
 - Отклонения от ТЗ: нет.
 - OPEN QUESTION: нет (restore не проверялся — отмечено в RUNBOOK).
 - Следующая подфаза: Sentry (instrumentation.ts, D197–D199).
+
+## [2026-10-05] — 9B: дайджест совпадений — DONE
+- Реализован cron-маршрут `/api/cron/digest` с защитой через `CRON_SECRET` (force-dynamic, timingSafeEqual, 404 для неавторизованных).
+- Добавлена колонка `last_digest_at` в таблицу `candidate_profiles` (миграция `0020_digest_tracking.sql`, обновлена схема в `src/db/schema/candidates.ts`).
+- Логика дайджеста в `src/modules/notifications/service/digest.ts`:
+  * Запускается раз в час, выбирает кандидатов, у которых сейчас утро (08:00–10:00 по их TZ) и с прошлого дайджеста прошло ≥24 ч.
+  * Для каждого кандидата выбирает до 5 новых совпадений (score ≥ 0.65, без hidden/dismissed/hidden_company) через сервис 6B (`getMatches`).
+  * Формирует письмо через `siteEmailHtml` (без ручного HTML) и in-app уведомление (всегда).
+  * Email отправляется только если в preferences включено и `getAuthUserEmail` вернул реальный адрес (не null).
+  * Язык берется из `users.locale` (en/ru), тексты из `src/messages/{en,ru}.json` под ключом `digest` и `notifications.types.matchesDigest`.
+  * После успешной отправки обновляет `last_digest_at` в той же транзакции, что и запись уведомления.
+  * В чат бота (если есть беседа) пишет системное сообщение со ссылкой на `/matches` через репозиторий бота.
+- Обновлены файлы переводов (`src/messages/en.json`, `src/messages/ru.json`) под ключами `digest` и `notifications.types.matchesDigest`.
+- Добавил решения D185–D189 в конец `docs/DECISIONS.md` (утро, порог/лимит, идемпотентность, каналы, локаль).
+- Обновлен `docs/ERD.md`: колонка `last_digest_at` в `candidate_profiles`.
+- Все тесты pass: unit (окно по TZ, DST, полночь, ≤1/день, порог 0.65, исключения hidden) и интеграционные (двойной запуск cron → одно уведомление, hidden_company не попадает, кандидат без TZ пропускается).
+- Локально: `pnpm lint`, `pnpm typecheck`, `pnpm test` → 0 ошибок.
+- CI (run 37288266570) — success.
+
+## [2026-10-05] — 9B: дайджест совпадений — DONE
+- Реализован cron-маршрут `/api/cron/digest` с защитой через `CRON_SECRET` (force-dynamic, timingSafeEqual, 404 для неавторизованных).
+- Добавлена колонка `last_digest_at` в таблицу `candidate_profiles` (миграция `0020_digest_tracking.sql`, обновлена схема в `src/db/schema/candidates.ts`).
+- Логика дайджеста в `src/modules/notifications/service/digest.ts`:
+  * Запускается раз в час, выбирает кандидатов, у которых сейчас утро (08:00–10:00 по их TZ) и с прошлого дайджеста прошло ≥24 ч.
+  * Для каждого кандидата выбирает до 5 новых совпадений (score ≥ 0.65, без hidden/dismissed/hidden_company) через сервис 6B (`getMatches`).
+  * Формирует письмо через `siteEmailHtml` (без ручного HTML) и in-app уведомление (всегда).
+  * Email отправляется только если в preferences включено и `getAuthUserEmail` вернул реальный адрес (не null).
+  * Язык берется из `users.locale` (en/ru), тексты из `src/messages/{en,ru}.json` под ключом `digest` и `notifications.types.matchesDigest`.
+  * После успешной отправки обновляет `last_digest_at` в той же транзакции, что и запись уведомления.
+  * В чат бота (если есть беседа) пишет системное сообщение со ссылкой на `/matches` через репозиторий бота.
+- Обновлены файлы переводов (`src/messages/en.json`, `src/messages/ru.json`) под ключами `digest` и `notifications.types.matchesDigest`.
+- Добавил решения D185–D189 в конец `docs/DECISIONS.md` (утро, порог/лимит, идемпотентность, каналы, локаль).
+- Обновлен `docs/ERD.md`: колонка `last_digest_at` в `candidate_profiles`.
+- Все тесты pass: unit (окно по TZ, DST, полночь, ≤1/день, порог 0.65, исключения hidden) и интеграционные (двойной запуск cron → одно уведомление, hidden_company не попадает, кандидат без TZ пропускается).
+- Локально: `pnpm lint`, `pnpm typecheck`, `pnpm test` → 0 ошибок.
+- CI (run 37288266570) — success.
