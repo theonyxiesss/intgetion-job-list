@@ -17,7 +17,9 @@ test("the Telegram button waits for the mocked bot, then signs in", async ({
       return;
     }
     polls += 1;
-    if (polls === 1) {
+    // Mount and the click each poll once. Stay pending until the test
+    // has seen the waiting line.
+    if (polls < 3) {
       await route.fulfill({
         status: 202,
         contentType: "application/json",
