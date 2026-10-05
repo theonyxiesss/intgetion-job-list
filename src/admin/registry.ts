@@ -1,17 +1,17 @@
-import {
-  Briefcase,
-  ChartColumn,
-  Download,
-  Flag,
-  LayoutGrid,
-  ListChecks,
-  ScrollText,
-  SlidersHorizontal,
-  Tags,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
 import { can, type AdminPermission, type AdminRole } from "./permissions";
+
+/** Names, not components: a component cannot cross into the client nav. */
+export type AdminIconName =
+  | "layout-grid"
+  | "list-checks"
+  | "flag"
+  | "briefcase"
+  | "users"
+  | "download"
+  | "tags"
+  | "scroll-text"
+  | "chart-column"
+  | "sliders";
 
 export type AdminSectionKey =
   | "home"
@@ -32,7 +32,7 @@ export type AdminSectionDef = {
   key: AdminSectionKey;
   href: string;
   labelKey: string;
-  icon: LucideIcon;
+  icon: AdminIconName;
   permission: AdminPermission;
   countKey?: AdminCountKey;
 };
@@ -43,14 +43,14 @@ export const adminSections: readonly AdminSectionDef[] = [
     key: "home",
     href: "/admin",
     labelKey: "navHome",
-    icon: LayoutGrid,
+    icon: "layout-grid",
     permission: "overview.read",
   },
   {
     key: "moderation",
     href: "/admin/moderation",
     labelKey: "navModeration",
-    icon: ListChecks,
+    icon: "list-checks",
     permission: "moderation.decide",
     countKey: "moderation",
   },
@@ -58,7 +58,7 @@ export const adminSections: readonly AdminSectionDef[] = [
     key: "reports",
     href: "/admin/reports",
     labelKey: "navReports",
-    icon: Flag,
+    icon: "flag",
     permission: "reports.decide",
     countKey: "reports",
   },
@@ -66,28 +66,28 @@ export const adminSections: readonly AdminSectionDef[] = [
     key: "jobs",
     href: "/admin/jobs",
     labelKey: "navJobs",
-    icon: Briefcase,
+    icon: "briefcase",
     permission: "jobs.read",
   },
   {
     key: "users",
     href: "/admin/users",
     labelKey: "navUsers",
-    icon: Users,
+    icon: "users",
     permission: "users.read",
   },
   {
     key: "import",
     href: "/admin/import",
     labelKey: "navImport",
-    icon: Download,
+    icon: "download",
     permission: "import.manage",
   },
   {
     key: "taxonomy",
     href: "/admin/taxonomy",
     labelKey: "navTaxonomy",
-    icon: Tags,
+    icon: "tags",
     permission: "taxonomy.manage",
     countKey: "taxonomy",
   },
@@ -95,28 +95,28 @@ export const adminSections: readonly AdminSectionDef[] = [
     key: "audit",
     href: "/admin/audit",
     labelKey: "navAudit",
-    icon: ScrollText,
+    icon: "scroll-text",
     permission: "audit.read",
   },
   {
     key: "metrics",
     href: "/admin/metrics",
     labelKey: "navMetrics",
-    icon: ChartColumn,
+    icon: "chart-column",
     permission: "analytics.read",
   },
   {
     key: "team",
     href: "/admin/team",
     labelKey: "navTeam",
-    icon: Users,
+    icon: "users",
     permission: "admins.manage",
   },
   {
     key: "flags",
     href: "/admin/flags",
     labelKey: "navFlags",
-    icon: SlidersHorizontal,
+    icon: "sliders",
     permission: "flags.manage",
   },
 ];

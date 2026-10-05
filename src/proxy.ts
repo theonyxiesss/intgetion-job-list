@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import {
   adminHostOnly,
   adminPathStatus,
-  hostOrigin,
+  csrfSite,
   isAdminHost,
 } from "./admin/host";
 import { routing } from "./i18n/routing";
@@ -60,7 +60,7 @@ export async function proxy(request: NextRequest) {
     );
   }
 
-  const originSite = adminHost && host ? hostOrigin(host) : siteUrl();
+  const originSite = csrfSite(host, siteUrl());
 
   if (request.nextUrl.pathname.startsWith("/api/")) {
     // CSRF (section 6, P12): mutating API calls must come from this host.
