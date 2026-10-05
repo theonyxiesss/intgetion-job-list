@@ -313,7 +313,8 @@
   animation: ui-fade-up var(--d-slow) var(--ease-out-expo) both;
 }
 
-/* Hero lines: only movement, never opacity — the LCP text shows at once. */
+/* Shift only, never opacity. The homepage hero does not use this:
+   a split line was smaller than the cookie banner and lost LCP (D260). */
 .ui-rise {
   animation: ui-rise var(--d-slow) var(--ease-out-expo) both;
   animation-delay: calc(var(--i, 0) * 80ms);

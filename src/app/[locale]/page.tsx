@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -26,6 +27,47 @@ const categoryIds = [
 ] as const;
 
 const steps = ["benefitBot", "benefitMatch", "benefitContacts"] as const;
+
+/** Catalog counts sit under the hero so the LCP line is not held for the database (D260). */
+async function HomeStats({ locale }: { locale: string }) {
+  const catalog = await countPublicCatalog();
+  if (catalog.jobs <= 0) return null;
+  const t = await getTranslations("home");
+  return (
+    <Section bordered>
+      <Container>
+        <dl className="grid grid-cols-2 gap-8">
+          <div className="flex flex-col gap-2">
+            <dt className="t-label text-fg-muted">{t("statJobs")}</dt>
+            <dd className="t-data-l">
+              <CountUp value={catalog.jobs} locale={locale} />
+            </dd>
+          </div>
+          <div className="flex flex-col gap-2">
+            <dt className="t-label text-fg-muted">{t("statCompanies")}</dt>
+            <dd className="t-data-l">
+              <CountUp value={catalog.companies} locale={locale} />
+            </dd>
+          </div>
+        </dl>
+      </Container>
+    </Section>
+  );
+}
+
+async function LatestSection({ locale }: { locale: string }) {
+  const t = await getTranslations("home");
+  return (
+    <Section>
+      <Container className="flex flex-col gap-8">
+        <h2 id="latest" className="t-h2">
+          {t("latestTitle")}
+        </h2>
+        <LatestJobs locale={locale} />
+      </Container>
+    </Section>
+  );
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -71,7 +113,6 @@ export default async function HomePage({
   const product = await getTranslations("product");
   const { q } = await searchParams;
   const query = q?.trim() ?? "";
-  const catalog = await countPublicCatalog();
 
   return (
     <main>
@@ -80,8 +121,9 @@ export default async function HomePage({
         <Container className="relative flex min-h-[70vh] flex-col justify-end gap-8 py-16 md:py-24">
           <p className="t-label text-fg-muted">{product("name")}</p>
           <h1 className="t-display-xl max-w-[16ch]">
-            <span className="ui-rise block">{t("line1")} </span>
-            <span className="ui-rise block [--i:1]">{t("line2")}</span>
+            {t("line1")}
+            <br />
+            {t("line2")}
           </h1>
           <p className="max-w-[52ch] text-fg-muted">{t("subtitle")}</p>
           <form
@@ -121,35 +163,13 @@ export default async function HomePage({
         </Container>
       </section>
 
-      {catalog.jobs > 0 ? (
-        <Section bordered>
-          <Container>
-            <dl className="grid grid-cols-2 gap-8">
-              <div className="flex flex-col gap-2">
-                <dt className="t-label text-fg-muted">{t("statJobs")}</dt>
-                <dd className="t-data-l">
-                  <CountUp value={catalog.jobs} locale={locale} />
-                </dd>
-              </div>
-              <div className="flex flex-col gap-2">
-                <dt className="t-label text-fg-muted">{t("statCompanies")}</dt>
-                <dd className="t-data-l">
-                  <CountUp value={catalog.companies} locale={locale} />
-                </dd>
-              </div>
-            </dl>
-          </Container>
-        </Section>
-      ) : null}
+      <Suspense fallback={null}>
+        <HomeStats locale={locale} />
+      </Suspense>
 
-      <Section>
-        <Container className="flex flex-col gap-8">
-          <h2 id="latest" className="t-h2">
-            {t("latestTitle")}
-          </h2>
-          <LatestJobs locale={locale} />
-        </Container>
-      </Section>
+      <Suspense fallback={null}>
+        <LatestSection locale={locale} />
+      </Suspense>
 
       <Section bordered>
         <Container className="flex flex-col gap-10">
