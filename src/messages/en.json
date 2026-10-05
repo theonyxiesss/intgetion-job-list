@@ -224,6 +224,8 @@
       "telegramTitle": "Signing in with Telegram",
       "telegramProgress": "Checking the Telegram confirmation…",
       "telegramTerms": "By continuing with Telegram you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
+      "telegramWaiting": "Open Telegram and tap Sign in. This page updates on its own.",
+      "telegramFailed": "Telegram sign-in could not start. Try again.",
       "telegramLinked": "Telegram is linked to your account."
     }
   },

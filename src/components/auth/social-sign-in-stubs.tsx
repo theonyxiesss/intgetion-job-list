@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonClass } from "@/components/ui/button";
 import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 import { authAdminAvailable } from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/supabase/env";
 import {
@@ -10,10 +11,11 @@ import {
   telegramBotId,
   telegramBotToken,
 } from "@/modules/auth/service";
+import { TelegramLoginButton } from "./telegram-login-button";
 
 const STUBS = ["google", "x"] as const;
 
-/** Telegram works when the bot token and the Auth admin key are set (D217). */
+/** Frozen widget (D246). The bot button is the default until this flag is on. */
 async function telegramHref(): Promise<string | null> {
   const token = telegramBotToken();
   if (!flags.telegramLoginEnabled || !token || !authAdminAvailable()) {
@@ -34,7 +36,24 @@ async function telegramHref(): Promise<string | null> {
  */
 export async function SocialSignInStubs() {
   const t = await getTranslations("auth.social");
+  const locale = (await getLocale()) === "ru" ? "ru" : "en";
   const telegram = await telegramHref();
+  const terms = (
+    <p className="t-caption text-fg-muted">
+      {t.rich("telegramTerms", {
+        terms: (chunks) => (
+          <Link href="/terms" className="underline">
+            {chunks}
+          </Link>
+        ),
+        privacy: (chunks) => (
+          <Link href="/privacy" className="underline">
+            {chunks}
+          </Link>
+        ),
+      })}
+    </p>
+  );
   return (
     <section aria-labelledby="social-sign-in" className="flex flex-col gap-3">
       <div className="flex items-center gap-3 text-fg-muted">
@@ -44,7 +63,7 @@ export async function SocialSignInStubs() {
         </h2>
         <span aria-hidden="true" className="h-px flex-1 bg-line" />
       </div>
-      {telegram && (
+      {telegram ? (
         <div className="flex flex-col gap-1">
           <a
             href={telegram}
@@ -52,32 +71,26 @@ export async function SocialSignInStubs() {
           >
             {t("telegram")}
           </a>
-          <p className="t-caption text-fg-muted">
-            {t.rich("telegramTerms", {
-              terms: (chunks) => (
-                <Link href="/terms" className="underline">
-                  {chunks}
-                </Link>
-              ),
-              privacy: (chunks) => (
-                <Link href="/privacy" className="underline">
-                  {chunks}
-                </Link>
-              ),
-            })}
-          </p>
+          {terms}
         </div>
+      ) : (
+        <TelegramLoginButton
+          locale={locale satisfies AppLocale}
+          label={t("telegram")}
+          waiting={t("telegramWaiting")}
+          failed={t("telegramFailed")}
+        >
+          {terms}
+        </TelegramLoginButton>
       )}
-      {[...STUBS, ...(telegram ? [] : (["telegram"] as const))].map(
-        (provider) => (
-          <div key={provider} className="flex items-center gap-3">
-            <Button variant="secondary" disabled className="flex-1">
-              {t(provider)}
-            </Button>
-            <Badge>{t("soon")}</Badge>
-          </div>
-        ),
-      )}
+      {STUBS.map((provider) => (
+        <div key={provider} className="flex items-center gap-3">
+          <Button variant="secondary" disabled className="flex-1">
+            {t(provider)}
+          </Button>
+          <Badge>{t("soon")}</Badge>
+        </div>
+      ))}
     </section>
   );
 }

@@ -3,10 +3,17 @@ import { describe, expect, it } from "vitest";
 import { isPlaceholderEmail } from "@/lib/supabase/admin";
 import {
   decodeTelegramResult,
+  newTelegramLoginCode,
+  parseTelegramLoginCode,
+  parseTelegramStartCommand,
   telegramAuthUrl,
   telegramBotId,
+  telegramBotStartUrl,
   telegramBotToken,
   telegramEmail,
+  telegramLoginCodeHash,
+  telegramWebhookSecret,
+  telegramWebhookSecretMatches,
   verifyTelegramAuth,
 } from "../service/telegram";
 
@@ -98,5 +105,35 @@ describe("Telegram sign-in (D217)", () => {
     expect(telegramEmail(42)).toBe("tg42@telegram.intgetion.com");
     expect(isPlaceholderEmail("TG42@telegram.intgetion.com")).toBe(true);
     expect(isPlaceholderEmail("ann@example.com")).toBe(false);
+  });
+});
+
+describe("Telegram bot sign-in codes (D256, D257)", () => {
+  it("keeps the raw code out of the hash and inside Telegram's payload limit", () => {
+    const code = newTelegramLoginCode();
+    expect(parseTelegramLoginCode(`login_${code}`)).toBe(code);
+    expect(telegramLoginCodeHash(code)).toHaveLength(64);
+    expect(telegramLoginCodeHash(code)).not.toContain(code);
+    const start = new URL(telegramBotStartUrl("intgetion_bot", code));
+    expect(start.origin).toBe("https://t.me");
+    expect(start.pathname).toBe("/intgetion_bot");
+    expect(start.searchParams.get("start")!.length).toBeLessThanOrEqual(64);
+  });
+
+  it("reads a /start payload and ignores other messages", () => {
+    expect(parseTelegramStartCommand("/start")).toBe("");
+    expect(parseTelegramStartCommand("/start@intgetion_bot login_abc")).toBe(
+      "login_abc",
+    );
+    expect(parseTelegramStartCommand("hello")).toBeNull();
+    expect(parseTelegramLoginCode("login_short")).toBeNull();
+  });
+
+  it("accepts only the webhook secret derived from the bot token", () => {
+    const secret = telegramWebhookSecret(token);
+    expect(telegramWebhookSecretMatches(token, secret)).toBe(true);
+    expect(telegramWebhookSecretMatches(token, secret + "x")).toBe(false);
+    expect(telegramWebhookSecretMatches(token, null)).toBe(false);
+    expect(telegramWebhookSecret("999:other")).not.toBe(secret);
   });
 });

@@ -28,7 +28,17 @@ export {
   type ConfirmationMailer,
   type EmailAddResult,
 } from "./email-change";
-export { telegramAuthUrl, telegramBotId, telegramBotToken } from "./telegram";
+export {
+  telegramAuthUrl,
+  telegramBotId,
+  telegramBotToken,
+  telegramWebhookSecretMatches,
+} from "./telegram";
+export {
+  beginTelegramBotLogin,
+  finishTelegramBotLogin,
+  handleTelegramWebhook,
+} from "./telegram-login";
 export type {
   AuthClient,
   CallbackParams,

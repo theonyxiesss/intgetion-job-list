@@ -587,3 +587,12 @@
 - Инцидент: около 15:23 общий `.git` получил обнулённый `packed-refs` (CRLF) и лишний `.git/shallow`; ссылки восстановлены из reflog, `git fsck` чистый.
 - OPEN QUESTION: LCP главной близко к бюджету 2500 мс (медианы 2474–2506), нужен запас. Номера Cursor: админка заняла D250–D255 и миграцию `0027`, новому входу через Telegram (`cursor/telegram-login-rescue`) — миграция `0028` и решения с D256.
 - Следующее: основатель — DNS и домен `admin.intgetion.com` в Vercel, затем `ADMIN_HOST_ONLY=1`; Cursor — Telegram-вход на новых номерах.
+
+## [2026-10-05] — telegram-login — DONE на ветке cursor/telegram-login
+
+- Сделано: одноразовый вход через бота. Код живёт в httpOnly-куке `tg_login`, в `telegram_login_challenges` лежит только SHA-256. Кнопка открывает `https://t.me/<bot>?start=login_<код>`. Вебхук сверяет `X-Telegram-Bot-Api-Secret-Token` (HMAC токена бота, метка `intgetion.telegram.webhook`). Сессия — тот же путь, что у виджета после проверки подписи. TTL 10 минут. Повторное нажатие подтверждение не меняет. Голый `/start` объясняет, как войти. Старый виджет остаётся за `TELEGRAM_LOGIN_ENABLED` (D246). Кнопка бота заменяет заглушку «Скоро», пока флаг выключен.
+- Миграции: `0028_telegram_login.sql` в репозитории, к облаку не применялась. Таблица уже есть от ручной `0020_telegram_login.sql`. Файл идемпотентный. `scripts/apply-migrations.mjs` учитывает имя файла и лишние строки не удаляет. Строку `0020_telegram_login.sql` в `schema_migrations` не удалять и не заводить файл с этим именем: номер 0020 занят `0020_digest_tracking.sql`, и одноимённый файл был бы пропущен. При вливании Claude Code применяет `0028`.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0, eslint по затронутым файлам → 0, `vitest run` unit → 0 (2 файла, 15 тестов), `vitest run --config vitest.integration.config.mts` на `telegram-login.integration.test.ts` → 0 (1 тест, около 6 с, облачная база и Auth, пользователь после теста удалён).
+- Решения: D256–D259.
+- Отклонения: `src/proxy.ts` не менялся (правило 5). `POST /api/telegram/webhook` без заголовка Origin получает 403, пока Claude Code не пропустит этот путь до проверки Origin. Маршрут без секрета отвечает 401.
+- OPEN QUESTION: нет. Прокси — поручение Claude Code, не вопрос.

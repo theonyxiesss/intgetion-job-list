@@ -224,6 +224,8 @@
       "telegramTitle": "Вход через Telegram",
       "telegramProgress": "Проверяем подтверждение Telegram…",
       "telegramTerms": "Продолжая через Telegram, вы принимаете <terms>пользовательское соглашение</terms> и <privacy>политику конфиденциальности</privacy>.",
+      "telegramWaiting": "Откройте Telegram и нажмите «Войти». Эта страница обновится сама.",
+      "telegramFailed": "Не удалось начать вход через Telegram. Попробуйте ещё раз.",
       "telegramLinked": "Telegram привязан к вашему аккаунту."
     }
   },

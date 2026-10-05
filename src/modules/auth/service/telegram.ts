@@ -1,4 +1,9 @@
-import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import {
+  createHash,
+  createHmac,
+  randomBytes,
+  timingSafeEqual,
+} from "node:crypto";
 import { z } from "zod";
 import { PLACEHOLDER_EMAIL_DOMAIN } from "@/lib/supabase/admin";
 
@@ -93,4 +98,56 @@ export function verifyTelegramAuth(
 /** Login email of a Telegram user; nothing is ever sent to it. */
 export function telegramEmail(telegramId: number): string {
   return `tg${telegramId}@${PLACEHOLDER_EMAIL_DOMAIN}`;
+}
+
+/** How long a bot sign-in challenge stays valid (D257). */
+export const TELEGRAM_LOGIN_TTL_SECONDS = 10 * 60;
+
+/** Raw one-time code. Only its hash is stored; the cookie holds this value. */
+export function newTelegramLoginCode(): string {
+  return randomBytes(18).toString("base64url");
+}
+
+/** `login_<code>` from a start link or a callback, or null when it is not one. */
+export function parseTelegramLoginCode(value: string): string | null {
+  const match = /^login_([A-Za-z0-9_-]{16,58})$/.exec(value);
+  return match?.[1] ?? null;
+}
+
+/**
+ * Payload of a `/start` message. `""` when the command has no payload,
+ * null when the text is not a start command (D257).
+ */
+export function parseTelegramStartCommand(text: string): string | null {
+  const match = /^\/start(?:@\w+)?(?:\s+(\S+))?/.exec(text.trim());
+  if (!match) return null;
+  return match[1] ?? "";
+}
+
+/** Deep link that opens the bot with this challenge. Fits Telegram's 64-char payload. */
+export function telegramBotStartUrl(username: string, code: string): string {
+  const url = new URL(`https://t.me/${username}`);
+  url.searchParams.set("start", `login_${code}`);
+  return url.toString();
+}
+
+export function telegramLoginCodeHash(code: string): string {
+  return createHash("sha256").update(code).digest("hex");
+}
+
+/** Secret Telegram sends back on the webhook. Derived, so no extra env var (D256). */
+export function telegramWebhookSecret(token: string): string {
+  return createHmac("sha256", token)
+    .update("intgetion.telegram.webhook")
+    .digest("hex");
+}
+
+export function telegramWebhookSecretMatches(
+  token: string,
+  header: string | null,
+): boolean {
+  if (!header) return false;
+  const expected = Buffer.from(telegramWebhookSecret(token));
+  const given = Buffer.from(header);
+  return given.length === expected.length && timingSafeEqual(given, expected);
 }

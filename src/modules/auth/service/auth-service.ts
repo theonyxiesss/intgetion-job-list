@@ -306,40 +306,37 @@ async function openSession(auth: AuthClient, email: string): Promise<void> {
 }
 
 /**
- * Telegram sign-in (D217, D230): checks the signed `tgAuthResult` and opens
- * a session through a one-time magic-link token. A linked Telegram id signs
- * into its account whatever the login email now is; an unknown one gets a
- * new account with a placeholder email (terms accepted by continuing), and
- * the link is recorded — also for accounts made before D230.
+ * Opens a session for a Telegram profile that is already authenticated
+ * (D256). A linked id signs into its account whatever the login email now
+ * is; an unknown one gets a placeholder email (terms accepted by continuing).
+ * The widget path checks the signed payload first, then calls this.
  */
-export async function signInWithTelegram(
+export async function signInWithTelegramProfile(
   auth: AuthClient,
-  input: { result: string; locale: AppLocale },
-  botToken: string,
+  profile: { id: number; username: string | null },
+  locale: AppLocale,
   now: Date = new Date(),
 ): Promise<CurrentUser> {
-  const telegram = verifiedTelegram(input.result, botToken, now);
-  const username = telegram.username ?? null;
-
-  const linked = await telegramAccounts.findByTelegramId(telegram.id);
+  const username = profile.username;
+  const linked = await telegramAccounts.findByTelegramId(profile.id);
   if (linked) {
     const user = await usersRepo.findUserById(linked.userId);
     const email = user ? await getAuthUserLoginEmail(user.authUid) : null;
     if (!user || user.status !== "active" || !email) throw telegramFailed();
     await openSession(auth, email);
-    await telegramAccounts.link(telegram.id, user.id, username);
+    await telegramAccounts.link(profile.id, user.id, username);
     return user;
   }
 
-  const email = telegramEmail(telegram.id);
+  const email = telegramEmail(profile.id);
   const metadata: SignupMetadata = {
     terms_version: TERMS_VERSION,
     terms_accepted_at: now.toISOString(),
-    locale: input.locale,
+    locale,
   };
   const created = await createConfirmedAuthUser(email, {
     ...metadata,
-    telegram_id: telegram.id,
+    telegram_id: profile.id,
     telegram_username: username,
   });
   if (created === "unavailable" || created === "failed") {
@@ -361,8 +358,23 @@ export async function signInWithTelegram(
     await auth.signOut();
     throw telegramFailed();
   }
-  await telegramAccounts.link(telegram.id, row.id, username);
+  await telegramAccounts.link(profile.id, row.id, username);
   return row;
+}
+
+export async function signInWithTelegram(
+  auth: AuthClient,
+  input: { result: string; locale: AppLocale },
+  botToken: string,
+  now: Date = new Date(),
+): Promise<CurrentUser> {
+  const telegram = verifiedTelegram(input.result, botToken, now);
+  return signInWithTelegramProfile(
+    auth,
+    { id: telegram.id, username: telegram.username ?? null },
+    input.locale,
+    now,
+  );
 }
 
 /**
