@@ -20,6 +20,7 @@
     "db:seed:jobs:4a": "node src/db/seed/jobs-4a.mjs",
     "perf:jobs:4a": "node scripts/perf-jobs-4a.mjs",
     "admin:grant": "node scripts/grant-admin.mjs",
+    "admin:check-host": "node scripts/check-admin-host.mjs",
     "db:seed:demo": "node scripts/seed-demo.mjs",
     "env:check": "node scripts/check-env.mjs",
     "legal:sync": "node scripts/legal-sync.mjs"

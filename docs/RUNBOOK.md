@@ -234,4 +234,24 @@ npx prettier --check docs/RUNBOOK.md scripts/check-env.mjs scripts/env-rules.mjs
 
 ---
 
+## 13. Включение admin.intgetion.com
+
+Флаг `ADMIN_HOST_ONLY` на проде **не включать**, пока проверки ниже не зелёные. DNS и домен в Vercel добавляет основатель. Код хоста уже в проекте (D251): на `admin.intgetion.com` и `admin.localhost` открыты только админка и `robots.txt`, всё остальное — 404.
+
+1. **DNS.** У регистратора домена `intgetion.com` запись `CNAME` с именем `admin` на цель, которую покажет Vercel (обычно `cname.vercel-dns.com`). Не включайте прокси Cloudflare, пока отдельно не решён периметр.
+2. **Домен в Vercel.** Проект `intgetion-job-list` → Settings → Domains → Add → `admin.intgetion.com`. Дождаться статуса Valid.
+3. **Переменные.** Те же, что у продакшена. `ADMIN_HOST_ONLY` пока не ставить. Отдельный секрет для админ-хоста не нужен.
+4. **Проверка до флага.** На `https://admin.intgetion.com/en/admin/login` открывается вход, на `/en/admin/mfa` — второй фактор, на `/en` и `/en/jobs` — 404, `https://admin.intgetion.com/robots.txt` содержит `Disallow: /`. На основном домене `/en/admin` всё ещё открыт — так и должно быть, пока флаг выключен.
+5. **Флаг.** Vercel → Environment Variables → Production: `ADMIN_HOST_ONLY` = `1`. Redeploy. Сразу после деплоя:
+
+   ```bash
+   pnpm admin:check-host https://admin.intgetion.com
+   ```
+
+   Скрипт `scripts/check-admin-host.mjs` ждёт: вход и MFA — 200, прочие пути админ-хоста — 404, `robots.txt` — `Disallow: /`, `https://intgetion.com/en/admin` и `/en/admin/login` — 404.
+
+6. **Откат.** Удалить `ADMIN_HOST_ONLY` (или поставить пустым) и передеплоить. Админка на `intgetion.com/en/admin` снова открывается. Домен и DNS можно не трогать.
+
+---
+
 _Документ актуален на момент подфазы 11B (ветка `hermes/runbook`). Обновлять при изменениях инфраструктуры._
