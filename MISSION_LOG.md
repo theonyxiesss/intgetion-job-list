@@ -569,11 +569,12 @@
 - Команды проверки: CI `37313714404` и `37316613395` — `check` и `database` success. Прод: главная, каталог, вакансия, компания, `/privacy`, `/terms`, манифест, `sw.js`, офлайн — 200; `/api/a` — 204; `/api/consent` — 200; `POST /api/auth/telegram` — 503 (заморожен); `sitemap.xml` — 200 (247 адресов) после D247.
 - Инцидент: после перевода прода на пулер transaction `sitemap.xml` зависал (конвейер запросов на одном соединении) — исправлено D247. Общий `.git` получил битые ссылки (`hermes/9b`, `cursor/2a?`); `gc.auto=0`, `maintenance.auto=false`.
 - Дальше: Cursor — новый вход через Telegram (ветка `cursor/telegram-login`, миграции с 0027) и админка A1; Hermes — `hermes/mobile-e2e`, затем P-SALARY. Все вливания и миграции — через Claude Code.
-## [2026-10-05] — A1 дом админки — локальные проверки зелёные, CI после пуша
 
-- Сделано: хост `admin.intgetion.com` / `admin.localhost` (всё прочее на нём — 404, `robots.txt` `Disallow: /`, `X-Robots-Tag`). Кука `__Host-admin_session` (30 мин / 8 ч). Вход почта+пароль и TOTP Supabase, ключ доступа через MFA `webauthn` того же клиента, 10 кодов восстановления только хешами. Роли и права 4.2, `requireAdminPermission`, обёртка POST, реестр и каркас. `ADMIN_HOST_ONLY` по умолчанию выключен. Миграция не применялась к облаку.
-- Команды проверки: `pnpm exec tsc --noEmit` → 0; `pnpm lint` → 0; `pnpm test` → 0 (76 files, 584 passed, 1 skipped). CI — дописать номер после `gh run watch`.
+## [2026-10-05] — A1 дом админки — DONE на ветке cursor/admin-a1
+
+- Сделано: хост `admin.intgetion.com` / `admin.localhost` (всё прочее на нём — 404, `robots.txt` `Disallow: /`, `X-Robots-Tag`). Кука `__Host-admin_session` (30 мин / 8 ч). Вход почта+пароль и TOTP Supabase, ключ доступа через MFA `webauthn` того же клиента, 10 кодов восстановления только хешами. Роли и права 4.2, `requireAdminPermission`, обёртка POST, реестр и каркас. `ADMIN_HOST_ONLY` по умолчанию выключен. Миграция не применялась к облаку. В master не вливалось.
+- Команды проверки: локально `pnpm exec tsc --noEmit` → 0, `pnpm lint` → 0, `pnpm test` → 0 (76 files, 585 passed, 1 skipped). `gh run watch 37309360589` → 0: https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37309360589 — `check` и `database` success. Прогоны 37307239960 и 37308478062 были красными (иконки в клиентской навигации, затем неоднозначная ссылка «Жалобы») и починены до этого.
 - Миграции: `0027_admin_core.sql` (в репозитории, не на облаке).
 - Решения: D250–D255.
-- OPEN QUESTION: адрес `admin.intgetion.com` основатель ещё не подтвердил в DNS; периметр (IP / Cloudflare Access / только MFA); состав команды и роли; сверка пароля админки со списком утёкших (HIBP) не делалась. Панель Supabase Auth (Site URL, SMTP Resend, TOTP) в этой сессии не открылась — нужен вход основателя.
-- Следующее: не вливать в master. После зелёного CI можно включать `ADMIN_HOST_ONLY`.
+- OPEN QUESTION: адрес `admin.intgetion.com` основатель ещё не подтвердил в DNS; периметр (IP / Cloudflare Access / только MFA); состав команды и роли; сверка пароля админки со списком утёкших (HIBP) не делалась. Панель Supabase Auth (Site URL, SMTP Resend, TOTP) в этой сессии не открылась — нужен вход основателя. Порт `DATABASE_URL` в этой сессии заново не читался.
+- Следующее: Claude Code вливает в master. После проверки хоста можно включать `ADMIN_HOST_ONLY`.
