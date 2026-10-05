@@ -57,12 +57,12 @@ async function expectNoCriticalAxe(page: Page) {
   ).toEqual([]);
 }
 
-async function expectNoHorizontalScroll(page: Page) {
+async function expectNoHorizontalScroll(page: Page, path: string) {
   const widths = await page.evaluate(() => ({
     scroll: document.documentElement.scrollWidth,
     inner: window.innerWidth,
   }));
-  expect(widths.scroll).toBeLessThanOrEqual(widths.inner);
+  expect(widths.scroll, path).toBeLessThanOrEqual(widths.inner);
 }
 
 test("non-admins get 404 on every admin page", async ({ page }) => {
@@ -135,6 +135,6 @@ test("an admin sees every section and opens a company and a user", async ({
   await page.setViewportSize({ width: 360, height: 800 });
   for (const path of pages) {
     await page.goto(path);
-    await expectNoHorizontalScroll(page);
+    await expectNoHorizontalScroll(page, path);
   }
 });

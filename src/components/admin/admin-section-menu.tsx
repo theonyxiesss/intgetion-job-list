@@ -15,12 +15,13 @@ export function AdminSectionMenu({
 }) {
   const router = useRouter();
   return (
-    <div className="lg:hidden">
+    <div className="w-full min-w-0 lg:hidden">
       <label htmlFor="admin-section" className="sr-only">
         {label}
       </label>
       <Select
         id="admin-section"
+        className="w-0 min-w-full"
         value={active}
         onChange={(event) => {
           const next = sections.find(

@@ -118,11 +118,11 @@ export async function AdminShell({
   };
 
   return (
-    <main className="flex-1 py-10">
+    <main className="min-w-0 flex-1 overflow-x-clip py-10">
       <Container className="flex flex-col gap-8 lg:flex-row lg:gap-12">
         <nav
           aria-label={t("navLabel")}
-          className="w-full shrink-0 lg:w-[220px]"
+          className="w-full min-w-0 shrink-0 lg:w-[220px]"
         >
           <p className="t-label mb-3 hidden text-fg-subtle lg:block">
             {t("title")}

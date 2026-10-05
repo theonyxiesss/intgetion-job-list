@@ -565,7 +565,7 @@
 ## [2026-10-05] — админ-панель (hermes/admin-panel) — DONE, ждёт CI
 
 - Сделано: D221–D224. Навигация с компаниями и метриками, счётчики модерации, жалоб и навыков, на телефоне выпадающее меню. Обзор: Stat, просроченная очередь, 10 событий аудита. Список и карточка компаний, карточка пользователя (почта только там), фильтры вакансий. Разрушительные действия — danger и ConfirmCard. `hermes/mobile-e2e` запушен как есть (`656f538`), e2e там не закончен.
-- Команды проверки: `pnpm exec tsc --noEmit` → 0; `pnpm lint` → 0; `pnpm test` → 0 (541 passed, 1 skipped).
+- Команды проверки: `pnpm exec tsc --noEmit` → 0; `pnpm lint` → 0; `pnpm test` → 0 (541 passed, 1 skipped). Первый CI `37296394812`: `check` зелёный, `database` красный — на 360 px меню разделов раздувало страницу до 401 px. Меню сжато до ширины колонки.
 - P-тесты подфазы: e2e `tests/e2e/admin-panel.spec.ts` написан, в этом прогоне CI unit-тестов его нет.
 - Миграции: нет.
 - Изменённые файлы: `src/app/[locale]/admin/**` кроме metrics, `src/components/admin/**`, чтения в `src/modules/admin/**`, ключ `admin` в сообщениях, `tests/e2e/admin-panel.spec.ts`, `docs/DECISIONS.md`.
