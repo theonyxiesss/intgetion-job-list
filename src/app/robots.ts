@@ -1,5 +1,10 @@
 import type { MetadataRoute } from "next";
-import { BLOCKED_CRAWLERS, ROBOTS_DISALLOW, siteUrl } from "@/modules/seo/site";
+import {
+  AI_CRAWLERS,
+  BLOCKED_CRAWLERS,
+  ROBOTS_DISALLOW,
+  siteUrl,
+} from "@/modules/seo/site";
 
 /**
  * Crawl public pages only; private areas and the API stay out (D210).
