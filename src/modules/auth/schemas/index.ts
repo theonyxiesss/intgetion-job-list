@@ -80,3 +80,8 @@ export const signupMetadata = z.object({
   locale: localeSchema,
 });
 export type SignupMetadata = z.infer<typeof signupMetadata>;
+
+/** `POST /api/me/email` — a Telegram-only account adds an email (D231). */
+export const addEmailInput = z
+  .object({ email: z.email().max(254), locale: localeSchema })
+  .strict();

@@ -4,15 +4,22 @@ import { sql } from "drizzle-orm";
 import { afterAll, describe, expect, it } from "vitest";
 import { getDb } from "@/db/client";
 import { deleteAuthUser, getAuthUserEmail } from "@/lib/supabase/admin";
-import { signInWithTelegram } from "../service/auth-service";
+import {
+  linkTelegram,
+  signInWithTelegram,
+  unlinkTelegram,
+} from "../service/auth-service";
+import { confirmEmailAdd, requestEmailAdd } from "../service/email-change";
 
 const botToken = "777000:integration-bot";
 const telegramId = 900_000_000 + Math.floor(Math.random() * 1_000_000);
+const otherTelegramId = telegramId + 1;
+const realEmail = `tg-${telegramId}@example.com`;
 const authUids = new Set<string>();
 
-function signedResult(now: Date): string {
+function signedResult(now: Date, id = telegramId): string {
   const fields: Record<string, string | number> = {
-    id: telegramId,
+    id,
     first_name: "Test",
     username: "intgetion_test",
     auth_date: Math.floor(now.getTime() / 1000),
@@ -49,8 +56,10 @@ const authReady = Boolean(
 );
 
 describe.skipIf(!authReady)(
-  "Telegram sign-in against Supabase Auth (D217)",
+  "Telegram sign-in against Supabase Auth (D217, D230, D231)",
   () => {
+    let userId = "";
+
     it("creates the user once and signs the same user in again", async () => {
       const now = new Date();
       const first = browserAuth();
@@ -61,6 +70,7 @@ describe.skipIf(!authReady)(
         now,
       );
       authUids.add(user.authUid);
+      userId = user.id;
       expect(user.locale).toBe("ru");
       expect(user.status).toBe("active");
       const { data } = await first.getUser();
@@ -76,6 +86,11 @@ describe.skipIf(!authReady)(
       );
       expect(again.id).toBe(user.id);
       expect(again.locale).toBe("ru");
+      const [link] = await getDb().execute<{ user_id: string }>(sql`
+        select user_id from public.telegram_accounts
+        where telegram_id = ${telegramId}
+      `);
+      expect(link?.user_id).toBe(user.id);
     });
 
     it("refuses a forged payload without touching Supabase", async () => {
@@ -88,6 +103,73 @@ describe.skipIf(!authReady)(
           now,
         ),
       ).rejects.toMatchObject({ status: 401 });
+    });
+
+    it("keeps Telegram as the only sign-in until an email is added", async () => {
+      const [user] = await getDb().execute<{
+        id: string;
+        auth_uid: string;
+      }>(sql`select id, auth_uid from public.users where id = ${userId}`);
+      await expect(
+        unlinkTelegram({ id: user!.id, authUid: user!.auth_uid } as never),
+      ).rejects.toMatchObject({ status: 409 });
+    });
+
+    it("adds a real email; Telegram still signs into the same account", async () => {
+      const [row] = await getDb().execute<{ auth_uid: string }>(
+        sql`select auth_uid from public.users where id = ${userId}`,
+      );
+      const user = { id: userId, authUid: row!.auth_uid } as never;
+      const sent: string[] = [];
+      await requestEmailAdd(
+        user,
+        { email: realEmail, locale: "en" },
+        async (message) => {
+          sent.push(message.text);
+          return "sent";
+        },
+      );
+      const token = decodeURIComponent(
+        /token=([^\s]+)/.exec(sent[0] ?? "")?.[1] ?? "",
+      );
+      expect(await confirmEmailAdd(token)).toEqual({ ok: true });
+      expect(await getAuthUserEmail(row!.auth_uid)).toBe(realEmail);
+
+      const now = new Date();
+      const again = await signInWithTelegram(
+        browserAuth(),
+        { result: signedResult(now), locale: "en" },
+        botToken,
+        now,
+      );
+      expect(again.id).toBe(userId);
+    });
+
+    it("lets a Telegram belong to one account only", async () => {
+      const now = new Date();
+      // A second Telegram id makes a second account…
+      const other = await signInWithTelegram(
+        browserAuth(),
+        { result: signedResult(now, otherTelegramId), locale: "en" },
+        botToken,
+        now,
+      );
+      authUids.add(other.authUid);
+      // …and the first Telegram cannot be linked to it.
+      await expect(
+        linkTelegram(other, signedResult(now), botToken, now),
+      ).rejects.toMatchObject({ status: 409 });
+    });
+
+    it("unlinks Telegram once the account has an email", async () => {
+      const [row] = await getDb().execute<{ auth_uid: string }>(
+        sql`select auth_uid from public.users where id = ${userId}`,
+      );
+      await unlinkTelegram({ id: userId, authUid: row!.auth_uid } as never);
+      const links = await getDb().execute(sql`
+        select 1 from public.telegram_accounts where user_id = ${userId}
+      `);
+      expect(links).toHaveLength(0);
     });
   },
 );

@@ -5,6 +5,8 @@ import { recordAudit } from "@/lib/audit";
 import { logger } from "@/lib/logger";
 import {
   createConfirmedAuthUser,
+  getAuthUserLoginEmail,
+  isPlaceholderEmail,
   magicLinkTokenHash,
 } from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/supabase/env";
@@ -14,6 +16,7 @@ import {
   unauthenticated,
   validationError,
 } from "@/lib/http";
+import * as telegramAccounts from "../repo/telegram-accounts";
 import * as usersRepo from "../repo/users";
 import {
   signupMetadata,
@@ -277,10 +280,37 @@ function telegramFailed(): HttpError {
   });
 }
 
+function authProviderError(): HttpError {
+  return new HttpError(502, "AUTH_PROVIDER_ERROR", "Auth provider error");
+}
+
+function verifiedTelegram(result: string, botToken: string, now: Date) {
+  const telegram = verifyTelegramAuth(
+    decodeTelegramResult(result),
+    botToken,
+    now,
+  );
+  if (!telegram) throw telegramFailed();
+  return telegram;
+}
+
+/** Opens a session for an existing login email without sending mail. */
+async function openSession(auth: AuthClient, email: string): Promise<void> {
+  const tokenHash = await magicLinkTokenHash(email);
+  if (!tokenHash) throw authProviderError();
+  const { error } = await auth.verifyOtp({
+    token_hash: tokenHash,
+    type: "magiclink",
+  });
+  if (error) throw telegramFailed();
+}
+
 /**
- * Telegram sign-in (D217): checks the signed `tgAuthResult`, creates the
- * auth user on the first visit (placeholder email, terms accepted by
- * continuing) and opens a session through a one-time magic-link token.
+ * Telegram sign-in (D217, D230): checks the signed `tgAuthResult` and opens
+ * a session through a one-time magic-link token. A linked Telegram id signs
+ * into its account whatever the login email now is; an unknown one gets a
+ * new account with a placeholder email (terms accepted by continuing), and
+ * the link is recorded — also for accounts made before D230.
  */
 export async function signInWithTelegram(
   auth: AuthClient,
@@ -288,12 +318,18 @@ export async function signInWithTelegram(
   botToken: string,
   now: Date = new Date(),
 ): Promise<CurrentUser> {
-  const telegram = verifyTelegramAuth(
-    decodeTelegramResult(input.result),
-    botToken,
-    now,
-  );
-  if (!telegram) throw telegramFailed();
+  const telegram = verifiedTelegram(input.result, botToken, now);
+  const username = telegram.username ?? null;
+
+  const linked = await telegramAccounts.findByTelegramId(telegram.id);
+  if (linked) {
+    const user = await usersRepo.findUserById(linked.userId);
+    const email = user ? await getAuthUserLoginEmail(user.authUid) : null;
+    if (!user || user.status !== "active" || !email) throw telegramFailed();
+    await openSession(auth, email);
+    await telegramAccounts.link(telegram.id, user.id, username);
+    return user;
+  }
 
   const email = telegramEmail(telegram.id);
   const metadata: SignupMetadata = {
@@ -304,20 +340,12 @@ export async function signInWithTelegram(
   const created = await createConfirmedAuthUser(email, {
     ...metadata,
     telegram_id: telegram.id,
-    telegram_username: telegram.username ?? null,
+    telegram_username: username,
   });
   if (created === "unavailable" || created === "failed") {
-    throw new HttpError(502, "AUTH_PROVIDER_ERROR", "Auth provider error");
+    throw authProviderError();
   }
-  const tokenHash = await magicLinkTokenHash(email);
-  if (!tokenHash) {
-    throw new HttpError(502, "AUTH_PROVIDER_ERROR", "Auth provider error");
-  }
-  const { error } = await auth.verifyOtp({
-    token_hash: tokenHash,
-    type: "magiclink",
-  });
-  if (error) throw telegramFailed();
+  await openSession(auth, email);
 
   const { data } = await auth.getUser();
   if (!data.user) throw telegramFailed();
@@ -333,7 +361,49 @@ export async function signInWithTelegram(
     await auth.signOut();
     throw telegramFailed();
   }
+  await telegramAccounts.link(telegram.id, row.id, username);
   return row;
+}
+
+/**
+ * Links Telegram to the signed-in account (D230). 409 when this Telegram
+ * is already another account's sign-in, or this account has another one.
+ */
+export async function linkTelegram(
+  user: CurrentUser,
+  result: string,
+  botToken: string,
+  now: Date = new Date(),
+): Promise<void> {
+  const telegram = verifiedTelegram(result, botToken, now);
+  const linked = await telegramAccounts.link(
+    telegram.id,
+    user.id,
+    telegram.username ?? null,
+  );
+  if (!linked) {
+    throw new HttpError(409, "TELEGRAM_TAKEN", "Telegram already linked", {
+      reason: "telegram_taken",
+    });
+  }
+}
+
+/**
+ * Removes the Telegram sign-in — only when the account can still sign in
+ * another way, i.e. it has a real email (D230).
+ */
+export async function unlinkTelegram(user: CurrentUser): Promise<void> {
+  const email = await getAuthUserLoginEmail(user.authUid);
+  if (!email || isPlaceholderEmail(email)) {
+    throw new HttpError(409, "TELEGRAM_ONLY_SIGN_IN", "Add an email first", {
+      reason: "email_required",
+    });
+  }
+  await telegramAccounts.unlink(user.id);
+}
+
+export async function telegramLinkOf(user: CurrentUser) {
+  return telegramAccounts.findByUserId(user.id);
 }
 
 export async function logout(auth: AuthClient): Promise<void> {

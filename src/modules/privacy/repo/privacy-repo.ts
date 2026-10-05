@@ -132,6 +132,11 @@ export async function anonymizeUser(userId: string, now: Date) {
     `);
     if (updated.length === 0) return null;
 
+    // A deleted account must not keep its Telegram sign-in (D230).
+    await tx.execute(sql`
+      delete from public.telegram_accounts where user_id = ${userId}
+    `);
+
     // Companies where this user is the only owner (section 17).
     const soleOwned = (await tx.execute(sql`
       select m.company_id from public.company_members m

@@ -141,3 +141,53 @@ export async function magicLinkTokenHash(
     return null;
   }
 }
+
+/**
+ * The login email exactly as Supabase stores it, placeholders included —
+ * for signing a known user in (D230), never for sending mail.
+ */
+export async function getAuthUserLoginEmail(
+  authUid: string,
+): Promise<string | null> {
+  try {
+    const response = await adminFetch(`/users/${encodeURIComponent(authUid)}`);
+    if (!response?.ok) return null;
+    const body = (await response.json()) as { email?: string | null };
+    return body.email?.trim() || null;
+  } catch (error) {
+    logger.warn({ err: error }, "auth admin: login email lookup failed");
+    return null;
+  }
+}
+
+/**
+ * Replaces the login email with one the user has just proven (D231).
+ * "taken" when another account already uses it.
+ */
+export async function setAuthUserEmail(
+  authUid: string,
+  email: string,
+): Promise<"updated" | "taken" | "unavailable" | "failed"> {
+  try {
+    const response = await adminFetch(`/users/${encodeURIComponent(authUid)}`, {
+      method: "PUT",
+      body: JSON.stringify({ email, email_confirm: true }),
+    });
+    if (!response) return "unavailable";
+    if (response.ok) return "updated";
+    const body = (await response.json().catch(() => ({}))) as {
+      error_code?: string;
+      code?: string;
+    };
+    const code = body.error_code ?? body.code;
+    if (response.status === 422 && code === "email_exists") return "taken";
+    logger.warn(
+      { status: response.status, code },
+      "auth admin: email change refused",
+    );
+    return "failed";
+  } catch (error) {
+    logger.warn({ err: error }, "auth admin: email change failed");
+    return "failed";
+  }
+}

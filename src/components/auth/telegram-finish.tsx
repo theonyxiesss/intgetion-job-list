@@ -12,7 +12,9 @@ export function TelegramFinish() {
   const t = useTranslations("auth");
   const locale = useLocale();
   const router = useRouter();
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState<
+    "telegram_failed" | "telegram_taken" | null
+  >(null);
   const started = useRef(false);
 
   useEffect(() => {
@@ -20,28 +22,39 @@ export function TelegramFinish() {
     started.current = true;
     const hash = new URLSearchParams(window.location.hash.slice(1));
     const result = hash.get("tgAuthResult");
+    // "?link=1": attach Telegram to the signed-in account (D230).
+    const link =
+      new URLSearchParams(window.location.search).get("link") === "1";
     // Drop the signed data from the address bar and history.
     window.history.replaceState(null, "", window.location.pathname);
     const request = result
       ? fetch("/api/auth/telegram", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ result, locale }),
+          body: JSON.stringify({
+            result,
+            locale,
+            mode: link ? "link" : "signin",
+          }),
         })
       : Promise.reject(new Error("no tgAuthResult"));
     request
       .then((response) => {
+        if (response.status === 409) {
+          setFailed("telegram_taken");
+          return;
+        }
         if (!response.ok) throw new Error(String(response.status));
-        router.replace("/");
+        router.replace(link ? "/settings/account" : "/");
         router.refresh();
       })
-      .catch(() => setFailed(true));
+      .catch(() => setFailed("telegram_failed"));
   }, [locale, router]);
 
   if (!failed) return <p role="status">{t("social.telegramProgress")}</p>;
   return (
     <div className="flex flex-col gap-3">
-      <p role="alert">{t("errors.telegram_failed")}</p>
+      <p role="alert">{t(`errors.${failed}`)}</p>
       <Link href="/login" className="underline">
         {t("toLogin")}
       </Link>

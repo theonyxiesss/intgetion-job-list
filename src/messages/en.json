@@ -204,7 +204,8 @@
       "rate_limited": "Too many attempts. Try again later.",
       "session_missing": "The reset link has expired. Request a new one.",
       "generic": "Something went wrong. Try again.",
-      "telegram_failed": "Telegram sign-in did not work. Try again or use email."
+      "telegram_failed": "Telegram sign-in did not work. Try again or use email.",
+      "telegram_taken": "This Telegram is already linked to another account."
     },
     "social": {
       "title": "Or continue with",
@@ -214,7 +215,8 @@
       "soon": "Soon",
       "telegramTitle": "Signing in with Telegram",
       "telegramProgress": "Checking the Telegram confirmation…",
-      "telegramTerms": "By continuing with Telegram you accept the terms of use and the privacy policy."
+      "telegramTerms": "By continuing with Telegram you accept the terms of use and the privacy policy.",
+      "telegramLinked": "Telegram is linked to your account."
     }
   },
   "onboarding": {
@@ -968,6 +970,41 @@
       "analytics": "Analytics",
       "analyticsHint": "Our own anonymous usage statistics. Nothing is collected yet.",
       "gpcHint": "Your browser sends Global Privacy Control, so analytics stays off."
+    },
+    "email": {
+      "mail": {
+        "subject": "Confirm your email",
+        "body": "Open the link to add this email to your INTGETION JOB LIST account. Then you can sign in with it and get notifications. The link works for 24 hours.",
+        "action": "Confirm email"
+      },
+      "confirmTitle": "Email",
+      "confirmed": "The email is added. You can now sign in with it and receive notifications.",
+      "toAccount": "Back to account settings",
+      "errors": {
+        "invalid_link": "The link is invalid or expired. Add the email again in account settings.",
+        "taken": "This email already belongs to another account. Sign in with that account and link Telegram there.",
+        "failed": "Could not add the email. Try again later."
+      }
+    },
+    "signIn": {
+      "title": "Sign-in methods",
+      "emailLabel": "Email",
+      "noEmail": "Not added — notifications cannot reach you.",
+      "emailHint": "We will send a confirmation link.",
+      "addEmail": "Add email",
+      "sent": "Check your inbox: we sent a confirmation link.",
+      "telegramLabel": "Telegram",
+      "telegramLinked": "Linked",
+      "telegramNotLinked": "Not linked",
+      "linkTelegram": "Link Telegram",
+      "unlinkTelegram": "Unlink",
+      "unlinked": "Telegram is unlinked.",
+      "errors": {
+        "email_required": "Add an email first: Telegram is your only way to sign in.",
+        "generic": "Something went wrong. Try again.",
+        "rate_limited": "Too many attempts. Try again later.",
+        "unavailable": "Email is not available right now."
+      }
     }
   },
   "chat": {

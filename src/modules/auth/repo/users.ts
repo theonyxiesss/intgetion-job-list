@@ -36,6 +36,15 @@ export async function findUserByAuthUid(
   return row;
 }
 
+export async function findUserById(id: string): Promise<UserRow | undefined> {
+  const [row] = await getDb()
+    .select()
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
+  return row;
+}
+
 export async function updateUser(
   id: string,
   patch: { locale?: "en" | "ru"; marketingOptIn?: boolean },
