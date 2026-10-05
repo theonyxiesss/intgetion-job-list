@@ -1,4 +1,4 @@
-import { test as base, expect, type Page } from "@playwright/test";
+import { test as base, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import * as fs from 'fs';
 import * as path from 'path';
@@ -18,7 +18,7 @@ async function waitForApiReady(page: Page, maxRetries = 10, baseDelay = 1000): P
       if (response.ok()) {
         return;
       }
-    } catch (err) {
+    } catch {
       // ignore and retry
     }
     await page.waitForTimeout(baseDelay * 2 ** i);
@@ -80,26 +80,32 @@ async function checkInteractiveElementSizes(page: Page): Promise<{selector: stri
 
 /**
  * Helper to check menu button functionality and return whether the menu is visible after clicking
+ * Uses role-based selector, checks aria-expanded="true" and visibility of navigation menu.
  * Returns null if no menu button is found.
  */
 async function checkMenuButton(page: Page): Promise<boolean | null> {
-  const menuButton = page.getByRole('button', { name: /menu|меню/i }) ||
-                    page.getByLabel(/menu|меню/i) ||
-                    page.locator('[aria-label*="menu" i], [aria-label*="меню" i]');
+  const menuButton = page.getByRole('button', { name: /menu|меню/i });
 
   if (await menuButton.count() > 0) {
-    await menuButton.first().click();
+    const button = menuButton.first();
+    await button.click();
+
+    // Check aria-expanded attribute
+    const expanded = await button.getAttribute('aria-expanded');
+    const isExpanded = expanded === 'true';
+
+    // Wait a bit for animation
+    await page.waitForTimeout(100);
 
     // Check if mobile menu opened (look for nav or sidebar that became visible)
     const mobileMenu = page.getByRole('navigation') ||
                      page.getByRole('complementary') ||
                      page.locator('[role="menu"]');
 
-    // Wait a bit for animation
-    await page.waitForTimeout(100);
+    const isVisible = await mobileMenu.first().isVisible();
 
-    // At least one of these should be visible now
-    return await mobileMenu.first().isVisible();
+    // Consider menu open if either aria-expanded is true or the menu is visible
+    return isExpanded || isVisible;
   }
   return null; // no menu button found
 }
@@ -191,10 +197,10 @@ function testMobileResponsiveness(testPath: string) {
         }
       }
       
-      // If there are any failures, log to MISSION_LOG
+      // If there are any failures, log to MISSION_LOG and fail the test
       if (failures.length > 0) {
         logBugToMissionLog(360, testPath, failures);
-        // Do not throw; test passes (we consider known bugs acceptable for now)
+        throw new Error(`Mobile responsiveness bugs: ${failures.join('; ')}`);
       }
     });
   });
@@ -268,10 +274,10 @@ function testMobileResponsiveness(testPath: string) {
         }
       }
       
-      // If there are any failures, log to MISSION_LOG
+      // If there are any failures, log to MISSION_LOG and fail the test
       if (failures.length > 0) {
         logBugToMissionLog(390, testPath, failures);
-        // Do not throw; test passes (we consider known bugs acceptable for now)
+        throw new Error(`Mobile responsiveness bugs: ${failures.join('; ')}`);
       }
     });
   });
@@ -359,10 +365,10 @@ test('mobile responsiveness: job detail page', async ({ page }: { page: Page }) 
     }
   }
   
-  // If there are any failures, log to MISSION_LOG
+  // If there are any failures, log to MISSION_LOG and fail the test
   if (failures360.length > 0) {
     logBugToMissionLog(360, 'job detail page', failures360);
-    // Do not throw; test passes
+    throw new Error(`Mobile responsiveness bugs: ${failures360.join('; ')}`);
   }
   
   // Test at 390px
@@ -443,10 +449,10 @@ test('mobile responsiveness: job detail page', async ({ page }: { page: Page }) 
     }
   }
   
-  // If there are any failures, log to MISSION_LOG
+  // If there are any failures, log to MISSION_LOG and fail the test
   if (failures390.length > 0) {
     logBugToMissionLog(390, 'job detail page', failures390);
-    // Do not throw; test passes
+    throw new Error(`Mobile responsiveness bugs: ${failures390.join('; ')}`);
   }
 });
 
