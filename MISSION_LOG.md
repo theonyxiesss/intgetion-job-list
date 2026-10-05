@@ -587,3 +587,15 @@
 - Инцидент: около 15:23 общий `.git` получил обнулённый `packed-refs` (CRLF) и лишний `.git/shallow`; ссылки восстановлены из reflog, `git fsck` чистый.
 - OPEN QUESTION: LCP главной близко к бюджету 2500 мс (медианы 2474–2506), нужен запас. Номера Cursor: админка заняла D250–D255 и миграцию `0027`, новому входу через Telegram (`cursor/telegram-login-rescue`) — миграция `0028` и решения с D256.
 - Следующее: основатель — DNS и домен `admin.intgetion.com` в Vercel, затем `ADMIN_HOST_ONLY=1`; Cursor — Telegram-вход на новых номерах.
+
+## [2026-10-05] — LCP главной — DONE на ветке cursor/lcp
+
+- Сделано: герой — один `h1` без `.ui-rise` (пробел перед переносом сохранён). Счётчик каталога и свежие вакансии в `Suspense`, чтобы герой ушёл в первых байтах. `generateMetadata` не менялся. Решение D280.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0. `pnpm exec eslint src/app/[locale]/page.tsx` → 0. `pnpm exec vitest run src/messages/messages.test.ts` → 0 (1 file, 1 passed). `pnpm build` → 0. Локальный Lighthouse (5 прогонов, порт 3001, тот же lighthouse@12.8.2 и флаги, что в `scripts/ci-ui.sh`): 2530, 2518, 2520, 2523, 2519, медиана 2520, элемент `h1.t-display-xl`. Это симуляция Windows; зачётная цифра — медиана CI.
+- До (CI `37352729300`, элемент `span.ui-rise`): 1880, 1972, 1888, 1965, 2432, медиана 1965.
+- P-тесты подфазы: нет отдельного P-номера; e2e главной проверяет текст героя.
+- Миграции: нет.
+- Изменённые файлы: `src/app/[locale]/page.tsx`, `src/app/globals.css`, `docs/DECISIONS.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: D280.
+- OPEN QUESTION: нет
+- Следующая подфаза: Claude Code вливает после зелёного CI. В master не вливалось.
