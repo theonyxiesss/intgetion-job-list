@@ -6,6 +6,7 @@ import { CONSENT_POLICY_VERSION } from "@/lib/consent";
 import {
   analyticsReport,
   forgetVisitor,
+  jobViews,
   purgeAnalytics,
   trackPageView,
 } from "./service";
@@ -15,6 +16,8 @@ const chrome =
 // A unique search term marks this run's rows.
 const marker = `itest-${randomUUID().slice(0, 8)}`;
 const visitorId = randomUUID();
+// A job id no real job has: its views belong to this run only.
+const jobId = randomUUID();
 const consentAll = `cookie_consent=all~${CONSENT_POLICY_VERSION}~${randomUUID()}`;
 
 function request(headers: Record<string, string>) {
@@ -32,7 +35,7 @@ afterAll(async () => {
   await getDb().execute(sql`
     delete from public.analytics_events
     where search_term = ${marker} or visitor_id = ${visitorId}
-       or path like ${"/en/itest-" + marker + "%"}
+       or job_id = ${jobId}
   `);
 });
 
@@ -84,6 +87,20 @@ describe("own analytics against the database (D225-D227)", () => {
     expect(
       (await rows()).filter((row) => row.visitor_id === visitorId).length,
     ).toBe(2);
+  });
+
+  it("counts a job's views for its employer (D232)", async () => {
+    for (const ip of ["198.18.9.1", "198.18.9.1", "198.18.9.2"]) {
+      await trackPageView(request({ "x-forwarded-for": ip }), {
+        path: `/en/jobs/${jobId}`,
+        search: "",
+        referrer: "https://t.me/channel",
+      });
+    }
+    const views = await jobViews(jobId, 1);
+    expect(views.views).toBe(3);
+    expect(views.visitors).toBe(2);
+    expect(views.sources).toEqual([{ label: "t.me", count: 3 }]);
   });
 
   it("ignores bots", async () => {

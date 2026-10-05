@@ -5,10 +5,11 @@
 export {
   analyticsReport,
   forgetVisitor,
+  jobViews,
   purgeAnalytics,
   trackPageView,
   trackServerEvent,
 } from "./analytics-service";
 export { VISITOR_COOKIE, VISITOR_MAX_AGE_SECONDS } from "../lib/events";
 export { beaconInput, forgetInput } from "../schemas";
-export type { AnalyticsReport } from "../repo/analytics-repo";
+export type { AnalyticsReport, JobViews } from "../repo/analytics-repo";

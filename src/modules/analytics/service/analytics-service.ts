@@ -143,3 +143,11 @@ export async function purgeAnalytics(now = new Date()): Promise<number> {
 export async function analyticsReport(days: number, now = new Date()) {
   return repo.readReport(new Date(now.getTime() - days * 24 * 60 * 60 * 1000));
 }
+
+/** One job's views for its employer, last `days` days (D232). */
+export async function jobViews(jobId: string, days: number, now = new Date()) {
+  return repo.readJobViews(
+    jobId,
+    new Date(now.getTime() - days * 24 * 60 * 60 * 1000),
+  );
+}

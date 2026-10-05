@@ -160,3 +160,50 @@ export async function readReport(since: Date) {
 }
 
 export type AnalyticsReport = Awaited<ReturnType<typeof readReport>>;
+
+/** Views of one job for its employer (D232): no visitor-level data leaves. */
+export async function readJobViews(jobId: string, since: Date) {
+  const from = since.toISOString();
+  const db = getDb();
+  const [totals] = await db.execute<{ views: number; visitors: number }>(sql`
+    select count(*)::int as views,
+           count(distinct (date_trunc('day', occurred_at), day_visitor))::int as visitors
+    from public.analytics_events
+    where name = 'job_view' and job_id = ${jobId}
+      and occurred_at >= ${from}::timestamptz
+  `);
+  const [daily, sources, devices] = await Promise.all([
+    db.execute<{ day: string; views: number }>(sql`
+      select to_char(date_trunc('day', occurred_at), 'YYYY-MM-DD') as day,
+             count(*)::int as views
+      from public.analytics_events
+      where name = 'job_view' and job_id = ${jobId}
+        and occurred_at >= ${from}::timestamptz
+      group by 1 order by 1
+    `),
+    top(sql`
+      select coalesce(utm_source, referrer_host, 'direct') as label,
+             count(*)::int as count
+      from public.analytics_events
+      where name = 'job_view' and job_id = ${jobId}
+        and occurred_at >= ${from}::timestamptz
+      group by 1 order by count desc limit 8
+    `),
+    top(sql`
+      select device as label, count(*)::int as count
+      from public.analytics_events
+      where name = 'job_view' and job_id = ${jobId}
+        and occurred_at >= ${from}::timestamptz
+      group by device order by count desc
+    `),
+  ]);
+  return {
+    views: totals?.views ?? 0,
+    visitors: totals?.visitors ?? 0,
+    daily: [...daily],
+    sources,
+    devices,
+  };
+}
+
+export type JobViews = Awaited<ReturnType<typeof readJobViews>>;

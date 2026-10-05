@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, lt, or } from "drizzle-orm";
+import { and, desc, eq, inArray, lt, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   applicationReveals,
@@ -291,4 +291,16 @@ export async function viewerSharesApplication(
     )
     .limit(1);
   return Boolean(row);
+}
+
+/** Applications to one job by status, for the employer's job stats (D232). */
+export async function countByStatusForJob(
+  jobId: string,
+): Promise<Record<string, number>> {
+  const rows = await getDb().execute<{ status: string; count: number }>(sql`
+    select status::text as status, count(*)::int as count
+    from public.applications where job_id = ${jobId}
+    group by status
+  `);
+  return Object.fromEntries(rows.map((row) => [row.status, row.count]));
 }

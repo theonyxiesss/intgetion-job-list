@@ -536,6 +536,31 @@
       "expired": "Expired",
       "closed": "Closed",
       "removed": "Removed"
+    },
+    "tabStats": "Stats",
+    "stats": {
+      "title": "Last {days} days",
+      "note": "Our own statistics without third parties. Visitors are counted once a day per browser; nothing identifies a person.",
+      "views": "Views",
+      "visitors": "Visitors",
+      "applications": "Applications",
+      "conversion": "Visitors who applied",
+      "daily": "Views by day",
+      "day": "Day",
+      "sources": "Where visitors came from",
+      "source": "Source",
+      "direct": "Direct or unknown",
+      "devices": "Devices",
+      "device": "Device",
+      "count": "Views",
+      "deviceNames": {
+        "mobile": "Phone",
+        "tablet": "Tablet",
+        "desktop": "Computer"
+      },
+      "pipeline": "Applications by status",
+      "status": "Status",
+      "empty": "No views yet. Share the link to the job to get the first visitors."
     }
   },
   "matches": {
