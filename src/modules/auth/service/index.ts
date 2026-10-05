@@ -34,6 +34,8 @@ export {
   telegramBotId,
   telegramBotToken,
   telegramWebhookSecretMatches,
+  verifyTelegramInitData,
+  type TelegramInitData,
 } from "./telegram";
 export {
   beginTelegramBotLogin,

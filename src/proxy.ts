@@ -11,6 +11,7 @@ import { isAllowedOrigin } from "./lib/origin";
 import { normalizeRequestId, REQUEST_ID_HEADER } from "./lib/request-id";
 import { buildCsp, createNonce } from "./lib/security-headers";
 import { siteUrl, supabaseUrl } from "./lib/supabase/env";
+import { flags } from "./config/flags";
 import { refreshSession } from "./lib/supabase/proxy";
 import { markSession } from "./lib/supabase/session-mark";
 
@@ -93,6 +94,8 @@ export async function proxy(request: NextRequest) {
     supabaseUrl: supabaseUrl(),
     isDev: process.env.NODE_ENV === "development",
     includeSupabase: !adminHost,
+    // Never on the admin host: it is framed by nobody (D251, D259).
+    allowTelegramFrame: !adminHost && flags.telegramMiniAppEnabled,
   });
   // Next.js reads the nonce from the request CSP header while rendering.
   request.headers.set("x-nonce", nonce);

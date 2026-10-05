@@ -159,3 +159,78 @@ export function telegramWebhookSecretMatches(
   const actual = Buffer.from(given);
   return expected.length === actual.length && timingSafeEqual(expected, actual);
 }
+
+/**
+ * Mini App sign-in (D259). Telegram opens the site inside its own window and
+ * passes `tgWebAppData` — the same fields as the widget, but signed with a
+ * different key: HMAC-SHA256 of the bot token keyed by the words "WebAppData".
+ */
+export interface TelegramInitData {
+  id: number;
+  username: string | null;
+  firstName: string | null;
+  authDate: number;
+}
+
+const miniAppUser = z
+  .object({
+    id: z.number().int().positive(),
+    username: z.string().max(64).optional(),
+    first_name: z.string().max(128).optional(),
+    is_bot: z.boolean().optional(),
+  })
+  .loose();
+
+/**
+ * Checks the signature and the age of a `tgWebAppData` string. Returns the
+ * person, or null when anything is off — never a guess.
+ */
+export function verifyTelegramInitData(
+  raw: string,
+  botToken: string,
+  now: Date = new Date(),
+): TelegramInitData | null {
+  if (typeof raw !== "string" || raw.length > 4096) return null;
+  let params: URLSearchParams;
+  try {
+    params = new URLSearchParams(raw);
+  } catch {
+    return null;
+  }
+  const hash = params.get("hash");
+  if (!hash || !/^[0-9a-f]{64}$/.test(hash)) return null;
+
+  const checkString = [...params.entries()]
+    .filter(([key]) => key !== "hash" && key !== "signature")
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+    .map(([key, value]) => `${key}=${value}`)
+    .join("\n");
+  const secret = createHmac("sha256", "WebAppData").update(botToken).digest();
+  const expected = createHmac("sha256", secret).update(checkString).digest();
+  const given = Buffer.from(hash, "hex");
+  if (given.length !== expected.length || !timingSafeEqual(given, expected)) {
+    return null;
+  }
+
+  const authDate = Number(params.get("auth_date"));
+  if (!Number.isSafeInteger(authDate) || authDate <= 0) return null;
+  const age = Math.floor(now.getTime() / 1000) - authDate;
+  if (age > TELEGRAM_MAX_AGE_SECONDS || age < -60) return null;
+
+  const rawUser = params.get("user");
+  if (!rawUser) return null;
+  let parsedUser: unknown;
+  try {
+    parsedUser = JSON.parse(rawUser);
+  } catch {
+    return null;
+  }
+  const user = miniAppUser.safeParse(parsedUser);
+  if (!user.success || user.data.is_bot) return null;
+  return {
+    id: user.data.id,
+    username: user.data.username ?? null,
+    firstName: user.data.first_name ?? null,
+    authDate,
+  };
+}

@@ -15,6 +15,7 @@ import {
   telegramLoginCodeHash,
   telegramWebhookSecret,
   telegramWebhookSecretMatches,
+  verifyTelegramInitData,
 } from "../service/telegram";
 
 const token = "123456:test-bot-token";
@@ -159,5 +160,79 @@ describe("bot sign-in codes (D256)", () => {
     expect(
       telegramWebhookSecretMatches(token, telegramWebhookSecret("999:other")),
     ).toBe(false);
+  });
+});
+
+describe("Mini App data (D259)", () => {
+  const token = "123:abc";
+
+  function initData(
+    over: Partial<{ authDate: number; user: unknown; token: string }> = {},
+  ): string {
+    const authDate = over.authDate ?? Math.floor(Date.now() / 1000);
+    const user =
+      "user" in over
+        ? over.user
+        : { id: 42, username: "person", first_name: "Person" };
+    const params = new URLSearchParams({
+      auth_date: String(authDate),
+      query_id: "AAE",
+      user: JSON.stringify(user),
+    });
+    const pairs = [...params.entries()]
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .map(([key, value]) => `${key}=${value}`)
+      .join("\n");
+    const secret = createHmac("sha256", "WebAppData")
+      .update(over.token ?? token)
+      .digest();
+    params.set(
+      "hash",
+      createHmac("sha256", secret).update(pairs).digest("hex"),
+    );
+    return params.toString();
+  }
+
+  it("accepts data signed with the bot token", () => {
+    const person = verifyTelegramInitData(initData(), token);
+    expect(person).toMatchObject({
+      id: 42,
+      username: "person",
+      firstName: "Person",
+    });
+  });
+
+  it("refuses another bot's signature and a tampered field", () => {
+    expect(
+      verifyTelegramInitData(initData({ token: "999:other" }), token),
+    ).toBeNull();
+    const tampered = initData().replace(
+      /user=[^&]*/,
+      "user=%7B%22id%22%3A1%7D",
+    );
+    expect(verifyTelegramInitData(tampered, token)).toBeNull();
+  });
+
+  it("refuses stale data, data from the future and a bot account", () => {
+    const old = Math.floor(Date.now() / 1000) - 60 * 60 * 2;
+    expect(
+      verifyTelegramInitData(initData({ authDate: old }), token),
+    ).toBeNull();
+    const ahead = Math.floor(Date.now() / 1000) + 600;
+    expect(
+      verifyTelegramInitData(initData({ authDate: ahead }), token),
+    ).toBeNull();
+    expect(
+      verifyTelegramInitData(
+        initData({ user: { id: 7, is_bot: true } }),
+        token,
+      ),
+    ).toBeNull();
+  });
+
+  it("refuses junk instead of throwing", () => {
+    for (const raw of ["", "hash=zz", "a=1&b=2", "x".repeat(5000)]) {
+      expect(verifyTelegramInitData(raw, token)).toBeNull();
+    }
   });
 });

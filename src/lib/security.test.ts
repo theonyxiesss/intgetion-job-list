@@ -116,3 +116,25 @@ describe("clientIp", () => {
     expect(clientIp(new Headers())).toBe("unknown");
   });
 });
+
+describe("Mini App framing (D259)", () => {
+  it("lets Telegram frame the site only when asked", () => {
+    const closed = buildCsp({
+      nonce: "abc",
+      supabaseUrl: "https://example.supabase.co",
+      isDev: false,
+    });
+    expect(closed).toContain("frame-ancestors 'none'");
+    const open = buildCsp({
+      nonce: "abc",
+      supabaseUrl: "https://example.supabase.co",
+      isDev: false,
+      allowTelegramFrame: true,
+    });
+    expect(open).toContain("https://web.telegram.org");
+    expect(open).not.toContain("frame-ancestors 'none'");
+    // Nothing else loosens up.
+    expect(open).toContain("script-src 'self' 'nonce-abc'");
+    expect(open).toContain("object-src 'none'");
+  });
+});

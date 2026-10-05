@@ -14,8 +14,11 @@ import { AnalyticsTracker } from "@/components/shell/analytics-tracker";
 import { ServiceWorker } from "@/components/shell/service-worker";
 import { CookieBanner } from "@/components/shell/cookie-banner";
 import { Header } from "@/components/shell/header";
+import { TelegramMiniApp } from "@/components/auth/telegram-mini-app";
+import { flags } from "@/config/flags";
+import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { ToastProvider } from "@/components/ui";
-import { routing } from "@/i18n/routing";
+import { routing, type AppLocale } from "@/i18n/routing";
 import { siteUrl } from "@/modules/seo/site";
 import "../globals.css";
 
@@ -97,7 +100,9 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
+  const requestHeaders = await headers();
+  const nonce = requestHeaders.get("x-nonce") ?? undefined;
+  const signedIn = hasSessionMark(requestHeaders);
   const t = await getTranslations();
   // Only namespaces that client components read go into the page (D41b);
   // the full catalogue added ~22 KB to every HTML document.
@@ -131,6 +136,9 @@ export default async function LocaleLayout({
             </div>
             <Footer />
             <AnalyticsTracker />
+            {flags.telegramMiniAppEnabled && !signedIn && (
+              <TelegramMiniApp locale={locale as AppLocale} />
+            )}
             <ServiceWorker />
             <CookieBanner
               text={{

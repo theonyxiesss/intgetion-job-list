@@ -12,4 +12,10 @@ export const flags = {
    * TELEGRAM_LOGIN_ENABLED=true.
    */
   telegramLoginEnabled: envFlag("TELEGRAM_LOGIN_ENABLED"),
+  /**
+   * The site may be opened as a Telegram Mini App (D259). Off by default: it
+   * lets Telegram Web show the site in a frame, so it is turned on only once
+   * the Mini App is actually set up in BotFather.
+   */
+  telegramMiniAppEnabled: envFlag("TELEGRAM_MINI_APP_ENABLED"),
 } as const;
