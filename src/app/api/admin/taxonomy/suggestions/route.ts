@@ -1,10 +1,10 @@
-import { requireAdmin } from "@/lib/auth-guards";
+import { requireAdminPermission } from "@/admin/action";
 import { readQuery, toErrorResponse } from "@/lib/http";
 import { listSuggestions, listSuggestionsQuery } from "@/modules/admin/service";
 
 export async function GET(request: Request) {
   try {
-    await requireAdmin();
+    await requireAdminPermission("taxonomy.manage");
     return Response.json(
       await listSuggestions(readQuery(request, listSuggestionsQuery)),
     );

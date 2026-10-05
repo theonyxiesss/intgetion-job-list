@@ -15,6 +15,8 @@ export const errorCodes = {
   confirmationRequired: "CONFIRMATION_REQUIRED",
   rateLimited: "RATE_LIMITED",
   botBudgetExceeded: "BOT_BUDGET_EXCEEDED",
+  stepUp: "STEP_UP",
+  reasonRequired: "REASON_REQUIRED",
 } as const;
 
 export type ErrorCode = (typeof errorCodes)[keyof typeof errorCodes];

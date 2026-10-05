@@ -20,6 +20,9 @@ export const auditLogs = pgTable(
     entityId: uuid("entity_id"),
     diff: jsonb("diff"),
     ipHash: text("ip_hash"),
+    reason: text("reason"),
+    requestId: text("request_id"),
+    deviceClass: text("device_class"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

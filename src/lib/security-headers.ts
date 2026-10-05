@@ -3,10 +3,12 @@ export function buildCsp({
   nonce,
   supabaseUrl,
   isDev,
+  includeSupabase = true,
 }: {
   nonce: string;
   supabaseUrl: string;
   isDev: boolean;
+  includeSupabase?: boolean;
 }): string {
   const supabase = new URL(supabaseUrl).origin;
   return [
@@ -15,7 +17,7 @@ export function buildCsp({
     `style-src 'self' 'nonce-${nonce}'`,
     `img-src 'self' data: ${supabase}`,
     "font-src 'self'",
-    `connect-src 'self' ${supabase}`,
+    `connect-src 'self'${includeSupabase ? ` ${supabase}` : ""}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

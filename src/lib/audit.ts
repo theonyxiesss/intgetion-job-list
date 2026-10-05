@@ -9,6 +9,9 @@ export type AuditEntry = {
   entityId?: string | null;
   diff?: Record<string, unknown> | null;
   ip?: string | null;
+  reason?: string | null;
+  requestId?: string | null;
+  deviceClass?: string | null;
 };
 
 /** Appends one audit row (section 16.1). The raw IP is never stored. */
@@ -22,5 +25,8 @@ export async function recordAudit(entry: AuditEntry): Promise<void> {
       entityId: entry.entityId ?? null,
       diff: entry.diff ?? null,
       ipHash: entry.ip && entry.ip !== "unknown" ? privacyHash(entry.ip) : null,
+      reason: entry.reason ?? null,
+      requestId: entry.requestId ?? null,
+      deviceClass: entry.deviceClass ?? null,
     });
 }

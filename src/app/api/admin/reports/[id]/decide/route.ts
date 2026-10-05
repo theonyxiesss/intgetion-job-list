@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { requireAdmin } from "@/lib/auth-guards";
+import { finishAdminAction, openAdminAction } from "@/admin/action";
 import { notFound, readJson, toErrorResponse } from "@/lib/http";
 import { clientIp } from "@/lib/request-ip";
 import { decideReport, decideReportInput } from "@/modules/moderation/service";
@@ -10,13 +10,23 @@ export async function POST(
   context: { params: Promise<{ id: string }> },
 ) {
   try {
-    const admin = await requireAdmin();
+    const admin = await openAdminAction("reports.decide", true);
     const { id } = await context.params;
     if (!z.uuid().safeParse(id).success) throw notFound();
     const input = await readJson(request, decideReportInput);
-    return Response.json({
-      report: await decideReport(admin, id, input, clientIp(request.headers)),
+    const report = await decideReport(
+      admin.user,
+      id,
+      input,
+      clientIp(request.headers),
+    );
+    await finishAdminAction(request, admin, {
+      action: "reports.decide",
+      entityType: "report",
+      entityId: id,
+      reason: input.note ?? null,
     });
+    return Response.json({ report });
   } catch (error) {
     return toErrorResponse(error);
   }

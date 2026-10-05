@@ -1,79 +1,49 @@
-import {
-  Download,
-  Flag,
-  LayoutGrid,
-  ListChecks,
-  ScrollText,
-  Tags,
-  Users,
-  Briefcase,
-  type LucideIcon,
-} from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
-import { Container, Icon, PageHeader, cn, navFade } from "@/components/ui";
+import { requireAdminPermission } from "@/admin/action";
+import {
+  sectionForPath,
+  sectionsFor,
+  type AdminSectionKey,
+} from "@/admin/registry";
+import { Container, PageHeader, navFade } from "@/components/ui";
+import { HttpError } from "@/lib/http";
 import { Link } from "@/i18n/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { countPendingSkillSuggestions } from "@/modules/admin/service";
-import { getCurrentUser, type CurrentUser } from "@/modules/auth/service";
+import type { CurrentUser } from "@/modules/auth/service";
 import {
   countOpenReports,
   countPendingQueue,
 } from "@/modules/moderation/service";
+import { AdminCommand } from "./admin-command";
+import { AdminNav } from "./admin-nav";
+import { AdminTopBar } from "./admin-topbar";
+
+export type AdminSection = AdminSectionKey;
 
 /**
- * Every admin page calls this itself; layouts are not re-run on every
- * navigation, so they cannot be the only check. Non-admins and guests get
- * the 404 page (section 5.1, P7).
+ * Every admin page calls this itself. Guests and roles without the right
+ * get the 404 page. On the admin host the public site session is ignored.
  */
 export async function requireAdminPage(): Promise<CurrentUser> {
-  const supabase = await createSupabaseServerClient();
-  const user = await getCurrentUser(supabase.auth);
-  if (!user || user.platformRole !== "admin") notFound();
-  return user;
+  const headerStore = await headers();
+  const section = sectionForPath(headerStore.get("x-pathname") ?? "");
+  try {
+    const access = await requireAdminPermission(
+      section?.permission ?? "overview.read",
+    );
+    return access.user;
+  } catch (error) {
+    if (error instanceof HttpError && error.status === 404) notFound();
+    throw error;
+  }
 }
 
-export type AdminSection =
-  | "home"
-  | "moderation"
-  | "reports"
-  | "jobs"
-  | "users"
-  | "import"
-  | "taxonomy"
-  | "audit";
-
-const sections: {
-  key: AdminSection;
-  href: string;
-  label: string;
-  icon: LucideIcon;
-}[] = [
-  { key: "home", href: "/admin", label: "navHome", icon: LayoutGrid },
-  {
-    key: "moderation",
-    href: "/admin/moderation",
-    label: "navModeration",
-    icon: ListChecks,
-  },
-  { key: "reports", href: "/admin/reports", label: "navReports", icon: Flag },
-  { key: "jobs", href: "/admin/jobs", label: "navJobs", icon: Briefcase },
-  { key: "users", href: "/admin/users", label: "navUsers", icon: Users },
-  { key: "import", href: "/admin/import", label: "navImport", icon: Download },
-  {
-    key: "taxonomy",
-    href: "/admin/taxonomy",
-    label: "navTaxonomy",
-    icon: Tags,
-  },
-  { key: "audit", href: "/admin/audit", label: "navAudit", icon: ScrollText },
-];
-
 /**
- * Admin "control room" (DESIGN.md 9.11): a vertical section list with
- * live counters on the left, the page on the right; on phones the list
- * becomes a scrollable row above the page.
+ * Admin frame: 220px navigation, section search, theme, sessions, sign-out.
+ * On a phone the navigation is a select, so the page does not scroll sideways.
  */
 export async function AdminShell({
   title,
@@ -89,56 +59,61 @@ export async function AdminShell({
   children: ReactNode;
 }) {
   const t = await getTranslations("admin");
+  const ui = await getTranslations("ui");
+  const headerStore = await headers();
+  const section = sectionForPath(headerStore.get("x-pathname") ?? "");
+  let access;
+  try {
+    access = await requireAdminPermission(
+      section?.permission ?? "overview.read",
+    );
+  } catch (error) {
+    if (error instanceof HttpError && error.status === 404) notFound();
+    throw error;
+  }
   const [queue, reports, suggestions] = await Promise.all([
     countPendingQueue(),
     countOpenReports(),
     countPendingSkillSuggestions(),
   ]);
-  const counts: Partial<Record<AdminSection, number>> = {
+  const counts = {
     moderation: queue,
     reports,
     taxonomy: suggestions,
   };
+  let visible = sectionsFor(access.role ?? "owner", true);
+  if (access.legacy && !access.role) {
+    visible = visible.filter(
+      (item) => item.key !== "team" && item.key !== "flags",
+    );
+  }
+  const items = visible.map((item) => ({
+    key: item.key,
+    href: item.href,
+    label: t(item.labelKey as "navHome"),
+    icon: item.icon,
+    count: item.countKey ? counts[item.countKey] : undefined,
+    current: item.key === active,
+  }));
 
   return (
-    <main className="flex-1 py-10">
-      <Container className="flex flex-col gap-8 lg:flex-row lg:gap-12">
-        <nav
-          aria-label={t("navLabel")}
-          className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:w-56 lg:shrink-0 lg:overflow-visible lg:px-0"
-        >
-          <p className="t-label mb-3 hidden text-fg-subtle lg:block">
-            {t("title")}
-          </p>
-          <ul className="flex gap-1 lg:flex-col lg:gap-0 lg:border-l lg:border-line">
-            {sections.map((section) => {
-              const current = section.key === active;
-              const count = counts[section.key];
-              return (
-                <li key={section.key}>
-                  <Link
-                    {...navFade}
-                    href={section.href}
-                    aria-current={current ? "page" : undefined}
-                    className={cn(
-                      "t-nav flex min-h-11 items-center gap-3 border-b-2 px-3 whitespace-nowrap transition-colors duration-[120ms] lg:-ml-px lg:border-b-0 lg:border-l-2 lg:pl-4",
-                      current
-                        ? "border-accent text-fg"
-                        : "border-transparent text-fg-muted hover:text-fg",
-                    )}
-                  >
-                    <Icon icon={section.icon} size={16} />
-                    <span className="flex-1">{t(section.label)}</span>
-                    {count !== undefined && count > 0 && (
-                      <span className="t-data text-signal">{count}</span>
-                    )}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+    <main className="min-w-0 flex-1 overflow-x-hidden py-10">
+      <Container className="flex min-w-0 flex-col gap-8 lg:flex-row lg:gap-12">
+        <AdminNav label={t("navLabel")} title={t("title")} items={items} />
         <div className="flex min-w-0 flex-1 flex-col gap-8">
+          <AdminTopBar
+            sessionsLabel={t("navSessions")}
+            logoutLabel={t("logout")}
+            search={
+              <AdminCommand
+                items={items}
+                label={t("searchSections")}
+                placeholder={t("searchPlaceholder")}
+                empty={t("searchEmpty")}
+                closeLabel={ui("close")}
+              />
+            }
+          />
           <PageHeader
             label={t("title")}
             title={title}

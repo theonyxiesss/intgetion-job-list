@@ -5,7 +5,7 @@ import { apiCsp, staticSecurityHeaders } from "./src/lib/security-headers";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["127.0.0.1"],
+  allowedDevOrigins: ["127.0.0.1", "admin.localhost"],
   poweredByHeader: false,
   async headers() {
     return [
