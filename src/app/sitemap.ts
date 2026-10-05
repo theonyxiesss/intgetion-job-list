@@ -10,7 +10,13 @@ import { languageAlternates, siteUrl } from "@/modules/seo/site";
 // Read the database per request, never at build time (D210).
 export const dynamic = "force-dynamic";
 
-const STATIC_PATHS = ["", "/jobs", "/for-employers"] as const;
+const STATIC_PATHS = [
+  "",
+  "/jobs",
+  "/for-employers",
+  "/terms",
+  "/privacy",
+] as const;
 
 function entry(
   path: string,

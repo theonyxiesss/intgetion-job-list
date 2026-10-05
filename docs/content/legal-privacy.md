@@ -1,261 +1,334 @@
-ДРАФТ ПОЛИТИКИ КОНФИДЕНЦИАЛЬНОСТИ
-Это черновой вариант для основателя и юриста. Финальные тексты по ТЗ — OPEN QUESTION (раздел 25).
+<!--
+Политика конфиденциальности (версия текста 2026-10-05). Источник для
+страницы /{locale}/privacy: после правки запустить `pnpm legal:sync`.
+Значения в двойных фигурных скобках подставляются из src/config/legal.ts;
+пока они не заданы, на сайте показывается «уточняется». Текст описывает то,
+что сервис реально делает на 2026-10-05; при новых функциях — обновлять.
+Перед окончательной публикацией — проверка юристом.
+-->
 
 # Политика конфиденциальности
 
-## 1. Собираемая информация
+Редакция от {{effectiveDate}}. Версия {{version}}.
 
-Мы собираем следующую информацию:
+## 1. Кратко
 
-- Данные учетной записи: электронная почта, хеш пароля, данные профиля (имя, фото, биография, ссылки на соцсети).
-- Информация о вакансиях и заявках: история просмотров, отправленные заявки, отклики работодателей.
-- Данные о взаимодействии: сообщения в чате, реакции, обновления профиля.
-- Технические данные: IP-адрес, User-Agent, куки, данные о устройстве и браузере.
-- Данные из импорта резюме и профилей (если пользователь загружает файлы).
-- Данные о предпочтениях: выбранные сферы, уровень, условия работы.
-- Данные о платежах (если применяется): информация о транзакциях (только последние 4 цифры карты, сумма, дата) — не сохраняем полные реквизиты.
-- Агрегированные и обезличенные данные для аналитики и улучшения сервиса.
-  [ЗАПОЛНИТЬ: другие категории данных, если есть в ТЗ]
+- Мы собираем то, что нужно для поиска работы и найма, и не продаём данные.
+- Контакты кандидата видит только работодатель, к которому у кандидата взаимный интерес.
+- Статистику посещений считаем сами, без Google Analytics и других сторонних сервисов; кука аналитики ставится только с вашего согласия, сигнал Global Privacy Control соблюдается.
+- Вы можете в любой момент скачать свои данные, изменить их, отказаться от необязательных кук и удалить аккаунт — в «Настройках».
 
-## 2. Цели обработки
+## 2. Кто отвечает за данные
 
-Мы используем собранные данные для:
+Оператор (контролёр) данных — {{operator}}, {{address}}. Вопросы о данных: {{privacyEmail}}.
 
-- Предоставления и улучшения сервиса (подбор вакансий, уведомления, чат).
-- Аутентификации и безопасности учетных записей.
-- Персонализации контента и рекомендаций.
-- Связи с пользователем по поводу вакансий, заявок и обновлений сервиса.
-- Выполнения обязательств перед работодателями (передача заявок и контактной информации только после взаимного интереса — D3).
-- Агрегированной статистики и отчетов.
-- Соблюдения юридических обязательств.
-- Отправки транзакционных писем (подтверждение регистрации, сброс пароля, уведомления о новых вакансиях) и маркетинговой рассылки (с согласия пользователя — 9A).
-  [ЗАПОЛНИТЬ: другие цели, если есть в ТЗ]
+## 3. Какие данные мы собираем
 
-## 3. Правовые основания обработки
+### 3.1 Аккаунт
 
-Мы обрабатываем данные на следующих основаниях:
+- Почта и пароль (пароль хранится только в виде хеша у нашего провайдера аутентификации, мы его не видим) или данные Telegram при входе через Telegram: числовой id, имя и ник. Номер телефона Telegram мы не получаем.
+- Язык интерфейса, дата принятия условий и их версия, подписка на новости (по умолчанию выключена).
+- Служебные записи о входах: время, страна и тип устройства.
 
-- Выполнение договора с пользователем (предоставление сервиса).
-- Согласие пользователя (для маркетинговой рассылки, использования необходимых куки и т.п.).
-- Законные интересы (безопасность, улучшение сервиса, предотвращение мошенничества).
-- Выполнение юридических обязательств (хранение данных для бухгалтерии, ответ на запросы органов власти).
-  [ЗАПОЛНИТЬ: другие основания, если есть в ТЗ]
+### 3.2 Профиль кандидата
 
-## 4. Сроки хранения
+Имя, заголовок, желаемые должности, навыки и их уровни, опыт, языки, часовой пояс и рабочие часы, формат и тип занятости, зарплатные ожидания, отраслевые предпочтения, видимость профиля. Контакты (почта, телефон, Telegram, LinkedIn, сайт) хранятся отдельно и открываются работодателю только при взаимном интересе.
 
-Мы храним данные не дольше, чем это необходимо для достижения целей обработки:
+### 3.3 Работодатели и компании
 
-- Данные учетной записи: до удаления учетной записи пользователем.
-- Данные о вакансиях и заявках: [ЗАПОЛНИТЬ: срок из ТЗ, например, 3 года после последней активности].
-- Данные о взаимодействии (чат, реакции): [ЗАПОЛНИТЬ: срок из ТЗ].
-- Технические данные (логи, IP): [ЗАПОЛНИТЬ: срок из ТЗ, например, 6 месяцев].
-- Куки: сессионные куки удаляются после закрытия браузера; постоянные куки — [ЗАПОЛНИТЬ: срок из ТЗ, например, 1 год].
-- Данные для аналитики: агрегированные и обезличенные данные могут храниться неограниченно.
-  [ЗАПОЛНИТЬ: конкретные сроки из разделов 17, D28, 10C ТЗ]
+Имя и должность представителя, данные компании (название, описание, сайт, логотип, домен для проверки), участники компании, вакансии, история проверки компании.
 
-## 5. Права пользователей
+### 3.4 Действия на сервисе
 
-Пользователи имеют право:
+Отклики и их статусы, сохранённые и скрытые вакансии, жалобы, сохранённые поиски, компании, за которыми вы следите, оценки совпадения с вакансиями, уведомления и их доставка, настройки уведомлений.
 
-- Доступа к своим данным и получения копии.
-- Исправления неточных данных.
-- Удаления своих данных («право на забвение»), за исключением данных, которые мы обязаны хранить по закону.
-- Ограничения или возражения против обработки своих данных.
-- Переносимости данных (получение данных в структурированном формате).
-- Отзыва согласия на обработку данных (в случае, если обработка основана на согласии).
-- Подачи жалобы в регулирующий орган.
-  Для реализации этих прав пользователь может связаться с нами по контактной информации ниже.
-  [ЗАПОЛНИТЬ: процедура подачи запроса]
+### 3.5 Карьерный агент (ИИ)
 
-## 6. Передача данных третьим лицам
+Сообщения в чате с агентом и черновики изменений профиля. Перед отправкой модели из текста удаляются почты, телефоны и похожие на документы номера. Гостевые беседы привязаны к случайному идентификатору в куке, а не к человеку.
 
-Мы передаем данные третьим лицам только в следующих случаях:
+### 3.6 Согласия
 
-- Работодателям: только после взаимного интереса (пользователь и работодатель выразили интерес друг к другу) передаем контактную информацию пользователя (email, телефон, если предоставлен) и данные из профиля, необходимые для связи — D3.
-- Поставщикам услуг: хостинг, аналитика, рассылка писем, обработка платежей (только необходимые данные для оказания услуги, с обязательствами по конфиденциальности).
-- Юридическим лицам: по требованию закона, в ответ на судебный запрос или для защиты наших прав.
-- Агрегированные и обезличенные данные: для публичной статистики и исследований.
-  Мы не продаем персональные данные третьим лицам.
-  [ЗАПОЛНИТЬ: конкретные третьи лица, если есть в ТЗ]
+Журнал выбора кук: какие категории разрешены, версия политики, был ли сигнал Global Privacy Control, где сделан выбор и хеш IP-адреса. Это нужно, чтобы доказать, что согласие было дано.
 
-## 7. Куки и аналогичные технологии
+### 3.7 Статистика посещений
 
-Мы используем только необходимые куки для работы сервиса (D201):
+- Для всех посетителей, без кук: адрес страницы без параметров, тип события (просмотр, открытие вакансии, поиск, регистрация, отклик), текст поискового запроса (до 60 символов), сайт, с которого вы пришли, метки рекламных кампаний, класс устройства (телефон, планшет, компьютер). Уникальные посетители за день считаются по ключу, который вычисляется из даты, IP-адреса и браузера с секретом сервера; сам IP и строка браузера не сохраняются, а ключ нельзя развернуть и связать с другим днём.
+- Только с согласием на аналитику: случайный идентификатор браузера в куке «_ia», чтобы видеть повторные визиты. Он не связан с вашим аккаунтом.
 
-- Куки аутентификации (для поддержания сессии пользователя).
-- Куки безопасности (для обнаружения и предотвращения мошенничества).
-- Куки предпочтений (для хранения выбранного языка и темы).
-  Мы не используем куки для рекламы, трекинга или профилирования без согласия пользователя.
-  Баннер об использовании куки отображается при первом посещении, пользователь может принять или отклонить несущественные куки (если такие будут добавлены в будущее).
-  [ЗАПОЛНИТЬ: детали куки из D201 ТЗ]
+### 3.8 Технические данные
 
-## 8. Безопасность данных
+Журналы сервера: время, адрес запроса, код ответа, идентификатор запроса; почты и телефоны в журналах маскируются. IP-адрес используется для защиты от злоупотреблений (лимиты запросов) и хранится только в виде хеша.
 
-Мы принимаем разумные технические и организационные меры для защиты данных от несанкционированного доступа, изменения, раскрытия или уничтожения, включая:
+## 4. Зачем и на каком основании
 
-- Шифрование передачи данных (TLS).
-- Шифрование конфиденциальных данных в состоянии покоя (например, хеширование паролей).
-- Ограничение доступа к данным только уполномоченным сотрудникам.
-- Регулярное тестирование безопасности и аудит.
-- Журналирование и мониторинг доступа.
-  [ЗАПОЛНИТЬ: конкретные меры из ТЗ, если есть]
+| Цель                                                                             | Данные              | Основание (GDPR, ст. 6)                                                  |
+| -------------------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------ |
+| Аккаунт, вход, профиль, каталог, подбор, отклики, связь кандидата и работодателя | 3.1–3.4             | исполнение договора (Пользовательского соглашения)                       |
+| Уведомления о ваших откликах, совпадениях, поисках                               | 3.4                 | исполнение договора; каналы настраиваются                                |
+| Карьерный агент                                                                  | 3.5                 | исполнение договора, по вашему запросу                                   |
+| Новостные рассылки                                                               | почта, Telegram     | согласие (подписка), отзывается в любой момент                           |
+| Модерация, борьба с мошенничеством и спамом, безопасность                        | 3.1–3.4, 3.8        | законный интерес — защитить пользователей и сервис                       |
+| Статистика без кук                                                               | 3.7, первая часть   | законный интерес — понимать, как работает сервис, без отслеживания людей |
+| Кука аналитики «_ia»                                                             | 3.7, вторая часть   | согласие                                                                 |
+| Запоминание фильтров и просмотренных вакансий                                    | куки «предпочтений» | согласие                                                                 |
+| Журнал согласий                                                                  | 3.6                 | юридическая обязанность доказать согласие                                |
+| Ответы на запросы властей                                                        | по запросу          | юридическая обязанность                                                  |
 
-## 9. Данные, отправляемые в модели ИИ и LLM
+Автоматическая оценка совпадения (подбор) помогает сортировать вакансии и кандидатов, но не принимает решений, имеющих для вас юридические последствия: решение об отклике и найме принимают люди.
 
-При использовании функций бота и LLM (раздел 12 ТЗ):
+## 5. Куки и похожие технологии
 
-- В модель могут отправляться только обезличенные и агрегированные данные, а также текстовые запросы пользователя, из которых заранее удаляется личная идентифицирующая информация (PII) — имена, контакты, идентификаторы.
-- Мы не отправляем в модель содержимое приватных чатов, личные документы или другие данные, содержащие PII, без предварительной анонимизации.
-- Пользователь может отключить функции, использующие LLM, в настройках аккаунта.
-  [ЗАПОЛНИТЬ: детали из раздела 12 ТЗ]
+Необходимые куки работают всегда — без них сайт не может работать. Остальные ставятся только после вашего согласия в баннере или в «Настройках → Приватность»; отказаться так же просто, как согласиться, а отзыв согласия удаляет соответствующие куки.
 
-## 10. Ограничения и модерация
+| Кука               | Зачем                                                            | Категория    | Срок                                       |
+| ------------------ | ---------------------------------------------------------------- | ------------ | ------------------------------------------ |
+| sb-…-auth-token    | вход в аккаунт                                                   | необходимая  | пока активна сессия, обновляется при входе |
+| NEXT_LOCALE        | выбранный язык                                                   | необходимая  | до закрытия браузера                       |
+| cookie_consent     | ваш выбор кук, версия политики и номер записи в журнале согласий | необходимая  | 1 год                                      |
+| bot_session        | беседа с карьерным агентом до входа                              | необходимая  | 30 дней                                    |
+| last_catalog_query | последние фильтры каталога                                       | предпочтения | 30 дней                                    |
+| recent_jobs        | последние просмотренные вакансии                                 | предпочтения | 30 дней                                    |
+| _ia                | случайный идентификатор для повторных визитов                    | аналитика    | 13 месяцев                                 |
 
-Мы применяем ограничения на использование сервиса и moderation контента:
+Тема оформления (светлая или тёмная) хранится в памяти браузера (localStorage) и никуда не передаётся.
 
-- Ограничение частоты запросов (rate limiting) для предотвращения злоупотребления.
-- Модерация вакансий и контента на предмет спама, мошенничества и неподходящего материала (разделы 10, 14.3 ТЗ).
-- Сектора, отмеченные как высокорисковые (например, igaming, memecoins — D205), подвергаются дополнительной проверке.
-- Мы не гарантируем полноту или точность информации, предоставляемой пользователями или работодателями.
-  [ЗАПОЛНИТЬ: детали из разделов 10, 14.3 ТЗ]
+Сторонних кук, рекламных и отслеживающих скриптов на сайте нет. Если браузер передаёт сигнал Global Privacy Control, аналитика остаётся выключенной, что бы ни было выбрано.
+
+## 6. Кому мы передаём данные
+
+### 6.1 Другим пользователям
+
+- Работодателю, на вакансию которого вы откликнулись, — ваш профиль без контактов; контакты — только при взаимном интересе.
+- Работодателям в подборе — профиль без контактов, если вы не скрыли его в настройках.
+- Подписчикам компании и всем посетителям — опубликованные вакансии и страница компании.
+- Работодателю в статистике вакансии — только суммы (просмотры, источники, устройства), без сведений о людях.
+
+### 6.2 Подрядчикам, которые обрабатывают данные по нашему поручению
+
+| Сервис                                                         | Для чего                                                       | Где                              |
+| -------------------------------------------------------------- | -------------------------------------------------------------- | -------------------------------- |
+| Supabase                                                       | база данных, вход, хранение логотипов                          | ЕС (Франкфурт)                   |
+| Vercel                                                         | хостинг сайта и запуск задач                                   | глобальная сеть, в том числе США |
+| Resend                                                         | отправка писем                                                 | США                              |
+| Telegram                                                       | вход через Telegram и уведомления от бота, если вы их включили | по условиям Telegram             |
+| Поставщик модели ИИ (OpenRouter или Anthropic — какой включён) | ответы карьерного агента; без почт и телефонов (п. 3.5)        | США                              |
+| Sentry (если включён)                                          | отчёты об ошибках сервера, без персональных данных             | ЕС или США                       |
+
+С подрядчиками действуют договоры об обработке данных; при передаче за пределы ЕЭЗ применяются стандартные договорные условия Европейской комиссии или иные законные механизмы. Использование данных поставщиком модели ИИ для обучения: {{aiTraining}}.
+
+### 6.3 Иным лицам
+
+Государственным органам — только по законному требованию. При продаже или реорганизации бизнеса данные могут перейти правопреемнику с сохранением этой политики. Данные не продаются и не передаются для рекламы.
+
+## 7. Сроки хранения
+
+| Данные                                         | Срок                                                                 |
+| ---------------------------------------------- | -------------------------------------------------------------------- |
+| Аккаунт и профиль                              | пока аккаунт существует; при удалении — сразу обезличиваются (п. 9)  |
+| Контакты кандидата                             | до удаления аккаунта или до изменения                                |
+| Отклики                                        | пока существует вакансия; после удаления аккаунта — без связи с вами |
+| Сообщения карьерному агенту                    | 180 дней                                                             |
+| Гостевые беседы с агентом                      | 30 дней                                                              |
+| Прочитанные уведомления                        | 90 дней                                                              |
+| Письма в очереди отправки                      | 90 дней                                                              |
+| Скрытые и отмеченные вакансии                  | 365 дней                                                             |
+| Оценки совпадения                              | пересчитываются; старше 30 дней удаляются                            |
+| Журнал действий администраторов и безопасности | 365 дней                                                             |
+| Журнал согласий                                | 3 года                                                               |
+| Статистика посещений                           | 395 дней                                                             |
+| Счётчики лимитов запросов                      | 48 часов                                                             |
+| Журналы сервера                                | до 30 дней                                                           |
+| Резервные копии базы                           | по циклу резервного копирования провайдера: {{backupPeriod}}         |
+
+## 8. Как мы защищаем данные
+
+Шифрование соединения (HTTPS, HSTS), шифрование дисков у провайдера, разграничение доступа по ролям, раздельные роли базы данных с запретом на изменение структуры из приложения, строгая политика безопасности содержимого страниц, лимиты запросов, журнал действий администраторов, обязательная двухфакторная аутентификация для администраторов, доступ сотрудников к персональным данным только с указанием причины и записью в журнал. Если произойдёт утечка, которая угрожает вашим правам, мы сообщим вам и надзорному органу в сроки, которых требует закон.
+
+## 9. Ваши права
+
+- **Доступ и перенос**: «Настройки → Приватность → Скачать свои данные» — файл JSON со всеми данными о вас.
+- **Исправление**: в профиле и настройках; остальное — по запросу.
+- **Удаление**: «Настройки → Приватность → Удалить аккаунт». Профиль обезличивается («Удалённый пользователь»), контакты, сообщения агенту, сохранённые вакансии и уведомления удаляются, аккаунт входа удаляется; отклики остаются у работодателей без ваших контактов; компании, где вы единственный владелец, приостанавливаются.
+- **Отзыв согласия**: куки — в баннере или «Настройках → Приватность»; новости — в настройках уведомлений или по ссылке в письме.
+- **Возражение и ограничение** обработки на основании законного интереса — по запросу на {{privacyEmail}}.
+- **Жалоба** в надзорный орган по защите данных вашей страны.
+
+Мы отвечаем на запросы в течение месяца. Чтобы защитить вас, можем попросить подтвердить, что запрос отправлен из вашего аккаунта.
+
+## 10. Дети
+
+Сервис не предназначен для лиц младше {{minAge}} лет, и мы сознательно не собираем их данные. Если вы узнали, что такой аккаунт создан, напишите нам — мы удалим его.
 
 ## 11. Изменения политики
 
-Мы можем обновлять эту политику конфиденциальности время от времени. О существенных изменениях мы будем уведомлять пользователей через электронную почту или уведомление в сервисе.
-[ЗАПОЛНИТЬ: процедура уведомления]
+О существенных изменениях мы сообщаем заранее письмом и уведомлением в сервисе. Если меняются цели обработки, основанные на согласии, мы попросим согласие заново — так же, как баннер кук спрашивает снова после изменения версии политики.
 
-## 12. Контактная информация
+## 12. Контакты
 
-[ЗАПОЛНИТЬ: адрес, email для связи с вопросом о конфиденциальности, ответственное лицо]
+- Вопросы о данных: {{privacyEmail}}
+- Общие вопросы: {{supportEmail}}
+- Почтовый адрес: {{address}}
 
----
-
-DRAFT PRIVACY POLICY
-This is a draft for the founder and lawyer. Final texts per TZ — OPEN QUESTION (section 25).
+<!-- en -->
 
 # Privacy Policy
 
-## 1. Information Collected
+Version of {{effectiveDate}}. Version id {{version}}.
 
-We collect the following information:
+## 1. In short
 
-- Account data: email, password hash, profile data (name, photo, bio, social links).
-- Job and application data: viewing history, submitted applications, employer responses.
-- Interaction data: chat messages, reactions, profile updates.
-- Technical data: IP address, User-Agent, cookies, device and browser information.
-- Data from imported resumes and profiles (if user uploads files).
-- Preference data: selected spheres, seniority, work conditions.
-- Payment data (if applicable): transaction information (only last 4 digits of card, amount, date) — we do not store full card details.
-- Aggregated and anonymized data for analytics and service improvement.
-  [TO BE FILLED: other data categories if present in TZ]
+- We collect what is needed to find work and hire, and we do not sell data.
+- A candidate's contacts are visible only to an employer with mutual interest.
+- We count visits ourselves, without Google Analytics or other third parties; the analytics cookie is set only with your consent, and the Global Privacy Control signal is honoured.
+- You can download your data, change it, refuse optional cookies and delete your account at any time in Settings.
 
-## 2. Purposes of Processing
+## 2. Who is responsible
 
-We use collected data for:
+The data controller is {{operator}}, {{address}}. Data questions: {{privacyEmail}}.
 
-- Providing and improving the service (job matching, notifications, chat).
-- Authentication and account security.
-- Personalizing content and recommendations.
-- Communicating with users about jobs, applications, and service updates.
-- Fulfilling obligations to employers (transmitting applications and contact information only after mutual interest — D3).
-- Aggregated statistics and reporting.
-- Compliance with legal obligations.
-- Sending transactional emails (registration confirmation, password reset, new job notifications) and marketing emails (with user consent — 9A).
-  [TO BE FILLED: other purposes if present in TZ]
+## 3. What we collect
 
-## 3. Legal Basis for Processing
+### 3.1 Account
 
-We process data on the following grounds:
+- Email and password (only a hash is stored by our authentication provider; we never see it), or Telegram data when you sign in with Telegram: numeric id, name and username. We do not receive your Telegram phone number.
+- Interface language, the date and version of the accepted terms, newsletter subscription (off by default).
+- Sign-in records: time, country and device type.
 
-- Performance of a contract with the user (providing the service).
-- User consent (for marketing emails, necessary cookies, etc.).
-- Legitimate interests (security, service improvement, fraud prevention).
-- Compliance with legal obligations (data retention for accounting, responding to authority requests).
-  [TO BE FILLED: other bases if present in TZ]
+### 3.2 Candidate profile
 
-## 4. Retention Periods
+Name, headline, desired titles, skills and levels, experience, languages, time zone and working hours, work format and employment type, salary expectations, sector preferences, profile visibility. Contacts (email, phone, Telegram, LinkedIn, website) are stored separately and shown to an employer only on mutual interest.
 
-We retain data only as long as necessary to fulfill the purposes for which it was processed:
+### 3.3 Employers and companies
 
-- Account data: until user deletes their account.
-- Job and application data: [TO BE FILLED: retention period from TZ, e.g., 3 years after last activity].
-- Interaction data (chat, reactions): [TO BE FILLED: retention period from TZ].
-- Technical data (logs, IP): [TO BE FILLED: retention period from TZ, e.g., 6 months].
-- Cookies: session cookies are deleted when the browser closes; persistent cookies — [TO BE FILLED: retention period from TZ, e.g., 1 year].
-- Analytics data: aggregated and anonymized data may be retained indefinitely.
-  [TO BE FILLED: specific periods from sections 17, D28, 10C of TZ]
+Representative's name and title, company data (name, description, website, logo, verification domain), company members, jobs, verification history.
 
-## 5. User Rights
+### 3.4 Activity
 
-Users have the right to:
+Applications and their statuses, saved and hidden jobs, reports, saved searches, followed companies, match scores, notifications and their delivery, notification settings.
 
-- Access their data and receive a copy.
-- Rectify inaccurate data.
-- Erase their data (“right to be forgotten”), except for data we are required to retain by law.
-- Restrict or object to the processing of their data.
-- Data portability (receiving data in a structured format).
-- Withdraw consent for data processing (where processing is based on consent).
-- Lodge a complaint with a supervisory authority.
-  To exercise these rights, users may contact us using the contact information below.
-  [TO BE FILLED: procedure for submitting requests]
+### 3.5 Career agent (AI)
 
-## 6. Sharing Data with Third Parties
+Messages with the agent and draft profile changes. Emails, phone numbers and document-like numbers are removed from the text before it reaches the model. Guest chats are tied to a random identifier in a cookie, not to a person.
 
-We share data with third parties only in the following cases:
+### 3.6 Consent
 
-- Employers: only after mutual interest (user and employer have expressed interest in each other) we share the user’s contact information (email, phone, if provided) and profile data necessary for contact — D3.
-- Service providers: hosting, analytics, email delivery, payment processing (only necessary data for the service, with confidentiality obligations).
-- Legal entities: in response to lawful requests, court orders, or to protect our rights.
-- Aggregated and anonymized data: for public statistics and research.
-  We do not sell personal data to third parties.
-  [TO BE FILLED: specific third parties if present in TZ]
+The cookie consent log: which categories are allowed, the policy version, whether Global Privacy Control was sent, where the choice was made and a hash of the IP address. It proves that consent was given.
 
-## 7. Cookies and Similar Technologies
+### 3.7 Visit statistics
 
-We use only strictly necessary cookies for the service to work (D201):
+- For all visitors, without cookies: the page address without parameters, the event type (view, job opened, search, registration, application), the search text (up to 60 characters), the referring site, campaign tags, the device class (phone, tablet, computer). Daily unique visitors are counted with a key computed from the date, IP address and browser with a server secret; the IP and the browser string are not stored, and the key cannot be reversed or linked across days.
+- Only with analytics consent: a random browser identifier in the "_ia" cookie to recognise returning visits. It is not linked to your account.
 
-- Authentication cookies (to maintain user session).
-- Security cookies (for fraud detection and prevention).
-- Preference cookies (to store language and theme selections).
-  We do not use cookies for advertising, tracking, or profiling without user consent.
-  A cookie banner is displayed on first visit, allowing users to accept or reject non-essential cookies (if such are added in the future).
-  [TO BE FILLED: cookie details from D201 TZ]
+### 3.8 Technical data
 
-## 8. Data Security
+Server logs: time, request address, response code, request id; emails and phone numbers are masked. IP addresses protect the service from abuse (rate limits) and are stored only as hashes.
 
-We implement reasonable technical and organizational measures to protect data from unauthorized access, alteration, disclosure, or destruction, including:
+## 4. Purposes and legal bases
 
-- Encryption of data in transit (TLS).
-- Encryption of sensitive data at rest (e.g., password hashing).
-- Limiting data access to authorized personnel only.
-- Regular security testing and audits.
-- Access logging and monitoring.
-  [TO BE FILLED: specific measures from TZ, if present]
+| Purpose                                                                                | Data               | Legal basis (GDPR art. 6)                                                |
+| -------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------------ |
+| Account, sign-in, profile, catalog, matching, applications, candidate–employer contact | 3.1–3.4            | contract (Terms of Use)                                                  |
+| Notifications about your applications, matches, searches                               | 3.4                | contract; channels are configurable                                      |
+| Career agent                                                                           | 3.5                | contract, at your request                                                |
+| Newsletters                                                                            | email, Telegram    | consent (subscription), withdrawable any time                            |
+| Moderation, fraud and spam prevention, security                                        | 3.1–3.4, 3.8       | legitimate interest in protecting users and the service                  |
+| Cookieless statistics                                                                  | 3.7, first part    | legitimate interest in understanding the service without tracking people |
+| Analytics cookie "_ia"                                                                 | 3.7, second part   | consent                                                                  |
+| Remembering filters and viewed jobs                                                    | preference cookies | consent                                                                  |
+| Consent log                                                                            | 3.6                | legal obligation to prove consent                                        |
+| Requests from authorities                                                              | as requested       | legal obligation                                                         |
 
-## 9. Data Sent to AI and LLM Models
+The automatic match score helps sort jobs and candidates but makes no decisions with legal effects on you: people decide on applications and hiring.
 
-When using bot and LLM features (section 12 of TZ):
+## 5. Cookies and similar technologies
 
-- Only anonymized and aggregated data, as well as user text queries with PII removed in advance (names, contacts, identifiers), may be sent to the model.
-- We do not send private chat contents, personal documents, or other data containing PII to the model without prior anonymization.
-- Users may disable LLM-powered features in their account settings.
-  [TO BE FILLED: details from section 12 TZ]
+Necessary cookies are always on — the site cannot work without them. Others are set only after your consent in the banner or in Settings → Privacy; refusing is as easy as accepting, and withdrawing consent deletes the related cookies.
 
-## 10. Limits and Moderation
+| Cookie             | Purpose                                                   | Category    | Lifetime                                        |
+| ------------------ | --------------------------------------------------------- | ----------- | ----------------------------------------------- |
+| sb-…-auth-token    | signing in                                                | necessary   | while the session is active, renewed on sign-in |
+| NEXT_LOCALE        | chosen language                                           | necessary   | until the browser is closed                     |
+| cookie_consent     | your cookie choice, policy version and consent log record | necessary   | 1 year                                          |
+| bot_session        | chat with the career agent before signing in              | necessary   | 30 days                                         |
+| last_catalog_query | last catalog filters                                      | preferences | 30 days                                         |
+| recent_jobs        | recently viewed jobs                                      | preferences | 30 days                                         |
+| _ia                | random identifier for returning visits                    | analytics   | 13 months                                       |
 
-We apply usage limits and content moderation:
+The light or dark theme is kept in the browser's local storage and is not sent anywhere.
 
-- Rate limiting to prevent abuse.
-- Moderation of job postings and content for spam, fraud, and inappropriate material (sections 10, 14.3 of TZ).
-- Sectors marked as high-risk (e.g., igaming, memecoins — D205) are subject to additional review.
-- We do not guarantee the completeness or accuracy of information provided by users or employers.
-  [TO BE FILLED: details from sections 10, 14.3 TZ]
+There are no third-party cookies, advertising or tracking scripts on the site. If your browser sends Global Privacy Control, analytics stays off whatever is chosen.
 
-## 11. Changes to This Policy
+## 6. Who we share data with
 
-We may update this privacy policy from time to time. We will notify users of material changes via email or in-app notice.
-[TO BE FILLED: notice procedure]
+### 6.1 Other users
 
-## 12. Contact Information
+- The employer of a job you applied to sees your profile without contacts; contacts only on mutual interest.
+- Employers in matching see your profile without contacts unless you hide it in settings.
+- Followers and all visitors see published jobs and company pages.
+- An employer's job statistics contain only totals (views, sources, devices), nothing about people.
 
-[TO BE FILLED: address, email for privacy inquiries, responsible person]
+### 6.2 Processors acting on our instructions
+
+| Service                                                           | Purpose                                                      | Where                            |
+| ----------------------------------------------------------------- | ------------------------------------------------------------ | -------------------------------- |
+| Supabase                                                          | database, sign-in, logo storage                              | EU (Frankfurt)                   |
+| Vercel                                                            | website hosting and scheduled tasks                          | global network, including the US |
+| Resend                                                            | sending email                                                | US                               |
+| Telegram                                                          | Telegram sign-in and bot notifications if you enabled them   | under Telegram's terms           |
+| AI model provider (OpenRouter or Anthropic, whichever is enabled) | career agent answers; without emails and phone numbers (3.5) | US                               |
+| Sentry (if enabled)                                               | server error reports without personal data                   | EU or US                         |
+
+We have data processing agreements with processors; transfers outside the EEA rely on the European Commission's Standard Contractual Clauses or other lawful mechanisms. Use of data by the AI provider for training: {{aiTraining}}.
+
+### 6.3 Others
+
+Public authorities only on a lawful request. In a sale or reorganisation of the business, data may pass to the successor under this policy. Data is not sold or shared for advertising.
+
+## 7. Retention
+
+| Data                         | Period                                                               |
+| ---------------------------- | -------------------------------------------------------------------- |
+| Account and profile          | while the account exists; anonymised at once on deletion (section 9) |
+| Candidate contacts           | until account deletion or change                                     |
+| Applications                 | while the job exists; after account deletion without a link to you   |
+| Messages to the career agent | 180 days                                                             |
+| Guest agent chats            | 30 days                                                              |
+| Read notifications           | 90 days                                                              |
+| Queued emails                | 90 days                                                              |
+| Hidden and flagged jobs      | 365 days                                                             |
+| Match scores                 | recomputed; deleted after 30 days                                    |
+| Admin and security log       | 365 days                                                             |
+| Consent log                  | 3 years                                                              |
+| Visit statistics             | 395 days                                                             |
+| Rate-limit counters          | 48 hours                                                             |
+| Server logs                  | up to 30 days                                                        |
+| Database backups             | per the provider's backup cycle: {{backupPeriod}}                    |
+
+## 8. Security
+
+Encrypted connections (HTTPS, HSTS), encrypted disks at the provider, role-based access, separate database roles with no schema changes from the application, a strict content security policy, rate limits, an admin action log, mandatory two-factor authentication for administrators, and staff access to personal data only with a stated reason recorded in the log. If a breach threatens your rights, we notify you and the supervisory authority within the time the law requires.
+
+## 9. Your rights
+
+- **Access and portability**: Settings → Privacy → Download your data — a JSON file with all data about you.
+- **Rectification**: in the profile and settings; the rest on request.
+- **Erasure**: Settings → Privacy → Delete account. The profile is anonymised ("Deleted user"); contacts, agent messages, saved jobs and notifications are deleted; the sign-in account is deleted; applications stay with employers without your contacts; companies where you are the only owner are suspended.
+- **Withdrawing consent**: cookies — in the banner or Settings → Privacy; newsletters — in notification settings or via the link in the email.
+- **Objection and restriction** of processing based on legitimate interest — on request to {{privacyEmail}}.
+- **Complaint** to the data protection authority of your country.
+
+We answer requests within one month. To protect you, we may ask you to confirm the request from your account.
+
+## 10. Children
+
+The Service is not intended for people under {{minAge}}, and we do not knowingly collect their data. If you learn that such an account exists, tell us and we will delete it.
+
+## 11. Changes
+
+We announce material changes in advance by email and in the Service. If purposes based on consent change, we will ask for consent again — the same way the cookie banner asks again after the policy version changes.
+
+## 12. Contact
+
+- Data questions: {{privacyEmail}}
+- General questions: {{supportEmail}}
+- Postal address: {{address}}

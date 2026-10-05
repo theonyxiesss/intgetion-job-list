@@ -1,29 +1,29 @@
 <!--
-Черновик для основателя и юриста (версия текста 2026-10-05). Опубликовать
-на /{locale}/terms можно после проверки юристом и заполнения полей
-[ОСНОВАТЕЛЬ: …]. При публикации — новая TERMS_VERSION (src/config/legal.ts)
-и порядок из docs/ADMIN.md раздел 7. Описание сервиса здесь соответствует
-тому, что сервис реально делает на 2026-10-05; при изменении функций текст
-обновляется.
+Пользовательское соглашение (версия текста 2026-10-05). Источник для
+страницы /{locale}/terms: после правки запустить `pnpm legal:sync`.
+Значения в двойных фигурных скобках подставляются из src/config/legal.ts;
+пока они не заданы, на сайте показывается «уточняется». Описание сервиса
+соответствует тому, что он делает на 2026-10-05. Перед окончательной
+публикацией — проверка юристом.
 -->
 
 # Пользовательское соглашение INTGETION JOB LIST
 
-Редакция от [ОСНОВАТЕЛЬ: дата публикации]. Версия: [TERMS_VERSION].
+Редакция от {{effectiveDate}}. Версия {{version}}.
 
 ## 1. Кто мы и что это за соглашение
 
 1.1. Сервис INTGETION JOB LIST (далее — «Сервис») — сайт https://intgetion.com, его поддомены, бот в Telegram и связанные с ними функции, которые помогают людям находить удалённую работу, а компаниям — сотрудников.
 
-1.2. Сервис предоставляет [ОСНОВАТЕЛЬ: полное наименование юрлица или ИП, регистрационный номер, адрес] (далее — «мы»).
+1.2. Сервис предоставляет {{operator}}, {{address}} (далее — «мы»).
 
-1.3. Это соглашение — договор между нами и вами (далее — «Пользователь») о пользовании Сервисом. Регистрируясь, входя через Telegram или иным способом пользуясь функциями для зарегистрированных пользователей, вы подтверждаете, что прочитали и принимаете это соглашение и Политику конфиденциальности (https://intgetion.com/ru/privacy). Просматривать открытые страницы можно без регистрации; к такому просмотру применяются разделы 6, 9–12.
+1.3. Это соглашение — договор между нами и вами (далее — «Пользователь») о пользовании Сервисом. Регистрируясь, входя через Telegram или иным способом пользуясь функциями для зарегистрированных пользователей, вы подтверждаете, что прочитали и принимаете это соглашение и [Политику конфиденциальности](/ru/privacy). Просматривать открытые страницы можно без регистрации; к такому просмотру применяются разделы 6, 9–12.
 
 1.4. Если вы принимаете соглашение от имени компании, вы подтверждаете, что вправе действовать от её имени, и соглашение обязательно и для компании.
 
 ## 2. Кто может пользоваться Сервисом
 
-2.1. Сервисом могут пользоваться лица старше 16 лет [ОСНОВАТЕЛЬ: 16 или 18 — с юристом, с учётом трудового права стран пользователей]. Работодателями могут быть дееспособные лица и организации.
+2.1. Сервисом могут пользоваться лица не младше {{minAge}} лет. Работодателями могут быть дееспособные лица и организации.
 
 2.2. Нельзя пользоваться Сервисом, если ваш аккаунт ранее был заблокирован нами, или если это запрещено законом, который к вам применяется.
 
@@ -87,7 +87,7 @@
 
 8.1. При нарушении соглашения или закона, а также при обоснованном подозрении в мошенничестве мы можем без предварительного уведомления: скрыть или удалить контент; приостановить аккаунт на срок или до выяснения; заблокировать аккаунт навсегда и запретить повторную регистрацию.
 
-8.2. Мы сообщаем причину приостановки или блокировки, если это не мешает расследованию и не запрещено законом. Решение можно оспорить, написав нам (раздел 15); мы ответим в разумный срок [ОСНОВАТЕЛЬ: например, 14 дней].
+8.2. Мы сообщаем причину приостановки или блокировки, если это не мешает расследованию и не запрещено законом. Решение можно оспорить, написав нам (раздел 15); мы ответим в течение {{appealDays}} дней.
 
 ## 9. Интеллектуальная собственность
 
@@ -125,36 +125,36 @@
 
 ## 14. Применимое право и споры
 
-14.1. К соглашению применяется право [ОСНОВАТЕЛЬ: страна]. Если вы потребитель в стране, закон которой даёт вам более сильную защиту, эта защита сохраняется.
+14.1. К соглашению применяется право {{lawCountry}}. Если вы потребитель в стране, закон которой даёт вам более сильную защиту, эта защита сохраняется.
 
-14.2. Споры мы сначала стараемся решить перепиской (раздел 15). Если не получилось — спор рассматривает суд [ОСНОВАТЕЛЬ: место], если иное не предусмотрено обязательными нормами закона.
+14.2. Споры мы сначала стараемся решить перепиской (раздел 15). Если не получилось — спор рассматривает {{court}}, если иное не предусмотрено обязательными нормами закона.
 
 ## 15. Связь с нами
 
-- Общие вопросы и споры: [ОСНОВАТЕЛЬ: адрес почты поддержки]
-- Персональные данные: [ОСНОВАТЕЛЬ: адрес почты по вопросам данных]
-- Сообщения об уязвимостях: [ОСНОВАТЕЛЬ: security@…] — мы не преследуем добросовестных исследователей, которые сообщили об уязвимости, не использовали её во вред и не раскрывали до исправления.
-- Почтовый адрес: [ОСНОВАТЕЛЬ: адрес]
+- Общие вопросы и споры: {{supportEmail}}
+- Персональные данные: {{privacyEmail}}
+- Сообщения об уязвимостях: {{securityEmail}} — мы не преследуем добросовестных исследователей, которые сообщили об уязвимости, не использовали её во вред и не раскрывали до исправления.
+- Почтовый адрес: {{address}}
 
----
+<!-- en -->
 
 # INTGETION JOB LIST Terms of Use
 
-Version of [FOUNDER: publication date]. Version id: [TERMS_VERSION].
+Version of {{effectiveDate}}. Version id {{version}}.
 
 ## 1. Who we are and what this agreement is
 
 1.1. INTGETION JOB LIST (the "Service") is the website https://intgetion.com, its subdomains, its Telegram bot and related features that help people find remote work and companies find people.
 
-1.2. The Service is provided by [FOUNDER: legal name, registration number, address] ("we", "us").
+1.2. The Service is provided by {{operator}}, {{address}} ("we", "us").
 
-1.3. These Terms are a contract between us and you ("User"). By registering, signing in with Telegram or otherwise using features for registered users, you confirm that you have read and accept these Terms and the Privacy Policy (https://intgetion.com/en/privacy). Public pages can be viewed without an account; sections 6 and 9–12 apply to such use.
+1.3. These Terms are a contract between us and you ("User"). By registering, signing in with Telegram or otherwise using features for registered users, you confirm that you have read and accept these Terms and the [Privacy Policy](/en/privacy). Public pages can be viewed without an account; sections 6 and 9–12 apply to such use.
 
 1.4. If you accept on behalf of a company, you confirm you are authorized to do so, and the Terms bind the company.
 
 ## 2. Eligibility
 
-2.1. You must be at least 16 [FOUNDER: 16 or 18, with counsel]. Employers must be legally capable persons or organizations.
+2.1. You must be at least {{minAge}}. Employers must be legally capable persons or organizations.
 
 2.2. You may not use the Service if we have banned your account before or if the law that applies to you forbids it.
 
@@ -218,7 +218,7 @@ Version of [FOUNDER: publication date]. Version id: [TERMS_VERSION].
 
 8.1. If you breach these Terms or the law, or there is a reasonable suspicion of fraud, we may without prior notice hide or remove content, suspend an account for a period or pending review, or ban it permanently and prevent re-registration.
 
-8.2. We tell you the reason unless that would hinder an investigation or is prohibited by law. You can appeal by contacting us (section 15); we will reply within a reasonable time [FOUNDER: e.g. 14 days].
+8.2. We tell you the reason unless that would hinder an investigation or is prohibited by law. You can appeal by contacting us (section 15); we will reply within {{appealDays}} days.
 
 ## 9. Intellectual property
 
@@ -256,13 +256,13 @@ Version of [FOUNDER: publication date]. Version id: [TERMS_VERSION].
 
 ## 14. Governing law and disputes
 
-14.1. These Terms are governed by the law of [FOUNDER: country]. If you are a consumer in a country whose law gives you stronger protection, that protection remains.
+14.1. These Terms are governed by the law of {{lawCountry}}. If you are a consumer in a country whose law gives you stronger protection, that protection remains.
 
-14.2. We first try to resolve disputes by correspondence (section 15). If that fails, the courts of [FOUNDER: place] decide, unless mandatory law provides otherwise.
+14.2. We first try to resolve disputes by correspondence (section 15). If that fails, {{court}} decides, unless mandatory law provides otherwise.
 
 ## 15. Contact
 
-- General questions and disputes: [FOUNDER: support email]
-- Personal data: [FOUNDER: privacy email]
-- Vulnerability reports: [FOUNDER: security@…] — we do not pursue good-faith researchers who report a vulnerability, do not exploit it to cause harm and do not disclose it before a fix.
-- Postal address: [FOUNDER: address]
+- General questions and disputes: {{supportEmail}}
+- Personal data: {{privacyEmail}}
+- Vulnerability reports: {{securityEmail}} — we do not pursue good-faith researchers who report a vulnerability, do not exploit it to cause harm and do not disclose it before a fix.
+- Postal address: {{address}}

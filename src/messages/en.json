@@ -178,7 +178,7 @@
     "methodPassword": "Password",
     "methodMagicLink": "Email link",
     "magicLinkHint": "We will email you a one-time sign-in link.",
-    "acceptTerms": "I accept the terms of use and the privacy policy.",
+    "acceptTerms": "I accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
     "submitLogin": "Sign in",
     "submitMagicLink": "Send link",
     "submitRegister": "Create account",
@@ -215,7 +215,7 @@
       "soon": "Soon",
       "telegramTitle": "Signing in with Telegram",
       "telegramProgress": "Checking the Telegram confirmation…",
-      "telegramTerms": "By continuing with Telegram you accept the terms of use and the privacy policy.",
+      "telegramTerms": "By continuing with Telegram you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
       "telegramLinked": "Telegram is linked to your account."
     }
   },
@@ -956,7 +956,8 @@
     "settings": "Notification settings",
     "rights": "All rights reserved.",
     "language": "Footer language",
-    "employerJobs": "Company jobs"
+    "employerJobs": "Company jobs",
+    "legal": "Legal"
   },
   "ui": {
     "close": "Close",
@@ -1099,7 +1100,8 @@
     "preferencesHint": "Remember your last catalog filters.",
     "analytics": "Analytics",
     "analyticsHint": "Our own anonymous usage statistics. Nothing is collected yet.",
-    "gpcHint": "Your browser sends Global Privacy Control, so analytics stays off."
+    "gpcHint": "Your browser sends Global Privacy Control, so analytics stays off.",
+    "more": "Details"
   },
   "forEmployers": {
     "title": "For employers",
@@ -1428,5 +1430,13 @@
     "empty": "You do not follow any company yet. Press “Follow” on a company page.",
     "openCompany": "Open the company",
     "signIn": "Sign in to follow"
+  },
+  "legal": {
+    "termsTitle": "Terms of Use",
+    "privacyTitle": "Privacy Policy",
+    "toBeSpecified": "to be specified",
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie settings"
   }
 }

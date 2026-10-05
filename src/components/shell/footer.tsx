@@ -67,6 +67,29 @@ export function Footer() {
             <span className="t-data">© {year}</span> {t("product.name")}.{" "}
             {t("footer.rights")}
           </p>
+          <nav
+            aria-label={t("footer.legal")}
+            className="flex flex-wrap gap-x-6 gap-y-2"
+          >
+            <Link
+              href="/terms"
+              className="t-caption text-fg-muted hover:text-fg"
+            >
+              {t("legal.terms")}
+            </Link>
+            <Link
+              href="/privacy"
+              className="t-caption text-fg-muted hover:text-fg"
+            >
+              {t("legal.privacy")}
+            </Link>
+            <Link
+              href="/privacy#cookie-settings"
+              className="t-caption text-fg-muted hover:text-fg"
+            >
+              {t("legal.cookies")}
+            </Link>
+          </nav>
           {/* Scraper trap: never rendered, disallowed in robots.txt (D218). */}
           <a href={SCRAPER_TRAP_PATH} hidden rel="nofollow" tabIndex={-1}>
             {t("product.name")}

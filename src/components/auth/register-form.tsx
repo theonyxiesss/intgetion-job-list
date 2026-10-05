@@ -111,7 +111,30 @@ export function RegisterForm() {
             aria-describedby={errors.acceptTerms ? "terms-error" : undefined}
             {...form.register("acceptTerms")}
           />
-          {t("acceptTerms")}
+          <span>
+            {t.rich("acceptTerms", {
+              terms: (chunks) => (
+                <a
+                  href={`/${locale}/terms`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline"
+                >
+                  {chunks}
+                </a>
+              ),
+              privacy: (chunks) => (
+                <a
+                  href={`/${locale}/privacy`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline"
+                >
+                  {chunks}
+                </a>
+              ),
+            })}
+          </span>
         </label>
         {errors.acceptTerms && (
           <p id="terms-error" className="text-sm text-danger">

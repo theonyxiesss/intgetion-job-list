@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Choice } from "@/components/ui/choice";
+import { Link } from "@/i18n/navigation";
 import {
   ACCEPT_ALL,
   NECESSARY_ONLY,
@@ -26,6 +27,7 @@ export interface CookieBannerText {
   analytics: string;
   analyticsHint: string;
   gpcHint: string;
+  more: string;
 }
 
 /**
@@ -78,7 +80,12 @@ export function CookieBanner({ text }: { text: CookieBannerText }) {
       <div className="mx-auto flex w-full max-w-[1376px] flex-col gap-4 px-4 py-4 md:px-6 xl:px-12">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           {/* One short line: a long text here became the LCP element (D201). */}
-          <p className="t-body-s text-fg-muted">{text.text}</p>
+          <p className="t-body-s text-fg-muted">
+            {text.text}{" "}
+            <Link href="/privacy#cookies" className="underline">
+              {text.more}
+            </Link>
+          </p>
           <div className="flex flex-wrap gap-3">
             <Button variant="secondary" onClick={() => choose(NECESSARY_ONLY)}>
               {text.necessaryOnly}

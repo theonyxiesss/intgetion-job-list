@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonClass } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 import { authAdminAvailable } from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/supabase/env";
 import {
@@ -48,7 +49,20 @@ export async function SocialSignInStubs() {
           >
             {t("telegram")}
           </a>
-          <p className="t-caption text-fg-muted">{t("telegramTerms")}</p>
+          <p className="t-caption text-fg-muted">
+            {t.rich("telegramTerms", {
+              terms: (chunks) => (
+                <Link href="/terms" className="underline">
+                  {chunks}
+                </Link>
+              ),
+              privacy: (chunks) => (
+                <Link href="/privacy" className="underline">
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
         </div>
       )}
       {[...STUBS, ...(telegram ? [] : (["telegram"] as const))].map(
