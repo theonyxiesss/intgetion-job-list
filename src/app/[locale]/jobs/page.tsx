@@ -23,6 +23,7 @@ import { listSearchSkillOptions, searchJobs } from "@/modules/jobs/service";
 import { FilterShell } from "@/modules/jobs/ui/filter-shell";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
 import { QuickFilters } from "@/modules/jobs/ui/quick-filters";
+import { RememberFilters } from "@/modules/jobs/ui/remember-filters";
 
 export const dynamic = "force-dynamic";
 
@@ -169,6 +170,14 @@ export default async function JobsPage({
           }
         />
         <QuickFilters signedIn={signedIn} />
+        <RememberFilters
+          query={
+            activeCount(raw) > 0
+              ? without(raw, "cursor").replace(/^\?/, "")
+              : ""
+          }
+          label={t("restoreFilters")}
+        />
         <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
           <form id="catalog-filters" action="" className="flex flex-col gap-4">
             <FilterShell

@@ -128,6 +128,12 @@ export default async function LocaleLayout({
                 text: t("cookies.text"),
                 acceptAll: t("cookies.acceptAll"),
                 necessaryOnly: t("cookies.necessaryOnly"),
+                customize: t("cookies.customize"),
+                save: t("cookies.save"),
+                preferences: t("cookies.preferences"),
+                preferencesHint: t("cookies.preferencesHint"),
+                analytics: t("cookies.analytics"),
+                analyticsHint: t("cookies.analyticsHint"),
               }}
             />
           </ToastProvider>

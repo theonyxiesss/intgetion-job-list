@@ -2,19 +2,30 @@
 
 import { useState } from "react";
 import { Choice } from "@/components/ui/choice";
-import { writeConsent, type Consent } from "@/lib/consent";
+import {
+  CONSENT_CATEGORIES,
+  NECESSARY_ONLY,
+  writeConsent,
+  type Consent,
+  type ConsentCategory,
+} from "@/lib/consent";
 
 export interface CookieChoiceText {
   title: string;
   text: string;
   necessary: string;
-  all: string;
+  necessaryHint: string;
+  preferences: string;
+  preferencesHint: string;
+  analytics: string;
+  analyticsHint: string;
   saved: string;
 }
 
 /**
- * Change the cookie choice made in the banner (D201): withdrawing consent
- * must be as easy as giving it. Applies at once, no save button.
+ * Change the cookie choice made in the banner (D201, D219): withdrawing
+ * consent must be as easy as giving it. Each switch applies at once and a
+ * withdrawn category deletes its cookies.
  */
 export function CookieChoice({
   initial,
@@ -23,12 +34,13 @@ export function CookieChoice({
   initial: Consent | null;
   text: CookieChoiceText;
 }) {
-  const [value, setValue] = useState<Consent>(initial ?? "necessary");
+  const [value, setValue] = useState<Consent>(initial ?? NECESSARY_ONLY);
   const [saved, setSaved] = useState(false);
 
-  function choose(consent: Consent) {
-    writeConsent(consent);
-    setValue(consent);
+  function toggle(category: ConsentCategory, allowed: boolean) {
+    const next = { ...value, [category]: allowed };
+    writeConsent(next);
+    setValue(next);
     setSaved(true);
   }
 
@@ -43,15 +55,20 @@ export function CookieChoice({
       <p className="t-body-s max-w-[60ch] text-fg-muted">{text.text}</p>
       <fieldset className="flex flex-col">
         <legend className="sr-only">{text.title}</legend>
-        {(["necessary", "all"] as const).map((option) => (
+        <Choice
+          label={text.necessary}
+          hint={text.necessaryHint}
+          checked
+          disabled
+          readOnly
+        />
+        {CONSENT_CATEGORIES.map((category) => (
           <Choice
-            key={option}
-            type="radio"
-            name="cookie-consent"
-            value={option}
-            checked={value === option}
-            onChange={() => choose(option)}
-            label={text[option]}
+            key={category}
+            label={text[category]}
+            hint={text[`${category}Hint`]}
+            checked={value[category]}
+            onChange={(event) => toggle(category, event.target.checked)}
           />
         ))}
       </fieldset>

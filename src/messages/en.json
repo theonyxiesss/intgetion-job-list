@@ -60,7 +60,8 @@
     "apply": "Apply",
     "sector": "Sector",
     "seniority": "Seniority",
-    "perk": "Perks"
+    "perk": "Perks",
+    "restoreFilters": "Bring back your last filters"
   },
   "companyPage": {
     "trusted": "Trusted employer",
@@ -957,10 +958,14 @@
     },
     "cookies": {
       "title": "Cookies",
-      "text": "Necessary cookies keep you signed in and remember your language. Optional ones (analytics) are used only if you allow them — there are none yet.",
-      "necessary": "Necessary only",
-      "all": "Allow all",
-      "saved": "Saved."
+      "text": "Necessary cookies are always on. Optional ones work only while their switch is on; turning a switch off deletes what it stored.",
+      "necessary": "Necessary",
+      "saved": "Saved.",
+      "necessaryHint": "Sign-in, language, the agent's session and this choice.",
+      "preferences": "Preferences",
+      "preferencesHint": "Remember your last catalog filters.",
+      "analytics": "Analytics",
+      "analyticsHint": "Our own anonymous usage statistics. Nothing is collected yet."
     }
   },
   "chat": {
@@ -997,9 +1002,15 @@
   },
   "cookies": {
     "label": "Cookie choice",
-    "text": "Necessary cookies only. Analytics only with your consent.",
+    "text": "Necessary cookies only. The rest only with your consent.",
     "acceptAll": "Accept all",
-    "necessaryOnly": "Necessary only"
+    "necessaryOnly": "Necessary only",
+    "customize": "Customize",
+    "save": "Save choice",
+    "preferences": "Preferences",
+    "preferencesHint": "Remember your last catalog filters.",
+    "analytics": "Analytics",
+    "analyticsHint": "Our own anonymous usage statistics. Nothing is collected yet."
   },
   "forEmployers": {
     "title": "For employers",

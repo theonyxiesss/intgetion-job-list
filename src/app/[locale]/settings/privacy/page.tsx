@@ -39,7 +39,11 @@ export default async function PrivacySettingsPage({
             title: t("cookies.title"),
             text: t("cookies.text"),
             necessary: t("cookies.necessary"),
-            all: t("cookies.all"),
+            necessaryHint: t("cookies.necessaryHint"),
+            preferences: t("cookies.preferences"),
+            preferencesHint: t("cookies.preferencesHint"),
+            analytics: t("cookies.analytics"),
+            analyticsHint: t("cookies.analyticsHint"),
             saved: t("cookies.saved"),
           }}
         />
