@@ -588,10 +588,10 @@
 - OPEN QUESTION: LCP главной близко к бюджету 2500 мс (медианы 2474–2506), нужен запас. Номера Cursor: админка заняла D250–D255 и миграцию `0027`, новому входу через Telegram (`cursor/telegram-login-rescue`) — миграция `0028` и решения с D256.
 - Следующее: основатель — DNS и домен `admin.intgetion.com` в Vercel, затем `ADMIN_HOST_ONLY=1`; Cursor — Telegram-вход на новых номерах.
 
-## [2026-10-05] — P-MOBILE — DONE на ветке cursor/p-mobile
+## [2026-10-05] — P-MOBILE — на ветке cursor/p-mobile
 
-- Сделано: e2e на 360 и 390 для главной, каталога, вакансии, зарплат, входа и чата (без горизонтальной прокрутки, зоны нажатия кнопок и полей ≥ 44 px, axe без critical и serious). Нижнее меню кандидата проверено на 360. Чат на телефоне занимает экран между шапкой и меню, поле ввода не уезжает под клавиатуру (`interactive-widget: resizes-content`). В `scripts/ci-ui.sh` мобильный Lighthouse каталога и вакансии, медиана пяти прогонов, потолок 4500 мс (D288).
-- Команды проверки: см. прогон CI ветки.
+- Сделано: e2e на 360 и 390 для главной, каталога, вакансии, зарплат, входа и чата (без горизонтальной прокрутки, зоны нажатия кнопок и полей ≥ 44 px, axe без critical и serious). Нижнее меню кандидата проверено на 360. Чат на телефоне занимает экран между шапкой и меню, поле ввода не уезжает под клавиатуру (`interactive-widget: resizes-content`). В `scripts/ci-ui.sh` мобильный Lighthouse каталога и вакансии, медиана пяти прогонов, потолок 4500 мс (D288). «Не указано» в телеметрии красится `--fg-muted` (D286): `#71717A` на чёрном — 4.35:1.
+- Команды проверки: первый прогон https://github.com/theonyxiesss/intgetion-job-list/actions/runs/37363382897 — `check` success, `database` failure. `phone.spec.ts` на странице вакансии: `serious:color-contrast`. Повтор после правки телеметрии — в следующем прогоне.
 - P-тесты подфазы: phone.spec.ts, правка mobile-app.spec.ts.
 - Миграции: нет.
 - Изменённые файлы: `src/components/bot/chat.tsx`, `src/app/[locale]/chat/page.tsx`, `src/app/[locale]/chat/layout.tsx`, `src/app/globals.css`, `tests/e2e/phone.spec.ts`, `tests/e2e/mobile-app.spec.ts`, `scripts/ci-ui.sh`, `docs/DECISIONS.md`, `MISSION_LOG.md`.

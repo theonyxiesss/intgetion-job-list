@@ -22,7 +22,7 @@ export function Stat({
       <dd
         className={cn(
           large ? "t-data-l" : "t-data",
-          muted ? "text-fg-subtle" : "text-fg",
+          muted ? "text-fg-muted" : "text-fg",
           "break-words",
         )}
       >
