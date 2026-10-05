@@ -121,8 +121,7 @@ export default async function HomePage({
         <Container className="relative flex min-h-[70vh] flex-col justify-end gap-8 py-16 md:py-24">
           <p className="t-label text-fg-muted">{product("name")}</p>
           <h1 className="t-display-xl max-w-[16ch]">
-            {t("line1")}
-            <br />
+            {t("line1")} <br />
             {t("line2")}
           </h1>
           <p className="max-w-[52ch] text-fg-muted">{t("subtitle")}</p>
