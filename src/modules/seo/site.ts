@@ -51,6 +51,18 @@ export const BLOCKED_CRAWLERS = [
 ] as const;
 
 /**
+ * Crawlers that collect text for training AI models. Refused by the
+ * founder's decision (D218); Google-Extended does not affect Google Search.
+ */
+export const AI_CRAWLERS = [
+  "GPTBot",
+  "ClaudeBot",
+  "anthropic-ai",
+  "Google-Extended",
+  "CCBot",
+] as const;
+
+/**
  * A link no person sees (hidden in the footer) and every honest crawler is
  * told to skip: whoever requests it is a scraper ignoring robots.txt (D218).
  */
