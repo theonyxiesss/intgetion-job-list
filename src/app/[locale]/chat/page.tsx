@@ -18,9 +18,11 @@ export default async function ChatPage({
   const user = await getCurrentUser(supabase.auth);
   const t = await getTranslations("chat");
   return (
-    <main className="py-10 md:py-16">
-      <Container className="flex max-w-3xl flex-col gap-8">
-        <PageHeader title={t("title")} intro={t("intro")} />
+    <main className="md:py-16">
+      <Container className="md:flex md:max-w-3xl md:flex-col md:gap-8">
+        <div className="max-md:hidden">
+          <PageHeader title={t("title")} intro={t("intro")} />
+        </div>
         <Chat signedIn={user !== null} />
       </Container>
     </main>

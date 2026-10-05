@@ -320,6 +320,17 @@
   animation-delay: calc(var(--i, 0) * 80ms);
 }
 
+/* Phone chat fills the screen. The tab bar, when a candidate has one, sits below it (D287). */
+@media (max-width: 767px) {
+  body:has(.chat-shell) {
+    overflow: hidden;
+  }
+
+  body:has([data-bottom-nav]) .chat-shell {
+    bottom: 4rem;
+  }
+}
+
 /* Staggered entry for list items and menu items: set --i on each. */
 .ui-stagger {
   animation: ui-fade-up var(--d-slow) var(--ease-out-expo) both;

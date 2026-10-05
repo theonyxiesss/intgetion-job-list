@@ -76,3 +76,45 @@ const median = [...runs].sort((a, b) => a - b)[Math.floor(runs.length / 2)];
 console.log(`lcp_ms ${median} (median of ${runs.length})`);
 if (!(median < 2500)) process.exit(1);
 EOF
+
+# Catalog and one job, mobile form factor, five-run median (D288).
+# 4500 ms is the first ceiling: the homepage's worst recent run was 2489,
+# and these pages are heavier. Tighten only after a measured median.
+job_path="$(curl -sf "http://127.0.0.1:3000/en/jobs" | grep -oE '/en/jobs/[0-9a-f-]{36}' | head -n 1 || true)"
+if [[ -z "$job_path" ]]; then
+  echo "no public job to measure" >&2
+  exit 1
+fi
+
+measure_mobile() {
+  local name="$1"
+  local url="$2"
+  for run in 1 2 3 4 5; do
+    pnpm dlx lighthouse@12.8.2 "$url" \
+      --quiet \
+      --chrome-path="$chrome" \
+      --form-factor=mobile \
+      --only-categories=performance \
+      --output=json \
+      --output-path="/tmp/lh-${name}-${run}.json" \
+      --chrome-flags="--headless --no-sandbox"
+  done
+  NAME="$name" node --input-type=module <<'EOF'
+import fs from "node:fs";
+
+const name = process.env.NAME;
+const runs = [1, 2, 3, 4, 5].map((run) => {
+  const report = JSON.parse(fs.readFileSync(`/tmp/lh-${name}-${run}.json`, "utf8"));
+  const lcp = report.audits["largest-contentful-paint"].numericValue;
+  console.log(`${name} run ${run}: lcp_ms ${Math.round(lcp)}`);
+  return lcp;
+});
+if (!runs.every((lcp) => typeof lcp === "number")) process.exit(1);
+const median = [...runs].sort((a, b) => a - b)[Math.floor(runs.length / 2)];
+console.log(`${name} lcp_ms ${median} (median of ${runs.length})`);
+if (!(median < 4500)) process.exit(1);
+EOF
+}
+
+measure_mobile catalog "http://127.0.0.1:3000/en/jobs"
+measure_mobile job "http://127.0.0.1:3000${job_path}"
