@@ -17,7 +17,10 @@ import { Header } from "@/components/shell/header";
 import { MiniAppBar } from "@/components/auth/mini-app-bar";
 import { TelegramMiniApp } from "@/components/auth/telegram-mini-app";
 import { flags } from "@/config/flags";
-import { isFramedRequest } from "@/lib/supabase/cookie-options";
+import {
+  hasMiniAppMarker,
+  isFramedRequest,
+} from "@/lib/supabase/cookie-options";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { ToastProvider } from "@/components/ui";
 import { routing, type AppLocale } from "@/i18n/routing";
@@ -110,6 +113,7 @@ export default async function LocaleLayout({
   const signedIn = hasSessionMark(requestHeaders);
   // Inside Telegram's frame the session cannot follow the person out (D316).
   const framed = isFramedRequest(requestHeaders);
+  const inMiniApp = framed || hasMiniAppMarker(requestHeaders);
   const t = await getTranslations();
   // Only namespaces that client components read go into the page (D41b);
   // the full catalogue added ~22 KB to every HTML document.
@@ -146,7 +150,7 @@ export default async function LocaleLayout({
             {flags.telegramMiniAppEnabled && !signedIn && (
               <TelegramMiniApp locale={locale as AppLocale} />
             )}
-            {flags.telegramMiniAppEnabled && signedIn && framed && (
+            {flags.telegramMiniAppEnabled && signedIn && inMiniApp && (
               <MiniAppBar locale={locale as AppLocale} />
             )}
             <ServiceWorker />

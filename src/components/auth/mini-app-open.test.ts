@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   deliverHandoffUrl,
   handoffNeedsCopy,
+  isEmbeddedFrame,
   isOwnHandoffUrl,
   readTelegramInitData,
   type ReservedPopup,
@@ -102,6 +103,14 @@ describe("handoff out of the Mini App (D318)", () => {
       ),
     ).toBe(false);
     expect(isOwnHandoffUrl("not a url", "https://intgetion.com")).toBe(false);
+  });
+
+  it("treats a phone webview as the top document and Telegram Web as a frame", () => {
+    const top = { parent: null as unknown };
+    top.parent = top;
+    expect(isEmbeddedFrame(top)).toBe(false);
+    expect(isEmbeddedFrame({ parent: top })).toBe(true);
+    expect(isEmbeddedFrame({ parent: null })).toBe(false);
   });
 
   it("reads the signed payload from the fragment, then from the client", () => {

@@ -4,6 +4,7 @@ import {
   authCookieOptions,
   framedMarkerCookie,
   isFramedRequest,
+  phoneMiniAppCookie,
 } from "./supabase/cookie-options";
 import { isAllowedOrigin, needsOriginCheck } from "./origin";
 import { privacyHash } from "./privacy-hash";
@@ -200,6 +201,16 @@ describe("the session inside the Mini App frame (D315)", () => {
     expect(isFramedRequest(new Headers({ "sec-fetch-dest": "document" }))).toBe(
       false,
     );
+    // The phone marker must not switch later requests onto Partitioned cookies.
+    expect(isFramedRequest(new Headers({ cookie: "tg_app=1" }))).toBe(false);
+  });
+
+  it("marks a phone Mini App with a first-party cookie", () => {
+    const cookie = phoneMiniAppCookie();
+    expect(cookie).toContain("tg_app=1");
+    expect(cookie).toContain("SameSite=Lax");
+    expect(cookie).not.toContain("Partitioned");
+    expect(cookie).not.toContain("SameSite=None");
   });
 
   it("keeps the marker out of reach and inside the frame", () => {

@@ -804,3 +804,10 @@
 - Сделано: D319. `https://admin.intgetion.com/` отвечал 404, вход при этом открыт на `/en/admin/login`. Корень админ-хоста теперь 307 на этот вход. `/en` и `/en/jobs` на админ-хосте по-прежнему 404.
 - Команды проверки: `pnpm exec vitest run src/admin/host.test.ts` → 0 (6 tests). Живой прод до выкладки: `curl -sI https://admin.intgetion.com/` → 404; `curl -sI https://admin.intgetion.com/en/admin/login` → 200.
 - Миграции: нет. Решения: D319.
+
+## [2026-10-06] — телефонный Mini App — на ветке cursor/mini-app-phone
+
+- Сделано: D320. На компьютере Mini App — фрейм, сессия `Partitioned` сохраняется, человек сразу в кабинете. На телефоне то же окно — верхний документ webview, и эти куки не сохраняются, поэтому тот же аккаунт остаётся гостем. Вход теперь пишет обычную `SameSite=Lax` сессию, если страница не во фрейме. Метка визита на телефоне — `tg_app`, не `tg_frame`: иначе следующий запрос снова включил бы Partitioned. Полоса внизу показывается и по этой метке.
+- Команды проверки: `pnpm exec vitest run src/components/auth/mini-app-open.test.ts src/lib/security.test.ts` → 0 (2 файла, 31 тест). eslint по этим файлам → 0. `pnpm exec tsc --noEmit` → 0.
+- Миграции: нет. Решения: D320.
+- OPEN QUESTION: нет. Живой телефон можно проверить только после выкладки этой ветки.
