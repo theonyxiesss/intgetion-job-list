@@ -665,3 +665,12 @@
 - Миграции: нет. Решения: D299–D301.
 - OPEN QUESTION: текст есть у семнадцати подборок из примерно ста. Остальным нужен либо текст, либо честное понимание, что высоко они не встанут. Следующие кандидаты по спросу — eco-ethereum, eco-solana, exchange, dao, engineering, design, marketing, community.
 - Следующее: зелёный CI → ff master.
+
+## [2026-10-06] — D302 ещё восемь текстов подборок — на ветке claude/integrate-seo2
+
+- Сделано: тексты для eco-ethereum, eco-solana, exchange, dao, engineering, design, marketing, community. Всего подборок с собственным текстом — 25.
+- Проверка в браузере (dev, порт 3400): `/en/jobs/t/exchange` 131 слово, `/en/jobs/t/dao` 136, `/ru/jobs/t/engineering` 108, `/ru/jobs/t/eco-solana` 112 — текст на странице и в `description`.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0, `pnpm exec eslint src` → 0, `pnpm exec vitest run` → 659 passed (тест длины и уникальности покрывает новые тексты автоматически). Красный `legal.test.ts` — артефакт CRLF рабочей копии Windows.
+- Миграции: нет. Решения: D302.
+- OPEN QUESTION: подтверждение сайта в Search Console, Вебмастере и Bing по-прежнему за основателем. Проверено в этой сессии: коннектор Vercel видит только команду `marks-projects-a1f8edb6` с проектами `intgetion` (домен `intgetion.vercel.app`) и `theonyxis` — проекта `intgetion-job-list`, который обслуживает intgetion.com, в доступе нет, переменные ему Claude поставить не может. Сами токены выдаются только после входа в аккаунты основателя.
+- Следующее: зелёный CI → ff master.

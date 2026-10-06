@@ -15,4 +15,10 @@
 
 ## Что уже написано
 
-web3, defi, nft, gamefi, zk, solidity, rust, react, smartcontracts, remote, senior, entry и пять регионов: europe, north-america, latam, apac, africa-mena.
+Двадцать пять подборок:
+
+- сферы: web3, defi, nft, gamefi, zk, dao, exchange, eco-ethereum, eco-solana;
+- профессии: engineering, design, marketing, community;
+- навыки: solidity, rust, react, smartcontracts;
+- формат и уровень: remote, senior, entry;
+- регионы: europe, north-america, latam, apac, africa-mena.
