@@ -11,6 +11,7 @@ import {
   PERKS,
   region,
   REGIONS,
+  relatedTags,
   SECTORS,
   sectorsForCard,
   seniorityPenalty,
@@ -83,5 +84,38 @@ describe("collection pages for skills and regions (D294, D295)", () => {
       expect(item.minOverlap).toBeGreaterThan(0);
       expect(item.minOverlap).toBeLessThanOrEqual(12);
     }
+  });
+});
+
+describe("neighbouring collections (D301)", () => {
+  it("links a sector to its own group and never to itself", () => {
+    const near = relatedTags("defi").map((tag) => tag.slug);
+    expect(near).not.toContain("defi");
+    expect(near).toContain("web3");
+    expect(near.length).toBeLessThanOrEqual(6);
+    expect(near.every((slug) => catalogTag(slug) !== null)).toBe(true);
+  });
+
+  it("links a skill to the skills of the same professional category", () => {
+    const near = relatedTags("aml").map((tag) => tag.slug);
+    expect(near).toContain("compliance");
+    expect(near).toContain("cryptolaw");
+    expect(near).not.toContain("solidity");
+  });
+
+  it("links levels, employment types and regions to their own family", () => {
+    expect(relatedTags("senior").map((tag) => tag.slug)).toContain("lead");
+    expect(relatedTags("full-time").map((tag) => tag.slug)).toContain(
+      "part-time",
+    );
+    expect(relatedTags("latam").map((tag) => tag.slug)).toContain("apac");
+  });
+
+  it("gives the headline filters a neighbour too, and nothing to a stranger", () => {
+    expect(relatedTags("remote").length).toBeGreaterThan(0);
+    expect(relatedTags("remote").map((tag) => tag.slug)).not.toContain(
+      "remote",
+    );
+    expect(relatedTags("missing")).toEqual([]);
   });
 });

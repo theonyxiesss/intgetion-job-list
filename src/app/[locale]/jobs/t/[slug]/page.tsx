@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { CatalogTag } from "@/config/markers";
-import { catalogTag, MARKER_SKILLS } from "@/config/markers";
+import { catalogTag, relatedTags } from "@/config/markers";
 import { buttonClass } from "@/components/ui/button";
 import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
 import { navForward } from "@/components/ui/page-transition";
+import { tagIntro } from "@/content/tag-intros";
 import { Link } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
@@ -18,7 +19,12 @@ import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
 import { QuickFilters } from "@/modules/jobs/ui/quick-filters";
 import { JsonLd } from "@/modules/seo/json-ld";
 import { breadcrumbListJsonLd, faqPageJsonLd } from "@/modules/seo/markup";
-import { languageAlternates, siteUrl } from "@/modules/seo/site";
+import {
+  languageAlternates,
+  metaDescription,
+  siteUrl,
+} from "@/modules/seo/site";
+import { tagLabel } from "@/modules/seo/tag-label";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +53,7 @@ export async function generateMetadata({
   const tag = catalogTag(slug);
   if (!tag) return {};
   const markers = await getTranslations({ locale, namespace: "markers" });
-  const name = await tagName(tag, locale, slug);
+  const name = await tagLabel(tag, locale, slug);
   const title =
     tag.kind === "high-paying"
       ? markers("highPayTitle")
@@ -55,7 +61,13 @@ export async function generateMetadata({
   const found = tag.kind === "for-you" ? 0 : await countForIndexing(tag);
   return {
     title,
-    description: markers("tagDescription", { name }),
+    // The page's own words describe it better than a template (D299).
+    description: (() => {
+      const written = tagIntro(slug, locale);
+      return written
+        ? metaDescription(written)
+        : markers("tagDescription", { name });
+    })(),
     alternates: {
       canonical: `${siteUrl()}/${locale}/jobs/t/${slug}`,
       languages: languageAlternates(`/jobs/t/${slug}`),
@@ -67,31 +79,6 @@ export async function generateMetadata({
     robots:
       found < MIN_INDEXABLE_JOBS ? { index: false, follow: true } : undefined,
   };
-}
-
-/** The tag in the visitor's language — one source for title, FAQ and crumbs. */
-async function tagName(
-  tag: CatalogTag,
-  locale: string,
-  slug: string,
-): Promise<string> {
-  const markers = await getTranslations({ locale, namespace: "markers" });
-  const categories = await getTranslations({ locale, namespace: "categories" });
-  const jobs = await getTranslations({ locale, namespace: "jobs" });
-  if (tag.kind === "sector") return markers(`sectors.${tag.sector}`);
-  if (tag.kind === "category") return categories(tag.category);
-  if (tag.kind === "seniority") return markers(`seniority.${tag.seniority}`);
-  if (tag.kind === "employment") return jobs(tag.employment);
-  if (tag.kind === "region") return markers(`regions.${tag.region.slug}`);
-  if (tag.kind === "remote") return jobs("remote");
-  return skillName(slug, locale);
-}
-
-/** Marker skills carry their own names; a database-only skill keeps its slug. */
-function skillName(slug: string, locale: string): string {
-  const skill = MARKER_SKILLS.find((item) => item.slug === slug);
-  if (!skill) return slug;
-  return locale === "ru" ? skill.nameRu : skill.nameEn;
 }
 
 export default async function TagPage({
@@ -129,7 +116,7 @@ export default async function TagPage({
     locale,
     viewer,
   );
-  const name = await tagName(tag, locale, slug);
+  const name = await tagLabel(tag, locale, slug);
   const title =
     tag.kind === "high-paying"
       ? markers("highPayTitle")
@@ -138,6 +125,14 @@ export default async function TagPage({
     tag.kind === "high-paying"
       ? markers("highPayIntro", { threshold: markers("highPayThreshold") })
       : markers("tagIntro", { name });
+  // A text written for this collection, when it has one (D299).
+  const written = tagIntro(slug, locale);
+  const neighbours = await Promise.all(
+    relatedTags(slug).map(async (near) => ({
+      slug: near.slug,
+      label: await tagLabel(near, locale, near.slug),
+    })),
+  );
   const nextParams = new URLSearchParams();
   for (const [key, value] of Object.entries(raw))
     for (const item of Array.isArray(value) ? value : value ? [value] : [])
@@ -182,6 +177,11 @@ export default async function TagPage({
             {markers("highPayThreshold")}
           </p>
         ) : null}
+        {written ? (
+          <section className="flex max-w-3xl flex-col gap-4">
+            <p className="text-fg-muted">{written}</p>
+          </section>
+        ) : null}
         <QuickFilters signedIn={signedIn} activeSlug={slug} />
         {result.items.length ? (
           <ul className="grid gap-4">
@@ -202,6 +202,23 @@ export default async function TagPage({
           >
             {jobs("next")}
           </Link>
+        ) : null}
+        {neighbours.length ? (
+          <nav className="flex flex-col gap-3" aria-label={markers("nearby")}>
+            <h2 className="t-h3">{markers("nearby")}</h2>
+            <ul className="flex flex-wrap gap-2">
+              {neighbours.map((near) => (
+                <li key={near.slug}>
+                  <Link
+                    className="t-label border border-line px-3 py-2 text-fg-muted"
+                    href={`/jobs/t/${near.slug}`}
+                  >
+                    {near.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         ) : null}
         {faq.length ? (
           <section className="flex flex-col gap-4">

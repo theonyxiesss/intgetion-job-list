@@ -612,3 +612,50 @@ export function catalogTag(slug: string): CatalogTag | null {
 export function sqlTextList(values: readonly string[]): string {
   return values.map((value) => `'${value}'`).join(", ");
 }
+
+/**
+ * Neighbouring collections to link to from a collection page (D301).
+ * Siblings of the same kind: sectors from the same group, skills from the same
+ * professional category, the other levels, employment types or regions. Links
+ * stay inside the catalogue, so a visitor and a crawler can walk sideways
+ * instead of returning to the home page.
+ */
+export function relatedTags(slug: string, limit = 6): CatalogTag[] {
+  const tag = catalogTag(slug);
+  if (!tag) return [];
+  const siblings = (slugs: readonly string[]) =>
+    slugs
+      .filter((item) => item !== slug)
+      .map((item) => catalogTag(item))
+      .filter((item): item is CatalogTag => item !== null)
+      .slice(0, limit);
+
+  if (tag.kind === "sector") {
+    const group = SECTOR_GROUPS.find((item) =>
+      (item.sectors as readonly string[]).includes(tag.sector),
+    );
+    return siblings(group ? group.sectors : []);
+  }
+  if (tag.kind === "skill") {
+    const skill = MARKER_SKILLS.find((item) => item.slug === tag.skillSlug);
+    return skill
+      ? siblings(
+          MARKER_SKILLS.filter((item) => item.category === skill.category).map(
+            (item) => item.slug,
+          ),
+        )
+      : [];
+  }
+  if (tag.kind === "category") return siblings(JOB_CATEGORIES);
+  if (tag.kind === "seniority") return siblings(SENIORITY_LEVELS);
+  if (tag.kind === "employment")
+    return siblings(
+      QUICK_FILTERS.filter((item) => item.kind === "employment").map(
+        (item) => item.slug,
+      ),
+    );
+  if (tag.kind === "region") return siblings(REGIONS.map((item) => item.slug));
+  // Remote, non-technical and high-paying have no family; the catalogue's own
+  // headline filters are the closest thing to a neighbour.
+  return siblings(["remote", "non-technical", "high-paying", "web3", "senior"]);
+}

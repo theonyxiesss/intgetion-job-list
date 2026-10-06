@@ -187,6 +187,23 @@ test("a region collection lists jobs, answers questions and stays indexable", as
   await expect(
     page.getByRole("heading", { name: "Questions and answers" }),
   ).toBeVisible();
+  // D299-D301: the written intro, the neighbours and the collection's own picture.
+  await expect(page.locator("main section p").first()).toContainText(
+    "European working hours",
+  );
+  const nearby = page.getByRole("navigation", { name: "Nearby collections" });
+  await expect(nearby.getByRole("link")).toHaveCount(4);
+  await expect(
+    nearby.getByRole("link", { name: "Latin America" }),
+  ).toHaveAttribute("href", /\/jobs\/t\/latam$/);
+  const collectionImage = await page
+    .locator('meta[property="og:image"]')
+    .getAttribute("content");
+  expect(collectionImage).toContain("/en/jobs/t/europe/opengraph-image");
+  const picture = await page.request.get(collectionImage ?? "");
+  expect(picture.status()).toBe(200);
+  expect(picture.headers()["content-type"]).toContain("image/png");
+
   const faq = await page
     .locator('script[type="application/ld+json"]')
     .last()

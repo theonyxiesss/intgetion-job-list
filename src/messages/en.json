@@ -1244,6 +1244,9 @@
     "perk": "Perks",
     "tagTitle": "{name} jobs",
     "tagIntro": "Published roles tagged {name}.",
+    "collectionJobs": "{count, plural, one {# open role} other {# open roles}}",
+    "collectionJobsMore": "{count}+ open roles",
+    "nearby": "Nearby collections",
     "tagDescription": "Remote {name} jobs in web3, crypto and AI — fresh openings with pay, time zone and format, in English and Russian.",
     "regions": {
       "europe": "Europe",

@@ -1244,6 +1244,9 @@
     "perk": "Условия",
     "tagTitle": "Вакансии: {name}",
     "tagIntro": "Опубликованные вакансии с меткой {name}.",
+    "collectionJobs": "{count, plural, one {# вакансия} few {# вакансии} many {# вакансий} other {# вакансии}}",
+    "collectionJobsMore": "{count}+ вакансий",
+    "nearby": "Соседние подборки",
     "tagDescription": "Удалённая работа «{name}» в web3, крипте и AI — свежие вакансии с вилкой, часовым поясом и форматом, на русском и английском.",
     "regions": {
       "europe": "Европа",
