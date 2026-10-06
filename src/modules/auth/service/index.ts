@@ -30,6 +30,7 @@ export {
   type ConfirmationMailer,
   type EmailAddResult,
 } from "./email-change";
+export { createSessionHandoff } from "./handoff";
 export { sendTelegramChatAction, sendTelegramMessage } from "./telegram-bot";
 export {
   telegramAuthUrl,

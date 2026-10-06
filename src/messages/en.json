@@ -1601,5 +1601,11 @@
     "jobs": "Jobs",
     "inOurWords": "In our words",
     "originalOn": "Original posting on {source}"
+  },
+  "miniApp": {
+    "intro": "You are signed in through Telegram. Open the site in your own browser to install the app and keep this account there.",
+    "open": "Open in my browser",
+    "addEmail": "Add an email",
+    "failed": "Could not open the link. Try again in a minute."
   }
 }
