@@ -1149,6 +1149,12 @@
     "emptyGuest": "Try: “remote backend jobs with Python”. As a guest you can search; sign up to save jobs and apply.",
     "emptySignedIn": "Try: “find remote design jobs” or “what is the status of my applications?”",
     "score": "{score}% match",
+    "thinking": "Thinking…",
+    "suggestions": {
+      "one": "Remote Solidity jobs",
+      "two": "Part-time design in Europe",
+      "three": "Who is hiring juniors?"
+    },
     "placeholder": "Write a message",
     "send": "Send",
     "guestHint": "Saving jobs, applying and keeping a profile need an account.",

@@ -1,6 +1,6 @@
 "use client";
 
-import { Send } from "lucide-react";
+import { Send, Sparkles } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,9 @@ const ERROR_CODES = new Set([
   "RATE_LIMITED",
 ]);
 
+/** Three openings, so a first-time visitor has something to tap (D312). */
+const SUGGESTIONS = ["one", "two", "three"] as const;
+
 let counter = 0;
 const nextKey = () => `e${(counter += 1)}`;
 
@@ -71,8 +74,10 @@ async function* readEvents(body: ReadableStream<Uint8Array>) {
 }
 
 /**
- * Web chat of 12.1 (D178). Model text is shown as plain text, never HTML
- * (16.2); job cards link only to platform pages.
+ * Web chat of 12.1 (D178), laid out as a conversation (D312). Model text is
+ * shown as plain text, never HTML (16.2); job cards link only to platform
+ * pages. Streamed tokens grow one answer instead of stacking one bubble per
+ * token.
  */
 export function Chat({ signedIn }: { signedIn: boolean }) {
   const t = useTranslations("chat");
@@ -81,6 +86,7 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
+  const [thinking, setThinking] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -124,17 +130,28 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
-  }, [entries]);
+  }, [entries, thinking]);
 
   const add = (entry: Entry) => setEntries((current) => [...current, entry]);
 
-  async function send(event: FormEvent) {
-    event.preventDefault();
-    const message = text.trim();
+  /** Appends streamed text to the answer in progress, or starts one. */
+  function appendAnswer(key: string, chunk: string) {
+    setEntries((current) => {
+      const last = current[current.length - 1];
+      if (last && last.kind === "assistant" && last.key === key) {
+        return [...current.slice(0, -1), { ...last, text: last.text + chunk }];
+      }
+      return [...current, { key, kind: "assistant", text: chunk }];
+    });
+  }
+
+  async function ask(message: string) {
     if (!message || sending) return;
     setText("");
     setSending(true);
+    setThinking(true);
     add({ key: nextKey(), kind: "user", text: message });
+    const answerKey = nextKey();
     try {
       const response = await fetch("/api/bot/message", {
         method: "POST",
@@ -151,17 +168,20 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
       }
       for await (const data of readEvents(response.body)) {
         if (data.type === "token") {
-          add({ key: nextKey(), kind: "assistant", text: String(data.text) });
+          setThinking(false);
+          appendAnswer(answerKey, String(data.text));
         } else if (
           data.type === "tool_result" &&
           (data.kind === "jobs" || data.kind === "matches")
         ) {
+          setThinking(false);
           add({
             key: nextKey(),
             kind: data.kind,
             jobs: data.data as JobCard[],
           });
         } else if (data.type === "confirm_request") {
+          setThinking(false);
           add({
             key: nextKey(),
             kind: "confirm",
@@ -170,14 +190,21 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
             state: "open",
           });
         } else if (data.type === "error") {
+          setThinking(false);
           add({ key: nextKey(), kind: "notice", code: String(data.code) });
         }
       }
     } catch {
       add({ key: nextKey(), kind: "notice", code: "BOT_TRY_LATER" });
     } finally {
+      setThinking(false);
       setSending(false);
     }
+  }
+
+  function send(event: FormEvent) {
+    event.preventDefault();
+    void ask(text.trim());
   }
 
   async function decide(key: string, confirmationId: string, accept: boolean) {
@@ -215,33 +242,51 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
   }
 
   return (
-    <div className="chat-shell flex flex-col gap-6 max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:gap-3 max-md:bg-bg max-md:px-4 max-md:pt-3">
+    <div className="chat-shell flex flex-col gap-4 max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:gap-3 max-md:bg-bg max-md:px-4 max-md:pt-3">
       <div
         role="log"
         aria-live="polite"
         aria-label={t("log")}
-        className="flex min-h-80 flex-col gap-4 border border-line bg-surface p-5 max-md:min-h-0 max-md:flex-1 max-md:overflow-y-auto"
+        className="flex min-h-96 flex-col gap-5 overflow-y-auto border border-line bg-surface p-5 max-md:min-h-0 max-md:flex-1 max-md:border-0 max-md:bg-transparent max-md:p-0"
       >
         {entries.length === 0 && (
-          <p className="t-body-s text-fg-muted">
-            {signedIn ? t("emptySignedIn") : t("emptyGuest")}
-          </p>
+          <div className="m-auto flex max-w-md flex-col items-center gap-5 py-8 text-center">
+            <span className="flex h-12 w-12 items-center justify-center border border-line-strong text-signal">
+              <Icon icon={Sparkles} size={20} />
+            </span>
+            <p className="t-body-s text-fg-muted">
+              {signedIn ? t("emptySignedIn") : t("emptyGuest")}
+            </p>
+            <ul className="flex flex-wrap justify-center gap-2">
+              {SUGGESTIONS.map((slot) => (
+                <li key={slot}>
+                  <button
+                    type="button"
+                    className="t-label border border-line px-3 py-2 text-fg-muted hover:border-line-strong hover:text-fg"
+                    onClick={() => void ask(t(`suggestions.${slot}`))}
+                  >
+                    {t(`suggestions.${slot}`)}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
         {entries.map((entry) => {
-          if (entry.kind === "user" || entry.kind === "assistant") {
+          if (entry.kind === "user") {
             return (
-              <div
-                key={entry.key}
-                className={
-                  entry.kind === "user"
-                    ? "self-end max-w-[80%] border border-line-strong px-4 py-3"
-                    : "self-start max-w-[80%] px-1 py-1"
-                }
-              >
-                <p className="t-label text-fg-muted">
-                  {entry.kind === "user" ? t("you") : t("agent")}
+              <div key={entry.key} className="flex justify-end">
+                <p className="max-w-[85%] whitespace-pre-wrap border border-line-strong bg-surface-2 px-4 py-3">
+                  {entry.text}
                 </p>
-                <p className="whitespace-pre-wrap">{entry.text}</p>
+              </div>
+            );
+          }
+          if (entry.kind === "assistant") {
+            return (
+              <div key={entry.key} className="flex flex-col gap-1">
+                <span className="t-label text-signal">{t("agent")}</span>
+                <p className="max-w-[90%] whitespace-pre-wrap">{entry.text}</p>
               </div>
             );
           }
@@ -256,23 +301,28 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
             return (
               <ul key={entry.key} className="grid gap-2">
                 {entry.jobs.map((job) => (
-                  <li key={job.id} className="border border-line px-4 py-3">
-                    <Link
-                      href={`/jobs/${job.id}`}
-                      className="font-medium underline-offset-4 hover:underline"
-                    >
-                      {job.title}
-                    </Link>
-                    <p className="t-body-s text-fg-muted">
-                      {job.companyName}
-                      {job.score !== undefined
-                        ? ` · ${t("score", { score: Math.round(job.score * 100) })}`
-                        : ""}
-                    </p>
-                    {job.explain?.slice(0, 4).map((line) => (
+                  <li
+                    key={job.id}
+                    className="border border-line bg-surface-2 px-4 py-3"
+                  >
+                    <div className="flex items-baseline justify-between gap-3">
+                      <Link
+                        href={`/jobs/${job.id}`}
+                        className="font-medium underline-offset-4 hover:underline"
+                      >
+                        {job.title}
+                      </Link>
+                      {job.score !== undefined && (
+                        <span className="t-label shrink-0 text-signal">
+                          {t("score", { score: Math.round(job.score * 100) })}
+                        </span>
+                      )}
+                    </div>
+                    <p className="t-body-s text-fg-muted">{job.companyName}</p>
+                    {job.explain?.slice(0, 3).map((line) => (
                       <p
                         key={line.detail.key}
-                        className="t-body-s text-fg-muted"
+                        className="t-body-s text-fg-subtle"
                       >
                         {explain(
                           line.detail.key.replace(/^explain\./, ""),
@@ -322,11 +372,16 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
             </p>
           );
         })}
+        {thinking && (
+          <p className="t-label text-fg-muted" aria-live="polite">
+            {t("thinking")}
+          </p>
+        )}
         <div ref={endRef} />
       </div>
       <form
         onSubmit={send}
-        className="flex flex-col gap-3 sm:flex-row sm:items-end max-md:shrink-0 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+        className="flex items-end gap-2 max-md:shrink-0 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       >
         <label className="sr-only" htmlFor="chat-input">
           {t("placeholder")}
@@ -343,7 +398,7 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
               event.currentTarget.form?.requestSubmit();
             }
           }}
-          className="min-h-20 flex-1"
+          className="min-h-12 flex-1"
         />
         <Button
           type="submit"
@@ -351,11 +406,11 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
           disabled={!text.trim()}
           icon={<Icon icon={Send} size={16} />}
         >
-          {t("send")}
+          <span className="max-sm:sr-only">{t("send")}</span>
         </Button>
       </form>
       {!signedIn && (
-        <p className="t-body-s text-fg-muted">
+        <p className="t-body-s text-fg-muted max-md:hidden">
           {t("guestHint")}{" "}
           <Link href="/register" className="underline underline-offset-4">
             {t("signUp")}

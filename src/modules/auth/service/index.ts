@@ -21,6 +21,7 @@ export {
   signInWithTelegramProfile,
   unlinkTelegram,
   updateMe,
+  userIdForTelegramId,
 } from "./auth-service";
 export {
   confirmEmailAdd,
@@ -29,6 +30,7 @@ export {
   type ConfirmationMailer,
   type EmailAddResult,
 } from "./email-change";
+export { sendTelegramChatAction, sendTelegramMessage } from "./telegram-bot";
 export {
   telegramAuthUrl,
   telegramBotId,

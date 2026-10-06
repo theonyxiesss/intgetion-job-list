@@ -79,6 +79,15 @@ export async function sendTelegramMessage(
   });
 }
 
+/** The «typing…» hint while the agent thinks (D311). Failure is not fatal. */
+export async function sendTelegramChatAction(
+  token: string,
+  chatId: number,
+  action: "typing",
+): Promise<void> {
+  await telegramApi(token, "sendChatAction", { chat_id: chatId, action });
+}
+
 export async function answerTelegramCallback(
   token: string,
   callbackId: string,

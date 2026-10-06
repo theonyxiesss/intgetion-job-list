@@ -4,6 +4,7 @@ import {
   telegramBotToken,
   telegramWebhookSecretMatches,
 } from "@/modules/auth/service";
+import { handleTelegramAgentUpdate } from "@/modules/bot/service";
 
 /** Telegram Bot API webhook (D256). Authenticated by the secret header, not Origin. */
 export async function POST(request: Request) {
@@ -24,7 +25,9 @@ export async function POST(request: Request) {
   if (!update || typeof update !== "object")
     return new Response(null, { status: 200 });
   try {
-    await handleTelegramWebhook(token, update);
+    // Sign-in first; anything else is ordinary chat for the agent (D311).
+    const handled = await handleTelegramWebhook(token, update);
+    if (!handled) await handleTelegramAgentUpdate(token, update);
   } catch (error) {
     logger.error(
       { err: error instanceof Error ? error.name : "Error" },

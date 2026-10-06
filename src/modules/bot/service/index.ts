@@ -30,3 +30,4 @@ export {
   type ToolContext,
 } from "./tools";
 export { postSystemEvent } from "./system-event";
+export { handleTelegramAgentUpdate } from "./telegram-agent";

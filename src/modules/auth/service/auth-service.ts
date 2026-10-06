@@ -382,6 +382,14 @@ export async function signInWithTelegramProfile(
  * Links Telegram to the signed-in account (D230). 409 when this Telegram
  * is already another account's sign-in, or this account has another one.
  */
+/** The account linked to a Telegram id, if any (D311). Reads, never links. */
+export async function userIdForTelegramId(
+  telegramId: number,
+): Promise<string | null> {
+  const linked = await telegramAccounts.findByTelegramId(telegramId);
+  return linked?.userId ?? null;
+}
+
 export async function linkTelegram(
   user: CurrentUser,
   result: string,

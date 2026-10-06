@@ -32,7 +32,7 @@ const copy = {
     expired:
       "This sign-in link expired. Press Continue with Telegram on the site again.",
     hello:
-      "To sign in, open intgetion.com and press Continue with Telegram.\nЧтобы войти, откройте intgetion.com и нажмите «Войти через Telegram».",
+      "Ask me about work in plain words — «remote solidity jobs», «part-time design in Europe». /help explains more.\nTo sign in on the site, press Continue with Telegram there.",
   },
   ru: {
     ask: "Вход в INTGETION JOB LIST. Если это вы запросили на intgetion.com, нажмите «Войти». Если нет — ничего не нажимайте.",
@@ -41,7 +41,7 @@ const copy = {
     expired:
       "Ссылка для входа устарела. Нажмите «Войти через Telegram» на сайте ещё раз.",
     hello:
-      "To sign in, open intgetion.com and press Continue with Telegram.\nЧтобы войти, откройте intgetion.com и нажмите «Войти через Telegram».",
+      "Спросите про работу словами — «удалённая работа solidity», «дизайн на part-time в Европе». /help — подробнее.\nЧтобы войти на сайте, нажмите там «Войти через Telegram».",
   },
 } as const;
 
@@ -165,11 +165,14 @@ async function reply(
 /**
  * Bot update (D256). Trust comes from the webhook secret checked by the route,
  * not from anything the browser sends.
+ *
+ * Returns true when the update was a sign-in step. Anything else — ordinary
+ * chat with the bot — is left to the caller to route to the agent (D311).
  */
 export async function handleTelegramWebhook(
   token: string,
   raw: unknown,
-): Promise<void> {
+): Promise<boolean> {
   const update = (raw ?? {}) as TelegramUpdate;
   const callback = update.callback_query;
   if (
@@ -186,7 +189,7 @@ export async function handleTelegramWebhook(
     });
     const code = callback.data ? parseTelegramLoginCode(callback.data) : null;
     const chatId = callback.message?.chat?.id;
-    if (!code) return;
+    if (!code) return true;
     const outcome = await confirmCode(code, callback.from);
     const locale = await challengeLocale(code);
     const text = copy[locale];
@@ -195,23 +198,24 @@ export async function handleTelegramWebhook(
     } else {
       await reply(token, chatId, text.expired);
     }
-    return;
+    return true;
   }
 
   const message = update.message;
-  if (!message?.text || !message.from || message.from.is_bot) return;
-  if (typeof message.chat?.id !== "number") return;
+  if (!message?.text || !message.from || message.from.is_bot) return false;
+  if (typeof message.chat?.id !== "number") return false;
   const payload = parseTelegramStartCommand(message.text);
-  if (payload === null) return;
+  // Not a /start command at all: ordinary chat, which the agent answers.
+  if (payload === null) return false;
   const text = copy.en;
   if (!payload) {
     await reply(token, message.chat?.id, text.hello);
-    return;
+    return true;
   }
   const code = parseTelegramLoginCode(payload);
   if (!code) {
     await reply(token, message.chat?.id, text.hello);
-    return;
+    return true;
   }
   const row = await challenges.findTelegramLoginChallenge(
     telegramLoginCodeHash(code),
@@ -224,12 +228,13 @@ export async function handleTelegramWebhook(
       message.chat?.id,
       row?.confirmedAt ? lines.done : lines.expired,
     );
-    return;
+    return true;
   }
   await reply(token, message.chat?.id, lines.ask, {
     label: lines.button,
     data: payload,
   });
+  return true;
 }
 
 async function confirmCode(
