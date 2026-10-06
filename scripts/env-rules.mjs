@@ -33,7 +33,7 @@ const PROD_REQUIRED = new Set([
   "DATABASE_MIGRATION_URL",
   "RESEND_API_KEY",
   "EMAIL_FROM",
-  "ANTHROPIC_API_KEY",
+  "OPENROUTER_API_KEY",
   "CRON_SECRET",
   "PRIVACY_HASH_SECRET",
   "UNSUBSCRIBE_SECRET",
@@ -52,6 +52,7 @@ const ALL_KNOWN = new Set([
   "EMAIL_FROM",
   "UNSUBSCRIBE_SECRET",
   "ANTHROPIC_API_KEY",
+  "OPENROUTER_API_KEY",
   "LLM_MODEL_CHAT",
   "LLM_MODEL_EXTRACT",
   "LLM_DAILY_BUDGET_USD",
@@ -193,6 +194,17 @@ function validateVar(name, value, mode) {
           name,
           status: "INVALID",
           reason: "too short for Anthropic API key",
+        };
+      }
+      break;
+
+    case "OPENROUTER_API_KEY":
+      // OpenRouter keys start with sk-or-; the bot runs on them by default.
+      if (!trimmed.startsWith("sk-or-") || trimmed.length < 20) {
+        return {
+          name,
+          status: "INVALID",
+          reason: "not an OpenRouter key (sk-or-…)",
         };
       }
       break;

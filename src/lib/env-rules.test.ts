@@ -192,7 +192,7 @@ describe("env-rules validation", () => {
       DATABASE_MIGRATION_URL: "postgresql://migrator:pass@host:5432/db",
       RESEND_API_KEY: "resend-example",
       EMAIL_FROM: "noreply@example.com",
-      ANTHROPIC_API_KEY: "anthropic-example",
+      OPENROUTER_API_KEY: "sk-or-v1-example-key-value",
       SENTRY_DSN: "https://sentry.io/123",
       LLM_DAILY_BUDGET_USD: "20",
       EMBEDDINGS_ENABLED: "false",
@@ -239,13 +239,13 @@ describe("env-rules validation", () => {
       expect(email?.status).toBe("MISSING");
     });
 
-    it("requires ANTHROPIC_API_KEY in prod", () => {
+    it("requires OPENROUTER_API_KEY in prod (D317)", () => {
       const { results, hasMissingRequired } = envRules.validateAll(
-        { ...prodBaseEnv, ANTHROPIC_API_KEY: undefined },
+        { ...prodBaseEnv, OPENROUTER_API_KEY: undefined },
         "prod",
       );
       expect(hasMissingRequired).toBe(true);
-      const anthropic = results.find((r) => r.name === "ANTHROPIC_API_KEY");
+      const anthropic = results.find((r) => r.name === "OPENROUTER_API_KEY");
       expect(anthropic?.status).toBe("MISSING");
     });
 

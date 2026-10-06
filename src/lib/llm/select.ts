@@ -4,19 +4,28 @@ import { isFreeModel, OpenRouterProvider } from "./openrouter";
 import type { LLMModels, LLMProvider } from "./provider";
 
 /**
- * Picks the LLM backend from the environment (D213):
- * - `LLM_PROVIDER=openrouter` + `OPENROUTER_API_KEY`: OpenRouter, free models
- *   (`…:free`) need no price — they cost 0 and the per-user limits still hold;
- * - otherwise Anthropic + `ANTHROPIC_API_KEY` (D171).
- * A paid model without a price in `LLM_PRICES_MICRO_USD` is not configured:
- * the budget breaker could not count it.
+ * Picks the LLM backend from the environment (D213, D317):
+ * - by default OpenRouter + `OPENROUTER_API_KEY` on free models (`…:free`),
+ *   which need no price — they cost 0 and the per-user limits still hold;
+ * - `LLM_PROVIDER=anthropic` + `ANTHROPIC_API_KEY` switches to Anthropic
+ *   (D171), where a model without a price in `LLM_PRICES_MICRO_USD` is not
+ *   configured at all: the budget breaker could not count it.
  */
 
 export type ProviderName = "anthropic" | "openrouter";
 
+/**
+ * Free models that exist and accept tool calls, checked against
+ * `https://openrouter.ai/api/v1/models` on 2026-10-06: of 16 free models 15
+ * accept tools, and these two also report a price of zero. The chat model
+ * answers with our tools, so `tools` support is not optional; the smaller one
+ * is kept for extraction. Both can be replaced from the environment when
+ * OpenRouter retires them — it does that often, which is why the list above
+ * is worth re-reading before changing these.
+ */
 export const OPENROUTER_DEFAULT_MODELS: LLMModels = {
-  chat: "qwen/qwen3.8-27b:free",
-  extract: "qwen/qwen3.8-27b:free",
+  chat: "nvidia/nemotron-3-super-120b-a12b:free",
+  extract: "google/gemma-4-26b-a4b-it:free",
 };
 const ANTHROPIC_DEFAULT_MODELS: LLMModels = {
   chat: "claude-sonnet-5-5",
@@ -33,9 +42,10 @@ export type LLMSetup = {
 export function providerName(
   env: Record<string, string | undefined> = process.env,
 ): ProviderName {
-  return env.LLM_PROVIDER?.trim().toLowerCase() === "openrouter"
-    ? "openrouter"
-    : "anthropic";
+  // OpenRouter unless asked otherwise: the project runs on free models (D317).
+  return env.LLM_PROVIDER?.trim().toLowerCase() === "anthropic"
+    ? "anthropic"
+    : "openrouter";
 }
 
 export function modelsFor(

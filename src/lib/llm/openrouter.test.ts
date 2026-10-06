@@ -8,7 +8,12 @@ import {
   toOpenRouterRequest,
 } from "./openrouter";
 import { chat } from "./provider";
-import { llmFromEnv, modelsFor, pricesFor } from "./select";
+import {
+  llmFromEnv,
+  modelsFor,
+  OPENROUTER_DEFAULT_MODELS,
+  pricesFor,
+} from "./select";
 
 describe("OpenRouter wire format (D213)", () => {
   it("puts the system prompt first and pairs tool calls with tool results", () => {
@@ -205,9 +210,25 @@ describe("provider selection (D213)", () => {
     expect(llmFromEnv({})).toBeNull();
   });
 
-  it("keeps Anthropic as the default provider", () => {
+  it("picks OpenRouter and its free models by default (D317)", () => {
+    const setup = llmFromEnv({ OPENROUTER_API_KEY: "k" });
+    expect(setup?.name).toBe("openrouter");
+    // Free models need no price: the key alone is enough to run the bot.
+    expect(setup?.models.chat).toBe(OPENROUTER_DEFAULT_MODELS.chat);
+    expect(setup?.models.chat.endsWith(":free")).toBe(true);
+    expect(setup?.models.extract.endsWith(":free")).toBe(true);
+    expect(setup?.prices[setup.models.chat]?.inputMicroUsdPerMTok).toBe(
+      BigInt(0),
+    );
+  });
+
+  it("switches to Anthropic only when asked, and then wants a price", () => {
+    expect(
+      llmFromEnv({ LLM_PROVIDER: "anthropic", ANTHROPIC_API_KEY: "k" }),
+    ).toBeNull();
     expect(
       llmFromEnv({
+        LLM_PROVIDER: "anthropic",
         ANTHROPIC_API_KEY: "k",
         LLM_PRICES_MICRO_USD: '{"claude-sonnet-5-5":{"in":1,"out":2}}',
       })?.name,
