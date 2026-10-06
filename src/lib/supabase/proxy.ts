@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import type { NextRequest, NextResponse } from "next/server";
-import { authCookieOptions } from "./cookie-options";
+import { authCookieOptions, isFramedRequest } from "./cookie-options";
 import { supabaseAnonKey, supabaseUrl } from "./env";
 
 type PendingCookie = {
@@ -16,12 +16,14 @@ type PendingCookie = {
  * them onto that response for the browser.
  */
 export async function refreshSession(request: NextRequest) {
+  // A page inside the Mini App frame needs cookies a frame may keep (D315).
+  const framed = isFramedRequest(request.headers);
   const pending: PendingCookie[] = [];
   const pendingHeaders: Record<string, string> = {};
 
   const supabase = createServerClient(supabaseUrl(), supabaseAnonKey(), {
     // Same rules as every other write of these cookies (D314).
-    cookieOptions: authCookieOptions(),
+    cookieOptions: authCookieOptions({ framed }),
     cookies: {
       getAll() {
         return request.cookies.getAll();

@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { rateLimited } from "@/lib/http";
-import { authCookieOptions } from "./supabase/cookie-options";
+import {
+  authCookieOptions,
+  framedMarkerCookie,
+  isFramedRequest,
+} from "./supabase/cookie-options";
 import { isAllowedOrigin, needsOriginCheck } from "./origin";
 import { privacyHash } from "./privacy-hash";
 import { retryAfterSeconds, windowStart } from "./rate-limit";
@@ -157,6 +161,53 @@ describe("Mini App framing (D259)", () => {
     // Nothing else loosens up.
     expect(open).toContain("script-src 'self' 'nonce-abc'");
     expect(open).toContain("object-src 'none'");
+  });
+});
+
+describe("the session inside the Mini App frame (D315)", () => {
+  const saved = process.env.NEXT_PUBLIC_SITE_URL;
+  afterEach(() => {
+    if (saved === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
+    else process.env.NEXT_PUBLIC_SITE_URL = saved;
+  });
+
+  it("writes a cookie a cross-site frame may keep", () => {
+    process.env.NEXT_PUBLIC_SITE_URL = "https://intgetion.com";
+    expect(authCookieOptions({ framed: true })).toEqual({
+      path: "/",
+      sameSite: "none",
+      httpOnly: true,
+      secure: true,
+      partitioned: true,
+      maxAge: 400 * 24 * 60 * 60,
+    });
+  });
+
+  it("never loosens the cookie without https", () => {
+    process.env.NEXT_PUBLIC_SITE_URL = "http://127.0.0.1:3000";
+    // SameSite=None without Secure is refused by browsers anyway.
+    expect(authCookieOptions({ framed: true }).sameSite).toBe("lax");
+  });
+
+  it("recognises a framed request by the header or by the marker", () => {
+    expect(isFramedRequest(new Headers({ "sec-fetch-dest": "iframe" }))).toBe(
+      true,
+    );
+    expect(isFramedRequest(new Headers({ cookie: "tg_frame=1" }))).toBe(true);
+    expect(isFramedRequest(new Headers({ cookie: "NEXT_LOCALE=en" }))).toBe(
+      false,
+    );
+    expect(isFramedRequest(new Headers({ "sec-fetch-dest": "document" }))).toBe(
+      false,
+    );
+  });
+
+  it("keeps the marker out of reach and inside the frame", () => {
+    const cookie = framedMarkerCookie();
+    expect(cookie).toContain("HttpOnly");
+    expect(cookie).toContain("SameSite=None");
+    expect(cookie).toContain("Secure");
+    expect(cookie).toContain("Partitioned");
   });
 });
 

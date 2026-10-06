@@ -8,11 +8,13 @@ import { supabaseAnonKey, supabaseUrl } from "./env";
  * Server Components cannot set cookies; the proxy refreshes the session
  * before they render, so a failed write there is safe to ignore.
  */
-export async function createSupabaseServerClient() {
+export async function createSupabaseServerClient(
+  options: { framed?: boolean } = {},
+) {
   const cookieStore = await cookies();
   return createServerClient(supabaseUrl(), supabaseAnonKey(), {
     // The session is closed to scripts (D314).
-    cookieOptions: authCookieOptions(),
+    cookieOptions: authCookieOptions(options),
     cookies: {
       getAll() {
         return cookieStore.getAll();

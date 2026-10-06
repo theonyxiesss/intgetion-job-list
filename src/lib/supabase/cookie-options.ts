@@ -16,12 +16,47 @@ import { siteUrl } from "./env";
  * `secure` follows the site URL, so a production build served over plain http
  * (CI, local dev) still gets its cookies back.
  */
-export function authCookieOptions() {
+export function authCookieOptions(options: { framed?: boolean } = {}) {
+  const https = siteUrl().startsWith("https://");
+  // Inside a cross-site frame — the Mini App on Telegram Web — a browser
+  // refuses to store a Lax cookie at all, so the person is signed out on
+  // every open. There the session is written as None + Partitioned: sent
+  // inside the frame, and kept in a jar of its own per embedding site (D315).
+  if (options.framed && https) {
+    return {
+      path: "/",
+      sameSite: "none" as const,
+      httpOnly: true,
+      secure: true,
+      partitioned: true,
+      maxAge: 400 * 24 * 60 * 60,
+    };
+  }
   return {
     path: "/",
     sameSite: "lax" as const,
     httpOnly: true,
-    secure: siteUrl().startsWith("https://"),
+    secure: https,
     maxAge: 400 * 24 * 60 * 60,
   };
+}
+
+/**
+ * True when this request was made by a page inside someone else's frame.
+ * A document loaded in an iframe says so in `Sec-Fetch-Dest`; a fetch made
+ * by that page carries the marker cookie the frame's first response set.
+ */
+export const FRAMED_COOKIE = "tg_frame";
+
+export function isFramedRequest(headers: Headers, cookie?: string): boolean {
+  if (headers.get("sec-fetch-dest") === "iframe") return true;
+  const jar = cookie ?? headers.get("cookie") ?? "";
+  return jar
+    .split(";")
+    .some((part) => part.trim().startsWith(`${FRAMED_COOKIE}=`));
+}
+
+/** The marker itself: readable by nobody, sent inside the frame. */
+export function framedMarkerCookie(): string {
+  return `${FRAMED_COOKIE}=1; Path=/; HttpOnly; SameSite=None; Secure; Partitioned; Max-Age=${400 * 24 * 60 * 60}`;
 }

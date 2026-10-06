@@ -3,6 +3,7 @@ import { HttpError, readJson, toErrorResponse } from "@/lib/http";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/request-ip";
 import { authAdminAvailable } from "@/lib/supabase/admin";
+import { framedMarkerCookie } from "@/lib/supabase/cookie-options";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   auditSignIn,
@@ -31,14 +32,18 @@ export async function POST(request: Request) {
     if (!profile) {
       throw new HttpError(401, "TELEGRAM_FAILED", "Telegram sign-in failed");
     }
-    const supabase = await createSupabaseServerClient();
+    // The Mini App runs inside Telegram's frame on the web (D315).
+    const supabase = await createSupabaseServerClient({ framed: true });
     const user = await signInWithTelegramProfile(
       supabase.auth,
       { id: profile.id, username: profile.username },
       body.locale,
     );
     await auditSignIn(user, "telegram", ip);
-    return Response.json({ ok: true });
+    return Response.json(
+      { ok: true },
+      { headers: { "set-cookie": framedMarkerCookie() } },
+    );
   } catch (error) {
     return toErrorResponse(error);
   }
