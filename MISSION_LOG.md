@@ -787,3 +787,11 @@
 - Отклонения от ТЗ: D317
 - OPEN QUESTION: основателю включить `TELEGRAM_MINI_APP_ENABLED=true` в Vercel (production, проект `intgetion-job-list`) и передеплоить. Кнопка меню в BotFather по брифу уже настроена. Рекомендация: включить флаг и влить эту ветку, затем пройти шаги 1–5 на живом проде. Пока флага нет, писать «должно работать» нельзя. `ANTHROPIC_API_KEY` по-прежнему нет — ответ бота «агент недоступен» на этом шаге не поломка.
 - Следующая подфаза: после флага и вливания — живая проверка Mini App. В master эта ветка не вливалась.
+
+## [2026-10-06] — флаг Mini App на проде — BLOCKED на BotFather URL
+
+- Сделано: по просьбе основателя в Vercel-проекте `intgetion-job-list`, production, поставлено `TELEGRAM_MINI_APP_ENABLED=true` и передеплоен текущий `master` (`b4bb14f`, deployment `dpl_gSSxihT7qsuGij7gb3JmbxdMtEdR`).
+- Проверка прода: `curl -sI https://intgetion.com/en` → HTTP 200, `frame-ancestors 'self' https://web.telegram.org https://*.telegram.org`, заголовка `X-Frame-Options` нет. `curl -sI https://intgetion.com/` → 307 `Location: /en`.
+- Адрес в BotFather: нужен `https://intgetion.com/en`. Корень редиректит на `/en`, а Telegram дописывает вход после `#`; на редиректе этот фрагмент часто пропадает, и автоматический вход не срабатывает. Сейчас в меню стоит `https://intgetion.com` — это меняет только основатель в BotFather.
+- Ветку `cursor/mini-app-live` этот деплой не содержит: на проде код `master`. Правка открытия браузера (D317 на этой ветке) туда не попала. Номер D317 на `master` уже занят другим решением, при вливании его надо перенумеровать.
+- OPEN QUESTION: нет. Действие основателя: в BotFather заменить адрес кнопки меню на `https://intgetion.com/en`.
