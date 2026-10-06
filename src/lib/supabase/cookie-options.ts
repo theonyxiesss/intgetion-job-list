@@ -48,6 +48,12 @@ export function authCookieOptions(options: { framed?: boolean } = {}) {
  */
 export const FRAMED_COOKIE = "tg_frame";
 
+/**
+ * Set on a phone Mini App login. It is not `tg_frame`: that marker makes
+ * later requests write Partitioned cookies, which a phone webview drops.
+ */
+export const MINI_APP_COOKIE = "tg_app";
+
 export function isFramedRequest(headers: Headers, cookie?: string): boolean {
   if (headers.get("sec-fetch-dest") === "iframe") return true;
   const jar = cookie ?? headers.get("cookie") ?? "";
@@ -59,4 +65,16 @@ export function isFramedRequest(headers: Headers, cookie?: string): boolean {
 /** The marker itself: readable by nobody, sent inside the frame. */
 export function framedMarkerCookie(): string {
   return `${FRAMED_COOKIE}=1; Path=/; HttpOnly; SameSite=None; Secure; Partitioned; Max-Age=${400 * 24 * 60 * 60}`;
+}
+
+/** First-party marker for the phone webview. Lax, so the webview keeps it. */
+export function phoneMiniAppCookie(): string {
+  return `${MINI_APP_COOKIE}=1; Path=/; HttpOnly; SameSite=Lax; Secure; Max-Age=${400 * 24 * 60 * 60}`;
+}
+
+export function hasMiniAppMarker(headers: Headers): boolean {
+  const jar = headers.get("cookie") ?? "";
+  return jar
+    .split(";")
+    .some((part) => part.trim().startsWith(`${MINI_APP_COOKIE}=`));
 }

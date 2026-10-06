@@ -52,6 +52,19 @@ type TelegramWebApp = {
   openLink?: (url: string) => void;
 };
 
+/**
+ * Telegram Web on a computer embeds the site in a frame. The phone apps
+ * open it as the top document of a webview. A cross-site frame cannot read
+ * `parent`, and that itself means we are embedded.
+ */
+export function isEmbeddedFrame(win: { parent: unknown }): boolean {
+  try {
+    return win.parent != null && win !== win.parent;
+  } catch {
+    return true;
+  }
+}
+
 /** Present only when the Telegram client injected it. We never load the script. */
 export function telegramWebApp(win: Window): TelegramWebApp | undefined {
   const host = win as Window & { Telegram?: { WebApp?: TelegramWebApp } };

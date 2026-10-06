@@ -3,7 +3,10 @@ import { HttpError, readJson, toErrorResponse } from "@/lib/http";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/request-ip";
 import { authAdminAvailable } from "@/lib/supabase/admin";
-import { framedMarkerCookie } from "@/lib/supabase/cookie-options";
+import {
+  framedMarkerCookie,
+  phoneMiniAppCookie,
+} from "@/lib/supabase/cookie-options";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   auditSignIn,
@@ -16,6 +19,7 @@ import {
 const input = z.object({
   initData: z.string().min(1).max(4096),
   locale: localeSchema,
+  framed: z.boolean().optional(),
 });
 
 /** Signs in whoever opened the Mini App inside Telegram (D259). */
@@ -32,8 +36,10 @@ export async function POST(request: Request) {
     if (!profile) {
       throw new HttpError(401, "TELEGRAM_FAILED", "Telegram sign-in failed");
     }
-    // The Mini App runs inside Telegram's frame on the web (D315).
-    const supabase = await createSupabaseServerClient({ framed: true });
+    // Telegram Web is a frame and needs Partitioned cookies (D315).
+    // The phone webview is the top document; Partitioned cookies do not stick.
+    const framed = body.framed !== false;
+    const supabase = await createSupabaseServerClient({ framed });
     const user = await signInWithTelegramProfile(
       supabase.auth,
       { id: profile.id, username: profile.username },
@@ -42,7 +48,11 @@ export async function POST(request: Request) {
     await auditSignIn(user, "telegram", ip);
     return Response.json(
       { ok: true },
-      { headers: { "set-cookie": framedMarkerCookie() } },
+      {
+        headers: {
+          "set-cookie": framed ? framedMarkerCookie() : phoneMiniAppCookie(),
+        },
+      },
     );
   } catch (error) {
     return toErrorResponse(error);
