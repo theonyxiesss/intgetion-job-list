@@ -61,7 +61,11 @@ export {
   runNotificationCron,
 } from "./dispatch";
 export { mergeApplicationBatch, utcHourStart } from "./batch-mail";
-export { noopEmailSender, senderFromEnv } from "./email-sender";
+export {
+  emailSenderConfigured,
+  noopEmailSender,
+  senderFromEnv,
+} from "./email-sender";
 export type { EmailSender } from "./email-sender";
 export { emailCopy, renderEmail } from "./render";
 export {

@@ -41,6 +41,18 @@ export function resendEmailSender(apiKey: string, from: string): EmailSender {
   };
 }
 
+/**
+ * Whether a letter of ours can actually leave the process (D320). Callers use
+ * it before asking Supabase for a token: minting one counts as a send against
+ * Supabase's own rate limit, so doing it when we cannot deliver would block
+ * the letter Supabase would otherwise have sent itself.
+ */
+export function emailSenderConfigured(): boolean {
+  return Boolean(
+    process.env.RESEND_API_KEY?.trim() && process.env.EMAIL_FROM?.trim(),
+  );
+}
+
 /** No key → noop. A key without EMAIL_FROM still refuses to call the network. */
 export function senderFromEnv(): EmailSender {
   const apiKey = process.env.RESEND_API_KEY?.trim();
