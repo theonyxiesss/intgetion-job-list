@@ -262,7 +262,7 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
                 <li key={slot}>
                   <button
                     type="button"
-                    className="t-label border border-line px-3 py-2 text-fg-muted hover:border-line-strong hover:text-fg"
+                    className="t-label flex min-h-11 items-center border border-line px-4 py-3 text-fg-muted hover:border-line-strong hover:text-fg"
                     onClick={() => void ask(t(`suggestions.${slot}`))}
                   >
                     {t(`suggestions.${slot}`)}
