@@ -56,7 +56,20 @@ export function isFramedRequest(headers: Headers, cookie?: string): boolean {
     .some((part) => part.trim().startsWith(`${FRAMED_COOKIE}=`));
 }
 
+/** Same rules as the session cookie inside the frame (D315). */
+export function framedMarkerOptions() {
+  return {
+    path: "/",
+    httpOnly: true,
+    sameSite: "none" as const,
+    secure: true,
+    partitioned: true,
+    maxAge: 400 * 24 * 60 * 60,
+  };
+}
+
 /** The marker itself: readable by nobody, sent inside the frame. */
 export function framedMarkerCookie(): string {
-  return `${FRAMED_COOKIE}=1; Path=/; HttpOnly; SameSite=None; Secure; Partitioned; Max-Age=${400 * 24 * 60 * 60}`;
+  const options = framedMarkerOptions();
+  return `${FRAMED_COOKIE}=1; Path=${options.path}; HttpOnly; SameSite=None; Secure; Partitioned; Max-Age=${options.maxAge}`;
 }

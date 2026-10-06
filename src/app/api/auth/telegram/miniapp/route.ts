@@ -1,9 +1,13 @@
+import { cookies } from "next/headers";
 import { z } from "zod";
 import { HttpError, readJson, toErrorResponse } from "@/lib/http";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/request-ip";
 import { authAdminAvailable } from "@/lib/supabase/admin";
-import { framedMarkerCookie } from "@/lib/supabase/cookie-options";
+import {
+  FRAMED_COOKIE,
+  framedMarkerOptions,
+} from "@/lib/supabase/cookie-options";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   auditSignIn,
@@ -40,10 +44,12 @@ export async function POST(request: Request) {
       body.locale,
     );
     await auditSignIn(user, "telegram", ip);
-    return Response.json(
-      { ok: true },
-      { headers: { "set-cookie": framedMarkerCookie() } },
-    );
+    // Set the marker through the same cookie jar as the session. A separate
+    // Set-Cookie on the Response is applied last and can drop the session
+    // cookies that just signed the person in (D319).
+    const jar = await cookies();
+    jar.set(FRAMED_COOKIE, "1", framedMarkerOptions());
+    return Response.json({ ok: true });
   } catch (error) {
     return toErrorResponse(error);
   }

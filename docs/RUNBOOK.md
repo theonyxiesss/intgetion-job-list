@@ -279,7 +279,7 @@ _Документ актуален на момент подфазы 11B (вет�
 
 ### Прикрепить сайт к боту (Mini App)
 
-1. В BotFather: `/mybots` → бот → `Bot Settings` → `Menu Button` → `Configure menu button` → адрес `https://intgetion.com/en` и подпись, например `INTGETION`.
+1. В BotFather: `/mybots` → бот → `Bot Settings` → `Menu Button` → `Configure menu button` → адрес `https://intgetion.com/en` (кнопка Web App, не обычная ссылка) и подпись, например `INTGETION`. Корень `https://intgetion.com/` тоже сохраняет подпись: пока Mini App включён, он не отвечает 307, а переходит на локаль уже в браузере (D319).
 2. В Vercel поставить `TELEGRAM_MINI_APP_ENABLED=true` (prod) и передеплоить. Флаг разрешает Telegram показывать сайт во фрейме; без него Mini App откроется пустым из-за `frame-ancestors`.
 3. Проверка: открыть бота на телефоне, нажать кнопку меню — сайт открывается внутри Telegram и подхватывает вход автоматически (D259).
 

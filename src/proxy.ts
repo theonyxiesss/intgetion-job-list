@@ -9,6 +9,7 @@ import {
 import { routing } from "./i18n/routing";
 import { isAllowedOrigin, needsOriginCheck } from "./lib/origin";
 import { normalizeRequestId, REQUEST_ID_HEADER } from "./lib/request-id";
+import { hashPreservingEntryHtml, localeEntryPath } from "./lib/hash-entry";
 import { buildCsp, createNonce } from "./lib/security-headers";
 import { siteUrl, supabaseUrl } from "./lib/supabase/env";
 import { flags } from "./config/flags";
@@ -62,6 +63,37 @@ export async function proxy(request: NextRequest) {
   }
 
   const originSite = csrfSite(host, siteUrl());
+
+  // Mini App payload lives in the fragment. A 307 from `/` drops it (D319).
+  if (
+    !adminHost &&
+    flags.telegramMiniAppEnabled &&
+    request.nextUrl.pathname === "/"
+  ) {
+    const probe = handleI18nRouting(request);
+    const path = localeEntryPath(probe.headers.get("location"));
+    if (path) {
+      const nonce = createNonce();
+      const csp = buildCsp({
+        nonce,
+        supabaseUrl: supabaseUrl(),
+        isDev: process.env.NODE_ENV === "development",
+        allowTelegramFrame: true,
+      });
+      return stamp(
+        new NextResponse(hashPreservingEntryHtml(path, nonce), {
+          status: 200,
+          headers: {
+            "content-type": "text/html; charset=utf-8",
+            "content-security-policy": csp,
+            "cache-control": "no-store",
+          },
+        }),
+        requestId,
+        false,
+      );
+    }
+  }
 
   if (request.nextUrl.pathname.startsWith("/api/")) {
     // CSRF (section 6, P12): mutating API calls must come from this host.

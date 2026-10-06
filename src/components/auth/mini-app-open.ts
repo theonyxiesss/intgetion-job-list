@@ -58,20 +58,47 @@ export function telegramWebApp(win: Window): TelegramWebApp | undefined {
   return host.Telegram?.WebApp;
 }
 
+/** Key the official Mini App script uses for the copy that survives a reload. */
+export const TELEGRAM_INIT_STORAGE_KEY = "__telegram__initParams";
+
+function looksLikeInitData(query: string): boolean {
+  const params = new URLSearchParams(query);
+  return Boolean(
+    params.get("hash") && params.get("auth_date") && params.get("user"),
+  );
+}
+
+/** The official script stores `{ tgWebAppData }` under TELEGRAM_INIT_STORAGE_KEY. */
+export function readStoredTelegramInitData(raw: string | null): string | null {
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as { tgWebAppData?: unknown };
+    if (typeof parsed.tgWebAppData !== "string") return null;
+    const value = parsed.tgWebAppData.trim();
+    return value ? value : null;
+  } catch {
+    return null;
+  }
+}
+
 /**
- * Telegram puts the signed payload in the URL fragment. Some clients also
- * keep it on the injected object after the fragment has been wiped.
+ * Telegram puts the signed payload in the URL fragment under `tgWebAppData`.
+ * Some clients put the raw init-data string in the fragment, and some leave
+ * a copy on `Telegram.WebApp.initData` or in sessionStorage after the
+ * fragment is gone (D319).
  */
 export function readTelegramInitData(input: {
   hash: string;
   injected?: string;
+  stored?: string | null;
 }): string | null {
-  const fromHash = new URLSearchParams(input.hash.replace(/^#/, "")).get(
-    "tgWebAppData",
-  );
+  const query = input.hash.replace(/^#/, "");
+  const fromHash = new URLSearchParams(query).get("tgWebAppData");
   if (fromHash) return fromHash;
+  if (query && looksLikeInitData(query)) return query;
   const injected = input.injected?.trim();
-  return injected ? injected : null;
+  if (injected) return injected;
+  return readStoredTelegramInitData(input.stored ?? null);
 }
 
 export function deliverHandoffUrl(

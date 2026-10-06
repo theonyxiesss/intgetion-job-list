@@ -7,6 +7,7 @@ import {
 } from "next-intl/server";
 import { Roboto_Condensed } from "next/font/google";
 import { headers } from "next/headers";
+import Script from "next/script";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { Footer } from "@/components/shell/footer";
@@ -129,6 +130,13 @@ export default async function LocaleLayout({
           nonce={nonce}
           dangerouslySetInnerHTML={{ __html: themeScript }}
         />
+        {flags.telegramMiniAppEnabled ? (
+          <Script
+            src="https://telegram.org/js/telegram-web-app.js"
+            strategy="beforeInteractive"
+            nonce={nonce}
+          />
+        ) : null}
         <a
           href="#content"
           className="t-nav sr-only z-50 bg-accent px-4 py-3 text-accent-fg focus:not-sr-only focus:fixed focus:top-2 focus:left-2"

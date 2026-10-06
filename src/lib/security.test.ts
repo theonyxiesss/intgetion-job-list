@@ -158,8 +158,10 @@ describe("Mini App framing (D259)", () => {
     });
     expect(open).toContain("https://web.telegram.org");
     expect(open).not.toContain("frame-ancestors 'none'");
-    // Nothing else loosens up.
-    expect(open).toContain("script-src 'self' 'nonce-abc'");
+    expect(open).toContain(
+      "script-src 'self' 'nonce-abc' https://telegram.org",
+    );
+    expect(closed).not.toContain("https://telegram.org");
     expect(open).toContain("object-src 'none'");
   });
 });

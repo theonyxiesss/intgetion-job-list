@@ -3,6 +3,7 @@ import {
   deliverHandoffUrl,
   handoffNeedsCopy,
   isOwnHandoffUrl,
+  readStoredTelegramInitData,
   readTelegramInitData,
   type ReservedPopup,
 } from "./mini-app-open";
@@ -113,5 +114,15 @@ describe("handoff out of the Mini App (D318)", () => {
     ).toBe("signed");
     expect(readTelegramInitData({ hash: "", injected: " kept " })).toBe("kept");
     expect(readTelegramInitData({ hash: "#tgWebAppVersion=7" })).toBeNull();
+  });
+
+  it("accepts a raw init-data fragment and the script's stored copy", () => {
+    const raw = "user=%7B%22id%22%3A1%7D&auth_date=10&hash=abc";
+    expect(readTelegramInitData({ hash: `#${raw}` })).toBe(raw);
+    const stored = JSON.stringify({ tgWebAppData: "stored-payload" });
+    expect(readStoredTelegramInitData(stored)).toBe("stored-payload");
+    expect(readTelegramInitData({ hash: "", stored })).toBe("stored-payload");
+    expect(readStoredTelegramInitData("not-json")).toBeNull();
+    expect(readStoredTelegramInitData(null)).toBeNull();
   });
 });

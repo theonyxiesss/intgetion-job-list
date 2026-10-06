@@ -14,9 +14,12 @@ export function buildCsp({
   allowTelegramFrame?: boolean;
 }): string {
   const supabase = new URL(supabaseUrl).origin;
+  // The official Mini App script reads the fragment and keeps a copy after a
+  // redirect. It is allowed only while Telegram may frame the site (D319).
+  const telegramScript = allowTelegramFrame ? " https://telegram.org" : "";
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}'${isDev ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'nonce-${nonce}'${telegramScript}${isDev ? " 'unsafe-eval'" : ""}`,
     `style-src 'self' 'nonce-${nonce}'`,
     `img-src 'self' data: ${supabase}`,
     "font-src 'self'",
