@@ -716,3 +716,12 @@
 - Отклонения от ТЗ: D304–D310 (номера перенумерованы при вливании: D293–D299 уже заняты). Карточки компании и вакансии только для чтения (D310).
 - OPEN QUESTION: повторная регистрация после удаления. `registrationBlocked` уже есть, но `src/modules/auth/**` в этой задаче менять нельзя. Нужны два вызова, их добавит Claude в том же слиянии: в `register()` до `signUp` / `signInWithOtp` — если `registrationBlocked({ email })`, вернуть тот же ответ, что и при существующей почте; в `signInWithTelegramProfile`, когда привязки ещё нет, до `createConfirmedAuthUser` — если `registrationBlocked({ telegramId: String(telegram.id) })`, бросить `telegramFailed()`. Бан и приостановка существующего аккаунта вход уже закрывают без этих правок. Рекомендация: влить оба вызова вместе с A2, не откладывать.
 - Следующая подфаза: Claude Code вливает после зелёного CI. В master не вливалось.
+
+## [2026-10-06] — A2 Cursor влит в пачку — на ветке claude/integrate-seo2
+
+- Сделано: два коммита `cursor/admin-a2` перенесены поверх P-MOBILE. Списки и карточки людей, компаний и вакансий в админке, контакты в маске до указания причины, бан и удаление в четыре глаза, заметки только на добавление, блок-лист против повторной регистрации.
+- Перенумерация: Cursor занял D293–D299, но эти номера уже заняты моими решениями (отчёт «откуда приходят», подборки, FAQ, картинки, подтверждение сайта, тексты). Его решения перенумерованы в D304–D310 — в `docs/DECISIONS.md`, в заголовке миграции `0029_admin_people.sql`, в комментариях `src/db/schema/admin-people.ts` и `src/modules/admin-console/service/people-service.ts` и в его записи журнала.
+- Миграции: `0029_admin_people.sql` применена к облачной базе ДО вливания: `pnpm db:migrate` → applied, `pnpm db:verify` → `app_rw exists; RLS deny-all holds on 51 tables; audit_logs is append-only`.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0, `pnpm exec eslint src tests scripts` → 0, `pnpm exec vitest run` → 663 passed. Паритет `en.json` / `ru.json` — 1255 ключей с обеих сторон. Предупреждения prettier по файлам Cursor — только переводы строк: те же файлы с LF проходят `--check` чисто, в его CI `format:check` был зелёный.
+- Решения: D304–D310 (Cursor, перенумерованы).
+- Следующее: зелёный CI → ff master, затем разбор веток Hermes.
