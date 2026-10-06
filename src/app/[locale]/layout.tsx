@@ -62,6 +62,9 @@ const CLIENT_NAMESPACES = [
 // Only an explicit "light" choice changes the default dark theme (D141).
 const themeScript = `(function(){try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light";}catch(e){}})();`;
 
+// Capture Telegram's fragment before anything else can wipe it (D322).
+const telegramHashScript = `(function(){try{var h=location.hash||"";if(h.indexOf("tgWebAppData")!==-1)sessionStorage.setItem("tg_web_app_hash",h);}catch(e){}})();`;
+
 export const viewport: Viewport = {
   themeColor: "#000000",
   colorScheme: "dark light",
@@ -133,6 +136,12 @@ export default async function LocaleLayout({
           nonce={nonce}
           dangerouslySetInnerHTML={{ __html: themeScript }}
         />
+        {flags.telegramMiniAppEnabled && (
+          <script
+            nonce={nonce}
+            dangerouslySetInnerHTML={{ __html: telegramHashScript }}
+          />
+        )}
         <a
           href="#content"
           className="t-nav sr-only z-50 bg-accent px-4 py-3 text-accent-fg focus:not-sr-only focus:fixed focus:top-2 focus:left-2"

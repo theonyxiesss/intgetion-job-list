@@ -7,7 +7,33 @@ import {
   needsPartitionedSession,
   readTelegramInitData,
   telegramWebApp,
+  TG_INIT_HASH_KEY,
 } from "./mini-app-open";
+
+function storedHash(): string | null {
+  try {
+    return sessionStorage.getItem(TG_INIT_HASH_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function rememberHash(hash: string) {
+  if (!hash.includes("tgWebAppData")) return;
+  try {
+    sessionStorage.setItem(TG_INIT_HASH_KEY, hash);
+  } catch {
+    // Private mode may refuse storage; the live hash may still work.
+  }
+}
+
+function forgetHash() {
+  try {
+    sessionStorage.removeItem(TG_INIT_HASH_KEY);
+  } catch {
+    // Ignore.
+  }
+}
 
 /**
  * Inside Telegram the page is opened with signed data about the person in the
@@ -21,6 +47,7 @@ export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
   useEffect(() => {
     let cancelled = false;
     let tries = 0;
+    rememberHash(window.location.hash);
 
     async function signIn(initData: string) {
       const response = await fetch("/api/auth/telegram/miniapp", {
@@ -29,12 +56,11 @@ export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
         body: JSON.stringify({
           initData,
           locale,
-          // Only web.telegram.org needs Partitioned cookies (D315, D321).
           framed: needsPartitionedSession(window),
         }),
       });
       if (cancelled || !response.ok) return;
-      // The signed data is a credential: keep it out of history and logs.
+      forgetHash();
       window.history.replaceState(
         null,
         "",
@@ -45,9 +71,11 @@ export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
 
     function tick() {
       if (cancelled) return;
+      rememberHash(window.location.hash);
       const initData = readTelegramInitData({
         hash: window.location.hash,
         injected: telegramWebApp(window)?.initData,
+        storedHash: storedHash(),
       });
       if (initData) {
         void signIn(initData).catch(() => {
@@ -55,9 +83,8 @@ export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
         });
         return;
       }
-      // Phone clients sometimes inject the payload a moment after load (D321).
       tries += 1;
-      if (tries < 20) window.setTimeout(tick, 100);
+      if (tries < 30) window.setTimeout(tick, 100);
     }
 
     tick();

@@ -103,6 +103,12 @@ export function telegramWebApp(win: Window): TelegramWebApp | undefined {
 }
 
 /**
+ * Key for the Telegram fragment. Phone webviews often lose `#tgWebAppData`
+ * on an HTTP redirect to `/en`; we stash it before that can happen (D322).
+ */
+export const TG_INIT_HASH_KEY = "tg_web_app_hash";
+
+/**
  * Telegram's own hash parser (from telegram-web-app.js): a path may sit
  * before `?`, and only the query after it carries `tgWebAppData`. Our first
  * version treated `#/en?tgWebAppData=…` as one key and returned null — that
@@ -111,9 +117,14 @@ export function telegramWebApp(win: Window): TelegramWebApp | undefined {
 export function readTelegramInitData(input: {
   hash: string;
   injected?: string;
+  storedHash?: string | null;
 }): string | null {
   const fromHash = tgWebAppDataFromHash(input.hash);
   if (fromHash) return fromHash;
+  const fromStore = input.storedHash
+    ? tgWebAppDataFromHash(input.storedHash)
+    : null;
+  if (fromStore) return fromStore;
   const injected = input.injected?.trim();
   return injected ? injected : null;
 }

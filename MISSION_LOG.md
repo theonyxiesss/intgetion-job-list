@@ -818,3 +818,10 @@
 - Команды проверки: `pnpm exec vitest run src/components/auth/mini-app-open.test.ts src/lib/security.test.ts` → 0 (2 файла, 31 тест). eslint → 0. `pnpm exec tsc --noEmit` → 0.
 - Миграции: нет. Решения: D321.
 - OPEN QUESTION: нет.
+
+## [2026-10-06] — телефонный Mini App, третья правка — D322
+
+- Сделано: корень `/` при Mini App больше не делает HTTP 307 на `/en` — отдаёт HTML с `location.replace`, чтобы `#tgWebAppData` не пропал на телефоне. Фрагмент дублируется в `sessionStorage`. Запасной URL `/tg.html` для BotFather. Маркер сессии пишется через `cookies().set`, чтобы не затереть куки Supabase.
+- Команды проверки: `pnpm exec vitest run src/components/auth/mini-app-open.test.ts src/lib/security.test.ts` → 0 (2 файла, 31 тест). eslint → 0. `pnpm exec tsc --noEmit` → 0.
+- Миграции: нет. Решения: D322.
+- OPEN QUESTION: в BotFather лучше `https://intgetion.com/tg.html` или `/en`, не голый домен. Рекомендация: `tg.html`.
