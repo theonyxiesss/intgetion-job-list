@@ -27,9 +27,9 @@ export const rateRules = {
   /** personal data exports, keyed by user id (10C) */
   dataExport: { limit: 5, windowSeconds: 24 * 60 * 60 },
   /** bot messages from a guest, keyed by IP + bot session (7A) */
-  botGuest: { limit: 30, windowSeconds: 24 * 60 * 60 },
-  /** bot messages from a user, keyed by user id (7A) */
-  botUser: { limit: 200, windowSeconds: 24 * 60 * 60 },
+  botGuest: { limit: 5, windowSeconds: 24 * 60 * 60 },
+  /** bot messages from a user, keyed by user id (7A); free tier, D323 */
+  botUser: { limit: 15, windowSeconds: 24 * 60 * 60 },
   /** cookie choices sent to the consent journal, keyed by IP (D220) */
   consent: { limit: 30, windowSeconds: 60 * 60 },
   /** analytics beacons, keyed by IP; over the limit they are dropped (D225) */
