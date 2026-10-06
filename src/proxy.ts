@@ -68,6 +68,35 @@ export async function proxy(request: NextRequest) {
     );
   }
 
+  // Mini App: an HTTP redirect from / to /en drops #tgWebAppData on many
+  // phone webviews. Bounce in the page so the fragment survives (D322).
+  if (
+    !adminHost &&
+    flags.telegramMiniAppEnabled &&
+    request.nextUrl.pathname === "/"
+  ) {
+    const bounceNonce = createNonce();
+    const bounceCsp = buildCsp({
+      nonce: bounceNonce,
+      supabaseUrl: supabaseUrl(),
+      isDev: process.env.NODE_ENV === "development",
+      includeSupabase: false,
+      allowTelegramFrame: true,
+    });
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script nonce="${bounceNonce}">(function(){try{var h=location.hash||"";if(h.indexOf("tgWebAppData")!==-1)sessionStorage.setItem("tg_web_app_hash",h);}catch(e){}var l="en";try{if(/^ru\\b/i.test(navigator.language||""))l="ru";}catch(e){}location.replace("/"+l+location.search+location.hash);})();</script></head><body></body></html>`;
+    return stamp(
+      new NextResponse(html, {
+        headers: {
+          "content-type": "text/html; charset=utf-8",
+          "content-security-policy": bounceCsp,
+          "cache-control": "no-store",
+        },
+      }),
+      requestId,
+      false,
+    );
+  }
+
   const originSite = csrfSite(host, siteUrl());
 
   if (request.nextUrl.pathname.startsWith("/api/")) {

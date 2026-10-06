@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>INTGETION JOB LIST</title>
+    <script>
+      (function () {
+        try {
+          var h = location.hash || "";
+          if (h.indexOf("tgWebAppData") !== -1) {
+            sessionStorage.setItem("tg_web_app_hash", h);
+          }
+        } catch (e) {}
+        var locale = "en";
+        try {
+          if (/^ru\b/i.test(navigator.language || "")) locale = "ru";
+        } catch (e) {}
+        location.replace(
+          "/" + locale + (location.search || "") + (location.hash || ""),
+        );
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
