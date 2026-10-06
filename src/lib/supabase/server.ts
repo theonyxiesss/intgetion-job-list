@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { authCookieOptions } from "./cookie-options";
 import { supabaseAnonKey, supabaseUrl } from "./env";
 
 /**
@@ -10,6 +11,8 @@ import { supabaseAnonKey, supabaseUrl } from "./env";
 export async function createSupabaseServerClient() {
   const cookieStore = await cookies();
   return createServerClient(supabaseUrl(), supabaseAnonKey(), {
+    // The session is closed to scripts (D314).
+    cookieOptions: authCookieOptions(),
     cookies: {
       getAll() {
         return cookieStore.getAll();

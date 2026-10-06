@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import type { NextRequest, NextResponse } from "next/server";
+import { authCookieOptions } from "./cookie-options";
 import { supabaseAnonKey, supabaseUrl } from "./env";
 
 type PendingCookie = {
@@ -19,6 +20,8 @@ export async function refreshSession(request: NextRequest) {
   const pendingHeaders: Record<string, string> = {};
 
   const supabase = createServerClient(supabaseUrl(), supabaseAnonKey(), {
+    // Same rules as every other write of these cookies (D314).
+    cookieOptions: authCookieOptions(),
     cookies: {
       getAll() {
         return request.cookies.getAll();

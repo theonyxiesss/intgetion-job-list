@@ -203,3 +203,64 @@ test("registration rejects short and common passwords and missing terms", async 
     },
   });
 });
+
+// D314: the session must outlive the window, the tab and an API call.
+test("the sign-in session is kept across reloads, tabs and a restart", async ({
+  page,
+  context,
+}) => {
+  const email = uniqueEmail("session");
+  await registerWithPassword(page, email);
+  await openLatestLink(page, email, 0);
+  await expectSignedIn(page);
+
+  // Not a window-lifetime cookie: it has an expiry far enough to survive a
+  // browser restart, which is what "stay signed in" means to a person.
+  const auth = (await context.cookies()).filter((cookie) =>
+    cookie.name.startsWith("sb-"),
+  );
+  expect(auth.length).toBeGreaterThan(0);
+  const weeks = Date.now() / 1000 + 14 * 24 * 60 * 60;
+  for (const cookie of auth) {
+    expect(cookie.expires, cookie.name).toBeGreaterThan(weeks);
+    expect(cookie.httpOnly, cookie.name).toBe(true);
+    expect(cookie.sameSite, cookie.name).toBe("Lax");
+  }
+
+  // A reload, a different page and a second tab all keep it.
+  await page.reload();
+  await expectSignedIn(page);
+  await page.goto("/en/jobs");
+  await expectSignedIn(page);
+  const second = await context.newPage();
+  await second.goto("/en");
+  await expectSignedIn(second);
+  await second.close();
+
+  // A brand new context with the same cookies: the browser was restarted.
+  const restarted = await context.browser()?.newContext({
+    storageState: await context.storageState(),
+    baseURL: "http://127.0.0.1:3000",
+  });
+  if (!restarted) throw new Error("no browser for the restart check");
+  const after = await restarted.newPage();
+  await after.goto("/en");
+  await expectSignedIn(after);
+  await restarted.close();
+});
+
+// D314: a guest's conversation belongs to the browser, not to the page view.
+test("the agent remembers a guest across a reload", async ({ page }) => {
+  await page.goto("/en/chat");
+  await page.getByLabel("Write a message").fill("Rust jobs in Europe");
+  await page.getByRole("button", { name: "Send" }).click();
+  const log = page.getByRole("log", { name: "Conversation" });
+  await expect(log.getByText("Rust jobs in Europe")).toBeVisible();
+
+  await page.reload();
+  await expect(
+    page
+      .getByRole("log", { name: "Conversation" })
+      .getByText("Rust jobs in Europe"),
+  ).toBeVisible();
+});

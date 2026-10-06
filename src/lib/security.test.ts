@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { rateLimited } from "@/lib/http";
+import { authCookieOptions } from "./supabase/cookie-options";
 import { isAllowedOrigin, needsOriginCheck } from "./origin";
 import { privacyHash } from "./privacy-hash";
 import { retryAfterSeconds, windowStart } from "./rate-limit";
@@ -156,5 +157,30 @@ describe("Mini App framing (D259)", () => {
     // Nothing else loosens up.
     expect(open).toContain("script-src 'self' 'nonce-abc'");
     expect(open).toContain("object-src 'none'");
+  });
+});
+
+describe("session cookies (D314)", () => {
+  const saved = process.env.NEXT_PUBLIC_SITE_URL;
+  afterEach(() => {
+    if (saved === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
+    else process.env.NEXT_PUBLIC_SITE_URL = saved;
+  });
+
+  it("keeps the session for 400 days and out of reach of scripts", () => {
+    process.env.NEXT_PUBLIC_SITE_URL = "https://intgetion.com";
+    expect(authCookieOptions()).toEqual({
+      path: "/",
+      sameSite: "lax",
+      httpOnly: true,
+      secure: true,
+      maxAge: 400 * 24 * 60 * 60,
+    });
+  });
+
+  it("drops Secure when the site is not served over https", () => {
+    process.env.NEXT_PUBLIC_SITE_URL = "http://127.0.0.1:3000";
+    expect(authCookieOptions().secure).toBe(false);
+    expect(authCookieOptions().httpOnly).toBe(true);
   });
 });
