@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
+import { readTelegramInitData, telegramWebApp } from "./mini-app-open";
 
 /**
  * Inside Telegram the page is opened with signed data about the person in the
@@ -14,8 +15,10 @@ export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
   const router = useRouter();
 
   useEffect(() => {
-    const fragment = window.location.hash.replace(/^#/, "");
-    const initData = new URLSearchParams(fragment).get("tgWebAppData");
+    const initData = readTelegramInitData({
+      hash: window.location.hash,
+      injected: telegramWebApp(window)?.initData,
+    });
     if (!initData) return;
     let cancelled = false;
 
