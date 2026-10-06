@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import {
   deliverHandoffUrl,
   handoffNeedsCopy,
-  isEmbeddedFrame,
   isOwnHandoffUrl,
+  needsPartitionedSession,
   readTelegramInitData,
   type ReservedPopup,
 } from "./mini-app-open";
@@ -105,21 +105,43 @@ describe("handoff out of the Mini App (D318)", () => {
     expect(isOwnHandoffUrl("not a url", "https://intgetion.com")).toBe(false);
   });
 
-  it("treats a phone webview as the top document and Telegram Web as a frame", () => {
+  it("uses Partitioned cookies only inside web.telegram.org", () => {
     const top = { parent: null as unknown };
     top.parent = top;
-    expect(isEmbeddedFrame(top)).toBe(false);
-    expect(isEmbeddedFrame({ parent: top })).toBe(true);
-    expect(isEmbeddedFrame({ parent: null })).toBe(false);
+    expect(needsPartitionedSession(top)).toBe(false);
+    expect(
+      needsPartitionedSession({
+        parent: top,
+        document: { referrer: "https://web.telegram.org/k/" },
+      }),
+    ).toBe(true);
+    // Phone webview that wraps the page in an iframe is not Telegram Web.
+    expect(
+      needsPartitionedSession({
+        parent: top,
+        document: { referrer: "" },
+        location: { ancestorOrigins: [] },
+      }),
+    ).toBe(false);
   });
 
-  it("reads the signed payload from the fragment, then from the client", () => {
+  it("reads the signed payload the way Telegram's own script does", () => {
     expect(
       readTelegramInitData({
         hash: "#tgWebAppData=signed&tgWebAppVersion=7",
         injected: "other",
       }),
     ).toBe("signed");
+    expect(
+      readTelegramInitData({
+        hash: "#/?tgWebAppData=signed&tgWebAppVersion=7",
+      }),
+    ).toBe("signed");
+    expect(
+      readTelegramInitData({
+        hash: "#/en?tgWebAppData=user%3D1%26hash%3Dabc&tgWebAppVersion=8",
+      }),
+    ).toBe("user=1&hash=abc");
     expect(readTelegramInitData({ hash: "", injected: " kept " })).toBe("kept");
     expect(readTelegramInitData({ hash: "#tgWebAppVersion=7" })).toBeNull();
   });

@@ -811,3 +811,10 @@
 - Команды проверки: `pnpm exec vitest run src/components/auth/mini-app-open.test.ts src/lib/security.test.ts` → 0 (2 файла, 31 тест). eslint по этим файлам → 0. `pnpm exec tsc --noEmit` → 0.
 - Миграции: нет. Решения: D320.
 - OPEN QUESTION: нет. Живой телефон можно проверить только после выкладки этой ветки.
+
+## [2026-10-06] — телефонный Mini App, вторая правка — на ветке cursor/mini-app-phone
+
+- Сделано: D321. После D320 Desktop заходил, телефон — нет. Парсер фрагмента теперь как у Telegram (`#/путь?tgWebAppData=…`). `Partitioned` только для `web.telegram.org`; сервер больше не включает их по умолчанию. Вход несколько раз перечитывает данные в первые ~2 с.
+- Команды проверки: `pnpm exec vitest run src/components/auth/mini-app-open.test.ts src/lib/security.test.ts` → 0 (2 файла, 31 тест). eslint → 0. `pnpm exec tsc --noEmit` → 0.
+- Миграции: нет. Решения: D321.
+- OPEN QUESTION: нет.
