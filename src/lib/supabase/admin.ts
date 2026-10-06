@@ -163,6 +163,44 @@ export async function createConfirmedAuthUser(
   }
 }
 
+/** Link kinds Supabase can mint for us to deliver ourselves (D320). */
+export type AuthLinkType = "signup" | "magiclink" | "recovery";
+
+/**
+ * A one-time token for an email flow, minted without Supabase sending
+ * anything (D320). We deliver the letter ourselves, from our own domain and
+ * in our own template; Supabase stays the authority on the token.
+ * `signup` needs the password the account was created with.
+ */
+export async function authLinkTokenHash(
+  type: AuthLinkType,
+  email: string,
+  password?: string,
+): Promise<string | null> {
+  try {
+    const response = await adminFetch("/generate_link", {
+      method: "POST",
+      body: JSON.stringify({
+        type,
+        email,
+        ...(password ? { password } : {}),
+      }),
+    });
+    if (!response?.ok) {
+      logger.warn(
+        { status: response?.status, type },
+        "auth admin: link refused",
+      );
+      return null;
+    }
+    const body = (await response.json()) as { hashed_token?: string };
+    return body.hashed_token || null;
+  } catch (error) {
+    logger.warn({ err: error }, "auth admin: link failed");
+    return null;
+  }
+}
+
 /**
  * A one-time sign-in token for an existing user, without sending an email.
  * The server turns it into a session with `verifyOtp` (D217).

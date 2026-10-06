@@ -17,6 +17,8 @@ import {
   validationError,
 } from "@/lib/http";
 import * as telegramAccounts from "../repo/telegram-accounts";
+import { sendAuthMail } from "./auth-mail";
+import type { ConfirmationMailer } from "./email-change";
 import * as usersRepo from "../repo/users";
 import {
   signupMetadata,
@@ -135,7 +137,10 @@ export async function signIn(
 export async function sendMagicLink(
   auth: AuthClient,
   input: MagicLinkInput,
+  mailer?: ConfirmationMailer,
 ): Promise<void> {
+  // Our own letter first (D320); Supabase's is the fallback.
+  if (mailer && (await sendAuthMail("signIn", input, mailer))) return;
   const { error } = await auth.signInWithOtp({
     email: input.email,
     options: {
@@ -167,7 +172,11 @@ export async function auditSignIn(
 export async function requestPasswordReset(
   auth: AuthClient,
   input: ResetInput,
+  mailer?: ConfirmationMailer,
 ): Promise<void> {
+  // Our own letter, from our own domain (D320). Supabase's own mail is the
+  // fallback: better a plain letter than none.
+  if (mailer && (await sendAuthMail("reset", input, mailer))) return;
   const { error } = await auth.resetPasswordForEmail(input.email, {
     redirectTo: callbackUrl(input.locale, "reset"),
   });

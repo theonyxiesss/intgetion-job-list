@@ -236,6 +236,26 @@
       "telegramLinked": "Telegram is linked to your account.",
       "telegramWaiting": "Waiting for your confirmation in Telegram…",
       "telegramFailed": "Telegram sign-in did not go through. Try again."
+    },
+    "mail": {
+      "confirm": {
+        "subject": "Confirm your email",
+        "body": "Welcome to INTGETION JOB LIST. Open the link below to confirm this address and finish setting up your account.",
+        "action": "Confirm email",
+        "ignore": "If you did not sign up, ignore this letter — the account stays unconfirmed and nothing happens."
+      },
+      "signIn": {
+        "subject": "Your sign-in link",
+        "body": "Open the link below to sign in to INTGETION JOB LIST. It works once and expires shortly.",
+        "action": "Sign in",
+        "ignore": "If you did not ask to sign in, ignore this letter. Nobody can use the link without this mailbox."
+      },
+      "reset": {
+        "subject": "Set a new password",
+        "body": "Open the link below to set a new password for your INTGETION JOB LIST account. It works once and expires shortly.",
+        "action": "Set a new password",
+        "ignore": "If you did not ask for this, ignore the letter: your current password keeps working and nothing changed."
+      }
     }
   },
   "onboarding": {
