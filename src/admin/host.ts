@@ -26,6 +26,11 @@ export function adminHostAllows(pathname: string): boolean {
   return pathname === "/robots.txt" || isAdminSurface(pathname);
 }
 
+/** The bare admin host has no public home. Open the sign-in page. */
+export function adminHostEntry(pathname: string): string | null {
+  return pathname === "/" ? "/en/admin/login" : null;
+}
+
 /**
  * Main host with the flag on: admin URLs are gone.
  * Admin host: only the admin surface. Everything else is refused.

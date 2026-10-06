@@ -1,6 +1,7 @@
 import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 import {
+  adminHostEntry,
   adminHostOnly,
   adminPathStatus,
   csrfSite,
@@ -31,6 +32,12 @@ export async function proxy(request: NextRequest) {
 
   const host = request.headers.get("host");
   const adminHost = isAdminHost(host);
+  const entry = adminHost ? adminHostEntry(request.nextUrl.pathname) : null;
+  if (entry) {
+    const url = request.nextUrl.clone();
+    url.pathname = entry;
+    return stamp(NextResponse.redirect(url, 307), requestId, true);
+  }
   const blocked = adminPathStatus({
     host,
     pathname: request.nextUrl.pathname,

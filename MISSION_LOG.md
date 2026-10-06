@@ -798,3 +798,9 @@
 - Отклонения от ТЗ: D318
 - OPEN QUESTION: основателю включить `TELEGRAM_MINI_APP_ENABLED=true` в Vercel (production, проект `intgetion-job-list`) и передеплоить. Кнопка меню в BotFather по брифу уже настроена. Рекомендация: включить флаг и влить эту ветку, затем пройти шаги 1–5 на живом проде. Пока флага нет, писать «должно работать» нельзя. `ANTHROPIC_API_KEY` по-прежнему нет — ответ бота «агент недоступен» на этом шаге не поломка.
 - Следующая подфаза: после флага и вливания — живая проверка Mini App. В master эта ветка не вливалась.
+
+## [2026-10-06] — корень admin.intgetion.com — DONE
+
+- Сделано: D319. `https://admin.intgetion.com/` отвечал 404, вход при этом открыт на `/en/admin/login`. Корень админ-хоста теперь 307 на этот вход. `/en` и `/en/jobs` на админ-хосте по-прежнему 404.
+- Команды проверки: `pnpm exec vitest run src/admin/host.test.ts` → 0 (6 tests). Живой прод до выкладки: `curl -sI https://admin.intgetion.com/` → 404; `curl -sI https://admin.intgetion.com/en/admin/login` → 200.
+- Миграции: нет. Решения: D319.

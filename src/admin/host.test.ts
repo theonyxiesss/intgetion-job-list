@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { adminPathStatus, csrfSite, hostOrigin, isAdminHost } from "./host";
+import {
+  adminHostEntry,
+  adminPathStatus,
+  csrfSite,
+  hostOrigin,
+  isAdminHost,
+} from "./host";
 
 describe("admin host routing", () => {
   it("recognises the production and local admin hosts", () => {
@@ -38,6 +44,12 @@ describe("admin host routing", () => {
         hostOnly: true,
       }),
     ).toBeNull();
+  });
+
+  it("sends the bare admin host to sign-in", () => {
+    expect(adminHostEntry("/")).toBe("/en/admin/login");
+    expect(adminHostEntry("/en")).toBeNull();
+    expect(adminHostEntry("/en/jobs")).toBeNull();
   });
 
   it("serves only the admin surface on the admin host", () => {
