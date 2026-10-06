@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import {
-  isEmbeddedFrame,
+  needsPartitionedSession,
   readTelegramInitData,
   telegramWebApp,
 } from "./mini-app-open";
@@ -19,39 +19,48 @@ export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
   const router = useRouter();
 
   useEffect(() => {
-    const initData = readTelegramInitData({
-      hash: window.location.hash,
-      injected: telegramWebApp(window)?.initData,
-    });
-    if (!initData) return;
     let cancelled = false;
+    let tries = 0;
 
-    void (async () => {
-      try {
-        const response = await fetch("/api/auth/telegram/miniapp", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            initData,
-            locale,
-            // A phone webview is not a frame. Partitioned cookies are dropped
-            // there, so the session has to be a normal first-party cookie.
-            framed: isEmbeddedFrame(window),
-          }),
+    async function signIn(initData: string) {
+      const response = await fetch("/api/auth/telegram/miniapp", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          initData,
+          locale,
+          // Only web.telegram.org needs Partitioned cookies (D315, D321).
+          framed: needsPartitionedSession(window),
+        }),
+      });
+      if (cancelled || !response.ok) return;
+      // The signed data is a credential: keep it out of history and logs.
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search,
+      );
+      router.refresh();
+    }
+
+    function tick() {
+      if (cancelled) return;
+      const initData = readTelegramInitData({
+        hash: window.location.hash,
+        injected: telegramWebApp(window)?.initData,
+      });
+      if (initData) {
+        void signIn(initData).catch(() => {
+          // Offline or refused: the person can still sign in by hand.
         });
-        if (cancelled || !response.ok) return;
-        // The signed data is a credential: keep it out of history and logs.
-        window.history.replaceState(
-          null,
-          "",
-          window.location.pathname + window.location.search,
-        );
-        router.refresh();
-      } catch {
-        // Offline or refused: the person can still sign in by hand.
+        return;
       }
-    })();
+      // Phone clients sometimes inject the payload a moment after load (D321).
+      tries += 1;
+      if (tries < 20) window.setTimeout(tick, 100);
+    }
 
+    tick();
     return () => {
       cancelled = true;
     };

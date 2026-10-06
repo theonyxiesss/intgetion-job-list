@@ -36,9 +36,10 @@ export async function POST(request: Request) {
     if (!profile) {
       throw new HttpError(401, "TELEGRAM_FAILED", "Telegram sign-in failed");
     }
-    // Telegram Web is a frame and needs Partitioned cookies (D315).
-    // The phone webview is the top document; Partitioned cookies do not stick.
-    const framed = body.framed !== false;
+    // Only an explicit true means Telegram Web's frame (D315). Anything
+    // else — phone webview, desktop app, missing field — stays first-party
+    // Lax, or the session is dropped (D321).
+    const framed = body.framed === true;
     const supabase = await createSupabaseServerClient({ framed });
     const user = await signInWithTelegramProfile(
       supabase.auth,
