@@ -646,3 +646,12 @@
 - Миграции: нет. Решения: D297.
 - OPEN QUESTION: у подборки `/jobs/t/*` картинка пока общая по сайту; имеет смысл сделать и ей свою, когда будут свои вводные тексты.
 - Следующее: зелёный CI → ff master.
+
+## [2026-10-06] — D298 подтверждение прав на сайт мета-тегом — на ветке claude/integrate-seo2
+
+- Сделано: `siteVerification()` в `src/modules/seo/site.ts` и поле `verification` корневых метаданных. Переменные `GOOGLE_SITE_VERIFICATION`, `YANDEX_VERIFICATION`, `BING_SITE_VERIFICATION` описаны в `.env.example` и добавлены в `ALL_KNOWN` в `scripts/env-rules.mjs`. Пустая переменная тег не выводит.
+- Проверка в браузере: с тремя тестовыми токенами в `.env.local` на `/en` выводятся `google-site-verification`, `yandex-verification` и `msvalidate.01`; без них тегов нет (тест).
+- Команды проверки: `pnpm exec tsc --noEmit` → 0, `pnpm exec eslint src scripts` → 0, `pnpm exec vitest run` → 651 passed (2 новых теста). Красный `legal.test.ts` — артефакт CRLF рабочей копии Windows.
+- Миграции: нет. Решения: D298.
+- OPEN QUESTION: нет. Основателю: выбрать в Search Console / Вебмастере / Bing способ «мета-тег», положить выданный токен в переменную Vercel (prod) и передеплоить. Способ с DNS-записью тоже работает и кода не требует.
+- Следующее: зелёный CI → ff master. Бюджеты CLS/INP (3.7) сознательно не трогал: `scripts/ci-ui.sh` сейчас переписан у Cursor в `cursor/p-mobile` (зелёная, не влита) — эта задача ложится сверху после его вливания.

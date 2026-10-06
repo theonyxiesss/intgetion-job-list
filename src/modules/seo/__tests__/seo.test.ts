@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { jobPostingJsonLd, serializeJsonLd } from "../job-posting";
 import {
   breadcrumbListJsonLd,
@@ -7,7 +7,7 @@ import {
   importedJobSummary,
 } from "../markup";
 import { ogClamp, ogCompanyCard, ogJobCard } from "../og";
-import { languageAlternates, metaDescription } from "../site";
+import { languageAlternates, metaDescription, siteVerification } from "../site";
 
 const job = {
   id: "00000000-0000-4000-8000-000000000001",
@@ -227,5 +227,36 @@ describe("share pictures for a job and a company (D297)", () => {
         jobsLabel: (count) => `${count} open roles`,
       }),
     ).toEqual({ name: "Acme", jobs: "0 open roles" });
+  });
+});
+
+describe("site ownership proofs (D298)", () => {
+  const keys = [
+    "GOOGLE_SITE_VERIFICATION",
+    "YANDEX_VERIFICATION",
+    "BING_SITE_VERIFICATION",
+  ] as const;
+  const saved = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
+  afterEach(() => {
+    for (const key of keys) {
+      if (saved[key] === undefined) delete process.env[key];
+      else process.env[key] = saved[key];
+    }
+  });
+
+  it("leaves out a proof the founder has not set", () => {
+    for (const key of keys) delete process.env[key];
+    expect(siteVerification()).toEqual({});
+  });
+
+  it("passes each token through, trimmed", () => {
+    process.env.GOOGLE_SITE_VERIFICATION = " g-token ";
+    process.env.YANDEX_VERIFICATION = "y-token";
+    process.env.BING_SITE_VERIFICATION = "b-token";
+    expect(siteVerification()).toEqual({
+      google: "g-token",
+      yandex: "y-token",
+      other: { "msvalidate.01": "b-token" },
+    });
   });
 });

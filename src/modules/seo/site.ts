@@ -83,3 +83,23 @@ export function metaDescription(text: string, max = 160): string {
   const space = cut.lastIndexOf(" ");
   return `${space > max * 0.6 ? cut.slice(0, space) : cut}…`;
 }
+
+/**
+ * Site ownership proofs for Search Console, Yandex Webmaster and Bing (D298).
+ * Each is a token the founder pastes into an env variable; an empty one is
+ * simply left out, so nothing fake ever reaches the page.
+ */
+export function siteVerification(): {
+  google?: string;
+  yandex?: string;
+  other?: Record<string, string>;
+} {
+  const google = process.env.GOOGLE_SITE_VERIFICATION?.trim();
+  const yandex = process.env.YANDEX_VERIFICATION?.trim();
+  const bing = process.env.BING_SITE_VERIFICATION?.trim();
+  return {
+    ...(google ? { google } : {}),
+    ...(yandex ? { yandex } : {}),
+    ...(bing ? { other: { "msvalidate.01": bing } } : {}),
+  };
+}

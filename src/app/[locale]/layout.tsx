@@ -19,7 +19,7 @@ import { flags } from "@/config/flags";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { ToastProvider } from "@/components/ui";
 import { routing, type AppLocale } from "@/i18n/routing";
-import { siteUrl } from "@/modules/seo/site";
+import { siteUrl, siteVerification } from "@/modules/seo/site";
 import "../globals.css";
 
 // One web font, for display text only (DESIGN.md 4.1, D144): Roboto
@@ -79,6 +79,8 @@ export async function generateMetadata({
     title: { default: product("name"), template: `%s · ${product("name")}` },
     description: t("description"),
     twitter: { card: "summary_large_image" },
+    // Ownership proofs for the webmaster tools, when the founder set them (D298).
+    verification: siteVerification(),
     // RSS of the newest jobs for feed readers and bots (D204).
     alternates: {
       types: {
