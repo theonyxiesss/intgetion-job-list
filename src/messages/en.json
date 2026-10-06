@@ -79,6 +79,7 @@
   "companyPage": {
     "trusted": "Trusted employer",
     "verified": "Verified company",
+    "openJobs": "{count, plural, =0 {No open roles} one {# open role} other {# open roles}}",
     "companyLogo": "Company logo",
     "openRoles": "Open positions",
     "empty": "No open positions right now.",

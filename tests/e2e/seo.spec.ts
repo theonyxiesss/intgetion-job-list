@@ -57,6 +57,14 @@ test("a job page has a title, a canonical URL and JobPosting data", async ({
 
   await page.goto(`/en/jobs/${jobId}`);
   await expect(page).toHaveTitle(new RegExp(`^${title} — SEO Co`));
+  // D297: the job has its own share picture, not the site-wide one.
+  const ogImage = page.locator('meta[property="og:image"]');
+  await expect(ogImage).toHaveCount(1);
+  const imageUrl = await ogImage.getAttribute("content");
+  expect(imageUrl).toContain(`/en/jobs/${jobId}/opengraph-image`);
+  const picture = await page.request.get(imageUrl ?? "");
+  expect(picture.status()).toBe(200);
+  expect(picture.headers()["content-type"]).toContain("image/png");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
     new RegExp(`/en/jobs/${jobId}$`),

@@ -6,6 +6,7 @@ import {
   homeGraphJsonLd,
   importedJobSummary,
 } from "../markup";
+import { ogClamp, ogCompanyCard, ogJobCard } from "../og";
 import { languageAlternates, metaDescription } from "../site";
 
 const job = {
@@ -177,5 +178,54 @@ describe("FAQPage JSON-LD (D296)", () => {
 
   it("stays empty when the page shows no questions", () => {
     expect(faqPageJsonLd([]).mainEntity).toEqual([]);
+  });
+});
+
+describe("share pictures for a job and a company (D297)", () => {
+  it("cuts a long title at a word and marks the cut", () => {
+    expect(ogClamp("  Senior   Solidity Engineer ", 70)).toBe(
+      "Senior Solidity Engineer",
+    );
+    const long =
+      "Senior Solidity Engineer for a decentralised exchange and its liquidity desk";
+    const cut = ogClamp(long, 70);
+    expect(cut.length).toBeLessThanOrEqual(70);
+    expect(cut.endsWith("…")).toBe(true);
+    expect(cut.startsWith("Senior Solidity Engineer")).toBe(true);
+    // A single long word still gets cut rather than overflowing the picture.
+    expect(ogClamp("a".repeat(90), 10)).toBe(`${"a".repeat(9)}…`);
+  });
+
+  it("builds the job lines from our own fields only", () => {
+    const card = ogJobCard({
+      title: "Solidity Engineer",
+      company: "Acme",
+      salary: "€5,000 – €7,000 / month",
+      facts: ["Remote", "Full-time", "", "  "],
+    });
+    expect(card).toEqual({
+      title: "Solidity Engineer",
+      company: "Acme",
+      salary: "€5,000 – €7,000 / month",
+      facts: "Remote · Full-time",
+    });
+    expect(
+      ogJobCard({
+        title: "Solidity Engineer",
+        company: "Acme",
+        salary: null,
+        facts: ["Remote"],
+      }).salary,
+    ).toBeNull();
+  });
+
+  it("counts a company's open roles through the caller's wording", () => {
+    expect(
+      ogCompanyCard({
+        name: "Acme",
+        openJobs: 0,
+        jobsLabel: (count) => `${count} open roles`,
+      }),
+    ).toEqual({ name: "Acme", jobs: "0 open roles" });
   });
 });
