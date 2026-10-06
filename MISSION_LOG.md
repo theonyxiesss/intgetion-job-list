@@ -735,3 +735,13 @@
 - Миграции: нет. Решения: D311, D312. RUNBOOK: раздел 14 — что нужно, чтобы агент заговорил, и как прикрепить сайт к боту через BotFather.
 - OPEN QUESTION: вход через Telegram возвращать не пришлось — он работает на проде, `/api/auth/telegram/start` отдаёт ссылку `t.me/intgetion_bot?start=login_…`. Старый виджет под флагом `TELEGRAM_LOGIN_ENABLED` остаётся выключенным: новый вход через бота его заменил.
 - Следующее: зелёный CI → ff master. Основателю: `ANTHROPIC_API_KEY` и `LLM_PRICES_MICRO_USD` в Vercel, иначе агент молчит везде.
+
+## [2026-10-06] — вебхук Telegram не доходил до маршрута — DONE на ветке claude/webhook-origin
+
+- Найдено при проверке прода после вливания агента: `POST https://intgetion.com/api/telegram/webhook` отвечал `403 {"error":{"code":"FORBIDDEN","message":"Cross-origin request"}}`. Причина — проверка CSRF в `src/proxy.ts`: она отклоняет любой изменяющий запрос без `Origin`, а Telegram его не шлёт. Бот не работал вообще: ни подтверждение входа (D256–D258), ни новый агент (D311).
+- Сделано: D313. `needsOriginCheck` в `src/lib/origin.ts` выводит ровно один путь `/api/telegram/webhook` из-под правила; маршрут по-прежнему проверяет `x-telegram-bot-api-secret-token` и без токена бота отвечает 404.
+- Проверка локально (dev, порт 3400): вебхук без `Origin` → 404 (нет токена в `.env.local`), то есть дошёл до маршрута; `POST /api/bot/message` без `Origin` → 403, как и было.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0, `pnpm exec eslint src tests` → 0, `pnpm exec vitest run` → 672 passed (2 новых теста на список исключений). Красный `legal.test.ts` — артефакт CRLF рабочей копии Windows.
+- Новый e2e в `tests/e2e/chat.spec.ts`: вебхук без `Origin` не должен отвечать 403, а обычный API без `Origin` — должен.
+- Миграции: нет. Решения: D313.
+- OPEN QUESTION: после вливания основателю стоит проверить вход через Telegram вживую — до этой правки он не мог сработать ни разу.

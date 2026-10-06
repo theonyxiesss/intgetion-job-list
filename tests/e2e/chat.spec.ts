@@ -37,3 +37,19 @@ test("7A: guests cannot confirm actions (P11)", async ({ request }) => {
   });
   expect(response.status()).toBe(401);
 });
+
+// D313: Telegram sends the webhook with no Origin; the CSRF rule must not eat
+// it, or the bot is silently dead. A wrong secret is still refused.
+test("the Telegram webhook is reachable without an Origin header", async ({
+  request,
+}) => {
+  const response = await request.post("/api/telegram/webhook", {
+    headers: { "x-telegram-bot-api-secret-token": "wrong" },
+    data: {},
+  });
+  expect(response.status()).not.toBe(403);
+  // 404 when no bot token is configured for the run, 401 when the secret fails.
+  expect([401, 404]).toContain(response.status());
+  const other = await request.post("/api/bot/message", { data: { text: "x" } });
+  expect(other.status()).toBe(403);
+});

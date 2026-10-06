@@ -1,12 +1,32 @@
 import { describe, expect, it } from "vitest";
 import { rateLimited } from "@/lib/http";
-import { isAllowedOrigin } from "./origin";
+import { isAllowedOrigin, needsOriginCheck } from "./origin";
 import { privacyHash } from "./privacy-hash";
 import { retryAfterSeconds, windowStart } from "./rate-limit";
 import { clientIp } from "./request-ip";
 import { buildCsp, createNonce } from "./security-headers";
 
 const site = "http://127.0.0.1:3000";
+
+describe("needsOriginCheck (D313)", () => {
+  it("skips the CSRF rule only for the Telegram webhook", () => {
+    // Telegram sends no Origin at all; the route checks its secret instead.
+    expect(needsOriginCheck("/api/telegram/webhook")).toBe(false);
+    expect(isAllowedOrigin("POST", null, site)).toBe(false);
+  });
+
+  it("keeps every other API route behind the rule", () => {
+    for (const path of [
+      "/api/bot/message",
+      "/api/auth/telegram/start",
+      "/api/admin/users/1/ban",
+      "/api/telegram/webhook/extra",
+      "/api/cron/import",
+    ]) {
+      expect(needsOriginCheck(path), path).toBe(true);
+    }
+  });
+});
 
 describe("isAllowedOrigin (P12)", () => {
   it("lets safe methods through without an Origin", () => {

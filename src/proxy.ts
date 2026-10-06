@@ -7,7 +7,7 @@ import {
   isAdminHost,
 } from "./admin/host";
 import { routing } from "./i18n/routing";
-import { isAllowedOrigin } from "./lib/origin";
+import { isAllowedOrigin, needsOriginCheck } from "./lib/origin";
 import { normalizeRequestId, REQUEST_ID_HEADER } from "./lib/request-id";
 import { buildCsp, createNonce } from "./lib/security-headers";
 import { siteUrl, supabaseUrl } from "./lib/supabase/env";
@@ -66,6 +66,7 @@ export async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/api/")) {
     // CSRF (section 6, P12): mutating API calls must come from this host.
     if (
+      needsOriginCheck(request.nextUrl.pathname) &&
       !isAllowedOrigin(
         request.method,
         request.headers.get("origin"),

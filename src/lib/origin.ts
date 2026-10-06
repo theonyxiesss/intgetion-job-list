@@ -17,3 +17,15 @@ export function isAllowedOrigin(
     return false;
   }
 }
+
+/**
+ * Routes that prove who is calling with a shared secret instead of an Origin
+ * (D313). Telegram's servers send the webhook with no Origin header at all, so
+ * the CSRF rule would reject every update before the route can check the
+ * secret. The route itself stays the gate: a wrong secret is still refused.
+ */
+const SECRET_AUTHENTICATED = new Set(["/api/telegram/webhook"]);
+
+export function needsOriginCheck(pathname: string): boolean {
+  return !SECRET_AUTHENTICATED.has(pathname);
+}
