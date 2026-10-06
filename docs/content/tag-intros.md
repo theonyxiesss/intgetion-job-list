@@ -15,10 +15,10 @@
 
 ## Что уже написано
 
-Двадцать пять подборок:
+Тридцать семь подборок:
 
-- сферы: web3, defi, nft, gamefi, zk, dao, exchange, eco-ethereum, eco-solana;
-- профессии: engineering, design, marketing, community;
+- сферы: web3, defi, nft, gamefi, zk, dao, exchange, infra-l1l2, metaverse, memecoins, crypto-vc, ai-ml, gamedev, eco-ethereum, eco-solana;
+- профессии: engineering, design, marketing, community, product, data, legal, content;
 - навыки: solidity, rust, react, smartcontracts;
-- формат и уровень: remote, senior, entry;
+- формат, уровень и отбор: remote, non-technical, high-paying, senior, entry;
 - регионы: europe, north-america, latam, apac, africa-mena.

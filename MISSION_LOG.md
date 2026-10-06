@@ -674,3 +674,12 @@
 - Миграции: нет. Решения: D302.
 - OPEN QUESTION: подтверждение сайта в Search Console, Вебмастере и Bing по-прежнему за основателем. Проверено в этой сессии: коннектор Vercel видит только команду `marks-projects-a1f8edb6` с проектами `intgetion` (домен `intgetion.vercel.app`) и `theonyxis` — проекта `intgetion-job-list`, который обслуживает intgetion.com, в доступе нет, переменные ему Claude поставить не может. Сами токены выдаются только после входа в аккаунты основателя.
 - Следующее: зелёный CI → ff master.
+
+## [2026-10-06] — D303 ещё двенадцать текстов подборок — на ветке claude/integrate-seo2
+
+- Сделано: тексты для infra-l1l2, metaverse, memecoins, crypto-vc, ai-ml, gamedev, product, data, legal, content, non-technical, high-paying. Всего подборок с собственным текстом — 37.
+- Проверка в браузере (dev, порт 3400): все шесть проверенных страниц 200, длина текста 100–130 слов, текст на странице и в `description`: `/en/jobs/t/high-paying` 127, `/en/jobs/t/legal` 127, `/en/jobs/t/memecoins` 130, `/ru/jobs/t/data` 100, `/ru/jobs/t/infra-l1l2` 112, `/ru/jobs/t/non-technical` 115.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0, `pnpm exec eslint src` → 0, `pnpm exec vitest run` → 659 passed. Красный `legal.test.ts` — артефакт CRLF рабочей копии Windows.
+- Миграции: нет. Решения: D303.
+- OPEN QUESTION: остаётся около 65 подборок без своего текста — в основном узкие секторы и навыки, спрос по ним меньше.
+- Следующее: зелёный CI → ff master.
