@@ -496,12 +496,36 @@ export function inferImportedMarkers(text: string): {
   return { sectors, seniority, category };
 }
 
+/**
+ * Working-hours regions for collection pages (D295). A region is one
+ * representative IANA zone plus the hours of overlap a job must share with it,
+ * so the filter is the existing `tzOverlapWith` and nothing new in the schema.
+ */
+export type Region = {
+  slug: string;
+  timezone: string;
+  minOverlap: number;
+};
+
+export const REGIONS: readonly Region[] = [
+  { slug: "europe", timezone: "Europe/Berlin", minOverlap: 4 },
+  { slug: "north-america", timezone: "America/New_York", minOverlap: 4 },
+  { slug: "latam", timezone: "America/Bogota", minOverlap: 4 },
+  { slug: "apac", timezone: "Asia/Singapore", minOverlap: 4 },
+  { slug: "africa-mena", timezone: "Africa/Lagos", minOverlap: 4 },
+];
+
+export function region(slug: string): Region | null {
+  return REGIONS.find((item) => item.slug === slug) ?? null;
+}
+
 export type CatalogTag =
   | { slug: string; kind: "sector"; sector: Sector }
   | { slug: string; kind: "category"; category: JobCategory }
   | { slug: string; kind: "skill"; skillSlug: string }
   | { slug: string; kind: "seniority"; seniority: Seniority }
   | { slug: string; kind: "employment"; employment: EmploymentType }
+  | { slug: string; kind: "region"; region: Region }
   | { slug: string; kind: "remote" }
   | { slug: string; kind: "non-technical" }
   | { slug: string; kind: "high-paying" }
@@ -558,10 +582,27 @@ const extraCategoryTags: CatalogTag[] = JOB_CATEGORIES.filter(
   (category) => !QUICK_FILTERS.some((tag) => tag.slug === category),
 ).map((category) => ({ slug: category, kind: "category", category }));
 
+const taken = new Set<string>([
+  ...QUICK_FILTERS.map((tag) => tag.slug),
+  ...extraSectorTags.map((tag) => tag.slug),
+  ...extraCategoryTags.map((tag) => tag.slug),
+]);
+
+/** Every marker skill gets a collection page, not only the quick filters (D294). */
+const extraSkillTags: CatalogTag[] = MARKER_SKILLS.filter(
+  (skill) => !taken.has(skill.slug),
+).map((skill) => ({ slug: skill.slug, kind: "skill", skillSlug: skill.slug }));
+
+const regionTags: CatalogTag[] = REGIONS.filter(
+  (item) => !taken.has(item.slug),
+).map((item) => ({ slug: item.slug, kind: "region", region: item }));
+
 export const CATALOG_TAGS: readonly CatalogTag[] = [
   ...QUICK_FILTERS,
   ...extraSectorTags,
   ...extraCategoryTags,
+  ...extraSkillTags,
+  ...regionTags,
 ];
 
 export function catalogTag(slug: string): CatalogTag | null {

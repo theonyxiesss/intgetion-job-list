@@ -15,6 +15,11 @@ export async function tagSearchOverrides(
   if (tag.kind === "seniority") return { seniority: tag.seniority };
   if (tag.kind === "employment") return { employmentType: tag.employment };
   if (tag.kind === "high-paying") return { highPay: "1", sort: "salary" };
+  if (tag.kind === "region")
+    return {
+      tzOverlapWith: tag.region.timezone,
+      minOverlap: String(tag.region.minOverlap),
+    };
   const [row] = await getDb()
     .select({ id: skills.id })
     .from(skills)

@@ -44,6 +44,8 @@ export async function QuickFilters({
         return markers(`seniority.${tag.seniority}`);
       case "employment":
         return jobs(tag.employment);
+      case "region":
+        return markers(`regions.${tag.region.slug}`);
       case "skill":
         return tag.skillSlug;
     }

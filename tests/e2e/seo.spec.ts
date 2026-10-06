@@ -125,3 +125,83 @@ test("the home page carries search wording, x-default and a social image", async
   ).toHaveAttribute("href", /\/en\/jobs$/);
   await expect(page.locator('meta[property="og:image"]')).toHaveCount(1);
 });
+
+// D294–D296: skill and region collections, the FAQ and the thin-page rule.
+test("a region collection lists jobs, answers questions and stays indexable", async ({
+  page,
+}) => {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString)
+    throw new Error("DATABASE_URL is required for SEO e2e.");
+  const userId = randomUUID();
+  const companyId = randomUUID();
+  const client = new pg.Client({ connectionString });
+  await client.connect();
+  try {
+    await client.query(
+      `insert into public.users (id, auth_uid, terms_accepted_at, terms_version)
+       values ($1, $2, now(), 'seo')`,
+      [userId, randomUUID()],
+    );
+    await client.query(
+      `insert into public.companies (id, name, slug, status, created_by)
+       values ($1, 'Region Co', $2, 'verified', $3)`,
+      [companyId, `region-${companyId.slice(0, 8)}`, userId],
+    );
+    // No timezone means UTC, which overlaps European hours by about eight.
+    for (let index = 0; index < 3; index += 1) {
+      await client.query(
+        `insert into public.jobs (
+           id, company_id, created_by, title, description, category,
+           work_format, employment_type, application_method, source, status,
+           published_at, expires_at
+         ) values ($1, $2, $3, $4,
+           'Work with a distributed team across European working hours.',
+           'engineering', 'remote', 'full_time', 'internal', 'internal',
+           'published', now(), now() + interval '30 days')`,
+        [randomUUID(), companyId, userId, `Region e2e role ${index}`],
+      );
+    }
+  } finally {
+    await client.end();
+  }
+
+  await page.goto("/en/jobs/t/europe");
+  await expect(page).toHaveTitle(/Europe jobs/);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    /\/en\/jobs\/t\/europe$/,
+  );
+  await expect(
+    page.locator('link[rel="alternate"][hreflang="x-default"]'),
+  ).toHaveAttribute("href", /\/en\/jobs\/t\/europe$/);
+  await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Questions and answers" }),
+  ).toBeVisible();
+  const faq = await page
+    .locator('script[type="application/ld+json"]')
+    .last()
+    .textContent();
+  const data = JSON.parse(faq ?? "{}") as {
+    "@type"?: string;
+    mainEntity?: unknown[];
+  };
+  expect(data["@type"]).toBe("FAQPage");
+  expect(data.mainEntity).toHaveLength(3);
+});
+
+test("a skill collection exists and an empty one is kept out of the index", async ({
+  page,
+}) => {
+  await page.goto("/en/jobs/t/tokenomics");
+  await expect(page).toHaveTitle(/Tokenomics jobs/);
+  // Nothing is tagged with it in the e2e database, so it must not be indexed.
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    /noindex/,
+  );
+  await expect(
+    page.getByRole("heading", { name: "Questions and answers" }),
+  ).toHaveCount(0);
+});

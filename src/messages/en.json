@@ -1243,6 +1243,23 @@
     "perk": "Perks",
     "tagTitle": "{name} jobs",
     "tagIntro": "Published roles tagged {name}.",
+    "tagDescription": "Remote {name} jobs in web3, crypto and AI — fresh openings with pay, time zone and format, in English and Russian.",
+    "regions": {
+      "europe": "Europe",
+      "north-america": "North America",
+      "latam": "Latin America",
+      "apac": "Asia and Pacific",
+      "africa-mena": "Africa and the Middle East"
+    },
+    "faq": {
+      "title": "Questions and answers",
+      "q1": "How do jobs get onto this {name} list?",
+      "a1": "Every published job that carries the {name} marker is here — the ones employers post with us and the ones we import from partner feeds, always with a link to the original. Nothing is placed for money.",
+      "q2": "Can I work remotely and keep my own hours?",
+      "a2": "Each card shows the work format, the employment type and the time zone the team needs you to overlap with, so you can see before you apply whether {name} work fits your day.",
+      "q3": "How do I follow new {name} jobs?",
+      "a3": "The RSS link at the top of this page carries the same list. Signed in, a saved search sends new matches by email or Telegram as they appear."
+    },
     "highPayTitle": "High-paying jobs",
     "highPayIntro": "Gross pay at or above {threshold} a year.",
     "highPayThreshold": "100000 USD",

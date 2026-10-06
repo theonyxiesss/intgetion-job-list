@@ -15,6 +15,25 @@ export function breadcrumbListJsonLd(items: BreadcrumbItem[]) {
   };
 }
 
+/** One question of a collection page FAQ (D296). */
+export type FaqItem = { question: string; answer: string };
+
+/**
+ * Schema.org FAQPage. Only questions that are also visible on the page are
+ * passed in: Google drops markup that the visitor cannot see.
+ */
+export function faqPageJsonLd(items: FaqItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  };
+}
+
 /**
  * Organization and WebSite for the homepage (D282).
  * `sameAs` is omitted when the founder has not given social URLs.

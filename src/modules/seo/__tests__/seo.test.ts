@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { jobPostingJsonLd, serializeJsonLd } from "../job-posting";
 import {
   breadcrumbListJsonLd,
+  faqPageJsonLd,
   homeGraphJsonLd,
   importedJobSummary,
 } from "../markup";
@@ -144,5 +145,37 @@ describe("languageAlternates (D276)", () => {
       ru: "http://localhost:3000/ru/jobs",
       "x-default": "http://localhost:3000/en/jobs",
     });
+  });
+});
+
+describe("FAQPage JSON-LD (D296)", () => {
+  it("wraps every visible question in a Question with an answer", () => {
+    const ld = faqPageJsonLd([
+      { question: "How do jobs get here?", answer: "Nothing is paid for." },
+      { question: "Remote?", answer: "The card shows the format." },
+    ]);
+    expect(ld).toMatchObject({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+    });
+    expect(ld.mainEntity).toEqual([
+      {
+        "@type": "Question",
+        name: "How do jobs get here?",
+        acceptedAnswer: { "@type": "Answer", text: "Nothing is paid for." },
+      },
+      {
+        "@type": "Question",
+        name: "Remote?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "The card shows the format.",
+        },
+      },
+    ]);
+  });
+
+  it("stays empty when the page shows no questions", () => {
+    expect(faqPageJsonLd([]).mainEntity).toEqual([]);
   });
 });

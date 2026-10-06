@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { sql } from "drizzle-orm";
-import { CATALOG_TAGS } from "@/config/markers";
+import { CATALOG_TAGS, REGIONS } from "@/config/markers";
 import { getDb } from "@/db/client";
 import { logger } from "@/lib/logger";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
@@ -62,6 +62,18 @@ async function presentTagSlugs(): Promise<Set<string>> {
     jobSearchQuery.parse({ highPay: "1", limit: 1, sort: "salary" }),
   );
   if (high.items.length > 0) present.add("high-paying");
+  // Regions are a time-zone overlap, not a column, so each one is asked
+  // separately — one after the other, never in parallel (D247, D295).
+  for (const item of REGIONS) {
+    const found = await searchJobs(
+      jobSearchQuery.parse({
+        tzOverlapWith: item.timezone,
+        minOverlap: String(item.minOverlap),
+        limit: 1,
+      }),
+    );
+    if (found.items.length > 0) present.add(item.slug);
+  }
   return present;
 }
 
