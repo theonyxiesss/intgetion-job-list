@@ -148,6 +148,91 @@ describe("register", () => {
     ).resolves.toBeUndefined();
   });
 
+  it("writes to the owner of a taken address instead of telling the form (D319)", async () => {
+    const sent: Array<{ to: string; subject: string; text: string }> = [];
+    const mailer = async (message: {
+      to: string;
+      subject: string;
+      text: string;
+      html: string;
+    }) => {
+      sent.push(message);
+      return "sent" as const;
+    };
+    const auth = fakeAuth(null);
+    auth.signUp.mockResolvedValue({
+      data: {},
+      error: { code: "user_already_exists", status: 422 },
+    });
+    await expect(
+      register(
+        asAuth(auth),
+        {
+          email: "ana@example.com",
+          password: "orbit-lantern-42",
+          locale: "en",
+          acceptTerms: true,
+        },
+        new Date(),
+        mailer,
+      ),
+    ).resolves.toBeUndefined();
+    expect(sent).toHaveLength(1);
+    expect(sent[0].to).toBe("ana@example.com");
+    expect(sent[0].subject).toContain("already have");
+    // The letter points at signing in and at setting a new password.
+    expect(sent[0].text).toContain("/en/login");
+    expect(sent[0].text).toContain("/en/reset-password");
+  });
+
+  it("also spots the silent answer Supabase gives a confirmed address", async () => {
+    const sent: unknown[] = [];
+    const auth = fakeAuth(null);
+    auth.signUp.mockResolvedValue({
+      data: { user: { id: "u1", identities: [] } },
+      error: null,
+    });
+    await register(
+      asAuth(auth),
+      {
+        email: "ana@example.com",
+        password: "orbit-lantern-42",
+        locale: "ru",
+        acceptTerms: true,
+      },
+      new Date(),
+      async (message) => {
+        sent.push(message);
+        return "sent" as const;
+      },
+    );
+    expect(sent).toHaveLength(1);
+  });
+
+  it("stays quiet for a genuinely new address", async () => {
+    const sent: unknown[] = [];
+    const auth = fakeAuth(null);
+    auth.signUp.mockResolvedValue({
+      data: { user: { id: "u1", identities: [{ provider: "email" }] } },
+      error: null,
+    });
+    await register(
+      asAuth(auth),
+      {
+        email: "new@example.com",
+        password: "orbit-lantern-42",
+        locale: "en",
+        acceptTerms: true,
+      },
+      new Date(),
+      async (message) => {
+        sent.push(message);
+        return "sent" as const;
+      },
+    );
+    expect(sent).toEqual([]);
+  });
+
   it("maps provider rate limits to 429 RATE_LIMITED", async () => {
     const auth = fakeAuth(null);
     auth.signInWithOtp.mockResolvedValue({

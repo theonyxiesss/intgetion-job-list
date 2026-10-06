@@ -99,3 +99,33 @@ export async function confirmEmailAdd(
   logger.warn({ result }, "email add failed");
   return { ok: false, reason: "failed" };
 }
+
+/**
+ * Someone tried to register with an address that already has an account
+ * (D319). The form answers the same for a new address and for a taken one —
+ * otherwise anyone could check which addresses are registered on a job site.
+ * The person who owns the mailbox is the one who gets told, and they get the
+ * two links that actually help: signing in and setting a new password.
+ */
+export async function sendExistingAccountNotice(
+  email: string,
+  locale: AppLocale,
+  mailer: ConfirmationMailer,
+): Promise<void> {
+  const copy = (locale === "ru" ? ru : en).auth.existingAccountMail;
+  const signIn = `${siteUrl()}/${locale}/login`;
+  const reset = `${siteUrl()}/${locale}/reset-password`;
+  const outcome = await mailer({
+    to: email,
+    subject: copy.subject,
+    text: `${copy.body}\n\n${copy.signIn}: ${signIn}\n${copy.reset}: ${reset}`,
+    html: siteEmailHtml({
+      body: `${copy.body}\n\n${copy.reset}: ${reset}`,
+      action: { href: signIn, label: copy.signIn },
+    }),
+  });
+  if (outcome === "skipped") {
+    // Nothing to do: without a mail sender the quiet answer is all there is.
+    logger.warn({ at: "register" }, "existing account notice not sent");
+  }
+}

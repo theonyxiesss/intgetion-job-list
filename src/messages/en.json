@@ -186,7 +186,7 @@
     "resetTitle": "Reset password",
     "updatePasswordTitle": "Set a new password",
     "checkEmailTitle": "Check your email",
-    "checkEmailBody": "We sent you a link. Open it in this browser to continue. The link works once.",
+    "checkEmailBody": "We sent you a link. Open it in this browser to continue — the link works once. If an account with this address already exists, the letter says so instead and shows you how to sign in.",
     "email": "Email",
     "password": "Password",
     "newPassword": "New password",
@@ -236,6 +236,12 @@
       "telegramLinked": "Telegram is linked to your account.",
       "telegramWaiting": "Waiting for your confirmation in Telegram…",
       "telegramFailed": "Telegram sign-in did not go through. Try again."
+    },
+    "existingAccountMail": {
+      "subject": "You already have an INTGETION account",
+      "body": "Someone just tried to create an account with this address. If that was you: the account already exists, so there is nothing to create. Sign in, or set a new password if you forgot it. If it was not you, you can ignore this — nobody got access to your account.",
+      "signIn": "Sign in",
+      "reset": "Set a new password"
     }
   },
   "onboarding": {

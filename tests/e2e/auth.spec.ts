@@ -264,3 +264,24 @@ test("the agent remembers a guest across a reload", async ({ page }) => {
       .getByText("Rust jobs in Europe"),
   ).toBeVisible();
 });
+
+// D319: a taken address gets the same screen as a new one, and its owner is
+// told by mail — so the form cannot be used to check who is registered.
+test("registering twice writes to the owner instead of revealing the address", async ({
+  page,
+}) => {
+  const email = uniqueEmail("taken");
+  await registerWithPassword(page, email);
+  await openLatestLink(page, email, 0);
+  await expectSignedIn(page);
+  await signOut(page);
+
+  const seen = await countMails(page.request, email);
+  await registerWithPassword(page, email, "orbit-lantern-77");
+  // Same screen, no hint that the address is taken.
+  await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
+  await expect(page.getByText(/already registered/i)).toHaveCount(0);
+
+  const mail = await waitForMail(page.request, email, seen);
+  expect(JSON.stringify(mail)).toContain("already have");
+});

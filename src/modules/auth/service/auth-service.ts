@@ -17,6 +17,10 @@ import {
   validationError,
 } from "@/lib/http";
 import * as telegramAccounts from "../repo/telegram-accounts";
+import {
+  sendExistingAccountNotice,
+  type ConfirmationMailer,
+} from "./email-change";
 import * as usersRepo from "../repo/users";
 import {
   signupMetadata,
@@ -78,6 +82,7 @@ export async function register(
   auth: AuthClient,
   input: RegisterInput,
   now: Date = new Date(),
+  mailer?: ConfirmationMailer,
 ): Promise<void> {
   const data: SignupMetadata = {
     terms_version: TERMS_VERSION,
@@ -85,18 +90,36 @@ export async function register(
     locale: input.locale,
   };
   const emailRedirectTo = callbackUrl(input.locale);
-  const { error } = input.password
-    ? await auth.signUp({
-        email: input.email,
-        password: input.password,
-        options: { emailRedirectTo, data },
-      })
-    : await auth.signInWithOtp({
-        email: input.email,
-        options: { shouldCreateUser: true, emailRedirectTo, data },
-      });
-  // An existing address gets the same answer as a new one (anti-enumeration).
-  if (error && error.code !== "user_already_exists") throw authFailure(error);
+  let taken = false;
+  if (input.password) {
+    const { data: signUp, error } = await auth.signUp({
+      email: input.email,
+      password: input.password,
+      options: { emailRedirectTo, data },
+    });
+    if (error) {
+      if (error.code !== "user_already_exists") throw authFailure(error);
+      taken = true;
+    } else {
+      // Supabase answers an existing confirmed address with a user that has
+      // no identities, so the caller cannot tell the two cases apart.
+      taken = (signUp.user?.identities?.length ?? 1) === 0;
+    }
+  } else {
+    const { error } = await auth.signInWithOtp({
+      email: input.email,
+      options: { shouldCreateUser: true, emailRedirectTo, data },
+    });
+    if (error) {
+      if (error.code !== "user_already_exists") throw authFailure(error);
+      taken = true;
+    }
+  }
+  // An existing address gets the same answer as a new one (anti-enumeration),
+  // but its owner is told what happened by mail (D319).
+  if (taken && mailer) {
+    await sendExistingAccountNotice(input.email, input.locale, mailer);
+  }
 }
 
 /**
