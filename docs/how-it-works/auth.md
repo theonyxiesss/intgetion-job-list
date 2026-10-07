@@ -7,6 +7,7 @@
 - Email + пароль и magic link через **Supabase Auth** (`@supabase/ssr`).
 - После подтверждения: `/auth/callback` → строка `users`, привязка гостевой бот-сессии при наличии cookie.
 - Страницы: `/[locale]/login`, `register`, `reset-password`.
+- Привязка уже существующего аккаунта: «Настройки → Аккаунт». Google и X — `linkIdentity`; Telegram — бот, опрос `/api/auth/telegram/link` (D339).
 - API: `/api/me` и guards в `src/lib/auth-guards.ts`.
 
 ## Ключевые пути

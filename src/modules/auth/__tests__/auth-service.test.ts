@@ -9,8 +9,10 @@ import {
   changePassword,
   completeCallback,
   getCurrentUser,
+  linkedOAuthAccounts,
   startGoogleSignIn,
   startXSignIn,
+  unlinkOAuthProvider,
   register,
   requestPasswordReset,
   requireCurrentUser,
@@ -82,6 +84,15 @@ function fakeAuth(user: AuthUser | null) {
       data: { provider: "google", url: "https://accounts.google.com/o/oauth2" },
       error: null,
     }),
+    linkIdentity: vi.fn().mockResolvedValue({
+      data: { provider: "google", url: "https://accounts.google.com/o/oauth2" },
+      error: null,
+    }),
+    getUserIdentities: vi.fn().mockResolvedValue({
+      data: { identities: [] },
+      error: null,
+    }),
+    unlinkIdentity: vi.fn().mockResolvedValue({ data: {}, error: null }),
   };
 }
 
@@ -151,7 +162,8 @@ describe("register", () => {
         email: "ana@example.com",
         password: "orbit-lantern-42",
         locale: "en",
-        acceptTerms: true, accountType: "candidate" as const,
+        acceptTerms: true,
+        accountType: "candidate" as const,
         next: "chat",
       },
       now,
@@ -229,7 +241,8 @@ describe("register", () => {
         email: "ana@example.com",
         password: "orbit-lantern-42",
         locale: "en",
-        acceptTerms: true, accountType: "candidate" as const,
+        acceptTerms: true,
+        accountType: "candidate" as const,
       }),
     ).rejects.toMatchObject({
       status: 409,
@@ -269,7 +282,8 @@ describe("register", () => {
       register(asAuth(auth), {
         email: "ana@example.com",
         locale: "en",
-        acceptTerms: true, accountType: "candidate" as const,
+        acceptTerms: true,
+        accountType: "candidate" as const,
       }),
     ).rejects.toMatchObject({ status: 429, code: "RATE_LIMITED" });
   });
@@ -369,7 +383,10 @@ describe("completeCallback", () => {
   });
 
   it("creates a row from the Google terms when the provider sent none", async () => {
-    const auth = fakeAuth({ ...confirmed, user_metadata: { iss: "https://accounts.google.com" } });
+    const auth = fakeAuth({
+      ...confirmed,
+      user_metadata: { iss: "https://accounts.google.com" },
+    });
     repo.findUserByAuthUid.mockResolvedValue(undefined);
     repo.insertUserIfMissing.mockResolvedValue(row);
     const result = await completeCallback(
@@ -384,6 +401,18 @@ describe("completeCallback", () => {
     );
     expect(result).toEqual({ ok: true, user: row, created: true });
     expect(auth.signOut).not.toHaveBeenCalled();
+  });
+
+  it("reports an identity that already belongs to someone else", async () => {
+    const auth = fakeAuth(null);
+    auth.exchangeCodeForSession.mockResolvedValue({
+      data: { user: null },
+      error: { code: "identity_already_exists", message: "already linked" },
+    });
+    expect(await completeCallback(asAuth(auth), { code: "abc" })).toEqual({
+      ok: false,
+      reason: "identity_taken",
+    });
   });
 });
 
@@ -421,6 +450,105 @@ describe("startXSignIn", () => {
         skipBrowserRedirect: true,
       },
     });
+  });
+});
+
+describe("linking Google and X", () => {
+  it("asks Supabase to attach Google to the current account", async () => {
+    const auth = fakeAuth(confirmed);
+    await startGoogleSignIn(asAuth(auth), { locale: "ru", link: true });
+    expect(auth.linkIdentity).toHaveBeenCalledWith({
+      provider: "google",
+      options: {
+        redirectTo: "http://127.0.0.1:3000/ru/auth/callback?next=account",
+        skipBrowserRedirect: true,
+        queryParams: { prompt: "select_account" },
+      },
+    });
+    expect(auth.signInWithOAuth).not.toHaveBeenCalled();
+  });
+
+  it("asks Supabase to attach X to the current account", async () => {
+    const auth = fakeAuth(confirmed);
+    await startXSignIn(asAuth(auth), { locale: "en", link: true });
+    expect(auth.linkIdentity).toHaveBeenCalledWith({
+      provider: "x",
+      options: {
+        redirectTo: "http://127.0.0.1:3000/en/auth/callback?next=account",
+        skipBrowserRedirect: true,
+      },
+    });
+  });
+
+  it("reads a linked Google email and an X username", async () => {
+    const auth = fakeAuth(confirmed);
+    auth.getUserIdentities.mockResolvedValue({
+      data: {
+        identities: [
+          {
+            id: "g",
+            identity_id: "g",
+            user_id: "u",
+            provider: "google",
+            identity_data: { email: "ada@example.com" },
+          },
+          {
+            id: "x",
+            identity_id: "x",
+            user_id: "u",
+            provider: "twitter",
+            identity_data: { preferred_username: "ada" },
+          },
+        ],
+      },
+      error: null,
+    });
+    await expect(linkedOAuthAccounts(asAuth(auth))).resolves.toEqual({
+      google: { label: "ada@example.com" },
+      x: { label: "@ada" },
+    });
+  });
+
+  it("refuses to unlink the only sign-in identity", async () => {
+    const auth = fakeAuth(confirmed);
+    auth.getUserIdentities.mockResolvedValue({
+      data: {
+        identities: [
+          { id: "g", identity_id: "g", user_id: "u", provider: "google" },
+        ],
+      },
+      error: null,
+    });
+    const error = await unlinkOAuthProvider(asAuth(auth), "google").catch(
+      (caught: unknown) => caught,
+    );
+    expect(error).toBeInstanceOf(HttpError);
+    expect(error).toMatchObject({
+      status: 409,
+      details: { reason: "last_sign_in" },
+    });
+    expect(auth.unlinkIdentity).not.toHaveBeenCalled();
+  });
+
+  it("unlinks Google when another identity remains", async () => {
+    const auth = fakeAuth(confirmed);
+    const google = {
+      id: "g",
+      identity_id: "g",
+      user_id: "u",
+      provider: "google",
+    };
+    auth.getUserIdentities.mockResolvedValue({
+      data: {
+        identities: [
+          { id: "e", identity_id: "e", user_id: "u", provider: "email" },
+          google,
+        ],
+      },
+      error: null,
+    });
+    await unlinkOAuthProvider(asAuth(auth), "google");
+    expect(auth.unlinkIdentity).toHaveBeenCalledWith(google);
   });
 });
 

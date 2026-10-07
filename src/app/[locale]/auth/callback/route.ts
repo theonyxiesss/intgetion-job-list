@@ -44,19 +44,24 @@ export async function GET(
     terms.success ? terms.data : undefined,
   );
 
-  if (result.ok) {
+  const backToAccount = query.get("next") === "account";
+  if (result.ok && !backToAccount) {
     await auditSignIn(result.user, "email_link", clientIp(request.headers));
   }
 
   const target = new URL(`/${locale}`, siteUrl());
   if (!result.ok) {
-    target.pathname = `/${locale}/login`;
+    target.pathname = backToAccount
+      ? `/${locale}/settings/account`
+      : `/${locale}/login`;
     target.searchParams.set("error", result.reason);
   } else if (query.get("next") === "reset") {
     target.pathname = `/${locale}/reset-password`;
     target.searchParams.set("mode", "update");
   } else if (query.get("next") === "chat") {
     target.pathname = `/${locale}/chat`;
+  } else if (backToAccount) {
+    target.pathname = `/${locale}/settings/account`;
   } else if (result.created && result.user.accountType === "employer") {
     // A new employer starts with the company profile (D331).
     target.pathname = `/${locale}/employer/company`;
