@@ -450,3 +450,8 @@ dialog[open] .ui-menu-item {
     transform: none;
   }
 }
+
+/* Logo (components/ui/logo.tsx): white chrome PNG; dark chrome on the light theme. */
+:root[data-theme="light"] .logo-img {
+  filter: invert(1);
+}
