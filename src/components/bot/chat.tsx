@@ -1,13 +1,12 @@
 "use client";
 
-import { Send, Sparkles } from "lucide-react";
+import { Send } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { ConfirmCard } from "@/components/ui/dialog";
+import { controlClass } from "@/components/ui/field";
 import { Alert } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
-import { Textarea } from "@/components/ui/input";
 import { Link, useRouter } from "@/i18n/navigation";
 
 type ExplainLine = {
@@ -97,6 +96,19 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
     profileReview: false,
   });
   const endRef = useRef<HTMLDivElement>(null);
+  const fieldRef = useRef<HTMLTextAreaElement>(null);
+
+  /** One line, then a few more, then a fixed cap. Past that, the field scrolls. */
+  function fitComposer(node: HTMLTextAreaElement) {
+    const cap = Number.parseFloat(getComputedStyle(node).maxHeight);
+    node.style.height = "0px";
+    const full = node.scrollHeight;
+    const height = Number.isFinite(cap) ? Math.min(full, cap) : full;
+    node.style.height = `${height}px`;
+    const overflows = Number.isFinite(cap) && full > cap + 1;
+    node.style.overflowY = overflows ? "auto" : "hidden";
+    if (!overflows) node.scrollTop = 0;
+  }
 
   useEffect(() => {
     fetch("/api/bot/conversation")
@@ -159,6 +171,7 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
   async function ask(message: string) {
     if (!message || sending) return;
     setText("");
+    fieldRef.current?.focus();
     setSending(true);
     setThinking(true);
     add({ key: nextKey(), kind: "user", text: message });
@@ -231,6 +244,10 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
     }
   }
 
+  useLayoutEffect(() => {
+    if (fieldRef.current) fitComposer(fieldRef.current);
+  }, [text]);
+
   function send(event: FormEvent) {
     event.preventDefault();
     void ask(text.trim());
@@ -297,38 +314,37 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
   }
 
   return (
-    <div className="chat-shell flex flex-col gap-4 max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:gap-3 max-md:bg-bg max-md:px-4 max-md:pt-3">
+    <div className="chat-shell mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-3 px-4 max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:max-w-none max-md:bg-bg md:px-6">
+      <h1 className="shrink-0 py-3 text-sm font-medium">{t("title")}</h1>
       <div
         role="log"
         aria-live="polite"
         aria-label={t("log")}
-        className="flex min-h-96 flex-col gap-5 overflow-y-auto border border-line bg-surface p-5 max-md:min-h-0 max-md:flex-1 max-md:border-0 max-md:bg-transparent max-md:p-0"
+        className="flex min-h-0 flex-1 flex-col gap-5 overflow-x-hidden overflow-y-auto"
       >
         {entries.length === 0 && (
-          <div className="m-auto flex max-w-md flex-col items-center gap-5 py-8 text-center">
-            <span className="flex h-12 w-12 items-center justify-center border border-line-strong text-signal">
-              <Icon icon={Sparkles} size={20} />
-            </span>
-            <p className="t-body-s text-fg-muted">
-              {signedIn ? t("emptySignedIn") : t("emptyGuest")}
-            </p>
-          </div>
+          <p className="t-body-s m-auto max-w-md py-8 text-center text-fg-muted">
+            {signedIn ? t("emptySignedIn") : t("emptyGuest")}
+          </p>
         )}
         {entries.map((entry) => {
           if (entry.kind === "user") {
             return (
-              <div key={entry.key} className="flex justify-end">
-                <p className="max-w-[85%] whitespace-pre-wrap border border-line-strong bg-surface-2 px-4 py-3">
-                  {entry.text}
-                </p>
-              </div>
+              <p
+                key={entry.key}
+                className="max-w-full whitespace-pre-wrap break-words border border-line-strong bg-surface-2 px-4 py-3"
+              >
+                {entry.text}
+              </p>
             );
           }
           if (entry.kind === "assistant") {
             return (
-              <div key={entry.key} className="flex flex-col gap-1">
+              <div key={entry.key} className="flex min-w-0 flex-col gap-1">
                 <span className="t-label text-signal">{t("agent")}</span>
-                <p className="max-w-[90%] whitespace-pre-wrap">{entry.text}</p>
+                <p className="max-w-full whitespace-pre-wrap break-words">
+                  {entry.text}
+                </p>
               </div>
             );
           }
@@ -456,33 +472,42 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
       )}
       <form
         onSubmit={send}
-        className="flex items-end gap-2 max-md:shrink-0 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+        className="shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       >
-        <label className="sr-only" htmlFor="chat-input">
-          {t("placeholder")}
-        </label>
-        <Textarea
-          id="chat-input"
-          value={text}
-          maxLength={2000}
-          placeholder={t("placeholder")}
-          onChange={(event) => setText(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" && !event.shiftKey) {
-              event.preventDefault();
-              event.currentTarget.form?.requestSubmit();
-            }
-          }}
-          className="min-h-12 flex-1"
-        />
-        <Button
-          type="submit"
-          loading={sending}
-          disabled={!text.trim()}
-          icon={<Icon icon={Send} size={16} />}
-        >
-          <span className="max-sm:sr-only">{t("send")}</span>
-        </Button>
+        <div className="relative">
+          <label className="sr-only" htmlFor="chat-input">
+            {t("placeholder")}
+          </label>
+          <textarea
+            ref={fieldRef}
+            id="chat-input"
+            rows={1}
+            value={text}
+            maxLength={2000}
+            placeholder={t("placeholder")}
+            onChange={(event) => {
+              setText(event.target.value);
+              fitComposer(event.currentTarget);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                event.currentTarget.form?.requestSubmit();
+              }
+            }}
+            style={{ paddingRight: "3rem" }}
+            className={`${controlClass} max-h-[min(10rem,30dvh)] min-h-11 resize-none overflow-x-hidden py-2.5 leading-5`}
+          />
+          <button
+            type="submit"
+            disabled={!text.trim() || sending}
+            aria-busy={sending || undefined}
+            className="absolute right-0 bottom-0 flex size-11 items-center justify-center text-fg disabled:opacity-40"
+          >
+            <Icon icon={Send} size={16} />
+            <span className="sr-only">{t("send")}</span>
+          </button>
+        </div>
       </form>
     </div>
   );

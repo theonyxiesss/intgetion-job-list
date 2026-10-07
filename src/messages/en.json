@@ -118,7 +118,9 @@
     "saved": "Saved jobs",
     "admin": "Administration",
     "chat": "Spoki",
-    "bottom": "Main sections"
+    "bottom": "Main sections",
+    "myJobs": "My jobs",
+    "company": "Company"
   },
   "locale": {
     "en": "English",
@@ -132,8 +134,6 @@
     "tagline": "Remote work. Real matches.",
     "line1": "Remote work.",
     "line2": "Real matches.",
-    "statJobs": "Published jobs",
-    "statCompanies": "Companies",
     "subtitle": "Find work. Find people. Connect directly.",
     "findJob": "Find a Remote Job",
     "postJob": "Post a Job",
@@ -224,7 +224,9 @@
       "session_missing": "The reset link has expired. Request a new one.",
       "generic": "Something went wrong. Try again.",
       "telegram_failed": "Telegram sign-in did not work. Try again or use email.",
-      "telegram_taken": "This Telegram is already linked to another account."
+      "telegram_taken": "This Telegram is already linked to another account.",
+      "account_type_required": "Choose who you are.",
+      "oauth_unavailable": "This sign-in is not available yet. Use email or Telegram."
     },
     "social": {
       "title": "Or continue with",
@@ -234,13 +236,25 @@
       "soon": "Soon",
       "telegramTitle": "Signing in with Telegram",
       "telegramProgress": "Checking the Telegram confirmation…",
+      "googleTerms": "By continuing with Google you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
+      "xTerms": "By continuing with X you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
       "telegramTerms": "By continuing with Telegram you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
       "telegramLinked": "Telegram is linked to your account.",
       "telegramWaiting": "Waiting for your confirmation in Telegram…",
       "telegramFailed": "Telegram sign-in did not go through. Try again."
     },
     "checkEmailHint": "Did not get it? Check the spam folder or request a new link in a minute.",
-    "backToLogin": "Back to sign in"
+    "backToLogin": "Back to sign in",
+    "accountTypeLabel": "Who are you?",
+    "accountType": {
+      "candidate": "I’m looking for work",
+      "candidateHint": "Find jobs and apply.",
+      "employer": "I’m hiring",
+      "employerHint": "Post jobs for your company.",
+      "settingsLabel": "Account type",
+      "saved": "Saved",
+      "error": "Could not save. Try again."
+    }
   },
   "onboarding": {
     "title": "What brings you here?",
@@ -860,6 +874,13 @@
           "body": "{companyName} published {count, plural, one {# new job} other {# new jobs}}: {jobs}."
         }
       }
+    },
+    "bot": {
+      "title": "New jobs in the Telegram bot",
+      "text": "New jobs always collect here on the site. Turn this on to also get them as messages from our bot.",
+      "link": "Link Telegram in account settings",
+      "saved": "Saved.",
+      "error": "Could not save. Try again."
     }
   },
   "notificationSettings": {

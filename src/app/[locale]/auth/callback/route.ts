@@ -4,7 +4,12 @@ import { routing } from "@/i18n/routing";
 import { siteUrl } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { clientIp } from "@/lib/request-ip";
-import { auditSignIn, completeCallback } from "@/modules/auth/service";
+import { signupMetadata } from "@/modules/auth/schemas";
+import {
+  auditSignIn,
+  completeCallback,
+  GOOGLE_TERMS_COOKIE,
+} from "@/modules/auth/service";
 
 export async function GET(
   request: NextRequest,
@@ -17,11 +22,23 @@ export async function GET(
   const query = request.nextUrl.searchParams;
 
   const supabase = await createSupabaseServerClient();
-  const result = await completeCallback(supabase.auth, {
-    code: query.get("code"),
-    tokenHash: query.get("token_hash"),
-    type: query.get("type"),
-  });
+  let terms = signupMetadata.safeParse(undefined);
+  try {
+    terms = signupMetadata.safeParse(
+      JSON.parse(request.cookies.get(GOOGLE_TERMS_COOKIE)?.value ?? "null"),
+    );
+  } catch {
+    terms = signupMetadata.safeParse(undefined);
+  }
+  const result = await completeCallback(
+    supabase.auth,
+    {
+      code: query.get("code"),
+      tokenHash: query.get("token_hash"),
+      type: query.get("type"),
+    },
+    terms.success ? terms.data : undefined,
+  );
 
   if (result.ok) {
     await auditSignIn(result.user, "email_link", clientIp(request.headers));
@@ -36,6 +53,14 @@ export async function GET(
     target.searchParams.set("mode", "update");
   } else if (query.get("next") === "chat") {
     target.pathname = `/${locale}/chat`;
+  } else if (result.created && result.user.accountType === "employer") {
+    // A new employer starts with the company profile (D331).
+    target.pathname = `/${locale}/employer/company`;
   }
-  return NextResponse.redirect(target);
+  const response = NextResponse.redirect(target);
+  response.cookies.set(GOOGLE_TERMS_COOKIE, "", {
+    path: `/${locale}/auth/callback`,
+    maxAge: 0,
+  });
+  return response;
 }

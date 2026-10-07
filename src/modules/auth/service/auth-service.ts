@@ -45,6 +45,7 @@ export type AuthClient = Pick<
   | "signOut"
   | "updateUser"
   | "signInWithPassword"
+  | "signInWithOAuth"
 >;
 
 export type CurrentUser = usersRepo.UserRow;
@@ -56,6 +57,55 @@ export function callbackUrl(
   const url = new URL(`${siteUrl()}/${locale}/auth/callback`);
   if (next) url.searchParams.set("next", next);
   return url.toString();
+}
+
+/** Short-lived proof that this browser accepted the terms by pressing Google or X (D335, D336). */
+export const GOOGLE_TERMS_COOKIE = "google_terms";
+
+export function googleSignupMetadata(
+  locale: AppLocale,
+  now: Date = new Date(),
+): SignupMetadata {
+  return {
+    terms_version: TERMS_VERSION,
+    terms_accepted_at: now.toISOString(),
+    locale,
+    account_type: "candidate",
+  };
+}
+
+/** Sends the browser to Google. The secret stays in the Supabase project (D335). */
+export async function startGoogleSignIn(
+  auth: AuthClient,
+  input: { locale: AppLocale; next?: "chat" },
+): Promise<{ url: string }> {
+  return startOAuthSignIn(auth, { ...input, provider: "google" });
+}
+
+/** Sends the browser to X. The secret stays in the Supabase project (D336). */
+export async function startXSignIn(
+  auth: AuthClient,
+  input: { locale: AppLocale; next?: "chat" },
+): Promise<{ url: string }> {
+  return startOAuthSignIn(auth, { ...input, provider: "x" });
+}
+
+async function startOAuthSignIn(
+  auth: AuthClient,
+  input: { provider: "google" | "x"; locale: AppLocale; next?: "chat" },
+): Promise<{ url: string }> {
+  const { data, error } = await auth.signInWithOAuth({
+    provider: input.provider,
+    options: {
+      redirectTo: callbackUrl(input.locale, input.next),
+      skipBrowserRedirect: true,
+      ...(input.provider === "google"
+        ? { queryParams: { prompt: "select_account" } }
+        : {}),
+    },
+  });
+  if (error || !data.url) throw authFailure(error ?? {});
+  return { url: data.url };
 }
 
 /** An auth user counts as signed in only after the email is confirmed (16.1). */
@@ -86,6 +136,7 @@ export async function register(
     terms_version: TERMS_VERSION,
     terms_accepted_at: now.toISOString(),
     locale: input.locale,
+    account_type: input.accountType,
   };
   const emailRedirectTo = callbackUrl(input.locale, input.next);
   const { error } = input.password
@@ -195,7 +246,8 @@ const otpTypes = new Set<EmailOtpType>([
 ]);
 
 export type CallbackResult =
-  | { ok: true; user: CurrentUser }
+  /** `created`: this link finished a registration (D331 picks the landing page). */
+  | { ok: true; user: CurrentUser; created: boolean }
   | { ok: false; reason: "invalid_link" | "missing_terms" };
 
 /**
@@ -205,6 +257,7 @@ export type CallbackResult =
 export async function completeCallback(
   auth: AuthClient,
   params: CallbackParams,
+  fallback?: SignupMetadata,
 ): Promise<CallbackResult> {
   if (params.code) {
     const { error } = await auth.exchangeCodeForSession(params.code);
@@ -227,15 +280,18 @@ export async function completeCallback(
   }
 
   const existing = await usersRepo.findUserByAuthUid(data.user.id);
-  if (existing) return { ok: true, user: existing };
+  if (existing) return { ok: true, user: existing, created: false };
 
-  const metadata = signupMetadata.safeParse(data.user.user_metadata);
-  if (!metadata.success) {
+  const fromProvider = signupMetadata.safeParse(data.user.user_metadata);
+  const accepted = fromProvider.success
+    ? fromProvider
+    : signupMetadata.safeParse(fallback);
+  if (!accepted.success) {
     await auth.signOut();
     return { ok: false, reason: "missing_terms" };
   }
-  const user = await usersRepo.insertUserIfMissing(data.user.id, metadata.data);
-  return { ok: true, user };
+  const user = await usersRepo.insertUserIfMissing(data.user.id, accepted.data);
+  return { ok: true, user, created: true };
 }
 
 /**

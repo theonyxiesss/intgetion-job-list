@@ -292,6 +292,22 @@ skip_nonce_check = false
 # If enabled, it will allow the user to successfully authenticate when the provider does not return an email address.
 email_optional = false
 
+# Google sign-in (D335). Turn this on only after the client id and secret are
+# in the environment. skip_nonce_check is required for local Google sign-in.
+# Do not commit the secret.
+[auth.external.google]
+enabled = false
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+skip_nonce_check = true
+
+# X sign-in uses OAuth 2.0 (`x`, not the older `twitter` key). The secret
+# stays in the cloud Supabase project (D336). Do not commit it.
+[auth.external.x]
+enabled = false
+client_id = "env(SUPABASE_AUTH_EXTERNAL_X_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_X_SECRET)"
+
 # Allow Solana wallet holders to sign in to your project via the Sign in with Solana (SIWS, EIP-4361) standard.
 # You can configure "web3" rate limit in the [auth.rate_limit] section and set up [auth.captcha] if self-hosting.
 [auth.web3.solana]

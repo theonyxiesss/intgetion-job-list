@@ -1,8 +1,9 @@
+import type { ReactNode } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
-import { Badge } from "@/components/ui/badge";
-import { Button, buttonClass } from "@/components/ui/button";
+import { buttonClass } from "@/components/ui/button";
 import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
+import { SocialMark } from "./social-marks";
 import { TelegramLoginButton } from "./telegram-login-button";
 import { authAdminAvailable } from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/supabase/env";
@@ -12,13 +13,6 @@ import {
   telegramBotId,
   telegramBotToken,
 } from "@/modules/auth/service";
-
-const STUBS = ["google", "x"] as const;
-
-/** Bot sign-in needs the bot token and the Auth admin key (D256). */
-function telegramReady(): boolean {
-  return Boolean(telegramBotToken() && authAdminAvailable());
-}
 
 /** The frozen widget sign-in, still behind its flag (D217, D246). */
 async function telegramHref(): Promise<string | null> {
@@ -36,15 +30,25 @@ async function telegramHref(): Promise<string | null> {
 }
 
 /**
- * Sign-in with Google and X — placeholders only (D200); OAuth is V2 (D7).
- * Telegram is real once configured (D217), otherwise a placeholder too.
+ * Google and X go through Supabase (D335, D336). Telegram is the bot button (D256).
  */
-export async function SocialSignInStubs() {
+export async function SocialSignInStubs({ next }: { next?: "chat" }) {
   const t = await getTranslations("auth.social");
   const locale = await getLocale();
-  const ready = telegramReady();
-  // The widget only when its flag is on; otherwise the bot does the signing in.
-  const telegram = ready ? await telegramHref() : null;
+  const telegram = await telegramHref();
+  const oauthParams = new URLSearchParams({ locale });
+  if (next === "chat") oauthParams.set("next", "chat");
+  const oauthQuery = oauthParams.toString();
+  const terms = (chunks: ReactNode) => (
+    <Link href="/terms" className="underline">
+      {chunks}
+    </Link>
+  );
+  const privacy = (chunks: ReactNode) => (
+    <Link href="/privacy" className="underline">
+      {chunks}
+    </Link>
+  );
   return (
     <section aria-labelledby="social-sign-in" className="flex flex-col gap-3">
       <div className="flex items-center gap-3 text-fg-muted">
@@ -54,60 +58,53 @@ export async function SocialSignInStubs() {
         </h2>
         <span aria-hidden="true" className="h-px flex-1 bg-line" />
       </div>
+      <div className="flex flex-col gap-1">
+        <a
+          href={`/api/auth/google?${oauthQuery}`}
+          className={buttonClass("secondary", "md", "w-full")}
+        >
+          <SocialMark name="google" />
+          {t("google")}
+        </a>
+        <p className="t-caption text-fg-muted">
+          {t.rich("googleTerms", { terms, privacy })}
+        </p>
+      </div>
       {telegram ? (
         <div className="flex flex-col gap-1">
-          <a
-            href={telegram}
-            className={buttonClass("secondary", "md", "w-full")}
-          >
+          <a href={telegram} className={buttonClass("secondary", "md", "w-full")}>
+            <SocialMark name="telegram" />
             {t("telegram")}
           </a>
           <p className="t-caption text-fg-muted">
-            {t.rich("telegramTerms", {
-              terms: (chunks) => (
-                <Link href="/terms" className="underline">
-                  {chunks}
-                </Link>
-              ),
-              privacy: (chunks) => (
-                <Link href="/privacy" className="underline">
-                  {chunks}
-                </Link>
-              ),
-            })}
+            {t.rich("telegramTerms", { terms, privacy })}
           </p>
         </div>
-      ) : ready ? (
+      ) : (
         <TelegramLoginButton
           locale={locale as AppLocale}
           label={t("telegram")}
           waiting={t("telegramWaiting")}
           failed={t("telegramFailed")}
+          icon={<SocialMark name="telegram" />}
         >
           <p className="t-caption text-fg-muted">
-            {t.rich("telegramTerms", {
-              terms: (chunks) => (
-                <Link href="/terms" className="underline">
-                  {chunks}
-                </Link>
-              ),
-              privacy: (chunks) => (
-                <Link href="/privacy" className="underline">
-                  {chunks}
-                </Link>
-              ),
-            })}
+            {t.rich("telegramTerms", { terms, privacy })}
           </p>
         </TelegramLoginButton>
-      ) : null}
-      {[...STUBS, ...(ready ? [] : (["telegram"] as const))].map((provider) => (
-        <div key={provider} className="flex items-center gap-3">
-          <Button variant="secondary" disabled className="flex-1">
-            {t(provider)}
-          </Button>
-          <Badge>{t("soon")}</Badge>
-        </div>
-      ))}
+      )}
+      <div className="flex flex-col gap-1">
+        <a
+          href={`/api/auth/x?${oauthQuery}`}
+          className={buttonClass("secondary", "md", "w-full")}
+        >
+          <SocialMark name="x" />
+          {t("x")}
+        </a>
+        <p className="t-caption text-fg-muted">
+          {t.rich("xTerms", { terms, privacy })}
+        </p>
+      </div>
     </section>
   );
 }

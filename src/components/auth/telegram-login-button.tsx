@@ -14,12 +14,14 @@ export function TelegramLoginButton({
   label,
   waiting,
   failed,
+  icon,
   children,
 }: {
   locale: AppLocale;
   label: string;
   waiting: string;
   failed: string;
+  icon?: ReactNode;
   /** The terms line, rendered on the server so its links stay real. */
   children?: ReactNode;
 }) {
@@ -85,6 +87,7 @@ export function TelegramLoginButton({
         className={buttonClass("secondary", "md", "w-full")}
         onClick={() => void onClick()}
       >
+        {icon}
         {label}
       </button>
       {children}

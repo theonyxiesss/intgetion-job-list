@@ -30,6 +30,19 @@ const telegramAuthData = z
   .loose();
 export type TelegramAuthData = z.infer<typeof telegramAuthData>;
 
+/**
+ * A local site must not call setWebhook: that would point the shared bot at
+ * localhost and stop production from receiving taps (D335).
+ */
+export function siteOwnsTelegramWebhook(site: string): boolean {
+  try {
+    const host = new URL(site).hostname;
+    return host !== "localhost" && host !== "127.0.0.1" && host !== "::1";
+  } catch {
+    return false;
+  }
+}
+
 export function telegramBotToken(
   env: Record<string, string | undefined> = process.env,
 ): string | null {

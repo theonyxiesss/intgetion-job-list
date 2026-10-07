@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ACCOUNT_TYPES } from "@/config/account";
 import { routing } from "@/i18n/routing";
 import { COMMON_PASSWORDS } from "./common-passwords";
 
@@ -6,6 +7,12 @@ export const PASSWORD_MIN_LENGTH = 10;
 export const PASSWORD_MAX_LENGTH = 72;
 
 export const localeSchema = z.enum(routing.locales);
+
+/** D331: "I'm looking for work" / "I'm hiring". */
+export const accountTypeSchema = z.enum(ACCOUNT_TYPES, {
+  error: "account_type_required",
+});
+export type AccountType = z.infer<typeof accountTypeSchema>;
 
 export const emailSchema = z
   .string()
@@ -31,6 +38,7 @@ export const registerInput = z.object({
   password: passwordSchema.optional(),
   locale: localeSchema,
   acceptTerms: z.literal(true, { error: "terms_required" }),
+  accountType: accountTypeSchema,
   next: authNext,
 });
 export type RegisterInput = z.infer<typeof registerInput>;
@@ -69,6 +77,7 @@ export const updateMeInput = z
   .object({
     locale: localeSchema.optional(),
     marketingOptIn: z.boolean().optional(),
+    accountType: accountTypeSchema.optional(),
   })
   .strict()
   .refine((value) => Object.keys(value).length > 0, { error: "empty_patch" });
@@ -82,6 +91,8 @@ export const signupMetadata = z.object({
   terms_version: z.string().min(1),
   terms_accepted_at: z.iso.datetime(),
   locale: localeSchema,
+  /** Absent on signups made before D331: they are candidates. */
+  account_type: accountTypeSchema.optional(),
 });
 export type SignupMetadata = z.infer<typeof signupMetadata>;
 

@@ -6,7 +6,13 @@ import { useRef, useState } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "@/i18n/navigation";
-import { emailSchema, passwordSchema } from "@/modules/auth/schemas";
+import { Choice } from "@/components/ui/choice";
+import type { AccountType } from "@/config/account";
+import {
+  accountTypeSchema,
+  emailSchema,
+  passwordSchema,
+} from "@/modules/auth/schemas";
 import {
   apiErrorCode,
   Field,
@@ -34,6 +40,7 @@ function schemaFor(magic: boolean) {
         }
       }),
     acceptTerms: z.literal(true, { error: "terms_required" }),
+    accountType: accountTypeSchema,
   });
 }
 
@@ -50,12 +57,14 @@ export function RegisterForm({ next }: { next?: "chat" }) {
     email: string;
     password?: string;
     acceptTerms: boolean;
+    accountType?: AccountType;
   }>({
     resolver: (values, context, options) => {
       const resolve = zodResolver(schemaFor(magicRef.current)) as Resolver<{
         email: string;
         password?: string;
         acceptTerms: boolean;
+        accountType?: AccountType;
       }>;
       return resolve(values, context, options);
     },
@@ -72,6 +81,7 @@ export function RegisterForm({ next }: { next?: "chat" }) {
         email: values.email,
         password: magic ? undefined : values.password,
         acceptTerms: values.acceptTerms,
+        accountType: values.accountType,
         locale,
         next,
       }),
@@ -86,6 +96,34 @@ export function RegisterForm({ next }: { next?: "chat" }) {
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
       <FormAlert>{errorText(formError)}</FormAlert>
+
+      <fieldset
+        className="flex flex-col gap-2"
+        aria-invalid={errors.accountType ? true : undefined}
+        aria-describedby={errors.accountType ? "account-type-error" : undefined}
+      >
+        <legend className="t-label mb-1 text-fg-muted">
+          {t("accountTypeLabel")}
+        </legend>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {(["candidate", "employer"] as const).map((type) => (
+            <Choice
+              key={type}
+              type="radio"
+              value={type}
+              label={t(`accountType.${type}`)}
+              hint={t(`accountType.${type}Hint`)}
+              className="border border-line px-3 py-2 has-[:checked]:border-accent"
+              {...form.register("accountType")}
+            />
+          ))}
+        </div>
+        {errors.accountType && (
+          <p id="account-type-error" className="text-sm text-danger">
+            {errorText(errors.accountType.message)}
+          </p>
+        )}
+      </fieldset>
 
       <Field
         id="register-email"

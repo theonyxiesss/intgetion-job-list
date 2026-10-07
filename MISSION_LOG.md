@@ -3,6 +3,43 @@
 > Older entries: [docs/archive/mission-log/](docs/archive/mission-log/) — see [docs/archive/INDEX.md](docs/archive/INDEX.md).
 > Session protocol: [docs/tz/00-protocol.md](docs/tz/00-protocol.md). Status now: [docs/CURRENT.md](docs/CURRENT.md).
 
+## [2026-10-07] — Spoki composer like a chat — DONE
+- Сделано: поле снизу чата. Пустое — одна строка 44 px. Две и три строки выше, низ поля на месте. С шести строк высота 160 px и дальше не растёт: длинный текст скроллится внутри. Лента скроллится отдельно, страница не растёт. Enter отправляет и возвращает поле к одной строке, фокус остаётся. Shift+Enter переносит строку. Клавиатура по-прежнему сжимает страницу (D287).
+- Команды проверки: eslint → 0. Chrome на `:3000`, 1280×800 и 390×700: пусто 44, одна 44, две 60, три 80, длинный текст 160 при scrollHeight 840, низ поля не сдвинулся, высота ленты та же. После Enter поле 44, пустое, в фокусе. Установленное PWA не ставилось: та же страница.
+- Миграции: нет.
+- Изменённые файлы: `src/components/bot/chat.tsx`, `tests/e2e/chat.spec.ts`, `docs/DESIGN.md`, `docs/DECISIONS.md`, `docs/CURRENT.md`.
+- Отклонения от ТЗ: D334 отменяет D333.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по явной команде.
+
+## [2026-10-07] — Spoki composer fixed — DONE
+- Сделано: поле чата снова всегда 44 px. Рост по `scrollHeight` убран. Длинный текст и Shift+Enter прокручиваются внутри. Enter отправляет. Общий textarea форм не трогался.
+- Команды проверки: eslint → 0. Chrome на `:3000`, 1280 и 390: 1 символ, 1 строка, 10 и 100 строк — высота 44 px, `min`/`max` тоже 44, `overflow-y: auto`, `scrollHeight` 2040 при видимых 42. Лента не меняла высоту. Enter очистил поле, высота осталась 44. Установленное PWA не ставилось: это та же страница.
+- Миграции: нет.
+- Изменённые файлы: `src/components/bot/chat.tsx`, `src/components/ui/input.tsx`, `tests/e2e/chat.spec.ts`, `docs/DESIGN.md`, `docs/DECISIONS.md`, `docs/CURRENT.md`.
+- Отклонения от ТЗ: D333 отменяет рост из D332.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по явной команде.
+
+## [2026-10-07] — Spoki composer cap — DONE
+- Сделано: поле чата растёт от 44 px до `min(7.5rem, 30dvh)`, дальше высота стоит, текст прокручивается внутри. Низ поля не сдвигается. Enter отправляет, Shift+Enter переносит строку. Общий textarea форм не изменил высоту.
+- Команды проверки: eslint → 0. Chrome на `:3000`: 1280 и 390 — одна строка 44 px, три строки 80 px, длинный текст 120 px при `scrollHeight` больше поля, `overflow-y: auto`, ширина ленты та же. Enter отправил 8 строк и вернул поле к 44 px.
+- Миграции: нет.
+- Изменённые файлы: `src/components/ui/input.tsx`, `src/components/bot/chat.tsx`, `tests/e2e/chat.spec.ts`, `docs/DESIGN.md`, `docs/DECISIONS.md`, `docs/CURRENT.md`.
+- Отклонения от ТЗ: D332 уточняет D331.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по явной команде.
+
+## [2026-10-07] — Spoki chat layout — DONE
+- Сделано: `/chat` — колонка на весь экран, лента сама скроллится, поле одной строки 44 px. Длинный текст прокручивается внутри, ручки растягивания нет. Кнопка отправки — иконка внутри поля. Карточки вакансий и разовые кнопки аккаунта остались над полем. Подвал на этой странице скрыт.
+- Команды проверки: `pnpm exec eslint` по `chat.tsx` и странице чата → 0. Playwright Chromium в среде не установлен. Замер через установленный Chrome на `http://127.0.0.1:3000/en/chat`: 1280×800 и 390×800, высота поля 44 px до и после длинной вставки, `resize: none`, заголовок Spoki Assistant виден, лента выше поля, поле у нижнего края.
+- P-тесты подфазы: `tests/e2e/chat.spec.ts` — сценарий высоты поля добавлен, локально не прогнан (нет браузера Playwright).
+- Миграции: нет.
+- Изменённые файлы: `src/components/bot/chat.tsx`, `src/app/[locale]/chat/page.tsx`, `src/app/globals.css`, `tests/e2e/chat.spec.ts`, `docs/DESIGN.md`, `docs/DECISIONS.md`, `docs/CURRENT.md`.
+- Отклонения от ТЗ: D331. Общий textarea форм не менялся.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по явной команде.
+
 ## [2026-10-07] — Spoki memory — DONE
 - Сделано: веб-чат ведёт Spoki Assistant. Ответ вроде «В Италии» пишется в `bot_conversations.state.draft.country` (`IT`) на любом LLM, известные поля не переспрашиваются, пустой ответ модели заменяется следующим вопросом. Гость после страны или роли видит одну кнопку «Создать аккаунт»; регистрация с `next=chat` возвращает в тот же диалог. «Пусть Spoki заполнит» пишет allowlist профиля без карточки на каждое поле; отклик по-прежнему с карточкой. В шапке одна кнопка «Войти» на всех ширинах; magic link — ссылка под формой. Отдельного PWA-входа нет.
 - Команды проверки: `pnpm exec tsc --noEmit` → 0. `pnpm exec eslint` по затронутым файлам → 0. `pnpm exec vitest run` на memory/extract/tools/auth-service/llm/messages → 72 passed. `pnpm exec vitest run --config vitest.integration.config.mts src/modules/bot/bot.integration.test.ts` → не запущен против БД: `DATABASE_URL` в этой среде не loopback, тест сам отказался. Браузерный инструмент недоступен. HTML уже запущенного `next dev` на `:3000`: `/en/chat` отдаёт заголовок Spoki Assistant и пустую фразу без чипов; `/en/login` — одна кнопка входа, ссылка Email link, «No account? Register», без легенды способа входа и без кнопок Google/X/Telegram. Узкое окно и установленное PWA не открывались: это тот же HTML, кнопка «Войти» в шапке скрыта ниже `sm` и остаётся в меню.
@@ -185,3 +222,45 @@
 - Отклонения: в рабочем дереве одновременно работал другой агент (Spoki/бот/регистрация); по решению основателя продолжили в общем дереве — диффы перемешаны в `en/ru.json`, login/register pages.
 - OPEN QUESTION: тема письма Supabase как Go-шаблон (см. D330). Шаблоны в облачный Supabase не загружены — нужен Dashboard.
 - Следующая подфаза: по команде основателя (проверка → merge отдельно).
+
+## [2026-10-07] — account-type D331 (ветка `feat/email-system-design`, без merge) — PARTIAL
+
+- Сделано: выбор «Я ищу работу / Я работодатель» в регистрации; `users.account_type` (миграция 0031); запись из метаданных при подтверждении; работодатель после регистрации → `/employer/company`; `accountType` в `/api/me`; смена типа в настройках аккаунта.
+- Команды проверки: `pnpm test` → 721 passed, 1 failed (`legal.test.ts`, не наш); `pnpm typecheck` → 0 ошибок; `pnpm lint` → 1 warning в чужом `scripts/docs-reorg.mjs`.
+- Ручная проверка: форма на 375 px, без выбора типа — «Выберите, кто вы.»
+- Миграции: `0031_account_type.sql` — НЕ применена к облачной БД. Пока не применена, локальный сервер (он смотрит в облачную БД) упадёт на чтении `users`.
+- OPEN QUESTION: нет.
+- Следующая подфаза: по команде основателя.
+- Дополнение D331: в шапке аккаунт-работодатель видит «Вакансии · Мои вакансии · Компания · Spoki», без «Отклики / Сохранённые / Профиль» (`src/components/shell/header.tsx`, `nav.myJobs`, `nav.company`).
+
+## [2026-10-07] — главная без счётчиков — DONE (локально, без коммита)
+
+- Сделано: убран блок «Опубликованные вакансии / Компании» с главной (`HomeStats` в `src/app/[locale]/page.tsx`), ключи `home.statJobs`, `home.statCompanies`. Сервис `countPublicCatalog` оставлен (не удалял рабочий код модуля).
+- Проверка: typecheck 0 ошибок; на `/ru` блока нет, остальные секции на месте.
+
+## [2026-10-07] — Google и Telegram на входе (D335) — DONE (локально, без коммита)
+
+- Сделано: кнопка Google ведёт в Supabase OAuth и возвращается в `/auth/callback`; согласие с условиями — cookie `google_terms`. Telegram на входе и регистрации всегда живая кнопка бота, не «Скоро». X остаётся заглушкой. Локальный сайт не переписывает webhook бота. Провайдер Google в облачном Supabase включён, секрет только в Dashboard. В allow list: `https://intgetion.com/**`, `http://localhost:3000/**`, `http://127.0.0.1:3000/**`.
+- Команды проверки: `pnpm exec vitest run src/modules/auth/__tests__/auth-service.test.ts src/modules/auth/__tests__/telegram.test.ts` → 46 passed. Повтор: `GET /api/auth/google?locale=ru` → Supabase → `accounts.google.com`. В браузере с `http://localhost:3000` согласие Google вернуло на `/ru` уже вошедшим.
+- Миграции: `0031_account_type.sql` применена к облачной БД (`pnpm db:migrate`). Без колонки `account_type` callback падал на чтении `users`.
+- Отклонения: D7 отложен OAuth на V2; основатель включил Google сейчас (D335). С `127.0.0.1` callback не видит cookie, выставленную на `localhost`, и показывает `invalid_link`. Локально открывать `http://localhost:3000`.
+- OPEN QUESTION: нет.
+- Следующая подфаза: по команде основателя.
+
+## [2026-10-07] — вход через X (D336) — PARTIAL
+
+- Сделано: кнопка X на входе и регистрации ведёт в `/api/auth/x`, дальше тот же `/auth/callback` и cookie согласия, что у Google. Новый аккаунт — кандидат. Пока провайдер выключен, кнопка возвращает `oauth_unavailable`.
+- Команды проверки: `pnpm exec vitest run src/modules/auth/__tests__/auth-service.test.ts` → 28 passed; `pnpm exec tsc --noEmit` → 0. `GET /api/auth/x?locale=ru` → 307 на вход с `oauth_unavailable` (провайдер в Supabase ещё выключен). На `/ru/login` есть ссылка `/api/auth/x?locale=ru`.
+- Миграции: нет.
+- Отклонения: D335 оставлял X «Скоро»; основатель подключил X сейчас (D336). Портал developer.x.com требует вход в X. Вход через Google в этом браузере открыл окно выбора аккаунта и не вернул сессию на страницу X, поэтому клиент OAuth ещё не создан.
+- OPEN QUESTION: нет. Client id и secret — в Dashboard Supabase, не в чате и не в git.
+- Следующая подфаза: дописать провайдер X, когда в браузере есть вход в портал разработчика X.
+
+## [2026-10-07] — переключатель новых вакансий в боте (D329) — DONE (локально, без коммита)
+
+- Сделано: с ветки `claude/notify-bot` перенесён переключатель на `/notifications`. Он пишет канал telegram сразу для `search.alert`, `matches.digest` и `company.new_jobs`. Без привязанного Telegram выключен и ведёт в настройки аккаунта.
+- Команды проверки: typecheck и eslint по затронутым файлам. Живой клик по переключателю без привязанного Telegram не сохраняет настройку — переключатель disabled.
+- Миграции: нет.
+- Отклонения: нет. Это обновление Claude (D329), не новая схема.
+- OPEN QUESTION: нет.
+- Следующая подфаза: по команде основателя.

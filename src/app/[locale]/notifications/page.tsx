@@ -1,4 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { BotAlertsSwitch } from "@/components/notifications/bot-alerts-switch";
+import { NEW_JOB_TYPES } from "@/components/notifications/new-job-types";
 import { MarkAllReadButton } from "@/components/notifications/mark-all-read";
 import { redirect } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth-guards";
@@ -6,9 +8,11 @@ import { HttpError } from "@/lib/http";
 import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
 import { LinkTabs } from "@/components/ui/tabs";
+import { telegramLinkOf } from "@/modules/auth/service";
 import {
   catalogTitleKey,
   listNotifications,
+  readPreferences,
 } from "@/modules/notifications/service";
 
 export default async function NotificationsPage({
@@ -33,7 +37,18 @@ export default async function NotificationsPage({
 
   const t = await getTranslations("notifications");
   const types = await getTranslations("notifications.types");
-  const feed = await listNotifications(user.id, {});
+  const bot = await getTranslations("notifications.bot");
+  const [feed, preferences, telegram] = await Promise.all([
+    listNotifications(user.id, {}),
+    readPreferences(user.id),
+    telegramLinkOf(user),
+  ]);
+  const botEnabled = NEW_JOB_TYPES.every((type) =>
+    preferences.some(
+      (item) =>
+        item.type === type && item.channel === "telegram" && item.enabled,
+    ),
+  );
   const unread = tab === "unread";
   const items = unread ? feed.items.filter((item) => !item.readAt) : feed.items;
 
@@ -43,6 +58,17 @@ export default async function NotificationsPage({
         <PageHeader
           title={t("title")}
           actions={<MarkAllReadButton label={t("markAll")} />}
+        />
+        <BotAlertsSwitch
+          linked={Boolean(telegram)}
+          enabled={botEnabled}
+          labels={{
+            title: bot("title"),
+            text: bot("text"),
+            link: bot("link"),
+            saved: bot("saved"),
+            error: bot("error"),
+          }}
         />
         <LinkTabs
           label={t("tabsLabel")}

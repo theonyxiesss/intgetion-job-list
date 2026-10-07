@@ -320,12 +320,21 @@
   animation-delay: calc(var(--i, 0) * 80ms);
 }
 
-/* Phone chat fills the screen. The tab bar, when a candidate has one, sits below it (D287). */
-@media (max-width: 767px) {
-  body:has(.chat-shell) {
-    overflow: hidden;
-  }
+/* Chat fills the viewport. Only the thread scrolls. The phone tab bar sits below it (D287). */
+body:has(.chat-shell) {
+  height: 100%;
+  overflow: hidden;
+}
 
+body:has(.chat-shell) #content {
+  min-height: 0;
+}
+
+body:has(.chat-shell) footer {
+  display: none;
+}
+
+@media (max-width: 767px) {
   body:has([data-bottom-nav]) .chat-shell {
     bottom: 4rem;
   }

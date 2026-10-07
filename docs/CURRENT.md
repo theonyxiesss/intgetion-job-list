@@ -2,7 +2,7 @@
 
 **Продукт:** `INTGETION JOB LIST`  
 **Ветка / worktree:** `feat/email-system-design` · `C:\Users\Admin\Documents\Integetion jobs`  
-**Активная задача:** нет. На ветке локально: Spoki (D324) и дизайн писем (D330), в origin не отправлено.  
+**Активная задача:** нет. На ветке локально: Spoki (D324), дизайн писем (D330), поле чата (D334), Google и Telegram на входе (D335) — в origin не отправлено.  
 **Прод:** https://intgetion.com
 
 ## Работает (кратко)
@@ -11,7 +11,9 @@
 - Публичный сайт, вакансии, профиль, отклики, matching, админка, уведомления — см. [status/INDEX.md](status/INDEX.md)
 - Деплой Vercel + Supabase — [how-it-works/deploy.md](how-it-works/deploy.md)
 - OpenRouter для бота (D317) — PARTIAL (зависит от ключа/лимитов)
-- Spoki Assistant на `/chat`: черновик в `bot_conversations.state`, один вход «Войти» (D324)
+- Spoki Assistant на `/chat`: черновик в `bot_conversations.state`, один вход «Войти» (D324). Поле чата растёт до потолка, дальше скролл внутри (D334)
+- Вход: Google доходит до аккаунта Google и возвращает на сайт (D335). Кнопка X включена (D336). Telegram на кнопке включён
+- Уведомления: переключатель «Новые вакансии в Telegram-бот» (D329, с ветки Claude)
 
 ## Не работает / отложено
 
@@ -19,8 +21,7 @@
 | ---- | ------ | --- |
 | Телефонный Telegram Mini App | OPEN / PARTIAL | [OPEN_TASKS.md](OPEN_TASKS.md), D318–D322 |
 | Cross-device email handoff (D328) | DEFERRED | не на этом master; см. OPEN_TASKS |
-| Social login кнопки (Google/X/TG) | сняты с UI, OAuth не подключён | OPEN_TASKS, D324 |
-| OAuth (D7 V2) | out of MVP | tz |
+| X на входе | кнопка есть; провайдер в Supabase ещё выключен — нет клиента в портале разработчика X | D336 |
 | Брендированные auth-письма в облачном Supabase | шаблоны не вставлены в Dashboard | D330, `supabase/templates/` |
 
 ## Следующий шаг

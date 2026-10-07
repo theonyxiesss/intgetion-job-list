@@ -113,6 +113,15 @@ test("notifications feed, preferences, and unsubscribe", async ({
   });
   expect(applied.ok()).toBeTruthy();
 
+  // The bot switch waits for a linked Telegram (D329).
+  await page.goto("/en/notifications");
+  await expect(
+    page.getByRole("switch", { name: "New jobs in the Telegram bot" }),
+  ).toBeDisabled();
+  await expect(
+    page.getByRole("link", { name: "Link Telegram in account settings" }),
+  ).toBeVisible();
+
   const feed = await employer.request.get("/api/notifications");
   expect(feed.ok()).toBeTruthy();
   const body = (await feed.json()) as {

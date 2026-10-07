@@ -27,6 +27,45 @@ test("7A: a guest chats; without a model the agent says it is unavailable", asyn
   expect(body.messages.at(-1)?.content).not.toContain("a@example.com");
 });
 
+test("chat composer grows a few lines, then scrolls inside", async ({
+  page,
+}) => {
+  for (const viewport of [
+    { width: 1280, height: 800 },
+    { width: 390, height: 800 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/en/chat");
+    const field = page.getByLabel("Write a message");
+    const shellBefore = await page.locator(".chat-shell").boundingBox();
+    const heightOf = async (value: string) => {
+      await field.fill(value);
+      return Math.round((await field.boundingBox())?.height ?? 0);
+    };
+    const one = await heightOf("one line");
+    const two = await heightOf("one\ntwo");
+    const three = await heightOf("one\ntwo\nthree");
+    const capped = await heightOf(`${"line\n".repeat(40)}`);
+    expect(one).toBeLessThanOrEqual(48);
+    expect(two).toBeGreaterThan(one);
+    expect(three).toBeGreaterThan(two);
+    expect(capped).toBeGreaterThan(three);
+    expect(capped).toBeLessThanOrEqual(160);
+    expect(
+      await field.evaluate((node) => node.scrollHeight > node.clientHeight + 1),
+    ).toBe(true);
+    expect(
+      await field.evaluate((node) => getComputedStyle(node).overflowY),
+    ).toBe("auto");
+    const shell = await page.locator(".chat-shell").boundingBox();
+    expect(Math.round(shell?.height ?? 0)).toBe(
+      Math.round(shellBefore?.height ?? 0),
+    );
+    const log = await page.getByRole("log", { name: "Conversation" }).boundingBox();
+    expect(log?.height ?? 0).toBeGreaterThan(capped);
+  }
+});
+
 test("7A: guests cannot confirm actions (P11)", async ({ request }) => {
   const response = await request.post("/api/bot/confirm", {
     headers: sameOrigin,
