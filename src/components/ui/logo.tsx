@@ -19,7 +19,7 @@ export function LogoMark({ size = 26 }: { size?: number }) {
       alt=""
       aria-hidden="true"
       decoding="async"
-      className="logo-img shrink-0"
+      className="logo-img h-[18px] w-auto shrink-0 md:h-auto"
     />
   );
 }
@@ -27,7 +27,7 @@ export function LogoMark({ size = 26 }: { size?: number }) {
 /** Wordmark: INTGETION + JOB LIST (the second part from md up). */
 export function Logo({ name, sub }: { name: string; sub: string }) {
   return (
-    <span className="inline-flex items-center gap-3">
+    <span className="inline-flex items-center gap-2 md:gap-3">
       <LogoMark />
       <span className="font-display text-[15px] font-semibold tracking-[0.24em] uppercase">
         {name}
