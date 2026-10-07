@@ -3,13 +3,7 @@
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { Switch } from "@/components/ui/choice";
-
-/** Notification types about new jobs that the bot switch covers. */
-export const NEW_JOB_TYPES = [
-  "search.alert",
-  "matches.digest",
-  "company.new_jobs",
-] as const;
+import { NEW_JOB_TYPES } from "./new-job-types";
 
 /**
  * One switch for "new jobs in the Telegram bot": it writes the telegram

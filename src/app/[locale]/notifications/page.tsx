@@ -1,8 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import {
-  BotAlertsSwitch,
-  NEW_JOB_TYPES,
-} from "@/components/notifications/bot-alerts-switch";
+import { BotAlertsSwitch } from "@/components/notifications/bot-alerts-switch";
+import { NEW_JOB_TYPES } from "@/components/notifications/new-job-types";
 import { MarkAllReadButton } from "@/components/notifications/mark-all-read";
 import { redirect } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth-guards";
