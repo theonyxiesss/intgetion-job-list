@@ -74,7 +74,8 @@
     "closedIntro": "The employer has closed it or it has expired. Here are jobs of the same kind.",
     "missingTitle": "Job not found",
     "missingIntro": "The link may be wrong, or the job was removed.",
-    "browseAll": "All jobs"
+    "browseAll": "All jobs",
+    "viewJob": "View job"
   },
   "companyPage": {
     "trusted": "Trusted employer",
@@ -120,6 +121,7 @@
     "chat": "Spoki",
     "bottom": "Main sections",
     "pricing": "Pricing",
+    "postJob": "Post a job",
     "myJobs": "My jobs",
     "company": "Company"
   },
@@ -129,44 +131,43 @@
     "short": {
       "en": "EN",
       "ru": "RU"
+    },
+    "native": {
+      "en": "English",
+      "ru": "Русский"
     }
   },
   "home": {
     "tagline": "Remote work. Real matches.",
-    "line1": "Remote work.",
-    "line2": "Real matches.",
-    "statJobs": "Published jobs",
-    "statCompanies": "Companies",
-    "subtitle": "Find work. Find people. Connect directly.",
-    "findJob": "Find a Remote Job",
-    "postJob": "Post a Job",
     "searchLabel": "Search",
     "searchPlaceholder": "Role, skill, or company",
     "searchSubmit": "Search",
-    "categoriesTitle": "Categories",
-    "latestTitle": "Latest vacancies",
     "latestEmpty": "Published vacancies will appear here.",
-    "benefitsTitle": "Why this platform",
-    "benefitBotTitle": "Agent bot",
-    "benefitBotBody": "A conversation that fills the profile and finds roles with you.",
-    "benefitMatchTitle": "Matches with explanations",
-    "benefitMatchBody": "Every recommendation says which parts of the profile it used.",
-    "benefitContactsTitle": "Contacts only by mutual interest",
-    "benefitContactsBody": "A company sees contact details only after it expresses interest in an application.",
-    "postNote": "Posting a vacancy opens after an employer account exists.",
-    "pricingTitle": "Free to search and to post",
-    "pricingText": "Paid plans add speed and reach. Nothing you need to find work or hire is behind a paywall.",
-    "pricingLink": "See plans",
-    "pricing": {
-      "candidates": {
-        "label": "For candidates",
-        "price": "Free · Plus from $5",
-        "text": "Every job, unlimited applications and matching are free. Plus adds instant alerts and a stronger career agent."
+    "feedTitle": "Remote jobs",
+    "topJobs": "Top jobs",
+    "allJobs": "All jobs",
+    "moreJobs": "Show more jobs",
+    "faqTitle": "Questions",
+    "faq": {
+      "what": {
+        "q": "What is INTGETION JOB LIST?",
+        "a": "A feed of remote jobs. Search, apply, and let the Spoki assistant suggest roles that fit your profile."
       },
-      "companies": {
-        "label": "For companies",
-        "price": "Free · $79 with a guarantee",
-        "text": "Post for free, or pay $79 per job for 10 matching applications — or your money back."
+      "free": {
+        "q": "Is it free?",
+        "a": "Yes. Searching, applying and posting jobs are free. Paid plans add speed and reach — see Pricing."
+      },
+      "apply": {
+        "q": "How do I apply?",
+        "a": "Open a job and press Apply. For imported jobs you apply on the employer’s own site."
+      },
+      "post": {
+        "q": "How do I post a job?",
+        "a": "Press Post a job, sign in and fill in the form. The job appears in the feed after review."
+      },
+      "contacts": {
+        "q": "Who sees my contacts?",
+        "a": "A company sees your contacts only after mutual interest."
       }
     }
   },
@@ -1136,7 +1137,11 @@
     "rights": "All rights reserved.",
     "language": "Footer language",
     "employerJobs": "Company jobs",
-    "legal": "Legal"
+    "legal": "Legal",
+    "platform": "Platform",
+    "resources": "Resources",
+    "faq": "FAQ",
+    "salaries": "Salaries"
   },
   "ui": {
     "close": "Close",
@@ -1895,5 +1900,10 @@
         "onsite": "On-site"
       }
     }
+  },
+  "postJob": {
+    "title": "Post a job",
+    "guest": "To post a job, sign in or create an account.",
+    "register": "Register"
   }
 }

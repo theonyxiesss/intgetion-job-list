@@ -6,7 +6,7 @@ import { logger } from "@/lib/logger";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import { listSitemapEntries, searchJobs } from "@/modules/jobs/service";
 import { listSalarySkillSlugs } from "@/modules/salaries/service";
-import { languageAlternates, siteUrl } from "@/modules/seo/site";
+import { languageAlternates, localeUrl } from "@/modules/seo/site";
 
 // Read the database per request, never at build time (D210).
 export const dynamic = "force-dynamic";
@@ -25,7 +25,7 @@ function entry(
   lastModified?: Date,
 ): MetadataRoute.Sitemap[number] {
   return {
-    url: `${siteUrl()}/en${path}`,
+    url: localeUrl("en", path),
     ...(lastModified ? { lastModified } : {}),
     alternates: { languages: languageAlternates(path) },
   };

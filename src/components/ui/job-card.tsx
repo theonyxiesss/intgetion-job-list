@@ -25,6 +25,9 @@ export function JobCard({
   actions,
   compact = false,
   transitionName,
+  meta,
+  summary,
+  viewLabel,
 }: {
   href: string;
   title: string;
@@ -43,6 +46,12 @@ export function JobCard({
   compact?: boolean;
   /** Same name as the job page H1, e.g. `job-title-<id>`: the title morphs. */
   transitionName?: string;
+  /** One quiet line under the company: place · format · date. */
+  meta?: string[];
+  /** Two lines of the description at most. */
+  summary?: string | null;
+  /** Visible "View job" control; the whole card stays the link. */
+  viewLabel?: string;
 }) {
   const titleLink = (
     <Link
@@ -71,7 +80,7 @@ export function JobCard({
         </div>
       )}
       <div className="flex flex-col gap-1 pr-0 md:pr-28">
-        <h3 className="t-h3">
+        <h3 className="t-h3 break-words">
           {transitionName ? (
             <Morph name={transitionName}>{titleLink}</Morph>
           ) : (
@@ -88,7 +97,17 @@ export function JobCard({
         ) : (
           <p className="t-body-s text-fg-muted">{companyName}</p>
         )}
+        {meta && meta.length > 0 && (
+          <p className="t-body-s text-fg-muted break-words">
+            {meta.join(" · ")}
+          </p>
+        )}
       </div>
+      {summary && (
+        <p className="t-body-s line-clamp-2 max-w-[75ch] break-words text-fg-muted">
+          {summary}
+        </p>
+      )}
       {stats.length > 0 && (
         <dl className="flex flex-wrap gap-x-6 gap-y-3">
           {stats.map((stat) => (
@@ -114,6 +133,14 @@ export function JobCard({
             </li>
           )}
         </ul>
+      )}
+      {viewLabel && (
+        <span
+          aria-hidden="true"
+          className="t-nav self-start border border-line-strong px-4 py-3 text-fg transition-colors group-hover:border-accent"
+        >
+          {viewLabel}
+        </span>
       )}
       {actions && (
         <div className="relative z-10 flex gap-1 md:absolute md:top-4 md:right-4">

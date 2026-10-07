@@ -21,6 +21,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { listEmployerApplications } from "@/modules/applications/service";
 import { EmployerJobTabs } from "../job-tabs";
+import { localePrefix } from "@/i18n/paths";
 
 /** DESIGN.md 9.0: application status tabs; «All» first. */
 const STATUS_TABS = [
@@ -45,7 +46,7 @@ export default async function EmployerApplicationsPage({
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(`${localePrefix(locale)}/login`);
 
   const t = await getTranslations("employerApplications");
   const jobsT = await getTranslations("employerJobs");

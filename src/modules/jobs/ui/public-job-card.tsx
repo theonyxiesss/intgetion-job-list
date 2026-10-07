@@ -7,6 +7,17 @@ import type { searchJobs } from "../service";
 
 type PublicJob = Awaited<ReturnType<typeof searchJobs>>["items"][number];
 
+/** Plain first lines of the description; the card clamps it to two lines. */
+function summaryOf(description: string | null): string | null {
+  if (!description) return null;
+  const plain = description
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[#*_`>[\]]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  return plain ? plain.slice(0, 240) : null;
+}
+
 export async function PublicJobCard({
   job,
   locale,
@@ -18,6 +29,16 @@ export async function PublicJobCard({
   const markers = await getTranslations("markers");
   const categories = await getTranslations("categories");
   const money = locale === "ru" ? "ru-RU" : "en-US";
+  const published = job.publishedAt
+    ? new Intl.DateTimeFormat(money, { day: "numeric", month: "short" }).format(
+        new Date(job.publishedAt),
+      )
+    : null;
+  const meta = [
+    job.location?.trim() || job.locationCountry || t("worldwide"),
+    t(job.workFormat),
+    ...(published ? [published] : []),
+  ];
   const salary = job.salaryMin
     ? `${formatMoneyDto(job.salaryMin, money)}${job.salaryMax ? ` – ${formatMoneyDto(job.salaryMax, money)}` : ""} / ${t(job.salaryMin.period)}`
     : t("salaryMissing");
@@ -37,7 +58,6 @@ export async function PublicJobCard({
           {job.perks.includes("crypto-pay") ? (
             <Badge tone="new">{markers("perks.crypto-pay")}</Badge>
           ) : null}
-          <Badge>{t(job.workFormat)}</Badge>
           {job.company.isTrusted ? (
             <Badge tone="trusted">{t("trusted")}</Badge>
           ) : null}
@@ -71,6 +91,9 @@ export async function PublicJobCard({
           .map((perk) => markers(`perks.${perk}`)),
       ]}
       moreSkillsLabel={(hidden) => `+${hidden + job.skillsMore}`}
+      meta={meta}
+      summary={summaryOf(job.description)}
+      viewLabel={t("viewJob")}
     />
   );
 }

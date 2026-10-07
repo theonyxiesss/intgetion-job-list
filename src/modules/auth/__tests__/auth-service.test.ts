@@ -171,7 +171,7 @@ describe("register", () => {
     expect(auth.signUp).toHaveBeenCalledWith(
       expect.objectContaining({
         options: expect.objectContaining({
-          emailRedirectTo: "http://127.0.0.1:3000/en/auth/callback?next=chat",
+          emailRedirectTo: "http://127.0.0.1:3000/auth/callback?next=chat",
         }),
       }),
     );
@@ -220,7 +220,7 @@ describe("register", () => {
       type: "signup",
       email: "ana@example.com",
       options: {
-        emailRedirectTo: "http://127.0.0.1:3000/en/auth/callback",
+        emailRedirectTo: "http://127.0.0.1:3000/auth/callback",
       },
     });
   });
@@ -305,7 +305,7 @@ describe("requestPasswordReset", () => {
     ).resolves.toBeUndefined();
     expect(auth.resetPasswordForEmail).toHaveBeenCalledWith(
       "nobody@example.com",
-      { redirectTo: "http://127.0.0.1:3000/en/auth/callback?next=reset" },
+      { redirectTo: "http://127.0.0.1:3000/auth/callback?next=reset" },
     );
   });
 });
@@ -474,7 +474,7 @@ describe("linking Google and X", () => {
     expect(auth.linkIdentity).toHaveBeenCalledWith({
       provider: "x",
       options: {
-        redirectTo: "http://127.0.0.1:3000/en/auth/callback?next=account",
+        redirectTo: "http://127.0.0.1:3000/auth/callback?next=account",
         skipBrowserRedirect: true,
       },
     });

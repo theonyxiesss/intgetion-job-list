@@ -24,8 +24,12 @@
           try {
             if (/^ru\b/i.test(navigator.language || "")) locale = "ru";
           } catch (e) {}
+          // D335: English is the root; `tgb=1` tells the proxy not to bounce
+          // again. No HTTP redirect, so the #tgWebAppData fragment survives.
+          var search = location.search || "";
+          search += (search ? "&" : "?") + "tgb=1";
           location.replace(
-            "/" + locale + (location.search || "") + (location.hash || ""),
+            (locale === "ru" ? "/ru" : "/") + search + (location.hash || ""),
           );
         }
         var n = 0;

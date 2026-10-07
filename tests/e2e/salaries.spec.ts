@@ -76,9 +76,9 @@ test("a skill salary page shows numbers once it has 10 own jobs", async ({
   await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 
   await page.goto("/en/salaries");
-  await expect(page.locator(`a[href="/en/salaries/${slug}"]`)).toBeVisible();
+  await expect(page.locator(`a[href="/salaries/${slug}"]`)).toBeVisible();
   expect(await (await request.get("/sitemap.xml")).text()).toContain(
-    `/en/salaries/${slug}`,
+    `/salaries/${slug}`,
   );
 
   expect((await request.get("/en/salaries/no-such-skill")).status()).toBe(404);

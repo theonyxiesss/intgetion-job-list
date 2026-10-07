@@ -16,6 +16,7 @@ import { toJobDto } from "@/modules/jobs/api/dto";
 import { findOwnedJob } from "@/modules/jobs/service";
 import { JobActions } from "@/modules/jobs/ui/job-actions";
 import { EmployerJobTabs } from "./job-tabs";
+import { localePrefix } from "@/i18n/paths";
 
 const date = (value: Date | null) =>
   value ? value.toISOString().slice(0, 10) : "—";
@@ -29,7 +30,7 @@ export default async function EmployerJobPage({
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(`${localePrefix(locale)}/login`);
   let job;
   try {
     job = await findOwnedJob(id, user.id);

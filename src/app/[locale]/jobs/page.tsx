@@ -32,6 +32,7 @@ import { RecentlyViewed } from "@/modules/jobs/ui/recently-viewed";
 import { SaveSearchButton } from "@/modules/saved-searches/ui/save-search-button";
 import { cookies } from "next/headers";
 import { CONSENT_COOKIE, consentAllows, consentInForce } from "@/lib/consent";
+import { localePrefix } from "@/i18n/paths";
 
 export const dynamic = "force-dynamic";
 
@@ -96,10 +97,10 @@ export async function generateMetadata({
     title: t("title"),
     description: t("subtitle"),
     alternates: {
-      canonical: `${siteUrl()}/${locale}/jobs`,
+      canonical: `${siteUrl()}${localePrefix(locale)}/jobs`,
       languages: languageAlternates("/jobs"),
       types: {
-        "application/rss+xml": `/${locale}/jobs/rss.xml`,
+        "application/rss+xml": `${localePrefix(locale)}/jobs/rss.xml`,
       },
     },
   };
@@ -179,7 +180,7 @@ export default async function JobsPage({
           actions={
             <a
               className="t-label text-fg-muted"
-              href={`/${locale}/jobs/rss.xml`}
+              href={`${localePrefix(locale)}/jobs/rss.xml`}
             >
               {markers("rss")}
             </a>

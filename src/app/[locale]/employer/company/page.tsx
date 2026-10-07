@@ -8,6 +8,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
 import { CompanyForm } from "@/modules/companies/ui/company-form";
+import { localePrefix } from "@/i18n/paths";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -22,7 +23,7 @@ export default async function EmployerCompanyPage({
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(`${localePrefix(locale)}/login`);
   const companies = await getCompaniesForUser(user.id);
   const company = companies[0];
   const t = await getTranslations("company");

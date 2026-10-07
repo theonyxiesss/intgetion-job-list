@@ -61,13 +61,13 @@ test("a job page has a title, a canonical URL and JobPosting data", async ({
   const ogImage = page.locator('meta[property="og:image"]');
   await expect(ogImage).toHaveCount(1);
   const imageUrl = await ogImage.getAttribute("content");
-  expect(imageUrl).toContain(`/en/jobs/${jobId}/opengraph-image`);
+  expect(imageUrl).toContain(`/jobs/${jobId}/opengraph-image`);
   const picture = await page.request.get(imageUrl ?? "");
   expect(picture.status()).toBe(200);
   expect(picture.headers()["content-type"]).toContain("image/png");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    new RegExp(`/en/jobs/${jobId}$`),
+    new RegExp(`/jobs/${jobId}$`),
   );
   const raw = await page
     .locator('script[type="application/ld+json"]')
@@ -199,7 +199,7 @@ test("a region collection lists jobs, answers questions and stays indexable", as
   const collectionImage = await page
     .locator('meta[property="og:image"]')
     .getAttribute("content");
-  expect(collectionImage).toContain("/en/jobs/t/europe/opengraph-image");
+  expect(collectionImage).toContain("/jobs/t/europe/opengraph-image");
   const picture = await page.request.get(collectionImage ?? "");
   expect(picture.status()).toBe(200);
   expect(picture.headers()["content-type"]).toContain("image/png");

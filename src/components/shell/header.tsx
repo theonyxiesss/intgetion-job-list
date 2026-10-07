@@ -45,26 +45,30 @@ export async function Header() {
     }
   }
 
-  // D331: an employer account gets a hiring menu; permissions are unchanged.
+  // Top level follows who is looking. A guest sees both sides; a signed-in
+  // person sees their own. Chat and hiring pages stay in the menu.
   const main: NavItem[] = employer
     ? [
         { href: "/jobs", label: t("nav.jobs") },
         { href: "/employer/jobs", label: t("nav.myJobs") },
         { href: "/employer/company", label: t("nav.company") },
-        { href: "/chat", label: t("nav.chat") },
+        { href: "/pricing", label: t("nav.pricing") },
       ]
     : [
         { href: "/jobs", label: t("nav.jobs") },
         ...(candidate ? [{ href: "/matches", label: t("nav.matches") }] : []),
-        { href: "/chat", label: t("nav.chat") },
-        // A guest reads about hiring first (D204); a member goes to their jobs.
-        {
-          href: signedIn ? "/employer/jobs" : "/for-employers",
-          label: t("nav.employers"),
-        },
-        // Only a guest sees pricing in the main menu (docs/PRICING_UX.md, 1).
-        ...(signedIn ? [] : [{ href: "/pricing", label: t("nav.pricing") }]),
+        { href: "/pricing", label: t("nav.pricing") },
       ];
+  const showPostJob = !signedIn || employer;
+  const more: NavItem[] = employer
+    ? [{ href: "/post-job", label: t("nav.postJob") }]
+    : signedIn
+      ? [{ href: "/chat", label: t("nav.chat") }]
+      : [
+          { href: "/post-job", label: t("nav.postJob") },
+          { href: "/chat", label: t("nav.chat") },
+          { href: "/for-employers", label: t("nav.employers") },
+        ];
   const account: NavItem[] = signedIn
     ? [
         { href: "/notifications", label: t("notifications.nav") },
@@ -75,6 +79,7 @@ export async function Header() {
               { href: "/saved-jobs", label: t("nav.saved") },
               { href: "/profile", label: t("profile.nav") },
             ]),
+        { href: "/settings/account", label: t("settings.title") },
         ...(isAdmin
           ? [
               { href: "/admin", label: t("nav.admin") },
@@ -112,6 +117,13 @@ export async function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-1">
+          {showPostJob && (
+            <span className="mr-2 hidden sm:inline-flex">
+              <ButtonLink {...navFade} href="/post-job">
+                {t("nav.postJob")}
+              </ButtonLink>
+            </span>
+          )}
           <nav
             aria-label={t("nav.account")}
             className="flex items-center gap-1"
@@ -132,24 +144,28 @@ export async function Header() {
                     </span>
                   )}
                 </Link>
-                <Link
-                  {...navFade}
-                  href="/applications"
-                  className={cn(iconLink, "hidden lg:inline-flex")}
-                  title={t("applications.nav")}
-                >
-                  <Icon icon={Send} />
-                  <span className="sr-only">{t("applications.nav")}</span>
-                </Link>
-                <Link
-                  {...navFade}
-                  href="/profile"
-                  className={cn(iconLink, "hidden lg:inline-flex")}
-                  title={t("profile.nav")}
-                >
-                  <Icon icon={User} />
-                  <span className="sr-only">{t("profile.nav")}</span>
-                </Link>
+                {!employer && (
+                  <>
+                    <Link
+                      {...navFade}
+                      href="/applications"
+                      className={cn(iconLink, "hidden lg:inline-flex")}
+                      title={t("applications.nav")}
+                    >
+                      <Icon icon={Send} />
+                      <span className="sr-only">{t("applications.nav")}</span>
+                    </Link>
+                    <Link
+                      {...navFade}
+                      href="/profile"
+                      className={cn(iconLink, "hidden lg:inline-flex")}
+                      title={t("profile.nav")}
+                    >
+                      <Icon icon={User} />
+                      <span className="sr-only">{t("profile.nav")}</span>
+                    </Link>
+                  </>
+                )}
                 {isAdmin && (
                   <Link
                     {...navFade}
@@ -179,7 +195,7 @@ export async function Header() {
             <ThemeToggle />
           </span>
           <MobileNav
-            items={[...main, ...account]}
+            items={[...main, ...more, ...account]}
             label={t("nav.menu")}
             openLabel={t("nav.menu")}
             closeLabel={t("ui.close")}

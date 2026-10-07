@@ -9,6 +9,7 @@ import { siteUrl } from "@/lib/supabase/env";
 import * as waits from "../repo/auth-email-wait";
 import type { AuthEmailWaitPurpose } from "../repo/auth-email-wait";
 import type { AuthClient, CurrentUser } from "./auth-service";
+import { localePrefix } from "@/i18n/paths";
 
 export const AUTH_EMAIL_WAIT_COOKIE = "auth_email_wait";
 export const AUTH_EMAIL_WAIT_TTL_SECONDS = 60 * 60;
@@ -102,5 +103,5 @@ export async function claimEmailWait(auth: AuthClient): Promise<EmailWaitPoll> {
 }
 
 export function signedInPath(locale: AppLocale, purpose: AuthEmailWaitPurpose) {
-  return `${siteUrl()}/${locale}/auth/signed-in?kind=${purpose}`;
+  return `${siteUrl()}${localePrefix(locale)}/auth/signed-in?kind=${purpose}`;
 }

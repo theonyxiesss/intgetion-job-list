@@ -25,6 +25,7 @@ import {
   siteUrl,
 } from "@/modules/seo/site";
 import { tagLabel } from "@/modules/seo/tag-label";
+import { localePrefix } from "@/i18n/paths";
 
 export const dynamic = "force-dynamic";
 
@@ -69,10 +70,10 @@ export async function generateMetadata({
         : markers("tagDescription", { name });
     })(),
     alternates: {
-      canonical: `${siteUrl()}/${locale}/jobs/t/${slug}`,
+      canonical: `${siteUrl()}${localePrefix(locale)}/jobs/t/${slug}`,
       languages: languageAlternates(`/jobs/t/${slug}`),
       types: {
-        "application/rss+xml": `/${locale}/jobs/t/${slug}/rss.xml`,
+        "application/rss+xml": `${localePrefix(locale)}/jobs/t/${slug}/rss.xml`,
       },
     },
     // A near-empty collection stays crawlable but out of the index (D296).
@@ -151,11 +152,14 @@ export default async function TagPage({
     <main className="py-10 md:py-16">
       <JsonLd
         data={breadcrumbListJsonLd([
-          { name: seo("home"), url: `${siteUrl()}/${locale}` },
-          { name: seo("jobs"), url: `${siteUrl()}/${locale}/jobs` },
+          { name: seo("home"), url: `${siteUrl()}${localePrefix(locale)}` },
+          {
+            name: seo("jobs"),
+            url: `${siteUrl()}${localePrefix(locale)}/jobs`,
+          },
           {
             name: title,
-            url: `${siteUrl()}/${locale}/jobs/t/${slug}`,
+            url: `${siteUrl()}${localePrefix(locale)}/jobs/t/${slug}`,
           },
         ])}
       />
@@ -166,7 +170,7 @@ export default async function TagPage({
           actions={
             <a
               className="t-label text-fg-muted"
-              href={`/${locale}/jobs/t/${slug}/rss.xml`}
+              href={`${localePrefix(locale)}/jobs/t/${slug}/rss.xml`}
             >
               {markers("rss")}
             </a>

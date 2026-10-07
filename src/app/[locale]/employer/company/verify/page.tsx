@@ -9,6 +9,7 @@ import {
   getCompaniesForUser,
   getVerificationState,
 } from "@/modules/companies/service";
+import { localePrefix } from "@/i18n/paths";
 
 export default async function CompanyVerifyPage({
   params,
@@ -21,7 +22,7 @@ export default async function CompanyVerifyPage({
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(`${localePrefix(locale)}/login`);
   const query = await searchParams;
   const companies = await getCompaniesForUser(user.id);
   const company = companies.find((c) => c.id === query.company) ?? companies[0];

@@ -1,5 +1,6 @@
 import { logger } from "@/lib/logger";
 import { SEO_LOCALES, siteUrl } from "./site";
+import { localePrefix } from "@/i18n/paths";
 
 /**
  * IndexNow (D284): tells Bing, Yandex and the other taking part that a page
@@ -20,7 +21,7 @@ export function indexNowKey(
 /** Every language version of one path, e.g. "/jobs/<id>". */
 export function localeUrls(path: string): string[] {
   const base = siteUrl();
-  return SEO_LOCALES.map((locale) => `${base}/${locale}${path}`);
+  return SEO_LOCALES.map((locale) => `${base}${localePrefix(locale)}${path}`);
 }
 
 /**

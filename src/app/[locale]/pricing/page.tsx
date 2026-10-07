@@ -13,9 +13,11 @@ import {
 } from "@/config/pricing";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/components/ui/cn";
+import { getViewer, pricingAudienceFor } from "@/lib/viewer";
 import { JsonLd } from "@/modules/seo/json-ld";
 import { faqPageJsonLd } from "@/modules/seo/markup";
 import { languageAlternates, siteUrl } from "@/modules/seo/site";
+import { localePrefix } from "@/i18n/paths";
 
 export async function generateMetadata({
   params,
@@ -28,7 +30,7 @@ export async function generateMetadata({
     title: t("metaTitle"),
     description: t("metaDescription"),
     alternates: {
-      canonical: `${siteUrl()}/${locale}/pricing`,
+      canonical: `${siteUrl()}${localePrefix(locale)}/pricing`,
       languages: languageAlternates("/pricing"),
     },
   };
@@ -48,8 +50,12 @@ export default async function PricingPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("pricing");
-  const audience: PricingAudience =
-    (await searchParams).for === "companies" ? "companies" : "candidates";
+  // D334: a signed-in user sees only their own plans; a guest can switch.
+  const viewer = await getViewer();
+  const audience: PricingAudience = pricingAudienceFor(
+    viewer.kind,
+    (await searchParams).for,
+  );
   const tiers = PRICING[audience];
   const faq = PRICING_FAQ.map((key) => ({
     question: t(`faq.${key}.q`),
@@ -64,23 +70,25 @@ export default async function PricingPage({
           <p className="t-label text-fg-muted">{t("label")}</p>
           <h1 className="t-display-l max-w-[22ch]">{t("title")}</h1>
           <p className="t-body-l max-w-[60ch] text-fg-muted">{t("intro")}</p>
-          <nav aria-label={t("switchLabel")} className="flex flex-wrap gap-2">
-            {(["candidates", "companies"] as const).map((key) => (
-              <Link
-                key={key}
-                href={`/pricing?for=${key}`}
-                aria-current={key === audience ? "page" : undefined}
-                className={cn(
-                  "t-label flex min-h-11 items-center border px-4",
-                  key === audience
-                    ? "border-line-strong bg-surface-2 text-fg"
-                    : "border-line text-fg-muted hover:text-fg",
-                )}
-              >
-                {t(`for.${key}`)}
-              </Link>
-            ))}
-          </nav>
+          {viewer.kind === "guest" ? (
+            <nav aria-label={t("switchLabel")} className="flex flex-wrap gap-2">
+              {(["candidates", "companies"] as const).map((key) => (
+                <Link
+                  key={key}
+                  href={`/pricing?for=${key}`}
+                  aria-current={key === audience ? "page" : undefined}
+                  className={cn(
+                    "t-label flex min-h-11 items-center border px-4",
+                    key === audience
+                      ? "border-line-strong bg-surface-2 text-fg"
+                      : "border-line text-fg-muted hover:text-fg",
+                  )}
+                >
+                  {t(`for.${key}`)}
+                </Link>
+              ))}
+            </nav>
+          ) : null}
         </Container>
       </Section>
 

@@ -39,6 +39,7 @@ import {
   telegramEmail,
   verifyTelegramAuth,
 } from "./telegram";
+import { localePrefix } from "@/i18n/paths";
 
 export type AuthClient = Pick<
   SupabaseClient["auth"],
@@ -68,7 +69,7 @@ export function callbackUrl(
   next?: "reset" | "chat" | "account",
   wait?: string,
 ): string {
-  const url = new URL(`${siteUrl()}/${locale}/auth/callback`);
+  const url = new URL(`${siteUrl()}${localePrefix(locale)}/auth/callback`);
   if (next) url.searchParams.set("next", next);
   if (wait) url.searchParams.set("wait", wait);
   return url.toString();

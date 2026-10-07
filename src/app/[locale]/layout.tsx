@@ -28,6 +28,7 @@ import { routing, type AppLocale } from "@/i18n/routing";
 import { TELEGRAM_WEB_APP_SCRIPT } from "@/lib/security-headers";
 import { siteUrl, siteVerification } from "@/modules/seo/site";
 import "../globals.css";
+import { localePrefix } from "@/i18n/paths";
 
 // One web font, for display text only (DESIGN.md 4.1, D144): Roboto
 // Condensed 600, Latin preloaded, Cyrillic loaded by unicode-range on demand.
@@ -96,7 +97,10 @@ export async function generateMetadata({
     alternates: {
       types: {
         "application/rss+xml": [
-          { url: `/${locale}/jobs/rss.xml`, title: product("name") },
+          {
+            url: `${localePrefix(locale)}/jobs/rss.xml`,
+            title: product("name"),
+          },
         ],
       },
     },

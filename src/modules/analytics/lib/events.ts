@@ -18,8 +18,9 @@ export type EventName = (typeof EVENT_NAMES)[number];
 export type Device = "mobile" | "tablet" | "desktop";
 
 const LOCALE_PATH = /^\/(en|ru)(?=\/|$)/;
-const JOB_PATH = /^\/(?:en|ru)\/jobs\/([0-9a-f-]{36})$/;
-const CATALOG_PATH = /^\/(?:en|ru)\/jobs(?:\/t\/[\w-]+)?$/;
+// D335: English pages have no prefix.
+const JOB_PATH = /^(?:\/(?:en|ru))?\/jobs\/([0-9a-f-]{36})$/;
+const CATALOG_PATH = /^(?:\/(?:en|ru))?\/jobs(?:\/t\/[\w-]+)?$/;
 const BOT_AGENT =
   /bot|crawl|spider|slurp|preview|fetch|headless|lighthouse|monitor|curl|wget|python|axios|node-fetch/i;
 
@@ -42,8 +43,10 @@ export function normalizePath(path: string): string | null {
   return clean.slice(0, 200);
 }
 
+/** A site path without a prefix is English (D335). */
 export function localeOf(path: string): string | null {
-  return LOCALE_PATH.exec(path)?.[1] ?? null;
+  if (!path.startsWith("/") || path.startsWith("/api/")) return null;
+  return LOCALE_PATH.exec(path)?.[1] ?? "en";
 }
 
 export function jobIdOf(path: string): string | null {

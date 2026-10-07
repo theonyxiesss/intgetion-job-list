@@ -1,6 +1,7 @@
 import { renderEmailLayout, type EmailJobCard } from "@/lib/email-html";
 import en from "@/messages/en.json";
 import ru from "@/messages/ru.json";
+import { localePrefix } from "@/i18n/paths";
 import { NOTIFICATION_CATALOG, type NotificationType } from "../lib/catalog";
 import type { EmailJobPayload } from "../lib/email-jobs";
 
@@ -157,7 +158,7 @@ export function renderEmail(input: {
   const action =
     actionLabel && input.actionPath
       ? {
-          href: `${origin}/${input.locale}${input.actionPath}`,
+          href: `${origin}${localePrefix(input.locale)}${input.actionPath}`,
           label: actionLabel,
         }
       : undefined;
@@ -262,7 +263,7 @@ export function telegramText(input: {
   const values = templateValues(input.payload);
   const title = fillTemplate(block.inapp.title, values, input.locale);
   const body = fillTemplate(block.inapp.body, values, input.locale);
-  const link = `${input.siteUrl}/${input.locale}${notificationPath(input.type, input.payload)}`;
+  const link = `${input.siteUrl}${localePrefix(input.locale)}${notificationPath(input.type, input.payload)}`;
   return `${title}
 ${body}
 

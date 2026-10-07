@@ -83,6 +83,16 @@
 @layer base {
   html {
     background: var(--bg);
+    /*
+     * D333: the page scrolls as usual (wheel, touch, trackpad, keys) but the
+     * window's own scrollbar is not drawn. Only the root: inner scroll areas
+     * (chat, admin tables) keep theirs.
+     */
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar {
+    display: none;
   }
 
   body {

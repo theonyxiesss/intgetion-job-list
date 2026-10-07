@@ -14,6 +14,7 @@ import {
   readyEmailWait,
   signedInPath,
 } from "@/modules/auth/service/email-wait";
+import { localePrefix } from "@/i18n/paths";
 
 export async function GET(
   request: NextRequest,
@@ -49,22 +50,22 @@ export async function GET(
     await auditSignIn(result.user, "email_link", clientIp(request.headers));
   }
 
-  const target = new URL(`/${locale}`, siteUrl());
+  const target = new URL(`${localePrefix(locale)}`, siteUrl());
   if (!result.ok) {
     target.pathname = backToAccount
-      ? `/${locale}/settings/account`
-      : `/${locale}/login`;
+      ? `${localePrefix(locale)}/settings/account`
+      : `${localePrefix(locale)}/login`;
     target.searchParams.set("error", result.reason);
   } else if (query.get("next") === "reset") {
-    target.pathname = `/${locale}/reset-password`;
+    target.pathname = `${localePrefix(locale)}/reset-password`;
     target.searchParams.set("mode", "update");
   } else if (query.get("next") === "chat") {
-    target.pathname = `/${locale}/chat`;
+    target.pathname = `${localePrefix(locale)}/chat`;
   } else if (backToAccount) {
-    target.pathname = `/${locale}/settings/account`;
+    target.pathname = `${localePrefix(locale)}/settings/account`;
   } else if (result.created && result.user.accountType === "employer") {
     // A new employer starts with the company profile (D331).
-    target.pathname = `/${locale}/employer/company`;
+    target.pathname = `${localePrefix(locale)}/employer/company`;
   } else {
     const wait = query.get("wait");
     if (wait) {
@@ -72,14 +73,18 @@ export async function GET(
       if (purpose) {
         const handed = NextResponse.redirect(signedInPath(locale, purpose));
         handed.cookies.set(GOOGLE_TERMS_COOKIE, "", {
-          path: `/${locale}/auth/callback`,
+          path: `${localePrefix(locale)}/auth/callback`,
           maxAge: 0,
         });
         return handed;
       }
     }
     // Same-device open, or wait handoff unavailable: success page (D326).
-    target.pathname = `/${locale}/auth/confirmed`;
+    // A new employer starts with the company profile instead (D331).
+    target.pathname =
+      result.created && result.user.accountType === "employer"
+        ? `${localePrefix(locale)}/employer/company`
+        : `${localePrefix(locale)}/auth/confirmed`;
   }
   const response = NextResponse.redirect(target);
   response.cookies.set(GOOGLE_TERMS_COOKIE, "", {

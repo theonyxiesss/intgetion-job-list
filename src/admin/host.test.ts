@@ -5,6 +5,7 @@ import {
   csrfSite,
   hostOrigin,
   isAdminHost,
+  isAdminSurface,
 } from "./host";
 
 describe("admin host routing", () => {
@@ -47,7 +48,7 @@ describe("admin host routing", () => {
   });
 
   it("sends the bare admin host to sign-in", () => {
-    expect(adminHostEntry("/")).toBe("/en/admin/login");
+    expect(adminHostEntry("/")).toBe("/admin/login");
     expect(adminHostEntry("/en")).toBeNull();
     expect(adminHostEntry("/en/jobs")).toBeNull();
   });
@@ -102,5 +103,20 @@ describe("admin host routing", () => {
     expect(csrfSite("admin.localhost:3000", "https://intgetion.com")).toBe(
       "http://admin.localhost:3000",
     );
+  });
+});
+
+describe("admin paths without a locale prefix (D335)", () => {
+  it("treats /admin like /en/admin and /ru/admin", () => {
+    for (const pathname of [
+      "/admin",
+      "/admin/users",
+      "/ru/admin",
+      "/en/admin",
+    ]) {
+      expect(isAdminSurface(pathname)).toBe(true);
+    }
+    expect(isAdminSurface("/administrators")).toBe(false);
+    expect(isAdminSurface("/jobs")).toBe(false);
   });
 });

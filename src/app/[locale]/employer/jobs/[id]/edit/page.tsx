@@ -15,6 +15,7 @@ import {
   navBack,
 } from "@/components/ui";
 import { jobFormOptions } from "../../form-options";
+import { localePrefix } from "@/i18n/paths";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -28,7 +29,7 @@ export default async function EditEmployerJobPage({
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(`${localePrefix(locale)}/login`);
   let job;
   try {
     job = await findOwnedJob(id, user.id);
