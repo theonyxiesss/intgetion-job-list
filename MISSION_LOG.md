@@ -3,6 +3,26 @@
 > Older entries: [docs/archive/mission-log/](docs/archive/mission-log/) — see [docs/archive/INDEX.md](docs/archive/INDEX.md).
 > Session protocol: [docs/tz/00-protocol.md](docs/tz/00-protocol.md). Status now: [docs/CURRENT.md](docs/CURRENT.md).
 
+## [2026-10-07] — ручная привязка в Supabase — DONE
+
+- Сделано: в облачном проекте `intgetion-dev` включён «Allow manual linking». В `supabase/config.toml` `enable_manual_linking = true`. «Привязать Google» с локального сайта открывает выбор аккаунта Google и возвращает на `/{locale}/auth/callback?next=account`. Провайдер X не включался: клиента OAuth 2.0 нет (D336).
+- Команды проверки: браузер — `GET /api/auth/google?locale=ru&link=1` открыл `accounts.google.com` (приложение INTGETION JOB LIST), не `oauth_unavailable`.
+- Миграции: нет.
+- Изменённые файлы: `supabase/config.toml`, `docs/DECISIONS.md`, `docs/OPEN_TASKS.md`, `docs/CURRENT.md`.
+- Отклонения от ТЗ: нет (D339).
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по команде основателя. X заработает после клиента в портале разработчика.
+
+## [2026-10-07] — привязка аккаунтов и одно согласие — DONE
+
+- Сделано: в «Настройки → Аккаунт → Способы входа» можно привязать и отвязать Telegram, Google и X. Google и X идут через `linkIdentity` и возвращают на эту страницу. Последнюю identity отвязать нельзя. Telegram при выключенном виджете привязывается ботом, без новой сессии. На входе и регистрации текст согласия один, внизу блока: «Продолжая, вы принимаете…».
+- Команды проверки: `pnpm exec tsc --noEmit` → 0. eslint по затронутым файлам → 0. `vitest` auth-service и telegram → 55 passed. Браузер на `:3000`: `/ru/login` и `/ru/register` — одна строка «Продолжая, вы принимаете…», «Продолжая через» нет. `/ru/settings/account` — Telegram «Привязать», Google «Отвязать» (уже привязан), X ссылка `/api/auth/x?locale=ru&link=1`.
+- Миграции: нет.
+- Изменённые файлы: `src/components/settings/sign-in-methods.tsx`, `src/app/[locale]/settings/account/page.tsx`, `src/components/auth/social-sign-in-stubs.tsx`, `src/components/auth/telegram-login-button.tsx`, `src/modules/auth/service/auth-service.ts`, `telegram-login.ts`, маршруты `oauth/unlink` и `telegram/link`, callback, `src/messages/{en,ru}.json`.
+- Отклонения от ТЗ: привязка OAuth поверх D7 (OAuth был V2) — D339, в том же духе, что D335 и D336.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по команде основателя.
+
 ## [2026-10-07] — сборка и выкладка — DONE
 
 - Сделано: локальные наработки собраны с `origin/master` и выложены на https://intgetion.com. В проде: Google и X на входе, кнопка Telegram, растущее поле чата, тип аккаунта, письма D330, плюс уже бывшие на master логотип, цены и D325–D329. X-провайдер в Supabase по-прежнему выключен.

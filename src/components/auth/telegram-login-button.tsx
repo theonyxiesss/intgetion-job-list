@@ -14,31 +14,48 @@ export function TelegramLoginButton({
   label,
   waiting,
   failed,
+  taken,
   icon,
   children,
+  purpose = "signin",
+  buttonClassName,
 }: {
   locale: AppLocale;
   label: string;
   waiting: string;
   failed: string;
+  /** Shown when this Telegram already belongs to another account. */
+  taken?: string;
   /** Brand mark shown before the label. */
   icon?: ReactNode;
-  /** The terms line, rendered on the server so its links stay real. */
+  /** Extra line under the button, rendered on the server so its links stay real. */
   children?: ReactNode;
+  /** `link` attaches Telegram to the signed-in account instead of signing in. */
+  purpose?: "signin" | "link";
+  buttonClassName?: string;
 }) {
   const router = useRouter();
-  const [phase, setPhase] = useState<"idle" | "waiting" | "failed">("idle");
+  const [phase, setPhase] = useState<"idle" | "waiting" | "failed" | "taken">(
+    "idle",
+  );
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     let timer = 0;
+    const pollPath =
+      purpose === "link"
+        ? "/api/auth/telegram/link"
+        : "/api/auth/telegram/pending";
     async function tick(afterClick: boolean) {
-      const response = await fetch("/api/auth/telegram/pending", {
-        method: "POST",
-      });
+      const response = await fetch(pollPath, { method: "POST" });
       if (cancelled) return;
       if (response.ok) {
+        if (purpose === "link") {
+          setPhase("idle");
+          router.refresh();
+          return;
+        }
         router.replace("/");
         router.refresh();
         return;
@@ -46,6 +63,10 @@ export function TelegramLoginButton({
       if (response.status === 202) {
         setPhase("waiting");
         timer = window.setTimeout(() => void tick(true), 2000);
+        return;
+      }
+      if (response.status === 409 && purpose === "link") {
+        setPhase("taken");
         return;
       }
       if (afterClick) setPhase("failed");
@@ -57,7 +78,7 @@ export function TelegramLoginButton({
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [attempt, router]);
+  }, [attempt, purpose, router]);
 
   async function onClick() {
     setPhase("waiting");
@@ -85,7 +106,7 @@ export function TelegramLoginButton({
     <div className="flex flex-col gap-1">
       <button
         type="button"
-        className={buttonClass("secondary", "md", "w-full")}
+        className={buttonClassName ?? buttonClass("secondary", "md", "w-full")}
         onClick={() => void onClick()}
       >
         {icon}
@@ -100,6 +121,11 @@ export function TelegramLoginButton({
       {phase === "failed" && (
         <p className="t-caption text-danger" role="alert">
           {failed}
+        </p>
+      )}
+      {phase === "taken" && (
+        <p className="t-caption text-danger" role="alert">
+          {taken ?? failed}
         </p>
       )}
     </div>

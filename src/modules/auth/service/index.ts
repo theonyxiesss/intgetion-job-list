@@ -17,9 +17,12 @@ export {
   requireCurrentUser,
   sendMagicLink,
   signIn,
+  linkedOAuthAccounts,
   startGoogleSignIn,
   startXSignIn,
+  unlinkOAuthProvider,
   linkTelegram,
+  linkTelegramProfile,
   signInWithTelegram,
   telegramLinkOf,
   signInWithTelegramProfile,
@@ -54,6 +57,7 @@ export {
 } from "./telegram";
 export {
   beginTelegramBotLogin,
+  finishTelegramBotLink,
   finishTelegramBotLogin,
   handleTelegramWebhook,
   type TelegramPoll,
@@ -63,6 +67,8 @@ export type {
   CallbackParams,
   CallbackResult,
   CurrentUser,
+  LinkedOAuth,
+  OAuthProviderName,
   RegisterResult,
 } from "./auth-service";
 export { toMeDto } from "../api/me-dto";

@@ -13,7 +13,9 @@ import {
 } from "@/lib/supabase/admin";
 import { flags } from "@/config/flags";
 import { siteUrl } from "@/lib/supabase/env";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
+  linkedOAuthAccounts,
   telegramAuthUrl,
   telegramBotId,
   telegramBotToken,
@@ -23,18 +25,29 @@ import { Alert, Container, PageHeader } from "@/components/ui";
 import { requireSettingsUser } from "../require-settings-user";
 import { SettingsTabs } from "../settings-tabs";
 
+const accountNotices = new Set([
+  "identity_taken",
+  "invalid_link",
+  "oauth_unavailable",
+]);
+
 export default async function AccountSettingsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
   const { locale } = await params;
+  const { error } = await searchParams;
   setRequestLocale(locale);
   const user = await requireSettingsUser(locale);
   const t = await getTranslations("settings");
-  const [loginEmail, telegram] = await Promise.all([
+  const supabase = await createSupabaseServerClient();
+  const [loginEmail, telegram, oauth] = await Promise.all([
     getAuthUserLoginEmail(user.authUid),
     telegramLinkOf(user),
+    linkedOAuthAccounts(supabase.auth),
   ]);
   const token = telegramBotToken();
   // Linking returns to the same page Telegram sign-in uses, in "link" mode (D230).
@@ -58,6 +71,9 @@ export default async function AccountSettingsPage({
           }
           telegram={telegram ? { username: telegram.username } : null}
           linkHref={linkHref}
+          google={oauth.google}
+          x={oauth.x}
+          notice={error && accountNotices.has(error) ? error : null}
         />
         <AccountTypeSetting value={user.accountType} />
         <EmailLanguage locale={user.locale} />

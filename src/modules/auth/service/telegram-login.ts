@@ -3,8 +3,12 @@ import type { AppLocale } from "@/i18n/routing";
 import { HttpError } from "@/lib/http";
 import { logger } from "@/lib/logger";
 import { authAdminAvailable } from "@/lib/supabase/admin";
-import type { AuthClient } from "./auth-service";
-import { signInWithTelegramProfile } from "./auth-service";
+import {
+  linkTelegramProfile,
+  signInWithTelegramProfile,
+  type AuthClient,
+  type CurrentUser,
+} from "./auth-service";
 import {
   answerTelegramCallback,
   ensureTelegramWebhook,
@@ -132,6 +136,36 @@ export async function finishTelegramBotLogin(
   );
   await challenges.deleteTelegramLoginChallenge(row.codeHash);
   jar.set(COOKIE, "", cookieOptions(0));
+  return "signed-in";
+}
+
+/**
+ * Links the confirmed bot tap to the signed-in account (D339).
+ * Does not open a new session.
+ */
+export async function finishTelegramBotLink(
+  user: CurrentUser,
+): Promise<TelegramPoll> {
+  const jar = await cookies();
+  const code = jar.get(COOKIE)?.value ?? "";
+  if (!parseTelegramLoginCode(`login_${code}`)) return "absent";
+  const row = await challenges.findTelegramLoginChallenge(
+    telegramLoginCodeHash(code),
+  );
+  if (!row || row.expiresAt.getTime() <= Date.now()) {
+    if (row) await challenges.deleteTelegramLoginChallenge(row.codeHash);
+    jar.set(COOKIE, "", cookieOptions(0));
+    return "absent";
+  }
+  if (!row.confirmedAt) return "pending";
+  const id = telegramIdNumber(row.telegramId);
+  if (!id) return "absent";
+  try {
+    await linkTelegramProfile(user, { id, username: row.username });
+  } finally {
+    await challenges.deleteTelegramLoginChallenge(row.codeHash);
+    jar.set(COOKIE, "", cookieOptions(0));
+  }
   return "signed-in";
 }
 

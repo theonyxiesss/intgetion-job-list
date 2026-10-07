@@ -5,6 +5,7 @@ import { clientIp } from "@/lib/request-ip";
 import { siteUrl } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
+  getCurrentUser,
   GOOGLE_TERMS_COOKIE,
   googleSignupMetadata,
   localeSchema,
@@ -43,26 +44,36 @@ export function isXAuthorizeHost(host: string): boolean {
  * Starts Google or X and comes back through `/auth/callback`.
  * Opening the authorize link spends that attempt, so a live provider gets a second link.
  */
+function oauthUnavailable(locale: string, link: boolean): Response {
+  const path = link ? `/${locale}/settings/account` : `/${locale}/login`;
+  const target = new URL(path, siteUrl());
+  target.searchParams.set("error", "oauth_unavailable");
+  return NextResponse.redirect(target);
+}
+
 export async function redirectToOAuth(
   request: Request,
   provider: "google" | "x",
 ): Promise<Response> {
   const query = new URL(request.url).searchParams;
   const locale = localeSchema.catch("en").parse(query.get("locale"));
-  const next = query.get("next") === "chat" ? "chat" : undefined;
-  const accept = provider === "google" ? isGoogleAuthorizeHost : isXAuthorizeHost;
+  const link = query.get("link") === "1";
+  const next = !link && query.get("next") === "chat" ? "chat" : undefined;
+  const accept =
+    provider === "google" ? isGoogleAuthorizeHost : isXAuthorizeHost;
   const start = provider === "google" ? startGoogleSignIn : startXSignIn;
   try {
     await enforceRateLimit("login", `${clientIp(request.headers)}|${provider}`);
     const supabase = await createSupabaseServerClient();
-    const probe = await start(supabase.auth, { locale, next });
+    if (link && !(await getCurrentUser(supabase.auth))) {
+      return NextResponse.redirect(new URL(`/${locale}/login`, siteUrl()));
+    }
+    const probe = await start(supabase.auth, { locale, next, link });
     const probed = await fetch(probe.url, { redirect: "manual" });
     if (!authorizeHostOk(probed.headers.get("location"), accept)) {
-      const target = new URL(`/${locale}/login`, siteUrl());
-      target.searchParams.set("error", "oauth_unavailable");
-      return NextResponse.redirect(target);
+      return oauthUnavailable(locale, link);
     }
-    const started = await start(supabase.auth, { locale, next });
+    const started = await start(supabase.auth, { locale, next, link });
     const response = NextResponse.redirect(started.url);
     response.cookies.set(
       GOOGLE_TERMS_COOKIE,
@@ -80,8 +91,6 @@ export async function redirectToOAuth(
     if (error instanceof HttpError && error.status === 429) {
       return toErrorResponse(error);
     }
-    const target = new URL(`/${locale}/login`, siteUrl());
-    target.searchParams.set("error", "oauth_unavailable");
-    return NextResponse.redirect(target);
+    return oauthUnavailable(locale, link);
   }
 }

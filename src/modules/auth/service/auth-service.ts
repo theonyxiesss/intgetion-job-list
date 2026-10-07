@@ -1,4 +1,9 @@
-import type { EmailOtpType, SupabaseClient, User } from "@supabase/supabase-js";
+import type {
+  EmailOtpType,
+  SupabaseClient,
+  User,
+  UserIdentity,
+} from "@supabase/supabase-js";
 import { TERMS_VERSION } from "@/config/legal";
 import type { AppLocale } from "@/i18n/routing";
 import { recordAudit } from "@/lib/audit";
@@ -48,6 +53,9 @@ export type AuthClient = Pick<
   | "updateUser"
   | "signInWithPassword"
   | "signInWithOAuth"
+  | "linkIdentity"
+  | "getUserIdentities"
+  | "unlinkIdentity"
 >;
 
 export type CurrentUser = usersRepo.UserRow;
@@ -57,7 +65,7 @@ export type RegisterResult = { status: "created" | "resent" };
 
 export function callbackUrl(
   locale: AppLocale,
-  next?: "reset" | "chat",
+  next?: "reset" | "chat" | "account",
   wait?: string,
 ): string {
   const url = new URL(`${siteUrl()}/${locale}/auth/callback`);
@@ -81,10 +89,15 @@ export function googleSignupMetadata(
   };
 }
 
+export type OAuthProviderName = "google" | "x";
+
+/** A linked Google or X identity, with a short label when the provider sent one. */
+export type LinkedOAuth = { label: string | null };
+
 /** Sends the browser to Google. The secret stays in the Supabase project (D335). */
 export async function startGoogleSignIn(
   auth: AuthClient,
-  input: { locale: AppLocale; next?: "chat" },
+  input: { locale: AppLocale; next?: "chat"; link?: boolean },
 ): Promise<{ url: string }> {
   return startOAuthSignIn(auth, { ...input, provider: "google" });
 }
@@ -92,27 +105,111 @@ export async function startGoogleSignIn(
 /** Sends the browser to X. The secret stays in the Supabase project (D336). */
 export async function startXSignIn(
   auth: AuthClient,
-  input: { locale: AppLocale; next?: "chat" },
+  input: { locale: AppLocale; next?: "chat"; link?: boolean },
 ): Promise<{ url: string }> {
   return startOAuthSignIn(auth, { ...input, provider: "x" });
 }
 
 async function startOAuthSignIn(
   auth: AuthClient,
-  input: { provider: "google" | "x"; locale: AppLocale; next?: "chat" },
+  input: {
+    provider: OAuthProviderName;
+    locale: AppLocale;
+    next?: "chat";
+    link?: boolean;
+  },
 ): Promise<{ url: string }> {
-  const { data, error } = await auth.signInWithOAuth({
-    provider: input.provider,
-    options: {
-      redirectTo: callbackUrl(input.locale, input.next),
-      skipBrowserRedirect: true,
-      ...(input.provider === "google"
-        ? { queryParams: { prompt: "select_account" } }
-        : {}),
-    },
-  });
+  const options = {
+    redirectTo: callbackUrl(input.locale, input.link ? "account" : input.next),
+    skipBrowserRedirect: true as const,
+    ...(input.provider === "google"
+      ? { queryParams: { prompt: "select_account" } }
+      : {}),
+  };
+  const { data, error } = input.link
+    ? await auth.linkIdentity({ provider: input.provider, options })
+    : await auth.signInWithOAuth({ provider: input.provider, options });
   if (error || !data.url) throw authFailure(error ?? {});
   return { url: data.url };
+}
+
+function isOAuthProvider(provider: string, wanted: OAuthProviderName): boolean {
+  if (wanted === "x") return provider === "x" || provider === "twitter";
+  return provider === "google";
+}
+
+function textOf(
+  data: Record<string, unknown> | undefined,
+  key: string,
+): string | null {
+  const value = data?.[key];
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function oauthLabel(
+  identity: UserIdentity,
+  provider: OAuthProviderName,
+): string | null {
+  const data = identity.identity_data;
+  if (provider === "x") {
+    const username =
+      textOf(data, "preferred_username") ??
+      textOf(data, "user_name") ??
+      textOf(data, "username");
+    if (!username) return textOf(data, "email");
+    return username.startsWith("@") ? username : `@${username}`;
+  }
+  return textOf(data, "email");
+}
+
+/** Google and X already attached to the signed-in Supabase user (D339). */
+export async function linkedOAuthAccounts(auth: AuthClient): Promise<{
+  google: LinkedOAuth | null;
+  x: LinkedOAuth | null;
+}> {
+  const { data, error } = await auth.getUserIdentities();
+  if (error || !data) return { google: null, x: null };
+  const one = (provider: OAuthProviderName): LinkedOAuth | null => {
+    const identity = data.identities.find((item) =>
+      isOAuthProvider(item.provider, provider),
+    );
+    return identity ? { label: oauthLabel(identity, provider) } : null;
+  };
+  return { google: one("google"), x: one("x") };
+}
+
+function lastSignIn(): HttpError {
+  return new HttpError(409, "LAST_SIGN_IN", "Last sign-in method", {
+    reason: "last_sign_in",
+  });
+}
+
+/**
+ * Detaches Google or X. Refuses when it is the only Supabase identity,
+ * so the account cannot be left with no way back in (D339).
+ */
+export async function unlinkOAuthProvider(
+  auth: AuthClient,
+  provider: OAuthProviderName,
+): Promise<void> {
+  const { data, error } = await auth.getUserIdentities();
+  if (error || !data) throw authProviderError();
+  const identity = data.identities.find((item) =>
+    isOAuthProvider(item.provider, provider),
+  );
+  if (!identity) return;
+  if (data.identities.length < 2) throw lastSignIn();
+  const { error: unlinkError } = await auth.unlinkIdentity(identity);
+  if (!unlinkError) return;
+  const code = unlinkError.code ?? "";
+  if (
+    unlinkError.status === 422 ||
+    code === "single_identity_not_deletable" ||
+    code === "conflict"
+  ) {
+    throw lastSignIn();
+  }
+  throw authProviderError();
 }
 
 /** An auth user counts as signed in only after the email is confirmed (16.1). */
@@ -303,7 +400,14 @@ const otpTypes = new Set<EmailOtpType>([
 export type CallbackResult =
   /** `created`: this link finished a registration (D331 picks the landing page). */
   | { ok: true; user: CurrentUser; created: boolean }
-  | { ok: false; reason: "invalid_link" | "missing_terms" };
+  | { ok: false; reason: "invalid_link" | "missing_terms" | "identity_taken" };
+
+function callbackFailureReason(error: {
+  code?: string;
+}): "invalid_link" | "identity_taken" {
+  if (error.code === "identity_already_exists") return "identity_taken";
+  return "invalid_link";
+}
 
 /**
  * `/auth/callback`: turns the email link into a session, then makes sure the
@@ -316,7 +420,7 @@ export async function completeCallback(
 ): Promise<CallbackResult> {
   if (params.code) {
     const { error } = await auth.exchangeCodeForSession(params.code);
-    if (error) return { ok: false, reason: "invalid_link" };
+    if (error) return { ok: false, reason: callbackFailureReason(error) };
   } else if (params.tokenHash && params.type) {
     const type = params.type as EmailOtpType;
     if (!otpTypes.has(type)) return { ok: false, reason: "invalid_link" };
@@ -504,13 +608,11 @@ export async function userIdForTelegramId(
   return linked?.userId ?? null;
 }
 
-export async function linkTelegram(
+/** Attaches an already proven Telegram profile. 409 when it belongs elsewhere. */
+export async function linkTelegramProfile(
   user: CurrentUser,
-  result: string,
-  botToken: string,
-  now: Date = new Date(),
+  telegram: { id: number; username?: string | null },
 ): Promise<void> {
-  const telegram = verifiedTelegram(result, botToken, now);
   const linked = await telegramAccounts.link(
     telegram.id,
     user.id,
@@ -521,6 +623,16 @@ export async function linkTelegram(
       reason: "telegram_taken",
     });
   }
+}
+
+export async function linkTelegram(
+  user: CurrentUser,
+  result: string,
+  botToken: string,
+  now: Date = new Date(),
+): Promise<void> {
+  const telegram = verifiedTelegram(result, botToken, now);
+  await linkTelegramProfile(user, telegram);
 }
 
 /**

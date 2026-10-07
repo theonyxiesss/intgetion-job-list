@@ -58,31 +58,18 @@ export async function SocialSignInStubs({ next }: { next?: "chat" }) {
         </h2>
         <span aria-hidden="true" className="h-px flex-1 bg-line" />
       </div>
-      <div className="flex flex-col gap-1">
-        <a
-          href={`/api/auth/google?${oauthQuery}`}
-          className={buttonClass("secondary", "md", "w-full")}
-        >
-          <SocialMark name="google" />
-          {t("google")}
-        </a>
-        <p className="t-caption text-fg-muted">
-          {t.rich("googleTerms", { terms, privacy })}
-        </p>
-      </div>
+      <a
+        href={`/api/auth/google?${oauthQuery}`}
+        className={buttonClass("secondary", "md", "w-full")}
+      >
+        <SocialMark name="google" />
+        {t("google")}
+      </a>
       {telegram ? (
-        <div className="flex flex-col gap-1">
-          <a
-            href={telegram}
-            className={buttonClass("secondary", "md", "w-full")}
-          >
-            <SocialMark name="telegram" />
-            {t("telegram")}
-          </a>
-          <p className="t-caption text-fg-muted">
-            {t.rich("telegramTerms", { terms, privacy })}
-          </p>
-        </div>
+        <a href={telegram} className={buttonClass("secondary", "md", "w-full")}>
+          <SocialMark name="telegram" />
+          {t("telegram")}
+        </a>
       ) : (
         <TelegramLoginButton
           locale={locale as AppLocale}
@@ -90,24 +77,18 @@ export async function SocialSignInStubs({ next }: { next?: "chat" }) {
           waiting={t("telegramWaiting")}
           failed={t("telegramFailed")}
           icon={<SocialMark name="telegram" />}
-        >
-          <p className="t-caption text-fg-muted">
-            {t.rich("telegramTerms", { terms, privacy })}
-          </p>
-        </TelegramLoginButton>
+        />
       )}
-      <div className="flex flex-col gap-1">
-        <a
-          href={`/api/auth/x?${oauthQuery}`}
-          className={buttonClass("secondary", "md", "w-full")}
-        >
-          <SocialMark name="x" />
-          {t("x")}
-        </a>
-        <p className="t-caption text-fg-muted">
-          {t.rich("xTerms", { terms, privacy })}
-        </p>
-      </div>
+      <a
+        href={`/api/auth/x?${oauthQuery}`}
+        className={buttonClass("secondary", "md", "w-full")}
+      >
+        <SocialMark name="x" />
+        {t("x")}
+      </a>
+      <p className="t-caption text-fg-muted">
+        {t.rich("continueTerms", { terms, privacy })}
+      </p>
     </section>
   );
 }
