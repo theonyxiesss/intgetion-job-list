@@ -4,6 +4,7 @@ import { Button, buttonClass } from "@/components/ui/button";
 import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
 import { TelegramLoginButton } from "./telegram-login-button";
+import { socialMark } from "./social-icons";
 import { authAdminAvailable } from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/supabase/env";
 import type { AppLocale } from "@/i18n/routing";
@@ -38,6 +39,7 @@ async function telegramHref(): Promise<string | null> {
 /**
  * Sign-in with Google and X — placeholders only (D200); OAuth is V2 (D7).
  * Telegram is real once configured (D217), otherwise a placeholder too.
+ * Each row shows the provider mark next to the label.
  */
 export async function SocialSignInStubs() {
   const t = await getTranslations("auth.social");
@@ -60,6 +62,7 @@ export async function SocialSignInStubs() {
             href={telegram}
             className={buttonClass("secondary", "md", "w-full")}
           >
+            {socialMark("telegram")}
             {t("telegram")}
           </a>
           <p className="t-caption text-fg-muted">
@@ -83,6 +86,7 @@ export async function SocialSignInStubs() {
           label={t("telegram")}
           waiting={t("telegramWaiting")}
           failed={t("telegramFailed")}
+          icon={socialMark("telegram")}
         >
           <p className="t-caption text-fg-muted">
             {t.rich("telegramTerms", {
@@ -102,7 +106,12 @@ export async function SocialSignInStubs() {
       ) : null}
       {[...STUBS, ...(ready ? [] : (["telegram"] as const))].map((provider) => (
         <div key={provider} className="flex items-center gap-3">
-          <Button variant="secondary" disabled className="flex-1">
+          <Button
+            variant="secondary"
+            disabled
+            className="flex-1"
+            icon={socialMark(provider)}
+          >
             {t(provider)}
           </Button>
           <Badge>{t("soon")}</Badge>
