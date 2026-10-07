@@ -3,6 +3,16 @@
 > Older entries: [docs/archive/mission-log/](docs/archive/mission-log/) — see [docs/archive/INDEX.md](docs/archive/INDEX.md).
 > Session protocol: [docs/tz/00-protocol.md](docs/tz/00-protocol.md). Status now: [docs/CURRENT.md](docs/CURRENT.md).
 
+## [2026-10-07] — канал Jobs Alert — DONE (код, не прод)
+
+- Сделано: новая опубликованная вакансия уходит в канал Jobs Alert фиксированным текстом (название, компания, зарплата, ссылка) из cron `/api/cron/telegram` после личной рассылки. Без LLM. Метка `jobs_alert_sent_at` только после успешной отправки. Старые вакансии не догоняются. На intgetion.com источник Remotive не постится. Пустой chat id выключает только этот шаг.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0. eslint по новым файлам → 0. `vitest` jobs-alert → 11 passed.
+- Миграции: `src/db/migrations/0033_jobs_alert.sql`. На облако не применялась.
+- Изменённые файлы: `src/modules/jobs/service/jobs-alert.ts`, cron telegram, схема jobs, тесты, `scripts/env-rules.mjs`.
+- Отклонения от ТЗ: `app_rw` получает чтение одной строки `schema_migrations` (имя этой миграции), иначе водяной знак из cron не виден.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по команде. Перед выкладкой — миграция на облако и `JOBS_ALERT_CHAT_ID` в Vercel.
+
 ## [2026-10-07] — ручная привязка в Supabase — DONE
 
 - Сделано: в облачном проекте `intgetion-dev` включён «Allow manual linking». В `supabase/config.toml` `enable_manual_linking = true`. «Привязать Google» с локального сайта открывает выбор аккаунта Google и возвращает на `/{locale}/auth/callback?next=account`. Провайдер X не включался: клиента OAuth 2.0 нет (D336).

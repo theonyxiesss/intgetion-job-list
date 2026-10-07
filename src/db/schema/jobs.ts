@@ -80,6 +80,7 @@ export const jobs = pgTable(
       .notNull()
       .default(sql`'[]'::jsonb`),
     publishedAt: timestamp("published_at", { withTimezone: true }),
+    jobsAlertSentAt: timestamp("jobs_alert_sent_at", { withTimezone: true }),
     expiresAt: timestamp("expires_at", { withTimezone: true }),
     importedAt: timestamp("imported_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
