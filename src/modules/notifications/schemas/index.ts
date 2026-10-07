@@ -25,3 +25,7 @@ export const writePreferencesInput = z.object({
 export const unsubscribeInput = z.object({
   token: z.string().min(1),
 });
+
+export const agentBriefsInput = z.object({
+  enabled: z.boolean(),
+});

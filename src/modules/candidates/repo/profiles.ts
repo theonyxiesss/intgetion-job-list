@@ -302,6 +302,28 @@ export function presentProfile(
   };
 }
 
+/** The agent's morning-brief flag; null when the user has no profile. */
+export async function readAgentBriefsEnabled(
+  userId: string,
+): Promise<boolean | null> {
+  const [row] = await getDb()
+    .select({ enabled: candidateProfiles.agentBriefsEnabled })
+    .from(candidateProfiles)
+    .where(eq(candidateProfiles.userId, userId))
+    .limit(1);
+  return row?.enabled ?? null;
+}
+
+/** Sets the flag for this user only; false when they have no profile. */
+export async function setAgentBriefsEnabled(userId: string, enabled: boolean) {
+  const rows = await getDb()
+    .update(candidateProfiles)
+    .set({ agentBriefsEnabled: enabled, updatedAt: new Date() })
+    .where(eq(candidateProfiles.userId, userId))
+    .returning({ userId: candidateProfiles.userId });
+  return rows.length > 0;
+}
+
 /** Flips `is_hidden` only; false when the user has no profile. */
 export async function setHidden(userId: string, hidden: boolean) {
   const rows = await getDb()

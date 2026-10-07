@@ -1,11 +1,11 @@
 # CURRENT — состояние сейчас
 
 **Продукт:** `INTGETION JOB LIST`  
-**Ветка / worktree:** `feat/account-linking` · `C:\Users\Admin\Documents\Integetion jobs`  
-**Активная задача:** выкладка D339 (привязка аккаунтов).  
+**Ветка / worktree:** `cursor/briefs-b` · `C:\Users\Admin\Documents\intgetion-briefs-b`  
+**Активная задача:** утренние сводки, подфаза B (D341). Не влита и не запушена.  
 **Прод до этой выкладки:** https://intgetion.com — `650e658` (PR #13). Эта выкладка добавляет привязку Telegram, Google и X в настройках и одну строку согласия на входе.
 
-**Ветка `feat/morning-briefs`** (worktree `C:\Users\Admin\Documents\intgetion-briefs`): подфаза A утренних сводок (D340). Старый cron `digest` заменён на `morning-briefs`.
+**Ветка `cursor/briefs-b`** от `feat/morning-briefs`: подфазы A (D340) и B (D341). Старый cron `digest` заменён на `morning-briefs`. Push и PR — только после команды.
 
 ## Работает (кратко)
 
@@ -17,6 +17,7 @@
 - Вход: Google доходит до аккаунта Google и возвращает на сайт (D335). Кнопка X включена (D336). Telegram на кнопке включён
 - Настройки → Аккаунт → «Способы входа»: привязка Telegram, Google и X (D339). Ручная привязка в облачном Supabase включена: «Привязать Google» открывает Google. X по-прежнему ждёт клиента в портале разработчика. На входе и регистрации одно согласие внизу блока, не под каждой кнопкой
 - Уведомления: переключатель «Новые вакансии в Telegram-бот» (D329, с ветки Claude)
+- Утренние сводки: подфаза A (D340) и подфаза B (D341) — галочка почты, флаг агента, ссылки в Telegram. Подфазы C–E не начаты
 
 ## Не работает / отложено
 

@@ -92,6 +92,16 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
   matchesDigest: strict({
     matchCount: z.number().int().min(0),
     sampleJobIds: z.array(idSchema).max(5),
+    sampleJobs: z
+      .array(
+        strict({
+          jobId: idSchema,
+          title: z.string().min(1).max(200),
+          companyName: z.string().min(1).max(200),
+        }),
+      )
+      .max(5)
+      .optional(),
   }),
   searchAlert: strict({
     savedSearchId: idSchema,

@@ -1,5 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { BotAlertsSwitch } from "@/components/notifications/bot-alerts-switch";
+import { AgentBriefsControls } from "@/components/notifications/agent-briefs-switch";
 import { NEW_JOB_TYPES } from "@/components/notifications/new-job-types";
 import { MarkAllReadButton } from "@/components/notifications/mark-all-read";
 import { redirect } from "@/i18n/navigation";
@@ -8,7 +8,11 @@ import { HttpError } from "@/lib/http";
 import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
 import { LinkTabs } from "@/components/ui/tabs";
-import { telegramLinkOf } from "@/modules/auth/service";
+import { canReceiveMail, telegramLinkOf } from "@/modules/auth/service";
+import {
+  hasCandidateProfile,
+  ownAgentBriefsEnabled,
+} from "@/modules/candidates/service";
 import {
   catalogTitleKey,
   listNotifications,
@@ -38,17 +42,24 @@ export default async function NotificationsPage({
   const t = await getTranslations("notifications");
   const types = await getTranslations("notifications.types");
   const bot = await getTranslations("notifications.bot");
-  const [feed, preferences, telegram] = await Promise.all([
+  const email = await getTranslations("notifications.emailAlerts");
+  const agent = await getTranslations("notifications.agentBriefs");
+  const [feed, preferences, telegram, mailReady, profile] = await Promise.all([
     listNotifications(user.id, {}),
     readPreferences(user.id),
     telegramLinkOf(user),
+    canReceiveMail(user),
+    hasCandidateProfile(user.id),
   ]);
-  const botEnabled = NEW_JOB_TYPES.every((type) =>
-    preferences.some(
-      (item) =>
-        item.type === type && item.channel === "telegram" && item.enabled,
-    ),
-  );
+  const agentOn = profile ? await ownAgentBriefsEnabled(user.id) : false;
+  function channelOn(channel: "telegram" | "email") {
+    return NEW_JOB_TYPES.every((type) =>
+      preferences.some(
+        (item) =>
+          item.type === type && item.channel === channel && item.enabled,
+      ),
+    );
+  }
   const unread = tab === "unread";
   const items = unread ? feed.items.filter((item) => !item.readAt) : feed.items;
 
@@ -59,15 +70,31 @@ export default async function NotificationsPage({
           title={t("title")}
           actions={<MarkAllReadButton label={t("markAll")} />}
         />
-        <BotAlertsSwitch
-          linked={Boolean(telegram)}
-          enabled={botEnabled}
+        <AgentBriefsControls
+          hasProfile={profile}
+          agentEnabled={agentOn}
+          telegram={{ linked: Boolean(telegram), enabled: channelOn("telegram") }}
+          email={{ linked: mailReady, enabled: channelOn("email") }}
           labels={{
-            title: bot("title"),
-            text: bot("text"),
-            link: bot("link"),
-            saved: bot("saved"),
-            error: bot("error"),
+            agentTitle: agent("title"),
+            agentText: agent("text"),
+            agentSaved: agent("saved"),
+            agentError: agent("error"),
+            agentOff: agent("off"),
+            telegram: {
+              title: bot("title"),
+              text: bot("text"),
+              link: bot("link"),
+              saved: bot("saved"),
+              error: bot("error"),
+            },
+            email: {
+              title: email("title"),
+              text: email("text"),
+              link: email("link"),
+              saved: email("saved"),
+              error: email("error"),
+            },
           }}
         />
         <LinkTabs
