@@ -10,6 +10,7 @@ export const SYSTEM_PROMPT_VERSION = 3;
 const LANGUAGE: Record<string, string> = {
   en: "English",
   ru: "Russian",
+  es: "Spanish",
 };
 
 export function systemPrompt(input: {

@@ -1,3 +1,4 @@
+import type { AppLocale } from "@/i18n/routing";
 import { toEmailJob, type EmailJobPayload } from "../lib/email-jobs";
 import { DIGEST_MIN_SCORE } from "../lib/digest";
 
@@ -40,7 +41,7 @@ export function pickDigestJobs(
 /** Where a candidate's matching jobs come from; a seam for tests. */
 export type DigestJobLoader = (
   userId: string,
-  locale: "en" | "ru",
+  locale: AppLocale,
   now: Date,
 ) => Promise<DigestCandidateJob[]>;
 

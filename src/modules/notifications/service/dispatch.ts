@@ -9,6 +9,7 @@ import { senderFromEnv, type EmailSender } from "./email-sender";
 import { notificationPath, renderEmail, templateValues } from "./render";
 import { unsubscribeUrl } from "./notify";
 import { deleteReadOlderThan } from "../repo/notifications";
+import { toAppLocale } from "@/i18n/locale";
 
 const BATCH = 50;
 const RETENTION_MS = 90 * 24 * 60 * 60 * 1000;
@@ -59,7 +60,7 @@ async function deliverOne(
   sender: EmailSender,
   now: Date,
 ): Promise<"sent" | "skipped" | "failed" | "pending"> {
-  const locale = row.locale === "ru" ? "ru" : "en";
+  const locale = toAppLocale(row.locale);
   if (!isNotificationType(row.type)) {
     await mark(tx, row.id, {
       status: "failed",

@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { logger } from "@/lib/logger";
-import en from "@/messages/en.json";
-import ru from "@/messages/ru.json";
+import { messagesFor } from "@/i18n/messages";
+import { toAppLocale } from "@/i18n/locale";
 import {
   BRIEF_SLOT_IDS,
   dueSlotDate,
@@ -42,8 +42,8 @@ type CandidateRow = {
   last_digest_at: string | Date | null;
 };
 
-function chatEvent(locale: "en" | "ru", count: number): string {
-  const template = (locale === "ru" ? ru : en).digest.chatEvent;
+function chatEvent(locale: string, count: number): string {
+  const template = messagesFor(locale).digest.chatEvent;
   return template.replace("{count}", String(count));
 }
 
@@ -187,7 +187,7 @@ async function briefCandidate(
     loadJobs: DigestJobLoader;
   },
 ): Promise<"sent" | "empty"> {
-  const locale = row.locale === "ru" ? "ru" : "en";
+  const locale = toAppLocale(row.locale);
   const lastDigestAt = row.last_digest_at ? new Date(row.last_digest_at) : null;
   const jobs = pickDigestJobs(
     await ctx.loadJobs(row.user_id, locale, ctx.now),

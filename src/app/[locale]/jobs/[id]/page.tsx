@@ -27,6 +27,7 @@ import { ShareJob } from "@/modules/jobs/ui/share-job";
 import { SimilarJobs } from "@/modules/jobs/ui/similar-jobs";
 import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 import { localePrefix } from "@/i18n/paths";
+import { intlLocale } from "@/i18n/locale";
 
 export const dynamic = "force-dynamic";
 
@@ -68,7 +69,7 @@ export default async function JobPage({
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
   const initialSaved = user ? await isJobSavedForUser(user.id, job.id) : false;
-  const money = locale === "ru" ? "ru-RU" : "en-US";
+  const money = intlLocale(locale);
   const salary = job.salaryMin
     ? `${formatMoneyDto(job.salaryMin, money)}${job.salaryMax ? ` – ${formatMoneyDto(job.salaryMax, money)}` : ""} / ${t(job.salaryMin.period)} (${t(job.salaryMin.basis)})`
     : t("salaryMissing");

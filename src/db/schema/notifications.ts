@@ -91,7 +91,7 @@ export const notificationEmails = pgTable(
     ),
     check(
       "notification_emails_locale_check",
-      sql`${table.locale} in ('en', 'ru')`,
+      sql`${table.locale} in ('en', 'ru', 'es')`,
     ),
     uniqueIndex("notification_emails_pending_batch_idx")
       .on(table.batchKey)

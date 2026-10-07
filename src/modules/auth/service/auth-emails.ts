@@ -1,8 +1,8 @@
 import { renderEmailLayout } from "@/lib/email-html";
 import type { AppLocale } from "@/i18n/routing";
 import { siteUrl } from "@/lib/supabase/env";
-import en from "@/messages/en.json";
-import ru from "@/messages/ru.json";
+import { toAppLocale } from "@/i18n/locale";
+import { messagesFor } from "@/i18n/messages";
 
 export type AuthEmailKind =
   "signup" | "magiclink" | "recovery" | "email_change" | "invite" | "email_add";
@@ -16,7 +16,7 @@ type AuthMailCopy = {
 };
 
 function catalog(locale: AppLocale) {
-  return (locale === "ru" ? ru : en).authEmails;
+  return messagesFor(locale).authEmails;
 }
 
 function copyFor(kind: AuthEmailKind, locale: AppLocale): AuthMailCopy {
@@ -126,5 +126,5 @@ export function localeFromAuthUser(user: {
   user_metadata?: Record<string, unknown> | null;
 }): AppLocale {
   const raw = user.user_metadata?.locale;
-  return raw === "ru" ? "ru" : "en";
+  return toAppLocale(raw);
 }

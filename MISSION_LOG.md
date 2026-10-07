@@ -3,6 +3,15 @@
 > Older entries: [docs/archive/mission-log/](docs/archive/mission-log/) — see [docs/archive/INDEX.md](docs/archive/INDEX.md).
 > Session protocol: [docs/tz/00-protocol.md](docs/tz/00-protocol.md). Status now: [docs/CURRENT.md](docs/CURRENT.md).
 
+## [2026-10-07] — главная, адреса без /en и испанский — DONE
+
+- Сделано: главная стала лентой вакансий, футер из трёх групп, меню зависит от типа аккаунта (D342–D344). Английский на корне, `/en` уходит на тот же путь без префикса (D345). Испанский — третий язык интерфейса (D346), миграция `0034_locale_es.sql`. Старый ежечасный digest не возвращался: утренние сводки читают каталог `es`.
+- Команды проверки: typecheck и точечные vitest после сборки конфликтов.
+- Миграции: `0034_locale_es.sql`. Тестовая капля Remotive не вливалась.
+- Отклонения: номера D332–D336 на ветке Клода уже были заняты, здесь это D342–D346.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по команде. Дальше по языкам — португальский.
+
 ## [2026-10-07] — утренние сводки и канал Jobs Alert на прод — DONE
 
 - Сделано: в одну ветку собраны утренние сводки Claude (D340, слоты Чикаго / Берлин / Москва, cron `/api/cron/morning-briefs`) и канал Jobs Alert (D341). Старые ветки `origin/claude/*` не мержились: те же решения уже на master. На облако применены `0032_morning_briefs.sql` и `0033_jobs_alert.sql`. Канал молчит, пока в Vercel пустой `JOBS_ALERT_CHAT_ID`.

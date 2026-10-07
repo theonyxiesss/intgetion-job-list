@@ -8,6 +8,7 @@ import { searchJobs } from "@/modules/jobs/service";
 import { deliverInTransaction } from "@/modules/notifications/service";
 import * as repo from "../repo/saved-searches";
 import { SAVED_SEARCH_LIMIT, type CreateSavedSearchInput } from "../schemas";
+import type { AppLocale } from "@/i18n/routing";
 
 /** Jobs in one alert at most (D234). */
 export const ALERT_MAX_JOBS = 10;
@@ -78,7 +79,7 @@ export type AlertJob = { id: string; title: string; companyName: string };
 
 /** New jobs for one saved search, as the owner would see them (D234). */
 async function newJobsFor(
-  search: repo.SavedSearch & { locale: "en" | "ru" },
+  search: repo.SavedSearch & { locale: AppLocale },
 ): Promise<AlertJob[]> {
   const params = new URLSearchParams(search.query);
   params.set("sort", "newest");

@@ -1,13 +1,14 @@
 import { and, eq, gt, isNull, lt } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { telegramLoginChallenges } from "@/db/schema";
+import type { AppLocale } from "@/i18n/routing";
 
 export type TelegramLoginChallenge =
   typeof telegramLoginChallenges.$inferSelect;
 
 export async function insertTelegramLoginChallenge(input: {
   codeHash: string;
-  locale: "en" | "ru";
+  locale: AppLocale;
   expiresAt: Date;
 }): Promise<void> {
   await getDb().insert(telegramLoginChallenges).values(input);
