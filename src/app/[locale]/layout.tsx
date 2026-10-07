@@ -8,6 +8,7 @@ import {
 import { Roboto_Condensed } from "next/font/google";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { Footer } from "@/components/shell/footer";
 import { AnalyticsTracker } from "@/components/shell/analytics-tracker";
@@ -24,6 +25,7 @@ import {
 import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { ToastProvider } from "@/components/ui";
 import { routing, type AppLocale } from "@/i18n/routing";
+import { TELEGRAM_WEB_APP_SCRIPT } from "@/lib/security-headers";
 import { siteUrl, siteVerification } from "@/modules/seo/site";
 import "../globals.css";
 
@@ -137,10 +139,17 @@ export default async function LocaleLayout({
           dangerouslySetInnerHTML={{ __html: themeScript }}
         />
         {flags.telegramMiniAppEnabled && (
-          <script
-            nonce={nonce}
-            dangerouslySetInnerHTML={{ __html: telegramHashScript }}
-          />
+          <>
+            {/* Phone clients expose initData through this bridge (D324). */}
+            <Script
+              src={TELEGRAM_WEB_APP_SCRIPT}
+              strategy="beforeInteractive"
+            />
+            <script
+              nonce={nonce}
+              dangerouslySetInnerHTML={{ __html: telegramHashScript }}
+            />
+          </>
         )}
         <a
           href="#content"

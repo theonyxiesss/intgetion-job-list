@@ -10,7 +10,11 @@ import {
 import { routing } from "./i18n/routing";
 import { isAllowedOrigin, needsOriginCheck } from "./lib/origin";
 import { normalizeRequestId, REQUEST_ID_HEADER } from "./lib/request-id";
-import { buildCsp, createNonce } from "./lib/security-headers";
+import {
+  buildCsp,
+  createNonce,
+  TELEGRAM_WEB_APP_SCRIPT,
+} from "./lib/security-headers";
 import { siteUrl, supabaseUrl } from "./lib/supabase/env";
 import { flags } from "./config/flags";
 import { refreshSession } from "./lib/supabase/proxy";
@@ -83,7 +87,9 @@ export async function proxy(request: NextRequest) {
       includeSupabase: false,
       allowTelegramFrame: true,
     });
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script nonce="${bounceNonce}">(function(){try{var h=location.hash||"";if(h.indexOf("tgWebAppData")!==-1)sessionStorage.setItem("tg_web_app_hash",h);}catch(e){}var l="en";try{if(/^ru\\b/i.test(navigator.language||""))l="ru";}catch(e){}location.replace("/"+l+location.search+location.hash);})();</script></head><body></body></html>`;
+    // Wait briefly for telegram-web-app.js / the phone bridge before leaving /
+    // so initData can be stashed when the hash is already empty (D324).
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="${TELEGRAM_WEB_APP_SCRIPT}"></script><script nonce="${bounceNonce}">(function(){function stash(){try{var h=location.hash||"";if(h.indexOf("tgWebAppData")!==-1)sessionStorage.setItem("tg_web_app_hash",h);var d=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData;if(d)sessionStorage.setItem("tg_web_app_init",d);}catch(e){}}function go(){stash();var l="en";try{if(/^ru\\b/i.test(navigator.language||""))l="ru";}catch(e){}location.replace("/"+l+location.search+location.hash);}var n=0;function tick(){stash();var ready=(location.hash||"").indexOf("tgWebAppData")!==-1||(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData);if(ready||n++>=10)go();else setTimeout(tick,100);}tick();})();</script></head><body></body></html>`;
     return stamp(
       new NextResponse(html, {
         headers: {
