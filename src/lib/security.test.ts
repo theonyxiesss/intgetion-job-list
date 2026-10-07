@@ -159,8 +159,11 @@ describe("Mini App framing (D259)", () => {
     });
     expect(open).toContain("https://web.telegram.org");
     expect(open).not.toContain("frame-ancestors 'none'");
-    // Nothing else loosens up.
-    expect(open).toContain("script-src 'self' 'nonce-abc'");
+    // Phone bridge only — not eval, not wildcards (D324).
+    expect(open).toContain(
+      "script-src 'self' 'nonce-abc' https://telegram.org",
+    );
+    expect(open).not.toContain("unsafe-eval");
     expect(open).toContain("object-src 'none'");
   });
 });
