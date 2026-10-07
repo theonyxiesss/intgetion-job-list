@@ -57,6 +57,7 @@ export type {
   CallbackParams,
   CallbackResult,
   CurrentUser,
+  RegisterResult,
 } from "./auth-service";
 export { toMeDto } from "../api/me-dto";
 export type { MeCompany, MeContext, MeDto } from "../api/me-dto";

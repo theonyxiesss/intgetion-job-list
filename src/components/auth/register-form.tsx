@@ -68,7 +68,14 @@ export function RegisterForm() {
       setFormError(await apiErrorCode(response));
       return;
     }
-    router.push("/auth/check-email");
+    const body = (await response.json().catch(() => null)) as {
+      status?: string;
+    } | null;
+    router.push(
+      body?.status === "resent"
+        ? "/auth/check-email?resent=1"
+        : "/auth/check-email",
+    );
   });
 
   return (

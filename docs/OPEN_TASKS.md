@@ -15,8 +15,8 @@
 - **Решение по процессу:** auto-sign-in через Mini App на телефоне **больше не крутить** без новых фактов (скрин/платформа iOS|Android, точный URL BotFather, есть ли вызов miniapp в логах). Рабочий обход для телефона сейчас: вход через бота (`login_*` / кнопка «Войти» в чате), не через меню Mini App.
 - **Следующая отдельная задача (когда брать):** либо диагностика с телефоном в руках (что в `location.hash` / `Telegram.WebApp.initData` в webview), либо явная кнопка «Войти через Telegram» внутри Mini App на телефоне вместо тихого auto-sign-in.
 
-## Auth HTML emails + confirm UX (D325 / D326)
+## Auth HTML emails + confirm UX (D325 / D326 / D327)
 
-- **Статус:** Hook на проде включён; D326 (localhost → prod, `/auth/confirmed`, check-email watch) на ветке `cursor/auth-confirm-ux` — **в прод после явной команды** (после выката Claude).
-- **Сделано в коде:** брендированные письма, Send Email Hook, `publicAuthRedirect`, страница подтверждения, обновление вкладки «Проверьте почту».
-- **Действие при выкладке D326:** убедиться Site URL = `https://intgetion.com` в Supabase Auth; проверить register → письмо → confirmed; сброс пароля без регрессии.
+- **Статус:** D325–D326 в проде; D327 (повторная регистрация показывает «уже есть» / шлёт письмо снова) — ветка `cursor/register-exists`.
+- **Сделано:** брендированные письма, hook, `publicAuthRedirect`, `/auth/confirmed`, check-email watch, 409 `EMAIL_ALREADY_REGISTERED` / resend signup.
+- **Проверка:** повторная регистрация подтверждённого email → сообщение войти/сброс; незавершённой → новое письмо и текст «отправили снова».

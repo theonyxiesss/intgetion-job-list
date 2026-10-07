@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TERMS_VERSION } from "@/config/legal";
 import { HttpError } from "@/lib/http";
 import * as audit from "@/lib/audit";
+import * as authAdmin from "@/lib/supabase/admin";
 import * as usersRepo from "../repo/users";
 import {
   auditSignIn,
@@ -24,6 +25,16 @@ vi.mock("../repo/users", () => ({
 }));
 
 vi.mock("@/lib/audit", () => ({ recordAudit: vi.fn() }));
+
+vi.mock("@/lib/supabase/admin", async (importOriginal) => {
+  const actual = await importOriginal<typeof authAdmin>();
+  return {
+    ...actual,
+    findAuthUserByEmail: vi.fn(),
+  };
+});
+
+const findAuthUserByEmail = vi.mocked(authAdmin.findAuthUserByEmail);
 
 const repo = vi.mocked(usersRepo);
 const recordAudit = vi.mocked(audit.recordAudit);
@@ -50,10 +61,11 @@ type AuthUser = {
 };
 
 function fakeAuth(user: AuthUser | null) {
-  const ok = { data: {}, error: null };
+  const ok = { data: { user: null }, error: null };
   return {
     signUp: vi.fn().mockResolvedValue(ok),
     signInWithOtp: vi.fn().mockResolvedValue(ok),
+    resend: vi.fn().mockResolvedValue(ok),
     resetPasswordForEmail: vi.fn().mockResolvedValue(ok),
     exchangeCodeForSession: vi.fn().mockResolvedValue(ok),
     verifyOtp: vi.fn().mockResolvedValue(ok),
@@ -91,16 +103,22 @@ describe("register", () => {
 
   it("signs up with a password and stores terms in metadata", async () => {
     const auth = fakeAuth(null);
-    await register(
-      asAuth(auth),
-      {
-        email: "ana@example.com",
-        password: "orbit-lantern-42",
-        locale: "ru",
-        acceptTerms: true,
-      },
-      now,
-    );
+    auth.signUp.mockResolvedValue({
+      data: { user: { id: "new", identities: [{ id: "i1" }] } },
+      error: null,
+    });
+    await expect(
+      register(
+        asAuth(auth),
+        {
+          email: "ana@example.com",
+          password: "orbit-lantern-42",
+          locale: "ru",
+          acceptTerms: true,
+        },
+        now,
+      ),
+    ).resolves.toEqual({ status: "created" });
     expect(auth.signUp).toHaveBeenCalledWith({
       email: "ana@example.com",
       password: "orbit-lantern-42",
@@ -118,11 +136,17 @@ describe("register", () => {
 
   it("sends a magic link that may create the user when there is no password", async () => {
     const auth = fakeAuth(null);
-    await register(
-      asAuth(auth),
-      { email: "ana@example.com", locale: "en", acceptTerms: true },
-      now,
-    );
+    await expect(
+      register(
+        asAuth(auth),
+        {
+          email: "ana@example.com",
+          locale: "en",
+          acceptTerms: true,
+        },
+        now,
+      ),
+    ).resolves.toEqual({ status: "created" });
     expect(auth.signInWithOtp).toHaveBeenCalledWith(
       expect.objectContaining({
         email: "ana@example.com",
@@ -132,12 +156,13 @@ describe("register", () => {
     expect(auth.signUp).not.toHaveBeenCalled();
   });
 
-  it("answers an existing address like a new one", async () => {
+  it("resends confirmation when the address is still unconfirmed (D327)", async () => {
     const auth = fakeAuth(null);
     auth.signUp.mockResolvedValue({
-      data: {},
-      error: { code: "user_already_exists", status: 422 },
+      data: { user: { id: "u1", identities: [] } },
+      error: null,
     });
+    findAuthUserByEmail.mockResolvedValue({ id: "u1", confirmed: false });
     await expect(
       register(asAuth(auth), {
         email: "ana@example.com",
@@ -145,7 +170,35 @@ describe("register", () => {
         locale: "en",
         acceptTerms: true,
       }),
-    ).resolves.toBeUndefined();
+    ).resolves.toEqual({ status: "resent" });
+    expect(auth.resend).toHaveBeenCalledWith({
+      type: "signup",
+      email: "ana@example.com",
+      options: {
+        emailRedirectTo: "http://127.0.0.1:3000/en/auth/callback",
+      },
+    });
+  });
+
+  it("refuses a confirmed address with EMAIL_ALREADY_REGISTERED (D327)", async () => {
+    const auth = fakeAuth(null);
+    auth.signUp.mockResolvedValue({
+      data: {},
+      error: { code: "user_already_exists", status: 422 },
+    });
+    findAuthUserByEmail.mockResolvedValue({ id: "u1", confirmed: true });
+    await expect(
+      register(asAuth(auth), {
+        email: "ana@example.com",
+        password: "orbit-lantern-42",
+        locale: "en",
+        acceptTerms: true,
+      }),
+    ).rejects.toMatchObject({
+      status: 409,
+      code: "EMAIL_ALREADY_REGISTERED",
+    });
+    expect(auth.resend).not.toHaveBeenCalled();
   });
 
   it("maps provider rate limits to 429 RATE_LIMITED", async () => {
