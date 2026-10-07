@@ -5,6 +5,7 @@ import { recordAudit } from "@/lib/audit";
 import { logger } from "@/lib/logger";
 import {
   createConfirmedAuthUser,
+  findAuthUserByEmail,
   getAuthUserLoginEmail,
   isPlaceholderEmail,
   magicLinkTokenHash,
@@ -38,6 +39,7 @@ export type AuthClient = Pick<
   SupabaseClient["auth"],
   | "signUp"
   | "signInWithOtp"
+  | "resend"
   | "resetPasswordForEmail"
   | "exchangeCodeForSession"
   | "verifyOtp"
@@ -48,6 +50,9 @@ export type AuthClient = Pick<
 >;
 
 export type CurrentUser = usersRepo.UserRow;
+
+/** Outcome of `register` for the API / check-email screen (D327). */
+export type RegisterResult = { status: "created" | "resent" };
 
 export function callbackUrl(locale: AppLocale, next?: "reset"): string {
   const url = new URL(`${siteUrl()}/${locale}/auth/callback`);
@@ -70,33 +75,87 @@ function authFailure(error: { status?: number; code?: string }): HttpError {
   return new HttpError(502, "AUTH_PROVIDER_ERROR", "Auth provider error");
 }
 
+function emailAlreadyRegistered(): HttpError {
+  return new HttpError(
+    409,
+    "EMAIL_ALREADY_REGISTERED",
+    "Email already registered",
+    { reason: "email_already_registered" },
+  );
+}
+
+/**
+ * Existing password signup: confirmed → tell them to sign in; still waiting
+ * for confirmation → send the letter again (D327).
+ */
+async function finishExistingPasswordRegister(
+  auth: AuthClient,
+  input: RegisterInput,
+): Promise<RegisterResult> {
+  const existing = await findAuthUserByEmail(input.email);
+  if (existing?.confirmed) throw emailAlreadyRegistered();
+
+  const { error } = await auth.resend({
+    type: "signup",
+    email: input.email,
+    options: { emailRedirectTo: callbackUrl(input.locale) },
+  });
+  if (error) {
+    // Confirmed accounts often refuse signup resend — show sign-in instead.
+    if (
+      error.code === "user_already_exists" ||
+      error.code === "email_exists" ||
+      existing?.confirmed
+    ) {
+      throw emailAlreadyRegistered();
+    }
+    throw authFailure(error);
+  }
+  return { status: "resent" };
+}
+
 /**
  * Starts registration. The `users` row is created by the callback, after the
  * email is confirmed; until then terms and locale live in user metadata.
+ * An already-confirmed address is a clear 409 (D327); an unfinished signup
+ * gets another confirmation letter.
  */
 export async function register(
   auth: AuthClient,
   input: RegisterInput,
   now: Date = new Date(),
-): Promise<void> {
+): Promise<RegisterResult> {
   const data: SignupMetadata = {
     terms_version: TERMS_VERSION,
     terms_accepted_at: now.toISOString(),
     locale: input.locale,
   };
   const emailRedirectTo = callbackUrl(input.locale);
-  const { error } = input.password
-    ? await auth.signUp({
-        email: input.email,
-        password: input.password,
-        options: { emailRedirectTo, data },
-      })
-    : await auth.signInWithOtp({
-        email: input.email,
-        options: { shouldCreateUser: true, emailRedirectTo, data },
-      });
-  // An existing address gets the same answer as a new one (anti-enumeration).
+
+  if (!input.password) {
+    const { error } = await auth.signInWithOtp({
+      email: input.email,
+      options: { shouldCreateUser: true, emailRedirectTo, data },
+    });
+    if (error) throw authFailure(error);
+    return { status: "created" };
+  }
+
+  const { data: signed, error } = await auth.signUp({
+    email: input.email,
+    password: input.password,
+    options: { emailRedirectTo, data },
+  });
   if (error && error.code !== "user_already_exists") throw authFailure(error);
+
+  // GoTrue hides duplicates as a user with an empty identities list.
+  const duplicate =
+    error?.code === "user_already_exists" ||
+    (signed.user != null &&
+      Array.isArray(signed.user.identities) &&
+      signed.user.identities.length === 0);
+  if (duplicate) return finishExistingPasswordRegister(auth, input);
+  return { status: "created" };
 }
 
 /**

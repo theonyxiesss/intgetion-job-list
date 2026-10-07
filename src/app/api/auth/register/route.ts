@@ -12,9 +12,11 @@ export async function POST(request: Request) {
     // Without a password registration sends a magic link.
     if (!input.password) await enforceRateLimit("emailLink", input.email);
     const supabase = await createSupabaseServerClient();
-    await register(supabase.auth, input);
-    await trackServerEvent(request, "signup");
-    return Response.json({ ok: true });
+    const result = await register(supabase.auth, input);
+    if (result.status === "created") {
+      await trackServerEvent(request, "signup");
+    }
+    return Response.json({ ok: true, status: result.status });
   } catch (error) {
     return toErrorResponse(error);
   }

@@ -89,6 +89,9 @@ export async function apiErrorCode(response: Response) {
       const reason = (details as { reason?: string } | undefined)?.reason;
       return reason ?? "invalid_credentials";
     }
+    if (body.error?.code === "EMAIL_ALREADY_REGISTERED") {
+      return "email_already_registered";
+    }
     if (body.error?.code === "RATE_LIMITED") return "rate_limited";
     return "generic";
   } catch {
