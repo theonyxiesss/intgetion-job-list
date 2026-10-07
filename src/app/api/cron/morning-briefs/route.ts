@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { notFound, toErrorResponse } from "@/lib/http";
-import { runDigestCron } from "@/modules/notifications/service";
+import { runMorningBriefsCron } from "@/modules/notifications/service";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,7 @@ function authorized(request: Request): boolean {
 export async function GET(request: Request) {
   try {
     if (!authorized(request)) throw notFound();
-    return Response.json({ ok: true, ...(await runDigestCron()) });
+    return Response.json({ ok: true, ...(await runMorningBriefsCron()) });
   } catch (error) {
     return toErrorResponse(error);
   }

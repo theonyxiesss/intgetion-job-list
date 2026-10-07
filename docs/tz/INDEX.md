@@ -22,7 +22,7 @@
 | [17-gdpr.md](17-gdpr.md) | §17 GDPR / retention |
 | [18-ops.md](18-ops.md) | §18 мониторинг → [RUNBOOK](../RUNBOOK.md) |
 | [19-tests.md](19-tests.md) | §19 тесты |
-| [20-morning-briefs.md](20-morning-briefs.md) | Утренние сводки агента, 3 часовых пояса, админка (PLANNED) |
+| [20-morning-briefs.md](20-morning-briefs.md) | Утренние сводки агента, 3 часовых пояса, админка |
 | [21-jobs-alert.md](21-jobs-alert.md) | Канал Jobs Alert: пост бота при публикации вакансии (D341) |
 | [22-roadmap.md](22-roadmap.md) | §22 подфазы → [PARALLEL_WORK](../PARALLEL_WORK.md) |
 

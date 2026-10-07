@@ -1,74 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
   DIGEST_MAX_JOBS,
-  isDigestDue,
   pickDigestJobs,
   type DigestCandidateJob,
 } from "../service/digest";
 
 const at = (iso: string) => new Date(iso);
-
-describe("isDigestDue (D185)", () => {
-  it("is due in the 08:00 local hour only", () => {
-    // Moscow is UTC+3 all year.
-    expect(isDigestDue("Europe/Moscow", null, at("2026-10-05T05:00:00Z"))).toBe(
-      true,
-    );
-    expect(isDigestDue("Europe/Moscow", null, at("2026-10-05T05:59:00Z"))).toBe(
-      true,
-    );
-    expect(isDigestDue("Europe/Moscow", null, at("2026-10-05T06:00:00Z"))).toBe(
-      false,
-    );
-    expect(isDigestDue("Europe/Moscow", null, at("2026-10-05T04:00:00Z"))).toBe(
-      false,
-    );
-  });
-
-  it("finds the morning for quarter-hour offsets on the hourly tick", () => {
-    // Kathmandu +5:45: the 02:00Z tick is 07:45, the 03:00Z tick is 08:45.
-    expect(
-      isDigestDue("Asia/Kathmandu", null, at("2026-10-05T02:00:00Z")),
-    ).toBe(false);
-    expect(
-      isDigestDue("Asia/Kathmandu", null, at("2026-10-05T03:00:00Z")),
-    ).toBe(true);
-  });
-
-  it("follows daylight saving time", () => {
-    // New York: EDT (-4) in July, EST (-5) in January.
-    expect(
-      isDigestDue("America/New_York", null, at("2026-07-06T12:00:00Z")),
-    ).toBe(true);
-    expect(
-      isDigestDue("America/New_York", null, at("2026-01-12T13:00:00Z")),
-    ).toBe(true);
-    expect(
-      isDigestDue("America/New_York", null, at("2026-01-12T12:00:00Z")),
-    ).toBe(false);
-  });
-
-  it("waits a full day after the previous digest", () => {
-    const sent = at("2026-10-05T05:00:00Z");
-    expect(isDigestDue("Europe/Moscow", sent, at("2026-10-05T05:30:00Z"))).toBe(
-      false,
-    );
-    expect(isDigestDue("Europe/Moscow", sent, at("2026-10-06T05:00:00Z"))).toBe(
-      true,
-    );
-  });
-
-  it("does not shorten the interval when the previous digest was late", () => {
-    // Sent at 08:59 local; the next 08:00 is only 23 hours later.
-    const sent = at("2026-10-05T05:59:00Z");
-    expect(isDigestDue("Europe/Moscow", sent, at("2026-10-06T05:00:00Z"))).toBe(
-      false,
-    );
-    expect(isDigestDue("Europe/Moscow", sent, at("2026-10-07T05:00:00Z"))).toBe(
-      true,
-    );
-  });
-});
 
 describe("pickDigestJobs (D186, D187)", () => {
   const now = at("2026-10-05T05:00:00Z");

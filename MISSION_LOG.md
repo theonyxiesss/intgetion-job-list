@@ -359,3 +359,10 @@
 - Команды проверки: eslint + `tsc --noEmit` → 0.
 - Миграции: нет. Решения: нет.
 - OPEN QUESTION: нет.
+
+## [2026-10-07] — утренние сводки, подфаза A (D340) — ветка feat/morning-briefs
+
+- Сделано: ТЗ `docs/tz/20-morning-briefs.md`. Миграция `0032_morning_briefs.sql`: таблицы слотов, паузы, запусков и доставок плюс флаг агента у кандидата. Чистая логика слотов `notifications/lib/briefs.ts`. Cron `/api/cron/morning-briefs` (`*/15`) вместо `/api/cron/digest`. Отправка идёт через `deliverInTransaction`, Telegram доставляет D237. Есть `runSlot` с сухим прогоном для будущей админки.
+- Команды проверки: `pnpm typecheck` → 0, `pnpm lint` → 0. `pnpm test`: 747 прошло, 3 упало — `legal.test.ts` и `auth-emails.test.ts`; на чистом master они падают так же, к задаче не относятся. Новый `briefs.test.ts` зелёный. `pnpm build` локально не собирается: Windows не даёт SWC писать в кэш (`ERR_SWC_NATIVE_CACHE`), это окружение, а не код — проверит CI. Интеграционный `morning-briefs.integration.test.ts` проверит CI.
+- Миграции: `0032_morning_briefs.sql`. Решения: D340.
+- OPEN QUESTION: нет. Следующее — подфаза B по команде.

@@ -66,12 +66,23 @@ export type { EmailSender } from "./email-sender";
 export { emailCopy, renderEmail } from "./render";
 export {
   DIGEST_MAX_JOBS,
-  isDigestDue,
   pickDigestJobs,
-  runDigestCron,
   type DigestCandidateJob,
   type DigestJobLoader,
 } from "./digest";
+export {
+  runMorningBriefsCron,
+  runSlot,
+  type BriefRunResult,
+} from "./morning-briefs";
+export {
+  BRIEF_SLOT_IDS,
+  dueSlotDate,
+  nextSlotStart,
+  slotForTimeZone,
+  type BriefSlot,
+  type BriefSlotId,
+} from "../lib/briefs";
 export { deliverInTransaction } from "./deliver";
 export { toEmailJob, type EmailJobPayload } from "../lib/email-jobs";
 export { runTelegramDispatch } from "./telegram-dispatch";

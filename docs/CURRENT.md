@@ -2,8 +2,8 @@
 
 **Продукт:** `INTGETION JOB LIST`  
 **Ветка / worktree:** `feat/jobs-alert` · `C:\Users\Admin\Documents\Integetion jobs`  
-**Активная задача:** канал Jobs Alert (D341) в коде. На прод не выложен: нет миграции `0033` на облаке и нет `JOBS_ALERT_CHAT_ID`.  
-**Прод:** https://intgetion.com — `294e614` (PR #14): привязка Telegram, Google и X, одна строка согласия на входе.
+**Активная задача:** выкладка утренних сводок (D340) и канала Jobs Alert (D341).  
+**Прод до этой выкладки:** https://intgetion.com — `294e614` (PR #14).
 
 ## Работает (кратко)
 
