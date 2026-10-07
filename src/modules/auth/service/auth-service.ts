@@ -54,9 +54,14 @@ export type CurrentUser = usersRepo.UserRow;
 /** Outcome of `register` for the API / check-email screen (D327). */
 export type RegisterResult = { status: "created" | "resent" };
 
-export function callbackUrl(locale: AppLocale, next?: "reset"): string {
+export function callbackUrl(
+  locale: AppLocale,
+  next?: "reset",
+  wait?: string,
+): string {
   const url = new URL(`${siteUrl()}/${locale}/auth/callback`);
   if (next) url.searchParams.set("next", next);
+  if (wait) url.searchParams.set("wait", wait);
   return url.toString();
 }
 
@@ -90,7 +95,7 @@ function emailAlreadyRegistered(): HttpError {
  */
 async function finishExistingPasswordRegister(
   auth: AuthClient,
-  input: RegisterInput,
+  input: RegisterInput & { wait?: string },
 ): Promise<RegisterResult> {
   const existing = await findAuthUserByEmail(input.email);
   if (existing?.confirmed) throw emailAlreadyRegistered();
@@ -98,20 +103,14 @@ async function finishExistingPasswordRegister(
   const { error } = await auth.resend({
     type: "signup",
     email: input.email,
-    options: { emailRedirectTo: callbackUrl(input.locale) },
+    options: {
+      emailRedirectTo: callbackUrl(input.locale, undefined, input.wait),
+    },
   });
-  if (error) {
-    // Confirmed accounts often refuse signup resend — show sign-in instead.
-    if (
-      error.code === "user_already_exists" ||
-      error.code === "email_exists" ||
-      existing?.confirmed
-    ) {
-      throw emailAlreadyRegistered();
-    }
-    throw authFailure(error);
-  }
-  return { status: "resent" };
+  // Resend worked → unfinished signup. Any failure → treat as already
+  // registered (D327): never show a generic "something went wrong".
+  if (!error) return { status: "resent" };
+  throw emailAlreadyRegistered();
 }
 
 /**
@@ -122,7 +121,7 @@ async function finishExistingPasswordRegister(
  */
 export async function register(
   auth: AuthClient,
-  input: RegisterInput,
+  input: RegisterInput & { wait?: string },
   now: Date = new Date(),
 ): Promise<RegisterResult> {
   const data: SignupMetadata = {
@@ -130,7 +129,7 @@ export async function register(
     terms_accepted_at: now.toISOString(),
     locale: input.locale,
   };
-  const emailRedirectTo = callbackUrl(input.locale);
+  const emailRedirectTo = callbackUrl(input.locale, undefined, input.wait);
 
   if (!input.password) {
     const { error } = await auth.signInWithOtp({
@@ -193,13 +192,13 @@ export async function signIn(
 /** Sign-in link for an existing account. Unknown addresses look the same. */
 export async function sendMagicLink(
   auth: AuthClient,
-  input: MagicLinkInput,
+  input: MagicLinkInput & { wait?: string },
 ): Promise<void> {
   const { error } = await auth.signInWithOtp({
     email: input.email,
     options: {
       shouldCreateUser: false,
-      emailRedirectTo: callbackUrl(input.locale),
+      emailRedirectTo: callbackUrl(input.locale, undefined, input.wait),
     },
   });
   if (error?.status === 429) throw authFailure(error);
