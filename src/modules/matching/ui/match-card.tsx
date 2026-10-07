@@ -5,6 +5,7 @@ import { formatMoneyDto } from "@/lib/money";
 import type { MatchCard } from "../service";
 import { DismissButton, type DismissText } from "./dismiss-button";
 import { ExplainLines } from "./explain-lines";
+import { intlLocale } from "@/i18n/locale";
 
 export async function MatchCardView({
   card,
@@ -21,7 +22,7 @@ export async function MatchCardView({
   const matches = await getTranslations("matches");
   const categories = await getTranslations("categories");
   const matchesNew = matches("new");
-  const money = locale === "ru" ? "ru-RU" : "en-US";
+  const money = intlLocale(locale);
   const { job } = card;
   const salary = job.salaryMin
     ? `${formatMoneyDto(job.salaryMin, money)}${job.salaryMax ? ` – ${formatMoneyDto(job.salaryMax, money)}` : ""} / ${t(job.salaryMin.period)}`

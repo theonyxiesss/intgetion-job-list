@@ -1,6 +1,7 @@
 import { and, eq, gt, isNull, lt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { authEmailWaits } from "@/db/schema";
+import type { AppLocale } from "@/i18n/routing";
 
 export type AuthEmailWait = typeof authEmailWaits.$inferSelect;
 export type AuthEmailWaitPurpose = "login" | "signup";
@@ -8,7 +9,7 @@ export type AuthEmailWaitPurpose = "login" | "signup";
 export async function insertAuthEmailWait(input: {
   waitHash: string;
   purpose: AuthEmailWaitPurpose;
-  locale: "en" | "ru";
+  locale: AppLocale;
   expiresAt: Date;
 }): Promise<void> {
   await getDb().insert(authEmailWaits).values(input);

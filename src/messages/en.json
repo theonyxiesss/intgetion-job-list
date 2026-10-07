@@ -130,12 +130,15 @@
     "ru": "Russian",
     "short": {
       "en": "EN",
-      "ru": "RU"
+      "ru": "RU",
+      "es": "ES"
     },
     "native": {
       "en": "English",
-      "ru": "Русский"
-    }
+      "ru": "Русский",
+      "es": "Español"
+    },
+    "es": "Spanish"
   },
   "home": {
     "tagline": "Remote work. Real matches.",

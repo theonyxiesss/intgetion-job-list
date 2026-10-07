@@ -909,3 +909,10 @@
 - curl на dev: `/` en → 200; ru-браузер → 307 `/ru`; кука en + ru-браузер → 200; `/en/jobs?q=go` → 308 `/jobs?q=go` + кука en; `/ru/...` ставит куку ru; canonical/hreflang/sitemap без `/en`; на главной 0 ссылок с `/en`. С включённым Mini App: `/` и `/en` отдают «отскок», `/?tgb=1` — страницу; в браузере `/#tgWebAppData=…` → `/ru?tgb=1#tgWebAppData=…`, фрагмент сохранён в sessionStorage.
 - После выкладки: в BotFather можно оставить `https://intgetion.com/tg.html` или корень; `/en` тоже работает (через «отскок»). Search Console — ожидать переиндексацию адресов.
 - Следующий шаг (не начат): новые языки — только по команде и данным (OPEN_TASKS).
+
+## [2026-10-07] — испанский язык D336 (ветка `feat/locale-es`, worktree «Integetion jobs es», без push/merge) — PARTIAL
+
+- Сделано: см. D336.
+- Проверки: typecheck 0, lint 0, `pnpm test` 718 passed + 1 падение `legal.test.ts` (есть на чистом master); `messages.test.ts` (ключи/плейсхолдеры для en/ru/es) зелёный.
+- dev :3600: `es-ES` и `es-MX` браузер на `/` → 307 `/es`; `/es`, `/es/jobs`, `/es/pricing`, `/es/login`, `/es/register`, `/es/for-employers`, `/es/salaries`, `/es/terms`, `/es/post-job` → 200, `lang="es"`; hreflang en/ru/es/x-default; на 375 px без горизонтального переполнения (pricing, register, login, for-employers); переключатель в футере на три языка.
+- Нужно до выкладки: вычитка es носителем; миграции 0031 и 0032 в облачной БД; перевод юридических текстов.

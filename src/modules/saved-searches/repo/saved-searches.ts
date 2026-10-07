@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { toAppLocale } from "@/i18n/locale";
 
 export type SavedSearch = {
   id: string;
@@ -95,6 +96,6 @@ export async function listDue(now: Date) {
   `);
   return rows.map((row) => ({
     ...toSearch(row),
-    locale: row.locale === "ru" ? ("ru" as const) : ("en" as const),
+    locale: toAppLocale(row.locale),
   }));
 }

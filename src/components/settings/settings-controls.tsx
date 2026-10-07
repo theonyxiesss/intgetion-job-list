@@ -11,6 +11,7 @@ import { Icon } from "@/components/ui/icon";
 import { Input, Select } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { useRouter } from "@/i18n/navigation";
+import { routing } from "@/i18n/routing";
 
 async function send(path: string, method: string, body: unknown) {
   const response = await fetch(path, {
@@ -118,8 +119,11 @@ export function EmailLanguage({ locale }: { locale: string }) {
         onChange={(event) => change(event.target.value)}
         className="max-w-60"
       >
-        <option value="en">{names("en")}</option>
-        <option value="ru">{names("ru")}</option>
+        {routing.locales.map((locale) => (
+          <option key={locale} value={locale}>
+            {names(locale)}
+          </option>
+        ))}
       </Select>
     </Field>
   );

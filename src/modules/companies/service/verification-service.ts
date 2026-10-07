@@ -22,6 +22,7 @@ import {
   type VerificationMethod,
 } from "./verification-rules";
 import { localePrefix } from "@/i18n/paths";
+import { toAppLocale } from "@/i18n/locale";
 
 /** Sends the corporate-email link; false when no provider is configured. */
 export type VerificationMailer = (message: {
@@ -52,7 +53,7 @@ export const resendVerificationMailer: VerificationMailer = async (message) => {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
   if (!key || !from) return false;
-  const locale = message.locale === "ru" ? "ru" : "en";
+  const locale = toAppLocale(message.locale);
   const text = `${BODY[locale]} ${message.companyName}:\n${message.link}`;
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -223,7 +224,7 @@ export async function requestVerification(
   if (input.method === "dns_txt") {
     return { verification, dnsRecord: dnsRecordValue(token) };
   }
-  const locale = user.locale === "ru" ? "ru" : "en";
+  const locale = toAppLocale(user.locale);
   const link = `${siteUrl()}${localePrefix(locale)}/employer/company/verify?company=${companyId}&token=${token}`;
   const emailSent = await deps.mailer({
     to: target,

@@ -7,7 +7,7 @@ export function siteUrl(): string {
   );
 }
 
-export const SEO_LOCALES = ["en", "ru"] as const;
+export const SEO_LOCALES = ["en", "ru", "es"] as const;
 
 /** Absolute URL of a path in a locale; English has no prefix (D335). */
 export function localeUrl(locale: string, path = ""): string {

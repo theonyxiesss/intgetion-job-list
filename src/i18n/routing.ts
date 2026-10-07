@@ -5,7 +5,7 @@ export const LOCALE_COOKIE = "NEXT_LOCALE";
 export const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 export const routing = defineRouting({
-  locales: ["en", "ru"],
+  locales: ["en", "ru", "es"],
   defaultLocale: "en",
   // D335: English at the root, Russian under /ru.
   localePrefix: "as-needed",

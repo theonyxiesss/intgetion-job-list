@@ -140,10 +140,11 @@ describe("imported job summary (D281)", () => {
 });
 
 describe("languageAlternates (D276)", () => {
-  it("answers for both languages and for everyone else", () => {
+  it("answers for every language and for everyone else", () => {
     expect(languageAlternates("/jobs")).toEqual({
       en: "http://localhost:3000/jobs",
       ru: "http://localhost:3000/ru/jobs",
+      es: "http://localhost:3000/es/jobs",
       "x-default": "http://localhost:3000/jobs",
     });
   });

@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/feedback";
 import { JobCard } from "@/components/ui/job-card";
 import { Link } from "@/i18n/navigation";
 import { localePrefix } from "@/i18n/paths";
+import { intlLocale } from "@/i18n/locale";
 
 export const dynamic = "force-dynamic";
 
@@ -54,7 +55,7 @@ export default async function SavedJobsPage({
                     {
                       label: t("savedOn"),
                       value: new Date(savedAt).toLocaleDateString(
-                        locale === "ru" ? "ru-RU" : "en-US",
+                        intlLocale(locale),
                       ),
                     },
                   ]}

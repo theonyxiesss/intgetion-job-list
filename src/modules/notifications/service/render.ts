@@ -1,27 +1,25 @@
 import { siteEmailHtml } from "@/lib/email-html";
-import en from "@/messages/en.json";
-import ru from "@/messages/ru.json";
 import { NOTIFICATION_CATALOG, type NotificationType } from "../lib/catalog";
 import { localePrefix } from "@/i18n/paths";
+import { messagesFor, type Messages } from "@/i18n/messages";
+import type { AppLocale } from "@/i18n/routing";
 
 type EmailCopy = { subject: string; body: string };
 
-const catalogs = { en, ru } as const;
-
 export function emailCopy(
-  locale: "en" | "ru",
+  locale: AppLocale,
   type: NotificationType,
 ): EmailCopy | null {
   const key = NOTIFICATION_CATALOG[type]
-    .i18nKey as keyof typeof en.notifications.types;
-  const block = catalogs[locale].notifications.types[key] as {
+    .i18nKey as keyof Messages["notifications"]["types"];
+  const block = messagesFor(locale).notifications.types[key] as {
     email?: EmailCopy;
   };
   return block.email ?? null;
 }
 
-export function unsubscribeLabel(locale: "en" | "ru"): string {
-  return catalogs[locale].notifications.unsubscribe.link;
+export function unsubscribeLabel(locale: AppLocale): string {
+  return messagesFor(locale).notifications.unsubscribe.link;
 }
 
 /** `{name}` plus the `{count, plural, one {…} other {…}}` form used in the catalog. */
@@ -43,7 +41,7 @@ export function fillTemplate(
 }
 
 export function renderEmail(input: {
-  locale: "en" | "ru";
+  locale: AppLocale;
   type: NotificationType;
   values: Record<string, string | number>;
   unsubscribeUrl: string;
@@ -59,11 +57,11 @@ export function renderEmail(input: {
   const origin = new URL(input.unsubscribeUrl).origin;
   const actionLabel =
     input.type === "matches.digest"
-      ? catalogs[input.locale].digest.openMatches
+      ? messagesFor(input.locale).digest.openMatches
       : input.type === "search.alert"
-        ? catalogs[input.locale].savedSearches.openSearch
+        ? messagesFor(input.locale).savedSearches.openSearch
         : input.type === "company.new_jobs"
-          ? catalogs[input.locale].follows.openCompany
+          ? messagesFor(input.locale).follows.openCompany
           : null;
   const action =
     actionLabel && input.actionPath
@@ -155,14 +153,14 @@ export function notificationPath(
  * a link to the page it is about (D237). Plain text, no markup.
  */
 export function telegramText(input: {
-  locale: "en" | "ru";
+  locale: AppLocale;
   type: NotificationType;
   payload: Record<string, unknown>;
   siteUrl: string;
 }): string | null {
   const key = NOTIFICATION_CATALOG[input.type]
-    .i18nKey as keyof typeof en.notifications.types;
-  const block = catalogs[input.locale].notifications.types[key] as {
+    .i18nKey as keyof Messages["notifications"]["types"];
+  const block = messagesFor(input.locale).notifications.types[key] as {
     inapp?: { title: string; body: string };
   };
   if (!block.inapp) return null;

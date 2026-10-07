@@ -33,6 +33,6 @@ export const users = pgTable(
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
   (table) => [
-    check("users_locale_check", sql`${table.locale} in ('en', 'ru')`),
+    check("users_locale_check", sql`${table.locale} in ('en', 'ru', 'es')`),
   ],
 );

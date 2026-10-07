@@ -4,6 +4,7 @@ import { formatMoneyDto } from "@/lib/money";
 import { Badge } from "@/components/ui/badge";
 import { JobCard } from "@/components/ui/job-card";
 import type { searchJobs } from "../service";
+import { intlLocale } from "@/i18n/locale";
 
 type PublicJob = Awaited<ReturnType<typeof searchJobs>>["items"][number];
 
@@ -28,7 +29,7 @@ export async function PublicJobCard({
   const t = await getTranslations("jobs");
   const markers = await getTranslations("markers");
   const categories = await getTranslations("categories");
-  const money = locale === "ru" ? "ru-RU" : "en-US";
+  const money = intlLocale(locale);
   const published = job.publishedAt
     ? new Intl.DateTimeFormat(money, { day: "numeric", month: "short" }).format(
         new Date(job.publishedAt),

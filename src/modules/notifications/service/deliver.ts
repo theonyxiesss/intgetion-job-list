@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { resolveDelivery, type NotificationType } from "../lib/catalog";
 import { insertEmail, insertNotification } from "../repo/notifications";
+import type { AppLocale } from "@/i18n/routing";
 
 type Tx = Parameters<
   Parameters<ReturnType<typeof import("@/db/client").getDb>["transaction"]>[0]
@@ -16,7 +17,7 @@ export async function deliverInTransaction(
   input: {
     userId: string;
     type: NotificationType;
-    locale: "en" | "ru";
+    locale: AppLocale;
     payload: Record<string, unknown>;
     /** Extra fields only the email needs, such as job titles. */
     emailPayload?: Record<string, unknown>;

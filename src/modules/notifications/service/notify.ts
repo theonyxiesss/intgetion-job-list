@@ -22,6 +22,7 @@ import {
   userLocale,
 } from "../repo/notifications";
 import { localePrefix } from "@/i18n/paths";
+import type { AppLocale } from "@/i18n/routing";
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -37,7 +38,7 @@ export function unsubscribeSecret(): string {
 }
 
 export function unsubscribeUrl(
-  locale: "en" | "ru",
+  locale: AppLocale,
   userId: string,
   type: NotificationType,
   now = new Date(),

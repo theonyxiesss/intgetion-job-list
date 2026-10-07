@@ -2,8 +2,6 @@ import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { logger } from "@/lib/logger";
 import { timeZoneOffsetMinutes } from "@/lib/tz";
-import en from "@/messages/en.json";
-import ru from "@/messages/ru.json";
 import { resolveDelivery } from "../lib/catalog";
 import {
   DIGEST_HOUR_LOCAL,
@@ -11,6 +9,9 @@ import {
   nextDigestAt,
 } from "../lib/digest";
 import { insertEmail, insertNotification } from "../repo/notifications";
+import { toAppLocale } from "@/i18n/locale";
+import { messagesFor } from "@/i18n/messages";
+import type { AppLocale } from "@/i18n/routing";
 
 /** At most this many jobs in one digest (D186). */
 export const DIGEST_MAX_JOBS = 5;
@@ -73,8 +74,8 @@ type CandidateRow = {
 
 type PreferenceRow = { type: string; channel: string; enabled: boolean };
 
-function chatEvent(locale: "en" | "ru", count: number): string {
-  const template = (locale === "ru" ? ru : en).digest.chatEvent;
+function chatEvent(locale: AppLocale, count: number): string {
+  const template = messagesFor(locale).digest.chatEvent;
   return template.replace("{count}", String(count));
 }
 
@@ -85,7 +86,7 @@ function chatEvent(locale: "en" | "ru", count: number): string {
  */
 export type DigestJobLoader = (
   userId: string,
-  locale: "en" | "ru",
+  locale: AppLocale,
   now: Date,
 ) => Promise<DigestCandidateJob[]>;
 
@@ -157,7 +158,7 @@ async function sendDigest(
   now: Date,
   loadJobs: DigestJobLoader,
 ): Promise<"sent" | "empty"> {
-  const locale = row.locale === "ru" ? "ru" : "en";
+  const locale = toAppLocale(row.locale);
   const jobs = pickDigestJobs(
     await loadJobs(row.user_id, locale, now),
     lastDigestAt,

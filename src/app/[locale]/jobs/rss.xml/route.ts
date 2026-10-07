@@ -6,6 +6,7 @@ import { formatMoneyDto } from "@/lib/money";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import { searchJobs } from "@/modules/jobs/service";
 import { buildRss } from "@/modules/jobs/service/rss";
+import { intlLocale } from "@/i18n/locale";
 
 const FEED_SIZE = 50;
 
@@ -23,7 +24,7 @@ export async function GET(
       locale,
       namespace: "categories",
     });
-    const money = locale === "ru" ? "ru-RU" : "en-US";
+    const money = intlLocale(locale);
     const { items } = await searchJobs(
       jobSearchQuery.parse({ sort: "newest", limit: FEED_SIZE }),
       locale,

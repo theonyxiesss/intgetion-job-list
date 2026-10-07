@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { routing } from "@/i18n/routing";
 import { HttpError, notFound } from "@/lib/http";
 import { privacyHash } from "@/lib/privacy-hash";
 import {
@@ -21,7 +22,7 @@ export const peopleQuery = z.object({
   limit: z.coerce.number().int().min(1).max(50).default(20),
   status: z.enum(["active", "suspended", "deleted", "banned"]).optional(),
   role: z.enum(["candidate", "employer", "both"]).optional(),
-  locale: z.enum(["en", "ru"]).optional(),
+  locale: z.enum(routing.locales).optional(),
   q: z.string().trim().min(1).max(200).optional(),
 });
 export const decisionInput = z

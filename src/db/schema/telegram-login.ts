@@ -28,7 +28,7 @@ export const telegramLoginChallenges = pgTable(
     index("telegram_login_challenges_expires_idx").on(table.expiresAt),
     check(
       "telegram_login_challenges_locale_check",
-      sql`${table.locale} in ('en', 'ru')`,
+      sql`${table.locale} in ('en', 'ru', 'es')`,
     ),
   ],
 );

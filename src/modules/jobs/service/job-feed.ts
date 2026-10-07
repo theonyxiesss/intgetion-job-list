@@ -4,6 +4,7 @@ import { PRODUCT_NAME } from "@/config/product";
 import type { JobSearchQuery } from "../schemas/search";
 import { searchJobs } from "./public-search";
 import { buildRss, type RssChannel } from "./rss";
+import { intlLocale } from "@/i18n/locale";
 
 /** Last 50 published jobs for an RSS channel. No personalization. */
 export async function renderJobFeed(
@@ -15,7 +16,7 @@ export async function renderJobFeed(
     { ...query, limit: 50, cursor: undefined },
     locale,
   );
-  const money = locale === "ru" ? "ru-RU" : "en-US";
+  const money = intlLocale(locale);
   const xml = buildRss(
     {
       title: channel.title,
@@ -42,7 +43,6 @@ export async function renderJobFeed(
 }
 
 export function catalogFeedTitle(locale: string) {
-  return locale === "ru"
-    ? `${PRODUCT_NAME}: вакансии`
-    : `${PRODUCT_NAME}: jobs`;
+  const word = { ru: "вакансии", es: "empleos" }[locale] ?? "jobs";
+  return `${PRODUCT_NAME}: ${word}`;
 }
