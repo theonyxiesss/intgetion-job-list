@@ -2,8 +2,8 @@
 
 **Продукт:** `INTGETION JOB LIST`  
 **Ветка / worktree:** `feat/email-system-design` · `C:\Users\Admin\Documents\Integetion jobs`  
-**Активная задача:** выкладка этой ветки на https://intgetion.com. В ней master (логотип, цены, D325–D329) плюс Spoki (D337), письма (D330), поле чата (D334), тип аккаунта (D331), Google и X (D335, D336).  
-**Прод:** https://intgetion.com
+**Активная задача:** нет.  
+**Прод:** https://intgetion.com — выложен `d914274` (PR #12): master плюс Spoki (D337), письма (D330), поле чата (D334), тип аккаунта (D331), Google и X (D335, D336).
 
 ## Работает (кратко)
 

@@ -3,6 +3,16 @@
 > Older entries: [docs/archive/mission-log/](docs/archive/mission-log/) — see [docs/archive/INDEX.md](docs/archive/INDEX.md).
 > Session protocol: [docs/tz/00-protocol.md](docs/tz/00-protocol.md). Status now: [docs/CURRENT.md](docs/CURRENT.md).
 
+## [2026-10-07] — сборка и выкладка — DONE
+
+- Сделано: локальные наработки собраны с `origin/master` и выложены на https://intgetion.com. В проде: Google и X на входе, кнопка Telegram, растущее поле чата, тип аккаунта, письма D330, плюс уже бывшие на master логотип, цены и D325–D329. X-провайдер в Supabase по-прежнему выключен.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0. `vitest` auth-service, schemas, email-html → 48 passed. Прод `d914274` READY. `https://intgetion.com/ru/login` содержит `/api/auth/google`, `/api/auth/x`, Telegram и `/pricing`.
+- Миграции: `0031_account_type.sql` уже была на облаке до этой выкладки.
+- Изменённые файлы: ветка `feat/email-system-design`, merge в master, PR #12.
+- Отклонения от ТЗ: запись про Spoki перенумерована в D337, потому что D324 на master — Mini App.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по команде основателя. X заработает после клиента в портале разработчика.
+
 ## [2026-10-07] — Spoki composer like a chat — DONE
 - Сделано: поле снизу чата. Пустое — одна строка 44 px. Две и три строки выше, низ поля на месте. С шести строк высота 160 px и дальше не растёт: длинный текст скроллится внутри. Лента скроллится отдельно, страница не растёт. Enter отправляет и возвращает поле к одной строке, фокус остаётся. Shift+Enter переносит строку. Клавиатура по-прежнему сжимает страницу (D287).
 - Команды проверки: eslint → 0. Chrome на `:3000`, 1280×800 и 390×700: пусто 44, одна 44, две 60, три 80, длинный текст 160 при scrollHeight 840, низ поля не сдвинулся, высота ленты та же. После Enter поле 44, пустое, в фокусе. Установленное PWA не ставилось: та же страница.
