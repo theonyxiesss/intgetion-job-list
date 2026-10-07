@@ -38,6 +38,32 @@ export async function ensureFixtureSource(adapter: ImportAdapter) {
   return row;
 }
 
+/**
+ * Registers a live source switched off; the migration or the admin turns it
+ * on. A re-run never flips enabled or republish_allowed (D342).
+ */
+export async function ensureLiveSource(source: {
+  sourceName: string;
+  kind: "api" | "rss";
+  url: string;
+}) {
+  const [row] = await getDb()
+    .insert(importSources)
+    .values({
+      name: source.sourceName,
+      kind: source.kind,
+      url: source.url,
+      enabled: false,
+    })
+    .onConflictDoUpdate({
+      target: importSources.name,
+      set: { kind: source.kind, url: source.url },
+    })
+    .returning();
+  if (!row) throw new Error("Could not register live source");
+  return row;
+}
+
 export async function sourceStartedSince(sourceId: string, since: Date) {
   const [run] = await getDb()
     .select({ id: importRuns.id })

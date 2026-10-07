@@ -604,7 +604,7 @@
     "importTitle": "Import",
     "importSources": "Sources",
     "importRuns": "Recent runs",
-    "importNote": "Only fixture sources run until a live source is approved; sources cannot be switched here yet.",
+    "importNote": "Live sources run when IMPORT_LIVE_ENABLED=true. Each one can be turned off here; imported jobs name and link their source.",
     "runCounters": "fetched {fetched} · created {created} · updated {updated} · merged {merged} · rejected {rejected} · expired {expired}",
     "navReports": "Reports",
     "reportsTitle": "Reports",
@@ -635,7 +635,11 @@
       "open": "Open",
       "confirmed": "Confirmed",
       "dismissed": "Dismissed"
-    }
+    },
+    "colEnabled": "On",
+    "importEnable": "Turn on",
+    "importDisable": "Turn off",
+    "importFixture": "Fixture"
   },
   "employerJobs": {
     "title": "Your jobs",

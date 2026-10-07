@@ -64,6 +64,31 @@ export function UserStatusAction({
   );
 }
 
+/** On/off for one import source (8B, D342). */
+export function ImportSourceToggle({
+  sourceId,
+  enabled,
+}: {
+  sourceId: string;
+  enabled: boolean;
+}) {
+  const t = useTranslations("admin");
+  const { pending, run } = useAction();
+  return (
+    <Button
+      variant={enabled ? "secondary" : "primary"}
+      loading={pending === "toggle"}
+      onClick={() =>
+        run("toggle", `/api/admin/import/sources/${sourceId}/toggle`, {
+          enabled: !enabled,
+        })
+      }
+    >
+      {enabled ? t("importDisable") : t("importEnable")}
+    </Button>
+  );
+}
+
 export function SuggestionActions({
   suggestionId,
   skills,

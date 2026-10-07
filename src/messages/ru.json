@@ -604,7 +604,7 @@
     "importTitle": "Импорт",
     "importSources": "Источники",
     "importRuns": "Последние запуски",
-    "importNote": "Пока живой источник не одобрен, работают только фикстуры; включать и выключать источники здесь пока нельзя.",
+    "importNote": "Живые источники работают при IMPORT_LIVE_ENABLED=true. Каждый можно выключить здесь; у импортированной вакансии указан источник и ссылка на него.",
     "runCounters": "получено {fetched} · создано {created} · обновлено {updated} · слито {merged} · отклонено {rejected} · истекло {expired}",
     "navReports": "Жалобы",
     "reportsTitle": "Жалобы",
@@ -635,7 +635,11 @@
       "open": "Открытые",
       "confirmed": "Подтверждённые",
       "dismissed": "Отклонённые"
-    }
+    },
+    "colEnabled": "Включён",
+    "importEnable": "Включить",
+    "importDisable": "Выключить",
+    "importFixture": "Фикстура"
   },
   "employerJobs": {
     "title": "Ваши вакансии",

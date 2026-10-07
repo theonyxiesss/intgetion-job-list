@@ -392,3 +392,13 @@
 - Команды проверки: `pnpm exec tsc --noEmit` и `pnpm exec vitest run src/lib/viewer.test.ts src/config/pricing.test.ts src/messages/messages.test.ts` → 0. В браузере: шапка, тарифы компаний, бесплатный путь, текст и ссылка на бота.
 - Миграции: нет. Решения: D347, D348.
 - OPEN QUESTION: нет. Выбор бесплатного тарифа не сохраняется — оплаты ещё нет, поэтому тарифы показываются каждый раз.
+
+## [2026-10-07] — живой импорт 8B (D342) — ветка feat/live-import
+
+founder approved: republish allowed — Remotive, Himalayas, Jobicy, Remote OK
+
+- Сделано: адаптеры `remotive.ts`, `himalayas.ts`, `jobicy.ts`, `remoteok.ts` на общем `adapters/live.ts`. `runLiveImports`: интервал и лимит новых у каждого источника, источник работает только при `enabled` и `republish_allowed`. Cron `/api/cron/import`: с `IMPORT_LIVE_ENABLED=true` идут живые источники, без него — фикстуры. Кнопка вкл/выкл на `/admin/import` с записью в журнал. Миграция `0033_live_import_sources.sql`.
+- Проверено на настоящих API (только чтение): Remotive 17, Himalayas 100, Jobicy 100, Remote OK 99 вакансий разобраны.
+- Команды проверки: `pnpm typecheck` → 0, `pnpm lint` → 0, `vitest run src/modules/ingestion src/lib` → 243 passed. `live-import.integration.test.ts` проверит CI (нужна локальная база).
+- Миграции: `0033_live_import_sources.sql`. Решения: D342.
+- OPEN QUESTION: что делать со снимком 2026-10-04 (CryptoJobsList и We Work Remotely в нём сейчас не прошли бы по D18); нужны ли Arbeitnow, CryptoJobsList и web3.career (заявка или ключ).

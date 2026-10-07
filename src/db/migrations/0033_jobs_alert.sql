@@ -1,4 +1,4 @@
--- D341: one channel post per job. The stamp is set only after Telegram accepts
+-- D342: one channel post per job. The stamp is set only after Telegram accepts
 -- the message. Old published jobs stay unmarked; the cron uses this file's
 -- applied_at in schema_migrations as the watermark and does not backfill them.
 

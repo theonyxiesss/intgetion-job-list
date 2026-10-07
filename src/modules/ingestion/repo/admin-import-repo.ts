@@ -2,7 +2,7 @@ import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { importRuns, importSources } from "@/db/schema";
 
-/** Read-only import panel for admins (10A, D83). */
+/** Import panel for admins (10A, D83); sources switch on and off (D342). */
 export async function listImportSources() {
   return getDb()
     .select({
@@ -16,6 +16,20 @@ export async function listImportSources() {
     })
     .from(importSources)
     .orderBy(importSources.name);
+}
+
+/** The admin switch; returns null for an unknown source. */
+export async function setImportSourceEnabled(id: string, enabled: boolean) {
+  const [row] = await getDb()
+    .update(importSources)
+    .set({ enabled })
+    .where(eq(importSources.id, id))
+    .returning({
+      id: importSources.id,
+      name: importSources.name,
+      enabled: importSources.enabled,
+    });
+  return row ?? null;
 }
 
 export async function listImportRuns(limit: number) {

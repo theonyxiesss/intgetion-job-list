@@ -604,7 +604,7 @@
     "importTitle": "Importación",
     "importSources": "Fuentes",
     "importRuns": "Ejecuciones recientes",
-    "importNote": "Solo se ejecutan fuentes de prueba hasta que se apruebe una fuente real; aquí todavía no se pueden cambiar las fuentes.",
+    "importNote": "Las fuentes reales funcionan con IMPORT_LIVE_ENABLED=true. Cada una se puede apagar aquí; las vacantes importadas nombran y enlazan su fuente.",
     "runCounters": "obtenidos {fetched} · creados {created} · actualizados {updated} · fusionados {merged} · rechazados {rejected} · caducados {expired}",
     "navReports": "Denuncias",
     "reportsTitle": "Denuncias",
@@ -635,7 +635,11 @@
       "open": "Abierta",
       "confirmed": "Confirmada",
       "dismissed": "Descartada"
-    }
+    },
+    "colEnabled": "Activa",
+    "importEnable": "Activar",
+    "importDisable": "Desactivar",
+    "importFixture": "Prueba"
   },
   "employerJobs": {
     "title": "Tus empleos",

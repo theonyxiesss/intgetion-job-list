@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ImportSourceToggle } from "@/components/admin/admin-actions";
 import { AdminShell, requireAdminPage } from "@/components/admin/admin-page";
 import {
   Alert,
@@ -45,6 +46,7 @@ export default async function AdminImportPage({
                 <Th>{t("colKind")}</Th>
                 <Th>{t("colLastRun")}</Th>
                 <Th>{t("colStatus")}</Th>
+                <Th>{t("colEnabled")}</Th>
               </tr>
             </thead>
             <tbody>
@@ -66,6 +68,16 @@ export default async function AdminImportPage({
                       </StatusBadge>
                     ) : (
                       "—"
+                    )}
+                  </Td>
+                  <Td>
+                    {source.republishAllowed ? (
+                      <ImportSourceToggle
+                        sourceId={source.id}
+                        enabled={source.enabled}
+                      />
+                    ) : (
+                      t("importFixture")
                     )}
                   </Td>
                 </Tr>
