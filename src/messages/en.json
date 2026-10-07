@@ -925,6 +925,13 @@
           "body": "{companyName} published {count, plural, one {# new job} other {# new jobs}}: {jobs}."
         }
       }
+    },
+    "bot": {
+      "title": "New jobs in the Telegram bot",
+      "text": "New jobs always collect here on the site. Turn this on to also get them as messages from our bot.",
+      "link": "Link Telegram in account settings",
+      "saved": "Saved.",
+      "error": "Could not save. Try again."
     }
   },
   "notificationSettings": {
