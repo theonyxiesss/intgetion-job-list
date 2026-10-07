@@ -865,5 +865,12 @@
 
 - Сделано: таблица `auth_email_waits`; magic-link/register кладут `wait` в письмо; телефон → `/auth/signed-in`; ПК poll `POST /api/auth/email-wait` забирает handoff-сессию. Текст «Эта почта уже зарегистрирована» без generic при сбое resend.
 - Команды проверки: `pnpm exec vitest run src/modules/auth/__tests__/auth-service.test.ts src/modules/auth/__tests__/email-wait.test.ts` → 0 (29 tests); `pnpm exec tsc --noEmit` → 0.
-- Миграции: `0030_auth_email_waits.sql`. Решения: D328.
+- Миграции: `0030_auth_email_waits.sql`. Решения: D328. Влита (PR #9).
 - OPEN QUESTION: нет.
+
+## [2026-10-07] — D328 отложено основателем — NOT DONE
+
+- Сделано: код D328 в проде, но живой сценарий «ссылка на телефоне → вход на ПК» **не работает хорошо**. По просьбе основателя — **не чинить сейчас**, записать в `docs/OPEN_TASKS.md` как **НЕ ЗАКРЫТО / ОТЛОЖЕНО**. Обход: открыть ссылку на том же устройстве/браузере или войти паролем / Telegram-ботом.
+- Команды проверки: код не менялся (только docs).
+- Миграции: нет. Решения: нет новых.
+- OPEN QUESTION: нет. Следующий заход — только по явной команде + факты с телефона/Network/`/api/auth/email-wait`.
