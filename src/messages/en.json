@@ -118,7 +118,8 @@
     "saved": "Saved jobs",
     "admin": "Administration",
     "chat": "Agent",
-    "bottom": "Main sections"
+    "bottom": "Main sections",
+    "pricing": "Pricing"
   },
   "locale": {
     "en": "English",
@@ -150,7 +151,22 @@
     "benefitMatchBody": "Every recommendation says which parts of the profile it used.",
     "benefitContactsTitle": "Contacts only by mutual interest",
     "benefitContactsBody": "A company sees contact details only after it expresses interest in an application.",
-    "postNote": "Posting a vacancy opens after an employer account exists."
+    "postNote": "Posting a vacancy opens after an employer account exists.",
+    "pricingTitle": "Free to search and to post",
+    "pricingText": "Paid plans add speed and reach. Nothing you need to find work or hire is behind a paywall.",
+    "pricingLink": "See plans",
+    "pricing": {
+      "candidates": {
+        "label": "For candidates",
+        "price": "Free · Plus from $5",
+        "text": "Every job, unlimited applications and matching are free. Plus adds instant alerts and a stronger career agent."
+      },
+      "companies": {
+        "label": "For companies",
+        "price": "Free · $79 with a guarantee",
+        "text": "Post for free, or pay $79 per job for 10 matching applications — or your money back."
+      }
+    }
   },
   "categories": {
     "engineering": "Engineering",
@@ -1310,7 +1326,10 @@
       }
     },
     "finalTitle": "Ready to hire?",
-    "finalText": "Post your first job — it takes 5 minutes."
+    "finalText": "Post your first job — it takes 5 minutes.",
+    "pricingTitle": "Free, or paid with a guarantee",
+    "pricingText": "Post for free, or pay $79 per job and get 10 matching applications — or your money back.",
+    "pricingLink": "See pricing"
   },
   "rss": {
     "title": "INTGETION JOB LIST — newest remote jobs",
@@ -1657,5 +1676,128 @@
     "copy": "Copy link",
     "copied": "Copied",
     "failed": "Could not open the link. Try again in a minute."
+  },
+  "pricing": {
+    "metaTitle": "Pricing — free job search, paid speed",
+    "metaDescription": "INTGETION pricing for companies and candidates. Posting jobs and searching stay free; paid plans add speed, reach and a refund if hiring does not work.",
+    "label": "Pricing",
+    "title": "Free for everything you need. Paid to go faster.",
+    "intro": "Posting a job and finding one are free and stay free. Paid plans add reach, speed and tools — and the company plan comes with a refund if the candidates do not come.",
+    "switchLabel": "Show plans for",
+    "for": {
+      "candidates": "For candidates",
+      "companies": "For companies"
+    },
+    "recommended": "Recommended",
+    "free": "Free",
+    "per": {
+      "job": "per job",
+      "month": "per month"
+    },
+    "yearly": "or ${price} a year",
+    "startFree": "Start free",
+    "soon": "Coming soon",
+    "soonNote": "Paid plans are not on sale yet. Card and USDT / USDC payments are coming; until then everything on the free plans works.",
+    "market": "Posting on the big remote boards costs $250–300 per job with no refund. Here it is free, or $79 with a guarantee.",
+    "alwaysFreeTitle": "What no plan ever sells",
+    "alwaysFree": {
+      "posting": "Posting jobs — a free plan stays, with the same moderation and the same catalogue.",
+      "trust": "The verified-company badge and Trusted status are earned, not bought.",
+      "contacts": "Candidate contacts open only on mutual interest, on every plan.",
+      "match": "The match percentage and the order of «For you» are the same for everyone.",
+      "apply": "Candidates never pay to apply or to be seen.",
+      "imported": "Jobs imported from other boards are never promoted for money."
+    },
+    "tiers": {
+      "start": {
+        "name": "Start",
+        "for": "Your first job, or trying the platform.",
+        "points": {
+          "jobs": "2 jobs live at a time, 30 days each",
+          "catalog": "Catalogue, collections and «For you» matching",
+          "applications": "Applications, statuses, mutual interest",
+          "digest": "Shown to matching candidates in the daily digest",
+          "stats": "Views and applications"
+        }
+      },
+      "hire": {
+        "name": "Hire",
+        "for": "One to five hires a year.",
+        "points": {
+          "guarantee": "10 applications from candidates who match 60%+ — or your money back",
+          "instant": "Sent at once to candidates who match 70%+",
+          "promoted": "Promoted block for 7 days",
+          "forecast": "See how many matching candidates there are before you pay",
+          "firstFree": "First one free for a verified company"
+        }
+      },
+      "team": {
+        "name": "Team",
+        "for": "Hiring all year, or an agency.",
+        "points": {
+          "jobs": "10 jobs live at a time, 45 days each",
+          "promoted": "3 promoted jobs a month",
+          "team": "Up to 10 teammates, funnel and CSV",
+          "api": "API for your own jobs",
+          "channel": "3 posts a month in the platform Telegram channel"
+        }
+      },
+      "free": {
+        "name": "Free",
+        "for": "Everyone.",
+        "points": {
+          "search": "Every job, collection and salary page",
+          "apply": "Unlimited applications",
+          "match": "«For you» with the same match % for everyone",
+          "alerts": "Daily alerts for saved searches",
+          "agent": "Career agent: 15 messages a day"
+        }
+      },
+      "plus": {
+        "name": "Plus",
+        "for": "Actively looking.",
+        "points": {
+          "instant": "New matching jobs the moment they appear",
+          "agent": "Career agent: 100 messages a day",
+          "letters": "A cover letter written for each job",
+          "views": "Which companies viewed your profile",
+          "hidden": "Hidden from your current employer"
+        }
+      },
+      "pro": {
+        "name": "Pro",
+        "for": "Going for a strong role or a raise.",
+        "points": {
+          "agent": "Career agent: 300 messages a day, stronger model",
+          "interview": "Mock interviews with feedback",
+          "review": "Full profile review with a plan",
+          "salary": "A salary report for negotiating",
+          "views": "When and how often companies viewed you"
+        }
+      }
+    },
+    "faqTitle": "Questions",
+    "faq": {
+      "guarantee": {
+        "q": "What if the paid job gets fewer applications than promised?",
+        "a": "After 30 days we count applications from candidates who match at least 60%. If there are fewer than 10, the money goes back automatically — you do not need to ask."
+      },
+      "cancel": {
+        "q": "Can I cancel?",
+        "a": "Yes, in one click. A subscription works to the end of the paid period; there is no yearly lock-in."
+      },
+      "crypto": {
+        "q": "Can I pay in crypto?",
+        "a": "Yes — USDT and USDC straight to the company wallet, prepaid for a period. Card payments go through Stripe."
+      },
+      "seen": {
+        "q": "Will employers see that I pay?",
+        "a": "No. A candidate plan is never shown to employers — not in applications, not on the profile."
+      },
+      "when": {
+        "q": "When can I buy?",
+        "a": "Paid plans are being prepared. Everything on the free plans works now."
+      }
+    }
   }
 }

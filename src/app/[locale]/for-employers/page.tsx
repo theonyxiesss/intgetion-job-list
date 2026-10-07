@@ -85,6 +85,24 @@ export default async function ForEmployersPage({
         </Container>
       </Section>
 
+      <Section labelledBy="pricing-title">
+        <Container className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-2">
+            <h2 id="pricing-title" className="t-h2">
+              {t("pricingTitle")}
+            </h2>
+            <p className="max-w-[60ch] text-fg-muted">{t("pricingText")}</p>
+          </div>
+          <Link
+            href="/pricing?for=companies"
+            {...navForward}
+            className={buttonClass("secondary", "md", "self-start")}
+          >
+            {t("pricingLink")}
+          </Link>
+        </Container>
+      </Section>
+
       <Section labelledBy="why-title">
         <Container className="flex flex-col gap-8">
           <h2 id="why-title" className="t-h2">
