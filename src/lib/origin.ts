@@ -24,7 +24,11 @@ export function isAllowedOrigin(
  * the CSRF rule would reject every update before the route can check the
  * secret. The route itself stays the gate: a wrong secret is still refused.
  */
-const SECRET_AUTHENTICATED = new Set(["/api/telegram/webhook"]);
+const SECRET_AUTHENTICATED = new Set([
+  "/api/telegram/webhook",
+  // Supabase Auth Send Email Hook (D325): no Origin; signature is the gate.
+  "/api/auth/hooks/send-email",
+]);
 
 export function needsOriginCheck(pathname: string): boolean {
   return !SECRET_AUTHENTICATED.has(pathname);

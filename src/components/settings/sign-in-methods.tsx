@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Button, buttonClass } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 
 type ErrorKey = "email_required" | "generic" | "rate_limited" | "unavailable";
 
@@ -84,7 +84,15 @@ export function SignInMethods({
       <div className="flex flex-col gap-2 border-b border-line pb-4">
         <p className="t-label text-fg-muted">{t("emailLabel")}</p>
         {email ? (
-          <p className="t-body break-all">{email}</p>
+          <div className="flex flex-col gap-2">
+            <p className="t-body break-all">{email}</p>
+            <p className="t-body-s text-fg-muted">{t("setPasswordHint")}</p>
+            <div>
+              <Link href="/reset-password" className={buttonClass("secondary")}>
+                {t("setPassword")}
+              </Link>
+            </div>
+          </div>
         ) : (
           <form onSubmit={addEmail} className="flex flex-col gap-3">
             <p className="t-body-s text-fg-muted">{t("noEmail")}</p>

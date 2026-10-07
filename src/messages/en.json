@@ -238,6 +238,50 @@
       "telegramFailed": "Telegram sign-in did not go through. Try again."
     }
   },
+  "authEmails": {
+    "signup": {
+      "subject": "Confirm your email · INTGETION JOB LIST",
+      "headline": "Confirm your email",
+      "body": "Thanks for signing up. Open the button below to confirm this address and finish creating your account. The link works once and expires in about an hour.",
+      "action": "Confirm email",
+      "preheader": "Confirm your email to finish signing up"
+    },
+    "magiclink": {
+      "subject": "Your sign-in link · INTGETION JOB LIST",
+      "headline": "Sign in",
+      "body": "Use the button below to sign in to INTGETION JOB LIST. The link works once. If you did not ask for it, you can ignore this email.",
+      "action": "Sign in",
+      "preheader": "Your one-time sign-in link"
+    },
+    "recovery": {
+      "subject": "Reset your password · INTGETION JOB LIST",
+      "headline": "Reset your password",
+      "body": "We received a request to reset the password for this account. Open the button below to choose a new password. If you did not ask for a reset, ignore this email — your password stays the same.",
+      "action": "Choose a new password",
+      "preheader": "Choose a new password for your account"
+    },
+    "emailChange": {
+      "subject": "Confirm your new email · INTGETION JOB LIST",
+      "headline": "Confirm your new email",
+      "body": "Confirm this address to use it for signing in to INTGETION JOB LIST.",
+      "action": "Confirm email",
+      "preheader": "Confirm your new email address"
+    },
+    "invite": {
+      "subject": "You are invited · INTGETION JOB LIST",
+      "headline": "You are invited",
+      "body": "Open the button below to accept the invitation and set up your account.",
+      "action": "Accept invitation",
+      "preheader": "Accept your invitation"
+    },
+    "emailAdd": {
+      "subject": "Confirm your email · INTGETION JOB LIST",
+      "headline": "Add this email to your account",
+      "body": "Open the button below to add this email to your INTGETION JOB LIST account. Then you can sign in with it, reset your password, and get notifications. The link works for 24 hours. After adding it, use “Forgot password?” on the sign-in page if you still need a password.",
+      "action": "Confirm email",
+      "preheader": "Add this email to your Telegram account"
+    }
+  },
   "onboarding": {
     "title": "What brings you here?",
     "candidate": "I’m looking for work",
@@ -1122,10 +1166,12 @@
     "signIn": {
       "title": "Sign-in methods",
       "emailLabel": "Email",
-      "noEmail": "Not added — notifications cannot reach you.",
-      "emailHint": "We will send a confirmation link.",
+      "noEmail": "Not added — notifications and password reset need an email.",
+      "emailHint": "We will send a confirmation link. After you confirm, you can set a password via “Forgot password?” on the sign-in page.",
       "addEmail": "Add email",
       "sent": "Check your inbox: we sent a confirmation link.",
+      "setPassword": "Set a password",
+      "setPasswordHint": "Email is linked. To sign in with a password, request a reset link once.",
       "telegramLabel": "Telegram",
       "telegramLinked": "Linked",
       "telegramNotLinked": "Not linked",

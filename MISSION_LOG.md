@@ -839,3 +839,10 @@
 - Команды проверки: код не менялся; runtime-логи Vercel (~2 ч) — вызовов `telegram/miniapp` не видно.
 - Миграции: нет. Решения: нет новых (D324 остаётся последней попыткой).
 - OPEN QUESTION: нет. Нужны факты с телефона (iOS/Android, URL BotFather, что на экране), прежде чем брать отдельную задачу.
+
+## [2026-10-07] — брендированные письма Auth (D325) — ветка cursor/auth-emails
+
+- Сделано: HTML-оболочка писем (headline/preheader/кнопка), тексты `authEmails` en/ru, hook `POST /api/auth/hooks/send-email` (Resend + Standard Webhooks), шаблоны `supabase/templates`, CSRF-исключение, в кабинете после привязки почты — «Задать пароль». Привязка почты к Telegram (D231) уже была — письмо переведено на общий бренд. **В master/прод не вливать** по просьбе основателя; включение Hook — RUNBOOK §15 / OPEN_TASKS.
+- Команды проверки: `pnpm exec vitest run src/lib/email-html.test.ts src/lib/security.test.ts src/modules/auth/__tests__/auth-emails.test.ts` → 0 (3 файла, 31 тест). eslint → 0. `pnpm exec tsc --noEmit` → 0.
+- Миграции: нет. Решения: D325. Ветка `cursor/auth-emails` — **не вливать в прод** без явной команды.
+- OPEN QUESTION: когда выкладывать — включить Send Email Hook в Supabase и `AUTH_SEND_EMAIL_HOOK_SECRET` в Vercel (RUNBOOK §15).

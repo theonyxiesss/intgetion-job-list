@@ -1,4 +1,3 @@
-import { siteEmailHtml } from "@/lib/email-html";
 import { HttpError, validationError } from "@/lib/http";
 import { logger } from "@/lib/logger";
 import { signToken, verifyToken } from "@/lib/signed-token";
@@ -9,10 +8,9 @@ import {
 } from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/supabase/env";
 import type { AppLocale } from "@/i18n/routing";
-import en from "@/messages/en.json";
-import ru from "@/messages/ru.json";
 import * as usersRepo from "../repo/users";
 import type { CurrentUser } from "./auth-service";
+import { renderAuthEmail } from "./auth-emails";
 
 const PURPOSE = "email-add";
 const TTL_MS = 24 * 60 * 60 * 1000;
@@ -60,15 +58,16 @@ export async function requestEmailAdd(
     secret(),
   );
   const link = `${siteUrl()}/${input.locale}/settings/email/confirm?token=${encodeURIComponent(token)}`;
-  const copy = (input.locale === "ru" ? ru : en).settings.email.mail;
+  const letter = renderAuthEmail({
+    kind: "email_add",
+    locale: input.locale,
+    actionHref: link,
+  });
   const outcome = await mailer({
     to: input.email,
-    subject: copy.subject,
-    text: `${copy.body}\n\n${link}`,
-    html: siteEmailHtml({
-      body: copy.body,
-      action: { href: link, label: copy.action },
-    }),
+    subject: letter.subject,
+    text: letter.text,
+    html: letter.html,
   });
   if (outcome === "skipped") {
     throw new HttpError(503, "EMAIL_UNAVAILABLE", "Email is not configured");
