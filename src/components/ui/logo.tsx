@@ -9,12 +9,11 @@ import { useId } from "react";
 export function LogoMark({ size = 28 }: { size?: number }) {
   const id = useId().replace(/:/g, "");
   const chrome = `${id}-chrome`;
-  const star = `${id}-star`;
   return (
     <svg
       width={size}
       height={size}
-      viewBox="150 120 760 760"
+      viewBox="76 42 500 500"
       fill="none"
       aria-hidden="true"
       focusable="false"
@@ -22,41 +21,22 @@ export function LogoMark({ size = 28 }: { size?: number }) {
       <defs>
         <linearGradient id={chrome} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" className="logo-hi" />
-          <stop offset="0.28" className="logo-mid" />
+          <stop offset="0.3" className="logo-mid" />
           <stop offset="0.5" className="logo-hi" />
-          <stop offset="0.72" className="logo-lo" />
+          <stop offset="0.75" className="logo-lo" />
           <stop offset="1" className="logo-hi" />
-        </linearGradient>
-        <linearGradient id={star} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" className="logo-hi" />
-          <stop offset="0.45" className="logo-mid" />
-          <stop offset="0.7" className="logo-hi" />
-          <stop offset="1" className="logo-lo" />
         </linearGradient>
       </defs>
       <path
-        d="M180 650 C265 430 535 245 820 260 C870 263 889 291 850 322 C760 392 650 390 595 382"
-        stroke={`url(#${chrome})`}
-        strokeWidth="25"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        d="M86 292 A240 70 0 1 0 566 292 A240 70 0 1 0 86 292 Z M112 287 A224 56 0 1 0 560 287 A224 56 0 1 0 112 287 Z"
+        transform="rotate(-24 326 292)"
+        fill={`url(#${chrome})`}
+        fillRule="evenodd"
       />
       <path
-        d="M835 322 C760 365 660 430 520 545 C390 650 280 727 205 715 C170 709 166 686 180 650"
-        stroke={`url(#${chrome})`}
-        strokeWidth="12"
-        strokeLinecap="round"
+        d="M300 158 C346 284 352 290 514 287 C354 300 352 304 448 448 C346 310 344 308 236 325 C342 300 346 292 300 158 Z"
+        fill={`url(#${chrome})`}
       />
-      <path
-        d="M530 350 C545 405 566 433 620 450 C566 459 537 481 520 535 C505 485 480 461 425 449 C479 435 508 408 530 350 Z"
-        fill={`url(#${star})`}
-        className="logo-edge"
-        strokeWidth="3"
-      />
-      <path d="M530 350 L553 285 L542 405 Z" fill={`url(#${star})`} />
-      <path d="M620 450 L720 449 L555 466 Z" fill={`url(#${star})`} />
-      <path d="M520 535 L535 625 L505 482 Z" fill={`url(#${star})`} />
-      <path d="M425 449 L330 462 L495 433 Z" fill={`url(#${star})`} />
     </svg>
   );
 }
