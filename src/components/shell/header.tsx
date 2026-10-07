@@ -1,4 +1,4 @@
-import { Bell, Send, Shield, User } from "lucide-react";
+import { Bell, Bot, Send, Shield, User } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { LogoutButton } from "@/components/auth/logout-button";
@@ -59,14 +59,19 @@ export async function Header() {
         ...(candidate ? [{ href: "/matches", label: t("nav.matches") }] : []),
         { href: "/pricing", label: t("nav.pricing") },
       ];
-  const showPostJob = !signedIn || employer;
   const more: NavItem[] = employer
-    ? [{ href: "/post-job", label: t("nav.postJob") }]
+    ? [
+        { href: "/chat", label: t("nav.chatWithAgent") },
+        { href: "/post-job", label: t("nav.postJob") },
+      ]
     : signedIn
-      ? [{ href: "/chat", label: t("nav.chat") }]
+      ? [
+          { href: "/post-job", label: t("nav.postJob") },
+          { href: "/chat", label: t("nav.chatWithAgent") },
+        ]
       : [
           { href: "/post-job", label: t("nav.postJob") },
-          { href: "/chat", label: t("nav.chat") },
+          { href: "/chat", label: t("nav.chatWithAgent") },
           { href: "/for-employers", label: t("nav.employers") },
         ];
   const account: NavItem[] = signedIn
@@ -117,13 +122,23 @@ export async function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-1">
-          {showPostJob && (
-            <span className="mr-2 hidden sm:inline-flex">
-              <ButtonLink {...navFade} href="/post-job">
-                {t("nav.postJob")}
-              </ButtonLink>
-            </span>
-          )}
+          <span className="mr-2 inline-flex">
+            <ButtonLink
+              {...navFade}
+              href="/chat"
+              variant="secondary"
+              icon={<Icon icon={Bot} size={16} />}
+              className="max-sm:size-11 max-sm:px-0"
+              title={t("nav.chatWithAgent")}
+            >
+              <span className="max-sm:sr-only">{t("nav.chatWithAgent")}</span>
+            </ButtonLink>
+          </span>
+          <span className="mr-2 hidden sm:inline-flex">
+            <ButtonLink {...navFade} href="/post-job">
+              {t("nav.postJob")}
+            </ButtonLink>
+          </span>
           <nav
             aria-label={t("nav.account")}
             className="flex items-center gap-1"

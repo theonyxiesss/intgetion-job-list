@@ -67,15 +67,24 @@ export default async function ProfilePage({
           title={profile?.fullName || t("title")}
           intro={profile?.headline ?? undefined}
           actions={
-            profile ? (
+            <span className="flex flex-wrap gap-2">
               <Link
-                href="/profile/edit"
+                href="/post-job"
                 {...navForward}
-                className={buttonClass("secondary")}
+                className={buttonClass("primary")}
               >
-                {t("edit")}
+                {t("postJob")}
               </Link>
-            ) : null
+              {profile ? (
+                <Link
+                  href="/profile/edit"
+                  {...navForward}
+                  className={buttonClass("secondary")}
+                >
+                  {t("edit")}
+                </Link>
+              ) : null}
+            </span>
           }
         />
         <section id="completeness" className="flex flex-col gap-3">

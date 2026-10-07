@@ -3,7 +3,7 @@
 import {
   Briefcase,
   FileText,
-  MessageCircle,
+  Bot,
   Sparkles,
   UserRound,
   type LucideIcon,
@@ -18,7 +18,7 @@ const ICONS: Record<string, LucideIcon> = {
   "/jobs": Briefcase,
   "/matches": Sparkles,
   "/applications": FileText,
-  "/chat": MessageCircle,
+  "/chat": Bot,
   "/profile": UserRound,
 };
 

@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/icon";
 import { navForward } from "@/components/ui/page-transition";
 import {
   ALWAYS_FREE,
+  freePlanHref,
   PRICING,
   PRICING_FAQ,
   type PricingAudience,
@@ -45,16 +46,20 @@ export default async function PricingPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ for?: string }>;
+  searchParams: Promise<{ for?: string; next?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("pricing");
+  const query = await searchParams;
   // D334: a signed-in user sees only their own plans; a guest can switch.
+  // D347: posting a job opens the company plans first.
   const viewer = await getViewer();
+  const posting = query.next === "post";
   const audience: PricingAudience = pricingAudienceFor(
     viewer.kind,
-    (await searchParams).for,
+    query.for,
+    query.next,
   );
   const tiers = PRICING[audience];
   const faq = PRICING_FAQ.map((key) => ({
@@ -70,7 +75,7 @@ export default async function PricingPage({
           <p className="t-label text-fg-muted">{t("label")}</p>
           <h1 className="t-display-l max-w-[22ch]">{t("title")}</h1>
           <p className="t-body-l max-w-[60ch] text-fg-muted">{t("intro")}</p>
-          {viewer.kind === "guest" ? (
+          {viewer.kind === "guest" && !posting ? (
             <nav aria-label={t("switchLabel")} className="flex flex-wrap gap-2">
               {(["candidates", "companies"] as const).map((key) => (
                 <Link
@@ -149,15 +154,13 @@ export default async function PricingPage({
                 <div className="mt-auto">
                   {tier.price === null ? (
                     <Link
-                      href={
-                        audience === "companies"
-                          ? "/for-employers"
-                          : "/register"
-                      }
+                      href={freePlanHref(audience, query.next)}
                       {...navForward}
                       className={buttonClass("secondary", "md", "w-full")}
                     >
-                      {t("startFree")}
+                      {posting && audience === "companies"
+                        ? t("continueFree")
+                        : t("startFree")}
                     </Link>
                   ) : (
                     <span
