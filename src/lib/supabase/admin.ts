@@ -225,11 +225,26 @@ export async function magicLinkTokenHash(
 export async function getAuthUserLoginEmail(
   authUid: string,
 ): Promise<string | null> {
+  const state = await getAuthUserLoginState(authUid);
+  return state?.email ?? null;
+}
+
+/** Login email as stored, including placeholders, plus whether it is confirmed. */
+export async function getAuthUserLoginState(authUid: string): Promise<{
+  email: string | null;
+  confirmed: boolean;
+} | null> {
   try {
     const response = await adminFetch(`/users/${encodeURIComponent(authUid)}`);
     if (!response?.ok) return null;
-    const body = (await response.json()) as { email?: string | null };
-    return body.email?.trim() || null;
+    const body = (await response.json()) as {
+      email?: string | null;
+      email_confirmed_at?: string | null;
+    };
+    return {
+      email: body.email?.trim() || null,
+      confirmed: Boolean(body.email_confirmed_at),
+    };
   } catch (error) {
     logger.warn({ err: error }, "auth admin: login email lookup failed");
     return null;

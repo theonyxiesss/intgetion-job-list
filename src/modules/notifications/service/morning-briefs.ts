@@ -214,6 +214,11 @@ async function briefCandidate(
       payload: {
         matchCount: jobs.length,
         sampleJobIds: jobs.map((job) => job.jobId),
+        sampleJobs: jobs.map((job) => ({
+          jobId: job.jobId,
+          title: job.title,
+          companyName: job.companyName,
+        })),
       },
       emailPayload: { jobs: jobs.map(emailCard) },
       now: ctx.now,

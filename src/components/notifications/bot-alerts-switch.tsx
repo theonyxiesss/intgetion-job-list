@@ -3,20 +3,27 @@
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { Switch } from "@/components/ui/choice";
-import { NEW_JOB_TYPES } from "./new-job-types";
+import {
+  newJobChannelPreferences,
+  type NewJobChannel,
+} from "./new-job-types";
 
 /**
- * One switch for "new jobs in the Telegram bot": it writes the telegram
- * channel of every new-job type at once. Without a linked Telegram the switch
- * is off and points to the account settings where it is linked (D329).
+ * One switch for every new-job type on one channel (D329, D349).
+ * Without a usable destination the switch stays off and points at account
+ * settings. When the agent is off, the switch is grey and does not save.
  */
 export function BotAlertsSwitch({
+  channel,
   linked,
   enabled,
+  locked = false,
   labels,
 }: {
+  channel: NewJobChannel;
   linked: boolean;
   enabled: boolean;
+  locked?: boolean;
   labels: {
     title: string;
     text: string;
@@ -29,17 +36,14 @@ export function BotAlertsSwitch({
   const [message, setMessage] = useState("");
 
   async function toggle(next: boolean) {
+    if (!linked || locked) return;
     setOn(next);
     setMessage("");
     const response = await fetch("/api/notifications/preferences", {
       method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        preferences: NEW_JOB_TYPES.map((type) => ({
-          type,
-          channel: "telegram",
-          enabled: next,
-        })),
+        preferences: newJobChannelPreferences(channel, next),
       }),
     });
     if (!response.ok) setOn(!next);
@@ -65,7 +69,7 @@ export function BotAlertsSwitch({
       <Switch
         label={labels.title}
         checked={on}
-        disabled={!linked}
+        disabled={!linked || locked}
         onChange={(event) => toggle(event.target.checked)}
       />
     </section>

@@ -17,6 +17,8 @@
    `deliverInTransaction` (`matches.digest`: in-app + письмо по настройкам) →
    `last_digest_at`. Потом заметка в чат `postSystemEvent`.
 7. Доставка дальше не наша: Telegram — `/api/cron/telegram` (D237), почта — 9A.
+8. `/notifications` (D349): галочка почты пишет канал `email` для тех же типов, что и Telegram. Заглушка или неподтверждённая почта — галочка выключена, ссылка на `/settings/account`. Переключатель «Агент подбирает мне вакансии» пишет `agent_briefs_enabled` только своему профилю; выключен — обе галочки серые.
+9. Текст Telegram для `matches.digest`: до пяти строк «Название — Компания» и ссылка на `/jobs/{id}` (`sampleJobs` в payload), внизу `/matches` и `/notifications`.
 
 ## Код
 

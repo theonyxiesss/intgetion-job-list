@@ -956,6 +956,24 @@
       "link": "Link Telegram in account settings",
       "saved": "Saved.",
       "error": "Could not save. Try again."
+    },
+    "emailAlerts": {
+      "title": "New jobs by email",
+      "text": "The same new jobs, sent to your email.",
+      "link": "Add an email",
+      "saved": "Saved.",
+      "error": "Could not save. Try again."
+    },
+    "agentBriefs": {
+      "title": "The agent picks jobs for me",
+      "text": "In the morning the agent sends jobs that fit. Turn this off if you do not want the brief.",
+      "saved": "Saved.",
+      "error": "Could not save. Try again.",
+      "off": "The agent is off, so these switches send nothing."
+    },
+    "brief": {
+      "allMatches": "All matches",
+      "turnOff": "Turn off"
     }
   },
   "notificationSettings": {

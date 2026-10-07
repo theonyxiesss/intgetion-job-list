@@ -90,7 +90,11 @@ describe("morning briefs cron against the database (D340)", () => {
     await runMorningBriefsCron({ now: morning, loadJobs });
 
     const notifications = await getDb().execute<{
-      payload: { matchCount: number; sampleJobIds: string[] };
+      payload: {
+        matchCount: number;
+        sampleJobIds: string[];
+        sampleJobs: { jobId: string; title: string; companyName: string }[];
+      };
     }>(sql`
       select payload from public.notifications
       where user_id = ${userId} and type = 'matches.digest'
@@ -100,6 +104,10 @@ describe("morning briefs cron against the database (D340)", () => {
     expect(notifications[0]!.payload.sampleJobIds).toEqual([
       jobIds[0],
       jobIds[1],
+    ]);
+    expect(notifications[0]!.payload.sampleJobs).toEqual([
+      { jobId: jobIds[0], title: "Rust engineer", companyName: "Acme" },
+      { jobId: jobIds[1], title: "Go engineer", companyName: "Beta" },
     ]);
 
     const emails = await getDb().execute<{
@@ -180,14 +188,24 @@ describe("morning briefs cron against the database (D340)", () => {
       set agent_briefs_enabled = false, last_digest_at = null
       where user_id = ${userId}
     `);
-    const run = await runSlot({
+    const before = await digestCount();
+    const dry = await runSlot({
       slotId: "cis",
       slotDate: "2031-03-20",
       now: new Date("2031-03-20T05:00:00Z"),
       dryRun: true,
       loadJobs,
     });
-    expect(run?.sent).toBe(0);
+    expect(dry?.sent).toBe(0);
+    const live = await runSlot({
+      slotId: "cis",
+      slotDate: "2031-03-21",
+      now: new Date("2031-03-21T05:00:00Z"),
+      dryRun: false,
+      loadJobs,
+    });
+    expect(live?.sent).toBe(0);
+    expect(await digestCount()).toBe(before);
   });
 
   it("counts in a dry run and sends nothing", async () => {

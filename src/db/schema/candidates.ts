@@ -70,7 +70,7 @@ export const candidateProfiles = pgTable(
     isHidden: boolean("is_hidden").notNull().default(false),
     completeness: smallint("completeness").notNull().default(0),
     lastDigestAt: timestamp("last_digest_at", { withTimezone: true }),
-    /** Morning briefs from the agent (D340); the switch comes in step B. */
+    /** Morning briefs from the agent (D340); the switch is on /notifications (D349). */
     agentBriefsEnabled: boolean("agent_briefs_enabled").notNull().default(true),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
