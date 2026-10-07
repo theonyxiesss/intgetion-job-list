@@ -24,6 +24,7 @@ import {
 import { Alert, Container, PageHeader } from "@/components/ui";
 import { requireSettingsUser } from "../require-settings-user";
 import { SettingsTabs } from "../settings-tabs";
+import { localePrefix } from "@/i18n/paths";
 
 const accountNotices = new Set([
   "identity_taken",
@@ -56,7 +57,7 @@ export default async function AccountSettingsPage({
       ? telegramAuthUrl({
           botId: telegramBotId(token),
           origin: siteUrl(),
-          returnTo: `${siteUrl()}/${locale}/auth/telegram?link=1`,
+          returnTo: `${siteUrl()}${localePrefix(locale)}/auth/telegram?link=1`,
         })
       : null;
 

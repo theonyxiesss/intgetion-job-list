@@ -7,6 +7,8 @@ import {
   users,
 } from "@/db/schema";
 import type { NotificationChannel, NotificationType } from "../lib/catalog";
+import { toAppLocale } from "@/i18n/locale";
+import type { AppLocale } from "@/i18n/routing";
 
 type Database = ReturnType<typeof getDb>;
 type Conn = Database | Parameters<Parameters<Database["transaction"]>[0]>[0];
@@ -25,13 +27,13 @@ export async function preferencesFor(userId: string, conn: Conn = getDb()) {
 export async function userLocale(
   userId: string,
   conn: Conn = getDb(),
-): Promise<"en" | "ru"> {
+): Promise<AppLocale> {
   const [row] = await conn
     .select({ locale: users.locale })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1);
-  return row?.locale === "ru" ? "ru" : "en";
+  return toAppLocale(row?.locale);
 }
 
 export async function insertNotification(
@@ -54,7 +56,7 @@ export async function insertEmail(
   input: {
     userId: string;
     type: string;
-    locale: "en" | "ru";
+    locale: AppLocale;
     payload: unknown;
     sendAfter: Date;
     notificationId?: string | null;

@@ -22,11 +22,12 @@ describe("IndexNow (D284)", () => {
     expect(indexNowKey({ INDEXNOW_KEY: "has space here" })).toBeNull();
   });
 
-  it("sends both language versions of a path", () => {
+  it("sends every language version of a path", () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", SITE);
     expect(localeUrls("/jobs/42")).toEqual([
-      `${SITE}/en/jobs/42`,
+      `${SITE}/jobs/42`,
       `${SITE}/ru/jobs/42`,
+      `${SITE}/es/jobs/42`,
     ]);
   });
 
@@ -59,7 +60,7 @@ describe("IndexNow (D284)", () => {
       host: "intgetion.com",
       key: "indexnow-test-value",
       keyLocation: `${SITE}${INDEXNOW_KEY_PATH}`,
-      urlList: [`${SITE}/en/jobs/7`, `${SITE}/ru/jobs/7`],
+      urlList: [`${SITE}/jobs/7`, `${SITE}/ru/jobs/7`, `${SITE}/es/jobs/7`],
     });
   });
 

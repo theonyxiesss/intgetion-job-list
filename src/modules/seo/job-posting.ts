@@ -1,3 +1,4 @@
+import { localePrefix } from "@/i18n/paths";
 /**
  * schema.org JobPosting for Google Jobs (D211). Pure: the job page passes
  * the public job DTO. Only fields the DTO already exposes publicly.
@@ -71,14 +72,14 @@ export function jobPostingJsonLd(
     title: job.title,
     description: job.description,
     identifier: { "@type": "PropertyValue", name: "INTGETION", value: job.id },
-    url: `${siteUrl}/${locale}/jobs/${job.id}`,
+    url: `${siteUrl}${localePrefix(locale)}/jobs/${job.id}`,
     ...(job.publishedAt ? { datePosted: job.publishedAt } : {}),
     ...(job.expiresAt ? { validThrough: job.expiresAt } : {}),
     employmentType: EMPLOYMENT[job.employmentType] ?? "OTHER",
     hiringOrganization: {
       "@type": "Organization",
       name: job.company.name,
-      sameAs: `${siteUrl}/${locale}/companies/${job.company.slug}`,
+      sameAs: `${siteUrl}${localePrefix(locale)}/companies/${job.company.slug}`,
     },
     ...(remote
       ? {

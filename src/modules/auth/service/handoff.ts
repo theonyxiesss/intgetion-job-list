@@ -6,6 +6,7 @@ import { siteUrl } from "@/lib/supabase/env";
 import { HttpError } from "@/lib/http";
 import type { AppLocale } from "@/i18n/routing";
 import type { CurrentUser } from "./auth-service";
+import { localePrefix } from "@/i18n/paths";
 
 /**
  * A one-time address that opens this person's session in another browser
@@ -29,7 +30,7 @@ export async function createSessionHandoff(
   if (!tokenHash) {
     throw new HttpError(503, "AUTH_UNAVAILABLE", "Cannot open a session link");
   }
-  const url = new URL(`/${locale}/auth/callback`, siteUrl());
+  const url = new URL(`${localePrefix(locale)}/auth/callback`, siteUrl());
   url.searchParams.set("token_hash", tokenHash);
   url.searchParams.set("type", "magiclink");
   return { url: url.toString() };

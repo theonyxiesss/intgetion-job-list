@@ -20,6 +20,7 @@ import {
   SubmitButton,
   useAuthError,
 } from "./fields";
+import { localePrefix } from "@/i18n/paths";
 
 // The password rule sits on the field, so its error shows together with the
 // others instead of after they are fixed.
@@ -165,7 +166,7 @@ export function RegisterForm({ next }: { next?: "chat" }) {
             {t.rich("acceptTerms", {
               terms: (chunks) => (
                 <a
-                  href={`/${locale}/terms`}
+                  href={`${localePrefix(locale)}/terms`}
                   target="_blank"
                   rel="noreferrer"
                   className="underline"
@@ -175,7 +176,7 @@ export function RegisterForm({ next }: { next?: "chat" }) {
               ),
               privacy: (chunks) => (
                 <a
-                  href={`/${locale}/privacy`}
+                  href={`${localePrefix(locale)}/privacy`}
                   target="_blank"
                   rel="noreferrer"
                   className="underline"

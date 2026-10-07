@@ -9,6 +9,7 @@ import {
   OG_TEXT,
   ogJobCard,
 } from "@/modules/seo/og";
+import { intlLocale } from "@/i18n/locale";
 
 /** The picture shown when a job is shared (D297). */
 export const alt = OG_TEXT.alt;
@@ -26,7 +27,7 @@ export default async function Image({
   const { locale, id } = await params;
   const job = await getJobForPublic(id, { locale });
   const t = await getTranslations({ locale, namespace: "jobs" });
-  const money = locale === "ru" ? "ru-RU" : "en-US";
+  const money = intlLocale(locale);
   const card = job
     ? ogJobCard({
         title: job.title,

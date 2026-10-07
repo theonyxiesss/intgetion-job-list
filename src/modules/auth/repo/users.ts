@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
 import type { SignupMetadata } from "../schemas";
+import type { AppLocale } from "@/i18n/routing";
 
 export type UserRow = typeof users.$inferSelect;
 
@@ -49,7 +50,7 @@ export async function findUserById(id: string): Promise<UserRow | undefined> {
 export async function updateUser(
   id: string,
   patch: {
-    locale?: "en" | "ru";
+    locale?: AppLocale;
     marketingOptIn?: boolean;
     accountType?: "candidate" | "employer";
   },

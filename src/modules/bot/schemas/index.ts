@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { routing } from "@/i18n/routing";
 
-const locale = z.enum(["en", "ru"]);
+const locale = z.enum(routing.locales);
 
 /**
  * `POST /api/bot/message` (section 6). The conversation comes from the

@@ -8,6 +8,7 @@ import {
   type NotificationPreferenceRow,
 } from "../lib/catalog";
 import { telegramText } from "./render";
+import { toAppLocale } from "@/i18n/locale";
 
 /** Notifications this old are not pushed any more (D237). */
 const MAX_AGE = "24 hours";
@@ -85,7 +86,7 @@ export async function runTelegramDispatch(input: {
     ).allowed;
     const text = allowed
       ? telegramText({
-          locale: row.locale === "ru" ? "ru" : "en",
+          locale: toAppLocale(row.locale),
           type: row.type,
           payload: row.payload ?? {},
           siteUrl: input.siteUrl,

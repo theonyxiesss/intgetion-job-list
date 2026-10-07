@@ -6,8 +6,7 @@ import { logger } from "@/lib/logger";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { siteEmailHtml } from "@/lib/email-html";
 import { siteUrl } from "@/lib/supabase/env";
-import en from "@/messages/en.json";
-import ru from "@/messages/ru.json";
+import { messagesFor } from "@/i18n/messages";
 import type { CurrentUser } from "@/modules/auth/service";
 import { safeNotify } from "@/modules/notifications/service";
 import * as companyRepo from "../repo/company-repo";
@@ -23,6 +22,8 @@ import {
   verificationTarget,
   type VerificationMethod,
 } from "./verification-rules";
+import { localePrefix } from "@/i18n/paths";
+import { toAppLocale } from "@/i18n/locale";
 
 /** Sends the corporate-email link; false when no provider is configured. */
 export type VerificationMailer = (message: {
@@ -35,14 +36,17 @@ export type VerificationMailer = (message: {
 const SUBJECT: Record<string, string> = {
   en: "Confirm your company domain",
   ru: "Подтвердите домен компании",
+  es: "Confirma el dominio de tu empresa",
 };
 const BODY: Record<string, string> = {
   en: "Open this link within 72 hours to confirm that you work at",
   ru: "Откройте ссылку в течение 72 часов, чтобы подтвердить, что вы работаете в",
+  es: "Abre este enlace en 72 horas para confirmar que trabajas en",
 };
 const ACTION: Record<string, string> = {
   en: "Confirm domain",
   ru: "Подтвердить домен",
+  es: "Confirmar dominio",
 };
 
 /**
@@ -53,7 +57,7 @@ export const resendVerificationMailer: VerificationMailer = async (message) => {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
   if (!key || !from) return false;
-  const locale = message.locale === "ru" ? "ru" : "en";
+  const locale = toAppLocale(message.locale);
   const text = `${BODY[locale]} ${message.companyName}:\n${message.link}`;
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -71,7 +75,7 @@ export const resendVerificationMailer: VerificationMailer = async (message) => {
         title: SUBJECT[locale],
         body: `${BODY[locale]} ${message.companyName}.`,
         action: { href: message.link, label: ACTION[locale]! },
-        fallbackLabel: (locale === "ru" ? ru : en).email.fallback,
+        fallbackLabel: messagesFor(locale).email.fallback,
       }),
     }),
     signal: AbortSignal.timeout(10_000),
@@ -227,8 +231,8 @@ export async function requestVerification(
   if (input.method === "dns_txt") {
     return { verification, dnsRecord: dnsRecordValue(token) };
   }
-  const locale = user.locale === "ru" ? "ru" : "en";
-  const link = `${siteUrl()}/${locale}/employer/company/verify?company=${companyId}&token=${token}`;
+  const locale = toAppLocale(user.locale);
+  const link = `${siteUrl()}${localePrefix(locale)}/employer/company/verify?company=${companyId}&token=${token}`;
   const emailSent = await deps.mailer({
     to: target,
     link,

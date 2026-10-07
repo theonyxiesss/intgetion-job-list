@@ -1,3 +1,4 @@
+import { localePrefix } from "@/i18n/paths";
 /** One step in a BreadcrumbList (D283). */
 export type BreadcrumbItem = { name: string; url: string };
 
@@ -66,7 +67,7 @@ export function homeGraphJsonLd(input: {
           "@type": "SearchAction",
           target: {
             "@type": "EntryPoint",
-            urlTemplate: `${input.url}/${input.locale}/jobs?q={search_term_string}`,
+            urlTemplate: `${input.url}${localePrefix(input.locale)}/jobs?q={search_term_string}`,
           },
           "query-input": "required name=search_term_string",
         },

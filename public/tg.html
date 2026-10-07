@@ -22,10 +22,18 @@
           stash();
           var locale = "en";
           try {
-            if (/^ru\b/i.test(navigator.language || "")) locale = "ru";
+            var lang = navigator.language || "";
+            if (/^ru\b/i.test(lang)) locale = "ru";
+            else if (/^es\b/i.test(lang)) locale = "es";
           } catch (e) {}
+          // D335: English is the root; `tgb=1` tells the proxy not to bounce
+          // again. No HTTP redirect, so the #tgWebAppData fragment survives.
+          var search = location.search || "";
+          search += (search ? "&" : "?") + "tgb=1";
           location.replace(
-            "/" + locale + (location.search || "") + (location.hash || ""),
+            (locale === "en" ? "/" : "/" + locale) +
+              search +
+              (location.hash || ""),
           );
         }
         var n = 0;

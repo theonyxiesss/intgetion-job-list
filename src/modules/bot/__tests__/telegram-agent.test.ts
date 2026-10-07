@@ -82,7 +82,7 @@ describe("the agent inside the Telegram bot (D311)", () => {
     await handleTelegramAgentUpdate("token", update("solidity"));
     expect(sent).toHaveLength(2);
     expect(sent[1].text).toContain("Solidity Engineer — Acme");
-    expect(sent[1].text).toContain("/en/jobs/job-1");
+    expect(sent[1].text).toContain("https://example.test/jobs/job-1");
   });
 
   it("answers in Russian when Telegram says the person speaks it", async () => {
@@ -100,7 +100,7 @@ describe("the agent inside the Telegram bot (D311)", () => {
         tool: "apply_to_job",
       } as BotEvent);
     await handleTelegramAgentUpdate("token", update("apply to the first one"));
-    expect(sent[0].text).toContain("/en/login");
+    expect(sent[0].text).toContain("/login");
   });
 
   it("keeps one thread per chat and starts a new one on /reset", async () => {

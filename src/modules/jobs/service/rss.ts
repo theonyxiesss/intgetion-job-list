@@ -1,3 +1,4 @@
+import { localePrefix } from "@/i18n/paths";
 /**
  * RSS 2.0 feed of the newest published jobs (D204, MARKERS.md 7a). Pure:
  * the route reads the jobs and passes plain items here. `selfPath` lets a
@@ -40,7 +41,7 @@ export function escapeXml(value: string): string {
 }
 
 function item(job: RssJob, channel: RssChannel): string {
-  const link = `${channel.siteUrl}/${channel.locale}/jobs/${job.id}`;
+  const link = `${channel.siteUrl}${localePrefix(channel.locale)}/jobs/${job.id}`;
   const description = [job.companyName, job.salary].filter(Boolean).join(" · ");
   return [
     "    <item>",
@@ -60,13 +61,13 @@ function item(job: RssJob, channel: RssChannel): string {
 
 export function buildRss(channel: RssChannel, jobs: readonly RssJob[]): string {
   const selfPath = channel.selfPath ?? "/jobs/rss.xml";
-  const self = `${channel.siteUrl}/${channel.locale}${selfPath}`;
+  const self = `${channel.siteUrl}${localePrefix(channel.locale)}${selfPath}`;
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
     "  <channel>",
     `    <title>${escapeXml(channel.title)}</title>`,
-    `    <link>${escapeXml(`${channel.siteUrl}/${channel.locale}/jobs`)}</link>`,
+    `    <link>${escapeXml(`${channel.siteUrl}${localePrefix(channel.locale)}/jobs`)}</link>`,
     `    <description>${escapeXml(channel.description)}</description>`,
     `    <language>${channel.locale}</language>`,
     `    <atom:link href="${escapeXml(self)}" rel="self" type="application/rss+xml"/>`,

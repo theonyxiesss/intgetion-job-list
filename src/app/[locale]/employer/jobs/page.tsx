@@ -19,6 +19,7 @@ import { Link } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { listJobsForUser } from "@/modules/jobs/service";
+import { localePrefix } from "@/i18n/paths";
 
 /** DESIGN.md 9.0: tabs by status, archive = expired, closed, removed. */
 const TABS = {
@@ -43,7 +44,7 @@ export default async function EmployerJobsPage({
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(`${localePrefix(locale)}/login`);
   const t = await getTranslations("employerJobs");
   const rows = await listJobsForUser(user.id);
   const requested = (await searchParams).tab;

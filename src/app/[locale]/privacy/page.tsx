@@ -8,6 +8,7 @@ import { LEGAL_DETAILS } from "@/config/legal";
 import { legalText } from "@/content/legal";
 import { CONSENT_COOKIE, consentInForce } from "@/lib/consent";
 import { languageAlternates, siteUrl } from "@/modules/seo/site";
+import { localePrefix } from "@/i18n/paths";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ export async function generateMetadata({
   return {
     title: t("privacyTitle"),
     alternates: {
-      canonical: `${siteUrl()}/${locale}/privacy`,
+      canonical: `${siteUrl()}${localePrefix(locale)}/privacy`,
       languages: languageAlternates("/privacy"),
     },
   };

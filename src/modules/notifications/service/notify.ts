@@ -21,6 +21,8 @@ import {
   updateEmailPayload,
   userLocale,
 } from "../repo/notifications";
+import { localePrefix } from "@/i18n/paths";
+import type { AppLocale } from "@/i18n/routing";
 
 const HOUR_MS = 60 * 60 * 1000;
 
@@ -36,7 +38,7 @@ export function unsubscribeSecret(): string {
 }
 
 export function unsubscribeUrl(
-  locale: "en" | "ru",
+  locale: AppLocale,
   userId: string,
   type: NotificationType,
   now = new Date(),
@@ -50,7 +52,7 @@ export function unsubscribeUrl(
     unsubscribeSecret(),
   );
   const site = process.env.NEXT_PUBLIC_SITE_URL || "http://127.0.0.1:3000";
-  return `${site}/${locale}/unsubscribe?token=${encodeURIComponent(token)}`;
+  return `${site}${localePrefix(locale)}/unsubscribe?token=${encodeURIComponent(token)}`;
 }
 
 async function queueEmail(

@@ -2,10 +2,11 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "./fixtures";
 
 // D204: the employers page and the RSS feed.
-test("a guest reaches the employers page from the header", async ({ page }) => {
+// D332: the header top level is jobs and pricing; employers sit in the footer.
+test("a guest reaches the employers page from the footer", async ({ page }) => {
   await page.goto("/en");
   await page
-    .getByRole("navigation", { name: "Main" })
+    .getByRole("contentinfo")
     .getByRole("link", { name: "For employers" })
     .click();
   await expect(page).toHaveURL(/\/en\/for-employers$/);
@@ -14,7 +15,7 @@ test("a guest reaches the employers page from the header", async ({ page }) => {
   );
   await expect(
     page.getByRole("link", { name: "Post a job" }).first(),
-  ).toHaveAttribute("href", "/en/register");
+  ).toHaveAttribute("href", "/post-job");
   await page.getByText("How much does it cost?").click();
   await expect(page.getByText("Posting is free for now.")).toBeVisible();
 

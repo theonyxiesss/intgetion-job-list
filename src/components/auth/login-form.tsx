@@ -21,12 +21,16 @@ const passwordLogin = z.object({
 });
 const magicLogin = z.object({ email: emailSchema });
 
+/** Pages a sign-in may return to (allowlist: no open redirect). */
+const RETURN_PATHS = { chat: "/chat", "post-job": "/post-job" } as const;
+export type LoginNext = keyof typeof RETURN_PATHS;
+
 export function LoginForm({
   initialError,
   next,
 }: {
   initialError?: string;
-  next?: "chat";
+  next?: LoginNext;
 }) {
   const t = useTranslations("auth");
   const errorText = useAuthError();
@@ -53,7 +57,7 @@ export function LoginForm({
       setFormError(await apiErrorCode(response));
       return;
     }
-    router.replace(next === "chat" ? "/chat" : "/");
+    router.replace(next ? RETURN_PATHS[next] : "/");
     router.refresh();
   });
 

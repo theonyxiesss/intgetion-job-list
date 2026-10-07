@@ -57,6 +57,7 @@ const admin: CurrentUser = {
 const target = {
   id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
   platformRole: "user" as const,
+  accountType: "candidate" as const,
   status: "active" as const,
   locale: "en",
   createdAt: at,

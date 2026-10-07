@@ -21,6 +21,7 @@ import { countFollowers } from "@/modules/follows/service";
 import { getCurrentUser } from "@/modules/auth/service";
 import { findOwnedJob } from "@/modules/jobs/service";
 import { EmployerJobTabs } from "../job-tabs";
+import { localePrefix } from "@/i18n/paths";
 
 const DAYS = 30;
 const STATUSES = [
@@ -56,7 +57,7 @@ export default async function EmployerJobStatsPage({
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(`${localePrefix(locale)}/login`);
   let companyId: string;
   try {
     companyId = (await findOwnedJob(id, user.id)).companyId;

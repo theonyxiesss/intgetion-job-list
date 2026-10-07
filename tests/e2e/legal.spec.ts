@@ -25,17 +25,17 @@ test("legal pages render and are linked where people consent", async ({
   const footer = page.locator("footer");
   await expect(
     footer.getByRole("link", { name: "Terms of Use" }),
-  ).toHaveAttribute("href", "/en/terms");
+  ).toHaveAttribute("href", "/terms");
   await expect(
     footer.getByRole("link", { name: "Privacy Policy" }),
-  ).toHaveAttribute("href", "/en/privacy");
+  ).toHaveAttribute("href", "/privacy");
 
   await page.goto("/en/register");
   const consent = page.locator("form label", { hasText: "I accept" });
   await expect(
     consent.getByRole("link", { name: "terms of use" }),
-  ).toHaveAttribute("href", "/en/terms");
+  ).toHaveAttribute("href", "/terms");
   await expect(
     consent.getByRole("link", { name: "privacy policy" }),
-  ).toHaveAttribute("href", "/en/privacy");
+  ).toHaveAttribute("href", "/privacy");
 });

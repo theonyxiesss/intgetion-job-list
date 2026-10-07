@@ -13,6 +13,7 @@ import { getCurrentUser } from "@/modules/auth/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
 import { JobForm } from "@/modules/jobs/ui/job-form";
 import { jobFormOptions } from "../form-options";
+import { localePrefix } from "@/i18n/paths";
 
 export default async function NewEmployerJobPage({
   params,
@@ -23,13 +24,13 @@ export default async function NewEmployerJobPage({
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(`${localePrefix(locale)}/login`);
   const companies = (await getCompaniesForUser(user.id)).filter(
     (company) =>
       company.origin === "internal" &&
       ["owner", "admin", "recruiter"].includes(company.role),
   );
-  if (!companies[0]) redirect(`/${locale}/employer/company`);
+  if (!companies[0]) redirect(`${localePrefix(locale)}/employer/company`);
   const t = await getTranslations("employerJobs");
   return (
     <main className="flex-1 py-10">

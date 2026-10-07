@@ -30,7 +30,7 @@ describe("JobPosting JSON-LD (D211)", () => {
     const ld = jobPostingJsonLd(job, "https://example.com", "en");
     expect(ld).toMatchObject({
       "@type": "JobPosting",
-      url: "https://example.com/en/jobs/00000000-0000-4000-8000-000000000001",
+      url: "https://example.com/jobs/00000000-0000-4000-8000-000000000001",
       employmentType: "CONTRACTOR",
       jobLocationType: "TELECOMMUTE",
       applicantLocationRequirements: [
@@ -100,7 +100,7 @@ describe("homepage graph (D282)", () => {
     expect(organization.logo).toBe("https://intgetion.com/icon.svg");
     expect(organization.sameAs).toBeUndefined();
     expect(website.potentialAction.target.urlTemplate).toBe(
-      "https://intgetion.com/en/jobs?q={search_term_string}",
+      "https://intgetion.com/jobs?q={search_term_string}",
     );
   });
 });
@@ -140,11 +140,12 @@ describe("imported job summary (D281)", () => {
 });
 
 describe("languageAlternates (D276)", () => {
-  it("answers for both languages and for everyone else", () => {
+  it("answers for every language and for everyone else", () => {
     expect(languageAlternates("/jobs")).toEqual({
-      en: "http://localhost:3000/en/jobs",
+      en: "http://localhost:3000/jobs",
       ru: "http://localhost:3000/ru/jobs",
-      "x-default": "http://localhost:3000/en/jobs",
+      es: "http://localhost:3000/es/jobs",
+      "x-default": "http://localhost:3000/jobs",
     });
   });
 });

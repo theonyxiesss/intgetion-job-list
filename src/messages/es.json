@@ -1,0 +1,1912 @@
+{
+  "jobs": {
+    "title": "Empleos remotos",
+    "subtitle": "Busca puestos remotos publicados.",
+    "filters": "Filtros",
+    "closeFilters": "Cerrar",
+    "clearFilter": "Quitar filtro",
+    "backToJobs": "Volver a los empleos",
+    "search": "Buscar empleos",
+    "category": "Categoría",
+    "anyCategory": "Cualquier categoría",
+    "skillsFilter": "Habilidades",
+    "format": "Modalidad de trabajo",
+    "employment": "Tipo de contrato",
+    "anyEmployment": "Cualquier tipo",
+    "country": "Código de país",
+    "minimumOverlap": "Coincidencia horaria mínima (horas)",
+    "timezoneExample": "Ejemplo: Europe/Berlin",
+    "salaryMin": "Salario mínimo",
+    "currency": "Moneda",
+    "currencyExample": "Ejemplo: USD",
+    "period": "Periodo del salario",
+    "basis": "Base del salario",
+    "hour": "Por hora",
+    "month": "Mensual",
+    "year": "Anual",
+    "gross": "Bruto",
+    "net": "Neto",
+    "sourceFilter": "Origen",
+    "anySource": "Cualquier origen",
+    "internal": "Directo",
+    "imported": "Importado",
+    "postedWithinLabel": "Publicado",
+    "anyDate": "En cualquier momento",
+    "day": "Último día",
+    "week": "Última semana",
+    "monthPosted": "Últimos 30 días",
+    "sort": "Ordenar por",
+    "newest": "Más recientes",
+    "relevance": "Relevancia",
+    "highestSalary": "Salario más alto",
+    "any": "Cualquier modalidad",
+    "remote": "Remoto",
+    "hybrid": "Híbrido",
+    "onsite": "Presencial",
+    "full_time": "Jornada completa",
+    "part_time": "Media jornada",
+    "contract": "Contrato",
+    "freelance": "Freelance",
+    "internship": "Prácticas",
+    "applyFilters": "Buscar",
+    "empty": "Ningún empleo coincide con estos filtros.",
+    "next": "Página siguiente",
+    "trusted": "Empleador de confianza",
+    "importedFrom": "Importado de",
+    "company": "Empresa",
+    "worldwide": "Todo el mundo",
+    "timezone": "Coincidencia de horario laboral",
+    "salaryMissing": "Salario no indicado",
+    "apply": "Postularme",
+    "sector": "Sector",
+    "seniority": "Nivel",
+    "perk": "Beneficios",
+    "restoreFilters": "Recuperar tus últimos filtros",
+    "recentlyViewed": "Has visto",
+    "similar": "Empleos similares",
+    "share": {
+      "title": "Compartir",
+      "copy": "Copiar enlace",
+      "copied": "Enlace copiado",
+      "more": "Más"
+    },
+    "closedTitle": "Este empleo ya no está abierto",
+    "closedIntro": "El empleador lo ha cerrado o ha caducado. Aquí tienes empleos del mismo tipo.",
+    "missingTitle": "Empleo no encontrado",
+    "missingIntro": "Puede que el enlace sea incorrecto o que el empleo se haya eliminado.",
+    "browseAll": "Todos los empleos",
+    "viewJob": "Ver empleo"
+  },
+  "companyPage": {
+    "trusted": "Empleador de confianza",
+    "verified": "Empresa verificada",
+    "openJobs": "{count, plural, =0 {Sin puestos abiertos} one {# puesto abierto} other {# puestos abiertos}}",
+    "companyLogo": "Logotipo de la empresa",
+    "openRoles": "Puestos abiertos",
+    "empty": "No hay puestos abiertos en este momento.",
+    "about": "Acerca de",
+    "jobsTab": "Empleos",
+    "tabsLabel": "Empresa",
+    "emptyAbout": "Esta empresa no ha añadido una descripción."
+  },
+  "product": {
+    "name": "INTGETION JOB LIST",
+    "wordmark": "INTGETION",
+    "wordmarkSub": "Job list"
+  },
+  "meta": {
+    "description": "Trabajo remoto. Coincidencias reales.",
+    "homeTitle": "Empleos remotos en Web3 y cripto",
+    "homeDescription": "Encuentra empleos remotos en Web3, cripto y blockchain: ingeniería, diseño, marketing y soporte. Rangos salariales, coincidencia horaria y afinidad con tu perfil.",
+    "ogAlt": "INTGETION Job List — trabajo remoto en Web3"
+  },
+  "nav": {
+    "home": "Inicio",
+    "main": "Principal",
+    "language": "Idioma",
+    "theme": "Tema de color",
+    "themeLight": "Tema claro",
+    "themeDark": "Tema oscuro",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión",
+    "account": "Cuenta",
+    "skip": "Saltar al contenido",
+    "menu": "Menú",
+    "jobs": "Empleos",
+    "matches": "Para ti",
+    "employers": "Para empleadores",
+    "saved": "Empleos guardados",
+    "admin": "Administración",
+    "chat": "Agente",
+    "bottom": "Secciones principales",
+    "pricing": "Precios",
+    "postJob": "Publicar empleo",
+    "myJobs": "Mis empleos",
+    "company": "Empresa"
+  },
+  "locale": {
+    "en": "Inglés",
+    "ru": "Ruso",
+    "short": {
+      "en": "EN",
+      "ru": "RU",
+      "es": "ES"
+    },
+    "native": {
+      "en": "English",
+      "ru": "Русский",
+      "es": "Español"
+    },
+    "es": "Español"
+  },
+  "home": {
+    "tagline": "Trabajo remoto. Coincidencias reales.",
+    "searchLabel": "Buscar",
+    "searchPlaceholder": "Puesto, habilidad o empresa",
+    "searchSubmit": "Buscar",
+    "latestEmpty": "Aquí aparecerán las vacantes publicadas.",
+    "feedTitle": "Empleos remotos",
+    "topJobs": "Empleos destacados",
+    "allJobs": "Todos los empleos",
+    "moreJobs": "Ver más empleos",
+    "faqTitle": "Preguntas",
+    "faq": {
+      "what": {
+        "q": "¿Qué es INTGETION JOB LIST?",
+        "a": "Un listado de empleos remotos. Busca, postúlate y deja que el asistente Spoki te sugiera puestos que encajen con tu perfil."
+      },
+      "free": {
+        "q": "¿Es gratis?",
+        "a": "Sí. Buscar, postularse y publicar empleos es gratis. Los planes de pago añaden rapidez y alcance: consulta Precios."
+      },
+      "apply": {
+        "q": "¿Cómo me postulo?",
+        "a": "Abre un empleo y pulsa Postularme. En los empleos importados te postulas en el sitio del propio empleador."
+      },
+      "post": {
+        "q": "¿Cómo publico un empleo?",
+        "a": "Pulsa Publicar empleo, inicia sesión y completa el formulario. El empleo aparece en el listado tras la revisión."
+      },
+      "contacts": {
+        "q": "¿Quién ve mis datos de contacto?",
+        "a": "Una empresa ve tus datos de contacto solo cuando hay interés mutuo."
+      }
+    }
+  },
+  "categories": {
+    "engineering": "Ingeniería",
+    "data": "Datos",
+    "design": "Diseño",
+    "product": "Producto",
+    "marketing": "Marketing",
+    "sales": "Ventas",
+    "support": "Soporte",
+    "operations": "Operaciones",
+    "finance": "Finanzas",
+    "hr": "RR. HH.",
+    "legal": "Legal",
+    "content": "Contenido",
+    "community": "Comunidad",
+    "research": "Investigación"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "body": "Esta dirección no forma parte de la plataforma.",
+    "code": "404",
+    "home": "Volver al inicio"
+  },
+  "error": {
+    "title": "Algo ha salido mal",
+    "body": "No se ha podido mostrar la página.",
+    "retry": "Reintentar",
+    "code": "500"
+  },
+  "auth": {
+    "loginTitle": "Iniciar sesión",
+    "registerTitle": "Crear una cuenta",
+    "resetTitle": "Restablecer contraseña",
+    "updatePasswordTitle": "Establece una nueva contraseña",
+    "checkEmailTitle": "Revisa tu correo",
+    "checkEmailBody": "Te hemos enviado un enlace. Ábrelo para confirmar tu dirección. El enlace solo funciona una vez.",
+    "checkEmailResentBody": "Esta dirección ya estaba pendiente de confirmación. Te hemos enviado un enlace nuevo: ábrelo para terminar.",
+    "checkEmailWaiting": "Esta página continuará automáticamente cuando se confirme el correo.",
+    "confirmedTitle": "Correo confirmado",
+    "confirmedBody": "Tu correo está confirmado. Puedes continuar en este dispositivo.",
+    "confirmedContinue": "Continuar",
+    "signedInTitle": "Inicio de sesión confirmado",
+    "signedInLoginBody": "El inicio de sesión está confirmado. Puedes cerrar esta ventana: la página de tu ordenador continuará sola.",
+    "signedInSignupBody": "Tu correo está confirmado. Puedes cerrar esta ventana: la página de tu ordenador continuará sola.",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "newPassword": "Nueva contraseña",
+    "passwordHint": "Al menos 10 caracteres.",
+    "methodLabel": "Método de inicio de sesión",
+    "methodPassword": "Contraseña",
+    "methodMagicLink": "Enlace por correo",
+    "magicLinkHint": "Te enviaremos por correo un enlace de acceso de un solo uso.",
+    "acceptTerms": "Acepto las <terms>condiciones de uso</terms> y la <privacy>política de privacidad</privacy>.",
+    "submitLogin": "Iniciar sesión",
+    "submitMagicLink": "Enviar enlace",
+    "submitRegister": "Crear cuenta",
+    "submitReset": "Enviar enlace de restablecimiento",
+    "submitNewPassword": "Guardar contraseña",
+    "noAccount": "¿Aún no tienes cuenta?",
+    "haveAccount": "¿Ya estás registrado?",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "toRegister": "Crear una cuenta",
+    "toLogin": "Iniciar sesión",
+    "resetHint": "Te enviaremos un enlace de restablecimiento si existe una cuenta con esta dirección.",
+    "errors": {
+      "invalid_email": "Introduce una dirección de correo válida.",
+      "password_too_short": "La contraseña debe tener al menos 10 caracteres.",
+      "password_too_long": "La contraseña debe tener como máximo 72 caracteres.",
+      "password_too_common": "Esta contraseña es demasiado común. Elige otra.",
+      "password_weak": "Esta contraseña es demasiado débil. Elige otra.",
+      "terms_required": "Acepta las condiciones para continuar.",
+      "invalid_credentials": "Correo o contraseña incorrectos.",
+      "email_not_confirmed": "Primero confirma tu correo: abre el enlace que te enviamos.",
+      "email_already_registered": "Este correo ya está registrado. Inicia sesión o usa «¿Olvidaste tu contraseña?».",
+      "invalid_link": "El enlace no es válido o ha caducado. Solicita uno nuevo.",
+      "missing_terms": "El registro no está terminado. Regístrate de nuevo y acepta las condiciones.",
+      "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
+      "session_missing": "El enlace de restablecimiento ha caducado. Solicita uno nuevo.",
+      "generic": "Algo ha salido mal. Inténtalo de nuevo.",
+      "telegram_failed": "El inicio de sesión con Telegram no ha funcionado. Inténtalo de nuevo o usa el correo.",
+      "telegram_taken": "Este Telegram ya está vinculado a otra cuenta.",
+      "account_type_required": "Elige quién eres.",
+      "oauth_unavailable": "Este acceso aún no está disponible. Usa el correo o Telegram."
+    },
+    "social": {
+      "title": "O continúa con",
+      "google": "Continuar con Google",
+      "x": "Continuar con X",
+      "telegram": "Continuar con Telegram",
+      "soon": "Próximamente",
+      "telegramTitle": "Iniciando sesión con Telegram",
+      "telegramProgress": "Comprobando la confirmación de Telegram…",
+      "telegramLinked": "Telegram está vinculado a tu cuenta.",
+      "telegramWaiting": "Esperando tu confirmación en Telegram…",
+      "telegramFailed": "El inicio de sesión con Telegram no se ha completado. Inténtalo de nuevo.",
+      "continueTerms": "Al continuar, aceptas los <terms>términos de uso</terms> y la <privacy>política de privacidad</privacy>."
+    },
+    "accountTypeLabel": "¿Quién eres?",
+    "accountType": {
+      "candidate": "Busco trabajo",
+      "candidateHint": "Encuentra empleos y postúlate.",
+      "employer": "Estoy contratando",
+      "employerHint": "Publica empleos para tu empresa.",
+      "settingsLabel": "Tipo de cuenta",
+      "saved": "Guardado",
+      "error": "No se ha podido guardar. Inténtalo de nuevo."
+    },
+    "useMagicLink": "Enlace por correo",
+    "usePassword": "Usar una contraseña",
+    "checkEmailHint": "¿No llegó? Revisa el spam o pide un enlace nuevo en un minuto.",
+    "backToLogin": "Volver al inicio de sesión"
+  },
+  "authEmails": {
+    "signup": {
+      "subject": "Confirma tu correo · INTGETION JOB LIST",
+      "headline": "Confirma tu correo",
+      "body": "Gracias por registrarte. Pulsa el botón de abajo para confirmar esta dirección y terminar de crear tu cuenta. El enlace solo funciona una vez y caduca en aproximadamente una hora.",
+      "action": "Confirmar correo",
+      "preheader": "Confirma tu correo para terminar el registro"
+    },
+    "magiclink": {
+      "subject": "Tu enlace de acceso · INTGETION JOB LIST",
+      "headline": "Iniciar sesión",
+      "body": "Usa el botón de abajo para iniciar sesión en INTGETION JOB LIST. El enlace solo funciona una vez. Si no lo has pedido, puedes ignorar este correo.",
+      "action": "Iniciar sesión",
+      "preheader": "Tu enlace de acceso de un solo uso"
+    },
+    "recovery": {
+      "subject": "Restablece tu contraseña · INTGETION JOB LIST",
+      "headline": "Restablece tu contraseña",
+      "body": "Hemos recibido una solicitud para restablecer la contraseña de esta cuenta. Pulsa el botón de abajo para elegir una nueva contraseña. Si no la has pedido, ignora este correo: tu contraseña no cambia.",
+      "action": "Elegir nueva contraseña",
+      "preheader": "Elige una nueva contraseña para tu cuenta"
+    },
+    "emailChange": {
+      "subject": "Confirma tu nuevo correo · INTGETION JOB LIST",
+      "headline": "Confirma tu nuevo correo",
+      "body": "Confirma esta dirección para usarla al iniciar sesión en INTGETION JOB LIST.",
+      "action": "Confirmar correo",
+      "preheader": "Confirma tu nueva dirección de correo"
+    },
+    "invite": {
+      "subject": "Te han invitado · INTGETION JOB LIST",
+      "headline": "Te han invitado",
+      "body": "Pulsa el botón de abajo para aceptar la invitación y configurar tu cuenta.",
+      "action": "Aceptar invitación",
+      "preheader": "Acepta tu invitación"
+    },
+    "emailAdd": {
+      "subject": "Confirma tu correo · INTGETION JOB LIST",
+      "headline": "Añade este correo a tu cuenta",
+      "body": "Pulsa el botón de abajo para añadir este correo a tu cuenta de INTGETION JOB LIST. Después podrás iniciar sesión con él, restablecer tu contraseña y recibir notificaciones. El enlace funciona durante 24 horas. Tras añadirlo, usa «¿Olvidaste tu contraseña?» en la página de inicio de sesión si aún necesitas una contraseña.",
+      "action": "Confirmar correo",
+      "preheader": "Añade este correo a tu cuenta de Telegram"
+    }
+  },
+  "onboarding": {
+    "title": "¿Qué te trae por aquí?",
+    "candidate": "Busco trabajo",
+    "candidateDescription": "Explora puestos remotos y crea tu perfil.",
+    "employer": "Estoy contratando",
+    "employerDescription": "Configura el perfil de tu empresa y prepárate para publicar puestos."
+  },
+  "company": {
+    "title": "Perfil de la empresa",
+    "status": "Estado",
+    "importedReadonly": "Los perfiles de empresa importados no se pueden editar ni se puede unir a ellos.",
+    "form": {
+      "name": "Nombre de la empresa",
+      "domain": "Dominio de la empresa",
+      "website": "Sitio web",
+      "description": "Sobre la empresa",
+      "logo": "Logotipo de la empresa (PNG, JPEG o WebP; máx. 2 MB)",
+      "save": "Guardar empresa",
+      "error": "No se ha podido guardar la empresa. Revisa los campos e inténtalo de nuevo.",
+      "saved": "Perfil de la empresa guardado."
+    },
+    "verifyLink": "Verificar la empresa",
+    "createTitle": "Crear una empresa",
+    "tabProfile": "Perfil",
+    "tabVerify": "Verificación",
+    "imported": "Importada",
+    "verifyHint": "Las empresas verificadas publican sin moderación previa y reciben una insignia.",
+    "statusLabel": {
+      "unverified": "Sin verificar",
+      "pending_verification": "Verificación pendiente",
+      "verified": "Verificada",
+      "rejected": "Rechazada",
+      "suspended": "Suspendida"
+    }
+  },
+  "profile": {
+    "nav": "Perfil",
+    "title": "Perfil",
+    "editTitle": "Editar perfil",
+    "empty": "Aún no tienes un perfil.",
+    "create": "Crear perfil",
+    "edit": "Editar perfil",
+    "completenessLabel": "Perfil completado",
+    "completenessValue": "{score}%",
+    "missingTitle": "Qué añadir",
+    "missing": {
+      "full_name": "Añade tu nombre (+5%)",
+      "headline": "Añade un titular (+10%)",
+      "desired_titles": "Añade un puesto deseado (+10%)",
+      "timezone": "Confirma tu zona horaria (+10%)",
+      "work_schedule": "Confirma tu horario y días de trabajo (+5%)",
+      "skills": "Añade al menos 3 habilidades (+15%)",
+      "experience_years": "Añade tus años de experiencia (+10%)",
+      "languages": "Añade un idioma (+10%)",
+      "salary": "Añade tus expectativas salariales (+10%)",
+      "work_preferences": "Confirma la modalidad y el tipo de contrato (+5%)",
+      "contact_email": "Añade un correo de contacto (+10%)"
+    },
+    "contactsTitle": "Contacto",
+    "contactsHint": "Una empresa solo los ve después de mostrar interés en tu candidatura.",
+    "noContacts": "Aún no hay correo de contacto.",
+    "tocLabel": "Secciones del perfil",
+    "toc": {
+      "basics": "Datos básicos",
+      "preferences": "Preferencias",
+      "experience": "Experiencia",
+      "skills": "Habilidades",
+      "languages": "Idiomas",
+      "salary": "Salario"
+    },
+    "fields": {
+      "fullName": "Nombre completo",
+      "headline": "Titular",
+      "desiredTitles": "Puestos deseados",
+      "desiredTitlesHint": "Hasta cinco, separados por comas.",
+      "country": "Código de país",
+      "city": "Ciudad",
+      "timezone": "Zona horaria",
+      "timezoneHint": "Tomada de tu navegador. Confírmala antes de guardar.",
+      "confirmTimezone": "Confirmo esta zona horaria",
+      "workHoursStart": "Inicio de la jornada",
+      "workHoursEnd": "Fin de la jornada",
+      "workDays": "Días de trabajo",
+      "workFormats": "Modalidad de trabajo",
+      "employmentTypes": "Tipo de contrato",
+      "experienceYears": "Años de experiencia",
+      "skills": "Habilidades",
+      "skillsHint": "Hasta 30, separadas por comas. Los nombres desconocidos se guardan como sugerencias.",
+      "skillLevel": "Nivel de la habilidad",
+      "language": "Código de idioma",
+      "languageLevel": "Nivel del idioma",
+      "salaryMin": "Salario mínimo, en unidades menores",
+      "salaryCurrency": "Moneda del salario",
+      "salaryPeriod": "Periodo del salario",
+      "salaryBasis": "Base del salario",
+      "contactEmail": "Correo de contacto",
+      "phone": "Teléfono",
+      "save": "Guardar perfil",
+      "sectors": "Sectores (hasta 5)",
+      "seniority": "Nivel"
+    },
+    "weekdays": {
+      "1": "Lunes",
+      "2": "Martes",
+      "3": "Miércoles",
+      "4": "Jueves",
+      "5": "Viernes",
+      "6": "Sábado",
+      "7": "Domingo"
+    },
+    "formats": {
+      "remote": "Remoto",
+      "hybrid": "Híbrido",
+      "onsite": "Presencial"
+    },
+    "employment": {
+      "full_time": "Jornada completa",
+      "part_time": "Media jornada",
+      "contract": "Contrato",
+      "freelance": "Freelance",
+      "internship": "Prácticas"
+    },
+    "levels": {
+      "novice": "Principiante",
+      "intermediate": "Intermedio",
+      "advanced": "Avanzado",
+      "expert": "Experto"
+    },
+    "cefr": {
+      "A1": "A1",
+      "A2": "A2",
+      "B1": "B1",
+      "B2": "B2",
+      "C1": "C1",
+      "C2": "C2",
+      "native": "Nativo"
+    },
+    "periods": {
+      "hour": "Hora",
+      "month": "Mes",
+      "year": "Año"
+    },
+    "basis": {
+      "gross": "Bruto",
+      "net": "Neto"
+    },
+    "errors": {
+      "generic": "No se ha podido guardar el perfil. Revisa los campos e inténtalo de nuevo.",
+      "timezone_confirm": "Confirma la zona horaria antes de guardar."
+    }
+  },
+  "admin": {
+    "title": "Administración",
+    "navLabel": "Administración",
+    "navHome": "Resumen",
+    "navUsers": "Usuarios",
+    "navCompanies": "Empresas",
+    "navAudit": "Registro de auditoría",
+    "navMetrics": "Métricas",
+    "navTeam": "Equipo",
+    "navFlags": "Interruptores",
+    "navSessions": "Mis sesiones",
+    "searchSections": "Secciones",
+    "searchPlaceholder": "Buscar secciones",
+    "searchEmpty": "Ninguna sección coincide.",
+    "loginTitle": "Acceso de administrador",
+    "loginIntro": "Correo y contraseña. Aquí no se usan enlaces de acceso ni otros proveedores.",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "signIn": "Iniciar sesión",
+    "loginFailed": "Correo o contraseña incorrectos.",
+    "mfaTitle": "Segundo factor",
+    "mfaIntro": "Confirma un código de tu autenticador, una llave de acceso o un código de recuperación. La consola permanece cerrada hasta entonces.",
+    "mfaCode": "Código",
+    "mfaVerify": "Confirmar",
+    "mfaSecret": "Secreto",
+    "mfaFailed": "Ese código no se ha aceptado.",
+    "passkey": "Usar una llave de acceso",
+    "recoveryTitle": "Códigos de recuperación",
+    "recoveryHint": "Guárdalos ahora. Solo se muestran una vez.",
+    "logout": "Cerrar sesión",
+    "sessionsTitle": "Mis sesiones",
+    "sessionsEmpty": "No hay otras sesiones.",
+    "revoke": "Finalizar",
+    "thisSession": "Esta sesión",
+    "teamTitle": "Equipo",
+    "teamIntro": "Las invitaciones llegarán más adelante. El propietario se designa con el script de permisos.",
+    "flagsTitle": "Interruptores",
+    "flagsIntro": "Los interruptores llegarán más adelante.",
+    "continueHome": "Continuar",
+    "navTaxonomy": "Sugerencias de habilidades",
+    "pendingSuggestions": "Sugerencias de habilidades pendientes de revisión: {count}",
+    "laterNote": "Contadores en vivo. Los elementos atrasados (más de 24 h) se marcan en la cola.",
+    "usersTitle": "Usuarios",
+    "companiesTitle": "Empresas",
+    "peopleSearch": "Nombre, correo o id",
+    "filterStatus": "Estado",
+    "filterAll": "Todos",
+    "statusActive": "Activo",
+    "statusSuspended": "Suspendido",
+    "statusBanned": "Bloqueado",
+    "statusDeleted": "Eliminado",
+    "filterRole": "Rol",
+    "roleCandidate": "Candidato",
+    "roleEmployer": "Empleador",
+    "roleBoth": "Ambos",
+    "colName": "Nombre",
+    "colEmail": "Correo",
+    "colPhone": "Teléfono",
+    "colTelegram": "Telegram",
+    "reasonLabel": "Motivo",
+    "reasonPlaceholder": "Por qué esta acción",
+    "ban": "Bloquear",
+    "deleteAccount": "Eliminar",
+    "signOutAll": "Cerrar todas las sesiones",
+    "resetPassword": "Restablecer contraseña",
+    "showPii": "Mostrar",
+    "noPii": "Nada que mostrar",
+    "addNote": "Añadir una nota",
+    "waitingSecond": "Esperando a un segundo administrador",
+    "rejectRequest": "Rechazar",
+    "trusted": "De confianza",
+    "jobsPublished": "{published} publicados de {total}",
+    "applicationsCount": "{count} candidaturas",
+    "openOnSite": "Abrir en el sitio",
+    "auditTitle": "Registro de auditoría",
+    "taxonomyTitle": "Sugerencias de habilidades",
+    "colId": "ID",
+    "colRole": "Rol",
+    "colStatus": "Estado",
+    "colCreated": "Creado",
+    "colActions": "Acciones",
+    "colTime": "Hora (UTC)",
+    "colAction": "Acción",
+    "colEntity": "Objeto",
+    "colActor": "Autor",
+    "colText": "Texto",
+    "colOccurrences": "Veces visto",
+    "colSource": "Origen",
+    "suspend": "Suspender",
+    "unsuspend": "Reactivar",
+    "map": "Asignar",
+    "reject": "Rechazar",
+    "mapTo": "Asignar a habilidad",
+    "chooseSkill": "Elige una habilidad",
+    "noSuggestions": "No hay sugerencias pendientes.",
+    "nextPage": "Página siguiente",
+    "actionFailed": "La acción ha fallado. Actualiza e inténtalo de nuevo.",
+    "navModeration": "Moderación",
+    "navJobs": "Empleos",
+    "navImport": "Importación",
+    "pendingQueue": "Elementos pendientes de moderación: {count}",
+    "moderationTitle": "Cola de moderación",
+    "queueEmpty": "No hay nada pendiente de moderación.",
+    "colReason": "Motivo",
+    "colRisk": "Riesgo",
+    "colTitle": "Título",
+    "colKind": "Tipo",
+    "colLastRun": "Última ejecución",
+    "colCounters": "Contadores",
+    "colError": "Error",
+    "overdue": "Atrasado",
+    "entityMissing": "Ya no existe",
+    "decisionNote": "Motivo (obligatorio para rechazar)",
+    "approve": "Aprobar",
+    "jobsTitle": "Empleos",
+    "searchTitle": "Buscar por título",
+    "search": "Buscar",
+    "removeReason": "Motivo de la retirada",
+    "remove": "Retirar",
+    "importTitle": "Importación",
+    "importSources": "Fuentes",
+    "importRuns": "Ejecuciones recientes",
+    "importNote": "Solo se ejecutan fuentes de prueba hasta que se apruebe una fuente real; aquí todavía no se pueden cambiar las fuentes.",
+    "runCounters": "obtenidos {fetched} · creados {created} · actualizados {updated} · fusionados {merged} · rechazados {rejected} · caducados {expired}",
+    "navReports": "Denuncias",
+    "reportsTitle": "Denuncias",
+    "reportsEmpty": "No hay denuncias abiertas.",
+    "reportsNote": "Tres denuncias confirmadas sobre una empresa en 30 días pausan todos sus empleos publicados y envían la empresa a la cola de moderación.",
+    "confirmReport": "Confirmar",
+    "dismissReport": "Descartar",
+    "overviewTitle": "Resumen",
+    "statQueue": "Cola de moderación",
+    "statReports": "Denuncias abiertas",
+    "statSuggestions": "Sugerencias de habilidades",
+    "open": "Abrir",
+    "moderationIntro": "Los más antiguos primero. Un rechazo necesita un motivo; el empleador lo ve.",
+    "tabJobs": "Empleos",
+    "tabCompanies": "Empresas",
+    "imported": "Importado",
+    "internal": "Interno",
+    "jobsEmpty": "Ningún empleo coincide.",
+    "auditEmpty": "El registro de auditoría está vacío.",
+    "importEmpty": "Aún no hay nada aquí.",
+    "runFetched": "Obtenidos",
+    "runCreated": "Creados",
+    "runUpdated": "Actualizados",
+    "runMerged": "Fusionados",
+    "runRejected": "Rechazados",
+    "runExpired": "Caducados",
+    "reportStatus": {
+      "open": "Abierta",
+      "confirmed": "Confirmada",
+      "dismissed": "Descartada"
+    }
+  },
+  "employerJobs": {
+    "title": "Tus empleos",
+    "newJob": "Crear un empleo",
+    "empty": "Aún no has creado ningún empleo.",
+    "status": "Estado",
+    "edit": "Editar empleo",
+    "back": "Volver a los empleos",
+    "form": {
+      "title": "Título del puesto",
+      "description": "Descripción (al menos 50 caracteres)",
+      "category": "Categoría",
+      "employmentType": "Tipo de contrato",
+      "seniority": "Nivel",
+      "sectors": "Sectores",
+      "perks": "Beneficios",
+      "workFormat": "Modalidad de trabajo",
+      "location": "Ubicación (obligatoria si es híbrido o presencial)",
+      "applicationMethod": "Forma de postularse",
+      "applicationUrl": "URL para postularse",
+      "applicationEmail": "Correo para postularse",
+      "salaryCurrency": "Moneda del salario (ISO 4217)",
+      "salaryMin": "Salario mínimo en unidades menores",
+      "salaryMax": "Salario máximo en unidades menores",
+      "skills": "Habilidades (separadas por comas)",
+      "save": "Guardar borrador",
+      "saving": "Guardando…",
+      "error": "No se ha podido guardar el empleo. Revisa los campos obligatorios.",
+      "saved": "Empleo guardado.",
+      "groups": {
+        "basics": "Datos básicos",
+        "details": "Detalles",
+        "application": "Cómo postularse",
+        "salary": "Salario",
+        "skills": "Habilidades",
+        "markers": "Sectores y beneficios"
+      },
+      "methods": {
+        "internal": "En esta plataforma",
+        "external_url": "En un sitio externo",
+        "email": "Por correo"
+      }
+    },
+    "actions": {
+      "publish": "Publicar",
+      "pause": "Pausar",
+      "close": "Cerrar",
+      "extend": "Ampliar 30 días",
+      "processing": "Procesando…",
+      "error": "No se ha podido cambiar el estado del empleo."
+    },
+    "colTitle": "Empleo",
+    "colPublished": "Publicado",
+    "colExpires": "Caduca",
+    "jobSections": "Secciones del empleo",
+    "tabJob": "Empleo",
+    "tabs": {
+      "published": "Publicados",
+      "moderation": "En moderación",
+      "drafts": "Borradores",
+      "archive": "Archivo"
+    },
+    "tabEmpty": {
+      "published": "No hay empleos publicados.",
+      "moderation": "No hay nada pendiente de moderación.",
+      "drafts": "No hay borradores.",
+      "archive": "El archivo está vacío."
+    },
+    "statusLabel": {
+      "draft": "Borrador",
+      "pending_moderation": "En moderación",
+      "published": "Publicado",
+      "paused": "En pausa",
+      "expired": "Caducado",
+      "closed": "Cerrado",
+      "removed": "Retirado"
+    },
+    "tabStats": "Estadísticas",
+    "stats": {
+      "title": "Últimos {days} días",
+      "note": "Estadísticas propias, sin terceros. Cada navegador se cuenta una vez al día; nada identifica a una persona.",
+      "views": "Visitas",
+      "visitors": "Visitantes",
+      "applications": "Candidaturas",
+      "conversion": "Visitantes que se postularon",
+      "daily": "Visitas por día",
+      "day": "Día",
+      "sources": "De dónde vinieron los visitantes",
+      "source": "Origen",
+      "direct": "Directo o desconocido",
+      "devices": "Dispositivos",
+      "device": "Dispositivo",
+      "count": "Visitas",
+      "deviceNames": {
+        "mobile": "Teléfono",
+        "tablet": "Tableta",
+        "desktop": "Ordenador"
+      },
+      "pipeline": "Candidaturas por estado",
+      "status": "Estado",
+      "empty": "Aún no hay visitas. Comparte el enlace del empleo para conseguir los primeros visitantes.",
+      "followers": "Siguen a la empresa"
+    }
+  },
+  "matches": {
+    "title": "Para ti",
+    "tabsLabel": "Listas de coincidencias",
+    "tabAll": "Todas",
+    "tabNew": "Nuevas",
+    "tabHidden": "Ocultas",
+    "new": "Nuevo",
+    "more": "Más",
+    "dismiss": "No me encaja",
+    "dismissTitle": "¿Por qué no encaja?",
+    "dismissConfirm": "Ocultar este empleo",
+    "dismissCancel": "Cancelar",
+    "dismissClose": "Cerrar",
+    "dismissError": "No se ha podido guardar.",
+    "emptyProfileTitle": "Completa tu perfil",
+    "emptyProfileText": "Para las coincidencias hacen falta habilidades, zona horaria y preferencias de trabajo.",
+    "emptyProfileAction": "Editar perfil",
+    "whyTitle": "Por qué encaja",
+    "hintTitle": "Actualiza tu perfil",
+    "hints": {
+      "salary": "Salario",
+      "format": "Modalidad de trabajo",
+      "timezone": "Zona horaria"
+    },
+    "empty": {
+      "all": "Aún no hay coincidencias.",
+      "new": "No hay coincidencias nuevas.",
+      "hidden": "No hay nada oculto."
+    },
+    "reasons": {
+      "salary": "Salario",
+      "format": "Modalidad",
+      "timezone": "Zona horaria",
+      "company": "Empresa",
+      "role": "Puesto",
+      "other": "Otro"
+    }
+  },
+  "explain": {
+    "skills": {
+      "matched": "Tiene las habilidades requeridas.",
+      "partial": "Cubre el {percent}% del peso de las habilidades requeridas.",
+      "neutral": "El empleo no indica habilidades requeridas.",
+      "failed": "No tiene ninguna de las habilidades requeridas."
+    },
+    "role": {
+      "matched": "El puesto coincide con el deseado.",
+      "partial": "Coincide en parte con los puestos deseados ({percent}% de similitud).",
+      "neutral": "El perfil no tiene puestos ni categorías deseados.",
+      "failed": "El puesto no coincide con los deseados.",
+      "sector": "Este empleo es de un sector que sigues."
+    },
+    "seniority": {
+      "partial": "El nivel está a más de un paso del tuyo."
+    },
+    "salary": {
+      "matched": "El salario cumple tus expectativas ({job}).",
+      "partial": "El salario está algo por debajo de tus expectativas ({job}).",
+      "neutral": "No se puede comparar el salario: faltan o están desactualizados la moneda, el periodo, la base o el tipo de cambio.",
+      "failed": "El salario ofrecido está muy por debajo de tus expectativas ({job})."
+    },
+    "tzOverlap": {
+      "matched": "El horario laboral coincide lo suficiente ({percent}% de la coincidencia requerida).",
+      "partial": "El horario laboral coincide en parte ({percent}% de la coincidencia requerida).",
+      "neutral": "El empleo no exige zona horaria.",
+      "failed": "El horario laboral no coincide."
+    },
+    "experience": {
+      "matched": "La experiencia cumple el requisito.",
+      "partial": "La experiencia solo cumple en parte el rango solicitado ({percent}%).",
+      "neutral": "El empleo no exige experiencia.",
+      "failed": "No hay suficiente experiencia para este puesto."
+    },
+    "languages": {
+      "matched": "Cumple los requisitos de idiomas.",
+      "partial": "Cumple en parte los requisitos de idiomas ({percent}%).",
+      "neutral": "El empleo no indica requisitos de idiomas.",
+      "failed": "No cumple los requisitos de idiomas."
+    }
+  },
+  "notifications": {
+    "nav": "Notificaciones",
+    "title": "Notificaciones",
+    "tabsLabel": "Notificaciones",
+    "tabAll": "Todas",
+    "tabUnread": "No leídas",
+    "empty": "Aún no hay notificaciones.",
+    "markAll": "Marcar todas como leídas",
+    "unsubscribe": {
+      "link": "Darse de baja de estos correos",
+      "title": "Darse de baja",
+      "button": "Desactivar estos correos",
+      "done": "Estos correos están desactivados."
+    },
+    "types": {
+      "applicationCreated": {
+        "inapp": {
+          "title": "Nueva candidatura",
+          "body": "Un candidato se ha postulado a {jobTitle}."
+        },
+        "email": {
+          "subject": "Nuevas candidaturas",
+          "body": "Tienes {count, plural, one {# candidatura nueva} other {# candidaturas nuevas}}: {jobs}."
+        }
+      },
+      "applicationViewed": {
+        "inapp": {
+          "title": "Candidatura vista",
+          "body": "El empleador ha visto tu candidatura a {jobTitle}."
+        }
+      },
+      "applicationStatusChanged": {
+        "inapp": {
+          "title": "Cambio de estado de la candidatura",
+          "body": "Tu candidatura a {jobTitle} está ahora en «{status}»."
+        },
+        "email": {
+          "subject": "El estado de tu candidatura ha cambiado",
+          "body": "Tu candidatura a {jobTitle} ha pasado a la fase «{status}»."
+        }
+      },
+      "applicationWithdrawn": {
+        "inapp": {
+          "title": "Candidatura retirada",
+          "body": "Un candidato ha retirado su candidatura a {jobTitle}."
+        }
+      },
+      "mutualInterestRevealed": {
+        "inapp": {
+          "title": "Contactos visibles",
+          "body": "Interés mutuo en {jobTitle}: los contactos ya están disponibles."
+        },
+        "email": {
+          "subject": "Los contactos ya están disponibles",
+          "body": "Hay interés mutuo en {jobTitle}. Abre la candidatura para ver los contactos."
+        }
+      },
+      "jobModerationDecided": {
+        "inapp": {
+          "title": "Empleo moderado",
+          "body": "Tu empleo {jobTitle} ha sido {decision}."
+        },
+        "email": {
+          "subject": "Tu empleo ha sido moderado",
+          "body": "Tu empleo {jobTitle} ha sido {decision} por la moderación."
+        }
+      },
+      "jobExpiring": {
+        "inapp": {
+          "title": "El empleo caduca pronto",
+          "body": "{jobTitle} caduca el {date}."
+        },
+        "email": {
+          "subject": "Tu empleo caduca en 3 días",
+          "body": "{jobTitle} caduca el {date}. Renuévalo para seguir recibiendo candidaturas."
+        }
+      },
+      "jobClosed": {
+        "inapp": {
+          "title": "Empleo cerrado",
+          "body": "El empleador ha cerrado {jobTitle}."
+        }
+      },
+      "companyVerificationDecided": {
+        "inapp": {
+          "title": "Verificación resuelta",
+          "body": "Tu empresa {companyName} ha sido {decision}."
+        },
+        "email": {
+          "subject": "Verificación de la empresa resuelta",
+          "body": "Tu empresa {companyName} ha sido {decision}."
+        }
+      },
+      "matchesDigest": {
+        "inapp": {
+          "title": "Nuevas coincidencias",
+          "body": "{count, plural, one {# empleo nuevo encaja contigo} other {# empleos nuevos encajan contigo}}."
+        },
+        "email": {
+          "subject": "Tus empleos afines",
+          "body": "{count, plural, one {# empleo nuevo encaja con tu perfil} other {# empleos nuevos encajan con tu perfil}}: {jobs}."
+        }
+      },
+      "reportDecided": {
+        "inapp": {
+          "title": "Denuncia revisada",
+          "body": "Tu denuncia ha sido revisada: {decision}."
+        }
+      },
+      "searchAlert": {
+        "inapp": {
+          "title": "Nuevos empleos para una búsqueda guardada",
+          "body": "{count, plural, one {# empleo nuevo} other {# empleos nuevos}} para «{searchName}»."
+        },
+        "email": {
+          "subject": "Nuevos empleos: {searchName}",
+          "body": "{count, plural, one {# empleo nuevo coincide} other {# empleos nuevos coinciden}} con tu búsqueda guardada «{searchName}»: {jobs}."
+        }
+      },
+      "companyNewJobs": {
+        "inapp": {
+          "title": "Nuevos empleos en una empresa que sigues",
+          "body": "{companyName}: {count, plural, one {# empleo nuevo} other {# empleos nuevos}}."
+        },
+        "email": {
+          "subject": "Nuevos empleos en {companyName}",
+          "body": "{companyName} ha publicado {count, plural, one {# empleo nuevo} other {# empleos nuevos}}: {jobs}."
+        }
+      }
+    },
+    "bot": {
+      "title": "Nuevos empleos en el bot de Telegram",
+      "text": "Los nuevos empleos siempre se reúnen aquí, en el sitio. Activa esto para recibirlos también como mensajes de nuestro bot.",
+      "link": "Vincula Telegram en los ajustes de la cuenta",
+      "saved": "Guardado.",
+      "error": "No se ha podido guardar. Inténtalo de nuevo."
+    }
+  },
+  "notificationSettings": {
+    "title": "Ajustes de notificaciones",
+    "inapp": "En la aplicación",
+    "email": "Correo",
+    "saved": "Guardado",
+    "error": "No se ha podido guardar este ajuste.",
+    "telegram": "Telegram",
+    "alwaysOnTitle": "Correos de cuenta y seguridad",
+    "alwaysOnBody": "La confirmación del correo, los enlaces de acceso y el restablecimiento de contraseña se envían siempre. Hacen falta para conservar el acceso a tu cuenta."
+  },
+  "applications": {
+    "nav": "Candidaturas",
+    "title": "Tus candidaturas",
+    "tabsLabel": "Candidaturas",
+    "tabActive": "Activas",
+    "tabProgress": "Entrevistas y ofertas",
+    "tabArchive": "Archivo",
+    "empty": "Aún no te has postulado a ningún empleo.",
+    "needProfile": "Crea un perfil de candidato antes de postularte.",
+    "createProfile": "Crear perfil",
+    "withdraw": "Retirar",
+    "withdrawing": "Retirando…",
+    "withdrawFailed": "No se ha podido retirar esta candidatura.",
+    "status": {
+      "applied": "Enviada",
+      "viewed": "Vista",
+      "shortlisted": "Preseleccionada",
+      "interview": "Entrevista",
+      "offer": "Oferta",
+      "hired": "Contratado",
+      "rejected": "Rechazada",
+      "withdrawn": "Retirada"
+    },
+    "emptyActive": "No hay candidaturas activas.",
+    "emptyProgress": "No hay entrevistas ni ofertas.",
+    "emptyArchive": "No hay nada en el archivo."
+  },
+  "employerApplications": {
+    "open": "Candidaturas",
+    "title": "Candidaturas",
+    "empty": "Aún no hay candidaturas.",
+    "unnamed": "Candidato",
+    "back": "Volver al empleo",
+    "backToList": "Volver a las candidaturas",
+    "profileTitle": "Perfil del candidato",
+    "noProfile": "Este candidato no tiene perfil.",
+    "coverNote": "Carta de presentación",
+    "next": "Página siguiente",
+    "status": {
+      "applied": "Enviada",
+      "viewed": "Vista",
+      "shortlisted": "Preseleccionada",
+      "interview": "Entrevista",
+      "offer": "Oferta",
+      "hired": "Contratado",
+      "rejected": "Rechazada",
+      "withdrawn": "Retirada"
+    },
+    "actions": {
+      "rejected": "Rechazar",
+      "interview": "Entrevista",
+      "offer": "Oferta",
+      "hired": "Contratado",
+      "processing": "Procesando…",
+      "error": "No se ha podido cambiar el estado."
+    },
+    "all": "Todas",
+    "emptyStatus": "No hay candidaturas con este estado.",
+    "candidate": "Candidato",
+    "appliedAt": "Enviada",
+    "experience": "Experiencia, años",
+    "timezone": "Zona horaria",
+    "hours": "Horario laboral",
+    "formats": "Modalidad",
+    "languages": "Idiomas"
+  },
+  "expressInterest": {
+    "button": "Mostrar interés",
+    "processing": "Procesando…",
+    "error": "No se ha podido mostrar interés."
+  },
+  "contacts": {
+    "title": "Contactos",
+    "empty": "No hay contactos abiertos.",
+    "unnamed": "Candidato",
+    "intro": "Candidatos cuyos contactos están abiertos tras el interés mutuo.",
+    "job": "Empleo",
+    "contactsCol": "Contactos"
+  },
+  "companyVerify": {
+    "title": "Verificación de la empresa",
+    "status": "Estado de la empresa: {status}",
+    "trusted": "De confianza",
+    "stepsTitle": "Qué necesita la verificación",
+    "stepDomain": "Dominio confirmado mediante un correo corporativo o un registro DNS TXT",
+    "stepRequisites": "Razón social, país y un sitio web en el dominio de la empresa",
+    "stepFirstJob": "El primer empleo ha superado la moderación manual",
+    "requisitesTitle": "Datos de la empresa",
+    "legalName": "Razón social",
+    "country": "País (código de dos letras)",
+    "website": "Sitio web en {domain}",
+    "saveRequisites": "Guardar datos",
+    "saved": "Guardado.",
+    "requestTitle": "Confirma el dominio",
+    "method": "Método",
+    "methodEmail": "Correo corporativo",
+    "methodDns": "Registro DNS TXT en {domain}",
+    "email": "Tu correo en {domain}",
+    "request": "Enviar",
+    "emailSent": "Hemos enviado un enlace a esa dirección. Funciona durante 72 horas.",
+    "emailNotConfigured": "El envío de correos aún no está configurado en este servidor. Usa el método DNS.",
+    "dnsAdd": "Añade al dominio el registro TXT de abajo y luego confirma.",
+    "dnsRecord": "Registro TXT:",
+    "confirmTitle": "Confirmar",
+    "token": "Código del enlace o del registro TXT",
+    "confirm": "Confirmar",
+    "confirmed": "Dominio confirmado.",
+    "failed": "No ha funcionado. Revisa los campos e inténtalo de nuevo.",
+    "errors": {
+      "FREE_EMAIL_DOMAIN": "Los dominios de correo gratuitos no sirven para verificar una empresa.",
+      "DOMAIN_MISMATCH": "El correo debe estar en el dominio de la empresa.",
+      "DOMAIN_REQUIRED": "Primero indica el dominio en el perfil de la empresa.",
+      "REAPPLY_TOO_SOON": "Tras un rechazo puedes volver a solicitarlo 7 días después de la última solicitud.",
+      "TOKEN_EXPIRED": "El código ha caducado. Solicita uno nuevo.",
+      "DNS_RECORD_NOT_FOUND": "El registro TXT aún no es visible. Los cambios de DNS pueden tardar.",
+      "RATE_LIMITED": "Demasiadas solicitudes hoy. Inténtalo mañana."
+    }
+  },
+  "savedJobs": {
+    "title": "Empleos guardados",
+    "empty": "Aún no tienes empleos guardados.",
+    "savedOn": "Guardado",
+    "unsave": "Quitar de guardados",
+    "unsaveError": "No se ha podido quitar el empleo. Inténtalo de nuevo."
+  },
+  "jobActions": {
+    "save": "Guardar",
+    "saved": "Guardado",
+    "unsave": "Quitar",
+    "saveError": "No se ha podido guardar el empleo. Inténtalo de nuevo.",
+    "hide": "Ocultar",
+    "hideTitle": "Ocultar este empleo",
+    "hideScopeJob": "Ocultar este empleo",
+    "hideScopeCompany": "Ocultar todos los empleos de esta empresa",
+    "reasonLabel": "Motivo (opcional)",
+    "reasonNone": "Sin motivo",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "hideError": "No se ha podido ocultar el empleo. Inténtalo de nuevo.",
+    "report": "Denunciar",
+    "reportTitle": "Denunciar este empleo",
+    "detailsLabel": "Detalles (opcional)",
+    "reportSuccess": "Gracias. Tu denuncia se ha enviado para revisión.",
+    "alreadyReported": "Ya has denunciado este empleo.",
+    "rateLimited": "Demasiadas denuncias hoy. Inténtalo mañana.",
+    "reportError": "No se ha podido enviar la denuncia. Inténtalo de nuevo.",
+    "reasons": {
+      "salary": "Salario",
+      "format": "Modalidad de trabajo",
+      "timezone": "Zona horaria",
+      "company": "Empresa",
+      "role": "Puesto",
+      "other": "Otro"
+    },
+    "reportReasons": {
+      "scam": "Estafa",
+      "spam": "Spam",
+      "fake_company": "Empresa falsa",
+      "discrimination": "Discriminación",
+      "wrong_info": "Información incorrecta",
+      "inappropriate": "Contenido inapropiado",
+      "other": "Otro"
+    }
+  },
+  "footer": {
+    "candidates": "Candidatos",
+    "employers": "Empleadores",
+    "account": "Cuenta",
+    "company": "Perfil de la empresa",
+    "contacts": "Contactos abiertos",
+    "settings": "Ajustes de notificaciones",
+    "rights": "Todos los derechos reservados.",
+    "language": "Idioma (pie de página)",
+    "employerJobs": "Empleos de la empresa",
+    "legal": "Información legal",
+    "platform": "Plataforma",
+    "resources": "Recursos",
+    "faq": "Preguntas frecuentes",
+    "salaries": "Salarios"
+  },
+  "ui": {
+    "close": "Cerrar",
+    "requestId": "ID de la solicitud",
+    "moreSkills": "+{count}",
+    "notSpecified": "No indicado",
+    "previous": "Atrás",
+    "next": "Siguiente",
+    "copy": "Copiar",
+    "copied": "Copiado"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "tabNotifications": "Notificaciones",
+    "tabPrivacy": "Privacidad",
+    "tabAccount": "Cuenta",
+    "saved": "Guardado.",
+    "failed": "No se ha podido guardar. Inténtalo de nuevo.",
+    "cancel": "Cancelar",
+    "hideProfile": "Ocultar mi perfil a los empleadores",
+    "hideProfileText": "Las empresas a las que te has postulado siguen viendo tu candidatura; nadie más encuentra tu perfil.",
+    "marketing": "Novedades del producto por correo",
+    "marketingText": "Correos ocasionales sobre nuevas funciones. Desactivado por defecto.",
+    "exportTitle": "Descargar tus datos",
+    "exportText": "Un archivo JSON con tu perfil, contactos, candidaturas, empleos guardados, comentarios, denuncias y notificaciones.",
+    "exportButton": "Descargar JSON",
+    "emailLanguage": "Idioma de los correos",
+    "emailLanguageText": "Las notificaciones se envían en este idioma.",
+    "deleteTitle": "Eliminar cuenta",
+    "deleteText": "Tu perfil, contactos, empleos guardados y notificaciones se eliminan de inmediato y se borra tu acceso. Las candidaturas se quedan con los empleadores como candidato anónimo sin contactos. Las empresas en las que eres el único propietario se suspenden y sus empleos se cierran. No se puede deshacer.",
+    "deleteType": "Escribe DELETE para continuar",
+    "deleteButton": "Eliminar cuenta",
+    "deleteConfirmTitle": "¿Eliminar tu cuenta definitivamente?",
+    "deleteConfirmText": "Se cerrará tu sesión de inmediato.",
+    "deleteConfirm": "Eliminar definitivamente",
+    "deleteFailed": "No se ha podido eliminar la cuenta. Inténtalo más tarde.",
+    "adminCannotDelete": "Una cuenta de administrador no puede eliminarse a sí misma. Pide a otro administrador que te quite primero el rol.",
+    "security": {
+      "title": "Seguridad",
+      "soon": "Próximamente",
+      "twoFactor": {
+        "title": "Inicio de sesión en dos pasos",
+        "text": "Un código de un solo uso de una app de autenticación en cada inicio de sesión."
+      },
+      "wallet": {
+        "title": "Monedero cripto",
+        "text": "Vincula un monedero a tu cuenta."
+      }
+    },
+    "cookies": {
+      "title": "Cookies",
+      "text": "Las cookies necesarias siempre están activas. Las opcionales solo funcionan mientras su interruptor está activado; al desactivarlo se borra lo que guardaron.",
+      "necessary": "Necesarias",
+      "saved": "Guardado.",
+      "necessaryHint": "Inicio de sesión, idioma, la sesión del agente y esta elección.",
+      "preferences": "Preferencias",
+      "preferencesHint": "Recordar tus últimos filtros del catálogo.",
+      "analytics": "Analítica",
+      "analyticsHint": "Nuestras propias estadísticas de uso anónimas. Todavía no se recopila nada.",
+      "gpcHint": "Tu navegador envía Global Privacy Control, así que la analítica permanece desactivada."
+    },
+    "email": {
+      "mail": {
+        "subject": "Confirma tu correo",
+        "body": "Abre el enlace para añadir este correo a tu cuenta de INTGETION JOB LIST. Después podrás iniciar sesión con él y recibir notificaciones. El enlace funciona durante 24 horas.",
+        "action": "Confirmar correo"
+      },
+      "confirmTitle": "Correo electrónico",
+      "confirmed": "El correo se ha añadido. Ya puedes iniciar sesión con él y recibir notificaciones.",
+      "toAccount": "Volver a los ajustes de la cuenta",
+      "errors": {
+        "invalid_link": "El enlace no es válido o ha caducado. Vuelve a añadir el correo en los ajustes de la cuenta.",
+        "taken": "Este correo ya pertenece a otra cuenta. Inicia sesión con esa cuenta y vincula Telegram allí.",
+        "failed": "No se ha podido añadir el correo. Inténtalo más tarde."
+      },
+      "confirmText": "¿Añadir este correo a tu cuenta?",
+      "confirmButton": "Confirmar correo"
+    },
+    "signIn": {
+      "title": "Métodos de inicio de sesión",
+      "emailLabel": "Correo electrónico",
+      "noEmail": "No añadido: las notificaciones y el restablecimiento de contraseña necesitan un correo.",
+      "emailHint": "Te enviaremos un enlace de confirmación. Tras confirmarlo, puedes establecer una contraseña desde «¿Olvidaste tu contraseña?» en la página de inicio de sesión.",
+      "addEmail": "Añadir correo",
+      "sent": "Revisa tu bandeja de entrada: te hemos enviado un enlace de confirmación.",
+      "setPassword": "Establecer contraseña",
+      "setPasswordHint": "El correo está vinculado. Para iniciar sesión con contraseña, solicita una vez un enlace de restablecimiento.",
+      "telegramLabel": "Telegram",
+      "linkTelegram": "Vincular Telegram",
+      "unlinked": "Telegram se ha desvinculado.",
+      "errors": {
+        "email_required": "Primero añade un correo: Telegram es tu única forma de iniciar sesión.",
+        "generic": "Algo ha salido mal. Inténtalo de nuevo.",
+        "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
+        "unavailable": "El correo no está disponible en este momento.",
+        "last_sign_in": "Es tu última forma de entrar. Vincula otra antes.",
+        "identity_taken": "Esta cuenta ya está vinculada a otra persona.",
+        "invalid_link": "No se pudo vincular la cuenta. Inténtalo de nuevo.",
+        "oauth_unavailable": "Este método de acceso aún no está disponible."
+      },
+      "googleLabel": "Google",
+      "xLabel": "X",
+      "linked": "Vinculado",
+      "notLinked": "Sin vincular",
+      "linkGoogle": "Vincular Google",
+      "linkX": "Vincular X",
+      "unlink": "Desvincular",
+      "unlinkedGoogle": "Google se ha desvinculado.",
+      "unlinkedX": "X se ha desvinculado."
+    }
+  },
+  "chat": {
+    "title": "Agente de carrera",
+    "intro": "Dile al agente qué trabajo buscas. Encuentra empleos, mantiene tu perfil al día y te pregunta antes de cambiar algo.",
+    "log": "Conversación",
+    "you": "Tú",
+    "agent": "Agente",
+    "emptyGuest": "Prueba: «empleos remotos de backend con Python». Como invitado puedes buscar; regístrate para guardar empleos y postularte.",
+    "emptySignedIn": "Prueba: «encuentra empleos remotos de diseño» o «¿en qué estado están mis candidaturas?»",
+    "score": "{score}% de afinidad",
+    "thinking": "Pensando…",
+    "suggestions": {
+      "one": "Empleos remotos de Solidity",
+      "two": "Diseño a media jornada en Europa",
+      "three": "¿Quién contrata perfiles junior?"
+    },
+    "placeholder": "Escribe un mensaje",
+    "send": "Enviar",
+    "guestHint": "Para guardar empleos, postularte y tener un perfil necesitas una cuenta.",
+    "signUp": "Registrarse",
+    "errors": {
+      "BOT_UNAVAILABLE": "El agente no está disponible ahora mismo. Mientras tanto, usa la búsqueda de empleos.",
+      "BOT_BUDGET_EXCEEDED": "El agente ha alcanzado el límite de hoy. Usa la búsqueda de empleos; el agente vuelve mañana.",
+      "BOT_TRY_LATER": "El agente no ha podido responder. Inténtalo de nuevo en un minuto.",
+      "RATE_LIMITED": "Has enviado demasiados mensajes hoy. Inténtalo mañana.",
+      "generic": "Algo ha salido mal. Inténtalo de nuevo."
+    },
+    "confirm": {
+      "applyTitle": "¿Postularte a este empleo?",
+      "profileTitle": "¿Guardar estos cambios del perfil?",
+      "text": "No pasa nada hasta que confirmes.",
+      "accept": "Confirmar",
+      "decline": "Cancelar",
+      "accepted": "Confirmado.",
+      "declined": "Cancelado.",
+      "failed": "No se ha podido completar. Puede que la tarjeta haya caducado; vuelve a pedirlo.",
+      "missing": "Al perfil aún le falta: {fields}"
+    },
+    "createAccount": "Crear cuenta",
+    "fillSelf": "Lo relleno yo",
+    "fillSpoki": "Que lo rellene Spoki",
+    "reviewProfile": "Revisar el perfil"
+  },
+  "cookies": {
+    "label": "Elección de cookies",
+    "text": "Solo cookies necesarias. El resto, solo con tu consentimiento.",
+    "acceptAll": "Aceptar todas",
+    "necessaryOnly": "Solo necesarias",
+    "customize": "Personalizar",
+    "save": "Guardar elección",
+    "preferences": "Preferencias",
+    "preferencesHint": "Recordar tus últimos filtros del catálogo.",
+    "analytics": "Analítica",
+    "analyticsHint": "Nuestras propias estadísticas de uso anónimas. Todavía no se recopila nada.",
+    "gpcHint": "Tu navegador envía Global Privacy Control, así que la analítica permanece desactivada.",
+    "more": "Detalles"
+  },
+  "forEmployers": {
+    "title": "Para empleadores",
+    "metaDescription": "Publica empleos remotos gratis y llega a personas cuyas habilidades, expectativas salariales y horario laboral encajan.",
+    "label": "Para empleadores",
+    "heroTitle": "Contrata en remoto a personas que encajan con tu zona horaria",
+    "heroText": "Publica empleos gratis. Los mostramos a candidatos cuyas habilidades, expectativas salariales y horario laboral encajan.",
+    "cta": "Publicar empleo",
+    "stepsTitle": "Cómo funciona",
+    "steps": {
+      "company": {
+        "title": "Empresa",
+        "text": "Crea tu empresa y verifícala con un correo corporativo o un registro DNS."
+      },
+      "job": {
+        "title": "Empleo",
+        "text": "Describe el empleo: habilidades, rango salarial, modalidad y coincidencia horaria necesaria."
+      },
+      "match": {
+        "title": "Coincidencias",
+        "text": "Lo mostramos a los candidatos afines y les explicamos por qué encaja."
+      },
+      "contacts": {
+        "title": "Contactos",
+        "text": "Revisa las candidaturas y marca las que te gusten: en ese momento se abren sus contactos."
+      }
+    },
+    "whyTitle": "Por qué aquí",
+    "why": {
+      "match": "Coincidencias por habilidades y zona horaria, no por palabras clave.",
+      "salary": "Los candidatos ven tu rango con la moneda y los impuestos en cuenta: menos candidaturas fuera de lugar.",
+      "both": "Web3 y trabajo remoto convencional en un solo lugar, en inglés, ruso y español.",
+      "trust": "Una insignia de verificación genera confianza y más respuestas."
+    },
+    "verifyTitle": "Niveles de verificación",
+    "verify": {
+      "unverified": {
+        "title": "Sin verificar",
+        "text": "Los empleos se moderan, hasta 5 publicaciones al día."
+      },
+      "verified": {
+        "title": "Verificada",
+        "text": "Correo corporativo o DNS más datos de la empresa. Hasta 50 publicaciones al día y una insignia."
+      },
+      "trusted": {
+        "title": "De confianza",
+        "text": "Se concede automáticamente tras una actividad constante sin quejas."
+      }
+    },
+    "faqTitle": "Preguntas de empleadores",
+    "faq": {
+      "price": {
+        "q": "¿Cuánto cuesta?",
+        "a": "Por ahora publicar es gratis."
+      },
+      "limit": {
+        "q": "¿Cuántos empleos puedo publicar?",
+        "a": "5 al día sin verificar, 50 una vez verificada."
+      },
+      "review": {
+        "q": "¿Por qué mi empleo está en revisión?",
+        "a": "La empresa aún no está verificada o la publicación parece arriesgada. La revisión suele tardar hasta un día."
+      },
+      "contacts": {
+        "q": "¿Cuándo veo los contactos de un candidato?",
+        "a": "Cuando marcas la candidatura como interesante: pasa a la preselección y se abren los contactos."
+      },
+      "salary": {
+        "q": "¿Puedo no indicar el salario?",
+        "a": "Sí, pero esos empleos aparecen más abajo en las coincidencias de los candidatos."
+      }
+    },
+    "finalTitle": "¿Listo para contratar?",
+    "finalText": "Publica tu primer empleo: se tarda 5 minutos.",
+    "pricingTitle": "Gratis, o de pago con garantía",
+    "pricingText": "Publica gratis o paga 79 $ por empleo y recibe 10 candidaturas afines, o te devolvemos el dinero.",
+    "pricingLink": "Ver precios"
+  },
+  "rss": {
+    "title": "INTGETION JOB LIST — empleos remotos más recientes",
+    "description": "Los 50 empleos remotos publicados más recientes.",
+    "feed": "Canal RSS"
+  },
+  "markers": {
+    "showMore": "Ver más ({count})",
+    "forYou": "Para ti",
+    "anySeniority": "Cualquier nivel",
+    "anySector": "Cualquier sector",
+    "anyPerk": "Cualquier beneficio",
+    "sector": "Sector",
+    "seniorityLabel": "Nivel",
+    "perk": "Beneficios",
+    "tagTitle": "Empleos de {name}",
+    "tagIntro": "Puestos publicados con la etiqueta {name}.",
+    "collectionJobs": "{count, plural, one {# puesto abierto} other {# puestos abiertos}}",
+    "collectionJobsMore": "{count}+ puestos abiertos",
+    "nearby": "Colecciones relacionadas",
+    "tagDescription": "Empleos remotos de {name} en web3, cripto e IA: vacantes recientes con salario, zona horaria y modalidad, en inglés, ruso y español.",
+    "regions": {
+      "europe": "Europa",
+      "north-america": "Norteamérica",
+      "latam": "Latinoamérica",
+      "apac": "Asia y el Pacífico",
+      "africa-mena": "África y Oriente Medio"
+    },
+    "faq": {
+      "title": "Preguntas y respuestas",
+      "q1": "¿Cómo llegan los empleos a esta lista de {name}?",
+      "a1": "Aquí está cada empleo publicado con la etiqueta {name}: los que los empleadores publican con nosotros y los que importamos de fuentes asociadas, siempre con un enlace al original. Nada se coloca a cambio de dinero.",
+      "q2": "¿Puedo trabajar en remoto y mantener mi propio horario?",
+      "a2": "Cada tarjeta muestra la modalidad, el tipo de contrato y la zona horaria con la que el equipo necesita que coincidas, así ves antes de postularte si el trabajo de {name} encaja con tu día.",
+      "q3": "¿Cómo sigo los nuevos empleos de {name}?",
+      "a3": "El enlace RSS de arriba de esta página contiene la misma lista. Con la sesión iniciada, una búsqueda guardada te envía las nuevas coincidencias por correo o Telegram en cuanto aparecen."
+    },
+    "highPayTitle": "Empleos bien pagados",
+    "highPayIntro": "Salario bruto igual o superior a {threshold} al año.",
+    "highPayThreshold": "100 000 USD",
+    "rss": "RSS",
+    "groups": {
+      "web3": "Web3",
+      "ai": "IA",
+      "finance": "Finanzas",
+      "products": "Productos",
+      "games": "Juegos",
+      "health": "Salud",
+      "society": "Sociedad",
+      "industry": "Industria"
+    },
+    "sectors": {
+      "web3": "Web3",
+      "defi": "DeFi",
+      "nft": "NFT",
+      "gamefi": "GameFi",
+      "metaverse": "Metaverso",
+      "zk": "Conocimiento cero",
+      "dao": "DAO",
+      "infra-l1l2": "L1 / L2",
+      "exchange": "Exchange",
+      "memecoins": "Memecoins",
+      "crypto-vc": "Capital riesgo cripto",
+      "eco-ethereum": "Ethereum",
+      "eco-solana": "Solana",
+      "eco-fantom": "Fantom",
+      "eco-polkadot": "Polkadot",
+      "ai-ml": "IA / ML",
+      "genai": "IA generativa",
+      "computer-vision": "Visión artificial",
+      "robotics": "Robótica",
+      "data-analytics": "Análisis de datos",
+      "fintech": "Fintech",
+      "banking": "Banca",
+      "payments": "Pagos",
+      "insurtech": "Insurtech",
+      "quant-trading": "Trading cuantitativo",
+      "accounting-tax": "Contabilidad",
+      "saas-b2b": "SaaS B2B",
+      "devtools": "Herramientas para desarrolladores",
+      "cloud-infra": "Nube",
+      "open-source": "Código abierto",
+      "cybersecurity": "Ciberseguridad",
+      "ecommerce": "Comercio electrónico",
+      "marketplaces": "Marketplaces",
+      "adtech-martech": "Adtech",
+      "hr-tech": "HR tech",
+      "gamedev": "Desarrollo de videojuegos",
+      "igaming": "iGaming",
+      "ar-vr": "RA / RV",
+      "media-streaming": "Medios",
+      "creator-economy": "Economía de creadores",
+      "music": "Música",
+      "healthtech": "Healthtech",
+      "medtech": "Medtech",
+      "biotech": "Biotecnología",
+      "mental-health": "Salud mental",
+      "fitness": "Fitness",
+      "edtech": "Edtech",
+      "govtech": "Govtech",
+      "legaltech": "Legaltech",
+      "nonprofit": "Sin ánimo de lucro",
+      "climatetech": "Clima",
+      "energy": "Energía",
+      "logistics": "Logística",
+      "proptech": "Proptech",
+      "autotech": "Autotech",
+      "agritech": "Agritech",
+      "foodtech": "Foodtech",
+      "travel": "Viajes",
+      "space": "Espacio",
+      "hardware-iot": "Hardware / IoT",
+      "telecom": "Telecomunicaciones"
+    },
+    "perks": {
+      "crypto-pay": "Pago en cripto",
+      "token-equity": "Participación en tokens",
+      "async": "Asíncrono",
+      "four-day-week": "Semana de cuatro días",
+      "visa-support": "Ayuda con el visado",
+      "relocation": "Reubicación",
+      "no-degree": "Sin título requerido",
+      "junior-friendly": "Apto para junior",
+      "own-timezone": "Tu zona horaria"
+    },
+    "seniority": {
+      "internship": "Prácticas",
+      "entry": "Inicial",
+      "mid": "Intermedio",
+      "senior": "Senior",
+      "lead": "Líder"
+    },
+    "nonTechnical": "No técnico"
+  },
+  "metrics": {
+    "title": "Métricas de la plataforma",
+    "description": "Contadores clave que se actualizan en cada visita. Los elementos atrasados (>24 h) se resaltan en la cola de moderación.",
+    "registrations": {
+      "total": "Registros totales",
+      "last7d": "Últimos 7 días"
+    },
+    "jobs": {
+      "published": "Empleos publicados",
+      "internal": "Empleos internos",
+      "imported": "Empleos importados"
+    },
+    "applications": {
+      "last24h": "Candidaturas (24 h)",
+      "last7d": "Candidaturas (7 d)",
+      "mutualInterest": "Interés mutuo"
+    },
+    "matching": {
+      "avgScore": "Afinidad media",
+      "totalPairs": "Total de pares candidato-empleo",
+      "thresholdPairs": "Pares por encima del umbral"
+    },
+    "moderation": {
+      "title": "Cola de moderación",
+      "status": "Estado",
+      "count": "Cantidad",
+      "pending": "Pendientes",
+      "approved": "Aprobados",
+      "rejected": "Rechazados",
+      "total": "Total",
+      "queueSize": "Tamaño de la cola"
+    },
+    "emails": {
+      "title": "Correos",
+      "status": "Estado",
+      "type": "Tipo",
+      "count": "Cantidad",
+      "pending": "Pendientes",
+      "sent": "Enviados",
+      "skipped": "Omitidos",
+      "failed": "Fallidos"
+    },
+    "analytics": {
+      "title": "Visitantes, últimos {days} días",
+      "note": "Estadísticas propias, sin terceros. Los visitantes se cuentan para todos sin cookies (únicos por día). Los visitantes recurrentes y el embudo entre visitas solo incluyen a quienes permitieron las cookies de analítica.",
+      "visitors": "Visitantes",
+      "views": "Páginas vistas",
+      "consented": "Con consentimiento de analítica",
+      "returning": "Recurrentes",
+      "funnel": "Embudo",
+      "step": "Paso",
+      "sameDay": "Visitantes (mismo día)",
+      "acrossVisits": "Entre visitas (con consentimiento)",
+      "steps": {
+        "page_view": "Visitó",
+        "search": "Buscó",
+        "job_view": "Abrió un empleo",
+        "signup": "Se registró",
+        "apply": "Se postuló"
+      },
+      "daily": "Por día",
+      "day": "Día",
+      "pages": "Páginas principales",
+      "page": "Página",
+      "searches": "Búsquedas principales",
+      "term": "Búsqueda",
+      "count": "Cantidad",
+      "jobs": "Empleos más vistos",
+      "job": "Empleo",
+      "sources": "Fuentes",
+      "source": "Fuente",
+      "direct": "Directo o desconocido",
+      "devices": "Dispositivos",
+      "device": "Dispositivo",
+      "deviceNames": {
+        "mobile": "Teléfono",
+        "tablet": "Tableta",
+        "desktop": "Ordenador"
+      }
+    },
+    "env": {
+      "title": "Ajustes de producción",
+      "note": "Con qué está configurado el servidor. Los valores nunca se muestran, solo si están definidos.",
+      "setting": "Ajuste",
+      "state": "Estado",
+      "detail": "Detalle",
+      "states": {
+        "ok": "Definido",
+        "warning": "Revisar",
+        "missing": "Sin definir"
+      },
+      "keys": {
+        "database": "Conexión a la base de datos",
+        "siteUrl": "Dirección del sitio",
+        "supabaseAdmin": "Clave de administrador de Supabase",
+        "email": "Correo (Resend)",
+        "telegram": "Inicio de sesión con Telegram",
+        "bot": "Modelo del agente",
+        "secrets": "Secretos del servidor",
+        "sentry": "Informes de errores (Sentry)"
+      },
+      "details": {
+        "session": "Pooler de sesión ({value}): se queda sin conexiones, usa el pooler de transacciones (6543)",
+        "transaction": "Pooler de transacciones ({value})",
+        "direct": "Conexión directa",
+        "format": "El token está definido, pero su formato es incorrecto",
+        "frozen": "El token está definido; el inicio de sesión está congelado (D246), las notificaciones funcionan"
+      }
+    },
+    "traffic": {
+      "title": "De dónde llegan las visitas ({days} días)",
+      "note": "Calculado a partir del referente que ya guardamos, sin rastreadores de terceros. Un enlace de campaña etiquetado cuenta según su etiqueta.",
+      "channel": {
+        "search": "Desde buscadores",
+        "social": "Redes sociales y mensajería",
+        "referral": "Otros sitios",
+        "direct": "Directo"
+      },
+      "searchShare": "Cuota de buscadores",
+      "engines": "Buscadores",
+      "engine": "Buscador",
+      "visitors": "Visitantes",
+      "landings": "Páginas a las que llegan desde buscadores",
+      "page": "Página",
+      "byDay": "Por día",
+      "day": "Día",
+      "fromSearch": "Desde buscadores",
+      "allVisitors": "Todos los visitantes"
+    }
+  },
+  "digest": {
+    "chatEvent": "Tu resumen de la mañana está listo: {count} empleos nuevos afines. Están en la página Para ti.",
+    "openMatches": "Ver coincidencias"
+  },
+  "savedSearches": {
+    "title": "Búsquedas guardadas y empresas",
+    "intro": "Búsquedas que guardaste en el catálogo. Con la alerta activada, te enviamos los empleos nuevos una vez al día.",
+    "empty": "Aún no hay búsquedas guardadas. Ajusta los filtros en el catálogo y pulsa «Guardar búsqueda».",
+    "open": "Abrir",
+    "alert": "Alerta diaria",
+    "delete": "Eliminar",
+    "deleted": "Eliminada.",
+    "save": "Guardar búsqueda",
+    "saved": "Búsqueda guardada. Los empleos nuevos llegarán una vez al día.",
+    "manage": "Búsquedas guardadas",
+    "openSearch": "Abrir la búsqueda",
+    "limit": "Tienes 10 búsquedas guardadas. Elimina una para guardar otra.",
+    "failed": "No se ha podido guardar. Inténtalo de nuevo.",
+    "signIn": "Inicia sesión para guardar búsquedas"
+  },
+  "follows": {
+    "follow": "Seguir",
+    "following": "Siguiendo",
+    "unfollow": "Dejar de seguir",
+    "hint": "Los empleos nuevos de esta empresa una vez al día, en la aplicación, por correo o en Telegram, según tus notificaciones.",
+    "limit": "Sigues a 50 empresas. Deja de seguir a una para seguir a otra.",
+    "failed": "No se ha podido cambiar. Inténtalo de nuevo.",
+    "title": "Empresas que sigues",
+    "empty": "Aún no sigues a ninguna empresa. Pulsa «Seguir» en la página de una empresa.",
+    "openCompany": "Abrir la empresa",
+    "signIn": "Inicia sesión para seguir"
+  },
+  "legal": {
+    "termsTitle": "Condiciones de uso",
+    "privacyTitle": "Política de privacidad",
+    "toBeSpecified": "por concretar",
+    "terms": "Condiciones de uso",
+    "privacy": "Política de privacidad",
+    "cookies": "Ajustes de cookies"
+  },
+  "salaries": {
+    "title": "Salarios en Web3 por habilidad",
+    "intro": "Salario anual típico en USD a partir de los rangos salariales de los empleos publicados en INTGETION en los últimos {days} días.",
+    "method": "Cómo lo calculamos: el punto medio del rango de cada empleo, solo salario bruto, con los rangos mensuales y anuales convertidos a USD al tipo del Banco Central Europeo. Los rangos por hora y netos se excluyen. Una habilidad aparece cuando tiene al menos {min} empleos así; una fila por nivel necesita {row}.",
+    "emptyTitle": "Aún no hay suficientes datos salariales",
+    "emptyText": "Las cifras salariales aparecen cuando una habilidad tiene al menos {min} empleos con un rango publicado. Mientras tanto, explora los empleos abiertos.",
+    "browseJobs": "Ver empleos",
+    "skill": "Habilidad",
+    "jobs": "Empleos",
+    "p25": "Percentil 25",
+    "median": "Mediana",
+    "p75": "Percentil 75",
+    "perYear": "USD al año",
+    "skillTitle": "Salarios de {skill}",
+    "skillIntro": "Salario anual de los puestos de {skill} en USD, a partir de {count} empleos publicados en INTGETION en los últimos {days} días.",
+    "skillEmptyTitle": "Aún no hay suficientes datos salariales de {skill}",
+    "skillJobs": "Empleos de {skill}",
+    "bySeniority": "Por nivel",
+    "allSalaries": "Todos los salarios",
+    "seniority": {
+      "internship": "Prácticas",
+      "entry": "Inicial",
+      "mid": "Intermedio",
+      "senior": "Senior",
+      "lead": "Líder"
+    }
+  },
+  "seo": {
+    "home": "Inicio",
+    "jobs": "Empleos",
+    "inOurWords": "En nuestras palabras",
+    "originalOn": "Oferta original en {source}"
+  },
+  "miniApp": {
+    "intro": "Has iniciado sesión con Telegram. Abre el sitio en tu propio navegador para instalar la aplicación y mantener allí esta cuenta.",
+    "install": "Para tenerla en tu pantalla de inicio: en iPhone pulsa Compartir y luego Añadir a pantalla de inicio; en otros dispositivos abre el menú del navegador y elige Instalar aplicación.",
+    "open": "Abrir en mi navegador",
+    "addEmail": "Añadir un correo",
+    "copyHint": "Si tu navegador no se abrió, copia esta dirección y pégala allí. Inicia sesión en esta cuenta una sola vez.",
+    "copy": "Copiar enlace",
+    "copied": "Copiado",
+    "failed": "No se ha podido abrir el enlace. Inténtalo de nuevo en un minuto."
+  },
+  "pricing": {
+    "metaTitle": "Precios: búsqueda de empleo gratis, rapidez de pago",
+    "metaDescription": "Precios de INTGETION para empresas y candidatos. Publicar empleos y buscar siguen siendo gratis; los planes de pago añaden rapidez, alcance y un reembolso si la contratación no funciona.",
+    "label": "Precios",
+    "title": "Gratis para todo lo que necesitas. De pago para ir más rápido.",
+    "intro": "Publicar un empleo y encontrar uno es gratis y seguirá siéndolo. Los planes de pago añaden alcance, rapidez y herramientas, y el plan para empresas incluye un reembolso si los candidatos no llegan.",
+    "switchLabel": "Mostrar planes para",
+    "for": {
+      "candidates": "Para candidatos",
+      "companies": "Para empresas"
+    },
+    "recommended": "Recomendado",
+    "free": "Gratis",
+    "per": {
+      "job": "por empleo",
+      "month": "al mes"
+    },
+    "yearly": "o ${price} al año",
+    "startFree": "Empezar gratis",
+    "soon": "Próximamente",
+    "soonNote": "Los planes de pago aún no están a la venta. Pronto se podrá pagar con tarjeta y con USDT / USDC; hasta entonces todo funciona en los planes gratuitos.",
+    "market": "Publicar en los grandes portales de empleo remoto cuesta 250–300 $ por empleo sin reembolso. Aquí es gratis, o 79 $ con garantía.",
+    "alwaysFreeTitle": "Lo que ningún plan vende nunca",
+    "alwaysFree": {
+      "posting": "Publicar empleos: siempre habrá un plan gratuito, con la misma moderación y el mismo catálogo.",
+      "trust": "La insignia de empresa verificada y el estado De confianza se ganan, no se compran.",
+      "contacts": "Los contactos de los candidatos solo se abren con interés mutuo, en todos los planes.",
+      "match": "El porcentaje de afinidad y el orden de «Para ti» son iguales para todos.",
+      "apply": "Los candidatos nunca pagan por postularse ni por ser vistos.",
+      "imported": "Los empleos importados de otros portales nunca se promocionan a cambio de dinero."
+    },
+    "tiers": {
+      "start": {
+        "name": "Start",
+        "for": "Tu primer empleo o para probar la plataforma.",
+        "points": {
+          "jobs": "2 empleos activos a la vez, 30 días cada uno",
+          "catalog": "Catálogo, colecciones y coincidencias «Para ti»",
+          "applications": "Candidaturas, estados e interés mutuo",
+          "digest": "Se muestra a los candidatos afines en el resumen diario",
+          "stats": "Visitas y candidaturas"
+        }
+      },
+      "hire": {
+        "name": "Hire",
+        "for": "De una a cinco contrataciones al año.",
+        "points": {
+          "guarantee": "10 candidaturas de candidatos con una afinidad del 60 % o más, o te devolvemos el dinero",
+          "instant": "Se envía al instante a los candidatos con una afinidad del 70 % o más",
+          "promoted": "Bloque destacado durante 7 días",
+          "forecast": "Mira cuántos candidatos afines hay antes de pagar",
+          "firstFree": "El primero es gratis para una empresa verificada"
+        }
+      },
+      "team": {
+        "name": "Team",
+        "for": "Contratación todo el año o una agencia.",
+        "points": {
+          "jobs": "10 empleos activos a la vez, 45 días cada uno",
+          "promoted": "3 empleos destacados al mes",
+          "team": "Hasta 10 compañeros, embudo y CSV",
+          "api": "API para tus propios empleos",
+          "channel": "3 publicaciones al mes en el canal de Telegram de la plataforma"
+        }
+      },
+      "free": {
+        "name": "Gratis",
+        "for": "Para todos.",
+        "points": {
+          "search": "Todos los empleos, colecciones y páginas de salarios",
+          "apply": "Candidaturas ilimitadas",
+          "match": "«Para ti» con el mismo % de afinidad para todos",
+          "alerts": "Alertas diarias de búsquedas guardadas",
+          "agent": "Agente de carrera: 15 mensajes al día"
+        }
+      },
+      "plus": {
+        "name": "Plus",
+        "for": "Buscando activamente.",
+        "points": {
+          "instant": "Empleos afines nuevos en cuanto aparecen",
+          "agent": "Agente de carrera: 100 mensajes al día",
+          "letters": "Una carta de presentación escrita para cada empleo",
+          "views": "Qué empresas han visto tu perfil",
+          "hidden": "Oculto para tu empleador actual"
+        }
+      },
+      "pro": {
+        "name": "Pro",
+        "for": "A por un gran puesto o un aumento.",
+        "points": {
+          "agent": "Agente de carrera: 300 mensajes al día, modelo más potente",
+          "interview": "Entrevistas de práctica con comentarios",
+          "review": "Revisión completa del perfil con un plan",
+          "salary": "Un informe salarial para negociar",
+          "views": "Cuándo y con qué frecuencia te vieron las empresas"
+        }
+      }
+    },
+    "faqTitle": "Preguntas",
+    "faq": {
+      "guarantee": {
+        "q": "¿Y si el empleo de pago recibe menos candidaturas de las prometidas?",
+        "a": "A los 30 días contamos las candidaturas de candidatos con una afinidad de al menos el 60 %. Si hay menos de 10, el dinero se devuelve automáticamente: no tienes que pedirlo."
+      },
+      "cancel": {
+        "q": "¿Puedo cancelar?",
+        "a": "Sí, con un clic. Una suscripción funciona hasta el final del periodo pagado; no hay permanencia anual."
+      },
+      "crypto": {
+        "q": "¿Puedo pagar en cripto?",
+        "a": "Sí: USDT y USDC directamente al monedero de la empresa, prepagado por un periodo. Los pagos con tarjeta se hacen a través de Stripe."
+      },
+      "seen": {
+        "q": "¿Verán los empleadores que pago?",
+        "a": "No. El plan de un candidato nunca se muestra a los empleadores: ni en las candidaturas ni en el perfil."
+      },
+      "when": {
+        "q": "¿Cuándo puedo comprar?",
+        "a": "Los planes de pago se están preparando. Todo lo de los planes gratuitos ya funciona."
+      }
+    }
+  },
+  "email": {
+    "fallback": "Si el botón no funciona, copia este enlace en el navegador:",
+    "footerAccount": "Recibiste este correo porque esta dirección se usa en una cuenta de INTGETION JOB LIST.",
+    "footerAlerts": "Recibes avisos de empleos porque están activados en tus ajustes de notificaciones.",
+    "manage": "Ajustes de notificaciones",
+    "confirm": {
+      "subject": "Confirma tu correo",
+      "title": "Confirma tu correo",
+      "body": "Bienvenido a INTGETION JOB LIST. Confirma esta dirección para terminar de crear tu cuenta.",
+      "action": "Confirmar correo",
+      "expiry": "El enlace funciona una vez y caduca en 1 hora.",
+      "ignore": "Si no creaste una cuenta, ignora este correo."
+    },
+    "reset": {
+      "subject": "Restablece tu contraseña",
+      "title": "Restablece tu contraseña",
+      "body": "Pediste restablecer la contraseña de tu cuenta de INTGETION JOB LIST. Elige una nueva con el botón de abajo.",
+      "action": "Restablecer contraseña",
+      "expiry": "El enlace funciona una vez y caduca en 1 hora.",
+      "ignore": "Si no pediste el restablecimiento, ignora este correo. Tu contraseña no cambia."
+    },
+    "magic": {
+      "subject": "Tu enlace para entrar",
+      "title": "Entra en INTGETION JOB LIST",
+      "body": "Usa el botón de abajo para entrar. No hace falta contraseña.",
+      "action": "Entrar",
+      "expiry": "El enlace funciona una vez y caduca en 1 hora.",
+      "ignore": "Si no intentaste entrar, ignora este correo."
+    },
+    "jobs": {
+      "title": "Empleos nuevos para tu perfil",
+      "intro": "{count, plural, one {# empleo nuevo encaja} other {# empleos nuevos encajan}} con tu perfil. Estos son los más cercanos.",
+      "viewJob": "Ver empleo",
+      "viewAll": "Ver todos los empleos",
+      "per": {
+        "hour": "hora",
+        "month": "mes",
+        "year": "año"
+      },
+      "formats": {
+        "remote": "Remoto",
+        "hybrid": "Híbrido",
+        "onsite": "Presencial"
+      }
+    }
+  },
+  "postJob": {
+    "title": "Publicar empleo",
+    "guest": "Para publicar un empleo, inicia sesión o crea una cuenta.",
+    "register": "Registrarse"
+  }
+}

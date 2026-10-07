@@ -1,34 +1,33 @@
 import { renderEmailLayout, type EmailJobCard } from "@/lib/email-html";
-import en from "@/messages/en.json";
-import ru from "@/messages/ru.json";
+import { messagesFor, type Messages } from "@/i18n/messages";
+import { localePrefix } from "@/i18n/paths";
+import type { AppLocale } from "@/i18n/routing";
 import { NOTIFICATION_CATALOG, type NotificationType } from "../lib/catalog";
 import type { EmailJobPayload } from "../lib/email-jobs";
 
 type EmailCopy = { subject: string; body: string };
 
-const catalogs = { en, ru } as const;
-
 export function emailCopy(
-  locale: "en" | "ru",
+  locale: AppLocale,
   type: NotificationType,
 ): EmailCopy | null {
   const key = NOTIFICATION_CATALOG[type]
-    .i18nKey as keyof typeof en.notifications.types;
-  const block = catalogs[locale].notifications.types[key] as {
+    .i18nKey as keyof Messages["notifications"]["types"];
+  const block = messagesFor(locale).notifications.types[key] as {
     email?: EmailCopy;
   };
   return block.email ?? null;
 }
 
-export function unsubscribeLabel(locale: "en" | "ru"): string {
-  return catalogs[locale].notifications.unsubscribe.link;
+export function unsubscribeLabel(locale: AppLocale): string {
+  return messagesFor(locale).notifications.unsubscribe.link;
 }
 
 /** `{name}` plus the `{count, plural, one {…} other {…}}` form used in the catalog. */
 export function fillTemplate(
   template: string,
   values: Record<string, string | number>,
-  locale: "en" | "ru" = "en",
+  locale: AppLocale = "en",
 ): string {
   const rules = new Intl.PluralRules(locale);
   const withPlural = template.replace(
@@ -53,10 +52,10 @@ export function fillTemplate(
 /** Cards for the email, at most DIGEST-size, with links to the job pages. */
 function jobCards(
   jobs: EmailJobPayload[],
-  locale: "en" | "ru",
+  locale: AppLocale,
   origin: string,
 ): EmailJobCard[] {
-  const copy = catalogs[locale].email.jobs;
+  const copy = messagesFor(locale).email.jobs;
   return jobs.slice(0, EMAIL_MAX_JOBS).map((job) => ({
     title: job.title,
     company: job.companyName,
@@ -69,7 +68,7 @@ function jobCards(
         }`
       : null,
     summary: job.summary,
-    href: `${origin}/${locale}/jobs/${encodeURIComponent(job.jobId)}`,
+    href: `${origin}${localePrefix(locale)}/jobs/${encodeURIComponent(job.jobId)}`,
   }));
 }
 
@@ -77,7 +76,7 @@ function jobCards(
 export const EMAIL_MAX_JOBS = 5;
 
 export function renderEmail(input: {
-  locale: "en" | "ru";
+  locale: AppLocale;
   type: NotificationType;
   values: Record<string, string | number>;
   unsubscribeUrl: string;
@@ -92,11 +91,11 @@ export function renderEmail(input: {
   const body = fillTemplate(copy.body, input.values, input.locale);
   const link = unsubscribeLabel(input.locale);
   const origin = new URL(input.unsubscribeUrl).origin;
-  const mail = catalogs[input.locale].email;
+  const mail = messagesFor(input.locale).email;
   const footer = {
     links: [
       {
-        href: `${origin}/${input.locale}/settings/notifications`,
+        href: `${origin}${localePrefix(input.locale)}/settings/notifications`,
         label: mail.manage,
       },
       { href: input.unsubscribeUrl, label: link },
@@ -115,7 +114,7 @@ export function renderEmail(input: {
       { count: input.values.count ?? cards.length },
       input.locale,
     );
-    const allHref = `${origin}/${input.locale}${input.actionPath ?? "/matches"}`;
+    const allHref = `${origin}${localePrefix(input.locale)}${input.actionPath ?? "/matches"}`;
     const text = [
       title,
       intro,
@@ -148,16 +147,16 @@ export function renderEmail(input: {
   const text = `${subject}\n\n${body}\n\n${link}: ${input.unsubscribeUrl}`;
   const actionLabel =
     input.type === "matches.digest"
-      ? catalogs[input.locale].digest.openMatches
+      ? messagesFor(input.locale).digest.openMatches
       : input.type === "search.alert"
-        ? catalogs[input.locale].savedSearches.openSearch
+        ? messagesFor(input.locale).savedSearches.openSearch
         : input.type === "company.new_jobs"
-          ? catalogs[input.locale].follows.openCompany
+          ? messagesFor(input.locale).follows.openCompany
           : null;
   const action =
     actionLabel && input.actionPath
       ? {
-          href: `${origin}/${input.locale}${input.actionPath}`,
+          href: `${origin}${localePrefix(input.locale)}${input.actionPath}`,
           label: actionLabel,
         }
       : undefined;
@@ -248,21 +247,21 @@ export function notificationPath(
  * a link to the page it is about (D237). Plain text, no markup.
  */
 export function telegramText(input: {
-  locale: "en" | "ru";
+  locale: AppLocale;
   type: NotificationType;
   payload: Record<string, unknown>;
   siteUrl: string;
 }): string | null {
   const key = NOTIFICATION_CATALOG[input.type]
-    .i18nKey as keyof typeof en.notifications.types;
-  const block = catalogs[input.locale].notifications.types[key] as {
+    .i18nKey as keyof Messages["notifications"]["types"];
+  const block = messagesFor(input.locale).notifications.types[key] as {
     inapp?: { title: string; body: string };
   };
   if (!block.inapp) return null;
   const values = templateValues(input.payload);
   const title = fillTemplate(block.inapp.title, values, input.locale);
   const body = fillTemplate(block.inapp.body, values, input.locale);
-  const link = `${input.siteUrl}/${input.locale}${notificationPath(input.type, input.payload)}`;
+  const link = `${input.siteUrl}${localePrefix(input.locale)}${notificationPath(input.type, input.payload)}`;
   return `${title}
 ${body}
 

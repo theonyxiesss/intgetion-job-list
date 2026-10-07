@@ -4,6 +4,7 @@
  * another query. Salary is formatted here, in the recipient's locale.
  */
 import { formatMoneyDto, type MoneyDto } from "@/lib/money";
+import type { AppLocale } from "@/i18n/routing";
 
 export type EmailJobPayload = {
   jobId: string;
@@ -47,7 +48,7 @@ export function jobSummary(description: string | null): string | null {
 }
 
 /** Like `formatMoneyDto`, without ",00" on whole amounts. */
-function formatSalary(value: MoneyDto, locale: "en" | "ru"): string {
+function formatSalary(value: MoneyDto, locale: AppLocale): string {
   const full = formatMoneyDto(value, locale);
   const digits =
     new Intl.NumberFormat(locale, {
@@ -73,7 +74,7 @@ function workFormatOf(value: string | null): EmailJobPayload["workFormat"] {
 
 export function toEmailJob(
   job: EmailJobSource,
-  locale: "en" | "ru",
+  locale: AppLocale,
 ): EmailJobPayload {
   let salary: EmailJobPayload["salary"] = null;
   if (job.salaryMin) {

@@ -26,6 +26,8 @@ import { RememberViewedJob } from "@/modules/jobs/ui/remember-viewed-job";
 import { ShareJob } from "@/modules/jobs/ui/share-job";
 import { SimilarJobs } from "@/modules/jobs/ui/similar-jobs";
 import { getHiddenSetsForViewer } from "@/modules/feedback/service";
+import { localePrefix } from "@/i18n/paths";
+import { intlLocale } from "@/i18n/locale";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +46,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: {
-      canonical: `${siteUrl()}/${locale}/jobs/${job.id}`,
+      canonical: `${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`,
       languages: languageAlternates(`/jobs/${job.id}`),
     },
     openGraph: { type: "website", title, description },
@@ -67,7 +69,7 @@ export default async function JobPage({
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
   const initialSaved = user ? await isJobSavedForUser(user.id, job.id) : false;
-  const money = locale === "ru" ? "ru-RU" : "en-US";
+  const money = intlLocale(locale);
   const salary = job.salaryMin
     ? `${formatMoneyDto(job.salaryMin, money)}${job.salaryMax ? ` – ${formatMoneyDto(job.salaryMax, money)}` : ""} / ${t(job.salaryMin.period)} (${t(job.salaryMin.basis)})`
     : t("salaryMissing");
@@ -87,11 +89,14 @@ export default async function JobPage({
       ) : null}
       <JsonLd
         data={breadcrumbListJsonLd([
-          { name: seo("home"), url: `${siteUrl()}/${locale}` },
-          { name: seo("jobs"), url: `${siteUrl()}/${locale}/jobs` },
+          { name: seo("home"), url: `${siteUrl()}${localePrefix(locale)}` },
+          {
+            name: seo("jobs"),
+            url: `${siteUrl()}${localePrefix(locale)}/jobs`,
+          },
           {
             name: job.title,
-            url: `${siteUrl()}/${locale}/jobs/${job.id}`,
+            url: `${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`,
           },
         ])}
       />
@@ -273,7 +278,7 @@ export default async function JobPage({
               {user ? <WhyItFits userId={user.id} jobId={job.id} /> : null}
               <div className="hidden lg:block">
                 <ShareJob
-                  url={`${siteUrl()}/${locale}/jobs/${job.id}`}
+                  url={`${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`}
                   title={job.title}
                   text={{
                     title: t("share.title"),
@@ -288,7 +293,7 @@ export default async function JobPage({
         </div>
         <div className="lg:hidden">
           <ShareJob
-            url={`${siteUrl()}/${locale}/jobs/${job.id}`}
+            url={`${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`}
             title={job.title}
             text={{
               title: t("share.title"),

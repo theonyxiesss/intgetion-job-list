@@ -56,7 +56,6 @@ describe("registerInput", () => {
     locale: "en",
     accountType: "candidate",
   };
-
   it("requires the terms to be accepted", () => {
     expect(
       firstMessage(registerInput.safeParse({ ...base, acceptTerms: false })),

@@ -11,6 +11,7 @@ import type { AppLocale } from "@/i18n/routing";
 import * as usersRepo from "../repo/users";
 import type { CurrentUser } from "./auth-service";
 import { renderAuthEmail } from "./auth-emails";
+import { localePrefix } from "@/i18n/paths";
 
 const PURPOSE = "email-add";
 const TTL_MS = 24 * 60 * 60 * 1000;
@@ -57,7 +58,7 @@ export async function requestEmailAdd(
     new Date(now.getTime() + TTL_MS),
     secret(),
   );
-  const link = `${siteUrl()}/${input.locale}/settings/email/confirm?token=${encodeURIComponent(token)}`;
+  const link = `${siteUrl()}${localePrefix(input.locale)}/settings/email/confirm?token=${encodeURIComponent(token)}`;
   const letter = renderAuthEmail({
     kind: "email_add",
     locale: input.locale,

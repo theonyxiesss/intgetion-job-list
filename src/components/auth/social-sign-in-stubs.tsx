@@ -13,6 +13,7 @@ import {
   telegramBotId,
   telegramBotToken,
 } from "@/modules/auth/service";
+import { localePrefix } from "@/i18n/paths";
 
 /** The frozen widget sign-in, still behind its flag (D217, D246). */
 async function telegramHref(): Promise<string | null> {
@@ -25,7 +26,7 @@ async function telegramHref(): Promise<string | null> {
   return telegramAuthUrl({
     botId: telegramBotId(token),
     origin,
-    returnTo: `${origin}/${locale}/auth/telegram`,
+    returnTo: `${origin}${localePrefix(locale)}/auth/telegram`,
   });
 }
 

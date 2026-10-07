@@ -25,6 +25,7 @@ import {
   TELEGRAM_LOGIN_TTL_SECONDS,
 } from "./telegram";
 import * as challenges from "../repo/telegram-login";
+import { toAppLocale } from "@/i18n/locale";
 
 const COOKIE = "tg_login";
 
@@ -47,6 +48,15 @@ const copy = {
     hello:
       "Спросите про работу словами — «удалённая работа solidity», «дизайн на part-time в Европе». /help — подробнее.\nЧтобы войти на сайте, нажмите там «Войти через Telegram».",
   },
+  es: {
+    ask: "Inicia sesión en INTGETION JOB LIST. Si acabas de pedirlo en intgetion.com, pulsa «Iniciar sesión». Si no, no pulses nada.",
+    button: "Iniciar sesión",
+    done: "Listo. Vuelve al sitio: ya has iniciado sesión.",
+    expired:
+      "Este enlace de inicio de sesión ha caducado. Pulsa «Continuar con Telegram» en el sitio de nuevo.",
+    hello:
+      "Pregúntame por trabajo con tus palabras: «empleos remotos de solidity», «diseño a media jornada en Europa». /help explica más.\nPara iniciar sesión en el sitio, pulsa allí «Continuar con Telegram».",
+  },
 } as const;
 
 function disabled(): HttpError {
@@ -64,7 +74,7 @@ function cookieOptions(maxAge: number) {
 }
 
 function localeOf(value: string): AppLocale {
-  return value === "ru" ? "ru" : "en";
+  return toAppLocale(value);
 }
 
 function profileFrom(from: {

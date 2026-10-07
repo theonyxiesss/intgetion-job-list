@@ -21,6 +21,7 @@ import {
   metaDescription,
   siteUrl,
 } from "@/modules/seo/site";
+import { localePrefix } from "@/i18n/paths";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +41,7 @@ export async function generateMetadata({
     title: company.name,
     ...(description ? { description } : {}),
     alternates: {
-      canonical: `${siteUrl()}/${locale}/companies/${company.slug}`,
+      canonical: `${siteUrl()}${localePrefix(locale)}/companies/${company.slug}`,
       languages: languageAlternates(`/companies/${company.slug}`),
     },
     openGraph: { type: "website", title: company.name, description },
@@ -90,10 +91,10 @@ export default async function CompanyPage({
     <main className="py-10 md:py-16">
       <JsonLd
         data={breadcrumbListJsonLd([
-          { name: seo("home"), url: `${siteUrl()}/${locale}` },
+          { name: seo("home"), url: `${siteUrl()}${localePrefix(locale)}` },
           {
             name: company.name,
-            url: `${siteUrl()}/${locale}/companies/${company.slug}`,
+            url: `${siteUrl()}${localePrefix(locale)}/companies/${company.slug}`,
           },
         ])}
       />

@@ -11,6 +11,7 @@ import { buttonClass } from "@/components/ui/button";
 import { Container, PageHeader } from "@/components/ui/container";
 import { navForward } from "@/components/ui/page-transition";
 import { Stat, StatRow } from "@/components/ui/stat";
+import { intlLocale } from "@/i18n/locale";
 
 const segments = Array.from({ length: 20 }, (_, index) => index);
 
@@ -50,7 +51,7 @@ export default async function ProfilePage({
   const contacts = profile ? await getOwnContacts(user.id) : null;
   const score = profile?.completeness ?? 0;
   const filled = Math.round(score / 5);
-  const money = locale === "ru" ? "ru-RU" : "en-US";
+  const money = intlLocale(locale);
   const salary = profile?.salaryMin
     ? `${formatMoneyDto(profile.salaryMin, money)}${
         profile.salaryMax
