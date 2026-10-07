@@ -2,8 +2,8 @@
 
 **Продукт:** `INTGETION JOB LIST`  
 **Ветка / worktree:** `feat/jobs-alert` · `C:\Users\Admin\Documents\Integetion jobs`  
-**Активная задача:** выкладка утренних сводок (D340) и канала Jobs Alert (D341).  
-**Прод до этой выкладки:** https://intgetion.com — `294e614` (PR #14).
+**Активная задача:** утренние сводки (D340) и канал Jobs Alert (D341) выложены.  
+**Прод:** https://intgetion.com. Миграции `0032_morning_briefs.sql` и `0033_jobs_alert.sql` уже на облаке. Канал не пишет, пока пустой `JOBS_ALERT_CHAT_ID`.
 
 ## Работает (кратко)
 

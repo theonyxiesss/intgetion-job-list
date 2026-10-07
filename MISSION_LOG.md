@@ -3,15 +3,25 @@
 > Older entries: [docs/archive/mission-log/](docs/archive/mission-log/) — see [docs/archive/INDEX.md](docs/archive/INDEX.md).
 > Session protocol: [docs/tz/00-protocol.md](docs/tz/00-protocol.md). Status now: [docs/CURRENT.md](docs/CURRENT.md).
 
-## [2026-10-07] — канал Jobs Alert — DONE (код, не прод)
+## [2026-10-07] — утренние сводки и канал Jobs Alert на прод — DONE
 
-- Сделано: новая опубликованная вакансия уходит в канал Jobs Alert фиксированным текстом (название, компания, зарплата, ссылка) из cron `/api/cron/telegram` после личной рассылки. Без LLM. Метка `jobs_alert_sent_at` только после успешной отправки. Старые вакансии не догоняются. На intgetion.com источник Remotive не постится. Пустой chat id выключает только этот шаг.
-- Команды проверки: `pnpm exec tsc --noEmit` → 0. eslint по новым файлам → 0. `vitest` jobs-alert → 11 passed.
-- Миграции: `src/db/migrations/0033_jobs_alert.sql`. На облако не применялась.
+- Сделано: в одну ветку собраны утренние сводки Claude (D340, слоты Чикаго / Берлин / Москва, cron `/api/cron/morning-briefs`) и канал Jobs Alert (D341). Старые ветки `origin/claude/*` не мержились: те же решения уже на master. На облако применены `0032_morning_briefs.sql` и `0033_jobs_alert.sql`. Канал молчит, пока в Vercel пустой `JOBS_ALERT_CHAT_ID`.
+- Команды проверки: `vitest` jobs-alert, briefs, digest-service → 23 passed. `tsc` на чистом дереве без локального `.next` (локальный прогон упёрся в устаревший тип удалённого `/api/cron/digest` в `.next`, каталог в gitignore).
+- Миграции: `0032_morning_briefs.sql`, `0033_jobs_alert.sql` — applied на облаке.
+- Изменённые файлы: сводки в `src/modules/notifications/`, канал в `src/modules/jobs/service/jobs-alert.ts`, `vercel.json`.
+- Отклонения от ТЗ: номер канала сдвинут на 0033 и D341, потому что 0032 и D340 заняты сводками. `app_rw` читает одну строку `schema_migrations`.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по команде. Чтобы канал писал, бот должен быть админом канала и в Vercel нужен числовой `JOBS_ALERT_CHAT_ID`.
+
+## [2026-10-07] — канал Jobs Alert — DONE
+
+- Сделано: новая опубликованная вакансия уходит в канал Jobs Alert фиксированным текстом (название, компания, зарплата, ссылка) из cron `/api/cron/telegram` после личной рассылки. Без LLM. Метка `jobs_alert_sent_at` только после успешной отправки. Старые вакансии не догоняются. На intgetion.com источник Remotive не постится. Пустой chat id выключает только этот шаг. Зарплата — в валюте работодателя, иначе USD.
+- Команды проверки: `vitest` jobs-alert → 12 passed (вместе со сводками — 23).
+- Миграции: `src/db/migrations/0033_jobs_alert.sql`.
 - Изменённые файлы: `src/modules/jobs/service/jobs-alert.ts`, cron telegram, схема jobs, тесты, `scripts/env-rules.mjs`.
 - Отклонения от ТЗ: `app_rw` получает чтение одной строки `schema_migrations` (имя этой миграции), иначе водяной знак из cron не виден.
 - OPEN QUESTION: нет.
-- Следующая подфаза: только по команде. Перед выкладкой — миграция на облако и `JOBS_ALERT_CHAT_ID` в Vercel.
+- Следующая подфаза: только по команде.
 
 ## [2026-10-07] — ручная привязка в Supabase — DONE
 
