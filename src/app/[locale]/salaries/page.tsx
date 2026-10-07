@@ -14,6 +14,7 @@ import {
 } from "@/modules/salaries/service";
 import { languageAlternates, siteUrl } from "@/modules/seo/site";
 import { formatUsd } from "./format";
+import { localePrefix } from "@/i18n/paths";
 
 // Numbers move with every published job (D260).
 export const dynamic = "force-dynamic";
@@ -31,7 +32,7 @@ export async function generateMetadata({
     title: t("title"),
     description,
     alternates: {
-      canonical: `${siteUrl()}/${locale}/salaries`,
+      canonical: `${siteUrl()}${localePrefix(locale)}/salaries`,
       languages: languageAlternates("/salaries"),
     },
     openGraph: { type: "website", title: t("title"), description },

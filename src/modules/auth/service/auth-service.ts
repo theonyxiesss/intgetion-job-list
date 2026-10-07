@@ -34,6 +34,7 @@ import {
   telegramEmail,
   verifyTelegramAuth,
 } from "./telegram";
+import { localePrefix } from "@/i18n/paths";
 
 export type AuthClient = Pick<
   SupabaseClient["auth"],
@@ -59,7 +60,7 @@ export function callbackUrl(
   next?: "reset",
   wait?: string,
 ): string {
-  const url = new URL(`${siteUrl()}/${locale}/auth/callback`);
+  const url = new URL(`${siteUrl()}${localePrefix(locale)}/auth/callback`);
   if (next) url.searchParams.set("next", next);
   if (wait) url.searchParams.set("wait", wait);
   return url.toString();
@@ -128,6 +129,7 @@ export async function register(
     terms_version: TERMS_VERSION,
     terms_accepted_at: now.toISOString(),
     locale: input.locale,
+    account_type: input.accountType,
   };
   const emailRedirectTo = callbackUrl(input.locale, undefined, input.wait);
 
@@ -250,7 +252,8 @@ const otpTypes = new Set<EmailOtpType>([
 ]);
 
 export type CallbackResult =
-  | { ok: true; user: CurrentUser }
+  /** `created`: this link finished a registration (D331 picks the landing page). */
+  | { ok: true; user: CurrentUser; created: boolean }
   | { ok: false; reason: "invalid_link" | "missing_terms" };
 
 /**
@@ -282,7 +285,7 @@ export async function completeCallback(
   }
 
   const existing = await usersRepo.findUserByAuthUid(data.user.id);
-  if (existing) return { ok: true, user: existing };
+  if (existing) return { ok: true, user: existing, created: false };
 
   const metadata = signupMetadata.safeParse(data.user.user_metadata);
   if (!metadata.success) {
@@ -290,7 +293,7 @@ export async function completeCallback(
     return { ok: false, reason: "missing_terms" };
   }
   const user = await usersRepo.insertUserIfMissing(data.user.id, metadata.data);
-  return { ok: true, user };
+  return { ok: true, user, created: true };
 }
 
 /**

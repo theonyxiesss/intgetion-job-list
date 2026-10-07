@@ -43,6 +43,7 @@ const row: CurrentUser = {
   id: "11111111-1111-4111-8111-111111111111",
   authUid: "22222222-2222-4222-8222-222222222222",
   platformRole: "user",
+  accountType: "candidate",
   status: "active",
   locale: "en",
   termsAcceptedAt: new Date("2026-10-03T00:00:00Z"),
@@ -115,6 +116,7 @@ describe("register", () => {
           password: "orbit-lantern-42",
           locale: "ru",
           acceptTerms: true,
+          accountType: "candidate" as const,
         },
         now,
       ),
@@ -128,6 +130,7 @@ describe("register", () => {
           terms_version: TERMS_VERSION,
           terms_accepted_at: "2026-10-03T10:00:00.000Z",
           locale: "ru",
+          account_type: "candidate",
         },
       },
     });
@@ -143,6 +146,7 @@ describe("register", () => {
           email: "ana@example.com",
           locale: "en",
           acceptTerms: true,
+          accountType: "candidate" as const,
         },
         now,
       ),
@@ -169,13 +173,14 @@ describe("register", () => {
         password: "orbit-lantern-42",
         locale: "en",
         acceptTerms: true,
+        accountType: "candidate" as const,
       }),
     ).resolves.toEqual({ status: "resent" });
     expect(auth.resend).toHaveBeenCalledWith({
       type: "signup",
       email: "ana@example.com",
       options: {
-        emailRedirectTo: "http://127.0.0.1:3000/en/auth/callback",
+        emailRedirectTo: "http://127.0.0.1:3000/auth/callback",
       },
     });
   });
@@ -197,6 +202,7 @@ describe("register", () => {
         password: "orbit-lantern-42",
         locale: "en",
         acceptTerms: true,
+        accountType: "candidate" as const,
       }),
     ).rejects.toMatchObject({
       status: 409,
@@ -217,6 +223,7 @@ describe("register", () => {
         password: "orbit-lantern-42",
         locale: "en",
         acceptTerms: true,
+        accountType: "candidate" as const,
       }),
     ).rejects.toMatchObject({
       status: 409,
@@ -236,6 +243,7 @@ describe("register", () => {
         email: "ana@example.com",
         locale: "en",
         acceptTerms: true,
+        accountType: "candidate" as const,
       }),
     ).rejects.toMatchObject({ status: 429, code: "RATE_LIMITED" });
   });
@@ -257,7 +265,7 @@ describe("requestPasswordReset", () => {
     ).resolves.toBeUndefined();
     expect(auth.resetPasswordForEmail).toHaveBeenCalledWith(
       "nobody@example.com",
-      { redirectTo: "http://127.0.0.1:3000/en/auth/callback?next=reset" },
+      { redirectTo: "http://127.0.0.1:3000/auth/callback?next=reset" },
     );
   });
 });
@@ -276,7 +284,7 @@ describe("completeCallback", () => {
       terms_accepted_at: "2026-10-03T10:00:00.000Z",
       locale: "ru",
     });
-    expect(result).toEqual({ ok: true, user: row });
+    expect(result).toEqual({ ok: true, user: row, created: true });
   });
 
   it("verifies token_hash links", async () => {

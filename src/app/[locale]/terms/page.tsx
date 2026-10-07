@@ -5,6 +5,7 @@ import { Container } from "@/components/ui";
 import { LEGAL_DETAILS } from "@/config/legal";
 import { legalText } from "@/content/legal";
 import { languageAlternates, siteUrl } from "@/modules/seo/site";
+import { localePrefix } from "@/i18n/paths";
 
 export async function generateMetadata({
   params,
@@ -16,7 +17,7 @@ export async function generateMetadata({
   return {
     title: t("termsTitle"),
     alternates: {
-      canonical: `${siteUrl()}/${locale}/terms`,
+      canonical: `${siteUrl()}${localePrefix(locale)}/terms`,
       languages: languageAlternates("/terms"),
     },
   };

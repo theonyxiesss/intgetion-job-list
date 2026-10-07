@@ -1,3 +1,4 @@
+import { localePrefix } from "@/i18n/paths";
 /** Absolute site origin for SEO files (D210), without a trailing slash. */
 export function siteUrl(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(
@@ -8,17 +9,21 @@ export function siteUrl(): string {
 
 export const SEO_LOCALES = ["en", "ru"] as const;
 
+/** Absolute URL of a path in a locale; English has no prefix (D335). */
+export function localeUrl(locale: string, path = ""): string {
+  return `${siteUrl()}${localePrefix(locale)}${path}`;
+}
+
 /**
  * hreflang alternates for one path, e.g. "/jobs". English also answers as
  * "x-default" — the page a visitor from any other language gets (D276).
  */
 export function languageAlternates(path: string): Record<string, string> {
-  const base = siteUrl();
   return {
     ...Object.fromEntries(
-      SEO_LOCALES.map((locale) => [locale, `${base}/${locale}${path}`]),
+      SEO_LOCALES.map((locale) => [locale, localeUrl(locale, path)]),
     ),
-    "x-default": `${base}/en${path}`,
+    "x-default": localeUrl("en", path),
   };
 }
 
@@ -26,19 +31,35 @@ export function languageAlternates(path: string): Record<string, string> {
 export const ROBOTS_DISALLOW = [
   "/api/",
   "/*/admin",
+  "/admin",
   "/*/employer",
+  "/employer",
   "/*/settings",
+  "/settings",
   "/*/profile",
+  "/profile",
   "/*/applications",
+  "/applications",
   "/*/saved-jobs",
+  "/saved-jobs",
   "/*/saved-searches",
+  "/saved-searches",
   "/*/notifications",
+  "/notifications",
   "/*/matches",
+  "/matches",
   "/*/contacts",
+  "/contacts",
   "/*/onboarding",
+  "/onboarding",
+  "/*/post-job",
+  "/post-job",
   "/*/auth/",
+  "/auth/",
   "/*/unsubscribe",
+  "/unsubscribe",
   "/*/dev/",
+  "/dev/",
 ] as const;
 
 /**

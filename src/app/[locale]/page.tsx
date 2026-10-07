@@ -4,70 +4,99 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { Button, buttonClass } from "@/components/ui/button";
-import { Container, Section } from "@/components/ui/container";
+import { Container } from "@/components/ui/container";
+import { EmptyState } from "@/components/ui/feedback";
 import { Input } from "@/components/ui/input";
-import { CountUp, Reveal } from "@/components/ui/motion";
-import { OrbitBackdrop } from "@/components/ui/orbit-backdrop";
 import { navForward } from "@/components/ui/page-transition";
-import { countPublicCatalog } from "@/modules/jobs/service";
-import { LatestJobs } from "@/modules/jobs/ui/latest-jobs";
+import { searchJobs } from "@/modules/jobs/service";
+import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
 import { JsonLd } from "@/modules/seo/json-ld";
-import { homeGraphJsonLd } from "@/modules/seo/markup";
+import { faqPageJsonLd, homeGraphJsonLd } from "@/modules/seo/markup";
 import { languageAlternates, siteUrl } from "@/modules/seo/site";
+import { localePrefix } from "@/i18n/paths";
 
-const categoryIds = [
-  "engineering",
-  "data",
-  "design",
-  "product",
-  "marketing",
-  "sales",
-  "support",
-  "operations",
-  "finance",
-  "hr",
-] as const;
+/** The home page is the job feed (D332): top jobs, then the long feed. */
+const FEED_SIZE = 50;
+const TOP_SIZE = 3;
+const FAQ = ["what", "free", "apply", "post", "contacts"] as const;
 
-const steps = ["benefitBot", "benefitMatch", "benefitContacts"] as const;
+type FeedJob = Awaited<ReturnType<typeof searchJobs>>["items"][number];
 
-/** Catalog counts sit under the hero so the LCP line is not held for the database (D260). */
-async function HomeStats({ locale }: { locale: string }) {
-  const catalog = await countPublicCatalog();
-  if (catalog.jobs <= 0) return null;
-  const t = await getTranslations("home");
-  return (
-    <Section bordered>
-      <Container>
-        <dl className="grid grid-cols-2 gap-8">
-          <div className="flex flex-col gap-2">
-            <dt className="t-label text-fg-muted">{t("statJobs")}</dt>
-            <dd className="t-data-l">
-              <CountUp value={catalog.jobs} locale={locale} />
-            </dd>
-          </div>
-          <div className="flex flex-col gap-2">
-            <dt className="t-label text-fg-muted">{t("statCompanies")}</dt>
-            <dd className="t-data-l">
-              <CountUp value={catalog.companies} locale={locale} />
-            </dd>
-          </div>
-        </dl>
-      </Container>
-    </Section>
-  );
+/** Top: trusted companies with a stated salary first, then the newest. */
+function pickTop(jobs: readonly FeedJob[]): FeedJob[] {
+  const weight = (job: FeedJob) =>
+    (job.company.isTrusted ? 2 : 0) + (job.salaryMin ? 1 : 0);
+  return [...jobs]
+    .map((job, index) => ({ job, index }))
+    .sort((a, b) => weight(b.job) - weight(a.job) || a.index - b.index)
+    .slice(0, TOP_SIZE)
+    .map(({ job }) => job);
 }
 
-async function LatestSection({ locale }: { locale: string }) {
+async function JobFeed({ locale }: { locale: string }) {
   const t = await getTranslations("home");
-  return (
-    <Section>
-      <Container className="flex flex-col gap-8">
-        <h2 id="latest" className="t-h2">
-          {t("latestTitle")}
-        </h2>
-        <LatestJobs locale={locale} />
+  const result = await searchJobs(
+    { limit: FEED_SIZE, minOverlap: 3, sort: "newest" },
+    locale,
+  );
+  if (result.items.length === 0) {
+    return (
+      <Container>
+        <EmptyState title={t("latestEmpty")} />
       </Container>
-    </Section>
+    );
+  }
+  const top = pickTop(result.items);
+  const topIds = new Set(top.map((job) => job.id));
+  const rest = result.items.filter((job) => !topIds.has(job.id));
+  return (
+    <>
+      <section
+        aria-labelledby="top-jobs"
+        className="pt-8 pb-6 md:pt-10 md:pb-8"
+      >
+        <Container className="flex flex-col gap-6">
+          <h2 id="top-jobs" className="t-h3">
+            {t("topJobs")}
+          </h2>
+          <ul className="grid gap-4">
+            {top.map((job) => (
+              <li key={job.id}>
+                <PublicJobCard job={job} locale={locale} />
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+      <section
+        aria-labelledby="all-jobs"
+        className="pt-6 pb-12 md:pt-8 md:pb-16"
+      >
+        <Container className="flex flex-col gap-6">
+          <h2 id="all-jobs" className="t-h3">
+            {t("allJobs")}
+          </h2>
+          <ul className="grid gap-4">
+            {rest.map((job) => (
+              <li key={job.id}>
+                <PublicJobCard job={job} locale={locale} />
+              </li>
+            ))}
+          </ul>
+          <Link
+            href={
+              result.nextCursor
+                ? `/jobs?cursor=${encodeURIComponent(result.nextCursor)}`
+                : "/jobs"
+            }
+            {...navForward}
+            className={buttonClass("secondary", "md", "self-start")}
+          >
+            {t("moreJobs")}
+          </Link>
+        </Container>
+      </section>
+    </>
   );
 }
 
@@ -90,7 +119,7 @@ export async function generateMetadata({
     title: { absolute: title },
     description: t("homeDescription"),
     alternates: {
-      canonical: `${siteUrl()}/${locale}`,
+      canonical: `${siteUrl()}${localePrefix(locale)}`,
       languages: languageAlternates(""),
     },
     openGraph: {
@@ -111,7 +140,6 @@ export default async function HomePage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("home");
-  const categories = await getTranslations("categories");
   const product = await getTranslations("product");
   const { q } = await searchParams;
   const query = q?.trim() ?? "";
@@ -126,20 +154,22 @@ export default async function HomePage({
           locale,
         })}
       />
-      <section className="relative overflow-hidden border-b border-line">
-        <OrbitBackdrop />
-        <Container className="relative flex min-h-[70vh] flex-col justify-end gap-8 py-16 md:py-24">
-          <p className="t-label text-fg-muted">{product("name")}</p>
-          <h1 className="t-display-xl max-w-[16ch]">
-            {t("line1")} <br />
-            {t("line2")}
-          </h1>
-          <p className="max-w-[52ch] text-fg-muted">{t("subtitle")}</p>
+      <JsonLd
+        data={faqPageJsonLd(
+          FAQ.map((key) => ({
+            question: t(`faq.${key}.q`),
+            answer: t(`faq.${key}.a`),
+          })),
+        )}
+      />
+      <section className="border-b border-line">
+        <Container className="flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between md:py-8">
+          <h1 className="t-h2">{t("feedTitle")}</h1>
           <form
             id="search"
-            action={`/${locale}/jobs`}
+            action={`${localePrefix(locale)}/jobs`}
             method="get"
-            className="flex max-w-3xl flex-col gap-3 sm:flex-row"
+            className="flex w-full flex-col gap-3 sm:flex-row md:max-w-xl"
           >
             <label className="sr-only" htmlFor="q">
               {t("searchLabel")}
@@ -151,99 +181,42 @@ export default async function HomePage({
               placeholder={t("searchPlaceholder")}
               className="flex-1"
             />
-            <Button type="submit" size="lg">
-              {t("searchSubmit")}
-            </Button>
+            <Button type="submit">{t("searchSubmit")}</Button>
           </form>
-          <ul className="flex flex-wrap gap-2">
-            {categoryIds.map((id) => (
-              <li key={id}>
-                <Link
-                  id={`category-${id}`}
-                  href={`/jobs?category=${id}`}
-                  {...navForward}
-                  className={buttonClass("secondary")}
-                >
-                  {categories(id)}
-                </Link>
-              </li>
-            ))}
-          </ul>
         </Container>
       </section>
 
       <Suspense fallback={null}>
-        <HomeStats locale={locale} />
+        <JobFeed locale={locale} />
       </Suspense>
 
-      <Suspense fallback={null}>
-        <LatestSection locale={locale} />
-      </Suspense>
-
-      <Section bordered>
-        <Container className="flex flex-col gap-10">
-          <h2 className="t-h2">{t("benefitsTitle")}</h2>
-          <ol className="grid gap-8 md:grid-cols-3">
-            {steps.map((step, index) => (
-              <Reveal as="li" index={index} key={step}>
-                <p className="t-data text-fg-muted">0{index + 1}</p>
-                <h3 className="t-h3 mt-3">{t(`${step}Title`)}</h3>
-                <p className="mt-2 text-fg-muted">{t(`${step}Body`)}</p>
-              </Reveal>
-            ))}
-          </ol>
-        </Container>
-      </Section>
-
-      <Section bordered labelledBy="home-pricing-title">
-        <Container className="flex flex-col gap-8">
-          <div className="flex flex-col gap-2">
-            <h2 id="home-pricing-title" className="t-h2">
-              {t("pricingTitle")}
-            </h2>
-            <p className="max-w-[60ch] text-fg-muted">{t("pricingText")}</p>
-          </div>
-          <ul className="grid gap-4 md:grid-cols-2">
-            {(["candidates", "companies"] as const).map((key) => (
-              <li
-                key={key}
-                className="flex flex-col gap-3 border border-line bg-surface p-6"
-              >
-                <p className="t-label text-fg-muted">
-                  {t(`pricing.${key}.label`)}
+      <section
+        id="faq"
+        aria-labelledby="home-faq"
+        className="scroll-mt-20 border-t border-line py-12 md:py-16"
+      >
+        <Container narrow className="flex flex-col gap-6">
+          <h2 id="home-faq" className="t-h3">
+            {t("faqTitle")}
+          </h2>
+          <div className="flex flex-col border-t border-line">
+            {FAQ.map((key) => (
+              <details key={key} className="group border-b border-line">
+                <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 font-medium [&::-webkit-details-marker]:hidden">
+                  <span className="break-words">{t(`faq.${key}.q`)}</span>
+                  <span
+                    aria-hidden="true"
+                    className="t-data text-fg-muted transition-transform duration-[120ms] group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="max-w-[65ch] pb-4 text-fg-muted">
+                  {t(`faq.${key}.a`)}
                 </p>
-                <p className="t-data-l">{t(`pricing.${key}.price`)}</p>
-                <p className="text-fg-muted">{t(`pricing.${key}.text`)}</p>
-                <Link
-                  href={`/pricing?for=${key}`}
-                  {...navForward}
-                  className={buttonClass(
-                    "secondary",
-                    "md",
-                    "mt-auto self-start",
-                  )}
-                >
-                  {t("pricingLink")}
-                </Link>
-              </li>
+              </details>
             ))}
-          </ul>
-        </Container>
-      </Section>
-
-      <section id="post" className="py-16 md:py-24">
-        <Container className="flex flex-col gap-4 border border-line p-6 md:flex-row md:items-center md:justify-between md:p-10">
-          <div className="flex flex-col gap-2">
-            <h2 className="t-h2">{t("postJob")}</h2>
-            <p className="text-fg-muted">{t("postNote")}</p>
           </div>
-          <Link
-            href="/register"
-            {...navForward}
-            className={buttonClass("primary", "lg")}
-          >
-            {t("postJob")}
-          </Link>
         </Container>
       </section>
     </main>

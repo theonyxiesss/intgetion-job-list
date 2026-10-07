@@ -1,6 +1,7 @@
 /** Admin host and the flag that retires `/admin` on the public site (D251). */
 
-const LOCALES = "(?:en|ru)";
+// D335: English has no prefix, so the locale segment is optional.
+const LOCALES = "(?:/(?:en|ru))?";
 
 export function isAdminHost(host: string | null): boolean {
   const name = host?.split(":")[0]?.toLowerCase() ?? "";
@@ -16,7 +17,7 @@ export function adminHostOnly(
 
 export function isAdminSurface(pathname: string): boolean {
   return (
-    new RegExp(`^/${LOCALES}/admin(?:/|$)`).test(pathname) ||
+    new RegExp(`^${LOCALES}/admin(?:/|$)`).test(pathname) ||
     /^\/api\/admin(?:\/|$)/.test(pathname) ||
     /^\/api\/admin-auth(?:\/|$)/.test(pathname)
   );
@@ -28,7 +29,7 @@ export function adminHostAllows(pathname: string): boolean {
 
 /** The bare admin host has no public home. Open the sign-in page. */
 export function adminHostEntry(pathname: string): string | null {
-  return pathname === "/" ? "/en/admin/login" : null;
+  return pathname === "/" ? "/admin/login" : null;
 }
 
 /**

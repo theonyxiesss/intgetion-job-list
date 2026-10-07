@@ -20,6 +20,7 @@ import {
   readApplicationContacts,
 } from "@/modules/applications/service";
 import type { ContactsDto } from "@/modules/contacts/service";
+import { localePrefix } from "@/i18n/paths";
 
 export default async function ContactsPage({
   params,
@@ -30,7 +31,7 @@ export default async function ContactsPage({
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(`${localePrefix(locale)}/login`);
 
   const t = await getTranslations("contacts");
   const statusT = await getTranslations("employerApplications");

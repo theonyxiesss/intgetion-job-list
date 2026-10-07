@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthPage } from "@/components/auth/auth-page";
-import { LoginForm } from "@/components/auth/login-form";
+import { LoginForm, type LoginNext } from "@/components/auth/login-form";
 import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
 import { Link } from "@/i18n/navigation";
 
@@ -11,12 +11,14 @@ export default async function LoginPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; next?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("auth");
-  const { error } = await searchParams;
+  const { error, next: rawNext } = await searchParams;
+  const next: LoginNext | undefined =
+    rawNext === "post-job" ? "post-job" : undefined;
 
   return (
     <AuthPage
@@ -37,6 +39,7 @@ export default async function LoginPage({
     >
       <LoginForm
         initialError={error && callbackErrors.has(error) ? error : undefined}
+        {...(next ? { next } : {})}
       />
       <SocialSignInStubs />
     </AuthPage>

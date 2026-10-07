@@ -13,6 +13,7 @@ import {
   telegramBotId,
   telegramBotToken,
 } from "@/modules/auth/service";
+import { localePrefix } from "@/i18n/paths";
 
 const STUBS = ["google", "x"] as const;
 
@@ -32,7 +33,7 @@ async function telegramHref(): Promise<string | null> {
   return telegramAuthUrl({
     botId: telegramBotId(token),
     origin,
-    returnTo: `${origin}/${locale}/auth/telegram`,
+    returnTo: `${origin}${localePrefix(locale)}/auth/telegram`,
   });
 }
 

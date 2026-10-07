@@ -8,6 +8,7 @@ import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
 import { JobCard } from "@/components/ui/job-card";
 import { Link } from "@/i18n/navigation";
+import { localePrefix } from "@/i18n/paths";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,7 @@ export default async function SavedJobsPage({
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(`${localePrefix(locale)}/login`);
   const t = await getTranslations("savedJobs");
   const searches = await getTranslations("savedSearches");
   const entries = await listSavedJobsForUser(user.id);

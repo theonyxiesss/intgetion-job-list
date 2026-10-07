@@ -4,6 +4,8 @@ import type { CurrentUser } from "../service/auth-service";
 export type MeDto = {
   id: string;
   locale: string;
+  /** D331: soft type; permissions come from `companies` (D13). */
+  accountType: "candidate" | "employer";
   platformRole?: "admin";
   marketingOptIn: boolean;
   hasCandidateProfile: boolean;
@@ -29,6 +31,7 @@ export function toMeDto(
   const dto: MeDto = {
     id: user.id,
     locale: user.locale,
+    accountType: user.accountType,
     marketingOptIn: user.marketingOptIn,
     hasCandidateProfile: context.hasCandidateProfile,
     companies: context.companies.map(({ id, name, role }) => ({

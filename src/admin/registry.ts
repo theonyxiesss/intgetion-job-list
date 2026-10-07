@@ -140,7 +140,8 @@ export function sectionsFor(
 
 /** `/en/admin/users` → the users section. Login and MFA are not sections. */
 export function sectionForPath(pathname: string): AdminSectionDef | null {
-  const match = pathname.match(/^\/(?:en|ru)(\/admin(?:\/[^/]+)?)/);
+  // D335: `/admin/users` (English, no prefix) or `/ru/admin/users`.
+  const match = pathname.match(/^(?:\/(?:en|ru))?(\/admin(?:\/[^/]+)?)/);
   if (!match?.[1]) return null;
   const path = match[1];
   if (path === "/admin/login" || path === "/admin/mfa") return null;

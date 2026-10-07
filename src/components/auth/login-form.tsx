@@ -22,7 +22,17 @@ const passwordLogin = z.object({
 });
 const magicLogin = z.object({ email: emailSchema });
 
-export function LoginForm({ initialError }: { initialError?: string }) {
+/** Pages a sign-in may return to (allowlist: no open redirect). */
+const RETURN_PATHS = { "post-job": "/post-job" } as const;
+export type LoginNext = keyof typeof RETURN_PATHS;
+
+export function LoginForm({
+  initialError,
+  next,
+}: {
+  initialError?: string;
+  next?: LoginNext;
+}) {
   const t = useTranslations("auth");
   const errorText = useAuthError();
   const locale = useLocale();
@@ -48,7 +58,7 @@ export function LoginForm({ initialError }: { initialError?: string }) {
       setFormError(await apiErrorCode(response));
       return;
     }
-    router.replace("/");
+    router.replace(next ? RETURN_PATHS[next] : "/");
     router.refresh();
   });
 

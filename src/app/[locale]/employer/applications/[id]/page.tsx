@@ -26,6 +26,7 @@ import {
   readApplicationContacts,
 } from "@/modules/applications/service";
 import { getCandidateForViewer } from "@/modules/candidates/service";
+import { localePrefix } from "@/i18n/paths";
 
 export default async function EmployerApplicationPage({
   params,
@@ -36,7 +37,7 @@ export default async function EmployerApplicationPage({
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
-  if (!user) redirect(`/${locale}/login`);
+  if (!user) redirect(`${localePrefix(locale)}/login`);
 
   const t = await getTranslations("employerApplications");
   const interest = await getTranslations("expressInterest");

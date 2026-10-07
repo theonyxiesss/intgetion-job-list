@@ -9,6 +9,7 @@ import {
   readyEmailWait,
   signedInPath,
 } from "@/modules/auth/service/email-wait";
+import { localePrefix } from "@/i18n/paths";
 
 export async function GET(
   request: NextRequest,
@@ -31,12 +32,12 @@ export async function GET(
     await auditSignIn(result.user, "email_link", clientIp(request.headers));
   }
 
-  const target = new URL(`/${locale}`, siteUrl());
+  const target = new URL(`${localePrefix(locale)}`, siteUrl());
   if (!result.ok) {
-    target.pathname = `/${locale}/login`;
+    target.pathname = `${localePrefix(locale)}/login`;
     target.searchParams.set("error", result.reason);
   } else if (query.get("next") === "reset") {
-    target.pathname = `/${locale}/reset-password`;
+    target.pathname = `${localePrefix(locale)}/reset-password`;
     target.searchParams.set("mode", "update");
   } else {
     const wait = query.get("wait");
@@ -47,7 +48,11 @@ export async function GET(
       }
     }
     // Same-device open, or wait handoff unavailable: success page (D326).
-    target.pathname = `/${locale}/auth/confirmed`;
+    // A new employer starts with the company profile instead (D331).
+    target.pathname =
+      result.created && result.user.accountType === "employer"
+        ? `${localePrefix(locale)}/employer/company`
+        : `${localePrefix(locale)}/auth/confirmed`;
   }
   return NextResponse.redirect(target);
 }

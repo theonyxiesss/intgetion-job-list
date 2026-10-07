@@ -45,7 +45,7 @@ export default async function ForEmployersPage({
   // The proxy marks a checked session (D41): signed-in users go to the form.
   const ctaHref = hasSessionMark(await headers())
     ? "/employer/jobs/new"
-    : "/register";
+    : "/post-job";
   const cta = (
     <Link
       href={ctaHref}

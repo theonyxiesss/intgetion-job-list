@@ -16,6 +16,7 @@ import {
 } from "@/modules/salaries/service";
 import { languageAlternates, siteUrl } from "@/modules/seo/site";
 import { formatUsd } from "../format";
+import { localePrefix } from "@/i18n/paths";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,7 @@ export async function generateMetadata({
     title,
     ...(description ? { description } : {}),
     alternates: {
-      canonical: `${siteUrl()}/${locale}/salaries/${slug}`,
+      canonical: `${siteUrl()}${localePrefix(locale)}/salaries/${slug}`,
       languages: languageAlternates(`/salaries/${slug}`),
     },
     openGraph: { type: "website", title, description },

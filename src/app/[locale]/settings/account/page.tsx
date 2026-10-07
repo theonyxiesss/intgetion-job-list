@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import {
   DeleteAccount,
+  AccountTypeSetting,
   EmailLanguage,
 } from "@/components/settings/settings-controls";
 import { SecurityStubs } from "@/components/settings/security-stubs";
@@ -21,6 +22,7 @@ import {
 import { Alert, Container, PageHeader } from "@/components/ui";
 import { requireSettingsUser } from "../require-settings-user";
 import { SettingsTabs } from "../settings-tabs";
+import { localePrefix } from "@/i18n/paths";
 
 export default async function AccountSettingsPage({
   params,
@@ -42,7 +44,7 @@ export default async function AccountSettingsPage({
       ? telegramAuthUrl({
           botId: telegramBotId(token),
           origin: siteUrl(),
-          returnTo: `${siteUrl()}/${locale}/auth/telegram?link=1`,
+          returnTo: `${siteUrl()}${localePrefix(locale)}/auth/telegram?link=1`,
         })
       : null;
 
@@ -58,6 +60,7 @@ export default async function AccountSettingsPage({
           telegram={telegram ? { username: telegram.username } : null}
           linkHref={linkHref}
         />
+        <AccountTypeSetting value={user.accountType} />
         <EmailLanguage locale={user.locale} />
         <SecurityStubs />
         {user.platformRole === "admin" ? (

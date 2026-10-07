@@ -206,7 +206,7 @@ test("a closed job explains itself and offers similar jobs", async ({
   await expect(page.getByRole("link", { name: "All jobs" })).toBeVisible();
   // The open job of the same category is offered instead.
   await expect(
-    page.locator(`a[href="/en/jobs/${openId}"]`).first(),
+    page.locator(`a[href="/jobs/${openId}"]`).first(),
   ).toBeVisible();
 
   // A job that was never public is not acknowledged at all.

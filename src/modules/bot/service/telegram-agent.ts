@@ -11,6 +11,7 @@ import {
   resolveConversation,
   type BotEvent,
 } from "./conversation";
+import { localePrefix } from "@/i18n/paths";
 
 /** One Telegram message is 4096 characters; leave room for the job list. */
 const TELEGRAM_TEXT_LIMIT = 3500;
@@ -110,7 +111,7 @@ function render(events: BotEvent[], lines: Lines, locale: string): string[] {
         companyName: string;
       }>) ?? [];
     const list = jobs.slice(0, MAX_JOBS_IN_REPLY).map((job) => {
-      return `• ${job.title} — ${job.companyName}\n${siteUrl()}/${locale}/jobs/${job.id}`;
+      return `• ${job.title} — ${job.companyName}\n${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`;
     });
     if (list.length) out.push(list.join("\n\n"));
   }

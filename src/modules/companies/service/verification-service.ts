@@ -21,6 +21,7 @@ import {
   verificationTarget,
   type VerificationMethod,
 } from "./verification-rules";
+import { localePrefix } from "@/i18n/paths";
 
 /** Sends the corporate-email link; false when no provider is configured. */
 export type VerificationMailer = (message: {
@@ -223,7 +224,7 @@ export async function requestVerification(
     return { verification, dnsRecord: dnsRecordValue(token) };
   }
   const locale = user.locale === "ru" ? "ru" : "en";
-  const link = `${siteUrl()}/${locale}/employer/company/verify?company=${companyId}&token=${token}`;
+  const link = `${siteUrl()}${localePrefix(locale)}/employer/company/verify?company=${companyId}&token=${token}`;
   const emailSent = await deps.mailer({
     to: target,
     link,

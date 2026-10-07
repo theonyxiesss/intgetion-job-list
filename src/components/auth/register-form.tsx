@@ -6,7 +6,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "@/i18n/navigation";
-import { emailSchema, passwordSchema } from "@/modules/auth/schemas";
+import { Choice } from "@/components/ui/choice";
+import {
+  accountTypeSchema,
+  emailSchema,
+  passwordSchema,
+} from "@/modules/auth/schemas";
 import { MethodPicker, type Method } from "./method-picker";
 import {
   apiErrorCode,
@@ -15,6 +20,7 @@ import {
   SubmitButton,
   useAuthError,
 } from "./fields";
+import { localePrefix } from "@/i18n/paths";
 
 // The password rule sits on the field, so its error shows together with the
 // others instead of after they are fixed.
@@ -35,6 +41,7 @@ function schemaFor(method: Method) {
         }
       }),
     acceptTerms: z.literal(true, { error: "terms_required" }),
+    accountType: accountTypeSchema,
   });
 }
 
@@ -61,6 +68,7 @@ export function RegisterForm() {
         email: values.email,
         password: method === "password" ? values.password : undefined,
         acceptTerms: values.acceptTerms,
+        accountType: values.accountType,
         locale,
       }),
     });
@@ -88,6 +96,33 @@ export function RegisterForm() {
         }}
       />
       <FormAlert>{errorText(formError)}</FormAlert>
+
+      <fieldset
+        className="flex flex-col gap-2"
+        aria-describedby={errors.accountType ? "account-type-error" : undefined}
+      >
+        <legend className="t-label mb-1 text-fg-muted">
+          {t("accountTypeLabel")}
+        </legend>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {(["candidate", "employer"] as const).map((type) => (
+            <Choice
+              key={type}
+              type="radio"
+              value={type}
+              label={t(`accountType.${type}`)}
+              hint={t(`accountType.${type}Hint`)}
+              className="border border-line px-3 py-2 has-[:checked]:border-accent"
+              {...form.register("accountType")}
+            />
+          ))}
+        </div>
+        {errors.accountType && (
+          <p id="account-type-error" className="text-sm text-danger">
+            {errorText(errors.accountType.message)}
+          </p>
+        )}
+      </fieldset>
 
       <Field
         id="register-email"
@@ -122,7 +157,7 @@ export function RegisterForm() {
             {t.rich("acceptTerms", {
               terms: (chunks) => (
                 <a
-                  href={`/${locale}/terms`}
+                  href={`${localePrefix(locale)}/terms`}
                   target="_blank"
                   rel="noreferrer"
                   className="underline"
@@ -132,7 +167,7 @@ export function RegisterForm() {
               ),
               privacy: (chunks) => (
                 <a
-                  href={`/${locale}/privacy`}
+                  href={`${localePrefix(locale)}/privacy`}
                   target="_blank"
                   rel="noreferrer"
                   className="underline"

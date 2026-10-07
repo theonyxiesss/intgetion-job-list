@@ -7,7 +7,11 @@ import {
   csrfSite,
   isAdminHost,
 } from "./admin/host";
-import { routing } from "./i18n/routing";
+import {
+  LOCALE_COOKIE,
+  LOCALE_COOKIE_MAX_AGE,
+  routing,
+} from "./i18n/routing";
 import { isAllowedOrigin, needsOriginCheck } from "./lib/origin";
 import { normalizeRequestId, REQUEST_ID_HEADER } from "./lib/request-id";
 import {
@@ -72,12 +76,16 @@ export async function proxy(request: NextRequest) {
     );
   }
 
-  // Mini App: an HTTP redirect from / to /en drops #tgWebAppData on many
-  // phone webviews. Bounce in the page so the fragment survives (D322).
+  // Mini App: an HTTP redirect drops #tgWebAppData on many phone webviews.
+  // Bounce in the page so the fragment survives (D322). Since D335 English is
+  // the root itself, so the bounce marks its target with `tgb=1`; the old
+  // `/en` entry is bounced the same way instead of redirected.
+  const pathname = request.nextUrl.pathname;
   if (
     !adminHost &&
     flags.telegramMiniAppEnabled &&
-    request.nextUrl.pathname === "/"
+    (pathname === "/" || pathname === "/en") &&
+    !request.nextUrl.searchParams.has("tgb")
   ) {
     const bounceNonce = createNonce();
     const bounceCsp = buildCsp({
@@ -89,7 +97,7 @@ export async function proxy(request: NextRequest) {
     });
     // Wait briefly for telegram-web-app.js / the phone bridge before leaving /
     // so initData can be stashed when the hash is already empty (D324).
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="${TELEGRAM_WEB_APP_SCRIPT}"></script><script nonce="${bounceNonce}">(function(){function stash(){try{var h=location.hash||"";if(h.indexOf("tgWebAppData")!==-1)sessionStorage.setItem("tg_web_app_hash",h);var d=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData;if(d)sessionStorage.setItem("tg_web_app_init",d);}catch(e){}}function go(){stash();var l="en";try{if(/^ru\\b/i.test(navigator.language||""))l="ru";}catch(e){}location.replace("/"+l+location.search+location.hash);}var n=0;function tick(){stash();var ready=(location.hash||"").indexOf("tgWebAppData")!==-1||(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData);if(ready||n++>=10)go();else setTimeout(tick,100);}tick();})();</script></head><body></body></html>`;
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="${TELEGRAM_WEB_APP_SCRIPT}"></script><script nonce="${bounceNonce}">(function(){function stash(){try{var h=location.hash||"";if(h.indexOf("tgWebAppData")!==-1)sessionStorage.setItem("tg_web_app_hash",h);var d=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData;if(d)sessionStorage.setItem("tg_web_app_init",d);}catch(e){}}function go(){stash();var l="en";try{if(/^ru\\b/i.test(navigator.language||""))l="ru";}catch(e){}var s=location.search;s+=(s?"&":"?")+"tgb=1";location.replace((l==="ru"?"/ru":"/")+s+location.hash);}var n=0;function tick(){stash();var ready=(location.hash||"").indexOf("tgWebAppData")!==-1||(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData);if(ready||n++>=10)go();else setTimeout(tick,100);}tick();})();</script></head><body></body></html>`;
     return stamp(
       new NextResponse(html, {
         headers: {
@@ -101,6 +109,22 @@ export async function proxy(request: NextRequest) {
       requestId,
       false,
     );
+  }
+
+  // D335: English has no prefix. Old `/en/...` links move for good.
+  // An `/en` link is also how the language switch says «English», so the
+  // choice is remembered like any other (otherwise a saved `ru` would send
+  // the visitor straight back).
+  if (/^\/en(?=\/|$)/.test(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.replace(/^\/en/, "") || "/";
+    const response = NextResponse.redirect(url, 308);
+    response.cookies.set(LOCALE_COOKIE, "en", {
+      path: "/",
+      sameSite: "lax",
+      maxAge: LOCALE_COOKIE_MAX_AGE,
+    });
+    return stamp(response, requestId, adminHost);
   }
 
   const originSite = csrfSite(host, siteUrl());

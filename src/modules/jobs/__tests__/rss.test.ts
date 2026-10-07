@@ -40,13 +40,13 @@ describe("RSS feed (D204)", () => {
       "<title>Solidity &lt;engineer&gt; — Acme &amp; Co</title>",
     );
     expect(xml).toContain(
-      "<link>https://example.com/en/jobs/00000000-0000-4000-8000-000000000001</link>",
+      "<link>https://example.com/jobs/00000000-0000-4000-8000-000000000001</link>",
     );
     expect(xml).toContain("<pubDate>Sun, 04 Oct 2026 12:00:00 GMT</pubDate>");
     expect(xml).toContain("<category>Engineering</category>");
     expect(xml).toContain("<description>Beta</description>");
     expect(xml).toContain(
-      '<atom:link href="https://example.com/en/jobs/rss.xml" rel="self"',
+      '<atom:link href="https://example.com/jobs/rss.xml" rel="self"',
     );
   });
 });
