@@ -24,6 +24,9 @@ import { ThemeToggle } from "./theme-toggle";
 const iconLink =
   "relative inline-flex size-11 items-center justify-center text-fg-muted transition-colors hover:text-fg";
 
+/** These two header actions only. Important utilities beat ButtonLink's default size. */
+const headerCta = "min-h-9! px-3! text-[12px]! tracking-[0.08em]!";
+
 /** Site header (DESIGN.md 8.11). */
 export async function Header() {
   const t = await getTranslations();
@@ -128,14 +131,14 @@ export async function Header() {
               href="/chat"
               variant="secondary"
               icon={<Icon icon={Bot} size={16} />}
-              className="max-sm:size-11 max-sm:px-0"
+              className={cn(headerCta, "max-sm:size-9! max-sm:px-0!")}
               title={t("nav.chatWithAgent")}
             >
               <span className="max-sm:sr-only">{t("nav.chatWithAgent")}</span>
             </ButtonLink>
           </span>
           <span className="mr-2 hidden sm:inline-flex">
-            <ButtonLink {...navFade} href="/post-job">
+            <ButtonLink {...navFade} href="/post-job" className={headerCta}>
               {t("nav.postJob")}
             </ButtonLink>
           </span>
