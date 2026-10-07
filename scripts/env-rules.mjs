@@ -59,6 +59,7 @@ const ALL_KNOWN = new Set([
   "LLM_DAILY_BUDGET_USD",
   "EMBEDDINGS_ENABLED",
   "IMPORT_LIVE_ENABLED",
+  "IMPORT_TEST_DRIP",
   "INDEXNOW_KEY",
   "GOOGLE_SITE_VERIFICATION",
   "YANDEX_VERIFICATION",
@@ -223,6 +224,7 @@ function validateVar(name, value, mode) {
 
     case "EMBEDDINGS_ENABLED":
     case "IMPORT_LIVE_ENABLED":
+    case "IMPORT_TEST_DRIP":
       if (!isBooleanString(trimmed)) {
         return { name, status: "INVALID", reason: 'must be "true" or "false"' };
       }

@@ -11,8 +11,14 @@ const ENTITIES: Record<string, string> = {
 };
 
 function field(item: string, name: string): string {
-  const match = item.match(new RegExp(`<${name}>([\\s\\S]*?)</${name}>`, "i"));
-  const value = match?.[1]?.trim() ?? "";
+  // Real feeds put attributes on <guid> and wrap text in CDATA. The fixture
+  // uses neither; both have to parse or every external id comes out empty.
+  const match = item.match(
+    new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)</${name}>`, "i"),
+  );
+  let value = match?.[1]?.trim() ?? "";
+  const cdata = value.match(/^<!\[CDATA\[([\s\S]*?)\]\]>$/);
+  if (cdata?.[1] !== undefined) value = cdata[1].trim();
   return value.replace(
     /&(?:amp|lt|gt|quot|apos);/g,
     (entity) => ENTITIES[entity]!,

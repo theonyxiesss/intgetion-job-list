@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { notFound, toErrorResponse } from "@/lib/http";
-import { runFixtureImports } from "@/modules/ingestion/service";
+import { runFixtureImports, runTestDrip } from "@/modules/ingestion/service";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,9 @@ function authorized(request: Request): boolean {
 export async function GET(request: Request) {
   try {
     if (!authorized(request)) throw notFound();
-    return Response.json({ ok: true, sources: await runFixtureImports() });
+    const sources = await runFixtureImports();
+    const drip = await runTestDrip();
+    return Response.json({ ok: true, sources, drip });
   } catch (error) {
     return toErrorResponse(error);
   }

@@ -11,6 +11,8 @@ export interface RssJob {
   publishedAt: string | null;
   /** Ready-made salary text, or null when the job has none. */
   salary: string | null;
+  /** Imported jobs name their source so the feed credits it. */
+  sourceName?: string | null;
   categories: readonly string[];
 }
 
@@ -22,6 +24,8 @@ export interface RssChannel {
   locale: string;
   /** Path after `/{locale}`. Defaults to the catalog feed. */
   selfPath?: string;
+  /** Page this channel describes. Defaults to the catalog. */
+  linkPath?: string;
 }
 
 const XML_ESCAPES: Record<string, string> = {
@@ -39,18 +43,25 @@ export function escapeXml(value: string): string {
     .replace(/[&<>"']/g, (char) => XML_ESCAPES[char]!);
 }
 
+function rfc822(value: string): string | null {
+  const time = Date.parse(value);
+  if (!Number.isFinite(time)) return null;
+  return new Date(time).toUTCString();
+}
+
 function item(job: RssJob, channel: RssChannel): string {
   const link = `${channel.siteUrl}/${channel.locale}/jobs/${job.id}`;
-  const description = [job.companyName, job.salary].filter(Boolean).join(" · ");
+  const description = [job.companyName, job.salary, job.sourceName]
+    .filter(Boolean)
+    .join(" · ");
+  const published = job.publishedAt ? rfc822(job.publishedAt) : null;
   return [
     "    <item>",
     `      <title>${escapeXml(`${job.title} — ${job.companyName}`)}</title>`,
     `      <link>${escapeXml(link)}</link>`,
     `      <guid isPermaLink="true">${escapeXml(link)}</guid>`,
     `      <description>${escapeXml(description)}</description>`,
-    ...(job.publishedAt
-      ? [`      <pubDate>${new Date(job.publishedAt).toUTCString()}</pubDate>`]
-      : []),
+    ...(published ? [`      <pubDate>${published}</pubDate>`] : []),
     ...job.categories.map(
       (category) => `      <category>${escapeXml(category)}</category>`,
     ),
@@ -61,14 +72,22 @@ function item(job: RssJob, channel: RssChannel): string {
 export function buildRss(channel: RssChannel, jobs: readonly RssJob[]): string {
   const selfPath = channel.selfPath ?? "/jobs/rss.xml";
   const self = `${channel.siteUrl}/${channel.locale}${selfPath}`;
+  const page = `${channel.siteUrl}/${channel.locale}${channel.linkPath ?? "/jobs"}`;
+  const newest = jobs
+    .map((job) => (job.publishedAt ? Date.parse(job.publishedAt) : NaN))
+    .filter((time) => Number.isFinite(time))
+    .sort((a, b) => b - a)[0];
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
     "  <channel>",
     `    <title>${escapeXml(channel.title)}</title>`,
-    `    <link>${escapeXml(`${channel.siteUrl}/${channel.locale}/jobs`)}</link>`,
+    `    <link>${escapeXml(page)}</link>`,
     `    <description>${escapeXml(channel.description)}</description>`,
     `    <language>${channel.locale}</language>`,
+    ...(newest !== undefined
+      ? [`    <lastBuildDate>${new Date(newest).toUTCString()}</lastBuildDate>`]
+      : []),
     `    <atom:link href="${escapeXml(self)}" rel="self" type="application/rss+xml"/>`,
     ...jobs.map((job) => item(job, channel)),
     "  </channel>",

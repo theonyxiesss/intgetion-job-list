@@ -48,5 +48,33 @@ describe("RSS feed (D204)", () => {
     expect(xml).toContain(
       '<atom:link href="https://example.com/en/jobs/rss.xml" rel="self"',
     );
+    expect(xml).toContain("<link>https://example.com/en/jobs</link>");
+    expect(xml).toContain(
+      "<lastBuildDate>Sun, 04 Oct 2026 12:00:00 GMT</lastBuildDate>",
+    );
+  });
+
+  it("points a tag feed at the tag page and drops a broken date", () => {
+    const xml = buildRss(
+      { ...channel, selfPath: "/jobs/t/engineering/rss.xml", linkPath: "/jobs/t/engineering" },
+      [
+        {
+          id: "00000000-0000-4000-8000-000000000003",
+          title: "Engineer",
+          companyName: "Acme",
+          publishedAt: "not-a-date",
+          salary: null,
+          sourceName: "Remotive",
+          categories: ["Engineering"],
+        },
+      ],
+    );
+    expect(xml).toContain("<link>https://example.com/en/jobs/t/engineering</link>");
+    expect(xml).toContain(
+      'href="https://example.com/en/jobs/t/engineering/rss.xml"',
+    );
+    expect(xml).not.toContain("<pubDate>");
+    expect(xml).not.toContain("Invalid Date");
+    expect(xml).toContain("<description>Acme · Remotive</description>");
   });
 });

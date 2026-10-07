@@ -6,6 +6,7 @@ export {
   FIXTURE_ADAPTERS,
   runFixtureImport,
   runFixtureImports,
+  runTestDrip,
 } from "./ingest-fixtures";
 export type { ImportReport } from "./ingest-fixtures";
 export { applyExternal, recordNothing } from "./apply-external";

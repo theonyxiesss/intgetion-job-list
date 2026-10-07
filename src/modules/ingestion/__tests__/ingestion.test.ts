@@ -85,6 +85,15 @@ describe("fixture adapters", () => {
     });
   });
 
+  it("reads a guid attribute and CDATA, which public RSS feeds use", () => {
+    const [job] = parseFixtureRss(
+      `<rss><item><guid isPermaLink="false"><![CDATA[rss-9]]></guid><company><![CDATA[North &amp; Co]]></company><title>Role</title><description><![CDATA[Build <b>it</b>]]></description><category>engineering</category><link>https://a.invalid/1</link></item></rss>`,
+    );
+    expect(job?.externalId).toBe("rss-9");
+    expect(job?.companyName).toBe("North & Co");
+    expect(job?.description).toBe("Build <b>it</b>");
+  });
+
   it("reads the API shape field by field", () => {
     const [job] = parseFixtureApi(
       JSON.stringify([

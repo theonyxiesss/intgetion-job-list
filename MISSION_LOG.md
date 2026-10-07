@@ -3,6 +3,16 @@
 > Older entries: [docs/archive/mission-log/](docs/archive/mission-log/) — see [docs/archive/INDEX.md](docs/archive/INDEX.md).
 > Session protocol: [docs/tz/00-protocol.md](docs/tz/00-protocol.md). Status now: [docs/CURRENT.md](docs/CURRENT.md).
 
+## [2026-10-07] — тестовая RSS-капля — DONE (ветка, не прод)
+
+- Сделано: ветка `test/rss-drip`. Лента каталога и тега одна: у тега название подборки и своя ссылка, битая дата не попадает в XML. Парсер RSS читает `guid` с атрибутом и CDATA. Капля Remotive: 3 новые вакансии за прогон, уже сохранённые обновляются. `founder approved: republish allowed — Remotive` только для этой ветки. Флаг `IMPORT_TEST_DRIP` выключен на `intgetion.com` и на облачной базе.
+- Команды проверки: `pnpm exec tsc --noEmit` → 0. eslint по затронутым файлам → 0. `vitest` rss, ingestion, remotive, env-rules → 62 passed.
+- Миграции: нет.
+- Изменённые файлы: `src/modules/jobs/service/rss.ts`, `job-feed.ts`, маршруты `rss.xml`, `src/modules/ingestion/adapters/remotive.ts`, `rss-fixture.ts`, `ingest-fixtures.ts`, cron import, тесты, `.env.example`.
+- Отклонения от ТЗ: живой источник только под флагом и не на проде (D18, D338).
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по команде. В master не вливать, пока основатель не скажет.
+
 ## [2026-10-07] — сборка и выкладка — DONE
 
 - Сделано: локальные наработки собраны с `origin/master` и выложены на https://intgetion.com. В проде: Google и X на входе, кнопка Telegram, растущее поле чата, тип аккаунта, письма D330, плюс уже бывшие на master логотип, цены и D325–D329. X-провайдер в Supabase по-прежнему выключен.

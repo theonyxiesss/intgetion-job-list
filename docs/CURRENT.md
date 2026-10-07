@@ -1,8 +1,8 @@
 # CURRENT — состояние сейчас
 
 **Продукт:** `INTGETION JOB LIST`  
-**Ветка / worktree:** `feat/email-system-design` · `C:\Users\Admin\Documents\Integetion jobs`  
-**Активная задача:** нет.  
+**Ветка / worktree:** `test/rss-drip` · `C:\Users\Admin\Documents\Integetion jobs`  
+**Активная задача:** тестовая капля Remotive и починка RSS (D338). На прод не выкладывать.  
 **Прод:** https://intgetion.com — выложен `d914274` (PR #12): master плюс Spoki (D337), письма (D330), поле чата (D334), тип аккаунта (D331), Google и X (D335, D336).
 
 ## Работает (кратко)

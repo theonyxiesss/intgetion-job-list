@@ -2,6 +2,13 @@ import { matchesScamPattern } from "@/config/scam-patterns";
 import { expireImportedJobs, saveImportedJob } from "@/modules/jobs/service";
 import { normalizeSkill } from "@/modules/taxonomy/service";
 import { apiFixtureAdapter } from "../adapters/api-fixture";
+import {
+  fetchRemotiveJobs,
+  REMOTIVE_DRIP_LIMIT,
+  REMOTIVE_SOURCE_NAME,
+  testDripAllowed,
+  withinCreateBudget,
+} from "../adapters/remotive";
 import { rssFixtureAdapter } from "../adapters/rss-fixture";
 import type { ImportAdapter, RawImportedJob } from "../adapters/types";
 import * as repo from "../repo/import-repo";
@@ -31,6 +38,8 @@ type Dependencies = {
   resolveSkill: SkillResolver;
   isScam: (text: string) => boolean;
   now: () => Date;
+  /** When set, only this many new jobs are written; known ones still refresh. */
+  createLimit?: number;
 };
 
 const defaults: Dependencies = {
@@ -98,7 +107,8 @@ async function importSource(
 
   const run = await repo.beginImportRun(source.id, now);
   try {
-    const records = (await deps.load(adapter)).slice(0, MAX_RECORDS_PER_RUN);
+    const loaded = (await deps.load(adapter)).slice(0, MAX_RECORDS_PER_RUN);
+    const records = await dripRecords(source.id, loaded, deps.createLimit);
     counters.fetched = records.length;
     for (const raw of records) {
       const job = await normalizeImportedJob(
@@ -183,6 +193,40 @@ async function importSource(
       error: message,
     };
   }
+}
+
+async function dripRecords(
+  sourceId: string,
+  records: RawImportedJob[],
+  limit: number | undefined,
+): Promise<RawImportedJob[]> {
+  if (limit === undefined) return records;
+  const linked = new Set<string>();
+  for (const record of records) {
+    const id = record.externalId.trim();
+    if (await repo.findLinkedJobId(sourceId, id)) linked.add(id);
+  }
+  return withinCreateBudget(records, linked, limit);
+}
+
+/**
+ * Test-only drip from Remotive. Off unless IMPORT_TEST_DRIP=true, the site
+ * is not intgetion.com, and the database is on this machine (D18).
+ */
+export async function runTestDrip(): Promise<ImportReport | null> {
+  if (!testDripAllowed()) return null;
+  const jobs = await fetchRemotiveJobs();
+  const adapter: ImportAdapter = {
+    sourceName: REMOTIVE_SOURCE_NAME,
+    kind: "rss",
+    loadFixture: async () => jobs,
+  };
+  return importSource(adapter, {
+    ...defaults,
+    adapters: [adapter],
+    load: async () => jobs,
+    createLimit: REMOTIVE_DRIP_LIMIT,
+  });
 }
 
 /** Published jobs from this source that every one of their sources lost. */

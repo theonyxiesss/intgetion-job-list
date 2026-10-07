@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { formatMoneyDto } from "@/lib/money";
 import { siteUrl } from "@/lib/supabase/env";
 import { PRODUCT_NAME } from "@/config/product";
@@ -9,12 +10,15 @@ import { buildRss, type RssChannel } from "./rss";
 export async function renderJobFeed(
   query: JobSearchQuery,
   locale: string,
-  channel: Pick<RssChannel, "title" | "description" | "selfPath">,
+  channel: Pick<RssChannel, "title" | "description" | "selfPath" | "linkPath">,
 ) {
   const result = await searchJobs(
     { ...query, limit: 50, cursor: undefined },
     locale,
   );
+  const jobsText = await getTranslations({ locale, namespace: "jobs" });
+  const categories = await getTranslations({ locale, namespace: "categories" });
+  const markers = await getTranslations({ locale, namespace: "markers" });
   const money = locale === "ru" ? "ru-RU" : "en-US";
   const xml = buildRss(
     {
@@ -23,20 +27,26 @@ export async function renderJobFeed(
       siteUrl: siteUrl(),
       locale,
       selfPath: channel.selfPath,
+      linkPath: channel.linkPath,
     },
     result.items.map((job) => ({
       id: job.id,
       title: job.title,
       companyName: job.company.name,
       publishedAt: job.publishedAt,
-      salary: job.salaryMin ? formatMoneyDto(job.salaryMin, money) : null,
-      categories: job.sectors,
+      salary: job.salaryMin
+        ? `${formatMoneyDto(job.salaryMin, money)}${job.salaryMax ? ` – ${formatMoneyDto(job.salaryMax, money)}` : ""} / ${jobsText(job.salaryMin.period)}`
+        : null,
+      sourceName: job.source.type === "imported" ? job.source.name : null,
+      categories: job.sectors.length
+        ? job.sectors.map((sector) => markers(`sectors.${sector}`))
+        : [categories(job.category)],
     })),
   );
   return new Response(xml, {
     headers: {
       "content-type": "application/rss+xml; charset=utf-8",
-      "cache-control": "public, s-maxage=600",
+      "cache-control": "public, s-maxage=600, stale-while-revalidate=600",
     },
   });
 }
