@@ -71,7 +71,7 @@ afterAll(async () => {
   await db.execute(sql`delete from public.import_sources where name = ${source.sourceName}`);
 });
 
-describe("live import (8B, D342)", () => {
+describe("live import (8B, D349)", () => {
   it("registers a new source switched off and fetches nothing", async () => {
     const [report] = await run(start);
     expect(report?.skipped).toBe(true);

@@ -2,7 +2,7 @@ import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { importRuns, importSources } from "@/db/schema";
 
-/** Import panel for admins (10A, D83); sources switch on and off (D342). */
+/** Import panel for admins (10A, D83); sources switch on and off (D349). */
 export async function listImportSources() {
   return getDb()
     .select({

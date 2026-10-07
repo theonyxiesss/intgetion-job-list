@@ -5,7 +5,7 @@ import { setImportSourceEnabled } from "@/modules/ingestion/service";
 
 const toggleInput = z.object({ enabled: z.boolean() });
 
-/** `POST /api/admin/import/sources/:id/toggle` `{ enabled }` (8B, D342). */
+/** `POST /api/admin/import/sources/:id/toggle` `{ enabled }` (8B, D349). */
 export async function POST(
   request: Request,
   context: { params: Promise<{ id: string }> },

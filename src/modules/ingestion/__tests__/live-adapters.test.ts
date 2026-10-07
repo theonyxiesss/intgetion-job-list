@@ -5,7 +5,7 @@ import { plain, withinCreateBudget } from "../adapters/live";
 import { mapRemoteOkJob, remoteOkSource } from "../adapters/remoteok";
 import { mapRemotiveJob } from "../adapters/remotive";
 
-describe("live adapters (8B, D342)", () => {
+describe("live adapters (8B, D349)", () => {
   it("Remotive: keeps the Remotive page as the apply link", () => {
     const job = mapRemotiveJob({
       id: 12,

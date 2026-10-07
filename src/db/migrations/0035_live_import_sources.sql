@@ -1,4 +1,4 @@
--- D342: live import (8B). The founder approved republishing from these four
+-- D349: live import (8B). The founder approved republishing from these four
 -- official APIs (MISSION_LOG 2026-10-07, D18). Each is on and allowed here;
 -- nothing runs until IMPORT_LIVE_ENABLED=true, and the admin can switch a
 -- source off on /admin/import. Terms per source are in docs/tz/13-import.md.

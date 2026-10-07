@@ -21,7 +21,7 @@
 | Telegram bot webhook | PARTIAL | вебхук чинили; phone Mini App OPEN |
 | Phone Mini App session | PARTIAL / OPEN | [OPEN_TASKS](../OPEN_TASKS.md) |
 | Cross-device email handoff (D328) | DEFERRED | не итерировать |
-| Live import (8B) | DONE (ветка `feat/live-import`, D342) | Remotive, Himalayas, Jobicy, Remote OK; включить `IMPORT_LIVE_ENABLED=true` на Vercel |
+| Live import (8B) | DONE (ветка `feat/live-import`, D349) | Remotive, Himalayas, Jobicy, Remote OK; включить `IMPORT_LIVE_ENABLED=true` на Vercel |
 | OAuth Google/X | OUT | V2 |
 | Messenger | OUT | V2 |
 

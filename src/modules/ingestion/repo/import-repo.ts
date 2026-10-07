@@ -40,7 +40,7 @@ export async function ensureFixtureSource(adapter: ImportAdapter) {
 
 /**
  * Registers a live source switched off; the migration or the admin turns it
- * on. A re-run never flips enabled or republish_allowed (D342).
+ * on. A re-run never flips enabled or republish_allowed (D349).
  */
 export async function ensureLiveSource(source: {
   sourceName: string;

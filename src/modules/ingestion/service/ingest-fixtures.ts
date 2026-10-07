@@ -20,7 +20,7 @@ export const FIXTURE_ADAPTERS: readonly ImportAdapter[] = [
 ];
 
 /**
- * Official APIs the founder approved for republishing (D18, D342). Each one
+ * Official APIs the founder approved for republishing (D18, D349). Each one
  * runs only when IMPORT_LIVE_ENABLED=true and its row in import_sources is
  * enabled with republish_allowed; the admin switches it off on /admin/import.
  */
@@ -48,7 +48,7 @@ type Dependencies = {
   resolveSkill: SkillResolver;
   isScam: (text: string) => boolean;
   now: () => Date;
-  /** Live sources run less often, by their own terms (D342). */
+  /** Live sources run less often, by their own terms (D349). */
   minIntervalMs?: number;
   /** When set, only this many new jobs are written; known ones still refresh. */
   createLimit?: number;
@@ -93,7 +93,7 @@ export async function runFixtureImports(
 }
 
 /**
- * Runs every approved live source once (8B, D342), each by its own interval
+ * Runs every approved live source once (8B, D349), each by its own interval
  * and with a budget of new jobs per run so the catalog grows evenly.
  */
 export async function runLiveImports(

@@ -5,7 +5,7 @@ import { formatMoneyDto, toMoneyDto } from "@/lib/money";
 import type { TelegramSender } from "@/lib/telegram-bot";
 import ru from "@/messages/ru.json";
 
-/** This file's applied_at is the watermark (D342). */
+/** This file's applied_at is the watermark (D341). */
 export const JOBS_ALERT_MIGRATION = "0033_jobs_alert.sql";
 
 const BATCH = 20;
@@ -56,7 +56,7 @@ function isBasis(value: string | null): value is SalaryBasis {
   return value === "gross" || value === "net";
 }
 
-/** Employer currency, or USD when the job did not name one (D342). */
+/** Employer currency, or USD when the job did not name one (D341). */
 export function jobsAlertCurrency(raw: string | null): string {
   const code = raw?.trim().toUpperCase() ?? "";
   return /^[A-Z]{3}$/.test(code) ? code : "USD";
@@ -80,7 +80,7 @@ export function jobsAlertSalaryLine(row: JobsAlertRow): string {
   return `Зарплата: ${amount}${periodLabel}`;
 }
 
-/** Fixed channel text. No description, no skills, no LLM (D342). */
+/** Fixed channel text. No description, no skills, no LLM (D341). */
 export function jobsAlertText(row: JobsAlertRow): string {
   return [
     `Вакансия: ${jobsAlertSingleLine(row.title)}`,

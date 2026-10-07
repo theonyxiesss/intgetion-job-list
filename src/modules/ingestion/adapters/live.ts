@@ -1,7 +1,7 @@
 import type { RawImportedJob } from "./types";
 
 /**
- * A live source (8B, D342): an official API the source lets other sites
+ * A live source (8B, D349): an official API the source lets other sites
  * show, with its name and a link back. Scraping HTML is not allowed (D18).
  */
 export interface LiveSource {

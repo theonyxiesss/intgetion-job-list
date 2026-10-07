@@ -18,7 +18,7 @@ function authorized(request: Request): boolean {
 
 /**
  * Hourly import. With IMPORT_LIVE_ENABLED=true the approved live sources run
- * (8B, D342), each by its own interval; fixtures never mix with real jobs.
+ * (8B, D349), each by its own interval; fixtures never mix with real jobs.
  * Otherwise the 8A fixtures run, as before.
  */
 export async function GET(request: Request) {
