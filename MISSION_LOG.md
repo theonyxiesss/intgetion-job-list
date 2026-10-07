@@ -846,3 +846,10 @@
 - Команды проверки: `pnpm exec vitest run src/lib/email-html.test.ts src/lib/security.test.ts src/modules/auth/__tests__/auth-emails.test.ts` → 0 (3 файла, 31 тест). eslint → 0. `pnpm exec tsc --noEmit` → 0.
 - Миграции: нет. Решения: D325. Ветка `cursor/auth-emails` — **не вливать в прод** без явной команды.
 - OPEN QUESTION: когда выкладывать — включить Send Email Hook в Supabase и `AUTH_SEND_EMAIL_HOOK_SECRET` в Vercel (RUNBOOK §15).
+
+## [2026-10-07] — confirm UX: localhost + confirmed page (D326) — ветка cursor/auth-confirm-ux
+
+- Сделано: `publicAuthRedirect` в hook (localhost/чужой origin → `NEXT_PUBLIC_SITE_URL`); HTML письма без сырого URL под кнопкой; `/auth/confirmed` после успешного callback; `CheckEmailWatch` (poll `/api/me` + BroadcastChannel) обновляет вкладку на компьютере. Site URL в Dashboard при выкладке — `https://intgetion.com`.
+- Команды проверки: `pnpm exec vitest run src/lib/email-html.test.ts src/modules/auth/__tests__/auth-emails.test.ts` → 0 (2 файла, 11 тестов); eslint по изменённым файлам → 0; `pnpm exec tsc --noEmit` → 0.
+- Миграции: нет. Решения: D326. Ветка `cursor/auth-confirm-ux` — **в прод не вливать**, пока Claude не закончит свой выкат / без явной команды.
+- OPEN QUESTION: нет.

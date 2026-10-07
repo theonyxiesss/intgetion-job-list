@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   authEmailKindFromAction,
   authVerifyUrl,
+  publicAuthRedirect,
   renderAuthEmail,
 } from "../service/auth-emails";
 import {
@@ -58,6 +59,33 @@ describe("auth email letters (D325)", () => {
       "https://proj.supabase.co/auth/v1/verify?token=hash1&type=recovery&redirect_to=https%3A%2F%2Fintgetion.com%2Fen%2Fauth%2Fcallback%3Fnext%3Dreset",
     );
   });
+
+  it("rewrites localhost redirect_to onto the public site (D326)", () => {
+    expect(
+      publicAuthRedirect(
+        "http://localhost:3000/en/auth/callback?next=reset",
+        "https://intgetion.com",
+      ),
+    ).toBe("https://intgetion.com/en/auth/callback?next=reset");
+    expect(
+      publicAuthRedirect(
+        "http://127.0.0.1:3000/ru/auth/callback",
+        "https://intgetion.com",
+      ),
+    ).toBe("https://intgetion.com/ru/auth/callback");
+    expect(
+      publicAuthRedirect(
+        "https://intgetion.com/en/auth/callback",
+        "https://intgetion.com",
+      ),
+    ).toBe("https://intgetion.com/en/auth/callback");
+    expect(
+      publicAuthRedirect(
+        "https://evil.example/en/auth/callback",
+        "https://intgetion.com",
+      ),
+    ).toBe("https://intgetion.com/en/auth/callback");
+  });
 });
 
 describe("send-email hook signature (D325)", () => {
@@ -101,6 +129,7 @@ describe("send-email hook signature (D325)", () => {
 
 describe("send-email hook handler (D325)", () => {
   const savedUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const savedSite = process.env.NEXT_PUBLIC_SITE_URL;
   const savedSecret = process.env.AUTH_SEND_EMAIL_HOOK_SECRET;
   const secretBytes = Buffer.from("hook-secret-bytes!!");
   const secret = `v1,whsec_${secretBytes.toString("base64")}`;
@@ -108,6 +137,8 @@ describe("send-email hook handler (D325)", () => {
   afterEach(() => {
     if (savedUrl === undefined) delete process.env.NEXT_PUBLIC_SUPABASE_URL;
     else process.env.NEXT_PUBLIC_SUPABASE_URL = savedUrl;
+    if (savedSite === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
+    else process.env.NEXT_PUBLIC_SITE_URL = savedSite;
     if (savedSecret === undefined) {
       delete process.env.AUTH_SEND_EMAIL_HOOK_SECRET;
     } else process.env.AUTH_SEND_EMAIL_HOOK_SECRET = savedSecret;
@@ -132,6 +163,7 @@ describe("send-email hook handler (D325)", () => {
 
   it("sends a recovery letter through the mailer", async () => {
     process.env.NEXT_PUBLIC_SUPABASE_URL = "https://proj.supabase.co";
+    process.env.NEXT_PUBLIC_SITE_URL = "https://intgetion.com";
     process.env.AUTH_SEND_EMAIL_HOOK_SECRET = secret;
     const sent: unknown[] = [];
     const mailer: EmailSender = {
@@ -151,10 +183,48 @@ describe("send-email hook handler (D325)", () => {
     const result = await handleSendEmailHook(raw, headers, mailer, secret);
     expect(result).toEqual({ ok: true });
     expect(sent).toHaveLength(1);
-    const message = sent[0] as { to: string; subject: string; html: string };
+    const message = sent[0] as {
+      to: string;
+      subject: string;
+      html: string;
+      text: string;
+    };
     expect(message.to).toBe("a@example.com");
     expect(message.subject).toContain("Reset");
     expect(message.html).toContain("/auth/v1/verify?token=tok");
+    expect(message.html).toContain(
+      "redirect_to=https%3A%2F%2Fintgetion.com%2Fen%2Fauth%2Fcallback%3Fnext%3Dreset",
+    );
+    // Raw verify URL stays in text/plain, not as visible body text under the button.
+    expect(message.text).toContain("/auth/v1/verify?token=tok");
+  });
+
+  it("rewrites localhost redirect_to before building the verify link", async () => {
+    process.env.NEXT_PUBLIC_SUPABASE_URL = "https://proj.supabase.co";
+    process.env.NEXT_PUBLIC_SITE_URL = "https://intgetion.com";
+    process.env.AUTH_SEND_EMAIL_HOOK_SECRET = secret;
+    const sent: unknown[] = [];
+    const mailer: EmailSender = {
+      async send(message) {
+        sent.push(message);
+        return "sent";
+      },
+    };
+    const { raw, headers } = signedRequest({
+      user: { email: "a@example.com", user_metadata: { locale: "en" } },
+      email_data: {
+        token_hash: "tok",
+        email_action_type: "signup",
+        redirect_to: "http://localhost:3000/en/auth/callback",
+      },
+    });
+    const result = await handleSendEmailHook(raw, headers, mailer, secret);
+    expect(result).toEqual({ ok: true });
+    const message = sent[0] as { html: string };
+    expect(message.html).toContain(
+      "redirect_to=https%3A%2F%2Fintgetion.com%2Fen%2Fauth%2Fcallback",
+    );
+    expect(message.html).not.toContain("localhost");
   });
 
   it("refuses a missing signature", async () => {

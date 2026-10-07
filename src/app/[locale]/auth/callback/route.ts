@@ -34,6 +34,9 @@ export async function GET(
   } else if (query.get("next") === "reset") {
     target.pathname = `/${locale}/reset-password`;
     target.searchParams.set("mode", "update");
+  } else {
+    // Signup / magic link: show a clear success page (phone + desktop) (D326).
+    target.pathname = `/${locale}/auth/confirmed`;
   }
   return NextResponse.redirect(target);
 }

@@ -1,5 +1,6 @@
 import { siteEmailHtml } from "@/lib/email-html";
 import type { AppLocale } from "@/i18n/routing";
+import { siteUrl } from "@/lib/supabase/env";
 import en from "@/messages/en.json";
 import ru from "@/messages/ru.json";
 
@@ -68,6 +69,37 @@ export function renderAuthEmail(input: {
   });
   const text = `${copy.headline}\n\n${copy.body}\n\n${input.actionHref}`;
   return { subject: copy.subject, html, text };
+}
+
+/**
+ * Rewrites Auth `redirect_to` onto the public site origin (D326).
+ * Supabase may still send localhost when Dashboard Site URL was left on
+ * loopback; letters must never open there in production.
+ */
+export function publicAuthRedirect(
+  redirectTo: string,
+  publicSite: string = siteUrl(),
+): string {
+  const site = new URL(publicSite);
+  let parsed: URL;
+  try {
+    parsed = new URL(redirectTo, site);
+  } catch {
+    return `${site.origin}/`;
+  }
+  const host = parsed.hostname.toLowerCase();
+  const loopback =
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host === "[::1]" ||
+    host === "::1";
+  if (!loopback && host === site.hostname.toLowerCase()) {
+    return parsed.toString();
+  }
+  return new URL(
+    `${parsed.pathname}${parsed.search}${parsed.hash}`,
+    site.origin,
+  ).toString();
 }
 
 /**

@@ -22,7 +22,11 @@ describe("site email shell", () => {
     expect(html).toContain("Hidden preview");
     expect(html).toContain("Confirm &lt;you&gt;");
     expect(html).toContain("Hello &lt;Acme&gt; &amp; &quot;co&quot;");
-    expect(html).toContain("https://intgetion.com/en/verify?a=1&amp;b=2");
+    expect(html).toContain(
+      'href="https://intgetion.com/en/verify?a=1&amp;b=2"',
+    );
+    // Visible fallback URL under the button was removed (D326).
+    expect(html).not.toContain("word-break:break-all");
     expect(html).not.toContain("<Acme>");
   });
 });
