@@ -72,7 +72,10 @@ export async function SocialSignInStubs({ next }: { next?: "chat" }) {
       </div>
       {telegram ? (
         <div className="flex flex-col gap-1">
-          <a href={telegram} className={buttonClass("secondary", "md", "w-full")}>
+          <a
+            href={telegram}
+            className={buttonClass("secondary", "md", "w-full")}
+          >
             <SocialMark name="telegram" />
             {t("telegram")}
           </a>

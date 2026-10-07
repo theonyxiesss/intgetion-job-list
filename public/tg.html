@@ -4,21 +4,40 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>INTGETION JOB LIST</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
       (function () {
-        try {
-          var h = location.hash || "";
-          if (h.indexOf("tgWebAppData") !== -1) {
-            sessionStorage.setItem("tg_web_app_hash", h);
-          }
-        } catch (e) {}
-        var locale = "en";
-        try {
-          if (/^ru\b/i.test(navigator.language || "")) locale = "ru";
-        } catch (e) {}
-        location.replace(
-          "/" + locale + (location.search || "") + (location.hash || ""),
-        );
+        function stash() {
+          try {
+            var h = location.hash || "";
+            if (h.indexOf("tgWebAppData") !== -1) {
+              sessionStorage.setItem("tg_web_app_hash", h);
+            }
+            var d =
+              window.Telegram && Telegram.WebApp && Telegram.WebApp.initData;
+            if (d) sessionStorage.setItem("tg_web_app_init", d);
+          } catch (e) {}
+        }
+        function go() {
+          stash();
+          var locale = "en";
+          try {
+            if (/^ru\b/i.test(navigator.language || "")) locale = "ru";
+          } catch (e) {}
+          location.replace(
+            "/" + locale + (location.search || "") + (location.hash || ""),
+          );
+        }
+        var n = 0;
+        function tick() {
+          stash();
+          var ready =
+            (location.hash || "").indexOf("tgWebAppData") !== -1 ||
+            (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData);
+          if (ready || n++ >= 10) go();
+          else setTimeout(tick, 100);
+        }
+        tick();
       })();
     </script>
   </head>

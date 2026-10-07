@@ -18,7 +18,7 @@ async function signUp(page: Page, email: string) {
   await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
   const mail = await waitForMail(page.request, email);
   await page.goto(authLink(mail));
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
 }
 
 async function newUserPage(browser: Browser) {

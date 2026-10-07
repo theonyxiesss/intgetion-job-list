@@ -21,6 +21,7 @@ export function TelegramLoginButton({
   label: string;
   waiting: string;
   failed: string;
+  /** Brand mark shown before the label. */
   icon?: ReactNode;
   /** The terms line, rendered on the server so its links stay real. */
   children?: ReactNode;

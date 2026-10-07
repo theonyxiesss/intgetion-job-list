@@ -1,28 +1,40 @@
 import { describe, expect, it } from "vitest";
-import { raw, renderEmailLayout, siteEmailHtml } from "./email-html";
+import { raw, renderEmailLayout } from "./email-html";
 
 const origin = "https://intgetion.com";
 
 describe("email layout (D330)", () => {
   it("escapes text and links, keeps the brand and the logo image", () => {
-    const html = siteEmailHtml({
+    const html = renderEmailLayout({
+      lang: "en",
+      origin,
+      preheader: "Hidden preview",
+      title: "Confirm <you>",
       body: 'Hello <Acme> & "co"',
       action: {
         href: "https://intgetion.com/en/verify?a=1&b=2",
         label: "Confirm",
       },
       footer: {
-        href: "https://intgetion.com/en/unsubscribe",
-        label: "Unsubscribe",
+        links: [
+          {
+            href: "https://intgetion.com/en/unsubscribe",
+            label: "Unsubscribe",
+          },
+        ],
       },
     });
     expect(html).toContain("INTGETION JOB LIST");
     expect(html).toMatch(
       /<img src="[^"]+\/email\/logo\.png" width="32" height="32"/,
     );
+    expect(html).toContain("Hidden preview");
+    expect(html).toContain("Confirm &lt;you&gt;");
     expect(html).toContain("Hello &lt;Acme&gt; &amp; &quot;co&quot;");
     expect(html).toContain("https://intgetion.com/en/verify?a=1&amp;b=2");
     expect(html).toContain("https://intgetion.com/en/unsubscribe");
+    // The raw URL stays out of the letter unless a fallback label is set (D326).
+    expect(html).not.toContain("word-break:break-all");
     expect(html).not.toContain("<Acme>");
   });
 

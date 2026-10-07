@@ -122,7 +122,7 @@ export default async function HomePage({
         data={homeGraphJsonLd({
           name: product("name"),
           url: siteUrl(),
-          logoUrl: `${siteUrl()}/icon.svg`,
+          logoUrl: `${siteUrl()}/icons/icon-512.png`,
           locale,
         })}
       />
@@ -192,6 +192,42 @@ export default async function HomePage({
               </Reveal>
             ))}
           </ol>
+        </Container>
+      </Section>
+
+      <Section bordered labelledBy="home-pricing-title">
+        <Container className="flex flex-col gap-8">
+          <div className="flex flex-col gap-2">
+            <h2 id="home-pricing-title" className="t-h2">
+              {t("pricingTitle")}
+            </h2>
+            <p className="max-w-[60ch] text-fg-muted">{t("pricingText")}</p>
+          </div>
+          <ul className="grid gap-4 md:grid-cols-2">
+            {(["candidates", "companies"] as const).map((key) => (
+              <li
+                key={key}
+                className="flex flex-col gap-3 border border-line bg-surface p-6"
+              >
+                <p className="t-label text-fg-muted">
+                  {t(`pricing.${key}.label`)}
+                </p>
+                <p className="t-data-l">{t(`pricing.${key}.price`)}</p>
+                <p className="text-fg-muted">{t(`pricing.${key}.text`)}</p>
+                <Link
+                  href={`/pricing?for=${key}`}
+                  {...navForward}
+                  className={buttonClass(
+                    "secondary",
+                    "md",
+                    "mt-auto self-start",
+                  )}
+                >
+                  {t("pricingLink")}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </Container>
       </Section>
 

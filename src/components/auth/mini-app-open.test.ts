@@ -148,6 +148,12 @@ describe("handoff out of the Mini App (D318)", () => {
         storedHash: "#tgWebAppData=from-store&tgWebAppVersion=7",
       }),
     ).toBe("from-store");
+    expect(
+      readTelegramInitData({
+        hash: "",
+        storedInit: " user=1&hash=from-bridge ",
+      }),
+    ).toBe("user=1&hash=from-bridge");
     expect(readTelegramInitData({ hash: "", injected: " kept " })).toBe("kept");
     expect(readTelegramInitData({ hash: "#tgWebAppVersion=7" })).toBeNull();
   });

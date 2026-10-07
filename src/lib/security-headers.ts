@@ -1,3 +1,7 @@
+/** Official Mini App bridge. Phone clients often expose initData only through it (D324). */
+export const TELEGRAM_WEB_APP_SCRIPT =
+  "https://telegram.org/js/telegram-web-app.js";
+
 /** Content-Security-Policy for pages (section 16.1), one nonce per request. */
 export function buildCsp({
   nonce,
@@ -14,9 +18,14 @@ export function buildCsp({
   allowTelegramFrame?: boolean;
 }): string {
   const supabase = new URL(supabaseUrl).origin;
+  // Phone Mini Apps need telegram-web-app.js; Desktop often injects initData
+  // without it. Host allowlist only when the Mini App flag opens framing (D324).
+  const scriptSrc = allowTelegramFrame
+    ? `script-src 'self' 'nonce-${nonce}' https://telegram.org${isDev ? " 'unsafe-eval'" : ""}`
+    : `script-src 'self' 'nonce-${nonce}'${isDev ? " 'unsafe-eval'" : ""}`;
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}'${isDev ? " 'unsafe-eval'" : ""}`,
+    scriptSrc,
     `style-src 'self' 'nonce-${nonce}'`,
     `img-src 'self' data: ${supabase}`,
     "font-src 'self'",

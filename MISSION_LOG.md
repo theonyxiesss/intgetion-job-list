@@ -264,3 +264,58 @@
 - Отклонения: нет. Это обновление Claude (D329), не новая схема.
 - OPEN QUESTION: нет.
 - Следующая подфаза: по команде основателя.
+## [2026-10-07] — телефонный Mini App, четвёртая правка — D324
+
+- Сделано: ресерч — в проде за 2 дня почти нет `POST …/telegram/miniapp` (группировка путей: `/api/auth/telegram` ×2), значит на телефоне `initData` не появляется. Desktop ок без скрипта; телефонный WebView отдаёт данные через `telegram-web-app.js`. Одна попытка: CSP + скрипт, bounce/`tg.html` ждут bridge, `sessionStorage` для raw init, клиент ~5 с + `ready()`.
+- Команды проверки: `pnpm exec vitest run src/components/auth/mini-app-open.test.ts src/lib/security.test.ts` → 0 (2 файла, 31 тест). eslint → 0. `pnpm exec tsc --noEmit` → 0.
+- Миграции: нет. Решения: D324. Список хвоста: `docs/OPEN_TASKS.md`.
+- OPEN QUESTION: живая проверка кнопки меню бота на телефоне. Если снова нет входа — оставить в OPEN_TASKS, без новых правок auto-sign-in.
+
+## [2026-10-07] — телефонный Mini App после D324 — NOT DONE
+
+- Сделано: основатель подтвердил — с телефона по кнопке меню по-прежнему не входит. D324 на проде (READY), правки входа больше не делались. Задача зафиксирована как **НЕ ЗАКРЫТО** в `docs/OPEN_TASKS.md`. Обход: вход через бота `login_*`, не Mini App menu.
+- Команды проверки: код не менялся; runtime-логи Vercel (~2 ч) — вызовов `telegram/miniapp` не видно.
+- Миграции: нет. Решения: нет новых (D324 остаётся последней попыткой).
+- OPEN QUESTION: нет. Нужны факты с телефона (iOS/Android, URL BotFather, что на экране), прежде чем брать отдельную задачу.
+
+## [2026-10-07] — брендированные письма Auth (D325) — ветка cursor/auth-emails
+
+- Сделано: HTML-оболочка писем (headline/preheader/кнопка), тексты `authEmails` en/ru, hook `POST /api/auth/hooks/send-email` (Resend + Standard Webhooks), шаблоны `supabase/templates`, CSRF-исключение, в кабинете после привязки почты — «Задать пароль». Привязка почты к Telegram (D231) уже была — письмо переведено на общий бренд. **В master/прод не вливать** по просьбе основателя; включение Hook — RUNBOOK §15 / OPEN_TASKS.
+- Команды проверки: `pnpm exec vitest run src/lib/email-html.test.ts src/lib/security.test.ts src/modules/auth/__tests__/auth-emails.test.ts` → 0 (3 файла, 31 тест). eslint → 0. `pnpm exec tsc --noEmit` → 0.
+- Миграции: нет. Решения: D325. Ветка `cursor/auth-emails` — **не вливать в прод** без явной команды.
+- OPEN QUESTION: когда выкладывать — включить Send Email Hook в Supabase и `AUTH_SEND_EMAIL_HOOK_SECRET` в Vercel (RUNBOOK §15).
+
+## [2026-10-07] — confirm UX: localhost + confirmed page (D326) — ветка cursor/auth-confirm-ux
+
+- Сделано: `publicAuthRedirect` в hook (localhost/чужой origin → `NEXT_PUBLIC_SITE_URL`); HTML письма без сырого URL под кнопкой; `/auth/confirmed` после успешного callback; `CheckEmailWatch` (poll `/api/me` + BroadcastChannel) обновляет вкладку на компьютере. Site URL в Dashboard при выкладке — `https://intgetion.com`.
+- Команды проверки: `pnpm exec vitest run src/lib/email-html.test.ts src/modules/auth/__tests__/auth-emails.test.ts` → 0 (2 файла, 11 тестов); eslint по изменённым файлам → 0; `pnpm exec tsc --noEmit` → 0.
+- Миграции: нет. Решения: D326. Влита в master (PR #7).
+- OPEN QUESTION: нет.
+
+## [2026-10-07] — повторная регистрация показывает статус (D327) — ветка cursor/register-exists
+
+- Сделано: парольная регистрация на уже занятый email — если не подтверждён, `auth.resend` + check-email `?resent=1`; если подтверждён — `409 EMAIL_ALREADY_REGISTERED` с текстом войти/сброс. Admin lookup `findAuthUserByEmail`.
+- Команды проверки: `pnpm exec vitest run src/modules/auth/__tests__/auth-service.test.ts` → 0 (25 tests); `pnpm exec tsc --noEmit` → 0.
+- Миграции: нет. Решения: D327. Влита (PR #8).
+- OPEN QUESTION: нет.
+
+## [2026-10-07] — email wait: телефон подтверждает, ПК входит (D328)
+
+- Сделано: таблица `auth_email_waits`; magic-link/register кладут `wait` в письмо; телефон → `/auth/signed-in`; ПК poll `POST /api/auth/email-wait` забирает handoff-сессию. Текст «Эта почта уже зарегистрирована» без generic при сбое resend.
+- Команды проверки: `pnpm exec vitest run src/modules/auth/__tests__/auth-service.test.ts src/modules/auth/__tests__/email-wait.test.ts` → 0 (29 tests); `pnpm exec tsc --noEmit` → 0.
+- Миграции: `0030_auth_email_waits.sql`. Решения: D328. Влита (PR #9).
+- OPEN QUESTION: нет.
+
+## [2026-10-07] — D328 отложено основателем — NOT DONE
+
+- Сделано: код D328 в проде, но живой сценарий «ссылка на телефоне → вход на ПК» **не работает хорошо**. По просьбе основателя — **не чинить сейчас**, записать в `docs/OPEN_TASKS.md` как **НЕ ЗАКРЫТО / ОТЛОЖЕНО**. Обход: открыть ссылку на том же устройстве/браузере или войти паролем / Telegram-ботом.
+- Команды проверки: код не менялся (только docs).
+- Миграции: нет. Решения: нет новых.
+- OPEN QUESTION: нет. Следующий заход — только по явной команде + факты с телефона/Network/`/api/auth/email-wait`.
+
+## [2026-10-07] — значки Telegram / Google / X на входе
+
+- Сделано: SVG-марки брендов напротив подписей «Continue with …» на `/login` и `/register` (`social-icons.tsx`). Google и X по-прежнему «Скоро»; Telegram — как был.
+- Команды проверки: eslint + `tsc --noEmit` → 0.
+- Миграции: нет. Решения: нет.
+- OPEN QUESTION: нет.

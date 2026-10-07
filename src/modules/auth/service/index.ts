@@ -34,7 +34,14 @@ export {
   type ConfirmationMailer,
   type EmailAddResult,
 } from "./email-change";
+export {
+  authEmailKindFromAction,
+  renderAuthEmail,
+  type AuthEmailKind,
+} from "./auth-emails";
+export { handleSendEmailHook } from "./send-email-hook";
 export { createSessionHandoff } from "./handoff";
+export { beginEmailWait, claimEmailWait, readyEmailWait } from "./email-wait";
 export { sendTelegramChatAction, sendTelegramMessage } from "./telegram-bot";
 export {
   telegramAuthUrl,
@@ -56,6 +63,7 @@ export type {
   CallbackParams,
   CallbackResult,
   CurrentUser,
+  RegisterResult,
 } from "./auth-service";
 export { toMeDto } from "../api/me-dto";
 export type { MeCompany, MeContext, MeDto } from "../api/me-dto";

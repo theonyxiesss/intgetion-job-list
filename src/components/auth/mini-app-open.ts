@@ -49,6 +49,7 @@ export function isOwnHandoffUrl(url: string, origin: string): boolean {
 
 type TelegramWebApp = {
   initData?: string;
+  ready?: () => void;
   openLink?: (url: string) => void;
 };
 
@@ -109,6 +110,12 @@ export function telegramWebApp(win: Window): TelegramWebApp | undefined {
 export const TG_INIT_HASH_KEY = "tg_web_app_hash";
 
 /**
+ * Raw signed init string from Telegram.WebApp when the hash is already gone
+ * but the official script still received it over the phone bridge (D324).
+ */
+export const TG_INIT_DATA_KEY = "tg_web_app_init";
+
+/**
  * Telegram's own hash parser (from telegram-web-app.js): a path may sit
  * before `?`, and only the query after it carries `tgWebAppData`. Our first
  * version treated `#/en?tgWebAppData=…` as one key and returned null — that
@@ -118,6 +125,7 @@ export function readTelegramInitData(input: {
   hash: string;
   injected?: string;
   storedHash?: string | null;
+  storedInit?: string | null;
 }): string | null {
   const fromHash = tgWebAppDataFromHash(input.hash);
   if (fromHash) return fromHash;
@@ -125,6 +133,8 @@ export function readTelegramInitData(input: {
     ? tgWebAppDataFromHash(input.storedHash)
     : null;
   if (fromStore) return fromStore;
+  const storedInit = input.storedInit?.trim();
+  if (storedInit) return storedInit;
   const injected = input.injected?.trim();
   return injected ? injected : null;
 }

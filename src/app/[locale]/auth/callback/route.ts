@@ -10,6 +10,10 @@ import {
   completeCallback,
   GOOGLE_TERMS_COOKIE,
 } from "@/modules/auth/service";
+import {
+  readyEmailWait,
+  signedInPath,
+} from "@/modules/auth/service/email-wait";
 
 export async function GET(
   request: NextRequest,
@@ -56,6 +60,21 @@ export async function GET(
   } else if (result.created && result.user.accountType === "employer") {
     // A new employer starts with the company profile (D331).
     target.pathname = `/${locale}/employer/company`;
+  } else {
+    const wait = query.get("wait");
+    if (wait) {
+      const purpose = await readyEmailWait(wait, result.user);
+      if (purpose) {
+        const handed = NextResponse.redirect(signedInPath(locale, purpose));
+        handed.cookies.set(GOOGLE_TERMS_COOKIE, "", {
+          path: `/${locale}/auth/callback`,
+          maxAge: 0,
+        });
+        return handed;
+      }
+    }
+    // Same-device open, or wait handoff unavailable: success page (D326).
+    target.pathname = `/${locale}/auth/confirmed`;
   }
   const response = NextResponse.redirect(target);
   response.cookies.set(GOOGLE_TERMS_COOKIE, "", {

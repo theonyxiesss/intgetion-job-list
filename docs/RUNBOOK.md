@@ -284,3 +284,17 @@ _Документ актуален на момент подфазы 11B (вет�
 3. Проверка: открыть бота на телефоне, нажать кнопку меню — сайт открывается внутри Telegram и подхватывает вход автоматически (D259).
 
 Порядок важен: включать флаг до настройки в BotFather незачем, он только ослабляет защиту от встраивания.
+
+## 15. Брендированные письма Auth (D325 / D326)
+
+Регистрация, magic link и сброс пароля идут через Supabase Auth. Чтобы письма выглядели как сайт и уходили через Resend:
+
+1. В Vercel уже должны быть `RESEND_API_KEY` и `EMAIL_FROM` (прод).
+2. Supabase Dashboard → Authentication → Hooks → **Send Email** → HTTPS → `https://intgetion.com/api/auth/hooks/send-email`.
+3. Скопировать секрет Hook (`v1,whsec_…`) в Vercel как `AUTH_SEND_EMAIL_HOOK_SECRET` (Production) → Redeploy.
+4. **Site URL** = `https://intgetion.com`, Redirect URLs включают `https://intgetion.com/**` (hook дополнительно переписывает localhost → prod, D326).
+5. Проверка: `/en/register` → письмо с кнопкой (без сырого URL под ней) → `/en/auth/confirmed`; вкладка «Проверьте почту» на компьютере сама уходит на главную после подтверждения. `/en/reset-password` → форма нового пароля.
+
+Запасной путь без Hook: в Dashboard → Email Templates вставить HTML из `supabase/templates/` (confirmation / magic_link / recovery) и настроить SMTP Resend в Auth. Привязка почты к Telegram-аккаунту — `/settings/account` (D231), письмо уже через наш Resend.
+
+Локально шаблоны подключены в `supabase/config.toml` (Inbucket). Hook локально опционален.

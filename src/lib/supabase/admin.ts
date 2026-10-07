@@ -40,6 +40,37 @@ async function adminFetch(path: string, init?: RequestInit) {
   });
 }
 
+/**
+ * Looks up an Auth user by login email (D327). Used when registration hits
+ * an address that already exists, to decide between "sign in" and "resend".
+ */
+export async function findAuthUserByEmail(email: string): Promise<{
+  id: string;
+  confirmed: boolean;
+} | null> {
+  try {
+    const response = await adminFetch(
+      `/users?email=${encodeURIComponent(email.trim().toLowerCase())}`,
+    );
+    if (!response?.ok) return null;
+    const body = (await response.json()) as {
+      users?: Array<{
+        id?: string;
+        email_confirmed_at?: string | null;
+      }>;
+    };
+    const user = body.users?.[0];
+    if (!user?.id) return null;
+    return {
+      id: user.id,
+      confirmed: Boolean(user.email_confirmed_at),
+    };
+  } catch (error) {
+    logger.warn({ err: error }, "auth admin: email lookup by address failed");
+    return null;
+  }
+}
+
 /** Login email of an auth user; null when unknown or the key is missing. */
 export async function getAuthUserEmail(
   authUid: string,

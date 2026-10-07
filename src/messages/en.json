@@ -119,6 +119,7 @@
     "admin": "Administration",
     "chat": "Spoki",
     "bottom": "Main sections",
+    "pricing": "Pricing",
     "myJobs": "My jobs",
     "company": "Company"
   },
@@ -134,6 +135,8 @@
     "tagline": "Remote work. Real matches.",
     "line1": "Remote work.",
     "line2": "Real matches.",
+    "statJobs": "Published jobs",
+    "statCompanies": "Companies",
     "subtitle": "Find work. Find people. Connect directly.",
     "findJob": "Find a Remote Job",
     "postJob": "Post a Job",
@@ -150,7 +153,22 @@
     "benefitMatchBody": "Every recommendation says which parts of the profile it used.",
     "benefitContactsTitle": "Contacts only by mutual interest",
     "benefitContactsBody": "A company sees contact details only after it expresses interest in an application.",
-    "postNote": "Posting a vacancy opens after an employer account exists."
+    "postNote": "Posting a vacancy opens after an employer account exists.",
+    "pricingTitle": "Free to search and to post",
+    "pricingText": "Paid plans add speed and reach. Nothing you need to find work or hire is behind a paywall.",
+    "pricingLink": "See plans",
+    "pricing": {
+      "candidates": {
+        "label": "For candidates",
+        "price": "Free · Plus from $5",
+        "text": "Every job, unlimited applications and matching are free. Plus adds instant alerts and a stronger career agent."
+      },
+      "companies": {
+        "label": "For companies",
+        "price": "Free · $79 with a guarantee",
+        "text": "Post for free, or pay $79 per job for 10 matching applications — or your money back."
+      }
+    }
   },
   "categories": {
     "engineering": "Engineering",
@@ -187,6 +205,14 @@
     "updatePasswordTitle": "Set a new password",
     "checkEmailTitle": "Check your email",
     "checkEmailBody": "We sent you a link. Open it in this browser to continue. The link works once.",
+    "checkEmailResentBody": "This address was already waiting for confirmation. We sent a new link — open it to finish.",
+    "checkEmailWaiting": "This page will continue automatically once the email is confirmed.",
+    "confirmedTitle": "Email confirmed",
+    "confirmedBody": "Your email is confirmed. You can continue on this device.",
+    "confirmedContinue": "Continue",
+    "signedInTitle": "Sign-in confirmed",
+    "signedInLoginBody": "Sign-in is confirmed. You can close this window — the page on your computer will continue by itself.",
+    "signedInSignupBody": "Your email is confirmed. You can close this window — the page on your computer will continue by itself.",
     "email": "Email",
     "password": "Password",
     "newPassword": "New password",
@@ -205,8 +231,6 @@
     "haveAccount": "Already registered?",
     "forgotPassword": "Forgot password?",
     "toRegister": "Register",
-    "useMagicLink": "Email link",
-    "usePassword": "Use a password",
     "toLogin": "Sign in",
     "resetHint": "We will email a reset link if an account exists for this address.",
     "errors": {
@@ -218,6 +242,7 @@
       "terms_required": "Accept the terms to continue.",
       "invalid_credentials": "Wrong email or password.",
       "email_not_confirmed": "Confirm your email first: open the link we sent you.",
+      "email_already_registered": "This email is already registered. Sign in or use “Forgot password?”.",
       "invalid_link": "The link is invalid or expired. Request a new one.",
       "missing_terms": "Registration is not finished. Register again and accept the terms.",
       "rate_limited": "Too many attempts. Try again later.",
@@ -236,13 +261,15 @@
       "soon": "Soon",
       "telegramTitle": "Signing in with Telegram",
       "telegramProgress": "Checking the Telegram confirmation…",
-      "googleTerms": "By continuing with Google you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
-      "xTerms": "By continuing with X you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
       "telegramTerms": "By continuing with Telegram you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
       "telegramLinked": "Telegram is linked to your account.",
       "telegramWaiting": "Waiting for your confirmation in Telegram…",
-      "telegramFailed": "Telegram sign-in did not go through. Try again."
+      "telegramFailed": "Telegram sign-in did not go through. Try again.",
+      "googleTerms": "By continuing with Google you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
+      "xTerms": "By continuing with X you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>."
     },
+    "useMagicLink": "Email link",
+    "usePassword": "Use a password",
     "checkEmailHint": "Did not get it? Check the spam folder or request a new link in a minute.",
     "backToLogin": "Back to sign in",
     "accountTypeLabel": "Who are you?",
@@ -254,6 +281,50 @@
       "settingsLabel": "Account type",
       "saved": "Saved",
       "error": "Could not save. Try again."
+    }
+  },
+  "authEmails": {
+    "signup": {
+      "subject": "Confirm your email · INTGETION JOB LIST",
+      "headline": "Confirm your email",
+      "body": "Thanks for signing up. Open the button below to confirm this address and finish creating your account. The link works once and expires in about an hour.",
+      "action": "Confirm email",
+      "preheader": "Confirm your email to finish signing up"
+    },
+    "magiclink": {
+      "subject": "Your sign-in link · INTGETION JOB LIST",
+      "headline": "Sign in",
+      "body": "Use the button below to sign in to INTGETION JOB LIST. The link works once. If you did not ask for it, you can ignore this email.",
+      "action": "Sign in",
+      "preheader": "Your one-time sign-in link"
+    },
+    "recovery": {
+      "subject": "Reset your password · INTGETION JOB LIST",
+      "headline": "Reset your password",
+      "body": "We received a request to reset the password for this account. Open the button below to choose a new password. If you did not ask for a reset, ignore this email — your password stays the same.",
+      "action": "Choose a new password",
+      "preheader": "Choose a new password for your account"
+    },
+    "emailChange": {
+      "subject": "Confirm your new email · INTGETION JOB LIST",
+      "headline": "Confirm your new email",
+      "body": "Confirm this address to use it for signing in to INTGETION JOB LIST.",
+      "action": "Confirm email",
+      "preheader": "Confirm your new email address"
+    },
+    "invite": {
+      "subject": "You are invited · INTGETION JOB LIST",
+      "headline": "You are invited",
+      "body": "Open the button below to accept the invitation and set up your account.",
+      "action": "Accept invitation",
+      "preheader": "Accept your invitation"
+    },
+    "emailAdd": {
+      "subject": "Confirm your email · INTGETION JOB LIST",
+      "headline": "Add this email to your account",
+      "body": "Open the button below to add this email to your INTGETION JOB LIST account. Then you can sign in with it, reset your password, and get notifications. The link works for 24 hours. After adding it, use “Forgot password?” on the sign-in page if you still need a password.",
+      "action": "Confirm email",
+      "preheader": "Add this email to your Telegram account"
     }
   },
   "onboarding": {
@@ -1153,6 +1224,8 @@
       "emailHint": "We will send a confirmation link.",
       "addEmail": "Add email",
       "sent": "Check your inbox: we sent a confirmation link.",
+      "setPassword": "Set a password",
+      "setPasswordHint": "Email is linked. To sign in with a password, request a reset link once.",
       "telegramLabel": "Telegram",
       "telegramLinked": "Linked",
       "telegramNotLinked": "Not linked",
@@ -1175,10 +1248,6 @@
     "agent": "Spoki Assistant",
     "emptyGuest": "Tell Spoki where you are and what work you want.",
     "emptySignedIn": "Tell Spoki what you want to find. The conversation continues where you left it.",
-    "createAccount": "Create account",
-    "fillSelf": "Fill it in myself",
-    "fillSpoki": "Let Spoki fill it in",
-    "reviewProfile": "Review profile",
     "score": "{score}% match",
     "thinking": "Thinking…",
     "suggestions": {
@@ -1207,7 +1276,11 @@
       "declined": "Cancelled.",
       "failed": "Could not complete this. The card may have expired; ask again.",
       "missing": "The profile is still missing: {fields}"
-    }
+    },
+    "createAccount": "Create account",
+    "fillSelf": "Fill it in myself",
+    "fillSpoki": "Let Spoki fill it in",
+    "reviewProfile": "Review profile"
   },
   "cookies": {
     "label": "Cookie choice",
@@ -1295,7 +1368,10 @@
       }
     },
     "finalTitle": "Ready to hire?",
-    "finalText": "Post your first job — it takes 5 minutes."
+    "finalText": "Post your first job — it takes 5 minutes.",
+    "pricingTitle": "Free, or paid with a guarantee",
+    "pricingText": "Post for free, or pay $79 per job and get 10 matching applications — or your money back.",
+    "pricingLink": "See pricing"
   },
   "rss": {
     "title": "INTGETION JOB LIST — newest remote jobs",
@@ -1642,6 +1718,129 @@
     "copy": "Copy link",
     "copied": "Copied",
     "failed": "Could not open the link. Try again in a minute."
+  },
+  "pricing": {
+    "metaTitle": "Pricing — free job search, paid speed",
+    "metaDescription": "INTGETION pricing for companies and candidates. Posting jobs and searching stay free; paid plans add speed, reach and a refund if hiring does not work.",
+    "label": "Pricing",
+    "title": "Free for everything you need. Paid to go faster.",
+    "intro": "Posting a job and finding one are free and stay free. Paid plans add reach, speed and tools — and the company plan comes with a refund if the candidates do not come.",
+    "switchLabel": "Show plans for",
+    "for": {
+      "candidates": "For candidates",
+      "companies": "For companies"
+    },
+    "recommended": "Recommended",
+    "free": "Free",
+    "per": {
+      "job": "per job",
+      "month": "per month"
+    },
+    "yearly": "or ${price} a year",
+    "startFree": "Start free",
+    "soon": "Coming soon",
+    "soonNote": "Paid plans are not on sale yet. Card and USDT / USDC payments are coming; until then everything on the free plans works.",
+    "market": "Posting on the big remote boards costs $250–300 per job with no refund. Here it is free, or $79 with a guarantee.",
+    "alwaysFreeTitle": "What no plan ever sells",
+    "alwaysFree": {
+      "posting": "Posting jobs — a free plan stays, with the same moderation and the same catalogue.",
+      "trust": "The verified-company badge and Trusted status are earned, not bought.",
+      "contacts": "Candidate contacts open only on mutual interest, on every plan.",
+      "match": "The match percentage and the order of «For you» are the same for everyone.",
+      "apply": "Candidates never pay to apply or to be seen.",
+      "imported": "Jobs imported from other boards are never promoted for money."
+    },
+    "tiers": {
+      "start": {
+        "name": "Start",
+        "for": "Your first job, or trying the platform.",
+        "points": {
+          "jobs": "2 jobs live at a time, 30 days each",
+          "catalog": "Catalogue, collections and «For you» matching",
+          "applications": "Applications, statuses, mutual interest",
+          "digest": "Shown to matching candidates in the daily digest",
+          "stats": "Views and applications"
+        }
+      },
+      "hire": {
+        "name": "Hire",
+        "for": "One to five hires a year.",
+        "points": {
+          "guarantee": "10 applications from candidates who match 60%+ — or your money back",
+          "instant": "Sent at once to candidates who match 70%+",
+          "promoted": "Promoted block for 7 days",
+          "forecast": "See how many matching candidates there are before you pay",
+          "firstFree": "First one free for a verified company"
+        }
+      },
+      "team": {
+        "name": "Team",
+        "for": "Hiring all year, or an agency.",
+        "points": {
+          "jobs": "10 jobs live at a time, 45 days each",
+          "promoted": "3 promoted jobs a month",
+          "team": "Up to 10 teammates, funnel and CSV",
+          "api": "API for your own jobs",
+          "channel": "3 posts a month in the platform Telegram channel"
+        }
+      },
+      "free": {
+        "name": "Free",
+        "for": "Everyone.",
+        "points": {
+          "search": "Every job, collection and salary page",
+          "apply": "Unlimited applications",
+          "match": "«For you» with the same match % for everyone",
+          "alerts": "Daily alerts for saved searches",
+          "agent": "Career agent: 15 messages a day"
+        }
+      },
+      "plus": {
+        "name": "Plus",
+        "for": "Actively looking.",
+        "points": {
+          "instant": "New matching jobs the moment they appear",
+          "agent": "Career agent: 100 messages a day",
+          "letters": "A cover letter written for each job",
+          "views": "Which companies viewed your profile",
+          "hidden": "Hidden from your current employer"
+        }
+      },
+      "pro": {
+        "name": "Pro",
+        "for": "Going for a strong role or a raise.",
+        "points": {
+          "agent": "Career agent: 300 messages a day, stronger model",
+          "interview": "Mock interviews with feedback",
+          "review": "Full profile review with a plan",
+          "salary": "A salary report for negotiating",
+          "views": "When and how often companies viewed you"
+        }
+      }
+    },
+    "faqTitle": "Questions",
+    "faq": {
+      "guarantee": {
+        "q": "What if the paid job gets fewer applications than promised?",
+        "a": "After 30 days we count applications from candidates who match at least 60%. If there are fewer than 10, the money goes back automatically — you do not need to ask."
+      },
+      "cancel": {
+        "q": "Can I cancel?",
+        "a": "Yes, in one click. A subscription works to the end of the paid period; there is no yearly lock-in."
+      },
+      "crypto": {
+        "q": "Can I pay in crypto?",
+        "a": "Yes — USDT and USDC straight to the company wallet, prepaid for a period. Card payments go through Stripe."
+      },
+      "seen": {
+        "q": "Will employers see that I pay?",
+        "a": "No. A candidate plan is never shown to employers — not in applications, not on the profile."
+      },
+      "when": {
+        "q": "When can I buy?",
+        "a": "Paid plans are being prepared. Everything on the free plans works now."
+      }
+    }
   },
   "email": {
     "fallback": "If the button does not work, copy this link into your browser:",

@@ -15,9 +15,10 @@ import { buildCsp, createNonce } from "./security-headers";
 const site = "http://127.0.0.1:3000";
 
 describe("needsOriginCheck (D313)", () => {
-  it("skips the CSRF rule only for the Telegram webhook", () => {
-    // Telegram sends no Origin at all; the route checks its secret instead.
+  it("skips the CSRF rule for secret-authenticated hooks", () => {
+    // Telegram / Auth send no Origin; the route checks its secret instead.
     expect(needsOriginCheck("/api/telegram/webhook")).toBe(false);
+    expect(needsOriginCheck("/api/auth/hooks/send-email")).toBe(false);
     expect(isAllowedOrigin("POST", null, site)).toBe(false);
   });
 
@@ -159,8 +160,11 @@ describe("Mini App framing (D259)", () => {
     });
     expect(open).toContain("https://web.telegram.org");
     expect(open).not.toContain("frame-ancestors 'none'");
-    // Nothing else loosens up.
-    expect(open).toContain("script-src 'self' 'nonce-abc'");
+    // Phone bridge only — not eval, not wildcards (D324).
+    expect(open).toContain(
+      "script-src 'self' 'nonce-abc' https://telegram.org",
+    );
+    expect(open).not.toContain("unsafe-eval");
     expect(open).toContain("object-src 'none'");
   });
 });

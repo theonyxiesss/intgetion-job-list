@@ -2,7 +2,7 @@
 
 **Продукт:** `INTGETION JOB LIST`  
 **Ветка / worktree:** `feat/email-system-design` · `C:\Users\Admin\Documents\Integetion jobs`  
-**Активная задача:** нет. На ветке локально: Spoki (D324), дизайн писем (D330), поле чата (D334), Google и Telegram на входе (D335) — в origin не отправлено.  
+**Активная задача:** выкладка этой ветки на https://intgetion.com. В ней master (логотип, цены, D325–D329) плюс Spoki (D337), письма (D330), поле чата (D334), тип аккаунта (D331), Google и X (D335, D336).  
 **Прод:** https://intgetion.com
 
 ## Работает (кратко)
@@ -20,7 +20,7 @@
 | Тема | Статус | Где |
 | ---- | ------ | --- |
 | Телефонный Telegram Mini App | OPEN / PARTIAL | [OPEN_TASKS.md](OPEN_TASKS.md), D318–D322 |
-| Cross-device email handoff (D328) | DEFERRED | не на этом master; см. OPEN_TASKS |
+| Cross-device email handoff (D328) | DEFERRED | код уже на master; живой сценарий отложен, см. OPEN_TASKS |
 | X на входе | кнопка есть; провайдер в Supabase ещё выключен — нет клиента в портале разработчика X | D336 |
 | Брендированные auth-письма в облачном Supabase | шаблоны не вставлены в Dashboard | D330, `supabase/templates/` |
 

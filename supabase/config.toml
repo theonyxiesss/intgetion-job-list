@@ -194,7 +194,7 @@ otp_expiry = 3600
 # sender_name = "Admin"
 
 # Branded auth emails (D330), generated from src/lib/auth-email-templates.ts.
-# The cloud project needs the same subject + HTML pasted in the dashboard.
+# The cloud project prefers the Send Email Hook, or the same HTML in the Dashboard.
 [auth.email.template.confirmation]
 subject = '{{ if eq (printf "%v" .Data.locale) "ru" }}Подтвердите email{{ else }}Confirm your email{{ end }}'
 content_path = "./supabase/templates/confirmation.html"
@@ -207,10 +207,12 @@ content_path = "./supabase/templates/recovery.html"
 subject = '{{ if eq (printf "%v" .Data.locale) "ru" }}Ссылка для входа{{ else }}Your sign-in link{{ end }}'
 content_path = "./supabase/templates/magic_link.html"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+# When AUTH_SEND_EMAIL_HOOK_SECRET is set locally, Auth posts here instead of
+# sending through Inbucket. Point the URI at the Next app Auth can reach.
+# [auth.hook.send_email]
+# enabled = true
+# uri = "http://host.docker.internal:3000/api/auth/hooks/send-email"
+# secrets = "env(AUTH_SEND_EMAIL_HOOK_SECRET)"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.

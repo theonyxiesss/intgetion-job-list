@@ -24,7 +24,7 @@ async function signUp(page: Page, email: string) {
   await page.getByRole("button", { name: "Create account" }).click();
   await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
   await page.goto(authLink(await waitForMail(page.request, email)));
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
 }
 
 const adminApis = [

@@ -76,7 +76,7 @@ test("password: unconfirmed email cannot sign in or write; confirmed can", async
   expect((await write.json()).error.code).toBe("UNAUTHENTICATED");
 
   await openLatestLink(page, email, 0);
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
   const me = await expectSignedIn(page);
   expect(me).toMatchObject({
     locale: "en",
@@ -114,7 +114,7 @@ test("magic link: register and sign in without a password", async ({
   await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
 
   await openLatestLink(page, email, 0);
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
   await expectSignedIn(page);
   await signOut(page);
 
@@ -126,7 +126,7 @@ test("magic link: register and sign in without a password", async ({
   await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
 
   await openLatestLink(page, email, seen);
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
   await expectSignedIn(page);
 });
 
