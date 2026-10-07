@@ -5,7 +5,7 @@
  * globals.css), so it never disappears on white.
  */
 /** Width over height of the cut-out artwork. */
-const RATIO = 1.651;
+const RATIO = 1.63;
 
 /** `size` is the height; the mark is wider than tall. */
 export function LogoMark({ size = 26 }: { size?: number }) {
