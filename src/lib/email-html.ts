@@ -32,11 +32,11 @@ export function siteEmailHtml(input: {
     ? `<tr><td style="padding:8px 32px 0;font-family:${font};font-size:22px;font-weight:700;line-height:1.3;color:#f5f5f5;">${escapeEmailHtml(input.headline)}</td></tr>`
     : "";
   const body = escapeEmailHtml(input.body).replaceAll("\n", "<br>");
+  // Button only in HTML — the raw URL lives in the text/plain part (D326).
   const action = input.action
     ? `<tr><td style="padding:8px 32px 28px;">
 <a href="${escapeEmailHtml(input.action.href)}" style="display:inline-block;background:#ffffff;color:#000000;font-family:${font};font-size:14px;font-weight:700;line-height:48px;padding:0 24px;text-decoration:none;border-radius:2px;">${escapeEmailHtml(input.action.label)}</a>
-</td></tr>
-<tr><td style="padding:0 32px 20px;font-family:${font};font-size:12px;line-height:1.5;color:#71717a;word-break:break-all;">${escapeEmailHtml(input.action.href)}</td></tr>`
+</td></tr>`
     : "";
   const footer = input.footer
     ? `<tr><td style="padding:16px 32px 24px;border-top:1px solid #26262a;font-family:${font};font-size:12px;line-height:1.5;color:#71717a;">

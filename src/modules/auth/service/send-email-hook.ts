@@ -7,6 +7,7 @@ import {
   authEmailKindFromAction,
   authVerifyUrl,
   localeFromAuthUser,
+  publicAuthRedirect,
   renderAuthEmail,
 } from "./auth-emails";
 
@@ -130,7 +131,7 @@ export async function handleSendEmailHook(
     supabaseUrl: supabaseUrl(),
     tokenHash: emailData.token_hash,
     type: emailData.email_action_type,
-    redirectTo: emailData.redirect_to,
+    redirectTo: publicAuthRedirect(emailData.redirect_to),
   });
   const letter = renderAuthEmail({ kind, locale, actionHref });
   const outcome = await mailer.send({

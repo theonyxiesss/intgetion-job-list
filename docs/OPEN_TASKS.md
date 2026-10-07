@@ -15,8 +15,8 @@
 - **Решение по процессу:** auto-sign-in через Mini App на телефоне **больше не крутить** без новых фактов (скрин/платформа iOS|Android, точный URL BotFather, есть ли вызов miniapp в логах). Рабочий обход для телефона сейчас: вход через бота (`login_*` / кнопка «Войти» в чате), не через меню Mini App.
 - **Следующая отдельная задача (когда брать):** либо диагностика с телефоном в руках (что в `location.hash` / `Telegram.WebApp.initData` в webview), либо явная кнопка «Войти через Telegram» внутри Mini App на телефоне вместо тихого auto-sign-in.
 
-## Auth HTML emails + Send Email Hook (D325)
+## Auth HTML emails + confirm UX (D325 / D326)
 
-- **Статус:** код на ветке `cursor/auth-emails`, **в прод не вливать**, пока основатель не включит Hook.
-- **Сделано в коде:** брендированная оболочка, тексты signup/magic/recovery/email-add, `POST /api/auth/hooks/send-email`, шаблоны `supabase/templates/*`, кнопка «Задать пароль» в кабинете после привязки почты.
-- **Действие основателя (когда готовы выкладывать):** RUNBOOK §15 — Hook в Supabase + `AUTH_SEND_EMAIL_HOOK_SECRET` в Vercel + redeploy. Без этого на облаке Auth шлёт свои письма.
+- **Статус:** Hook на проде включён; D326 (localhost → prod, `/auth/confirmed`, check-email watch) на ветке `cursor/auth-confirm-ux` — **в прод после явной команды** (после выката Claude).
+- **Сделано в коде:** брендированные письма, Send Email Hook, `publicAuthRedirect`, страница подтверждения, обновление вкладки «Проверьте почту».
+- **Действие при выкладке D326:** убедиться Site URL = `https://intgetion.com` в Supabase Auth; проверить register → письмо → confirmed; сброс пароля без регрессии.

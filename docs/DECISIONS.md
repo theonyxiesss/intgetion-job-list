@@ -1459,8 +1459,15 @@ Mini App живёт в чужом окне: его сессия не может 
 
 ## D325 — брендированные письма Auth и привязка почты
 
-Письма регистрации, magic link, сброса пароля и добавления почты к Telegram-аккаунту собираются одной тёмной HTML-оболочкой (`siteEmailHtml`: бренд, заголовок, кнопка, запасная ссылка текстом). Тексты — `authEmails` в `messages` (en/ru).
+Письма регистрации, magic link, сброса пароля и добавления почты к Telegram-аккаунту собираются одной тёмной HTML-оболочкой (`siteEmailHtml`: бренд, заголовок, кнопка). Тексты — `authEmails` в `messages` (en/ru). Сырой URL в HTML не показывается — он остаётся в text/plain (D326).
 
 Отправка Auth-писем: маршрут `POST /api/auth/hooks/send-email` принимает Send Email Hook Supabase (подпись Standard Webhooks, секрет `AUTH_SEND_EMAIL_HOOK_SECRET`), шлёт через Resend. CSRF для этого пути отключён (как у Telegram webhook). Локально шаблоны также лежат в `supabase/templates/*` и подключены в `config.toml` для Inbucket. Привязка почты к Telegram (D231) в `/settings/account` остаётся; письмо подтверждения — тот же бренд; после привязки в кабинете есть ссылка «Задать пароль» → `/reset-password`.
 
-На прод не включать, пока основатель не включит Hook в панели Supabase Auth и не положит секрет в Vercel. Без хука облако шлёт стандартные письма Auth (или то, что в Dashboard Templates).
+Hook на проде включён основателем; Site URL в Dashboard должен быть `https://intgetion.com` (см. D326).
+
+## D326 — подтверждение почты: прод-ссылки и UX
+
+1. В Send Email Hook `redirect_to` прогоняется через `publicAuthRedirect`: localhost / 127.0.0.1 / чужой origin заменяются на `NEXT_PUBLIC_SITE_URL`, path и query сохраняются. Иначе при Site URL = localhost в Dashboard письма открывают loopback.
+2. HTML письма — только кнопка; длинный verify URL не дублируется текстом под ней.
+3. Успешный `/auth/callback` (не сброс пароля) ведёт на `/{locale}/auth/confirmed` с текстом «Почта подтверждена» и кнопкой «Продолжить». Страница шлёт сигнал другим вкладкам (`BroadcastChannel` + `localStorage`).
+4. Страница `/auth/check-email` опрашивает `GET /api/me` и слушает сигнал: на компьютере исходное окно само уходит на главную, когда почта подтверждена (в другой вкладке или на телефоне — после появления сессии при следующем заходе на тот же origin).
