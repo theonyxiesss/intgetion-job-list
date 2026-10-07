@@ -76,6 +76,16 @@ export const ALWAYS_FREE = [
   "imported",
 ] as const;
 
+/** Where the free card goes. Posting continues to the job form (D347). */
+export function freePlanHref(
+  audience: PricingAudience,
+  next?: string,
+): string {
+  if (audience === "companies" && next === "post") return "/employer/jobs/new";
+  if (audience === "companies") return "/for-employers";
+  return "/register";
+}
+
 export const PRICING_FAQ = [
   "guarantee",
   "cancel",

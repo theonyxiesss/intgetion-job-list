@@ -22,11 +22,16 @@ export async function getViewer(): Promise<Viewer> {
   }
 }
 
-/** Pricing audience (D334): a signed-in user's own side; a guest picks. */
+/**
+ * Pricing audience (D334): a signed-in user's own side; a guest picks.
+ * Posting a job (D347) always opens the company plans, even for a candidate.
+ */
 export function pricingAudienceFor(
   kind: Viewer["kind"],
   requested: string | undefined,
+  next?: string,
 ): "candidates" | "companies" {
+  if (next === "post") return "companies";
   if (kind === "employer") return "companies";
   if (kind === "candidate") return "candidates";
   return requested === "companies" ? "companies" : "candidates";

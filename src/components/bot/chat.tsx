@@ -7,6 +7,7 @@ import { ConfirmCard } from "@/components/ui/dialog";
 import { controlClass } from "@/components/ui/field";
 import { Alert } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
+import { TELEGRAM_BOT_URL } from "@/config/telegram";
 import { Link, useRouter } from "@/i18n/navigation";
 
 type ExplainLine = {
@@ -315,7 +316,20 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
 
   return (
     <div className="chat-shell mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-3 px-4 max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:max-w-none max-md:bg-bg md:px-6">
-      <h1 className="shrink-0 py-3 text-sm font-medium">{t("title")}</h1>
+      <div className="shrink-0 py-3">
+        <h1 className="text-sm font-medium">{t("title")}</h1>
+        <p className="t-body-s mt-1 text-fg-muted">
+          {t("telegramHint")}{" "}
+          <a
+            href={TELEGRAM_BOT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            {t("telegramBot")}
+          </a>
+        </p>
+      </div>
       <div
         role="log"
         aria-live="polite"

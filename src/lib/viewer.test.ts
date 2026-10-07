@@ -13,4 +13,9 @@ describe("pricing audience by viewer (D334)", () => {
     expect(pricingAudienceFor("guest", "companies")).toBe("companies");
     expect(pricingAudienceFor("guest", "nonsense")).toBe("candidates");
   });
+
+  it("opens company plans when the person came to post a job", () => {
+    expect(pricingAudienceFor("candidate", undefined, "post")).toBe("companies");
+    expect(pricingAudienceFor("guest", "candidates", "post")).toBe("companies");
+  });
 });
