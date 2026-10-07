@@ -151,7 +151,22 @@
     "benefitMatchBody": "Every recommendation says which parts of the profile it used.",
     "benefitContactsTitle": "Contacts only by mutual interest",
     "benefitContactsBody": "A company sees contact details only after it expresses interest in an application.",
-    "postNote": "Posting a vacancy opens after an employer account exists."
+    "postNote": "Posting a vacancy opens after an employer account exists.",
+    "pricingTitle": "Free to search and to post",
+    "pricingText": "Paid plans add speed and reach. Nothing you need to find work or hire is behind a paywall.",
+    "pricingLink": "See plans",
+    "pricing": {
+      "candidates": {
+        "label": "For candidates",
+        "price": "Free · Plus from $5",
+        "text": "Every job, unlimited applications and matching are free. Plus adds instant alerts and a stronger career agent."
+      },
+      "companies": {
+        "label": "For companies",
+        "price": "Free · $79 with a guarantee",
+        "text": "Post for free, or pay $79 per job for 10 matching applications — or your money back."
+      }
+    }
   },
   "categories": {
     "engineering": "Engineering",
