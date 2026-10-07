@@ -219,7 +219,6 @@ const keepFromIdx =
     : entryStarts[0] ?? 0;
 
 const headerEnd = entryStarts[0] ?? 0;
-const headerPart = missionLines.slice(0, headerEnd).join("\n");
 const archiveBody = missionLines.slice(headerEnd, keepFromIdx).join("\n");
 const recentBody = missionLines.slice(keepFromIdx).join("\n");
 
