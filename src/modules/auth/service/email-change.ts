@@ -66,8 +66,11 @@ export async function requestEmailAdd(
     subject: copy.subject,
     text: `${copy.body}\n\n${link}`,
     html: siteEmailHtml({
+      lang: input.locale,
+      title: copy.subject,
       body: copy.body,
       action: { href: link, label: copy.action },
+      fallbackLabel: (input.locale === "ru" ? ru : en).email.fallback,
     }),
   });
   if (outcome === "skipped") {

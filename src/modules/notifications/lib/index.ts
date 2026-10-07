@@ -6,3 +6,4 @@ export * from "./catalog";
 export * from "./batch";
 export * from "./digest";
 export * from "./unsubscribe";
+export * from "./email-jobs";

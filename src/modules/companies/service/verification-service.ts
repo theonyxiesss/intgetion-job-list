@@ -6,6 +6,8 @@ import { logger } from "@/lib/logger";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { siteEmailHtml } from "@/lib/email-html";
 import { siteUrl } from "@/lib/supabase/env";
+import en from "@/messages/en.json";
+import ru from "@/messages/ru.json";
 import type { CurrentUser } from "@/modules/auth/service";
 import { safeNotify } from "@/modules/notifications/service";
 import * as companyRepo from "../repo/company-repo";
@@ -65,8 +67,11 @@ export const resendVerificationMailer: VerificationMailer = async (message) => {
       subject: SUBJECT[locale],
       text,
       html: siteEmailHtml({
+        lang: locale,
+        title: SUBJECT[locale],
         body: `${BODY[locale]} ${message.companyName}.`,
         action: { href: message.link, label: ACTION[locale]! },
+        fallbackLabel: (locale === "ru" ? ru : en).email.fallback,
       }),
     }),
     signal: AbortSignal.timeout(10_000),

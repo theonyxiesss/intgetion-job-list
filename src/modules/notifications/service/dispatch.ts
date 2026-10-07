@@ -3,6 +3,7 @@ import { getDb } from "@/db/client";
 import { getAuthUserEmail } from "@/lib/supabase/admin";
 import { notificationEmails } from "@/db/schema";
 import { isNotificationType, type NotificationType } from "../lib/catalog";
+import { readEmailJobs } from "../lib/email-jobs";
 import { nextSendAfter } from "./batch-mail";
 import { senderFromEnv, type EmailSender } from "./email-sender";
 import { notificationPath, renderEmail, templateValues } from "./render";
@@ -74,6 +75,7 @@ async function deliverOne(
     values: templateValues(row.payload ?? {}),
     unsubscribeUrl: unsubscribeUrl(locale, row.user_id, type, now),
     actionPath: notificationPath(type, row.payload ?? {}),
+    jobs: readEmailJobs(row.payload ?? {}),
   });
   if (!rendered) {
     await mark(tx, row.id, {

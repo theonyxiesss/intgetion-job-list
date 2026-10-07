@@ -5,6 +5,7 @@ import { timeZoneOffsetMinutes } from "@/lib/tz";
 import en from "@/messages/en.json";
 import ru from "@/messages/ru.json";
 import { resolveDelivery } from "../lib/catalog";
+import { toEmailJob, type EmailJobPayload } from "../lib/email-jobs";
 import {
   DIGEST_HOUR_LOCAL,
   DIGEST_MIN_SCORE,
@@ -41,6 +42,8 @@ export type DigestCandidateJob = {
   companyName: string;
   score: number;
   publishedAt: string | null;
+  /** The card the email shows (D330); absent in older test seams. */
+  email?: EmailJobPayload;
 };
 
 /**
@@ -105,6 +108,7 @@ const loadFeedJobs: DigestJobLoader = async (userId, locale, now) => {
     companyName: item.job.company.name,
     score: item.score,
     publishedAt: item.job.publishedAt,
+    email: toEmailJob(item.job, locale),
   }));
 };
 
@@ -201,9 +205,10 @@ async function sendDigest(
         locale,
         payload: {
           ...payload,
-          jobs: jobs.map((job) => ({
-            jobTitle: `${job.title} — ${job.companyName}`,
-          })),
+          jobs: jobs.map(
+            (job) =>
+              job.email ?? { jobTitle: `${job.title} — ${job.companyName}` },
+          ),
         },
         sendAfter: now,
         notificationId,
