@@ -177,7 +177,7 @@
 
 ## 7. Интеграция с платёжным провайдером
 
-### 7.1 Один интерфейс, два провайдера
+### 7.1 Один интерфейс, три реализации
 
 ```ts
 interface BillingProvider {
@@ -187,15 +187,20 @@ interface BillingProvider {
     period;
     successUrl;
     cancelUrl;
-  }): Promise<{ url: string }>;
+  }): Promise<{ url: string } | { unavailable: true }>;
   customerPortalUrl(subject): Promise<string | null>; // смена карты, счета
   verifyWebhook(request: Request): Promise<BillingEvent | null>;
 }
 ```
 
-- `src/lib/billing/provider.ts` — интерфейс; `paddle.ts` или `lemonsqueezy.ts` — карты; `crypto.ts` — стейблкоины. Выбор — `BILLING_PROVIDER`.
-- Оплата — **на странице провайдера** (hosted checkout). Номера карт к нам не попадают никогда.
-- Возврат с оплаты: `/{locale}/billing/return?status=success|cancel` — показывает итог и уводит обратно туда, откуда пришли.
+- `src/lib/billing/provider.ts` — интерфейс.
+- `stripe.ts` — карты (основной). Запасной для страны без Stripe — `paddle.ts` или `lemonsqueezy.ts`, тот же интерфейс.
+- `crypto-stub.ts` — **сейчас**: USDT/USDC, всегда `{ unavailable: true }`, заявка в `billing_interest` (см. `PRICING.md`, 5.1.1). Позже — `nowpayments.ts`.
+- Выбор: `BILLING_CARD_PROVIDER=stripe`, `BILLING_CRYPTO_PROVIDER=stub|nowpayments`.
+- Оплата — **на странице провайдера** (Stripe Checkout). Номера карт к нам не попадают никогда.
+- Возврат с оплаты: `/{locale}/billing/return?status=success|cancel`.
+- Окно оплаты: две кнопки — **«Картой»** и **«USDT / USDC»**. Пока крипта — заглушка, вторая кнопка открывает форму «сообщить, когда включим / попросить счёт».
+- Переменные: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (только сервер), позже `NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET`. Ключи кладёт основатель в Vercel; в `.env.example` и `env-rules` — пустыми.
 
 ### 7.2 Маршруты
 
