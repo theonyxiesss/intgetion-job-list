@@ -180,6 +180,30 @@ describe("register", () => {
     });
   });
 
+  it("shows already-registered when resend fails after a duplicate (D327)", async () => {
+    const auth = fakeAuth(null);
+    auth.signUp.mockResolvedValue({
+      data: { user: { id: "u1", identities: [] } },
+      error: null,
+    });
+    findAuthUserByEmail.mockResolvedValue({ id: "u1", confirmed: false });
+    auth.resend.mockResolvedValue({
+      data: {},
+      error: { code: "unexpected_failure", status: 500 },
+    });
+    await expect(
+      register(asAuth(auth), {
+        email: "ana@example.com",
+        password: "orbit-lantern-42",
+        locale: "en",
+        acceptTerms: true,
+      }),
+    ).rejects.toMatchObject({
+      status: 409,
+      code: "EMAIL_ALREADY_REGISTERED",
+    });
+  });
+
   it("refuses a confirmed address with EMAIL_ALREADY_REGISTERED (D327)", async () => {
     const auth = fakeAuth(null);
     auth.signUp.mockResolvedValue({

@@ -8,8 +8,8 @@ import {
 } from "./email-confirmed-notify";
 
 /**
- * While the person waits on "check your email", refresh this tab when
- * another tab (or phone confirm + later return) establishes a session (D326).
+ * While the person waits on "check your email", finish sign-in when another
+ * tab or device confirms the link (D326 / D328).
  */
 export function CheckEmailWatch() {
   const router = useRouter();
@@ -18,12 +18,27 @@ export function CheckEmailWatch() {
     let stopped = false;
 
     function goHome() {
-      if (!stopped) router.replace("/");
+      if (!stopped) {
+        router.replace("/");
+        router.refresh();
+      }
     }
 
     async function poll() {
-      const response = await fetch("/api/me").catch(() => null);
-      if (response?.ok) goHome();
+      const me = await fetch("/api/me").catch(() => null);
+      if (me?.ok) {
+        goHome();
+        return;
+      }
+      const wait = await fetch("/api/auth/email-wait", {
+        method: "POST",
+      }).catch(() => null);
+      if (wait?.status === 200) {
+        const body = (await wait.json().catch(() => null)) as {
+          ok?: boolean;
+        } | null;
+        if (body?.ok) goHome();
+      }
     }
 
     void poll();
@@ -41,7 +56,7 @@ export function CheckEmailWatch() {
       channel = new BroadcastChannel(AUTH_EMAIL_CONFIRMED_CHANNEL);
       channel.onmessage = () => goHome();
     } catch {
-      // Poll + storage remain.
+      // Poll remains.
     }
 
     return () => {

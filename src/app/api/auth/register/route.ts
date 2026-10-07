@@ -4,6 +4,7 @@ import { clientIp } from "@/lib/request-ip";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { trackServerEvent } from "@/modules/analytics/service";
 import { register, registerInput } from "@/modules/auth/service";
+import { beginEmailWait } from "@/modules/auth/service/email-wait";
 
 export async function POST(request: Request) {
   try {
@@ -11,8 +12,9 @@ export async function POST(request: Request) {
     await enforceRateLimit("register", clientIp(request.headers));
     // Without a password registration sends a magic link.
     if (!input.password) await enforceRateLimit("emailLink", input.email);
+    const wait = await beginEmailWait("signup", input.locale);
     const supabase = await createSupabaseServerClient();
-    const result = await register(supabase.auth, input);
+    const result = await register(supabase.auth, { ...input, wait });
     if (result.status === "created") {
       await trackServerEvent(request, "signup");
     }

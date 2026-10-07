@@ -5,6 +5,10 @@ import { siteUrl } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { clientIp } from "@/lib/request-ip";
 import { auditSignIn, completeCallback } from "@/modules/auth/service";
+import {
+  readyEmailWait,
+  signedInPath,
+} from "@/modules/auth/service/email-wait";
 
 export async function GET(
   request: NextRequest,
@@ -35,7 +39,14 @@ export async function GET(
     target.pathname = `/${locale}/reset-password`;
     target.searchParams.set("mode", "update");
   } else {
-    // Signup / magic link: show a clear success page (phone + desktop) (D326).
+    const wait = query.get("wait");
+    if (wait) {
+      const purpose = await readyEmailWait(wait, result.user);
+      if (purpose) {
+        return NextResponse.redirect(signedInPath(locale, purpose));
+      }
+    }
+    // Same-device open, or wait handoff unavailable: success page (D326).
     target.pathname = `/${locale}/auth/confirmed`;
   }
   return NextResponse.redirect(target);

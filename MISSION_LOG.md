@@ -858,5 +858,12 @@
 
 - Сделано: парольная регистрация на уже занятый email — если не подтверждён, `auth.resend` + check-email `?resent=1`; если подтверждён — `409 EMAIL_ALREADY_REGISTERED` с текстом войти/сброс. Admin lookup `findAuthUserByEmail`.
 - Команды проверки: `pnpm exec vitest run src/modules/auth/__tests__/auth-service.test.ts` → 0 (25 tests); `pnpm exec tsc --noEmit` → 0.
-- Миграции: нет. Решения: D327.
+- Миграции: нет. Решения: D327. Влита (PR #8).
+- OPEN QUESTION: нет.
+
+## [2026-10-07] — email wait: телефон подтверждает, ПК входит (D328)
+
+- Сделано: таблица `auth_email_waits`; magic-link/register кладут `wait` в письмо; телефон → `/auth/signed-in`; ПК poll `POST /api/auth/email-wait` забирает handoff-сессию. Текст «Эта почта уже зарегистрирована» без generic при сбое resend.
+- Команды проверки: `pnpm exec vitest run src/modules/auth/__tests__/auth-service.test.ts src/modules/auth/__tests__/email-wait.test.ts` → 0 (29 tests); `pnpm exec tsc --noEmit` → 0.
+- Миграции: `0030_auth_email_waits.sql`. Решения: D328.
 - OPEN QUESTION: нет.
