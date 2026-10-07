@@ -451,28 +451,7 @@ dialog[open] .ui-menu-item {
   }
 }
 
-/* Logo chrome (components/ui/logo.tsx): stop colours per theme. */
-.logo-hi {
-  stop-color: #ffffff;
-}
-.logo-mid {
-  stop-color: #9da1a6;
-}
-.logo-lo {
-  stop-color: #666a70;
-}
-.logo-edge {
-  stroke: #f7f7f7;
-}
-:root[data-theme="light"] .logo-hi {
-  stop-color: #2a2d31;
-}
-:root[data-theme="light"] .logo-mid {
-  stop-color: #6b7076;
-}
-:root[data-theme="light"] .logo-lo {
-  stop-color: #0b0b0c;
-}
-:root[data-theme="light"] .logo-edge {
-  stroke: #1a1c1f;
+/* Logo (components/ui/logo.tsx): white chrome PNG; dark chrome on the light theme. */
+:root[data-theme="light"] .logo-img {
+  filter: invert(1);
 }

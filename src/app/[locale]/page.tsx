@@ -122,7 +122,7 @@ export default async function HomePage({
         data={homeGraphJsonLd({
           name: product("name"),
           url: siteUrl(),
-          logoUrl: `${siteUrl()}/icon.svg`,
+          logoUrl: `${siteUrl()}/icons/icon-512.png`,
           locale,
         })}
       />
