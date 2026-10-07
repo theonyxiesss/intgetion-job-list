@@ -1,5 +1,5 @@
 import { siteUrl } from "@/lib/supabase/env";
-import { telegramWebhookSecret } from "./telegram";
+import { siteOwnsTelegramWebhook, telegramWebhookSecret } from "./telegram";
 
 type TelegramResult = { ok?: boolean; result?: unknown };
 
@@ -45,6 +45,7 @@ export function telegramBotUsername(token: string): Promise<string> {
 
 /** Points this bot's webhook at the site. Repeated calls are idempotent. */
 export function ensureTelegramWebhook(token: string): Promise<void> {
+  if (!siteOwnsTelegramWebhook(siteUrl())) return Promise.resolve();
   webhookCache ??= telegramApi(token, "setWebhook", {
     url: `${siteUrl()}/api/telegram/webhook`,
     secret_token: telegramWebhookSecret(token),

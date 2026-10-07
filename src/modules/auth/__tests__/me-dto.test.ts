@@ -6,6 +6,7 @@ const row: CurrentUser = {
   id: "11111111-1111-4111-8111-111111111111",
   authUid: "22222222-2222-4222-8222-222222222222",
   platformRole: "user",
+  accountType: "candidate",
   status: "active",
   locale: "ru",
   termsAcceptedAt: new Date("2026-10-03T00:00:00Z"),
@@ -21,6 +22,7 @@ describe("toMeDto", () => {
   it("exposes only the allowlisted keys", () => {
     const dto = toMeDto(row);
     expect(Object.keys(dto).sort()).toEqual([
+      "accountType",
       "companies",
       "hasCandidateProfile",
       "id",

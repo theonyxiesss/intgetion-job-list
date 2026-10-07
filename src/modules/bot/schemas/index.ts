@@ -15,6 +15,13 @@ export const botMessageInput = z
   })
   .strict();
 
+/** `POST /api/bot/fill` — how to fill the profile after sign-up (D324). */
+export const botFillModeInput = z
+  .object({
+    mode: z.enum(["self", "spoki"]),
+  })
+  .strict();
+
 /** `POST /api/bot/confirm` (12.3). */
 export const botConfirmInput = z
   .object({

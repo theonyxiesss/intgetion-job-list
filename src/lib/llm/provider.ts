@@ -172,6 +172,27 @@ export class FakeLLMProvider implements LLMProvider {
 
   async complete(request: LLMRequest): Promise<LLMResponse> {
     this.requests.push(request);
+    const next = this.script[0];
+    const scriptedExtraction =
+      !!next &&
+      typeof next !== "function" &&
+      next.toolCalls.some((call) => call.name === "record_result");
+    // Profile extraction runs before the chat turn. A script that only
+    // describes the chat reply still yields an empty extraction.
+    if (
+      request.toolChoice === "record_result" &&
+      !scriptedExtraction &&
+      typeof next !== "function"
+    ) {
+      return {
+        text: "",
+        toolCalls: [
+          { id: "call_record_result", name: "record_result", input: {} },
+        ],
+        usage: { tokensIn: 0, tokensOut: 0 },
+        stopReason: "tool_use",
+      };
+    }
     const step = this.script.shift();
     if (!step) throw new Error("FakeLLMProvider script is exhausted");
     return typeof step === "function" ? step(request) : step;

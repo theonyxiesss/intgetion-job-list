@@ -1,7 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { HttpError } from "@/lib/http";
 import {
-  AnthropicProvider,
   chat,
   circuitBreakerOpen,
   costMicroUsd,
@@ -20,9 +19,23 @@ import {
 } from "@/lib/llm";
 import { logger } from "@/lib/logger";
 import { enforceRateLimit } from "@/lib/rate-limit";
-import { candidatePatchInput } from "@/modules/candidates/service";
+import {
+  candidatePatchInput,
+  patchCandidateProfile,
+} from "@/modules/candidates/service";
 import { matchSkillSlug } from "@/modules/taxonomy/service";
 import { systemPrompt, SYSTEM_PROMPT_VERSION } from "../prompts/system";
+import {
+  followUp,
+  hasSearchFact,
+  mergeDraft,
+  mergeNotes,
+  profileSavedLine,
+  rememberUtterance,
+  resumeAck,
+  signupHint,
+  spokiFillIntro,
+} from "./memory";
 import * as repo from "../repo/bot-repo";
 import { draftFromExtraction, extractDraft } from "./extract";
 import {
@@ -56,7 +69,17 @@ export type BotEvent =
       expiresAt: string;
     }
   | { type: "error"; code: string }
+  | { type: "signup_hint"; text: string }
+  | { type: "resume_ack"; text: string }
+  | { type: "fill_choice" }
+  | { type: "profile_saved"; text: string }
   | { type: "done"; conversationId: string };
+
+export type ChatActions = {
+  signup: boolean;
+  fillChoice: boolean;
+  profileReview: boolean;
+};
 
 export type Emit = (event: BotEvent) => void;
 
@@ -114,13 +137,10 @@ async function claimGuestConversation(input: {
   if (!found || found.userId !== null) return undefined;
   const state = (found.state ?? {}) as BotState;
   const draft = state.draft;
-  const canOffer =
-    !!draft &&
-    Object.keys(draft).length > 0 &&
-    candidatePatchInput.safeParse(draft).success;
+  const hasDraft = !!draft && Object.keys(draft).length > 0;
   return repo.claimConversation(found.id, input.userId, {
     ...state,
-    needsDraftOffer: canOffer,
+    ...(hasDraft ? { resumeAckPending: true } : {}),
   });
 }
 
@@ -141,6 +161,17 @@ export async function resolveConversation(input: {
       (await repo.findConversationByToken(hashSessionToken(input.token)));
     if (found && found.userId === input.userId) {
       return { conversation: found, token: input.token };
+    }
+  }
+  if (input.userId) {
+    const latest = await repo.latestConversationForUser(input.userId);
+    if (latest) {
+      const token = newSessionToken();
+      await repo.replaceSessionToken(latest.id, hashSessionToken(token));
+      return {
+        conversation: { ...latest, sessionTokenHash: hashSessionToken(token) },
+        token,
+      };
     }
   }
   const token = newSessionToken();
@@ -195,17 +226,52 @@ export async function resumeConversation(input: {
 }): Promise<{
   conversation: repo.ConversationRow | null;
   offer: Extract<BotEvent, { type: "confirm_request" }> | null;
+  token?: string;
+  actions: ChatActions;
 }> {
-  if (!input.token) return { conversation: null, offer: null };
-  const claimed = await claimGuestConversation(input);
-  const found =
-    claimed ??
-    (await repo.findConversationByToken(hashSessionToken(input.token)));
-  if (!found || found.userId !== input.userId) {
-    return { conversation: null, offer: null };
+  const empty = {
+    conversation: null,
+    offer: null,
+    actions: chatActions(input.userId, {}),
+  };
+  let found: repo.ConversationRow | undefined;
+  let issued: string | undefined;
+  if (input.token) {
+    const claimed = await claimGuestConversation(input);
+    const byCookie =
+      claimed ??
+      (await repo.findConversationByToken(hashSessionToken(input.token)));
+    if (byCookie && byCookie.userId === input.userId) found = byCookie;
   }
-  const offer = await takeDraftOffer(found, input.userId, new Date());
-  return { conversation: found, offer };
+  if (!found && input.userId) {
+    const latest = await repo.latestConversationForUser(input.userId);
+    if (latest) {
+      issued = newSessionToken();
+      await repo.replaceSessionToken(latest.id, hashSessionToken(issued));
+      found = { ...latest, sessionTokenHash: hashSessionToken(issued) };
+    }
+  }
+  if (!found) return empty;
+  const acked = await acknowledgeResume(found, found.locale ?? "en");
+  const conversation = acked ?? found;
+  const offer = await takeDraftOffer(conversation, input.userId, new Date());
+  return {
+    conversation,
+    offer,
+    token: issued,
+    actions: chatActions(input.userId, (conversation.state ?? {}) as BotState),
+  };
+}
+
+export function chatActions(
+  userId: string | null,
+  state: BotState,
+): ChatActions {
+  return {
+    signup: !userId && !!state.signupHintShown && hasSearchFact(state.draft),
+    fillChoice: !!userId && !!state.resumeAckShown && !state.fillMode,
+    profileReview: userId !== null && state.fillMode === "spoki",
+  };
 }
 
 /** Existing conversation only (history, confirmations); null when none. */
@@ -213,9 +279,12 @@ export async function findOwnConversation(
   userId: string | null,
   token: string | undefined,
 ) {
-  if (!token) return null;
-  const found = await repo.findConversationByToken(hashSessionToken(token));
-  return found && found.userId === userId ? found : null;
+  if (token) {
+    const found = await repo.findConversationByToken(hashSessionToken(token));
+    if (found && found.userId === userId) return found;
+  }
+  if (!userId) return null;
+  return (await repo.latestConversationForUser(userId)) ?? null;
 }
 
 // ---- budgets --------------------------------------------------------------
@@ -308,15 +377,38 @@ export function startAtUser(messages: readonly LLMMessage[]): LLMMessage[] {
 }
 
 /**
- * Live extraction (D181). The test provider is not Anthropic, so scripted
- * conversations stay one model call. Unknown skills are matched read-only.
+ * One continuation after a guest thread is claimed (D324). The flag is
+ * cleared in the update that wins, so a second request does not repeat it.
+ */
+async function acknowledgeResume(
+  conversation: repo.ConversationRow,
+  locale: string,
+  emit?: Emit,
+): Promise<repo.ConversationRow | undefined> {
+  const won = await repo.takeResumeAck(conversation.id);
+  if (!won) return undefined;
+  const state = (won.state ?? {}) as BotState;
+  const text = resumeAck(locale, state.draft);
+  await repo.insertMessage({
+    conversationId: won.id,
+    role: "assistant",
+    content: text,
+  });
+  emit?.({ type: "resume_ack", text });
+  emit?.({ type: "fill_choice" });
+  return { ...won, locale };
+}
+
+/**
+ * Live extraction on whatever provider is configured (D317, D324).
+ * A failed extraction does not drop the turn. Unknown skills are matched
+ * read-only.
  */
 async function absorbExtraction(
   input: MessageInput,
   llm: BotLLM,
   state: BotState,
   emit: Emit,
-  now: Date,
 ): Promise<BotState> {
   try {
     const rows = await repo.listMessages(input.conversation.id, HISTORY_READ);
@@ -335,28 +427,46 @@ async function absorbExtraction(
       tokensOut: extracted.usage.tokensOut,
       costMicroUsd: cost,
     });
-    const { patch } = await draftFromExtraction(extracted.data, matchSkillSlug);
-    if (!patch) return state;
-    const next: BotState = {
-      ...state,
-      draft: { ...(state.draft ?? {}), ...patch },
-    };
-    if (!input.userId) {
-      emit({
-        type: "tool_result",
-        name: "propose_profile_update",
-        kind: "draft",
-        data: next.draft,
-      });
-      return next;
+    const { patch, notes } = await draftFromExtraction(
+      extracted.data,
+      matchSkillSlug,
+    );
+    let next: BotState = state;
+    if (patch) next = { ...next, draft: mergeDraft(next.draft, patch) };
+    if (notes) next = { ...next, notes: mergeNotes(next.notes, notes) };
+    if (input.userId && next.fillMode === "spoki" && patch) {
+      next = await saveFilledProfile(input, next, emit);
     }
-    next.needsDraftOffer = true;
-    await repo.updateConversation(input.conversation.id, { state: next }, now);
     return next;
   } catch (error) {
     logger.warn({ err: error }, "bot: profile extraction skipped");
     return state;
   }
+}
+
+/** Writes the allowlisted draft after the person asked Spoki to fill it. */
+async function saveFilledProfile(
+  input: MessageInput,
+  state: BotState,
+  emit: Emit,
+): Promise<BotState> {
+  if (!input.userId) return state;
+  const parsed = candidatePatchInput.safeParse(state.draft ?? {});
+  if (!parsed.success) return state;
+  try {
+    await patchCandidateProfile(input.userId, parsed.data);
+  } catch (error) {
+    logger.warn({ err: error }, "bot: profile fill kept in the draft");
+    return state;
+  }
+  const text = profileSavedLine(input.locale);
+  await repo.insertMessage({
+    conversationId: input.conversation.id,
+    role: "assistant",
+    content: text,
+  });
+  emit({ type: "profile_saved", text });
+  return state;
 }
 
 // ---- one user message -----------------------------------------------------
@@ -386,14 +496,19 @@ export async function handleMessage(
     conversation.sessionTokenHash,
     now,
   );
+  const acked = await acknowledgeResume(conversation, input.locale, emit);
+  const current = acked ?? conversation;
   await repo.insertMessage({
-    conversationId: conversation.id,
+    conversationId: current.id,
     role: "user",
     content: redactPii(input.text),
   });
 
-  let state = conversation.state as BotState;
-  const offer = await takeDraftOffer(conversation, userId, now);
+  let state: BotState = {
+    ...(current.state as BotState),
+    draft: rememberUtterance((current.state as BotState).draft, input.text),
+  };
+  const offer = await takeDraftOffer(current, userId, now);
   if (offer) {
     emit(offer);
     state = { ...state, needsDraftOffer: false };
@@ -409,20 +524,17 @@ export async function handleMessage(
     return finish(input, state, emit, now);
   }
 
-  if (llm.provider instanceof AnthropicProvider) {
-    state = await absorbExtraction(input, llm, state, emit, now);
-    const again = await takeDraftOffer({ ...conversation, state }, userId, now);
-    if (again) {
-      emit(again);
-      state = { ...state, needsDraftOffer: false };
-    }
-  }
+  state = await absorbExtraction(input, llm, state, emit);
 
   const system = systemPrompt({
     locale: input.locale,
     signedIn: userId !== null,
+    draft: state.draft,
+    notes: state.notes,
   });
   const tools = toolsFor(userId);
+  let spoke = false;
+  let waiting = false;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS + 1; round += 1) {
     const rows = await repo.listMessages(conversation.id, HISTORY_READ);
@@ -463,10 +575,12 @@ export async function handleMessage(
       tokensOut: response.usage.tokensOut,
       costMicroUsd: cost,
     });
-    if (response.text) emit({ type: "token", text: response.text });
+    if (response.text) {
+      spoke = true;
+      emit({ type: "token", text: response.text });
+    }
     if (!calls.length) break;
 
-    let waiting = false;
     for (const call of calls) {
       const ctx: ToolContext = {
         userId,
@@ -485,6 +599,15 @@ export async function handleMessage(
       });
     }
     if (waiting) break;
+  }
+  if (!spoke && !waiting) {
+    const text = followUp(input.locale, state.draft);
+    await repo.insertMessage({
+      conversationId: conversation.id,
+      role: "assistant",
+      content: text,
+    });
+    emit({ type: "token", text });
   }
   return finish(input, state, emit, now);
 }
@@ -537,18 +660,88 @@ async function callTool(
   }
 }
 
+async function maybeSignup(
+  input: MessageInput,
+  state: BotState,
+  emit: Emit,
+): Promise<BotState> {
+  if (input.userId || state.signupHintShown || !hasSearchFact(state.draft)) {
+    return state;
+  }
+  const text = signupHint(input.locale);
+  await repo.insertMessage({
+    conversationId: input.conversation.id,
+    role: "assistant",
+    content: text,
+  });
+  emit({ type: "signup_hint", text });
+  return { ...state, signupHintShown: true };
+}
+
 async function finish(
   input: MessageInput,
   state: BotState,
   emit: Emit,
   now: Date,
 ) {
+  const next = await maybeSignup(input, state, emit);
   await repo.updateConversation(
     input.conversation.id,
-    { state, locale: input.locale },
+    { state: next, locale: input.locale },
     now,
   );
   emit({ type: "done", conversationId: input.conversation.id });
+}
+
+/**
+ * The person chose how to fill the profile after the guest thread was
+ * claimed (D324). `spoki` writes allowlisted fields without a card.
+ */
+export async function setFillMode(
+  conversation: repo.ConversationRow,
+  userId: string,
+  mode: "self" | "spoki",
+): Promise<{ message: string | null; saved: boolean; messages: string[] }> {
+  const locale = conversation.locale ?? "en";
+  const previous = (conversation.state ?? {}) as BotState;
+  const state: BotState = {
+    ...previous,
+    fillMode: mode,
+    resumeAckPending: false,
+    resumeAckShown: true,
+  };
+  let saved = false;
+  if (mode === "spoki") {
+    const parsed = candidatePatchInput.safeParse(state.draft ?? {});
+    if (parsed.success) {
+      try {
+        await patchCandidateProfile(userId, parsed.data);
+        saved = true;
+      } catch (error) {
+        logger.warn({ err: error }, "bot: profile fill kept in the draft");
+      }
+    }
+  }
+  await repo.updateConversation(conversation.id, { state }, new Date());
+  const message = mode === "spoki" ? spokiFillIntro(locale) : null;
+  if (message) {
+    await repo.insertMessage({
+      conversationId: conversation.id,
+      role: "assistant",
+      content: message,
+    });
+  }
+  const messages = message ? [message] : [];
+  if (saved) {
+    const savedLine = profileSavedLine(locale);
+    messages.push(savedLine);
+    await repo.insertMessage({
+      conversationId: conversation.id,
+      role: "assistant",
+      content: savedLine,
+    });
+  }
+  return { message, saved, messages };
 }
 
 // ---- confirmations --------------------------------------------------------

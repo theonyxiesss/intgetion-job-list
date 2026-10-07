@@ -193,19 +193,19 @@ otp_expiry = 3600
 # admin_email = "admin@email.com"
 # sender_name = "Admin"
 
-# Branded Auth letters for local Inbucket (D325). On cloud prefer the Send
-# Email Hook at /api/auth/hooks/send-email, or paste these into the Dashboard.
+# Branded auth emails (D330), generated from src/lib/auth-email-templates.ts.
+# The cloud project prefers the Send Email Hook, or the same HTML in the Dashboard.
 [auth.email.template.confirmation]
-subject = "Confirm your email · INTGETION JOB LIST"
+subject = '{{ if eq (printf "%v" .Data.locale) "ru" }}Подтвердите email{{ else }}Confirm your email{{ end }}'
 content_path = "./supabase/templates/confirmation.html"
 
-[auth.email.template.magic_link]
-subject = "Your sign-in link · INTGETION JOB LIST"
-content_path = "./supabase/templates/magic_link.html"
-
 [auth.email.template.recovery]
-subject = "Reset your password · INTGETION JOB LIST"
+subject = '{{ if eq (printf "%v" .Data.locale) "ru" }}Сброс пароля{{ else }}Reset your password{{ end }}'
 content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.magic_link]
+subject = '{{ if eq (printf "%v" .Data.locale) "ru" }}Ссылка для входа{{ else }}Your sign-in link{{ end }}'
+content_path = "./supabase/templates/magic_link.html"
 
 # When AUTH_SEND_EMAIL_HOOK_SECRET is set locally, Auth posts here instead of
 # sending through Inbucket. Point the URI at the Next app Auth can reach.
@@ -293,6 +293,22 @@ url = ""
 skip_nonce_check = false
 # If enabled, it will allow the user to successfully authenticate when the provider does not return an email address.
 email_optional = false
+
+# Google sign-in (D335). Turn this on only after the client id and secret are
+# in the environment. skip_nonce_check is required for local Google sign-in.
+# Do not commit the secret.
+[auth.external.google]
+enabled = false
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+skip_nonce_check = true
+
+# X sign-in uses OAuth 2.0 (`x`, not the older `twitter` key). The secret
+# stays in the cloud Supabase project (D336). Do not commit it.
+[auth.external.x]
+enabled = false
+client_id = "env(SUPABASE_AUTH_EXTERNAL_X_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_X_SECRET)"
 
 # Allow Solana wallet holders to sign in to your project via the Sign in with Solana (SIWS, EIP-4361) standard.
 # You can configure "web3" rate limit in the [auth.rate_limit] section and set up [auth.captcha] if self-hosting.

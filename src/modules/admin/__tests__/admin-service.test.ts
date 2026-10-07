@@ -43,6 +43,7 @@ const admin: CurrentUser = {
   id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
   authUid: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
   platformRole: "admin",
+  accountType: "candidate",
   status: "active",
   locale: "en",
   termsAcceptedAt: at,

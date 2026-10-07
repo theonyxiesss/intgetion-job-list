@@ -243,7 +243,7 @@
 ### 8.2 Поля: Input, Textarea, Select, Checkbox, Radio, Switch, Field
 
 - `Field` = `label` (стиль `label`, над полем) + контрол + `help` (`caption`, `--fg-muted`) + `error` (`caption`, `--danger`, `role="alert"`, связан через `aria-describedby`).
-- Input/Select/Textarea: высота 44 (textarea — от 120), фон `--surface-2`, рамка `--line-strong`, без скругления; фокус — рамка `--accent` + `outline` 2 px `--accent` со смещением 2 px. Ошибка — рамка `--danger`, `aria-invalid`.
+- Input/Select/Textarea: высота 44 (textarea — от 120), фон `--surface-2`, рамка `--line-strong`, без скругления; фокус — рамка `--accent` + `outline` 2 px `--accent` со смещением 2 px. Ошибка — рамка `--danger`, `aria-invalid`. Поле на `/chat` — исключение: от одной строки до `min(10rem, 30dvh)`, дальше текст прокручивается внутри (D334).
 - Плейсхолдер — `--fg-subtle`, никогда не заменяет label.
 - Checkbox/Radio — квадрат/круг 18 px с рамкой `--line-strong`, отмеченный — заливка `--accent`, галочка `--accent-fg`. Зона клика — вся строка с текстом (≥ 44 px).
 - Switch — капсула 36×20, для настроек уведомлений.

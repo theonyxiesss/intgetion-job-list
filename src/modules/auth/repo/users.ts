@@ -16,6 +16,7 @@ export async function insertUserIfMissing(
     .values({
       authUid,
       locale: metadata.locale,
+      accountType: metadata.account_type ?? "candidate",
       termsVersion: metadata.terms_version,
       termsAcceptedAt: new Date(metadata.terms_accepted_at),
     })
@@ -47,7 +48,11 @@ export async function findUserById(id: string): Promise<UserRow | undefined> {
 
 export async function updateUser(
   id: string,
-  patch: { locale?: "en" | "ru"; marketingOptIn?: boolean },
+  patch: {
+    locale?: "en" | "ru";
+    marketingOptIn?: boolean;
+    accountType?: "candidate" | "employer";
+  },
 ): Promise<UserRow> {
   const [row] = await getDb()
     .update(users)

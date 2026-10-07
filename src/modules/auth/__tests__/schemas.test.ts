@@ -51,13 +51,40 @@ describe("emailSchema", () => {
 });
 
 describe("registerInput", () => {
-  const base = { email: "ana@example.com", locale: "en" };
+  const base = {
+    email: "ana@example.com",
+    locale: "en",
+    accountType: "candidate",
+  };
 
   it("requires the terms to be accepted", () => {
     expect(
       firstMessage(registerInput.safeParse({ ...base, acceptTerms: false })),
     ).toBe("terms_required");
     expect(registerInput.safeParse(base).success).toBe(false);
+  });
+
+  it("requires choosing candidate or employer (D331)", () => {
+    const withoutType = { email: base.email, locale: base.locale };
+    expect(
+      firstMessage(
+        registerInput.safeParse({ ...withoutType, acceptTerms: true }),
+      ),
+    ).toBe("account_type_required");
+    expect(
+      registerInput.safeParse({
+        ...base,
+        accountType: "admin",
+        acceptTerms: true,
+      }).success,
+    ).toBe(false);
+    expect(
+      registerInput.safeParse({
+        ...base,
+        accountType: "employer",
+        acceptTerms: true,
+      }).success,
+    ).toBe(true);
   });
 
   it("allows registration without a password (magic link)", () => {

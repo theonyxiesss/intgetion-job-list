@@ -1,5 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import {
+  AccountTypeSetting,
   DeleteAccount,
   EmailLanguage,
 } from "@/components/settings/settings-controls";
@@ -58,6 +59,7 @@ export default async function AccountSettingsPage({
           telegram={telegram ? { username: telegram.username } : null}
           linkHref={linkHref}
         />
+        <AccountTypeSetting value={user.accountType} />
         <EmailLanguage locale={user.locale} />
         <SecurityStubs />
         {user.platformRole === "admin" ? (

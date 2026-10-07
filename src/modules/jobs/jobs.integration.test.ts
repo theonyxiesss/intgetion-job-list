@@ -15,6 +15,7 @@ const user: CurrentUser = {
   id: ownerId,
   authUid: randomUUID(),
   platformRole: "user",
+  accountType: "candidate",
   status: "active",
   locale: "en",
   termsAcceptedAt: new Date(),

@@ -117,9 +117,11 @@
     "employers": "For employers",
     "saved": "Saved jobs",
     "admin": "Administration",
-    "chat": "Agent",
+    "chat": "Spoki",
     "bottom": "Main sections",
-    "pricing": "Pricing"
+    "pricing": "Pricing",
+    "myJobs": "My jobs",
+    "company": "Company"
   },
   "locale": {
     "en": "English",
@@ -202,7 +204,7 @@
     "resetTitle": "Reset password",
     "updatePasswordTitle": "Set a new password",
     "checkEmailTitle": "Check your email",
-    "checkEmailBody": "We sent you a link. Open it to confirm your address. The link works once.",
+    "checkEmailBody": "We sent you a link. Open it in this browser to continue. The link works once.",
     "checkEmailResentBody": "This address was already waiting for confirmation. We sent a new link — open it to finish.",
     "checkEmailWaiting": "This page will continue automatically once the email is confirmed.",
     "confirmedTitle": "Email confirmed",
@@ -225,10 +227,10 @@
     "submitRegister": "Create account",
     "submitReset": "Send reset link",
     "submitNewPassword": "Save password",
-    "noAccount": "No account yet?",
+    "noAccount": "No account?",
     "haveAccount": "Already registered?",
     "forgotPassword": "Forgot password?",
-    "toRegister": "Create an account",
+    "toRegister": "Register",
     "toLogin": "Sign in",
     "resetHint": "We will email a reset link if an account exists for this address.",
     "errors": {
@@ -247,7 +249,9 @@
       "session_missing": "The reset link has expired. Request a new one.",
       "generic": "Something went wrong. Try again.",
       "telegram_failed": "Telegram sign-in did not work. Try again or use email.",
-      "telegram_taken": "This Telegram is already linked to another account."
+      "telegram_taken": "This Telegram is already linked to another account.",
+      "account_type_required": "Choose who you are.",
+      "oauth_unavailable": "This sign-in is not available yet. Use email or Telegram."
     },
     "social": {
       "title": "Or continue with",
@@ -260,7 +264,23 @@
       "telegramTerms": "By continuing with Telegram you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
       "telegramLinked": "Telegram is linked to your account.",
       "telegramWaiting": "Waiting for your confirmation in Telegram…",
-      "telegramFailed": "Telegram sign-in did not go through. Try again."
+      "telegramFailed": "Telegram sign-in did not go through. Try again.",
+      "googleTerms": "By continuing with Google you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
+      "xTerms": "By continuing with X you accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>."
+    },
+    "useMagicLink": "Email link",
+    "usePassword": "Use a password",
+    "checkEmailHint": "Did not get it? Check the spam folder or request a new link in a minute.",
+    "backToLogin": "Back to sign in",
+    "accountTypeLabel": "Who are you?",
+    "accountType": {
+      "candidate": "I’m looking for work",
+      "candidateHint": "Find jobs and apply.",
+      "employer": "I’m hiring",
+      "employerHint": "Post jobs for your company.",
+      "settingsLabel": "Account type",
+      "saved": "Saved",
+      "error": "Could not save. Try again."
     }
   },
   "authEmails": {
@@ -940,7 +960,9 @@
     "email": "Email",
     "saved": "Saved",
     "error": "Could not save this setting.",
-    "telegram": "Telegram"
+    "telegram": "Telegram",
+    "alwaysOnTitle": "Account and security emails",
+    "alwaysOnBody": "Email confirmation, sign-in links and password resets are always sent. They are needed to keep access to your account."
   },
   "applications": {
     "nav": "Applications",
@@ -1198,8 +1220,8 @@
     "signIn": {
       "title": "Sign-in methods",
       "emailLabel": "Email",
-      "noEmail": "Not added — notifications and password reset need an email.",
-      "emailHint": "We will send a confirmation link. After you confirm, you can set a password via “Forgot password?” on the sign-in page.",
+      "noEmail": "Not added — notifications cannot reach you.",
+      "emailHint": "We will send a confirmation link.",
       "addEmail": "Add email",
       "sent": "Check your inbox: we sent a confirmation link.",
       "setPassword": "Set a password",
@@ -1219,13 +1241,13 @@
     }
   },
   "chat": {
-    "title": "Career agent",
-    "intro": "Tell the agent what work you want. It finds jobs, keeps your profile up to date and asks before it changes anything.",
+    "title": "Spoki Assistant",
+    "intro": "A conversation that learns what work you want and keeps looking.",
     "log": "Conversation",
     "you": "You",
-    "agent": "Agent",
-    "emptyGuest": "Try: “remote backend jobs with Python”. As a guest you can search; sign up to save jobs and apply.",
-    "emptySignedIn": "Try: “find remote design jobs” or “what is the status of my applications?”",
+    "agent": "Spoki Assistant",
+    "emptyGuest": "Tell Spoki where you are and what work you want.",
+    "emptySignedIn": "Tell Spoki what you want to find. The conversation continues where you left it.",
     "score": "{score}% match",
     "thinking": "Thinking…",
     "suggestions": {
@@ -1254,7 +1276,11 @@
       "declined": "Cancelled.",
       "failed": "Could not complete this. The card may have expired; ask again.",
       "missing": "The profile is still missing: {fields}"
-    }
+    },
+    "createAccount": "Create account",
+    "fillSelf": "Fill it in myself",
+    "fillSpoki": "Let Spoki fill it in",
+    "reviewProfile": "Review profile"
   },
   "cookies": {
     "label": "Cookie choice",
@@ -1813,6 +1839,52 @@
       "when": {
         "q": "When can I buy?",
         "a": "Paid plans are being prepared. Everything on the free plans works now."
+      }
+    }
+  },
+  "email": {
+    "fallback": "If the button does not work, copy this link into your browser:",
+    "footerAccount": "You received this email because this address is used for an account on INTGETION JOB LIST.",
+    "footerAlerts": "You receive job alerts because they are turned on in your notification settings.",
+    "manage": "Notification settings",
+    "confirm": {
+      "subject": "Confirm your email",
+      "title": "Confirm your email",
+      "body": "Welcome to INTGETION JOB LIST. Confirm this address to finish creating your account.",
+      "action": "Confirm email",
+      "expiry": "The link works once and expires in 1 hour.",
+      "ignore": "If you did not create an account, ignore this email."
+    },
+    "reset": {
+      "subject": "Reset your password",
+      "title": "Reset your password",
+      "body": "You requested a password reset for your INTGETION JOB LIST account. Choose a new password with the button below.",
+      "action": "Reset password",
+      "expiry": "The link works once and expires in 1 hour.",
+      "ignore": "If you did not request a reset, ignore this email. Your password stays the same."
+    },
+    "magic": {
+      "subject": "Your sign-in link",
+      "title": "Sign in to INTGETION JOB LIST",
+      "body": "Use the button below to sign in. You do not need a password.",
+      "action": "Sign in",
+      "expiry": "The link works once and expires in 1 hour.",
+      "ignore": "If you did not try to sign in, ignore this email."
+    },
+    "jobs": {
+      "title": "New jobs matching your profile",
+      "intro": "{count, plural, one {# new job fits} other {# new jobs fit}} your profile. Here are the closest matches.",
+      "viewJob": "View job",
+      "viewAll": "View all jobs",
+      "per": {
+        "hour": "hour",
+        "month": "month",
+        "year": "year"
+      },
+      "formats": {
+        "remote": "Remote",
+        "hybrid": "Hybrid",
+        "onsite": "On-site"
       }
     }
   }

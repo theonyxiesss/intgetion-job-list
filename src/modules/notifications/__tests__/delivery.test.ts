@@ -83,7 +83,7 @@ describe("notification delivery rules", () => {
           "https://example.com/en/unsubscribe?token=abc",
         );
         expect(rendered?.html).toContain("INTGETION JOB LIST");
-        expect(rendered?.html).toContain("background:#000000");
+        expect(rendered?.html).toContain("max-width:560px");
         expect(rendered?.subject.length).toBeGreaterThan(0);
       }
     }

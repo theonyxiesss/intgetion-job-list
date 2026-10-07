@@ -113,7 +113,7 @@ test("notifications feed, preferences, and unsubscribe", async ({
   });
   expect(applied.ok()).toBeTruthy();
 
-  // The bot switch waits for a linked Telegram.
+  // The bot switch waits for a linked Telegram (D329).
   await page.goto("/en/notifications");
   await expect(
     page.getByRole("switch", { name: "New jobs in the Telegram bot" }),

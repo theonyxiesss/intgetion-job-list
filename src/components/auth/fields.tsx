@@ -54,7 +54,10 @@ export function Field({ id, label, hint, error, ...input }: FieldProps) {
 export function FormAlert({ children }: { children?: ReactNode }) {
   if (!children) return null;
   return (
-    <p role="alert" className="border border-danger px-3 py-2 text-danger">
+    <p
+      role="alert"
+      className="border border-danger px-3 py-2 break-words text-danger"
+    >
       {children}
     </p>
   );

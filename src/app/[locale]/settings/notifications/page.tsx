@@ -59,6 +59,12 @@ export default async function NotificationSettingsPage({
           saved={t("saved")}
           error={t("error")}
         />
+        <section className="flex flex-col gap-2 border border-line p-4">
+          <h2 className="t-label text-fg-muted">{t("alwaysOnTitle")}</h2>
+          <p className="t-body-s max-w-[60ch] text-fg-muted">
+            {t("alwaysOnBody")}
+          </p>
+        </section>
       </Container>
     </main>
   );

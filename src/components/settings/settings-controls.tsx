@@ -125,6 +125,39 @@ export function EmailLanguage({ locale }: { locale: string }) {
   );
 }
 
+/** D331: switch between looking for work and hiring; permissions do not change. */
+export function AccountTypeSetting({
+  value,
+}: {
+  value: "candidate" | "employer";
+}) {
+  const t = useTranslations("settings");
+  const auth = useTranslations("auth.accountType");
+  const toast = useToast();
+  const router = useRouter();
+  const [current, setCurrent] = useState(value);
+  async function change(next: "candidate" | "employer") {
+    setCurrent(next);
+    const ok = await send("/api/me", "PATCH", { accountType: next });
+    toast.show(ok ? t("saved") : t("failed"), ok ? "info" : "danger");
+    if (ok) router.refresh();
+  }
+  return (
+    <Field label={auth("settingsLabel")}>
+      <Select
+        value={current}
+        onChange={(event) =>
+          change(event.target.value as "candidate" | "employer")
+        }
+        className="max-w-60"
+      >
+        <option value="candidate">{auth("candidate")}</option>
+        <option value="employer">{auth("employer")}</option>
+      </Select>
+    </Field>
+  );
+}
+
 /**
  * Account deletion (D28): the user types DELETE, then confirms in a card.
  * After success the session is gone and the browser goes home.

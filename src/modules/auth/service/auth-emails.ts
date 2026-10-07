@@ -1,4 +1,4 @@
-import { siteEmailHtml } from "@/lib/email-html";
+import { renderEmailLayout } from "@/lib/email-html";
 import type { AppLocale } from "@/i18n/routing";
 import { siteUrl } from "@/lib/supabase/env";
 import en from "@/messages/en.json";
@@ -61,9 +61,11 @@ export function renderAuthEmail(input: {
   actionHref: string;
 }): { subject: string; html: string; text: string } {
   const copy = copyFor(input.kind, input.locale);
-  const html = siteEmailHtml({
+  const html = renderEmailLayout({
+    lang: input.locale,
+    origin: siteUrl().replace(/\/+$/, ""),
     preheader: copy.preheader,
-    headline: copy.headline,
+    title: copy.headline,
     body: copy.body,
     action: { href: input.actionHref, label: copy.action },
   });

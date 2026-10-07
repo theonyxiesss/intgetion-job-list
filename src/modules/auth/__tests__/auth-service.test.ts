@@ -9,6 +9,8 @@ import {
   changePassword,
   completeCallback,
   getCurrentUser,
+  startGoogleSignIn,
+  startXSignIn,
   register,
   requestPasswordReset,
   requireCurrentUser,
@@ -43,6 +45,7 @@ const row: CurrentUser = {
   id: "11111111-1111-4111-8111-111111111111",
   authUid: "22222222-2222-4222-8222-222222222222",
   platformRole: "user",
+  accountType: "candidate",
   status: "active",
   locale: "en",
   termsAcceptedAt: new Date("2026-10-03T00:00:00Z"),
@@ -75,6 +78,10 @@ function fakeAuth(user: AuthUser | null) {
     signInWithPassword: vi
       .fn()
       .mockResolvedValue({ data: { user }, error: null }),
+    signInWithOAuth: vi.fn().mockResolvedValue({
+      data: { provider: "google", url: "https://accounts.google.com/o/oauth2" },
+      error: null,
+    }),
   };
 }
 
@@ -115,6 +122,7 @@ describe("register", () => {
           password: "orbit-lantern-42",
           locale: "ru",
           acceptTerms: true,
+          accountType: "candidate",
         },
         now,
       ),
@@ -128,10 +136,33 @@ describe("register", () => {
           terms_version: TERMS_VERSION,
           terms_accepted_at: "2026-10-03T10:00:00.000Z",
           locale: "ru",
+          account_type: "candidate",
         },
       },
     });
     expect(auth.signInWithOtp).not.toHaveBeenCalled();
+  });
+
+  it("sends the person back to the chat when they registered from Spoki", async () => {
+    const auth = fakeAuth(null);
+    await register(
+      asAuth(auth),
+      {
+        email: "ana@example.com",
+        password: "orbit-lantern-42",
+        locale: "en",
+        acceptTerms: true, accountType: "candidate" as const,
+        next: "chat",
+      },
+      now,
+    );
+    expect(auth.signUp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          emailRedirectTo: "http://127.0.0.1:3000/en/auth/callback?next=chat",
+        }),
+      }),
+    );
   });
 
   it("sends a magic link that may create the user when there is no password", async () => {
@@ -143,6 +174,7 @@ describe("register", () => {
           email: "ana@example.com",
           locale: "en",
           acceptTerms: true,
+          accountType: "candidate",
         },
         now,
       ),
@@ -169,6 +201,7 @@ describe("register", () => {
         password: "orbit-lantern-42",
         locale: "en",
         acceptTerms: true,
+        accountType: "candidate",
       }),
     ).resolves.toEqual({ status: "resent" });
     expect(auth.resend).toHaveBeenCalledWith({
@@ -196,7 +229,7 @@ describe("register", () => {
         email: "ana@example.com",
         password: "orbit-lantern-42",
         locale: "en",
-        acceptTerms: true,
+        acceptTerms: true, accountType: "candidate" as const,
       }),
     ).rejects.toMatchObject({
       status: 409,
@@ -217,6 +250,7 @@ describe("register", () => {
         password: "orbit-lantern-42",
         locale: "en",
         acceptTerms: true,
+        accountType: "candidate",
       }),
     ).rejects.toMatchObject({
       status: 409,
@@ -235,7 +269,7 @@ describe("register", () => {
       register(asAuth(auth), {
         email: "ana@example.com",
         locale: "en",
-        acceptTerms: true,
+        acceptTerms: true, accountType: "candidate" as const,
       }),
     ).rejects.toMatchObject({ status: 429, code: "RATE_LIMITED" });
   });
@@ -276,7 +310,7 @@ describe("completeCallback", () => {
       terms_accepted_at: "2026-10-03T10:00:00.000Z",
       locale: "ru",
     });
-    expect(result).toEqual({ ok: true, user: row });
+    expect(result).toEqual({ ok: true, user: row, created: true });
   });
 
   it("verifies token_hash links", async () => {
@@ -332,6 +366,61 @@ describe("completeCallback", () => {
     expect(result).toEqual({ ok: false, reason: "missing_terms" });
     expect(auth.signOut).toHaveBeenCalled();
     expect(repo.insertUserIfMissing).not.toHaveBeenCalled();
+  });
+
+  it("creates a row from the Google terms when the provider sent none", async () => {
+    const auth = fakeAuth({ ...confirmed, user_metadata: { iss: "https://accounts.google.com" } });
+    repo.findUserByAuthUid.mockResolvedValue(undefined);
+    repo.insertUserIfMissing.mockResolvedValue(row);
+    const result = await completeCallback(
+      asAuth(auth),
+      { code: "abc" },
+      {
+        terms_version: TERMS_VERSION,
+        terms_accepted_at: "2026-10-03T10:00:00.000Z",
+        locale: "en",
+        account_type: "candidate",
+      },
+    );
+    expect(result).toEqual({ ok: true, user: row, created: true });
+    expect(auth.signOut).not.toHaveBeenCalled();
+  });
+});
+
+describe("startGoogleSignIn", () => {
+  it("asks Supabase for a Google redirect back to this site", async () => {
+    const auth = fakeAuth(null);
+    const started = await startGoogleSignIn(asAuth(auth), {
+      locale: "ru",
+      next: "chat",
+    });
+    expect(started.url).toBe("https://accounts.google.com/o/oauth2");
+    expect(auth.signInWithOAuth).toHaveBeenCalledWith({
+      provider: "google",
+      options: {
+        redirectTo: "http://127.0.0.1:3000/ru/auth/callback?next=chat",
+        skipBrowserRedirect: true,
+        queryParams: { prompt: "select_account" },
+      },
+    });
+  });
+});
+
+describe("startXSignIn", () => {
+  it("asks Supabase for an X redirect back to this site", async () => {
+    const auth = fakeAuth(null);
+    const started = await startXSignIn(asAuth(auth), {
+      locale: "ru",
+      next: "chat",
+    });
+    expect(started.url).toBe("https://accounts.google.com/o/oauth2");
+    expect(auth.signInWithOAuth).toHaveBeenCalledWith({
+      provider: "x",
+      options: {
+        redirectTo: "http://127.0.0.1:3000/ru/auth/callback?next=chat",
+        skipBrowserRedirect: true,
+      },
+    });
   });
 });
 

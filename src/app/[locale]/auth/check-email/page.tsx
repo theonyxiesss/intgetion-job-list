@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthPage } from "@/components/auth/auth-page";
 import { CheckEmailWatch } from "@/components/auth/check-email-watch";
+import { Link } from "@/i18n/navigation";
 
 export default async function CheckEmailPage({
   params,
@@ -16,7 +17,14 @@ export default async function CheckEmailPage({
   const again = resent === "1";
 
   return (
-    <AuthPage title={t("checkEmailTitle")}>
+    <AuthPage
+      title={t("checkEmailTitle")}
+      footer={
+        <Link href="/login" className="underline underline-offset-4">
+          {t("backToLogin")}
+        </Link>
+      }
+    >
       <CheckEmailWatch />
       <p>{again ? t("checkEmailResentBody") : t("checkEmailBody")}</p>
       <p className="text-fg-muted">{t("checkEmailWaiting")}</p>

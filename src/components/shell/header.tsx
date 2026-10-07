@@ -32,10 +32,12 @@ export async function Header() {
   let unread = 0;
   let isAdmin = false;
   let candidate = false;
+  let employer = false;
   if (signedIn) {
     try {
       const user = await requireUser();
       isAdmin = user.platformRole === "admin";
+      employer = user.accountType === "employer";
       unread = await countUnread(user.id);
       candidate = await hasCandidateProfile(user.id);
     } catch {
@@ -43,24 +45,36 @@ export async function Header() {
     }
   }
 
-  const main: NavItem[] = [
-    { href: "/jobs", label: t("nav.jobs") },
-    ...(candidate ? [{ href: "/matches", label: t("nav.matches") }] : []),
-    { href: "/chat", label: t("nav.chat") },
-    // A guest reads about hiring first (D204); a member goes to their jobs.
-    {
-      href: signedIn ? "/employer/jobs" : "/for-employers",
-      label: t("nav.employers"),
-    },
-    // Only a guest sees pricing in the main menu (docs/PRICING_UX.md, 1).
-    ...(signedIn ? [] : [{ href: "/pricing", label: t("nav.pricing") }]),
-  ];
+  // D331: an employer account gets a hiring menu; permissions are unchanged.
+  const main: NavItem[] = employer
+    ? [
+        { href: "/jobs", label: t("nav.jobs") },
+        { href: "/employer/jobs", label: t("nav.myJobs") },
+        { href: "/employer/company", label: t("nav.company") },
+        { href: "/chat", label: t("nav.chat") },
+      ]
+    : [
+        { href: "/jobs", label: t("nav.jobs") },
+        ...(candidate ? [{ href: "/matches", label: t("nav.matches") }] : []),
+        { href: "/chat", label: t("nav.chat") },
+        // A guest reads about hiring first (D204); a member goes to their jobs.
+        {
+          href: signedIn ? "/employer/jobs" : "/for-employers",
+          label: t("nav.employers"),
+        },
+        // Only a guest sees pricing in the main menu (docs/PRICING_UX.md, 1).
+        ...(signedIn ? [] : [{ href: "/pricing", label: t("nav.pricing") }]),
+      ];
   const account: NavItem[] = signedIn
     ? [
         { href: "/notifications", label: t("notifications.nav") },
-        { href: "/applications", label: t("applications.nav") },
-        { href: "/saved-jobs", label: t("nav.saved") },
-        { href: "/profile", label: t("profile.nav") },
+        ...(employer
+          ? []
+          : [
+              { href: "/applications", label: t("applications.nav") },
+              { href: "/saved-jobs", label: t("nav.saved") },
+              { href: "/profile", label: t("profile.nav") },
+            ]),
         ...(isAdmin
           ? [
               { href: "/admin", label: t("nav.admin") },
@@ -68,10 +82,7 @@ export async function Header() {
             ]
           : []),
       ]
-    : [
-        { href: "/login", label: t("nav.login") },
-        { href: "/register", label: t("nav.register") },
-      ];
+    : [{ href: "/login", label: t("nav.login") }];
 
   return (
     <ScrollFrame className="sticky top-0 z-40 border-b border-line bg-bg transition-colors duration-200 data-[scrolled]:bg-surface">
@@ -157,12 +168,9 @@ export async function Header() {
             ) : (
               // A wrapper hides them: `hidden` on the link itself would lose
               // to the button's own `inline-flex`.
-              <span className="hidden gap-1 sm:inline-flex">
-                <ButtonLink {...navFade} href="/login" variant="ghost">
+              <span className="hidden sm:inline-flex">
+                <ButtonLink {...navFade} href="/login" variant="secondary">
                   {t("nav.login")}
-                </ButtonLink>
-                <ButtonLink {...navFade} href="/register" variant="secondary">
-                  {t("nav.register")}
                 </ButtonLink>
               </span>
             )}

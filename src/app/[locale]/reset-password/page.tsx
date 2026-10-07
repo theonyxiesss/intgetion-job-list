@@ -23,7 +23,7 @@ export default async function ResetPasswordPage({
     <AuthPage
       title={updating ? t("updatePasswordTitle") : t("resetTitle")}
       footer={
-        <Link href="/login" className="underline">
+        <Link href="/login" className="underline underline-offset-4">
           {t("toLogin")}
         </Link>
       }

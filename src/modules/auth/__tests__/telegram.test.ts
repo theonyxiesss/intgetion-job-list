@@ -11,6 +11,7 @@ import {
   newTelegramLoginCode,
   parseTelegramLoginCode,
   parseTelegramStartCommand,
+  siteOwnsTelegramWebhook,
   telegramBotStartUrl,
   telegramLoginCodeHash,
   telegramWebhookSecret,
@@ -234,5 +235,13 @@ describe("Mini App data (D259)", () => {
     for (const raw of ["", "hash=zz", "a=1&b=2", "x".repeat(5000)]) {
       expect(verifyTelegramInitData(raw, token)).toBeNull();
     }
+  });
+});
+
+describe("siteOwnsTelegramWebhook", () => {
+  it("leaves the production bot webhook alone on a local site", () => {
+    expect(siteOwnsTelegramWebhook("http://localhost:3000")).toBe(false);
+    expect(siteOwnsTelegramWebhook("http://127.0.0.1:3000")).toBe(false);
+    expect(siteOwnsTelegramWebhook("https://intgetion.com")).toBe(true);
   });
 });

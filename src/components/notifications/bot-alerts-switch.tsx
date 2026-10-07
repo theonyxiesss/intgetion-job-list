@@ -8,7 +8,7 @@ import { NEW_JOB_TYPES } from "./new-job-types";
 /**
  * One switch for "new jobs in the Telegram bot": it writes the telegram
  * channel of every new-job type at once. Without a linked Telegram the switch
- * is off and points to the account settings where it is linked.
+ * is off and points to the account settings where it is linked (D329).
  */
 export function BotAlertsSwitch({
   linked,

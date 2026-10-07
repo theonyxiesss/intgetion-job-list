@@ -101,6 +101,7 @@ describe("company membership in Postgres", () => {
       id: ownerId,
       authUid: randomUUID(),
       platformRole: "user" as const,
+      accountType: "candidate" as const,
       status: "active" as const,
       locale: "en",
       termsAcceptedAt: now,
