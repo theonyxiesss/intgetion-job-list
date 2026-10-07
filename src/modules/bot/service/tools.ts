@@ -31,6 +31,7 @@ import {
   topExplain,
 } from "@/modules/matching/service";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
+import { searchFiltersFromDraft } from "./memory";
 
 /**
  * Tool layer of 12.3 (D173): the only way from the model to data. Every
@@ -38,11 +39,23 @@ import { jobSearchQuery } from "@/modules/jobs/schemas/search";
  * carries a server-issued confirmation (P8) — whatever the model says.
  */
 
+export type FillMode = "self" | "spoki";
+
 export type BotState = {
-  /** Guest profile draft (12.2); a user's draft is saved only on confirm. */
+  /** Allowlisted profile fields gathered in the conversation (12.2, D324). */
   draft?: Record<string, unknown>;
+  /** Preferences that are not columns on the candidate profile. */
+  notes?: string;
   /** Set when a guest conversation is attached and its draft can be saved. */
   needsDraftOffer?: boolean;
+  /** How a signed-in person wants the profile filled. */
+  fillMode?: FillMode | null;
+  /** The guest has already been offered an account once. */
+  signupHintShown?: boolean;
+  /** Claimed guest thread still needs one continuation message. */
+  resumeAckPending?: boolean;
+  /** Continuation was shown; the fill choice stays until they pick. */
+  resumeAckShown?: boolean;
 };
 
 export type ToolContext = {
@@ -123,11 +136,13 @@ export const TOOLS: readonly BotTool[] = [
     access: "guest",
     confirm: never,
     async run(ctx, input) {
+      const remembered = searchFiltersFromDraft(ctx.state.draft);
       const query = jobSearchQuery.parse({
-        q: input.q,
+        q: input.q ?? remembered.q,
         category: input.category,
-        workFormat: input.workFormat,
+        workFormat: input.workFormat ?? remembered.workFormat,
         employmentType: input.employmentType,
+        country: remembered.country,
         limit: input.limit ?? MAX_JOBS,
       });
       const hidden = ctx.userId
@@ -192,10 +207,10 @@ export const TOOLS: readonly BotTool[] = [
   tool({
     name: "propose_profile_update",
     description:
-      "Propose profile changes. A guest's changes stay in the draft; a user confirms them on a card before anything is saved.",
+      "Propose profile changes. A guest's changes stay in the draft. A signed-in user confirms them on a card, unless they asked Spoki to fill the profile.",
     input: candidatePatchInput,
     access: "guest",
-    confirm: (ctx) => ctx.userId !== null,
+    confirm: (ctx) => ctx.userId !== null && ctx.state.fillMode !== "spoki",
     async run(ctx, input) {
       if (!ctx.userId) {
         const draft = { ...ctx.state.draft, ...input };

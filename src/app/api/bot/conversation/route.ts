@@ -2,7 +2,7 @@ import { toErrorResponse } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { conversationHistory, resumeConversation } from "@/modules/bot/service";
-import { sessionToken } from "../session-cookie";
+import { sessionCookie, sessionToken } from "../session-cookie";
 
 /** `GET /api/bot/conversation` — the current session's last 50 messages. */
 export async function GET(request: Request) {
@@ -10,10 +10,12 @@ export async function GET(request: Request) {
     const supabase = await createSupabaseServerClient();
     const user = await getCurrentUser(supabase.auth);
     const userId = user && user.status === "active" ? user.id : null;
-    const { conversation, offer } = await resumeConversation({
+    const { conversation, offer, token, actions } = await resumeConversation({
       userId,
       token: sessionToken(request),
     });
+    const headers = new Headers({ "cache-control": "no-store" });
+    if (token) headers.set("set-cookie", sessionCookie(token));
     return Response.json(
       {
         conversationId: conversation?.id ?? null,
@@ -21,8 +23,9 @@ export async function GET(request: Request) {
           ? await conversationHistory(conversation.id)
           : [],
         draftOffer: offer,
+        actions,
       },
-      { headers: { "cache-control": "no-store" } },
+      { headers },
     );
   } catch (error) {
     return toErrorResponse(error);

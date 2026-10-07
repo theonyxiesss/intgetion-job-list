@@ -49,7 +49,10 @@ export type AuthClient = Pick<
 
 export type CurrentUser = usersRepo.UserRow;
 
-export function callbackUrl(locale: AppLocale, next?: "reset"): string {
+export function callbackUrl(
+  locale: AppLocale,
+  next?: "reset" | "chat",
+): string {
   const url = new URL(`${siteUrl()}/${locale}/auth/callback`);
   if (next) url.searchParams.set("next", next);
   return url.toString();
@@ -84,7 +87,7 @@ export async function register(
     terms_accepted_at: now.toISOString(),
     locale: input.locale,
   };
-  const emailRedirectTo = callbackUrl(input.locale);
+  const emailRedirectTo = callbackUrl(input.locale, input.next);
   const { error } = input.password
     ? await auth.signUp({
         email: input.email,
@@ -140,7 +143,7 @@ export async function sendMagicLink(
     email: input.email,
     options: {
       shouldCreateUser: false,
-      emailRedirectTo: callbackUrl(input.locale),
+      emailRedirectTo: callbackUrl(input.locale, input.next),
     },
   });
   if (error?.status === 429) throw authFailure(error);

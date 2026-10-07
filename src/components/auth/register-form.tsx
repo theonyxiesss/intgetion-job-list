@@ -2,12 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useRef, useState } from "react";
+import { useForm, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "@/i18n/navigation";
 import { emailSchema, passwordSchema } from "@/modules/auth/schemas";
-import { MethodPicker, type Method } from "./method-picker";
 import {
   apiErrorCode,
   Field,
@@ -18,14 +17,14 @@ import {
 
 // The password rule sits on the field, so its error shows together with the
 // others instead of after they are fixed.
-function schemaFor(method: Method) {
+function schemaFor(magic: boolean) {
   return z.object({
     email: emailSchema,
     password: z
       .string()
       .optional()
       .superRefine((value, ctx) => {
-        if (method !== "password") return;
+        if (magic) return;
         const result = passwordSchema.safeParse(value ?? "");
         if (!result.success) {
           ctx.addIssue({
@@ -38,16 +37,28 @@ function schemaFor(method: Method) {
   });
 }
 
-export function RegisterForm() {
+export function RegisterForm({ next }: { next?: "chat" }) {
   const t = useTranslations("auth");
   const errorText = useAuthError();
   const locale = useLocale();
   const router = useRouter();
-  const [method, setMethod] = useState<Method>("password");
+  const [magic, setMagic] = useState(false);
+  const magicRef = useRef(false);
   const [formError, setFormError] = useState<string>();
 
-  const form = useForm({
-    resolver: zodResolver(schemaFor(method)),
+  const form = useForm<{
+    email: string;
+    password?: string;
+    acceptTerms: boolean;
+  }>({
+    resolver: (values, context, options) => {
+      const resolve = zodResolver(schemaFor(magicRef.current)) as Resolver<{
+        email: string;
+        password?: string;
+        acceptTerms: boolean;
+      }>;
+      return resolve(values, context, options);
+    },
     defaultValues: { email: "", password: "" },
   });
   const errors = form.formState.errors;
@@ -59,9 +70,10 @@ export function RegisterForm() {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         email: values.email,
-        password: method === "password" ? values.password : undefined,
+        password: magic ? undefined : values.password,
         acceptTerms: values.acceptTerms,
         locale,
+        next,
       }),
     });
     if (!response.ok) {
@@ -73,13 +85,6 @@ export function RegisterForm() {
 
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
-      <MethodPicker
-        method={method}
-        onChange={(value) => {
-          setMethod(value);
-          form.clearErrors();
-        }}
-      />
       <FormAlert>{errorText(formError)}</FormAlert>
 
       <Field
@@ -90,7 +95,7 @@ export function RegisterForm() {
         error={errorText(errors.email?.message)}
         {...form.register("email")}
       />
-      {method === "password" ? (
+      {!magic ? (
         <Field
           id="register-password"
           type="password"
@@ -145,6 +150,18 @@ export function RegisterForm() {
       <SubmitButton pending={form.formState.isSubmitting}>
         {t("submitRegister")}
       </SubmitButton>
+      <button
+        type="button"
+        className="min-h-11 self-start text-fg-muted underline underline-offset-4"
+        onClick={() => {
+          const next = !magicRef.current;
+          magicRef.current = next;
+          setMagic(next);
+          form.clearErrors();
+        }}
+      >
+        {magic ? t("usePassword") : t("useMagicLink")}
+      </button>
     </form>
   );
 }

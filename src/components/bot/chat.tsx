@@ -8,7 +8,7 @@ import { ConfirmCard } from "@/components/ui/dialog";
 import { Alert } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
 import { Textarea } from "@/components/ui/input";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 
 type ExplainLine = {
   detail: { key: string; params: Record<string, string | number> };
@@ -44,8 +44,11 @@ const ERROR_CODES = new Set([
   "RATE_LIMITED",
 ]);
 
-/** Three openings, so a first-time visitor has something to tap (D312). */
-const SUGGESTIONS = ["one", "two", "three"] as const;
+type ChatActions = {
+  signup: boolean;
+  fillChoice: boolean;
+  profileReview: boolean;
+};
 
 let counter = 0;
 const nextKey = () => `e${(counter += 1)}`;
@@ -83,10 +86,16 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
   const t = useTranslations("chat");
   const explain = useTranslations("explain");
   const locale = useLocale();
+  const router = useRouter();
   const [entries, setEntries] = useState<Entry[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [thinking, setThinking] = useState(false);
+  const [actions, setActions] = useState<ChatActions>({
+    signup: false,
+    fillChoice: false,
+    profileReview: false,
+  });
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -100,9 +109,11 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
               confirmationId: string;
               tool: string;
             } | null;
+            actions?: ChatActions;
           } | null,
         ) => {
           if (!body) return;
+          if (body.actions) setActions(body.actions);
           const history: Entry[] = body.messages.map((message) => ({
             key: message.id,
             kind:
@@ -192,6 +203,24 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
         } else if (data.type === "error") {
           setThinking(false);
           add({ key: nextKey(), kind: "notice", code: String(data.code) });
+        } else if (
+          data.type === "resume_ack" ||
+          data.type === "signup_hint" ||
+          data.type === "profile_saved"
+        ) {
+          setThinking(false);
+          add({ key: nextKey(), kind: "assistant", text: String(data.text) });
+          if (data.type === "signup_hint") {
+            setActions((current) => ({ ...current, signup: true }));
+          }
+          if (data.type === "resume_ack") {
+            setActions((current) => ({ ...current, fillChoice: true }));
+          }
+          if (data.type === "profile_saved") {
+            setActions((current) => ({ ...current, profileReview: true }));
+          }
+        } else if (data.type === "fill_choice") {
+          setActions((current) => ({ ...current, fillChoice: true }));
         }
       }
     } catch {
@@ -241,6 +270,32 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
     setState(accept ? "accepted" : "declined");
   }
 
+  async function chooseFill(mode: "self" | "spoki") {
+    setActions((current) => ({ ...current, fillChoice: false }));
+    const response = await fetch("/api/bot/fill", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ mode }),
+    }).catch(() => null);
+    if (!response?.ok) {
+      setActions((current) => ({ ...current, fillChoice: true }));
+      return;
+    }
+    const body = (await response.json().catch(() => null)) as {
+      message?: string | null;
+      messages?: string[];
+      saved?: boolean;
+    } | null;
+    for (const line of body?.messages ?? []) {
+      add({ key: nextKey(), kind: "assistant", text: line });
+    }
+    if (mode === "self") {
+      router.push("/profile");
+      return;
+    }
+    setActions((current) => ({ ...current, profileReview: true }));
+  }
+
   return (
     <div className="chat-shell flex flex-col gap-4 max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:gap-3 max-md:bg-bg max-md:px-4 max-md:pt-3">
       <div
@@ -257,19 +312,6 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
             <p className="t-body-s text-fg-muted">
               {signedIn ? t("emptySignedIn") : t("emptyGuest")}
             </p>
-            <ul className="flex flex-wrap justify-center gap-2">
-              {SUGGESTIONS.map((slot) => (
-                <li key={slot}>
-                  <button
-                    type="button"
-                    className="t-label flex min-h-11 items-center border border-line px-4 py-3 text-fg-muted hover:border-line-strong hover:text-fg"
-                    onClick={() => void ask(t(`suggestions.${slot}`))}
-                  >
-                    {t(`suggestions.${slot}`)}
-                  </button>
-                </li>
-              ))}
-            </ul>
           </div>
         )}
         {entries.map((entry) => {
@@ -379,6 +421,39 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
         )}
         <div ref={endRef} />
       </div>
+      {actions.signup && !signedIn && (
+        <p className="flex flex-col items-start gap-2">
+          <Link
+            href={{ pathname: "/register", query: { next: "chat" } }}
+            className="inline-flex min-h-11 items-center bg-fg px-4 text-bg"
+          >
+            {t("createAccount")}
+          </Link>
+        </p>
+      )}
+      {actions.fillChoice && signedIn && (
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            className="inline-flex min-h-11 items-center border border-line px-4"
+            onClick={() => void chooseFill("self")}
+          >
+            {t("fillSelf")}
+          </button>
+          <button
+            type="button"
+            className="inline-flex min-h-11 items-center bg-fg px-4 text-bg"
+            onClick={() => void chooseFill("spoki")}
+          >
+            {t("fillSpoki")}
+          </button>
+        </div>
+      )}
+      {actions.profileReview && signedIn && (
+        <Link href="/profile" className="t-body-s underline underline-offset-4">
+          {t("reviewProfile")}
+        </Link>
+      )}
       <form
         onSubmit={send}
         className="flex items-end gap-2 max-md:shrink-0 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]"
@@ -409,14 +484,6 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
           <span className="max-sm:sr-only">{t("send")}</span>
         </Button>
       </form>
-      {!signedIn && (
-        <p className="t-body-s text-fg-muted max-md:hidden">
-          {t("guestHint")}{" "}
-          <Link href="/register" className="underline underline-offset-4">
-            {t("signUp")}
-          </Link>
-        </p>
-      )}
     </div>
   );
 }

@@ -107,7 +107,7 @@ test("magic link: register and sign in without a password", async ({
 }) => {
   const email = uniqueEmail("magic");
   await page.goto("/en/register");
-  await page.getByLabel("Email link").check();
+  await page.getByRole("button", { name: "Email link" }).click();
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.getByLabel("I accept the terms").check();
   await page.getByRole("button", { name: "Create account" }).click();
@@ -120,7 +120,7 @@ test("magic link: register and sign in without a password", async ({
 
   const seen = await countMails(page.request, email);
   await page.goto("/en/login");
-  await page.getByLabel("Email link").check();
+  await page.getByRole("button", { name: "Email link" }).click();
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.getByRole("button", { name: "Send link" }).click();
   await expect(page).toHaveURL(/\/en\/auth\/check-email$/);

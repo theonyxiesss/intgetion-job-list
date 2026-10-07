@@ -33,6 +33,14 @@ export async function createConversation(input: {
   return row!;
 }
 
+/** Points an existing conversation at a new session cookie. */
+export async function replaceSessionToken(id: string, tokenHash: string) {
+  await getDb()
+    .update(botConversations)
+    .set({ sessionTokenHash: tokenHash })
+    .where(eq(botConversations.id, id));
+}
+
 /** Attaches a guest conversation to a user. Loses if another request already did. */
 export async function claimConversation(
   id: string,
@@ -63,6 +71,28 @@ export async function takeDraftOfferFlag(
       and(
         eq(botConversations.id, id),
         sql`${botConversations.state}->>'needsDraftOffer' = 'true'`,
+      ),
+    )
+    .returning();
+  return row;
+}
+
+/**
+ * Clears `resumeAckPending` only when it is still set, and marks the
+ * continuation as shown, so two requests cannot both greet again.
+ */
+export async function takeResumeAck(
+  id: string,
+): Promise<ConversationRow | undefined> {
+  const [row] = await getDb()
+    .update(botConversations)
+    .set({
+      state: sql`${botConversations.state} || '{"resumeAckPending":false,"resumeAckShown":true}'::jsonb`,
+    })
+    .where(
+      and(
+        eq(botConversations.id, id),
+        sql`${botConversations.state}->>'resumeAckPending' = 'true'`,
       ),
     )
     .returning();

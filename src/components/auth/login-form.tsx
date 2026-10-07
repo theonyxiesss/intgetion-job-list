@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "@/i18n/navigation";
 import { emailSchema } from "@/modules/auth/schemas";
-import { MethodPicker, type Method } from "./method-picker";
 import {
   apiErrorCode,
   Field,
@@ -22,12 +21,18 @@ const passwordLogin = z.object({
 });
 const magicLogin = z.object({ email: emailSchema });
 
-export function LoginForm({ initialError }: { initialError?: string }) {
+export function LoginForm({
+  initialError,
+  next,
+}: {
+  initialError?: string;
+  next?: "chat";
+}) {
   const t = useTranslations("auth");
   const errorText = useAuthError();
   const locale = useLocale();
   const router = useRouter();
-  const [method, setMethod] = useState<Method>("password");
+  const [magic, setMagic] = useState(false);
   const [formError, setFormError] = useState(initialError);
 
   const passwordForm = useForm({ resolver: zodResolver(passwordLogin) });
@@ -48,13 +53,17 @@ export function LoginForm({ initialError }: { initialError?: string }) {
       setFormError(await apiErrorCode(response));
       return;
     }
-    router.replace("/");
+    router.replace(next === "chat" ? "/chat" : "/");
     router.refresh();
   });
 
   const sendMagicLink = magicForm.handleSubmit(async ({ email }) => {
     setFormError(undefined);
-    const response = await post("/api/auth/magic-link", { email, locale });
+    const response = await post("/api/auth/magic-link", {
+      email,
+      locale,
+      next,
+    });
     if (!response.ok) {
       setFormError(await apiErrorCode(response));
       return;
@@ -64,10 +73,9 @@ export function LoginForm({ initialError }: { initialError?: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <MethodPicker method={method} onChange={setMethod} />
       <FormAlert>{errorText(formError)}</FormAlert>
 
-      {method === "password" ? (
+      {!magic ? (
         <form
           onSubmit={signInWithPassword}
           noValidate
@@ -113,6 +121,16 @@ export function LoginForm({ initialError }: { initialError?: string }) {
           </SubmitButton>
         </form>
       )}
+      <button
+        type="button"
+        className="min-h-11 self-start text-fg-muted underline underline-offset-4"
+        onClick={() => {
+          setMagic((value) => !value);
+          setFormError(undefined);
+        }}
+      >
+        {magic ? t("usePassword") : t("useMagicLink")}
+      </button>
     </div>
   );
 }

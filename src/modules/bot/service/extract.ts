@@ -18,6 +18,7 @@ import {
   type CandidatePatch,
 } from "@/modules/candidates/service";
 import { normalizeSkillText } from "@/modules/taxonomy/service";
+import { normalizeCountry } from "./memory";
 
 /**
  * Onboarding extraction (12.2, D181). The model fills this schema; the
@@ -62,11 +63,9 @@ export const extractionSchema = z
       .optional(),
     salaryPeriod: z.enum(["hour", "month", "year"]).optional(),
     salaryBasis: z.enum(["gross", "net"]).optional(),
-    country: z
-      .string()
-      .regex(/^[A-Z]{2}$/)
-      .optional(),
+    country: z.string().trim().min(1).max(80).optional(),
     city: z.string().trim().min(1).max(80).optional(),
+    notes: z.string().trim().min(1).max(500).optional(),
     categories: z.array(z.string()).max(14).optional(),
     sectors: z.array(z.enum(SECTORS)).max(MAX_CANDIDATE_SECTORS).optional(),
     seniority: z.enum(SENIORITY_LEVELS).optional(),
@@ -81,6 +80,8 @@ const EXTRACT_SYSTEM = [
   "skillNames are the skill words they used, not invented ones.",
   "timezone is an IANA name such as Europe/Berlin.",
   "Salary amounts are integer minor units (cents). Include currency, period and gross or net together.",
+  "country may be a country name or an ISO code such as IT.",
+  "notes are preferences that are not a profile field, such as a driving licence or work authorisation. Leave notes out when nothing like that was said.",
   "Do not extract email, phone or links.",
 ].join(" ");
 
@@ -115,7 +116,11 @@ function defined(input: Record<string, unknown>): Record<string, unknown> {
 export async function draftFromExtraction(
   raw: Extraction,
   resolveSkill: (name: string) => Promise<string | null> | string | null,
-): Promise<{ patch: CandidatePatch | null; timezoneDropped: boolean }> {
+): Promise<{
+  patch: CandidatePatch | null;
+  timezoneDropped: boolean;
+  notes?: string;
+}> {
   const skills: { slug: string; level: "intermediate" }[] = [];
   const seen = new Set<string>();
   for (const name of raw.skillNames ?? []) {
@@ -161,7 +166,7 @@ export async function draftFromExtraction(
     salaryCurrency: salaryReady ? raw.salaryCurrency : undefined,
     salaryPeriod: salaryReady ? raw.salaryPeriod : undefined,
     salaryBasis: salaryReady ? raw.salaryBasis : undefined,
-    country: raw.country,
+    country: normalizeCountry(raw.country),
     city: raw.city,
     sectors: raw.sectors,
     seniority: raw.seniority,
@@ -173,6 +178,7 @@ export async function draftFromExtraction(
   return {
     patch: parsed.success ? parsed.data : null,
     timezoneDropped,
+    notes: raw.notes?.trim() || undefined,
   };
 }
 

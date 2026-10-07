@@ -66,10 +66,7 @@ export async function Header() {
             ]
           : []),
       ]
-    : [
-        { href: "/login", label: t("nav.login") },
-        { href: "/register", label: t("nav.register") },
-      ];
+    : [{ href: "/login", label: t("nav.login") }];
 
   return (
     <ScrollFrame className="sticky top-0 z-40 border-b border-line bg-bg transition-colors duration-200 data-[scrolled]:bg-surface">
@@ -155,12 +152,9 @@ export async function Header() {
             ) : (
               // A wrapper hides them: `hidden` on the link itself would lose
               // to the button's own `inline-flex`.
-              <span className="hidden gap-1 sm:inline-flex">
-                <ButtonLink {...navFade} href="/login" variant="ghost">
+              <span className="hidden sm:inline-flex">
+                <ButtonLink {...navFade} href="/login" variant="secondary">
                   {t("nav.login")}
-                </ButtonLink>
-                <ButtonLink {...navFade} href="/register" variant="secondary">
-                  {t("nav.register")}
                 </ButtonLink>
               </span>
             )}

@@ -34,6 +34,8 @@ export async function GET(
   } else if (query.get("next") === "reset") {
     target.pathname = `/${locale}/reset-password`;
     target.searchParams.set("mode", "update");
+  } else if (query.get("next") === "chat") {
+    target.pathname = `/${locale}/chat`;
   }
   return NextResponse.redirect(target);
 }

@@ -7,7 +7,7 @@ test("7A: a guest chats; without a model the agent says it is unavailable", asyn
 }) => {
   await page.goto("/en/chat");
   await expect(
-    page.getByRole("heading", { level: 1, name: "Career agent" }),
+    page.getByRole("heading", { level: 1, name: "Spoki Assistant" }),
   ).toBeVisible();
   await page
     .getByLabel("Write a message")

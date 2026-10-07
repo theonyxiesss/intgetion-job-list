@@ -116,6 +116,28 @@ describe("register", () => {
     expect(auth.signInWithOtp).not.toHaveBeenCalled();
   });
 
+  it("sends the person back to the chat when they registered from Spoki", async () => {
+    const auth = fakeAuth(null);
+    await register(
+      asAuth(auth),
+      {
+        email: "ana@example.com",
+        password: "orbit-lantern-42",
+        locale: "en",
+        acceptTerms: true,
+        next: "chat",
+      },
+      now,
+    );
+    expect(auth.signUp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          emailRedirectTo: "http://127.0.0.1:3000/en/auth/callback?next=chat",
+        }),
+      }),
+    );
+  });
+
   it("sends a magic link that may create the user when there is no password", async () => {
     const auth = fakeAuth(null);
     await register(

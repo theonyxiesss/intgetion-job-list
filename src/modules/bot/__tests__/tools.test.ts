@@ -4,6 +4,7 @@ import {
   runTool,
   startAtUser,
   toLLMMessages,
+  toolNeedsConfirmation,
   toolsFor,
   type ToolContext,
 } from "../service";
@@ -47,6 +48,22 @@ describe("bot tool layer (7A)", () => {
       });
     },
   );
+
+  it("D324: Spoki fill writes the profile without a card; apply still needs one", () => {
+    expect(
+      toolNeedsConfirmation(
+        { ...user, state: { fillMode: "spoki" } },
+        "propose_profile_update",
+      ),
+    ).toBe(false);
+    expect(toolNeedsConfirmation(user, "propose_profile_update")).toBe(true);
+    expect(
+      toolNeedsConfirmation(
+        { ...user, state: { fillMode: "spoki" } },
+        "apply_to_job",
+      ),
+    ).toBe(true);
+  });
 
   it("P8: apply and profile writes need a matching confirmation", async () => {
     await expect(

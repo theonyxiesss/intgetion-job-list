@@ -23,12 +23,15 @@ export const passwordSchema = z
     error: "password_too_common",
   });
 
+const authNext = z.enum(["chat"]).optional();
+
 /** `POST /api/auth/register`. Without a password the user gets a magic link. */
 export const registerInput = z.object({
   email: emailSchema,
   password: passwordSchema.optional(),
   locale: localeSchema,
   acceptTerms: z.literal(true, { error: "terms_required" }),
+  next: authNext,
 });
 export type RegisterInput = z.infer<typeof registerInput>;
 
@@ -46,6 +49,7 @@ export type LoginInput = z.infer<typeof loginInput>;
 export const magicLinkInput = z.object({
   email: emailSchema,
   locale: localeSchema,
+  next: authNext,
 });
 export type MagicLinkInput = z.infer<typeof magicLinkInput>;
 

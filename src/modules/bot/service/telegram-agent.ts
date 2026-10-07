@@ -96,7 +96,14 @@ function render(events: BotEvent[], lines: Lines, locale: string): string[] {
   const out: string[] = [];
   let answer = "";
   for (const event of events) {
-    if (event.type === "token") answer += event.text;
+    if (
+      event.type === "token" ||
+      event.type === "resume_ack" ||
+      event.type === "signup_hint" ||
+      event.type === "profile_saved"
+    ) {
+      answer += event.text;
+    }
   }
   if (answer.trim()) out.push(answer.trim().slice(0, TELEGRAM_TEXT_LIMIT));
 

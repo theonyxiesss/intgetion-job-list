@@ -299,9 +299,12 @@ describe("bot conversation (7A)", () => {
     setBotLLMForTests(null);
     const bound = await send(userId, "I signed in", guest.session);
     expect(bound.events).toContainEqual(
+      expect.objectContaining({ type: "fill_choice" }),
+    );
+    expect(bound.events).toContainEqual(
       expect.objectContaining({
-        type: "confirm_request",
-        tool: "propose_profile_update",
+        type: "resume_ack",
+        text: expect.stringContaining("already told"),
       }),
     );
     expect(bound.events).toContainEqual({
@@ -313,6 +316,55 @@ describe("bot conversation (7A)", () => {
       sql`select user_id from public.bot_conversations where id = ${guest.conversation.id}`,
     );
     expect(row?.user_id).toBe(userId);
+  });
+
+  it("keeps Italy across a refresh and does not ask for it again", async () => {
+    useModel(
+      new FakeLLMProvider([
+        fakeToolCall("record_result", { country: "Италии" }),
+        fakeText(""),
+      ]),
+    );
+    const first = await send(null, "В Италии");
+    expect(first.events).toContainEqual(
+      expect.objectContaining({
+        type: "token",
+        text: expect.stringContaining("Italy"),
+      }),
+    );
+    const [stored] = await rowsOf<{ state: { draft?: { country?: string } } }>(
+      sql`select state from public.bot_conversations where id = ${first.conversation.id}`,
+    );
+    expect(stored?.state.draft?.country).toBe("IT");
+
+    const provider = new FakeLLMProvider([
+      fakeToolCall("record_result", {}),
+      fakeText("What kind of work are you looking for?"),
+    ]);
+    useModel(provider);
+    const second = await send(null, "customer support", first.session);
+    expect(second.conversation.id).toBe(first.conversation.id);
+    const chat = provider.requests.find(
+      (request) => request.toolChoice !== "record_result",
+    );
+    expect(chat?.system).toContain('"country":"IT"');
+    expect(chat?.system).not.toContain("about: country");
+    const [again] = await rowsOf<{ state: { draft?: { country?: string } } }>(
+      sql`select state from public.bot_conversations where id = ${first.conversation.id}`,
+    );
+    expect(again?.state.draft?.country).toBe("IT");
+  });
+
+  it("resumes the signed-in conversation when the cookie is gone", async () => {
+    setBotLLMForTests(null);
+    const first = await send(userId, "hello from a saved thread");
+    const again = await resolveConversation({
+      userId,
+      token: undefined,
+      locale: "en",
+    });
+    expect(again.conversation.id).toBe(first.conversation.id);
+    expect(again.token).not.toBe(first.session);
   });
 
   it("retention removes old guest conversations and old messages", async () => {

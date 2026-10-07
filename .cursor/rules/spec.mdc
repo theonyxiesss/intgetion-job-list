@@ -1,18 +1,16 @@
 ---
-description: Protocol for INTGETION JOB LIST. One subphase per session. The spec is the source of truth.
+description: Thin always-on pointer. Canonical agent rules live in AGENTS.md.
 alwaysApply: true
 ---
 
 # INTGETION JOB LIST
 
-Source of truth: `docs/TZ_INTGETION_v6.md`. Do not treat archived specs as current.
+Canonical instructions: root `AGENTS.md`. Read that first; do not duplicate it here.
 
-- One subphase per session (section 22). Do not start the next subphase without an explicit user command.
-- Session start: read sections 0, 2, and the current subphase, then `MISSION_LOG.md`.
-- Before code: print a 5–15 line plan (files, migrations, tests).
-- Session end: append `MISSION_LOG.md` using the section 0 template, including command output.
-- Do not change `PRODUCT_NAME` (`INTGETION JOB LIST`).
-- Do not invent functionality beyond MVP (section 21) or the current subphase.
-- If something is undefined: record `OPEN QUESTION` in `MISSION_LOG.md`, pick the smallest conservative option, and record it in `docs/DECISIONS.md`.
-- Do not skip or weaken tests.
-- If a check fails, say the subphase is not done. A one-word "Готово" report is forbidden.
+Hot path every session: `docs/CURRENT.md` → `docs/OPEN_TASKS.md` → one `docs/tz/<domain>.md` when coding.
+
+- One subphase or hotfix per session; next only on explicit user command.
+- Session end: `MISSION_LOG.md` + update `docs/CURRENT.md` (and OPEN_TASKS/status if needed).
+- `PRODUCT_NAME` = `INTGETION JOB LIST` — never rename.
+- No invented MVP scope; no skipped/weakened tests; no one-word «Готово».
+- Working TZ: `docs/tz/`. Monolith v6 is archive only.
