@@ -21,7 +21,7 @@ async function signUp(page: Page, email: string) {
   await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
   const mail = await waitForMail(page.request, email);
   await page.goto(authLink(mail));
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/\/en\/auth\/confirmed$/);
 }
 
 test("P2: employer creates and publishes a job; a different employer gets 404", async ({

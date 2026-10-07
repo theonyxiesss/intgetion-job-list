@@ -17,7 +17,7 @@ test("a user changes the cookie choice in privacy settings", async ({
   await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
   const mail = await waitForMail(page.request, email, 0);
   await page.goto(authLink(mail));
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/\/en\/auth\/confirmed$/);
 
   await page.goto("/en/settings/privacy");
   const section = page.getByRole("region", { name: "Cookies" });
