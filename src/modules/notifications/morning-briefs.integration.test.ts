@@ -3,11 +3,11 @@ import { inArray, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
-import { runDigestCron, type DigestJobLoader } from "./service";
+import { runMorningBriefsCron, runSlot, type DigestJobLoader } from "./service";
 
 const userId = randomUUID();
 const quietUserId = randomUUID();
-// 08:00 in Moscow (UTC+3), far from any other test's clock.
+// 08:00 in Moscow (UTC+3): the "cis" slot, far from any other test's clock.
 const morning = new Date("2031-03-03T05:00:00Z");
 const jobIds = [randomUUID(), randomUUID(), randomUUID()];
 
@@ -85,9 +85,9 @@ async function digestCount(): Promise<number> {
   return row?.count ?? 0;
 }
 
-describe("digest cron against the database (D185-D188)", () => {
+describe("morning briefs cron against the database (D340)", () => {
   it("sends one digest: in-app, a queued email and a chat note", async () => {
-    await runDigestCron({ now: morning, loadJobs });
+    await runMorningBriefsCron({ now: morning, loadJobs });
 
     const notifications = await getDb().execute<{
       payload: { matchCount: number; sampleJobIds: string[] };
@@ -133,18 +133,78 @@ describe("digest cron against the database (D185-D188)", () => {
 
   it("never sends a second digest for the same morning", async () => {
     const later = new Date(+morning + 30 * 60 * 1000);
-    await runDigestCron({ now: later, loadJobs });
+    await runMorningBriefsCron({ now: later, loadJobs });
     await Promise.all([
-      runDigestCron({ now: later, loadJobs }),
-      runDigestCron({ now: later, loadJobs }),
+      runMorningBriefsCron({ now: later, loadJobs }),
+      runMorningBriefsCron({ now: later, loadJobs }),
     ]);
     expect(await digestCount()).toBe(1);
   });
 
   it("skips the next morning when nothing new was published", async () => {
     const nextMorning = new Date(+morning + 24 * 60 * 60 * 1000);
-    await runDigestCron({ now: nextMorning, loadJobs });
+    await runMorningBriefsCron({ now: nextMorning, loadJobs });
     expect(await digestCount()).toBe(1);
     expect(await lastDigestAt(userId)).toEqual(morning);
+  });
+
+  it("logs one live run per slot day and none outside the window", async () => {
+    const runs = await getDb().execute<{ slot_id: string; sent: number }>(sql`
+      select slot_id, sent from public.brief_runs
+      where slot_date = '2031-03-03' and not dry_run
+    `);
+    expect(runs).toEqual([{ slot_id: "cis", sent: 1 }]);
+    const tooLate = new Date(+morning + 3 * 60 * 60 * 1000);
+    const result = await runMorningBriefsCron({ now: tooLate, loadJobs });
+    expect(result.runs.filter((run) => run.slotId === "cis")).toEqual([]);
+  });
+
+  it("does nothing while paused", async () => {
+    const db = getDb();
+    await db.execute(sql`update public.brief_settings set paused = true`);
+    try {
+      const day = new Date(+morning + 7 * 24 * 60 * 60 * 1000);
+      expect(await runMorningBriefsCron({ now: day, loadJobs })).toEqual({
+        paused: true,
+        runs: [],
+      });
+    } finally {
+      await db.execute(sql`update public.brief_settings set paused = false`);
+    }
+  });
+
+  it("skips candidates who turned the agent off", async () => {
+    const db = getDb();
+    await db.execute(sql`
+      update public.candidate_profiles
+      set agent_briefs_enabled = false, last_digest_at = null
+      where user_id = ${userId}
+    `);
+    const run = await runSlot({
+      slotId: "cis",
+      slotDate: "2031-03-20",
+      now: new Date("2031-03-20T05:00:00Z"),
+      dryRun: true,
+      loadJobs,
+    });
+    expect(run?.sent).toBe(0);
+  });
+
+  it("counts in a dry run and sends nothing", async () => {
+    await getDb().execute(sql`
+      update public.candidate_profiles
+      set agent_briefs_enabled = true, last_digest_at = null
+      where user_id = ${userId}
+    `);
+    const before = await digestCount();
+    const run = await runSlot({
+      slotId: "cis",
+      slotDate: "2031-03-04",
+      now: new Date("2031-03-04T05:00:00Z"),
+      dryRun: true,
+      loadJobs,
+    });
+    expect(run?.sent).toBe(1);
+    expect(await digestCount()).toBe(before);
   });
 });

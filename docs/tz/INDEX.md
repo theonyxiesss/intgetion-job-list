@@ -22,6 +22,7 @@
 | [17-gdpr.md](17-gdpr.md) | §17 GDPR / retention |
 | [18-ops.md](18-ops.md) | §18 мониторинг → [RUNBOOK](../RUNBOOK.md) |
 | [19-tests.md](19-tests.md) | §19 тесты |
+| [20-morning-briefs.md](20-morning-briefs.md) | Утренние сводки агента, 3 часовых пояса, админка |
 | [22-roadmap.md](22-roadmap.md) | §22 подфазы → [PARALLEL_WORK](../PARALLEL_WORK.md) |
 
 Новые D — только в [../DECISIONS.md](../DECISIONS.md). Как в коде — [../how-it-works/](../how-it-works/INDEX.md).

@@ -16,7 +16,7 @@
 | job.expiring (за 3 дня) | создатель | ✅ | ✅ |
 | job.closed (на которую откликнулся) | кандидат | ✅ | — |
 | company.verification_decided | owner | ✅ | ✅ |
-| matches.digest | кандидат | ✅ | ✅ (≤ 1/сутки, утро по tz) |
+| matches.digest | кандидат | ✅ | ✅ (≤ 1/сутки, утро своего слота — D340, [20-morning-briefs.md](20-morning-briefs.md)) |
 | report.decided | жалобщик | ✅ | — |
 
 - Отправка через pg-boss; email — Resend, шаблоны React Email на языке
