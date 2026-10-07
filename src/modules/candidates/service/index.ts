@@ -24,6 +24,8 @@ export {
   getOwnCandidate,
   hasCandidateProfile,
   setProfileHidden,
+  ownAgentBriefsEnabled,
+  setOwnAgentBriefsEnabled,
   saveCandidateProfile,
   scoreStoredProfile,
   storeCompleteness,

@@ -177,6 +177,22 @@ export function scoreStoredProfile(
   return profileCompleteness(completenessInput(profile, contactEmail));
 }
 
+/**
+ * Morning-brief switch (D349). Updates only this user's profile, so the
+ * caller must pass the session user. No profile → not found.
+ */
+export async function setOwnAgentBriefsEnabled(
+  userId: string,
+  enabled: boolean,
+): Promise<boolean> {
+  if (!(await profiles.setAgentBriefsEnabled(userId, enabled))) throw notFound();
+  return enabled;
+}
+
+export async function ownAgentBriefsEnabled(userId: string): Promise<boolean> {
+  return (await profiles.readAgentBriefsEnabled(userId)) ?? false;
+}
+
 /** Hides or shows the profile to employers without touching other fields (10C). */
 export async function setProfileHidden(
   userId: string,

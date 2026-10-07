@@ -262,8 +262,50 @@ export function telegramText(input: {
   const title = fillTemplate(block.inapp.title, values, input.locale);
   const body = fillTemplate(block.inapp.body, values, input.locale);
   const link = `${input.siteUrl}${localePrefix(input.locale)}${notificationPath(input.type, input.payload)}`;
-  return `${title}
+  const jobs = input.type === "matches.digest" ? digestJobLines(input) : null;
+  if (!jobs) {
+    return `${title}
 ${body}
 
 ${link}`;
+  }
+  const copy = messagesFor(input.locale).notifications.brief;
+  const root = `${input.siteUrl}${localePrefix(input.locale)}`;
+  return `${title}
+${body}
+
+${jobs}
+
+${copy.allMatches}
+${root}/matches
+${copy.turnOff}
+${root}/notifications`;
+}
+
+function oneLine(value: string): string {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+/** Up to five "Title — Company" lines, each with an absolute job link (D349). */
+function digestJobLines(input: {
+  payload: Record<string, unknown>;
+  siteUrl: string;
+  locale: AppLocale;
+}): string | null {
+  const jobs = input.payload.sampleJobs;
+  if (!Array.isArray(jobs)) return null;
+  const lines = jobs.slice(0, 5).flatMap((job) => {
+    if (!job || typeof job !== "object") return [];
+    const row = job as Record<string, unknown>;
+    const title = typeof row.title === "string" ? oneLine(row.title) : "";
+    const company =
+      typeof row.companyName === "string" ? oneLine(row.companyName) : "";
+    const id = typeof row.jobId === "string" ? row.jobId : "";
+    if (!title || !company || !id) return [];
+    return [
+      `${title} — ${company}`,
+      `${input.siteUrl}${localePrefix(input.locale)}/jobs/${encodeURIComponent(id)}`,
+    ];
+  });
+  return lines.length > 0 ? lines.join("\n") : null;
 }

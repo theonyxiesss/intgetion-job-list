@@ -7,3 +7,13 @@ export const NEW_JOB_TYPES = [
   "matches.digest",
   "company.new_jobs",
 ] as const;
+
+export type NewJobChannel = "telegram" | "email";
+
+/** One switch writes the same channel for every new-job type (D329, D349). */
+export function newJobChannelPreferences(
+  channel: NewJobChannel,
+  enabled: boolean,
+) {
+  return NEW_JOB_TYPES.map((type) => ({ type, channel, enabled }));
+}

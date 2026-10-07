@@ -956,6 +956,24 @@
       "link": "Vincula Telegram en los ajustes de la cuenta",
       "saved": "Guardado.",
       "error": "No se ha podido guardar. Inténtalo de nuevo."
+    },
+    "emailAlerts": {
+      "title": "Nuevos empleos por correo",
+      "text": "Los mismos empleos nuevos, enviados a tu correo.",
+      "link": "Añadir correo",
+      "saved": "Guardado.",
+      "error": "No se ha podido guardar. Inténtalo de nuevo."
+    },
+    "agentBriefs": {
+      "title": "El agente me busca empleos",
+      "text": "Por la mañana el agente envía empleos que encajan. Desactívalo si no quieres el resumen.",
+      "saved": "Guardado.",
+      "error": "No se ha podido guardar. Inténtalo de nuevo.",
+      "off": "El agente está desactivado, así que estos interruptores no envían nada."
+    },
+    "brief": {
+      "allMatches": "Todos los que encajan",
+      "turnOff": "Desactivar"
     }
   },
   "notificationSettings": {
