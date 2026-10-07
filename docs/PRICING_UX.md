@@ -195,12 +195,12 @@ interface BillingProvider {
 
 - `src/lib/billing/provider.ts` — интерфейс.
 - `stripe.ts` — карты (основной). Запасной для страны без Stripe — `paddle.ts` или `lemonsqueezy.ts`, тот же интерфейс.
-- `crypto-stub.ts` — **сейчас**: USDT/USDC, всегда `{ unavailable: true }`, заявка в `billing_interest` (см. `PRICING.md`, 5.1.1). Позже — `nowpayments.ts`.
-- Выбор: `BILLING_CARD_PROVIDER=stripe`, `BILLING_CRYPTO_PROVIDER=stub|nowpayments`.
+- `crypto-stub.ts` — **сейчас**: USDT/USDC, всегда `{ unavailable: true }`, заявка в `billing_interest` (см. `PRICING.md`, 5.1.1). Следующая — `walletconnect.ts`: прямой перевод USDC/USDT на кошелёк компании с проверкой транзакции в сети (`PRICING.md`, 5.1.0); для USDT в Tron — `nowpayments.ts`.
+- Выбор: `BILLING_CARD_PROVIDER=stripe`, `BILLING_CRYPTO_PROVIDER=stub|walletconnect|nowpayments`.
 - Оплата — **на странице провайдера** (Stripe Checkout). Номера карт к нам не попадают никогда.
 - Возврат с оплаты: `/{locale}/billing/return?status=success|cancel`.
 - Окно оплаты: две кнопки — **«Картой»** и **«USDT / USDC»**. Пока крипта — заглушка, вторая кнопка открывает форму «сообщить, когда включим / попросить счёт».
-- Переменные: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (только сервер), позже `NOWPAYMENTS_API_KEY`, `NOWPAYMENTS_IPN_SECRET`. Ключи кладёт основатель в Vercel; в `.env.example` и `env-rules` — пустыми.
+- Переменные: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (только сервер), позже `WALLETCONNECT_PROJECT_ID`, `COMPANY_WALLET_ADDRESS`, RPC-ключи сетей (`RPC_URL_BASE`, `RPC_URL_POLYGON`, …), для Tron — `NOWPAYMENTS_API_KEY`. Ключи кладёт основатель в Vercel; в `.env.example` и `env-rules` — пустыми.
 
 ### 7.2 Маршруты
 
