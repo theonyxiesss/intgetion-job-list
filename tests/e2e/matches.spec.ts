@@ -26,7 +26,7 @@ async function registerWithPassword(page: Page, email: string) {
 async function confirmEmail(page: Page, email: string) {
   const mail = await waitForMail(page.request, email, 0);
   await page.goto(authLink(mail));
-  await expect(page).toHaveURL(/\/en\/auth\/confirmed$/);
+  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
   await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
 }
 

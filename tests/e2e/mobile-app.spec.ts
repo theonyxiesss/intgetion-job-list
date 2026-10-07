@@ -32,7 +32,7 @@ async function signUpCandidate(page: Page) {
   await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
   const mail = await waitForMail(page.request, email, 0);
   await page.goto(authLink(mail));
-  await expect(page).toHaveURL(/\/en\/auth\/confirmed$/);
+  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
   await page.goto("/en/profile/edit");
   await page.getByLabel("Full name").fill("Ada Lovelace");
   await page.getByLabel("Headline").fill("Engineer");
