@@ -8,6 +8,7 @@
 - Web chat SSE: `/api/bot/**`, UI `/[locale]/chat`
 - LLM: `src/lib/llm/**`, провайдер через env (OpenRouter по D317)
 - Telegram: webhook routes + Mini App session helpers (D311–D322)
+- Канал Jobs Alert: cron `/api/cron/telegram` после личной рассылки, шаблон без LLM (D341)
 
 ## Статус
 

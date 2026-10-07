@@ -3,6 +3,7 @@ import { notFound, toErrorResponse } from "@/lib/http";
 import { siteUrl } from "@/lib/supabase/env";
 import { telegramSender } from "@/lib/telegram-bot";
 import { telegramBotToken } from "@/modules/auth/service";
+import { runJobsAlert } from "@/modules/jobs/service";
 import { runTelegramDispatch } from "@/modules/notifications/service";
 
 export const dynamic = "force-dynamic";
@@ -22,13 +23,17 @@ export async function GET(request: Request) {
     const token = telegramBotToken();
     // Without the bot token Telegram is simply off.
     if (!token) return Response.json({ ok: true, disabled: true });
-    return Response.json({
-      ok: true,
-      ...(await runTelegramDispatch({
-        sender: telegramSender(token),
-        siteUrl: siteUrl(),
-      })),
+    const sender = telegramSender(token);
+    const dispatch = await runTelegramDispatch({
+      sender,
+      siteUrl: siteUrl(),
     });
+    const jobsAlert = await runJobsAlert({
+      sender,
+      host: new URL(siteUrl()).host,
+      chatIdRaw: process.env.JOBS_ALERT_CHAT_ID,
+    });
+    return Response.json({ ok: true, ...dispatch, jobsAlert });
   } catch (error) {
     return toErrorResponse(error);
   }
