@@ -52,6 +52,8 @@ export async function Header() {
       href: signedIn ? "/employer/jobs" : "/for-employers",
       label: t("nav.employers"),
     },
+    // Only a guest sees pricing in the main menu (docs/PRICING_UX.md, 1).
+    ...(signedIn ? [] : [{ href: "/pricing", label: t("nav.pricing") }]),
   ];
   const account: NavItem[] = signedIn
     ? [

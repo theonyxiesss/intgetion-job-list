@@ -10,6 +10,7 @@ const columns = [
       { href: "/saved-jobs", label: "nav.saved" },
       { href: "/applications", label: "applications.nav" },
       { href: "/profile", label: "profile.nav" },
+      { href: "/pricing", label: "nav.pricing" },
     ],
   },
   {
@@ -19,6 +20,7 @@ const columns = [
       { href: "/employer/jobs", label: "footer.employerJobs" },
       { href: "/employer/company", label: "footer.company" },
       { href: "/contacts", label: "footer.contacts" },
+      { href: "/pricing?for=companies", label: "nav.pricing" },
     ],
   },
   {
