@@ -15,9 +15,10 @@ import { buildCsp, createNonce } from "./security-headers";
 const site = "http://127.0.0.1:3000";
 
 describe("needsOriginCheck (D313)", () => {
-  it("skips the CSRF rule only for the Telegram webhook", () => {
-    // Telegram sends no Origin at all; the route checks its secret instead.
+  it("skips the CSRF rule for secret-authenticated hooks", () => {
+    // Telegram / Auth send no Origin; the route checks its secret instead.
     expect(needsOriginCheck("/api/telegram/webhook")).toBe(false);
+    expect(needsOriginCheck("/api/auth/hooks/send-email")).toBe(false);
     expect(isAllowedOrigin("POST", null, site)).toBe(false);
   });
 

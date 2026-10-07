@@ -30,6 +30,12 @@ export {
   type ConfirmationMailer,
   type EmailAddResult,
 } from "./email-change";
+export {
+  authEmailKindFromAction,
+  renderAuthEmail,
+  type AuthEmailKind,
+} from "./auth-emails";
+export { handleSendEmailHook } from "./send-email-hook";
 export { createSessionHandoff } from "./handoff";
 export { sendTelegramChatAction, sendTelegramMessage } from "./telegram-bot";
 export {
