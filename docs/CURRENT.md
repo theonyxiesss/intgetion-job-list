@@ -5,6 +5,8 @@
 **Активная задача:** выкладка D339 (привязка аккаунтов).  
 **Прод до этой выкладки:** https://intgetion.com — `650e658` (PR #13). Эта выкладка добавляет привязку Telegram, Google и X в настройках и одну строку согласия на входе.
 
+**Ветка `feat/morning-briefs`** (worktree `C:\Users\Admin\Documents\intgetion-briefs`): подфаза A утренних сводок (D340). Старый cron `digest` заменён на `morning-briefs`.
+
 ## Работает (кратко)
 
 - Auth email+пароль / magic link (Supabase) — см. [how-it-works/auth.md](how-it-works/auth.md)
