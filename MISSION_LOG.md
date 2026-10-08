@@ -5,7 +5,7 @@
 
 ## [2026-10-08] — приём «Найма» на production (D356) — DONE
 
-- Сделано: страница оплаты берёт кошелёк из браузера, без Project ID WalletConnect. На production включены `BILLING_ENABLED`, провайдер `walletconnect`, официальные контракты USDC (Circle) и USDT (Tether / USDT0) и публичные RPC. На Base контракта USDT в официальных страницах нет, там только USDC.
+- Сделано: страница оплаты берёт кошелёк из браузера, без Project ID WalletConnect. На production включены `BILLING_ENABLED`, провайдер `walletconnect`, официальные контракты USDC (Circle) и USDT (Tether / USDT0) и публичные RPC. На Base контракта USDT в официальных страницах нет, там только USDC. Выкладка `dpl_8sGLZVb4mHFdim4F2GEb5zkakTyh` стоит на https://intgetion.com. Без входа `/billing/crypto` уходит на `/login`.
 - Команды проверки: чтение контрактов в сети → `decimals` 6 и ожидаемый `symbol`; `pnpm typecheck` → 0; eslint по файлам оплаты → 0; `pnpm exec vitest run src/messages/messages.test.ts src/lib/billing` → 14 прошло.
 - P-тесты подфазы: живой перевод с кошелька основателя в этой сессии не проводился.
 - Миграции: нет новых. `0038` уже на облаке.
