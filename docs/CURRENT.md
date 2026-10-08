@@ -3,7 +3,7 @@
 **Продукт:** `INTGETION JOB LIST`  
 **Ветка / worktree:** `master` · `C:\Users\Admin\Documents\Integetion jobs`  
 **Активная задача:** выкладка pt-BR, сводок работодателя и оплаты «Найма» на production. Миграции `0035`–`0038` уже на облаке. Приём оплаты выключен.  
-**Прод:** https://intgetion.com. Миграции `0032`–`0038` на облаке. `JOBS_ALERT_CHAT_ID` задан только в production. Предыдущая выкладка `dpl_DrtiLuTMVg4qfvdvrzdZqmZwdX44`; эта запись уходит на intgetion.com следом.
+**Прод:** https://intgetion.com. Миграции `0032`–`0038` на облаке. `JOBS_ALERT_CHAT_ID` задан только в production. Выкладка `dpl_7e9vxx63wQnwuyFaEHxP6XASnd9M` готова и стоит на intgetion.com.
 
 ## Работает (кратко)
 
