@@ -26,6 +26,34 @@ function units(amount: string): bigint {
   return BigInt(whole + frac.padEnd(6, "0").slice(0, 6));
 }
 
+type Wallet = {
+  request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+};
+
+async function connectWallet(projectId: string): Promise<Wallet> {
+  if (projectId) {
+    const mod = await import("@walletconnect/ethereum-provider");
+    const provider = await mod.EthereumProvider.init({
+      projectId,
+      chains: [1],
+      optionalChains: [137, 42161, 8453],
+      showQrModal: true,
+      metadata: {
+        name: "INTGETION JOB LIST",
+        description: "Pay for Hire",
+        url: window.location.origin,
+        icons: [`${window.location.origin}/icon.png`],
+      },
+    });
+    await provider.connect();
+    return provider;
+  }
+  const injected = (window as Window & { ethereum?: Wallet }).ethereum;
+  if (!injected?.request) throw new Error("wallet");
+  await injected.request({ method: "eth_requestAccounts" });
+  return injected;
+}
+
 export function CryptoPay({
   jobId,
   projectId,
@@ -43,20 +71,7 @@ export function CryptoPay({
     setBusy(true);
     setError(null);
     try {
-      const mod = await import("@walletconnect/ethereum-provider");
-      const provider = await mod.EthereumProvider.init({
-        projectId,
-        chains: [1],
-        optionalChains: [137, 42161, 8453],
-        showQrModal: true,
-        metadata: {
-          name: "INTGETION JOB LIST",
-          description: "Pay for Hire",
-          url: window.location.origin,
-          icons: [`${window.location.origin}/icon.png`],
-        },
-      });
-      await provider.connect();
+      const provider = await connectWallet(projectId);
       const accounts = (await provider.request({
         method: "eth_accounts",
       })) as string[];
@@ -118,8 +133,12 @@ export function CryptoPay({
           window.clearInterval(timer);
         }
       }, 4000);
-    } catch {
-      setError(t("status.failed"));
+    } catch (error) {
+      setError(
+        error instanceof Error && error.message === "wallet"
+          ? t("needWallet")
+          : t("status.failed"),
+      );
     } finally {
       setBusy(false);
     }

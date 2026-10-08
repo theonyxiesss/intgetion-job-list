@@ -25,7 +25,6 @@ export default async function CryptoBillingPage({
   const ready =
     process.env.BILLING_ENABLED === "true" &&
     process.env.BILLING_CRYPTO_PROVIDER === "walletconnect" &&
-    projectId.length > 0 &&
     Boolean(process.env.COMPANY_WALLET_ADDRESS?.trim());
 
   return (

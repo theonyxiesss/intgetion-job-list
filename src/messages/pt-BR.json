@@ -2038,6 +2038,7 @@
     },
     "checkWallet": "Confira este endereço na carteira antes de aprovar.",
     "connect": "Conectar carteira",
+    "needWallet": "Instale a MetaMask ou outra carteira neste navegador e tente de novo.",
     "interestTitle": "USDT e USDC ainda não estão ativos",
     "interestBody": "Deixe um e-mail e avisamos quando der para pagar. Nada é cobrado agora.",
     "interestEmail": "E-mail",

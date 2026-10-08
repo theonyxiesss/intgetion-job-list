@@ -2038,6 +2038,7 @@
     },
     "checkWallet": "Comprueba esta dirección en tu monedero antes de aprobar.",
     "connect": "Conectar monedero",
+    "needWallet": "Instala MetaMask u otro monedero en este navegador y vuelve a intentarlo.",
     "interestTitle": "USDT y USDC aún no están activos",
     "interestBody": "Deja un correo y te avisamos cuando puedas pagar. Ahora no se cobra nada.",
     "interestEmail": "Correo",

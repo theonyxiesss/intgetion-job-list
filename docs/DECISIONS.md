@@ -491,3 +491,17 @@ Tron, Solana и прочие не-EVM сети этим решением не о
 Нет ключа, ошибка, таймаут, лимит, пустой или негодный ответ → шаблон `notifications.briefIntro.{candidate,employer}` из `messages/{en,ru,es,pt-BR}.json`. Сводка уходит в любом случае. Язык — `users.locale`.
 
 Вступление пишется до транзакции (медленный LLM не держит блокировку) и кладётся в payload (`intro`, необязательное поле у `matches.digest` и `company.candidates_digest`). Его используют: Telegram — первой строкой под заголовком; почта — вместо шаблонной фразы над карточками или перед текстом письма; `/chat` — заметка = вступление + прежняя строка `chatEvent`.
+
+## D356 — приём «Найма» через кошелёк в браузере
+
+Основатель 2026-10-08: включить приём на production и не просить его создавать проект в кабинете WalletConnect. Кабинет выдаёт Project ID только после входа, этого входа нет. Страница `/billing/crypto` платит кошельком, который уже стоит в браузере (MetaMask и другие). Подпись SIWE, перевод `transfer` и проверка квитанции сервером те же. Если позже задать `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`, подключится WalletConnect.
+
+Контракты сверены 2026-10-08 чтением `decimals` и `symbol` через публичный RPC, не по памяти.
+
+USDC, страница Circle [developers.circle.com/stablecoins/usdc-contract-addresses](https://developers.circle.com/stablecoins/usdc-contract-addresses): Ethereum `0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48`, Polygon PoS `0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359`, Arbitrum `0xaf88d065e77c8cC2239327C5EDb3A432268e5831`, Base `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`. На цепи у всех `decimals` 6 и `symbol` USDC.
+
+USDT Ethereum, страница Tether [tether.to/en/supported-protocols](https://tether.to/en/supported-protocols/): `0xdAC17F958D2ee523a2206206994597C13D831ec7`, `decimals` 6, `symbol` USDT.
+
+USDT Polygon и Arbitrum, страница Tether USDT0 [docs.usdt0.to/technical-documentation/deployments](https://docs.usdt0.to/technical-documentation/deployments): Polygon `0xc2132D05D31c914a87C6611C10748AEb04B58e8F` (`symbol` USDT0), Arbitrum `0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9` (`symbol` USD₮0). Оба `decimals` 6. На Base в этих двух официальных страницах контракта USDT нет, поэтому Base принимает только USDC.
+
+Живые значения лежат в `BILLING_TOKEN_CONTRACTS` и `RPC_URL_*` на production. RPC — публичные узлы publicnode. Если узел молчит, заказ остаётся «проверяется», cron повторяет. Санкционный список по-прежнему не подключён.

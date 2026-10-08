@@ -2038,6 +2038,7 @@
     },
     "checkWallet": "Check this address in your wallet before you approve.",
     "connect": "Connect wallet",
+    "needWallet": "Install MetaMask or another wallet in this browser, then try again.",
     "interestTitle": "USDT and USDC are not on yet",
     "interestBody": "Leave an email and we will tell you when you can pay. Nothing is charged.",
     "interestEmail": "Email",
