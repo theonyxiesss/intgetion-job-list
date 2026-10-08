@@ -39,8 +39,8 @@ export async function generateMetadata({
 }
 
 /**
- * /pricing (docs/PRICING_UX.md, section 2). Hire is the only card that
- * takes money (D357). Team, Plus and Pro stay closed.
+ * /pricing (docs/PRICING_UX.md, section 2). A guest who clicks pay goes to
+ * login. A signed-in user opens checkout (D358).
  */
 export default async function PricingPage({
   params,
@@ -62,6 +62,7 @@ export default async function PricingPage({
     query.for,
     query.next,
   );
+  const signedIn = viewer.kind !== "guest";
   const paymentsOn =
     process.env.BILLING_ENABLED === "true" &&
     process.env.BILLING_CRYPTO_PROVIDER === "walletconnect" &&
@@ -167,9 +168,12 @@ export default async function PricingPage({
                         ? t("continueFree")
                         : t("startFree")}
                     </Link>
-                  ) : planPayHref(paymentsOn, tier.code) ? (
+                  ) : planPayHref(paymentsOn, tier.code, signedIn) ? (
                     <Link
-                      href={planPayHref(paymentsOn, tier.code) ?? "/billing/crypto"}
+                      href={
+                        planPayHref(paymentsOn, tier.code, signedIn) ??
+                        "/login?next=billing"
+                      }
                       {...navForward}
                       className={buttonClass("primary", "md", "w-full")}
                     >

@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
+import { planLoginNext } from "@/components/auth/login-next";
 import { Button, TokenMark, cn } from "@/components/ui";
+import { useRouter } from "@/i18n/navigation";
 import { classifyPayError, type PayErrorKind } from "./pay-error";
 
 type Order = {
@@ -79,6 +81,7 @@ export function CryptoPay({
   projectId: string;
 }) {
   const t = useTranslations("billing");
+  const router = useRouter();
   const [token, setToken] = useState<"USDC" | "USDT">("USDC");
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<PayErrorKind | null>(null);
@@ -95,6 +98,12 @@ export function CryptoPay({
   async function pay() {
     setBusy(true);
     setError(null);
+    const returnTo = planLoginNext(plan) ?? "billing";
+    const requireSession = (response: Response) => {
+      if (response.status !== 401) return;
+      router.push(`/login?next=${returnTo}`);
+      throw new Error("auth");
+    };
     try {
       const provider = await connectWallet(projectId);
       const accounts = (await provider.request({
@@ -111,6 +120,7 @@ export function CryptoPay({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ address, chainId }),
       });
+      requireSession(nonce);
       if (!nonce.ok) {
         const code = await errorCode(nonce);
         throw new Error(code === "VALIDATION_ERROR" ? "network" : "nonce");
@@ -125,6 +135,7 @@ export function CryptoPay({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ signature }),
       });
+      requireSession(verified);
       if (!verified.ok) throw new Error("verify");
       const created = await fetch("/api/billing/crypto/order", {
         method: "POST",
@@ -136,6 +147,7 @@ export function CryptoPay({
           ...(companyId ? { companyId } : {}),
         }),
       });
+      requireSession(created);
       if (!created.ok) {
         const code = await errorCode(created);
         if (code === "TOKEN_UNSUPPORTED") throw new Error("token");
@@ -160,11 +172,18 @@ export function CryptoPay({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ orderId: next.id, txHash: hash }),
       });
+      requireSession(confirmed);
       if (!confirmed.ok) throw new Error("confirm");
       setOrder((await confirmed.json()) as Order);
       if (poll.current !== null) window.clearInterval(poll.current);
       poll.current = window.setInterval(async () => {
         const fresh = await fetch(`/api/billing/crypto/orders/${next.id}`);
+        if (fresh.status === 401) {
+          if (poll.current !== null) window.clearInterval(poll.current);
+          poll.current = null;
+          router.push(`/login?next=${returnTo}`);
+          return;
+        }
         if (!fresh.ok) return;
         const body = (await fresh.json()) as Order;
         setOrder(body);
@@ -174,6 +193,7 @@ export function CryptoPay({
         }
       }, 4000);
     } catch (caught) {
+      if (caught instanceof Error && caught.message === "auth") return;
       setError(classifyPayError(caught));
     } finally {
       setBusy(false);

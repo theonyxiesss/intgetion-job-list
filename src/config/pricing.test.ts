@@ -13,12 +13,19 @@ describe("free plan link", () => {
 });
 
 describe("paid plan links", () => {
-  it("opens payment for Hire, Team, Plus and Pro when crypto is on", () => {
-    expect(planPayHref(true, "hire")).toBe("/billing/crypto?plan=hire");
-    expect(planPayHref(true, "team")).toBe("/billing/crypto?plan=team");
-    expect(planPayHref(true, "plus")).toBe("/billing/crypto?plan=plus");
-    expect(planPayHref(true, "pro")).toBe("/billing/crypto?plan=pro");
-    expect(planPayHref(true, "start")).toBeNull();
-    expect(planPayHref(false, "team")).toBeNull();
+  it("opens payment only for a signed-in user", () => {
+    expect(planPayHref(true, "hire", true)).toBe("/billing/crypto?plan=hire");
+    expect(planPayHref(true, "team", true)).toBe("/billing/crypto?plan=team");
+    expect(planPayHref(true, "plus", true)).toBe("/billing/crypto?plan=plus");
+    expect(planPayHref(true, "pro", true)).toBe("/billing/crypto?plan=pro");
+    expect(planPayHref(true, "start", true)).toBeNull();
+    expect(planPayHref(false, "team", true)).toBeNull();
+  });
+
+  it("sends a guest who clicks pay to the login page", () => {
+    expect(planPayHref(true, "hire", false)).toBe("/login?next=billing");
+    expect(planPayHref(true, "team", false)).toBe("/login?next=billing-team");
+    expect(planPayHref(true, "plus", false)).toBe("/login?next=billing-plus");
+    expect(planPayHref(true, "pro", false)).toBe("/login?next=billing-pro");
   });
 });

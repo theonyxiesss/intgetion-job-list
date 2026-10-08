@@ -2,6 +2,8 @@
  * Price list shown on /pricing (docs/PRICING.md, section 1A).
  * The charge is the same dollars in `plans.price_minor` (D358).
  */
+import { planLoginNext, RETURN_PATHS } from "@/components/auth/login-next";
+
 export type PricingAudience = "companies" | "candidates";
 
 export type PricingTier = {
@@ -76,13 +78,17 @@ export const ALWAYS_FREE = [
 ] as const;
 
 /** Where the free card goes. Posting continues to the job form (D347). */
-/** Paid cards open crypto checkout. Start and Free stay free (D358). */
-export function planPayHref(paymentsOn: boolean, code: string): string | null {
+/** Paid cards open checkout for a signed-in user, and login for a guest (D358). */
+export function planPayHref(
+  paymentsOn: boolean,
+  code: string,
+  signedIn: boolean,
+): string | null {
   if (!paymentsOn) return null;
-  if (code === "hire" || code === "team" || code === "plus" || code === "pro") {
-    return `/billing/crypto?plan=${code}`;
-  }
-  return null;
+  const next = planLoginNext(code);
+  if (!next) return null;
+  if (!signedIn) return `/login?next=${next}`;
+  return RETURN_PATHS[next];
 }
 
 export function freePlanHref(
