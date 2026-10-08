@@ -221,10 +221,31 @@ export async function setCompanyStatus(
   return rows[0] ?? null;
 }
 
+export async function listCompanyMembers(companyId: string) {
+  return getDb().execute<{
+    user_id: string;
+    role: "owner" | "admin" | "recruiter" | "member";
+    full_name: string | null;
+    auth_uid: string;
+  }>(sql`
+    select m.user_id, m.role, ep.full_name, u.auth_uid
+    from public.company_members m
+    join public.users u on u.id = m.user_id
+    left join public.employer_profiles ep on ep.user_id = m.user_id
+    where m.company_id = ${companyId}
+    order by case m.role
+      when 'owner' then 0
+      when 'admin' then 1
+      else 2
+    end, m.created_at
+  `);
+}
+
 export async function addCompanyMember(
   companyId: string,
   userId: string,
   role: "admin" | "recruiter" | "member" = "member",
+  cap = 2,
 ) {
   return getDb().transaction(async (tx) => {
     const companyRows = await tx
@@ -233,11 +254,25 @@ export async function addCompanyMember(
       .where(eq(companies.id, companyId))
       .for("update");
     if (!companyRows[0] || companyRows[0].origin === "imported") return false;
-    await tx
-      .insert(companyMembers)
-      .values({ companyId, userId, role })
-      .onConflictDoNothing();
-    return true;
+    const existing = await tx
+      .select({ userId: companyMembers.userId })
+      .from(companyMembers)
+      .where(
+        and(
+          eq(companyMembers.companyId, companyId),
+          eq(companyMembers.userId, userId),
+        ),
+      )
+      .limit(1);
+    if (existing[0]) return "already" as const;
+    const counted = await tx.execute<{ n: number }>(sql`
+      select count(*)::int as n
+      from public.company_members
+      where company_id = ${companyId}
+    `);
+    if (Number(counted[0]?.n ?? 0) >= cap) return "full" as const;
+    await tx.insert(companyMembers).values({ companyId, userId, role });
+    return "added" as const;
   });
 }
 

@@ -1,5 +1,6 @@
 export {
   addCompanyMember,
+  listCompanyMembers,
   assertCompanyEditable,
   changeCompanyStatus,
   assertCanEditCompany,

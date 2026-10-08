@@ -13,6 +13,7 @@ import {
 const ownerId = randomUUID();
 const memberId = randomUUID();
 const outsiderId = randomUUID();
+const extraId = randomUUID();
 const internalCompanyId = randomUUID();
 const importedCompanyId = randomUUID();
 const duplicateIds: string[] = [];
@@ -52,7 +53,7 @@ afterAll(async () => {
     sql`delete from public.companies where id in (${internalCompanyId}, ${importedCompanyId})`,
   );
   await db.execute(
-    sql`delete from public.users where id in (${ownerId}, ${memberId}, ${outsiderId})`,
+    sql`delete from public.users where id in (${ownerId}, ${memberId}, ${outsiderId}, ${extraId})`,
   );
 });
 
@@ -67,6 +68,14 @@ describe("company membership in Postgres", () => {
   it("rejects joining imported companies and keeps the last owner", async () => {
     await addCompanyMember(internalCompanyId, memberId);
     expect(await findMemberRole(internalCompanyId, memberId)).toBe("member");
+    await getDb().execute(sql`
+      insert into public.users (id, auth_uid, terms_accepted_at, terms_version)
+      values (${extraId}, ${randomUUID()}, now(), 'test')
+    `);
+    await expect(addCompanyMember(internalCompanyId, extraId)).rejects.toMatchObject({
+      status: 409,
+      code: "SEAT_LIMIT",
+    });
     await expect(
       addCompanyMember(importedCompanyId, outsiderId),
     ).rejects.toMatchObject({ status: 403 });

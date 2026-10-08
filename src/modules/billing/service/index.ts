@@ -1,5 +1,6 @@
 export {
   billingMe,
+  companyHasActiveTeam,
   payableCompanies,
   payableJobs,
   confirmHireOrder,

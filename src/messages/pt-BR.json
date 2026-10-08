@@ -370,6 +370,27 @@
       "verified": "Verificada",
       "rejected": "Rejeitada",
       "suspended": "Suspensa"
+    },
+    "team": {
+      "heading": "Colegas",
+      "count": "{used} de {cap}",
+      "email": "E-mail de uma pessoa que já tem conta",
+      "add": "Adicionar",
+      "added": "Adicionado à empresa.",
+      "remove": "Remover",
+      "removed": "Removido da empresa.",
+      "full": "Esta empresa não tem mais lugares livres.",
+      "missing": "Ainda não há uma conta com este e-mail. A pessoa precisa se cadastrar primeiro.",
+      "already": "Esta pessoa já está na empresa.",
+      "error": "Não foi possível atualizar a equipe. Tente de novo.",
+      "upgrade": "Team sobe o limite para 10.",
+      "atTeamCap": "Esta empresa já tem 10 colegas.",
+      "roles": {
+        "owner": "Dono",
+        "admin": "Admin",
+        "recruiter": "Recrutador",
+        "member": "Membro"
+      }
     }
   },
   "profile": {
@@ -1919,7 +1940,7 @@
     "payHire": "Pagar com USDT ou USDC",
     "soon": "Em breve",
     "soonNote": "Os planos pagos ainda não estão à venda. Pagamentos com cartão e USDT / USDC estão chegando; até lá, tudo nos planos gratuitos funciona.",
-    "hireNote": "Start continua grátis. Hire, Team, Plus e Pro são pagos em USDT ou USDC. O botão cobra o preço mensal e liga o plano por 30 dias. Não renova sozinho. Hire inclui um bloco promovido por 7 dias. Plus liga 100 mensagens do Spoki por dia e Pro liga 300. O plano grátis continua em 15. Um modelo mais forte, lugares na equipe e um reembolso automático ainda não são ligados por este pagamento.",
+    "hireNote": "Start continua grátis. Hire, Team, Plus e Pro são pagos em USDT ou USDC. O botão cobra o preço mensal e liga o plano por 30 dias. Não renova sozinho. Hire inclui um bloco promovido por 7 dias. Plus liga 100 mensagens do Spoki por dia e Pro liga 300. O plano grátis continua em 15. Start e Hire incluem 2 colegas. Team sobe essa empresa para 10. Um modelo mais forte e um reembolso automático ainda não são ligados por este pagamento.",
     "market": "Publicar nos grandes sites de vagas remotas custa US$ 250–300 por vaga, sem reembolso. Aqui é grátis, ou US$ 79 com garantia.",
     "alwaysFreeTitle": "O que nenhum plano jamais vende",
     "alwaysFree": {
@@ -1959,7 +1980,7 @@
         "points": {
           "jobs": "10 vagas ativas ao mesmo tempo, 45 dias cada",
           "promoted": "3 vagas promovidas por mês",
-          "team": "Até 10 colegas de equipe, funil e CSV",
+          "team": "Até 10 colegas",
           "api": "API para suas próprias vagas",
           "channel": "3 publicações por mês no canal da plataforma no Telegram"
         }

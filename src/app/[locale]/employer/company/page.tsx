@@ -3,11 +3,18 @@ import { redirect } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { Alert, Badge, Container, StatusBadge } from "@/components/ui";
+import { seatCap } from "@/lib/billing/seats";
+import { getAuthUserEmail } from "@/lib/supabase/admin";
 import { CompanyTabs } from "./company-tabs";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
-import { getCompaniesForUser } from "@/modules/companies/service";
+import { companyHasActiveTeam } from "@/modules/billing/service";
+import {
+  getCompaniesForUser,
+  listCompanyMembers,
+} from "@/modules/companies/service";
 import { CompanyForm } from "@/modules/companies/ui/company-form";
+import { TeamSeats } from "@/modules/companies/ui/team-seats";
 import { localePrefix } from "@/i18n/paths";
 
 export function generateStaticParams() {
@@ -43,6 +50,24 @@ export default async function EmployerCompanyPage({
     company &&
     company.origin !== "imported" &&
     (company.role === "owner" || company.role === "admin");
+  const ownCompany =
+    company && company.origin !== "imported" && company.role === "owner"
+      ? company
+      : null;
+  const members = ownCompany ? await listCompanyMembers(ownCompany.id) : [];
+  const cap = ownCompany ? seatCap(await companyHasActiveTeam(ownCompany.id)) : 2;
+  const people = await Promise.all(
+    members.map(async (member) => {
+      const email = await getAuthUserEmail(member.auth_uid);
+      const name = member.full_name?.trim() || null;
+      const who = email ?? name ?? t(`team.roles.${member.role}`);
+      return {
+        userId: member.user_id,
+        role: member.role,
+        label: `${who} · ${t(`team.roles.${member.role}`)}`,
+      };
+    }),
+  );
   return (
     <main className="flex-1 py-10">
       <Container className="flex flex-col gap-8">
@@ -92,6 +117,28 @@ export default async function EmployerCompanyPage({
         ) : (
           <CompanyForm action="create" text={formText} />
         )}
+        {ownCompany ? (
+          <TeamSeats
+            companyId={ownCompany.id}
+            cap={cap}
+            people={people}
+            text={{
+              heading: t("team.heading"),
+              count: t("team.count", { used: people.length, cap }),
+              email: t("team.email"),
+              add: t("team.add"),
+              added: t("team.added"),
+              remove: t("team.remove"),
+              removed: t("team.removed"),
+              full: t("team.full"),
+              missing: t("team.missing"),
+              already: t("team.already"),
+              error: t("team.error"),
+              upgrade: t("team.upgrade"),
+              atTeamCap: t("team.atTeamCap"),
+            }}
+          />
+        ) : null}
       </Container>
     </main>
   );

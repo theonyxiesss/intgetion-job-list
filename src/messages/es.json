@@ -370,6 +370,27 @@
       "verified": "Verificada",
       "rejected": "Rechazada",
       "suspended": "Suspendida"
+    },
+    "team": {
+      "heading": "Compañeros",
+      "count": "{used} de {cap}",
+      "email": "Correo de una persona que ya tiene cuenta",
+      "add": "Añadir",
+      "added": "Añadido a la empresa.",
+      "remove": "Quitar",
+      "removed": "Quitado de la empresa.",
+      "full": "Esta empresa ya no tiene puestos libres.",
+      "missing": "Todavía no hay una cuenta con este correo. Primero tiene que registrarse.",
+      "already": "Esta persona ya está en la empresa.",
+      "error": "No se pudo actualizar el equipo. Inténtalo de nuevo.",
+      "upgrade": "Team sube este límite a 10.",
+      "atTeamCap": "Esta empresa ya tiene 10 compañeros.",
+      "roles": {
+        "owner": "Dueño",
+        "admin": "Admin",
+        "recruiter": "Reclutador",
+        "member": "Miembro"
+      }
     }
   },
   "profile": {
@@ -1919,7 +1940,7 @@
     "payHire": "Pagar con USDT o USDC",
     "soon": "Próximamente",
     "soonNote": "Los planes de pago aún no están a la venta. Pronto se podrá pagar con tarjeta y con USDT / USDC; hasta entonces todo funciona en los planes gratuitos.",
-    "hireNote": "Start sigue gratis. Hire, Team, Plus y Pro se pagan en USDT o USDC. El botón cobra el precio mensual y activa el plan 30 días. No se renueva solo. Hire incluye un bloque promocionado durante 7 días. Plus activa 100 mensajes de Spoki al día y Pro activa 300. El plan gratis se queda en 15. Un modelo más potente, los puestos del equipo y un reembolso automático todavía no se activan con este pago.",
+    "hireNote": "Start sigue gratis. Hire, Team, Plus y Pro se pagan en USDT o USDC. El botón cobra el precio mensual y activa el plan 30 días. No se renueva solo. Hire incluye un bloque promocionado durante 7 días. Plus activa 100 mensajes de Spoki al día y Pro activa 300. El plan gratis se queda en 15. Start y Hire incluyen 2 compañeros. Team sube esa empresa a 10. Un modelo más potente y un reembolso automático todavía no se activan con este pago.",
     "market": "Publicar en los grandes portales de empleo remoto cuesta 250–300 $ por empleo sin reembolso. Aquí es gratis, o 79 $ con garantía.",
     "alwaysFreeTitle": "Lo que ningún plan vende nunca",
     "alwaysFree": {
@@ -1959,7 +1980,7 @@
         "points": {
           "jobs": "10 empleos activos a la vez, 45 días cada uno",
           "promoted": "3 empleos destacados al mes",
-          "team": "Hasta 10 compañeros, embudo y CSV",
+          "team": "Hasta 10 compañeros",
           "api": "API para tus propios empleos",
           "channel": "3 publicaciones al mes en el canal de Telegram de la plataforma"
         }

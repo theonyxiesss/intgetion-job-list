@@ -121,9 +121,21 @@ export async function removeCompanyMember(companyId: string, userId: string) {
     throw forbidden("Cannot remove the last owner or join an imported company");
 }
 
-export async function addCompanyMember(companyId: string, userId: string) {
-  const added = await repo.addCompanyMember(companyId, userId);
-  if (!added) throw forbidden("Cannot join an imported or unavailable company");
+export const listCompanyMembers = repo.listCompanyMembers;
+
+export async function addCompanyMember(
+  companyId: string,
+  userId: string,
+  cap = 2,
+) {
+  const added = await repo.addCompanyMember(companyId, userId, "member", cap);
+  if (added === false) {
+    throw forbidden("Cannot join an imported or unavailable company");
+  }
+  if (added === "full") {
+    throw new HttpError(409, "SEAT_LIMIT", "This company is at its teammate limit");
+  }
+  return added;
 }
 
 /**

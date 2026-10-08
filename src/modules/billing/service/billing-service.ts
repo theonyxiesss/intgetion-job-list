@@ -139,6 +139,20 @@ export async function payableJobs(
   `);
 }
 
+/** A paid Team plan that is still inside its 30 days (D367). */
+export async function companyHasActiveTeam(companyId: string): Promise<boolean> {
+  const rows = await getDb().execute<{ ok: number }>(sql`
+    select 1 as ok
+    from public.purchases
+    where company_id = ${companyId}
+      and plan_code = ${SALE_PLANS.team.code}
+      and status = 'paid'
+      and valid_until > now()
+    limit 1
+  `);
+  return Boolean(rows[0]);
+}
+
 /** Companies this owner can pay Team for. */
 export async function payableCompanies(
   userId: string,

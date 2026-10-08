@@ -28,6 +28,7 @@ export {
   signInWithTelegramProfile,
   unlinkTelegram,
   updateMe,
+  userIdForAuthUid,
   userIdForTelegramId,
 } from "./auth-service";
 export {

@@ -655,6 +655,13 @@ export async function telegramLinkOf(user: CurrentUser) {
   return telegramAccounts.findByUserId(user.id);
 }
 
+/** Public user id for an auth uid, or null when that account cannot be added. */
+export async function userIdForAuthUid(authUid: string): Promise<string | null> {
+  const row = await usersRepo.findUserByAuthUid(authUid);
+  if (!row || row.deletedAt || row.status !== "active") return null;
+  return row.id;
+}
+
 export async function logout(auth: AuthClient): Promise<void> {
   await auth.signOut();
 }

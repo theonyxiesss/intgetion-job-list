@@ -370,6 +370,27 @@
       "verified": "Verified",
       "rejected": "Rejected",
       "suspended": "Suspended"
+    },
+    "team": {
+      "heading": "Teammates",
+      "count": "{used} of {cap}",
+      "email": "Email of a person who already has an account",
+      "add": "Add",
+      "added": "Added to the company.",
+      "remove": "Remove",
+      "removed": "Removed from the company.",
+      "full": "This company is at its teammate limit.",
+      "missing": "No account uses this email yet. They need to register first.",
+      "already": "This person is already on the company.",
+      "error": "Could not update the team. Try again.",
+      "upgrade": "Team raises this to 10.",
+      "atTeamCap": "This company is at 10 teammates.",
+      "roles": {
+        "owner": "Owner",
+        "admin": "Admin",
+        "recruiter": "Recruiter",
+        "member": "Member"
+      }
     }
   },
   "profile": {
@@ -1919,7 +1940,7 @@
     "payHire": "Pay with USDT or USDC",
     "soon": "Coming soon",
     "soonNote": "Paid plans are not on sale yet. Card and USDT / USDC payments are coming; until then everything on the free plans works.",
-    "hireNote": "Start stays free. Hire, Team, Plus and Pro are paid in USDT or USDC. The button charges the monthly price and turns the plan on for 30 days. It does not renew by itself. Hire includes a promoted block for 7 days. Plus turns on 100 Spoki messages a day and Pro turns on 300. The free plan stays at 15. A stronger model, teammate seats and an automatic refund are not switched on by this payment yet.",
+    "hireNote": "Start stays free. Hire, Team, Plus and Pro are paid in USDT or USDC. The button charges the monthly price and turns the plan on for 30 days. It does not renew by itself. Hire includes a promoted block for 7 days. Plus turns on 100 Spoki messages a day and Pro turns on 300. The free plan stays at 15. Start and Hire include 2 teammates. Team raises that company to 10. A stronger model and an automatic refund are not switched on by this payment yet.",
     "market": "Posting on the big remote boards costs $250–300 per job with no refund. Here it is free, or $79 with a guarantee.",
     "alwaysFreeTitle": "What no plan ever sells",
     "alwaysFree": {
@@ -1959,7 +1980,7 @@
         "points": {
           "jobs": "10 jobs live at a time, 45 days each",
           "promoted": "3 promoted jobs a month",
-          "team": "Up to 10 teammates, funnel and CSV",
+          "team": "Up to 10 teammates",
           "api": "API for your own jobs",
           "channel": "3 posts a month in the platform Telegram channel"
         }
