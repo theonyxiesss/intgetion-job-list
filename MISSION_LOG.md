@@ -7,7 +7,7 @@
 
 - Сделано: на `/pricing` карточка «Найм» — ссылка на `/billing/crypto`. Там владелец выбирает опубликованную вакансию. «Команда», Plus и Pro остаются «Скоро».
 - Команды проверки: `pnpm typecheck` → 0; eslint по страницам тарифов и оплаты → 0; `vitest run src/config/pricing.test.ts src/messages/messages.test.ts` → 12 прошло.
-- P-тесты подфазы: нет живого клика с кошельком.
+- P-тесты подфазы: на https://intgetion.com/pricing?for=companies кнопка «Pay with USDT or USDC» у гостя открывает `/login?next=billing`. На `/ru/pricing?for=companies` кнопка «Оплатить в USDT или USDC». Живой перевод с кошелька не проводился.
 - Миграции: нет.
 - Изменённые файлы: `src/app/[locale]/pricing/page.tsx`, `src/app/[locale]/billing/crypto/page.tsx`, `src/config/pricing.ts`, `src/modules/billing/service/billing-service.ts`, сообщения.
 - Отклонения от ТЗ: нет.

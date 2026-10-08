@@ -3,7 +3,7 @@
 **Продукт:** `INTGETION JOB LIST`  
 **Ветка / worktree:** `master` · `C:\Users\Admin\Documents\Integetion jobs`  
 **Активная задача:** приём оплаты «Найма» на production (D356). Миграции `0035`–`0038` на облаке.  
-**Прод:** https://intgetion.com. Миграции `0032`–`0038` на облаке. `JOBS_ALERT_CHAT_ID` задан только в production. Выкладка `dpl_8sGLZVb4mHFdim4F2GEb5zkakTyh` готова и стоит на intgetion.com. Приём «Найма» включён.
+**Прод:** https://intgetion.com. Миграции `0032`–`0038` на облаке. `JOBS_ALERT_CHAT_ID` задан только в production. Выкладка `dpl_A634MFaUP31CRbJkbAPxR6bAQJ1L` готова и стоит на intgetion.com. Приём «Найма» включён. На тарифах кнопка «Найм» открывает оплату.
 
 ## Работает (кратко)
 
