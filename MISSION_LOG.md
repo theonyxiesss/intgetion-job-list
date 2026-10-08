@@ -685,3 +685,10 @@
 - Испанские /terms и /privacy: не начаты. Пункт 10.5 (версия 2026-10-08) есть только в незакоммиченной рабочей копии, в master его нет.
 - OPEN QUESTION: добавлять ли `companies.timezone` и `candidate_profiles.job_search_status`.
 - Проверки: typecheck, eslint файла, vitest notifications (78) — зелёные.
+
+## 2026-10-08 — испанские /terms и /privacy
+
+- Перевёл опубликованную редакцию 2026-10-08 (коммит c4cdee5), включая 10.5, в блоки `<!-- es -->` обоих файлов `docs/content/legal-*.md`. Плейсхолдеры, юрлицо и TERMS_VERSION не трогал; ссылки ведут на /es/.
+- `legal-sync.mjs` режет и `es`, `legalText` отдаёт `es`. Тест проверяет свой текст, отличие от en, совпадение плейсхолдеров и отсутствие `/en/`.
+- Prettier выровнял таблицы pt-BR в privacy и перевёл файлы на LF; в legal.json `\r\n` стали `\n`, смысл не менялся.
+- Проверки: legal:sync, vitest legal (5), typecheck, lint зелёные. `pnpm test`: 3 падения в auth-emails — нет `NEXT_PUBLIC_SITE_URL` локально, падают и без этих правок.
