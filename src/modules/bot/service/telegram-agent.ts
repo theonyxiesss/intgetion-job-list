@@ -56,6 +56,24 @@ const copy = {
       "Чтобы сохранить вакансию или откликнуться, войдите: {site}/ru/login — и возвращайтесь сюда.",
     more: "Ещё в каталоге: {site}/ru/jobs",
   },
+  "pt-BR": {
+    unavailable:
+      "O agente está descansando agora. O catálogo continua funcionando: " +
+      "{site}/pt-BR/jobs",
+    tryLater: "Algo deu errado do meu lado. Tente novamente em um minuto.",
+    rateLimited:
+      "São muitas perguntas de uma vez. Tente novamente em um minuto.",
+    budget: "O agente atingiu o orçamento de hoje. Tente novamente amanhã.",
+    empty:
+      "Diga o que você procura — um cargo, uma habilidade, um fuso horário.",
+    reset: "Esquecido. O que você procura?",
+    help:
+      "Pergunte com suas palavras: «vagas remotas de solidity», «design em meio período na Europa». " +
+      "Entre em {site} para salvar vagas e se candidatar. /reset começa uma nova conversa.",
+    signIn:
+      "Para salvar uma vaga ou se candidatar, entre: {site}/pt-BR/login — e depois volte aqui.",
+    more: "Mais no catálogo: {site}/pt-BR/jobs",
+  },
 } as const;
 
 type Lines = { readonly [K in keyof (typeof copy)["en"]]: string };
@@ -64,7 +82,10 @@ function linesFor(languageCode: string | undefined): {
   lines: Lines;
   locale: string;
 } {
-  const ru = (languageCode ?? "").toLowerCase().startsWith("ru");
+  const code = (languageCode ?? "").toLowerCase();
+  // D350: Telegram sends "pt" or "pt-br"; both get Brazilian Portuguese.
+  if (code.startsWith("pt")) return { lines: copy["pt-BR"], locale: "pt-BR" };
+  const ru = code.startsWith("ru");
   return { lines: ru ? copy.ru : copy.en, locale: ru ? "ru" : "en" };
 }
 

@@ -27,11 +27,13 @@ const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
   ["search.alert", true],
   // D240: new jobs of a followed company.
   ["company.new_jobs", true],
+  // D352: the employer side of the morning brief.
+  ["company.candidates_digest", true],
 ];
 
 describe("notification catalog (15, D100)", () => {
   it("contains the 11 types of section 15 in table order, then D234", () => {
-    expect(NOTIFICATION_TYPES).toHaveLength(13);
+    expect(NOTIFICATION_TYPES).toHaveLength(14);
     expect([...NOTIFICATION_TYPES]).toEqual(
       SECTION_15_EMAIL_DEFAULTS.map(([type]) => type),
     );
@@ -55,6 +57,7 @@ describe("notification catalog (15, D100)", () => {
       "matches.digest",
       "search.alert",
       "company.new_jobs",
+      "company.candidates_digest",
     ];
     for (const type of NOTIFICATION_TYPES) {
       if (!scheduled.includes(type)) {

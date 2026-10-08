@@ -125,3 +125,16 @@ export async function addCompanyMember(companyId: string, userId: string) {
   const added = await repo.addCompanyMember(companyId, userId);
   if (!added) throw forbidden("Cannot join an imported or unavailable company");
 }
+
+/**
+ * Morning briefs about candidates (D352): only an owner or admin turns the
+ * flag on or off, for each company they manage.
+ */
+export async function setOwnCompanyAgentBriefs(
+  userId: string,
+  enabled: boolean,
+): Promise<boolean> {
+  const changed = await repo.setAgentBriefsForManagedCompanies(userId, enabled);
+  if (changed === 0) throw forbidden();
+  return enabled;
+}

@@ -6,6 +6,8 @@ export const NEW_JOB_TYPES = [
   "search.alert",
   "matches.digest",
   "company.new_jobs",
+  // The employer morning brief rides the same switches (D352).
+  "company.candidates_digest",
 ] as const;
 
 export type NewJobChannel = "telegram" | "email";

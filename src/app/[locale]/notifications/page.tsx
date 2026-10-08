@@ -9,6 +9,7 @@ import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
 import { LinkTabs } from "@/components/ui/tabs";
 import { canReceiveMail, telegramLinkOf } from "@/modules/auth/service";
+import { getCompaniesForUser } from "@/modules/companies/service";
 import {
   hasCandidateProfile,
   ownAgentBriefsEnabled,
@@ -44,14 +45,22 @@ export default async function NotificationsPage({
   const bot = await getTranslations("notifications.bot");
   const email = await getTranslations("notifications.emailAlerts");
   const agent = await getTranslations("notifications.agentBriefs");
-  const [feed, preferences, telegram, mailReady, profile] = await Promise.all([
-    listNotifications(user.id, {}),
-    readPreferences(user.id),
-    telegramLinkOf(user),
-    canReceiveMail(user),
-    hasCandidateProfile(user.id),
-  ]);
+  const companyAgent = await getTranslations("notifications.companyAgent");
+  const [feed, preferences, telegram, mailReady, profile, companies] =
+    await Promise.all([
+      listNotifications(user.id, {}),
+      readPreferences(user.id),
+      telegramLinkOf(user),
+      canReceiveMail(user),
+      hasCandidateProfile(user.id),
+      getCompaniesForUser(user.id),
+    ]);
   const agentOn = profile ? await ownAgentBriefsEnabled(user.id) : false;
+  // Recruiter and above get the employer brief (D352).
+  const briefCompanies = companies.filter((company) =>
+    ["owner", "admin", "recruiter"].includes(company.role),
+  );
+  const employer = briefCompanies.length > 0;
   function channelOn(channel: "telegram" | "email") {
     return NEW_JOB_TYPES.every((type) =>
       preferences.some(
@@ -73,6 +82,15 @@ export default async function NotificationsPage({
         <AgentBriefsControls
           hasProfile={profile}
           agentEnabled={agentOn}
+          company={{
+            member: employer,
+            canManage: briefCompanies.some((company) =>
+              ["owner", "admin"].includes(company.role),
+            ),
+            enabled: briefCompanies.some(
+              (company) => company.agentBriefsEnabled,
+            ),
+          }}
           telegram={{ linked: Boolean(telegram), enabled: channelOn("telegram") }}
           email={{ linked: mailReady, enabled: channelOn("email") }}
           labels={{
@@ -81,16 +99,22 @@ export default async function NotificationsPage({
             agentSaved: agent("saved"),
             agentError: agent("error"),
             agentOff: agent("off"),
+            company: {
+              title: companyAgent("title"),
+              text: companyAgent("text"),
+              saved: companyAgent("saved"),
+              error: companyAgent("error"),
+            },
             telegram: {
-              title: bot("title"),
-              text: bot("text"),
+              title: employer ? bot("titleEmployer") : bot("title"),
+              text: employer ? bot("textEmployer") : bot("text"),
               link: bot("link"),
               saved: bot("saved"),
               error: bot("error"),
             },
             email: {
-              title: email("title"),
-              text: email("text"),
+              title: employer ? email("titleEmployer") : email("title"),
+              text: employer ? email("textEmployer") : email("text"),
               link: email("link"),
               saved: email("saved"),
               error: email("error"),

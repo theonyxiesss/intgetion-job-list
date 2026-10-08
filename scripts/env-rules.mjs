@@ -65,6 +65,15 @@ const ALL_KNOWN = new Set([
   "BING_SITE_VERIFICATION",
   "TELEGRAM_MINI_APP_ENABLED",
   "JOBS_ALERT_CHAT_ID",
+  "BILLING_ENABLED",
+  "BILLING_CRYPTO_PROVIDER",
+  "COMPANY_WALLET_ADDRESS",
+  "BILLING_TOKEN_CONTRACTS",
+  "NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID",
+  "RPC_URL_ETHEREUM",
+  "RPC_URL_POLYGON",
+  "RPC_URL_ARBITRUM",
+  "RPC_URL_BASE",
   "CRON_SECRET",
   "PRIVACY_HASH_SECRET",
   "SENTRY_DSN",
@@ -241,6 +250,20 @@ function validateVar(name, value, mode) {
       }
       break;
 
+    case "BILLING_ENABLED":
+      if (!isBooleanString(trimmed)) {
+        return { name, status: "INVALID", reason: "must be true or false" };
+      }
+      break;
+    case "COMPANY_WALLET_ADDRESS":
+      if (!/^0x[0-9a-fA-F]{40}$/.test(trimmed)) {
+        return {
+          name,
+          status: "INVALID",
+          reason: "must be an EVM address",
+        };
+      }
+      break;
     case "SENTRY_DSN":
       if (!isValidUrl(trimmed, ["https:"])) {
         return { name, status: "INVALID", reason: "must be https:// DSN" };

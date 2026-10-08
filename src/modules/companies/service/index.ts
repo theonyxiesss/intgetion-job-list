@@ -12,6 +12,7 @@ export {
   recordCompanyStatusChange,
   removeCompanyMember,
   setCompanyLogo,
+  setOwnCompanyAgentBriefs,
 } from "./company-service";
 export type { CompanyRow, CompanySummary } from "./company-service";
 export {

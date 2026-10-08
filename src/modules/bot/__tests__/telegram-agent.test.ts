@@ -92,6 +92,23 @@ describe("the agent inside the Telegram bot (D311)", () => {
     expect(lastInput).toMatchObject({ locale: "ru" });
   });
 
+  it("answers in Brazilian Portuguese for pt and pt-br (D350)", async () => {
+    turn = (emit) => emit({ type: "error", code: "BOT_UNAVAILABLE" });
+    await handleTelegramAgentUpdate("token", update("vagas", "pt-br"));
+    expect(sent[0].text).toContain("O agente está descansando");
+    expect(lastInput).toMatchObject({ locale: "pt-BR" });
+    sent.length = 0;
+    await handleTelegramAgentUpdate("token", update("vagas", "pt"));
+    expect(sent[0].text).toContain("/pt-BR/jobs");
+  });
+
+  it("falls back to English for languages without their own copy", async () => {
+    turn = (emit) => emit({ type: "error", code: "BOT_UNAVAILABLE" });
+    await handleTelegramAgentUpdate("token", update("empleos", "es"));
+    expect(sent[0].text).toContain("The agent is resting");
+    expect(lastInput).toMatchObject({ locale: "en" });
+  });
+
   it("points a write action at the site instead of guessing consent", async () => {
     turn = (emit) =>
       emit({

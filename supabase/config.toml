@@ -196,15 +196,15 @@ otp_expiry = 3600
 # Branded auth emails (D330), generated from src/lib/auth-email-templates.ts.
 # The cloud project prefers the Send Email Hook, or the same HTML in the Dashboard.
 [auth.email.template.confirmation]
-subject = '{{ if eq (printf "%v" .Data.locale) "ru" }}Подтвердите email{{ else }}Confirm your email{{ end }}'
+subject = '{{ if eq (printf "%v" .Data.locale) "ru" }}Подтвердите email{{ else if eq (printf "%v" .Data.locale) "es" }}Confirma tu correo{{ else if eq (printf "%v" .Data.locale) "pt-BR" }}Confirme seu e-mail{{ else }}Confirm your email{{ end }}'
 content_path = "./supabase/templates/confirmation.html"
 
 [auth.email.template.recovery]
-subject = '{{ if eq (printf "%v" .Data.locale) "ru" }}Сброс пароля{{ else }}Reset your password{{ end }}'
+subject = '{{ if eq (printf "%v" .Data.locale) "ru" }}Сброс пароля{{ else if eq (printf "%v" .Data.locale) "es" }}Restablece tu contraseña{{ else if eq (printf "%v" .Data.locale) "pt-BR" }}Redefina sua senha{{ else }}Reset your password{{ end }}'
 content_path = "./supabase/templates/recovery.html"
 
 [auth.email.template.magic_link]
-subject = '{{ if eq (printf "%v" .Data.locale) "ru" }}Ссылка для входа{{ else }}Your sign-in link{{ end }}'
+subject = '{{ if eq (printf "%v" .Data.locale) "ru" }}Ссылка для входа{{ else if eq (printf "%v" .Data.locale) "es" }}Tu enlace para entrar{{ else if eq (printf "%v" .Data.locale) "pt-BR" }}Seu link de acesso{{ else }}Your sign-in link{{ end }}'
 content_path = "./supabase/templates/magic_link.html"
 
 # When AUTH_SEND_EMAIL_HOOK_SECRET is set locally, Auth posts here instead of

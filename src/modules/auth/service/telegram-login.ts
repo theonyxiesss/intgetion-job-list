@@ -57,6 +57,15 @@ const copy = {
     hello:
       "Pregúntame por trabajo con tus palabras: «empleos remotos de solidity», «diseño a media jornada en Europa». /help explica más.\nPara iniciar sesión en el sitio, pulsa allí «Continuar con Telegram».",
   },
+  "pt-BR": {
+    ask: "Entrar no INTGETION JOB LIST. Se você acabou de pedir isso em intgetion.com, toque em «Entrar». Se não, não toque em nada.",
+    button: "Entrar",
+    done: "Pronto. Volte ao site — você já está conectado.",
+    expired:
+      "Este link de acesso expirou. Toque em «Continuar com Telegram» no site novamente.",
+    hello:
+      "Pergunte sobre trabalho com suas palavras — «vagas remotas de solidity», «design em meio período na Europa». /help explica mais.\nPara entrar no site, toque lá em «Continuar com Telegram».",
+  },
 } as const;
 
 function disabled(): HttpError {

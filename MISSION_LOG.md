@@ -3,6 +3,102 @@
 > Older entries: [docs/archive/mission-log/](docs/archive/mission-log/) — see [docs/archive/INDEX.md](docs/archive/INDEX.md).
 > Session protocol: [docs/tz/00-protocol.md](docs/tz/00-protocol.md). Status now: [docs/CURRENT.md](docs/CURRENT.md).
 
+## [2026-10-08] — выкладка pt-BR, сводок и оплаты — DONE
+
+- Сделано: на облако применены `0035`–`0038`. В продукт уходят португальский (Бразилия), сводки работодателя с админкой и вступлением, и путь оплаты «Найма». Приём денег не включался: нет контрактов токенов, проекта WalletConnect и RPC.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `NEXT_PUBLIC_SITE_URL=http://localhost:3000 pnpm test` → 804 прошло, 1 пропущен; `pnpm db:migrate` → applied 0035, 0036, 0037, 0038.
+- P-тесты подфазы: нет отдельного прогона в браузере. Оплата на сайте остаётся заявкой, пока флаги выключены.
+- Миграции: `0035_locale_pt_br.sql`, `0036_company_agent_briefs.sql`, `0037_brief_runs_employers.sql`, `0038_billing_hire.sql` — на облаке.
+- Изменённые файлы: язык pt-BR, сводки, оплата, документы статуса. Не в коммите: `.claude/` и `docs/tz/20-morning-briefs.local-draft.md`.
+- Отклонения от ТЗ: номера D352, D354 и D355 в DECISIONS заняты и сводками, и оплатой. Санкционный список и блок «Продвигается» в ленте по-прежнему не сделаны.
+- OPEN QUESTION: контракты USDT/USDC, проект WalletConnect и RPC основатель кладёт в окружение, не в чат. Адреса Tron и Solana не заданы.
+- Следующая подфаза: только по команде. Боевое включение оплаты — после этих трёх значений.
+
+## [2026-10-08] — оплата «Найма», статус и тариф (D354) — DONE
+
+- Сделано: миграция `0038_billing_hire.sql`, проверка перевода, заказ WalletConnect, статус только с сервера, «Найм» на 30 дней одной транзакцией после `paid`. Без флагов страница пишет заявку и тариф не включает. Кабинет `/employer/billing` и страница вакансии показывают «Старт» или «Найм».
+- Команды проверки: `pnpm exec tsc --noEmit` → 0; eslint по файлам оплаты → 0; `pnpm test` → 796 прошло, 3 упали в `auth-emails.test.ts` без `NEXT_PUBLIC_SITE_URL` (так же падает без этой переменной и до оплаты); с `NEXT_PUBLIC_SITE_URL=http://localhost:3000` эти 11 писем проходят.
+- P-тесты подфазы: девять отказов проверки перевода по отдельности, недоплата и повтор не включают тариф.
+- Миграции: `0038_billing_hire.sql` (на облако не выкладывалась).
+- Изменённые файлы: `src/db/migrations/0038_billing_hire.sql`, `src/lib/billing/**`, `src/modules/billing/**`, `src/app/api/billing/**`, `src/app/api/cron/billing/route.ts`, `src/app/[locale]/billing/crypto/page.tsx`, `src/app/[locale]/employer/billing/page.tsx`, `src/messages/*.json`, `vercel.json`, `.env.example`, `scripts/env-rules.mjs`.
+- Отклонения от ТЗ: санкционный список не подключён (проверка умеет `frozen`, сверка с OFAC — до боевого включения). Общая лента ещё не рисует блок «Продвигается» из покупки. Письмо уходит только если заданы Resend и почта владельца.
+- OPEN QUESTION: адреса контрактов USDT/USDC и адрес Safe основатель кладёт в окружение, не в репозиторий.
+- Следующая подфаза: боевое включение (D в ТЗ) только по команде, после миграции `0038` на облако.
+
+## [2026-10-08] — статус оплаты и появление тарифа (D353) — DONE
+
+- Сделано: в ТЗ оплаты статус заказа выдаёт и проверяет только сервер. Клиент его опрашивает. «Найм» (`company_hire`) появляется в кабинете и на вакансии только в статусе `paid`, одной транзакцией. До этого остаётся «Старт». Поправлены противоречия: код `company_growth` в PRICING §6.1 и общий вебхук в §6.3. Код не писался.
+- Команды проверки: нет — правка документов.
+- P-тесты подфазы: нет.
+- Миграции: нет.
+- Изменённые файлы: `docs/tz/23-billing.md`, `docs/PAYMENTS.md`, `docs/PRICING.md`, `docs/DECISIONS.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет новых. Адреса не-EVM по-прежнему не заданы.
+- Следующая подфаза: только по команде.
+
+## [2026-10-08] — USDT и USDC на любой сети (D352) — DONE
+
+- Сделано: в ТЗ оплаты покупатель сам выбирает USDT или USDC и сеть. Оба токена на EVM-сетях белого списка, один адрес компании. Сеть не из EVM в решение входит, но не покрывается адресом `0x`. Код не писался.
+- Команды проверки: нет — правка документов.
+- P-тесты подфазы: нет.
+- Миграции: нет.
+- Изменённые файлы: `docs/tz/23-billing.md`, `docs/PAYMENTS.md`, `docs/DECISIONS.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: адреса получателя для Tron и Solana не заданы.
+- Следующая подфаза: только по команде.
+
+## [2026-10-08] — ТЗ оплаты WalletConnect (D351) — DONE
+
+- Сделано: живое ТЗ `docs/tz/23-billing.md`. Первая оплата — WalletConnect, услуга «Найм» $79, один EVM-адрес компании, без ключа на сервере. Карты, Tron и тарифы кандидата вынесены из первых подфаз. Механика проверки остаётся в `docs/PAYMENTS.md`, цены — в `docs/PRICING.md`. Код не писался.
+- Команды проверки: нет — документов достаточно, кода нет.
+- P-тесты подфазы: нет.
+- Миграции: нет.
+- Изменённые файлы: `docs/tz/23-billing.md`, `docs/tz/INDEX.md`, `docs/PAYMENTS.md`, `docs/DECISIONS.md`, `docs/OPEN_TASKS.md`, `docs/CURRENT.md`.
+- Отклонения от ТЗ: нет. V3-запрет на код оплаты сохранён до явной подфазы.
+- OPEN QUESTION: первая сеть (консервативно Base); адрес Safe основатель кладёт в окружение, не в чат; юрлицо по-прежнему открыто до боевых денег.
+- Следующая подфаза: только по команде. Подфаза B ТЗ — заглушка заявки, без перевода.
+
+## [2026-10-08] — язык pt-BR (D350) — DONE
+
+- Сделано: `src/messages/pt-BR.json` (перевод всех ключей en), `routing.ts` (`pt-BR`), `intlLocale` → `pt-BR`, каталог серверных писем, имена языка в en/ru/es. Письма: `email-html.ts`, `renderAuthEmail` берёт pt-BR из каталога; Go-шаблоны `supabase/templates/*` и темы в `config.toml` ветвятся ru/es/pt-BR/en. Бот: `linesFor` — `pt*` → pt-BR, строки входа через Telegram на pt-BR. Юридические тексты: секции `<!-- pt-BR -->` в `legal-terms.md` и `legal-privacy.md`, `pnpm legal:sync`, `legalText` отдаёт pt-BR. Миграция `0035_locale_pt_br.sql` и CHECK в `src/db/schema`. `SEO_LOCALES`, заголовок RSS, письмо проверки домена, язык в промпте агента.
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0; `pnpm test` → 781 прошло, 2 упало в `auth-emails.test.ts` (нет `NEXT_PUBLIC_SITE_URL` в окружении, на чистом master падает так же); с `NEXT_PUBLIC_SITE_URL=http://localhost:3000 pnpm test` → 783 прошло, 1 пропущен. `pnpm build` без переменной → 1 (`ERR_SWC_NATIVE_CACHE`, ACL Windows); `SWC_NATIVE_BINDING_CACHE=C:UsersAdmin.swc-cache-cursor pnpm build` → 0. В браузере `/pt-BR/jobs` и `/pt-BR/terms` на португальском, тексты вакансий на исходном языке.
+- P-тесты подфазы: новые тесты — каталог pt-BR (ключи и плейсхолдеры), бот pt/pt-br и запасной английский для es, `legalText` pt-BR, письмо magic link pt-BR, шаблоны Supabase на четыре языка, hreflang и IndexNow.
+- Миграции: `0035_locale_pt_br.sql` (на облако не выкладывалась).
+- Изменённые файлы: `src/messages/*.json`, `src/i18n/{routing,locale,messages}.ts`, `src/lib/{email-html,auth-email-templates}.ts`, `supabase/templates/*`, `supabase/config.toml`, `src/modules/bot/service/telegram-agent.ts`, `src/modules/bot/prompts/system.ts`, `src/modules/auth/service/telegram-login.ts`, `src/modules/companies/service/verification-service.ts`, `src/modules/jobs/service/job-feed.ts`, `src/modules/seo/site.ts`, `src/db/schema/*`, `scripts/legal-sync.mjs`, `src/content/legal/*`, `docs/content/legal-*.md`, тесты.
+- Отклонения от ТЗ: нет. Mini App (`tg.html`, перенаправление в `proxy.ts`) не трогал — D350.
+- OPEN QUESTION: перевод юридических текстов на pt-BR — машинный уровень, нужна проверка юристом до опоры на него.
+- Следующая подфаза: только по команде (de/fr/it не начинались). Миграцию `0035` выложить на облако по протоколу до выкладки кода, иначе пользователь с pt-BR упрётся в CHECK.
+
+## [2026-10-08] — вход через X включён — DONE
+
+- Сделано: в существующем приложении портала X включена аутентификация пользователя (OAuth 2.0, confidential, запрос почты, права Read). Callback — облачный Supabase. Провайдер X / Twitter (OAuth 2.0) включён в проекте `intgetion-dev`. Секрет в репозиторий и в лог не писался. `GET /api/auth/x` отвечает 307 на authorize, следующий шаг — `x.com/i/oauth2/authorize`.
+- Команды проверки: `curl` authorize → 302 на `x.com`. lint/typecheck/test не запускались — код не менялся.
+- Миграции: нет.
+- Изменённые файлы: `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет. Имя приложения в портале переименовано в `INTGETION JOB LIST`.
+- Следующая подфаза: только по команде.
+
+## [2026-10-08] — канал Jobs Alert включён на проде — DONE
+
+- Сделано: `JOBS_ALERT_CHAT_ID` записан в Vercel production проекта `intgetion-job-list` (тип sensitive, preview не задан). Бот уже админ канала. Перевыкладка текущего production `dpl_9RYxwju33cs6pPMHu32sy4b1TDNh` → `dpl_DrtiLuTMVg4qfvdvrzdZqmZwdX44`, чтобы cron увидел переменную. Само значение id в лог не пишется.
+- Команды проверки: создание env через Vercel API — created, failed пустой. Выкладка `dpl_DrtiLuTMVg4qfvdvrzdZqmZwdX44` — READY, алиас intgetion.com.
+- Миграции: нет ( `0033` уже на облаке).
+- Изменённые файлы: `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет.
+- Следующая подфаза: вход через X. Портал разработчика в браузере агента всё ещё на экране входа.
+
+## [2026-10-08] — хвосты канала, X и писем входа — BLOCKED
+
+- Сделано: сверка прода, без новых фич. Письма входа уже брендированные: Send Email Hook на `https://intgetion.com/api/auth/hooks/send-email` включён, `AUTH_SEND_EMAIL_HOOK_SECRET` есть в Vercel (production и preview). В логах Auth за 2026-10-07 есть `Hook ran successfully`. Вставка HTML в Dashboard не нужна, пока хук включён. Google в `/auth/v1/settings` включён, X/twitter выключен. `JOBS_ALERT_CHAT_ID` в Vercel проекта `intgetion-job-list` отсутствует.
+- Команды проверки: чтение `/auth/v1/settings` и списка env Vercel (без расшифровки секретов); выборка `auth_logs` за сутки. lint/typecheck/test не запускались — код не менялся.
+- Миграции: нет.
+- Изменённые файлы: `docs/CURRENT.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет.
+- Следующая подфаза: канал — после числового chat id и прав бота писать в канал. X — после клиента OAuth 2.0 в портале разработчика (секрет в чат не присылать, только в Supabase). Язык `pt-BR` — отдельная сессия.
+
 ## [2026-10-07] — главная, адреса без /en и испанский — DONE
 
 - Сделано: главная стала лентой вакансий, футер из трёх групп, меню зависит от типа аккаунта (D342–D344). Английский на корне, `/en` уходит на тот же путь без префикса (D345). Испанский — третий язык интерфейса (D346), миграция `0034_locale_es.sql`. Старый ежечасный digest не возвращался: утренние сводки читают каталог `es`.
@@ -403,3 +499,29 @@
 - Отклонения от ТЗ: номер сдвинут с D341 на D349, потому что D341 на master — канал Jobs Alert.
 - OPEN QUESTION: нет.
 - Следующая подфаза: C, только по команде.
+
+## [2026-10-08] — утренние сводки, подфаза C (D352) — сторона работодателя
+
+- Сделано: флаг `companies.agent_briefs_enabled` (миграция `0036`, на облако не применялась, деплоя нет). Тип `company.candidates_digest` в каталоге и в наборе галочек. Подбор кандидатов через `computeMatchesForJob` + `matching_results`, ≥ 0.65, без `is_hidden` и откликнувшихся, новые с прошлой сводки, ≤ 5. Обезличенная карточка, строгая схема payload. Вторая петля в `runSlot` с общими счётчиками; транзакция `brief_deliveries` (employer) → `deliverInTransaction` → заметка в `/chat` шаблоном. Telegram-строки со ссылкой на `/employer/jobs/{id}`, кнопка в письме. На `/employer/jobs/{id}` — короткий обезличенный список подходящих. На `/notifications` — переключатель компании (owner/admin) и подписи работодателю. Строки en/ru/es/pt-BR.
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0. `pnpm test`: 788 прошло, 3 упало в `auth-emails.test.ts` (D350, незакоммиченный файл; падает, если `NEXT_PUBLIC_SITE_URL` не задан в окружении — порядок тестов). С `NEXT_PUBLIC_SITE_URL=http://localhost:3000` — 791 прошло, 1 пропущен. `pnpm build` локально не собирается: `ERR_SWC_NATIVE_CACHE` (ACL на `AppData\Local`), ACL не трогал — проверит CI. Интеграционный `employer-briefs.integration.test.ts` (скрытый, флаг выкл., 5 карточек без контактов, повтор за день) — проверит CI.
+- Миграции: `0036_company_agent_briefs.sql` (не на облаке). `0035` не трогал.
+- Решения: D352 (D351 уже занят оплатой).
+- OPEN QUESTION: у работодателя и компании нет колонки часового пояса — все работодатели в слоте `europe` (D340 «нет пояса → europe»). Нужна ли колонка пояса? «Флаг поиска» кандидата в базе не существует — фильтруем только `is_hidden`. Нужен ли отдельный флаг «ищу работу»?
+- Не коммитил.
+
+## [2026-10-08] — утренние сводки, подфаза D (D354) — админка `/admin/briefs`
+
+- Сделано: раздел `/admin/briefs` — три слота (IANA-пояс, время с шагом 15 мин, вкл/пауза, следующий запуск UTC и местный), глобальная пауза, «сухой прогон» и «боевой запуск» с подтверждением, журнал за 30 дней (кандидаты и работодатели отдельно), счётчики подписок по слотам. API `/api/admin/briefs/*`, права owner/admin (`jobs_scheduler.manage`/`.run`), каждое действие в `audit_log`. Миграция `0037_brief_runs_employers.sql` (`checked_employers`). Строки en/ru/es/pt-BR.
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0. `pnpm test`: 791 прошло, 3 упало в `auth-emails.test.ts` (D350, нет `NEXT_PUBLIC_SITE_URL` в окружении; то же, что в подфазе C). С `NEXT_PUBLIC_SITE_URL=http://localhost:3000` — 794 прошло, 1 пропущен. `pnpm build` локально: `ERR_SWC_NATIVE_CACHE` (ACL `AppData\Local`), не трогал — проверит CI. Интеграционный `briefs-admin.integration.test.ts` (сухой прогон не пишет `brief_deliveries`/уведомления; повторный боевой → 409) — проверит CI.
+- Миграции: `0037_brief_runs_employers.sql` (не на облаке). 0032–0036 не менялись.
+- Решения: D354.
+- OPEN QUESTION: боевой запуск требует свежий step-up (как прочие опасные действия админки); если мешает — снять флаг `dangerous`. Путь `/es/admin/...` и `/pt-BR/admin/...` реестр разделов не распознаёт (регулярка только en|ru, было до задачи) — страница сама проверяет право.
+- Не коммитил, не деплоил.
+
+## [2026-10-08] — утренние сводки, подфаза E (D355) — вступление от LLM
+
+- Сделано: `writeBriefIntro` (OpenRouter через `llmFromEnv`, модель extract, ≤ 200 токенов, таймаут 8 с, карточки как недоверенные данные) с фолбэком на шаблон `notifications.briefIntro` (en/ru/es/pt-BR). Поле `intro` в payload `matches.digest` и `company.candidates_digest`; Telegram, почта и заметка в `/chat` начинаются с него. LLM не выбирает и не переставляет карточки.
+- Команды проверки: `pnpm lint` → 0; `pnpm typecheck` → 0. `pnpm test`: 801 прошло, 3 упало в `auth-emails.test.ts` (D350, нет `NEXT_PUBLIC_SITE_URL`; как в C и D). С `NEXT_PUBLIC_SITE_URL=http://localhost:3000` — 804 прошло, 1 пропущен. `pnpm build` локально: `ERR_SWC_NATIVE_CACHE` (ACL), не трогал — проверит CI. Интеграционный `brief-intro.integration.test.ts` (ошибка LLM → шаблон, уведомление создано) — проверит CI.
+- Миграции: нет. Решения: D355.
+- OPEN QUESTION: в DECISIONS номера D352 и D354 встречаются дважды — параллельная работа по оплате заняла их одновременно с подфазами C и D. Нужно перенумеровать одну из сторон (предлагаю сводки: C → D356, D → D357). Интеграционные тесты C и D без шва `writeIntro` в CI с ключом OpenRouter пойдут в сеть; на результат не влияет (фолбэк), но может замедлить.
+- Не коммитил, не деплоил.

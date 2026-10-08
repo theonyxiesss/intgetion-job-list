@@ -132,14 +132,17 @@
     "short": {
       "en": "EN",
       "ru": "RU",
-      "es": "ES"
+      "es": "ES",
+      "pt-BR": "PT"
     },
     "native": {
       "en": "English",
       "ru": "Русский",
-      "es": "Español"
+      "es": "Español",
+      "pt-BR": "Português (Brasil)"
     },
-    "es": "Español"
+    "es": "Español",
+    "pt-BR": "Portugués (Brasil)"
   },
   "home": {
     "tagline": "Trabajo remoto. Coincidencias reales.",
@@ -635,7 +638,48 @@
       "open": "Abierta",
       "confirmed": "Confirmada",
       "dismissed": "Descartada"
-    }
+    },
+    "briefs": {
+      "title": "Resúmenes matutinos",
+      "intro": "Franjas, pausa, ejecución manual y registro de los resúmenes matutinos del agente.",
+      "pause": "Pausar todos los resúmenes",
+      "pausedOn": "En pausa: no sale ningún resumen.",
+      "pausedOff": "Funcionan según el horario.",
+      "slots": "Franjas",
+      "nextRun": "Próxima ejecución: {utc} UTC · {local} hora local",
+      "subscriptions": "Con el agente activado: {agent} · Telegram: {telegram} · correo: {email}",
+      "timezone": "Zona horaria (IANA)",
+      "time": "Hora",
+      "enabled": "Activa",
+      "save": "Guardar",
+      "runDry": "Prueba en seco",
+      "runLive": "Ejecución real",
+      "confirmLive": "¿Enviar ahora los resúmenes de esta franja? No se puede deshacer.",
+      "alreadyRan": "Esta franja ya tuvo una ejecución real ese día. No se envió nada de nuevo.",
+      "failed": "No se pudo ejecutar. Inténtalo de nuevo.",
+      "invalid": "Revisa la zona horaria y la hora.",
+      "runResult": "Enviados: {sent} · vacíos: {empty} · errores: {failed}",
+      "log": "Ejecuciones, últimos 30 días",
+      "logEmpty": "Aún no hay ejecuciones.",
+      "colSlot": "Franja",
+      "colDate": "Fecha",
+      "colStarted": "Inicio",
+      "colFinished": "Fin",
+      "colCandidates": "Candidatos",
+      "colEmployers": "Empresas",
+      "colSent": "Enviados",
+      "colEmpty": "Vacíos",
+      "colFailed": "Errores",
+      "colMode": "Modo",
+      "modeDry": "prueba",
+      "modeLive": "real",
+      "slot": {
+        "americas": "Américas",
+        "europe": "Europa",
+        "cis": "CEI"
+      }
+    },
+    "navBriefs": "Resúmenes"
   },
   "employerJobs": {
     "title": "Tus empleos",
@@ -738,6 +782,14 @@
       "status": "Estado",
       "empty": "Aún no hay visitas. Comparte el enlace del empleo para conseguir los primeros visitantes.",
       "followers": "Siguen a la empresa"
+    },
+    "candidates": {
+      "title": "Candidatos que encajan",
+      "text": "Tarjetas anónimas: sin nombre ni contactos hasta que haya interés mutuo.",
+      "empty": "Aún no hay candidatos que encajen.",
+      "why": "Por qué",
+      "noRole": "Candidato",
+      "years": "{count, plural, one {# año} other {# años}}"
     }
   },
   "matches": {
@@ -948,6 +1000,16 @@
           "subject": "Nuevos empleos en {companyName}",
           "body": "{companyName} ha publicado {count, plural, one {# empleo nuevo} other {# empleos nuevos}}: {jobs}."
         }
+      },
+      "companyCandidatesDigest": {
+        "inapp": {
+          "title": "Nuevos candidatos que encajan",
+          "body": "{count, plural, one {# nuevo candidato encaja con tus vacantes} other {# nuevos candidatos encajan con tus vacantes}}."
+        },
+        "email": {
+          "subject": "Candidatos para tus vacantes",
+          "body": "{count, plural, one {# nuevo candidato encaja con tus vacantes} other {# nuevos candidatos encajan con tus vacantes}}: {jobs}."
+        }
       }
     },
     "bot": {
@@ -955,14 +1017,18 @@
       "text": "Los nuevos empleos siempre se reúnen aquí, en el sitio. Activa esto para recibirlos también como mensajes de nuestro bot.",
       "link": "Vincula Telegram en los ajustes de la cuenta",
       "saved": "Guardado.",
-      "error": "No se ha podido guardar. Inténtalo de nuevo."
+      "error": "No se ha podido guardar. Inténtalo de nuevo.",
+      "titleEmployer": "Nuevos candidatos y vacantes en el bot de Telegram",
+      "textEmployer": "Los candidatos y las vacantes siempre se reúnen aquí, en el sitio. Actívalo para recibirlos también como mensajes de nuestro bot."
     },
     "emailAlerts": {
       "title": "Nuevos empleos por correo",
       "text": "Los mismos empleos nuevos, enviados a tu correo.",
       "link": "Añadir correo",
       "saved": "Guardado.",
-      "error": "No se ha podido guardar. Inténtalo de nuevo."
+      "error": "No se ha podido guardar. Inténtalo de nuevo.",
+      "titleEmployer": "Nuevos candidatos y vacantes por correo",
+      "textEmployer": "Los mismos candidatos y vacantes, por correo."
     },
     "agentBriefs": {
       "title": "El agente me busca empleos",
@@ -973,7 +1039,33 @@
     },
     "brief": {
       "allMatches": "Todos los que encajan",
-      "turnOff": "Desactivar"
+      "turnOff": "Desactivar",
+      "openCandidates": "Abrir la vacante"
+    },
+    "employerBrief": {
+      "chatEvent": "El resumen de la mañana está listo: {count} nuevos candidatos encajan con tus vacantes. Están en las páginas de las vacantes en tu panel de empresa.",
+      "years": "{count, plural, one {# año} other {# años}}",
+      "noRole": "Candidato",
+      "why": "Por qué",
+      "reasons": {
+        "skills": "habilidades",
+        "role": "puesto",
+        "salary": "salario",
+        "tzOverlap": "horario",
+        "experience": "experiencia",
+        "languages": "idiomas"
+      }
+    },
+    "companyAgent": {
+      "title": "El agente busca candidatos",
+      "text": "Por la mañana el agente envía candidatos que encajan con las vacantes activas de la empresa. Se activa para toda la empresa.",
+      "saved": "Guardado.",
+      "error": "No se pudo guardar. Inténtalo de nuevo.",
+      "off": "El agente está desactivado, así que estos interruptores no envían nada."
+    },
+    "briefIntro": {
+      "candidate": "¡Buenos días! Hoy encontré {count, plural, one {# vacante que encaja contigo} other {# vacantes que encajan contigo}}.",
+      "employer": "¡Buenos días! Hoy encontré {count, plural, one {# candidato para tus vacantes} other {# candidatos para tus vacantes}}."
     }
   },
   "notificationSettings": {
@@ -1925,6 +2017,38 @@
         "hybrid": "Híbrido",
         "onsite": "Presencial"
       }
+    }
+  },
+  "billing": {
+    "nav": "Pago",
+    "title": "Pago y plan",
+    "start": "Tu plan: Start",
+    "hire": "Tu plan: Hire",
+    "hireUntil": "Hire está activo para este empleo hasta {date}.",
+    "startHint": "Start es gratis. Hire cuesta 79 $ por un empleo publicado, en USDT o USDC.",
+    "pay": "Pagar con USDT o USDC",
+    "status": {
+      "awaiting_payment": "Esperando la transferencia",
+      "checking": "Comprobando la transferencia",
+      "paid": "Pagado. Hire está activo.",
+      "underpaid": "Llegó menos. Hire no está activo.",
+      "expired": "El pedido caducó. Hire no está activo.",
+      "failed": "La transferencia no se aceptó. Hire no está activo.",
+      "frozen": "El pago está en revisión."
+    },
+    "checkWallet": "Comprueba esta dirección en tu monedero antes de aprobar.",
+    "connect": "Conectar monedero",
+    "interestTitle": "USDT y USDC aún no están activos",
+    "interestBody": "Deja un correo y te avisamos cuando puedas pagar. Ahora no se cobra nada.",
+    "interestEmail": "Correo",
+    "interestSend": "Avisadme cuando pueda pagar",
+    "interestDone": "Guardado. Escribiremos cuando el pago esté activo.",
+    "token": "Token",
+    "usdc": "USDC",
+    "usdt": "USDT",
+    "mail": {
+      "subject": "Hire está activo",
+      "body": "Hire está activo para tu empleo. Ábrelo: {url}"
     }
   },
   "postJob": {

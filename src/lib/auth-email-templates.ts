@@ -1,4 +1,6 @@
 import en from "@/messages/en.json";
+import es from "@/messages/es.json";
+import ptBR from "@/messages/pt-BR.json";
 import ru from "@/messages/ru.json";
 import { raw, renderEmailLayout } from "./email-html";
 
@@ -12,7 +14,9 @@ import { raw, renderEmailLayout } from "./email-html";
  *
  * Language: registration stores `locale` in user metadata, which Supabase
  * exposes as `.Data`. `printf "%v"` keeps a missing value from breaking the
- * Go template; anything but "ru" gets English.
+ * Go template; ru, es and pt-BR get their own copy, anything else English
+ * (D350). The live letters go through the Send Email Hook; these files only
+ * keep local Inbucket in step with it.
  */
 
 export const AUTH_TEMPLATE_KINDS = [
@@ -28,10 +32,24 @@ const copyKey = {
   magic_link: "magic",
 } as const satisfies Record<AuthTemplateKind, keyof typeof en.email>;
 
-const IS_RU = '{{ if eq (printf "%v" .Data.locale) "ru" }}';
+type TemplateLocale = "en" | "ru" | "es" | "pt-BR";
 
-function bodyFor(kind: AuthTemplateKind, locale: "en" | "ru"): string {
-  const all = (locale === "ru" ? ru : en).email;
+const catalogs = { en, ru, es, "pt-BR": ptBR } as const;
+
+/** Languages with their own branch, in the order the template tests them. */
+const BRANCHES = ["ru", "es", "pt-BR"] as const;
+
+/** `{{ if ru }}…{{ else if es }}…{{ else if pt-BR }}…{{ else }}en{{ end }}`. */
+function byLocale(render: (locale: TemplateLocale) => string): string {
+  const branches = BRANCHES.map(
+    (locale, i) =>
+      `{{ ${i === 0 ? "if" : "else if"} eq (printf "%v" .Data.locale) "${locale}" }}${render(locale)}`,
+  ).join("");
+  return `${branches}{{ else }}${render("en")}{{ end }}`;
+}
+
+function bodyFor(kind: AuthTemplateKind, locale: TemplateLocale): string {
+  const all = catalogs[locale].email;
   const copy = all[copyKey[kind]];
   return renderEmailLayout({
     lang: locale,
@@ -49,7 +67,7 @@ function bodyFor(kind: AuthTemplateKind, locale: "en" | "ru"): string {
 /** What Supabase would send, with sample values (dev preview only). */
 export function authTemplatePreview(
   kind: AuthTemplateKind,
-  locale: "en" | "ru",
+  locale: TemplateLocale,
   values: { siteUrl: string; confirmationUrl: string },
 ): string {
   return bodyFor(kind, locale)
@@ -57,12 +75,12 @@ export function authTemplatePreview(
     .replaceAll("{{ .ConfirmationURL }}", values.confirmationUrl);
 }
 
-/** One file per kind: Russian and English bodies behind a Go conditional. */
+/** One file per kind: every language's body behind a Go conditional. */
 export function authTemplateHtml(kind: AuthTemplateKind): string {
-  return `${IS_RU}${bodyFor(kind, "ru")}{{ else }}${bodyFor(kind, "en")}{{ end }}\n`;
+  return `${byLocale((locale) => bodyFor(kind, locale))}\n`;
 }
 
 export function authTemplateSubject(kind: AuthTemplateKind): string {
   const key = copyKey[kind];
-  return `${IS_RU}${ru.email[key].subject}{{ else }}${en.email[key].subject}{{ end }}`;
+  return byLocale((locale) => catalogs[locale].email[key].subject);
 }

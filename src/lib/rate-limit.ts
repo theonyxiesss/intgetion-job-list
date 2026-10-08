@@ -38,6 +38,14 @@ export const rateRules = {
   publicApi: { limit: 120, windowSeconds: 60 },
   /** admin host sign-in failures, keyed by account and by IP (D252) */
   adminLogin: { limit: 5, windowSeconds: 15 * 60 },
+  /** Wallet sign-in before a crypto order (D353). */
+  billingSiwe: { limit: 20, windowSeconds: 60 * 60 },
+  /** Opening a Hire order, keyed by user id. */
+  billingOrder: { limit: 10, windowSeconds: 60 * 60 },
+  /** Submitting a transaction hash, keyed by user id. */
+  billingConfirm: { limit: 30, windowSeconds: 60 * 60 },
+  /** "Tell me when I can pay", keyed by IP. */
+  billingInterest: { limit: 5, windowSeconds: 60 * 60 },
 } as const satisfies Record<string, RateRule>;
 
 /** Fixed window (D26): windows start at multiples of the window length. */

@@ -8,11 +8,15 @@ import { fileURLToPath } from "node:url";
 
 const DOCS = { terms: "legal-terms.md", privacy: "legal-privacy.md" };
 
-/** One document as { ru, en }: comments dropped, split at <!-- en -->. */
+/**
+ * One document as { ru, en, "pt-BR" }: comments dropped, split at
+ * <!-- en --> and <!-- pt-BR --> (D350).
+ */
 export function splitLegal(markdown) {
-  const [ru, en] = markdown.split(/^<!-- en -->\s*$/m);
+  const [ru, rest] = markdown.split(/^<!-- en -->\s*$/m);
+  const [en, ptBR] = (rest ?? "").split(/^<!-- pt-BR -->\s*$/m);
   const clean = (text) => (text ?? "").replace(/<!--[\s\S]*?-->/g, "").trim();
-  return { ru: clean(ru), en: clean(en) };
+  return { ru: clean(ru), en: clean(en), "pt-BR": clean(ptBR) };
 }
 
 export function buildLegal(root) {

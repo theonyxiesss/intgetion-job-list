@@ -12,6 +12,14 @@ import {
 } from "../lib/briefs";
 import { deliverInTransaction } from "./deliver";
 import {
+  briefEmployer,
+  loadCompanyCandidates,
+  readEmployerRecipients,
+  type EmployerCandidateLoader,
+} from "./employer-briefs";
+import type { EmployerMatchRow } from "../lib/employer-briefs";
+import { writeBriefIntro, type BriefIntroWriter } from "./brief-intro";
+import {
   loadFeedJobs,
   pickDigestJobs,
   type DigestCandidateJob,
@@ -23,6 +31,8 @@ export type BriefRunResult = {
   slotDate: string;
   dryRun: boolean;
   checked: number;
+  /** Employers among `checked` (D354). */
+  checkedEmployers: number;
   sent: number;
   empty: number;
   failed: number;
@@ -82,6 +92,10 @@ export async function runMorningBriefsCron(input?: {
   now?: Date;
   /** Test seam: the feed source; matching itself is covered by 6B tests. */
   loadJobs?: DigestJobLoader;
+  /** Test seam: a company's matched candidates (D352). */
+  loadCandidates?: EmployerCandidateLoader;
+  /** Test seam: the intro writer (D355). */
+  writeIntro?: BriefIntroWriter;
 }): Promise<{ paused: boolean; runs: BriefRunResult[] }> {
   const now = input?.now ?? new Date();
   if (await isPaused()) return { paused: true, runs: [] };
@@ -95,6 +109,8 @@ export async function runMorningBriefsCron(input?: {
       now,
       dryRun: false,
       loadJobs: input?.loadJobs,
+      loadCandidates: input?.loadCandidates,
+      writeIntro: input?.writeIntro,
     });
     if (run) runs.push(run);
   }
@@ -112,9 +128,12 @@ export async function runSlot(input: {
   now: Date;
   dryRun: boolean;
   loadJobs?: DigestJobLoader;
+  loadCandidates?: EmployerCandidateLoader;
+  writeIntro?: BriefIntroWriter;
 }): Promise<BriefRunResult | null> {
   const { slotId, slotDate, now, dryRun } = input;
   const loadJobs = input.loadJobs ?? loadFeedJobs;
+  const writeIntro = input.writeIntro ?? writeBriefIntro;
   const db = getDb();
   const [claimed] = await db.execute<{ id: string }>(sql`
     insert into public.brief_runs (slot_id, slot_date, dry_run, started_at)
@@ -129,6 +148,7 @@ export async function runSlot(input: {
     slotDate,
     dryRun,
     checked: 0,
+    checkedEmployers: 0,
     sent: 0,
     empty: 0,
     failed: 0,
@@ -156,6 +176,7 @@ export async function runSlot(input: {
           now,
           dryRun,
           loadJobs,
+          writeIntro,
         });
         if (outcome === "sent") result.sent += 1;
         else result.empty += 1;
@@ -164,13 +185,42 @@ export async function runSlot(input: {
         logger.error({ err, userId: row.user_id, slotId }, "brief failed");
       }
     }
+    // Employers (D352) share the same counters. No time zone is stored for
+    // them, so they all fall into the default slot.
+    if (slotForTimeZone(null, now) === slotId) {
+      const cache = new Map<string, Promise<EmployerMatchRow[]>>();
+      for (const recipient of await readEmployerRecipients(slotDate)) {
+        result.checked += 1;
+        result.checkedEmployers += 1;
+        try {
+          const outcome = await briefEmployer(recipient, {
+            slotId,
+            slotDate,
+            now,
+            dryRun,
+            loadCandidates: input.loadCandidates ?? loadCompanyCandidates,
+            writeIntro,
+            cache,
+          });
+          if (outcome === "sent") result.sent += 1;
+          else result.empty += 1;
+        } catch (err) {
+          result.failed += 1;
+          logger.error(
+            { err, userId: recipient.userId, slotId },
+            "employer brief failed",
+          );
+        }
+      }
+    }
   } catch (err) {
     error = err instanceof Error ? err.message : String(err);
     logger.error({ err, slotId, slotDate }, "brief run failed");
   }
   await db.execute(sql`
     update public.brief_runs
-    set finished_at = now(), checked = ${result.checked}, sent = ${result.sent},
+    set finished_at = now(), checked = ${result.checked},
+        checked_employers = ${result.checkedEmployers}, sent = ${result.sent},
         empty = ${result.empty}, failed = ${result.failed}, error = ${error}
     where id = ${claimed.id}
   `);
@@ -185,6 +235,7 @@ async function briefCandidate(
     now: Date;
     dryRun: boolean;
     loadJobs: DigestJobLoader;
+    writeIntro: BriefIntroWriter;
   },
 ): Promise<"sent" | "empty"> {
   const locale = toAppLocale(row.locale);
@@ -196,6 +247,16 @@ async function briefCandidate(
   );
   if (jobs.length === 0) return "empty";
   if (ctx.dryRun) return "sent";
+
+  // Outside the transaction: a slow LLM must not hold a lock (D355).
+  const intro = await ctx.writeIntro({
+    locale,
+    audience: "candidate",
+    cards: jobs.map((job) => ({
+      id: job.jobId,
+      lines: [`${job.title} — ${job.companyName}`],
+    })),
+  });
 
   const delivered = await getDb().transaction(async (tx) => {
     // The delivery row is the claim: a second run for this day finds it.
@@ -219,6 +280,7 @@ async function briefCandidate(
           title: job.title,
           companyName: job.companyName,
         })),
+        intro: intro.text,
       },
       emailPayload: { jobs: jobs.map(emailCard) },
       now: ctx.now,
@@ -235,7 +297,10 @@ async function briefCandidate(
 
   try {
     const { postSystemEvent } = await import("@/modules/bot/service");
-    await postSystemEvent(row.user_id, chatEvent(locale, jobs.length));
+    await postSystemEvent(
+      row.user_id,
+      `${intro.text}\n\n${chatEvent(locale, jobs.length)}`,
+    );
   } catch (err) {
     // The brief already went out; the chat note is a convenience.
     logger.warn({ err, userId: row.user_id }, "brief chat note failed");

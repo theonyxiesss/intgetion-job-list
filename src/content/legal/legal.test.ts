@@ -3,6 +3,7 @@ import { buildLegal } from "../../../scripts/legal-sync.mjs";
 import { LEGAL_DETAILS } from "@/config/legal";
 import { headingId, parseLegal } from "@/components/legal/parse";
 import legal from "./legal.json";
+import { legalText } from "./index";
 
 describe("legal texts (D241)", () => {
   it("match docs/content/legal-*.md — run pnpm legal:sync after editing", () => {
@@ -11,7 +12,8 @@ describe("legal texts (D241)", () => {
 
   it("use only placeholders that the config knows", () => {
     const used = new Set(
-      [legal.terms.ru, legal.terms.en, legal.privacy.ru, legal.privacy.en]
+      [legal.terms, legal.privacy]
+        .flatMap((doc) => Object.values(doc))
         .flatMap((text) => [...text.matchAll(/\{\{(\w+)\}\}/g)])
         .map((match) => match[1]),
     );
@@ -39,8 +41,16 @@ describe("legal texts (D241)", () => {
     expect(headingId("3.2 Профиль кандидата")).toBe("s3-2");
   });
 
-  it("has a cookie section in both languages of the privacy policy", () => {
+  it("has a cookie section in every language of the privacy policy", () => {
     expect(legal.privacy.ru).toContain("## 5. Куки");
     expect(legal.privacy.en).toContain("## 5. Cookies");
+    expect(legal.privacy["pt-BR"]).toContain("## 5. Cookies");
+  });
+
+  it("gives pt-BR its own text and every other language English (D350)", () => {
+    expect(legalText("terms", "pt-BR")).toBe(legal.terms["pt-BR"]);
+    expect(legalText("terms", "ru")).toBe(legal.terms.ru);
+    expect(legalText("terms", "es")).toBe(legal.terms.en);
+    expect(legal.terms["pt-BR"]).toContain("/pt-BR/privacy");
   });
 });

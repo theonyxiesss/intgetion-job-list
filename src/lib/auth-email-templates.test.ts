@@ -24,8 +24,8 @@ describe("Supabase auth email templates (D330)", () => {
 
     it(`${kind}: keeps the Supabase link unescaped in button and fallback`, () => {
       const html = authTemplateHtml(kind);
-      // Two languages × (button + fallback text + fallback href).
-      expect(html.match(/\{\{ \.ConfirmationURL \}\}/g)).toHaveLength(6);
+      // Four languages × (button + fallback text + fallback href) (D350).
+      expect(html.match(/\{\{ \.ConfirmationURL \}\}/g)).toHaveLength(12);
       expect(html).toContain('src="{{ .SiteURL }}/email/logo.png"');
       expect(
         html.startsWith('{{ if eq (printf "%v" .Data.locale) "ru" }}'),

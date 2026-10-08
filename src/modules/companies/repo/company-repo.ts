@@ -173,6 +173,7 @@ export async function findCompaniesForUser(userId: string) {
       country: companies.country,
       size: companies.size,
       status: companies.status,
+      agentBriefsEnabled: companies.agentBriefsEnabled,
     })
     .from(companyMembers)
     .innerJoin(companies, eq(companyMembers.companyId, companies.id))
@@ -279,4 +280,20 @@ export async function removeMember(companyId: string, userId: string) {
       );
     return true;
   });
+}
+
+/** The agent flag of every company where this user is owner or admin (D352). */
+export async function setAgentBriefsForManagedCompanies(
+  userId: string,
+  enabled: boolean,
+): Promise<number> {
+  const rows = await getDb().execute<{ id: string }>(sql`
+    update public.companies c
+    set agent_briefs_enabled = ${enabled}, updated_at = now()
+    from public.company_members cm
+    where cm.company_id = c.id and cm.user_id = ${userId}
+      and cm.role in ('owner', 'admin')
+    returning c.id
+  `);
+  return rows.length;
 }

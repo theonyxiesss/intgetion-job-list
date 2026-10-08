@@ -266,3 +266,134 @@ Version of {{effectiveDate}}. Version id {{version}}.
 - Personal data: {{privacyEmail}}
 - Vulnerability reports: {{securityEmail}} — we do not pursue good-faith researchers who report a vulnerability, do not exploit it to cause harm and do not disclose it before a fix.
 - Postal address: {{address}}
+
+<!-- pt-BR -->
+
+# Termos de Uso do INTGETION JOB LIST
+
+Redação de {{effectiveDate}}. Identificador da versão {{version}}.
+
+## 1. Quem somos e o que é este acordo
+
+1.1. O INTGETION JOB LIST (o "Serviço") é o site https://intgetion.com, seus subdomínios, seu bot no Telegram e recursos relacionados que ajudam pessoas a encontrar trabalho remoto e empresas a encontrar pessoas.
+
+1.2. O Serviço é prestado por {{operator}}, {{address}} ("nós").
+
+1.3. Estes Termos são um contrato entre nós e você ("Usuário"). Ao se cadastrar, entrar com o Telegram ou usar de outra forma recursos para usuários cadastrados, você confirma que leu e aceita estes Termos e a [Política de Privacidade](/pt-BR/privacy). As páginas públicas podem ser vistas sem conta; as seções 6 e 9–12 se aplicam a esse uso.
+
+1.4. Se você aceitar em nome de uma empresa, confirma que tem autorização para isso, e os Termos vinculam a empresa.
+
+## 2. Quem pode usar
+
+2.1. Você deve ter pelo menos {{minAge}}. Empregadores devem ser pessoas ou organizações juridicamente capazes.
+
+2.2. Você não pode usar o Serviço se já tivermos banido sua conta antes ou se a lei aplicável a você o proibir.
+
+## 3. Conta
+
+3.1. Você pode entrar com e-mail (senha ou link de uso único) ou com o Telegram. Com o Telegram, recebemos do Telegram seu id numérico, nome e nome de usuário (se houver); não recebemos seu número de telefone. Você pode adicionar um e-mail e vincular o Telegram a uma mesma conta.
+
+3.2. Você é responsável por manter seguros o acesso ao seu e-mail, senha e Telegram e por tudo o que for feito a partir da sua conta. Se suspeitar que outra pessoa tem acesso, troque a senha, encerre as sessões e fale conosco (seção 15).
+
+3.3. Forneça informações verdadeiras. Uma pessoa, uma conta de candidato; empregadores agem em nome da empresa por meio do perfil da empresa.
+
+3.4. Você pode excluir sua conta a qualquer momento em Configurações → Privacidade. A Política de Privacidade explica os efeitos: o perfil é anonimizado, os contatos são excluídos e as candidaturas ficam com os empregadores sem os seus contatos.
+
+## 4. O que o Serviço faz
+
+4.1. **Catálogo de vagas**: vagas publicadas por empresas no Serviço e vagas de fontes públicas (seção 6).
+
+4.2. **Correspondência**: o Serviço compara o perfil de um candidato com as vagas (habilidades, fuso horário e sobreposição do horário de trabalho, formato de trabalho, expectativa salarial) e mostra uma pontuação de correspondência com explicação. A pontuação é uma dica automática, não uma promessa de entrevista ou de emprego.
+
+4.3. **Candidaturas e contato**: candidatos se candidatam; empregadores veem o perfil do candidato sem contatos; os contatos só são liberados com interesse mútuo.
+
+4.4. **Agente de carreira (IA)**: ajuda a buscar vagas e a preencher o perfil. As respostas vêm de um modelo de inteligência artificial e podem ser imprecisas; confira o que for importante. O agente nunca altera seu perfil nem se candidata sem a sua confirmação explícita. Não compartilhe com ele dados pessoais desnecessários: números de documentos, dados bancários, senhas.
+
+4.5. **Notificações**: no app, por e-mail e no Telegram — sobre candidaturas, correspondências, pesquisas salvas e empresas seguidas. Os canais e tipos são definidos em Configurações → Notificações; mensagens de serviço (login, segurança, alterações destes Termos) são sempre enviadas.
+
+4.6. **Para empregadores**: perfil da empresa, publicação de vagas após moderação, verificação da empresa (domínio de e-mail corporativo ou registro DNS), gestão de candidaturas, estatísticas de visualização das vagas (apenas totais anônimos).
+
+4.7. Atualmente o Serviço é gratuito. Recursos pagos (por exemplo, uma API para parceiros) serão anunciados com antecedência e regidos por termos próprios.
+
+## 5. Regras
+
+5.1. **Você não pode**:
+
+- publicar informações falsas, enganosas ou de terceiros sobre você ou uma empresa;
+- publicar vagas que não sejam trabalho real: "vagas" com pagamento antecipado, marketing multinível disfarçado de contratação, "treinamento" pago, esquemas de saque, entregas de mercadorias desconhecidas, coleta de documentos ou dados bancários, "laranjas" e similares;
+- pedir dinheiro aos candidatos, pagamento por treinamento ou equipamento, cópias de documentos antes de um contrato, dados de cartão ou acesso a carteiras;
+- discriminar por motivos proibidos pela lei aplicável;
+- enviar spam, publicidade sem relação com contratação ou mensagens não solicitadas;
+- coletar dados de outros usuários ou vagas do Serviço por meios automatizados (scraping, bots) fora da API oficial, ou contornar limites técnicos, incluindo o `robots.txt` e limites de requisições;
+- interferir no Serviço, procurar ou explorar vulnerabilidades (exceto relatos de boa-fé — seção 15), se passar por outra pessoa ou por nós;
+- usar contatos obtidos pelo Serviço para fins que não sejam de contratação;
+- violar direitos de terceiros ou a lei.
+
+5.2. **Você não pode publicar** conteúdo ilegal, que viole direitos de terceiros, contenha ameaças, ofensas, material sexual, software malicioso ou links para ele.
+
+## 6. Vagas de fontes públicas
+
+6.1. Algumas vagas vêm de feeds e sites públicos de vagas. Elas são identificadas com a fonte e trazem um link para ela para a candidatura.
+
+6.2. Não somos autores dessas vagas e não verificamos cada uma delas. Os direitos sobre os textos pertencem às fontes e aos empregadores; você não pode copiá-los nem redistribuí-los pelo Serviço.
+
+## 7. Moderação e verificação
+
+7.1. Vagas e empresas passam por verificações automáticas e manuais; uma vaga pode ser publicada mais tarde ou rejeitada com um motivo.
+
+7.2. Você pode denunciar uma vaga, empresa ou usuário pelo botão Denunciar. Analisamos as denúncias e podemos remover uma vaga ou suspender uma empresa ou conta.
+
+7.3. "Empresa verificada" e "Empregador confiável" significam que a empresa passou nas nossas verificações pelos critérios descritos no site; não são uma garantia sobre uma vaga específica. Sempre verifique o empregador por conta própria e nunca pague para conseguir um emprego.
+
+## 8. Nossos direitos em caso de violação
+
+8.1. Se você violar estes Termos ou a lei, ou houver suspeita razoável de fraude, podemos, sem aviso prévio, ocultar ou remover conteúdo, suspender uma conta por um período ou até a conclusão de uma análise, ou bani-la definitivamente e impedir novo cadastro.
+
+8.2. Informamos o motivo, a menos que isso atrapalhe uma investigação ou seja proibido por lei. Você pode recorrer falando conosco (seção 15); responderemos em até {{appealDays}} dias.
+
+## 9. Propriedade intelectual
+
+9.1. O Serviço, seu design, código, banco de dados, logotipos e textos pertencem a nós ou aos nossos licenciadores. Concedemos a você um direito não exclusivo e intransferível de usar o Serviço para a sua finalidade.
+
+9.2. Ao publicar conteúdo (perfil, descrição da empresa, vaga, logotipo), você mantém seus direitos e nos concede uma licença gratuita, não exclusiva e mundial para armazená-lo, processá-lo, mostrá-lo aos usuários, adaptá-lo ao formato do Serviço e exibi-lo em mecanismos de busca (páginas de vagas e de empresas) enquanto estiver publicado e por um prazo razoável após a exclusão, para cópias de segurança. Você confirma que tem os direitos sobre esse conteúdo.
+
+## 10. Responsabilidade
+
+10.1. O Serviço é fornecido "no estado em que se encontra". Trabalhamos para mantê-lo disponível e correto, mas não o garantimos; podem ocorrer manutenções planejadas e não planejadas.
+
+10.2. Somos uma plataforma, não parte da relação de trabalho. Não somos empregador, agência de recrutamento nem representante de nenhuma das partes; não garantimos que um candidato consiga um emprego ou que um empregador contrate; não respondemos pelo conteúdo de vagas e perfis, por acordos e ações entre usuários, nem por remuneração ou condições de trabalho.
+
+10.3. Pontuações de correspondência, dicas e respostas do agente de IA são automáticas e informativas; as decisões são suas.
+
+10.4. Na medida permitida pela lei aplicável, não respondemos por lucros cessantes ou danos indiretos. Nada nestes Termos limita uma responsabilidade que a lei não permite limitar nem direitos do consumidor que não podem ser renunciados por contrato.
+
+## 11. Dados pessoais e cookies
+
+11.1. A Política de Privacidade explica como coletamos, usamos e guardamos dados. Em resumo: não vendemos dados; um empregador só vê os contatos de um candidato com interesse mútuo; as estatísticas de visitas são coletadas sem terceiros e sem cookies, e o cookie de análise só é definido com o seu consentimento; o sinal Global Privacy Control é respeitado.
+
+11.2. Você pode alterar sua escolha de cookies em Configurações → Privacidade ou no banner; recusar é tão fácil quanto aceitar.
+
+## 12. Alterações
+
+12.1. Podemos alterar estes Termos. Anunciamos alterações relevantes com pelo menos 30 dias de antecedência por e-mail e no Serviço; a nova versão vale a partir da data indicada. Se não concordar, você pode excluir sua conta antes dessa data; continuar usando o Serviço depois dela significa que você aceita a nova versão.
+
+12.2. Podemos alterar, adicionar e remover recursos. Se uma alteração limitar de forma relevante o acesso a conteúdo que você já publicou, avisaremos com antecedência.
+
+## 13. Encerramento
+
+13.1. Você pode parar de usar o Serviço e excluir sua conta a qualquer momento.
+
+13.2. Podemos descontinuar o Serviço com aviso de pelo menos 30 dias e uma forma de exportar seus dados.
+
+## 14. Lei aplicável e disputas
+
+14.1. Estes Termos são regidos pela lei de {{lawCountry}}. Se você for consumidor em um país cuja lei lhe dê proteção maior, essa proteção continua valendo.
+
+14.2. Primeiro tentamos resolver disputas por correspondência (seção 15). Se não for possível, {{court}} decide, salvo disposição em contrário de lei imperativa.
+
+## 15. Contato
+
+- Dúvidas gerais e disputas: {{supportEmail}}
+- Dados pessoais: {{privacyEmail}}
+- Relatos de vulnerabilidades: {{securityEmail}} — não processamos pesquisadores de boa-fé que relatam uma vulnerabilidade, não a exploram para causar danos e não a divulgam antes de uma correção.
+- Endereço postal: {{address}}

@@ -72,6 +72,8 @@ export const briefRuns = pgTable(
       .defaultNow(),
     finishedAt: timestamp("finished_at", { withTimezone: true }),
     checked: integer("checked").notNull().default(0),
+    /** Employers among `checked` (D354). */
+    checkedEmployers: integer("checked_employers").notNull().default(0),
     sent: integer("sent").notNull().default(0),
     empty: integer("empty").notNull().default(0),
     failed: integer("failed").notNull().default(0),

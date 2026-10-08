@@ -26,7 +26,8 @@ export type AdminSectionKey =
   | "audit"
   | "metrics"
   | "team"
-  | "flags";
+  | "flags"
+  | "briefs";
 
 export type AdminCountKey = "moderation" | "reports" | "taxonomy";
 
@@ -113,6 +114,13 @@ export const adminSections: readonly AdminSectionDef[] = [
     labelKey: "navMetrics",
     icon: "chart-column",
     permission: "analytics.read",
+  },
+  {
+    key: "briefs",
+    href: "/admin/briefs",
+    labelKey: "navBriefs",
+    icon: "sliders",
+    permission: "jobs_scheduler.manage",
   },
   {
     key: "team",

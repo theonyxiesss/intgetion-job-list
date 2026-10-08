@@ -43,6 +43,12 @@ export async function renderJobFeed(
 }
 
 export function catalogFeedTitle(locale: string) {
-  const word = { ru: "вакансии", es: "empleos" }[locale] ?? "jobs";
+  const word =
+    (
+      { ru: "вакансии", es: "empleos", "pt-BR": "vagas" } as Record<
+        string,
+        string
+      >
+    )[locale] ?? "jobs";
   return `${PRODUCT_NAME}: ${word}`;
 }

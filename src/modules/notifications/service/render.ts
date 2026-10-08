@@ -88,7 +88,12 @@ export function renderEmail(input: {
   const copy = emailCopy(input.locale, input.type);
   if (!copy) return null;
   const subject = fillTemplate(copy.subject, input.values, input.locale);
-  const body = fillTemplate(copy.body, input.values, input.locale);
+  const filled = fillTemplate(copy.body, input.values, input.locale);
+  // Morning briefs open with the agent's line (D355), then the list.
+  const body =
+    typeof input.values.intro === "string" && input.values.intro
+      ? `${input.values.intro} ${filled}`
+      : filled;
   const link = unsubscribeLabel(input.locale);
   const origin = new URL(input.unsubscribeUrl).origin;
   const mail = messagesFor(input.locale).email;
@@ -109,11 +114,15 @@ export function renderEmail(input: {
       : [];
   if (cards.length > 0) {
     const title = mail.jobs.title;
-    const intro = fillTemplate(
-      mail.jobs.intro,
-      { count: input.values.count ?? cards.length },
-      input.locale,
-    );
+    // The agent's own line when the brief has one (D355).
+    const intro =
+      typeof input.values.intro === "string" && input.values.intro
+        ? input.values.intro
+        : fillTemplate(
+            mail.jobs.intro,
+            { count: input.values.count ?? cards.length },
+            input.locale,
+          );
     const allHref = `${origin}${localePrefix(input.locale)}${input.actionPath ?? "/matches"}`;
     const text = [
       title,
@@ -152,7 +161,9 @@ export function renderEmail(input: {
         ? messagesFor(input.locale).savedSearches.openSearch
         : input.type === "company.new_jobs"
           ? messagesFor(input.locale).follows.openCompany
-          : null;
+          : input.type === "company.candidates_digest"
+            ? messagesFor(input.locale).notifications.brief.openCandidates
+            : null;
   const action =
     actionLabel && input.actionPath
       ? {
@@ -199,6 +210,7 @@ export function templateValues(
     decision: String(payload.decision ?? ""),
     companyName: String(payload.companyName ?? ""),
     searchName: String(payload.searchName ?? ""),
+    intro: typeof payload.intro === "string" ? payload.intro : "",
     date: expires,
     count,
     jobs,
@@ -233,6 +245,14 @@ export function notificationPath(
       return typeof payload.query === "string" && payload.query
         ? `/jobs?${payload.query}`
         : "/saved-searches";
+    case "company.candidates_digest": {
+      const first = Array.isArray(payload.sampleCandidates)
+        ? (payload.sampleCandidates[0] as { jobId?: unknown } | undefined)
+        : undefined;
+      return typeof first?.jobId === "string"
+        ? `/employer/jobs/${encodeURIComponent(first.jobId)}`
+        : "/employer/jobs";
+    }
     case "company.new_jobs":
       return typeof payload.companySlug === "string"
         ? `/companies/${encodeURIComponent(payload.companySlug)}?tab=jobs`
@@ -260,8 +280,24 @@ export function telegramText(input: {
   if (!block.inapp) return null;
   const values = templateValues(input.payload);
   const title = fillTemplate(block.inapp.title, values, input.locale);
-  const body = fillTemplate(block.inapp.body, values, input.locale);
+  const filled = fillTemplate(block.inapp.body, values, input.locale);
+  // Morning briefs open with the agent's line (D355).
+  const body = values.intro ? `${values.intro}\n${filled}` : filled;
   const link = `${input.siteUrl}${localePrefix(input.locale)}${notificationPath(input.type, input.payload)}`;
+  if (input.type === "company.candidates_digest") {
+    const lines = candidateLines(input);
+    if (lines) {
+      const copy = messagesFor(input.locale).notifications.brief;
+      const root = `${input.siteUrl}${localePrefix(input.locale)}`;
+      return `${title}
+${body}
+
+${lines}
+
+${copy.turnOff}
+${root}/notifications`;
+    }
+  }
   const jobs = input.type === "matches.digest" ? digestJobLines(input) : null;
   if (!jobs) {
     return `${title}
@@ -305,6 +341,52 @@ function digestJobLines(input: {
     return [
       `${title} — ${company}`,
       `${input.siteUrl}${localePrefix(input.locale)}/jobs/${encodeURIComponent(id)}`,
+    ];
+  });
+  return lines.length > 0 ? lines.join("\n") : null;
+}
+
+/**
+ * Up to five anonymous cards (D352): "Role · N years — Job", skills and
+ * why it fits, then a link to the job in the employer's cabinet.
+ */
+function candidateLines(input: {
+  payload: Record<string, unknown>;
+  siteUrl: string;
+  locale: AppLocale;
+}): string | null {
+  const cards = input.payload.sampleCandidates;
+  if (!Array.isArray(cards)) return null;
+  const copy = messagesFor(input.locale).notifications.employerBrief;
+  const reasons = copy.reasons as Record<string, string>;
+  const lines = cards.slice(0, 5).flatMap((card) => {
+    if (!card || typeof card !== "object") return [];
+    const row = card as Record<string, unknown>;
+    const jobId = typeof row.jobId === "string" ? row.jobId : "";
+    const job = typeof row.jobTitle === "string" ? oneLine(row.jobTitle) : "";
+    if (!jobId || !job) return [];
+    const role =
+      typeof row.role === "string" && row.role
+        ? oneLine(row.role)
+        : copy.noRole;
+    const years =
+      typeof row.experienceYears === "number"
+        ? fillTemplate(copy.years, { count: row.experienceYears }, input.locale)
+        : null;
+    const skills = Array.isArray(row.skills)
+      ? row.skills.filter((skill) => typeof skill === "string").join(", ")
+      : "";
+    const why = Array.isArray(row.reasons)
+      ? row.reasons
+          .map((reason) => reasons[String(reason)])
+          .filter(Boolean)
+          .join(", ")
+      : "";
+    return [
+      `${[role, years].filter(Boolean).join(" · ")} — ${job}`,
+      ...(skills ? [skills] : []),
+      ...(why ? [`${copy.why}: ${why}`] : []),
+      `${input.siteUrl}${localePrefix(input.locale)}/employer/jobs/${encodeURIComponent(jobId)}`,
     ];
   });
   return lines.length > 0 ? lines.join("\n") : null;

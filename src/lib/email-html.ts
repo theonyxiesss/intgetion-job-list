@@ -54,7 +54,7 @@ export type EmailJobCard = {
 };
 
 export type EmailContent = {
-  lang: "en" | "ru" | "es";
+  lang: "en" | "ru" | "es" | "pt-BR";
   /** Site origin for the logo, e.g. https://intgetion.com (no slash). */
   origin: string;
   /** Hidden inbox preview line. */
@@ -280,7 +280,7 @@ function defaultOrigin(): string {
 export function siteEmailHtml(input: {
   body: string;
   title?: string;
-  lang?: "en" | "ru" | "es";
+  lang?: "en" | "ru" | "es" | "pt-BR";
   action?: EmailLink;
   fallbackLabel?: string;
   notes?: string[];

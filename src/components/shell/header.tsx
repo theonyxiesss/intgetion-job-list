@@ -55,6 +55,7 @@ export async function Header() {
         { href: "/jobs", label: t("nav.jobs") },
         { href: "/employer/jobs", label: t("nav.myJobs") },
         { href: "/employer/company", label: t("nav.company") },
+        { href: "/employer/billing", label: t("billing.nav") },
         { href: "/pricing", label: t("nav.pricing") },
       ]
     : [

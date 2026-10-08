@@ -132,14 +132,17 @@
     "short": {
       "en": "EN",
       "ru": "RU",
-      "es": "ES"
+      "es": "ES",
+      "pt-BR": "PT"
     },
     "native": {
       "en": "English",
       "ru": "Русский",
-      "es": "Español"
+      "es": "Español",
+      "pt-BR": "Português (Brasil)"
     },
-    "es": "Spanish"
+    "es": "Spanish",
+    "pt-BR": "Portuguese (Brazil)"
   },
   "home": {
     "tagline": "Remote work. Real matches.",
@@ -635,7 +638,48 @@
       "open": "Open",
       "confirmed": "Confirmed",
       "dismissed": "Dismissed"
-    }
+    },
+    "briefs": {
+      "title": "Morning briefs",
+      "intro": "Slots, pause, run now and the log of the agent's morning briefs.",
+      "pause": "Pause all briefs",
+      "pausedOn": "Paused: no brief goes out.",
+      "pausedOff": "Running on schedule.",
+      "slots": "Slots",
+      "nextRun": "Next run: {utc} UTC · {local} local",
+      "subscriptions": "With the agent on: {agent} · Telegram: {telegram} · email: {email}",
+      "timezone": "Time zone (IANA)",
+      "time": "Time",
+      "enabled": "On",
+      "save": "Save",
+      "runDry": "Dry run",
+      "runLive": "Live run",
+      "confirmLive": "Send the briefs for this slot now? This cannot be undone.",
+      "alreadyRan": "This slot day already had a live run. Nothing was sent again.",
+      "failed": "Could not run. Try again.",
+      "invalid": "Check the time zone and time.",
+      "runResult": "Sent: {sent} · empty: {empty} · errors: {failed}",
+      "log": "Runs, last 30 days",
+      "logEmpty": "No runs yet.",
+      "colSlot": "Slot",
+      "colDate": "Date",
+      "colStarted": "Started",
+      "colFinished": "Finished",
+      "colCandidates": "Candidates",
+      "colEmployers": "Employers",
+      "colSent": "Sent",
+      "colEmpty": "Empty",
+      "colFailed": "Errors",
+      "colMode": "Mode",
+      "modeDry": "dry",
+      "modeLive": "live",
+      "slot": {
+        "americas": "Americas",
+        "europe": "Europe",
+        "cis": "CIS"
+      }
+    },
+    "navBriefs": "Briefs"
   },
   "employerJobs": {
     "title": "Your jobs",
@@ -738,6 +782,14 @@
       "status": "Status",
       "empty": "No views yet. Share the link to the job to get the first visitors.",
       "followers": "Following the company"
+    },
+    "candidates": {
+      "title": "Matching candidates",
+      "text": "Anonymous cards: no name or contacts until there is mutual interest.",
+      "empty": "No matching candidates yet.",
+      "why": "Why",
+      "noRole": "Candidate",
+      "years": "{count, plural, one {# year} other {# years}}"
     }
   },
   "matches": {
@@ -948,6 +1000,16 @@
           "subject": "New jobs at {companyName}",
           "body": "{companyName} published {count, plural, one {# new job} other {# new jobs}}: {jobs}."
         }
+      },
+      "companyCandidatesDigest": {
+        "inapp": {
+          "title": "New matching candidates",
+          "body": "{count, plural, one {# new candidate fits your jobs} other {# new candidates fit your jobs}}."
+        },
+        "email": {
+          "subject": "Candidates for your jobs",
+          "body": "{count, plural, one {# new candidate fits your jobs} other {# new candidates fit your jobs}}: {jobs}."
+        }
       }
     },
     "bot": {
@@ -955,14 +1017,18 @@
       "text": "New jobs always collect here on the site. Turn this on to also get them as messages from our bot.",
       "link": "Link Telegram in account settings",
       "saved": "Saved.",
-      "error": "Could not save. Try again."
+      "error": "Could not save. Try again.",
+      "titleEmployer": "New candidates and jobs in the Telegram bot",
+      "textEmployer": "Candidates and jobs always collect here on the site. Turn on to also get them as messages from our bot."
     },
     "emailAlerts": {
       "title": "New jobs by email",
       "text": "The same new jobs, sent to your email.",
       "link": "Add an email",
       "saved": "Saved.",
-      "error": "Could not save. Try again."
+      "error": "Could not save. Try again.",
+      "titleEmployer": "New candidates and jobs by email",
+      "textEmployer": "The same candidates and jobs, by email."
     },
     "agentBriefs": {
       "title": "The agent picks jobs for me",
@@ -973,7 +1039,33 @@
     },
     "brief": {
       "allMatches": "All matches",
-      "turnOff": "Turn off"
+      "turnOff": "Turn off",
+      "openCandidates": "Open the job"
+    },
+    "employerBrief": {
+      "chatEvent": "Morning brief is ready: {count} new candidates fit your jobs. They are on the job pages in your employer cabinet.",
+      "years": "{count, plural, one {# year} other {# years}}",
+      "noRole": "Candidate",
+      "why": "Why",
+      "reasons": {
+        "skills": "skills",
+        "role": "role",
+        "salary": "salary",
+        "tzOverlap": "working hours",
+        "experience": "experience",
+        "languages": "languages"
+      }
+    },
+    "companyAgent": {
+      "title": "Agent finds candidates",
+      "text": "In the morning the agent sends candidates who fit the company's live jobs. Turns on for the whole company.",
+      "saved": "Saved.",
+      "error": "Could not save. Try again.",
+      "off": "The agent is off, so these switches send nothing."
+    },
+    "briefIntro": {
+      "candidate": "Good morning! Today I found {count, plural, one {# job that fits you} other {# jobs that fit you}}.",
+      "employer": "Good morning! Today I found {count, plural, one {# candidate who fits your jobs} other {# candidates who fit your jobs}}."
     }
   },
   "notificationSettings": {
@@ -1925,6 +2017,38 @@
         "hybrid": "Hybrid",
         "onsite": "On-site"
       }
+    }
+  },
+  "billing": {
+    "nav": "Billing",
+    "title": "Payment and plan",
+    "start": "Your plan: Start",
+    "hire": "Your plan: Hire",
+    "hireUntil": "Hire is on for this job until {date}.",
+    "startHint": "Start is free. Hire is $79 for one published job, paid in USDT or USDC.",
+    "pay": "Pay with USDT or USDC",
+    "status": {
+      "awaiting_payment": "Waiting for the transfer",
+      "checking": "Checking the transfer",
+      "paid": "Paid. Hire is on.",
+      "underpaid": "The transfer was short. Hire is not on.",
+      "expired": "This order expired. Hire is not on.",
+      "failed": "The transfer was not accepted. Hire is not on.",
+      "frozen": "The payment is being reviewed."
+    },
+    "checkWallet": "Check this address in your wallet before you approve.",
+    "connect": "Connect wallet",
+    "interestTitle": "USDT and USDC are not on yet",
+    "interestBody": "Leave an email and we will tell you when you can pay. Nothing is charged.",
+    "interestEmail": "Email",
+    "interestSend": "Tell me when I can pay",
+    "interestDone": "Saved. We will write when payments are on.",
+    "token": "Token",
+    "usdc": "USDC",
+    "usdt": "USDT",
+    "mail": {
+      "subject": "Hire is on",
+      "body": "Hire is on for your job. Open it: {url}"
     }
   },
   "postJob": {
