@@ -3,6 +3,7 @@ import { logger } from "@/lib/logger";
 import { siteUrl } from "@/lib/supabase/env";
 import {
   sendTelegramChatAction,
+  sendTelegramLinks,
   sendTelegramMessage,
   userIdForTelegramId,
 } from "@/modules/auth/service";
@@ -12,6 +13,7 @@ import {
   type BotEvent,
 } from "./conversation";
 import { localePrefix } from "@/i18n/paths";
+import { isOfferAction, offerPath, type OfferAction } from "./offers";
 
 /** One Telegram message is 4096 characters; leave room for the job list. */
 const TELEGRAM_TEXT_LIMIT = 3500;
@@ -38,8 +40,9 @@ const copy = {
     help:
       "Ask in plain words: «remote solidity jobs», «part-time design in Europe». " +
       "Sign in on {site} to save jobs and apply. /reset starts a new conversation.",
-    signIn:
-      "To save a job or apply, sign in: {site}/en/login — then come back here.",
+    signIn: "To save a job or apply, sign in, then come back here.",
+    signInButton: "Sign in",
+    openJob: "Open",
     more: "More in the catalogue: {site}/en/jobs",
   },
   ru: {
@@ -52,8 +55,9 @@ const copy = {
     help:
       "Пишите словами: «удалённая работа solidity», «дизайн на part-time в Европе». " +
       "Войдите на {site}, чтобы сохранять вакансии и откликаться. /reset — начать заново.",
-    signIn:
-      "Чтобы сохранить вакансию или откликнуться, войдите: {site}/ru/login — и возвращайтесь сюда.",
+    signIn: "Чтобы сохранить вакансию или откликнуться, войдите и возвращайтесь сюда.",
+    signInButton: "Войти",
+    openJob: "Открыть",
     more: "Ещё в каталоге: {site}/ru/jobs",
   },
   "pt-BR": {
@@ -71,12 +75,55 @@ const copy = {
       "Pergunte com suas palavras: «vagas remotas de solidity», «design em meio período na Europa». " +
       "Entre em {site} para salvar vagas e se candidatar. /reset começa uma nova conversa.",
     signIn:
-      "Para salvar uma vaga ou se candidatar, entre: {site}/pt-BR/login — e depois volte aqui.",
+      "Para salvar uma vaga ou se candidatar, entre e depois volte aqui.",
+    signInButton: "Entrar",
+    openJob: "Abrir",
     more: "Mais no catálogo: {site}/pt-BR/jobs",
   },
 } as const;
 
 type Lines = { readonly [K in keyof (typeof copy)["en"]]: string };
+
+const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
+  en: {
+    pay_hire: "Pay for Hire",
+    pay_team: "Pay for Team",
+    pay_plus: "Pay for Plus",
+    pay_pro: "Pay for Pro",
+    pricing: "See plans",
+    register: "Create account",
+    post_job: "Post a job",
+  },
+  ru: {
+    pay_hire: "Оплатить «Найм»",
+    pay_team: "Оплатить «Команду»",
+    pay_plus: "Оплатить Plus",
+    pay_pro: "Оплатить Pro",
+    pricing: "Открыть тарифы",
+    register: "Создать аккаунт",
+    post_job: "Разместить вакансию",
+  },
+  "pt-BR": {
+    pay_hire: "Pagar Hire",
+    pay_team: "Pagar Team",
+    pay_plus: "Pagar Plus",
+    pay_pro: "Pagar Pro",
+    pricing: "Ver planos",
+    register: "Criar conta",
+    post_job: "Publicar uma vaga",
+  },
+};
+
+type LinkButton = { label: string; url: string };
+type Part = { text: string; links: LinkButton[] };
+
+function buttonsFor(locale: string): Record<OfferAction, string> {
+  return OFFER_BUTTON[locale] ?? OFFER_BUTTON.en;
+}
+
+function pageUrl(locale: string, path: string): string {
+  return `${siteUrl()}${localePrefix(locale)}${path}`;
+}
 
 function linesFor(languageCode: string | undefined): {
   lines: Lines;
@@ -113,9 +160,14 @@ function resetSessionToken(chatId: number, now: Date): string {
 
 const resets = new Map<number, string>();
 
-/** Collects the turn's events into the text and the cards Telegram can show. */
-function render(events: BotEvent[], lines: Lines, locale: string): string[] {
-  const out: string[] = [];
+/** Collects the turn's events into text and the buttons Telegram can show. */
+function render(
+  events: BotEvent[],
+  lines: Lines,
+  locale: string,
+  signedIn: boolean,
+): Part[] {
+  const out: Part[] = [];
   let answer = "";
   for (const event of events) {
     if (
@@ -127,7 +179,8 @@ function render(events: BotEvent[], lines: Lines, locale: string): string[] {
       answer += event.text;
     }
   }
-  if (answer.trim()) out.push(answer.trim().slice(0, TELEGRAM_TEXT_LIMIT));
+  const said = answer.trim().slice(0, TELEGRAM_TEXT_LIMIT);
+  if (said) out.push({ text: said, links: [] });
 
   for (const event of events) {
     if (event.type !== "tool_result") continue;
@@ -138,22 +191,47 @@ function render(events: BotEvent[], lines: Lines, locale: string): string[] {
         title: string;
         companyName: string;
       }>) ?? [];
-    const list = jobs.slice(0, MAX_JOBS_IN_REPLY).map((job) => {
-      return `• ${job.title} — ${job.companyName}\n${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`;
+    const shown = jobs.slice(0, MAX_JOBS_IN_REPLY);
+    const links = shown.map((job) => ({
+      label: job.title.trim().slice(0, 64) || lines.openJob,
+      url: pageUrl(locale, `/jobs/${job.id}`),
+    }));
+    const list = shown.map((job) => `• ${job.title} — ${job.companyName}`);
+    if (list.length) out.push({ text: list.join("\n"), links });
+  }
+
+  const labels = buttonsFor(locale);
+  for (const event of events) {
+    if (event.type !== "tool_result" || event.kind !== "offer") continue;
+    const action = (event.data as { action?: unknown } | null)?.action;
+    if (!isOfferAction(action)) continue;
+    const path = offerPath(action, signedIn);
+    if (!path) continue;
+    const label = labels[action];
+    out.push({
+      text: label,
+      links: [{ label, url: pageUrl(locale, path) }],
     });
-    if (list.length) out.push(list.join("\n\n"));
   }
 
   for (const event of events) {
     if (event.type === "confirm_request") {
-      // A write needs an account and a confirmation the chat cannot show.
-      out.push(fill(lines.signIn));
+      // A write needs an account and a confirmation this chat cannot press.
+      out.push({
+        text: fill(lines.signIn),
+        links: [
+          {
+            label: lines.signInButton,
+            url: pageUrl(locale, "/login?next=chat"),
+          },
+        ],
+      });
       break;
     }
     if (event.type === "error") {
       const code = event.code;
-      out.push(
-        fill(
+      out.push({
+        text: fill(
           code === "BOT_UNAVAILABLE"
             ? lines.unavailable
             : code === "BOT_BUDGET_EXCEEDED"
@@ -162,11 +240,12 @@ function render(events: BotEvent[], lines: Lines, locale: string): string[] {
                 ? lines.rateLimited
                 : lines.tryLater,
         ),
-      );
+        links: [],
+      });
       break;
     }
   }
-  return out.length ? out : [fill(lines.empty)];
+  return out.length ? out : [{ text: fill(lines.empty), links: [] }];
 }
 
 /**
@@ -233,7 +312,11 @@ export async function handleTelegramAgentUpdate(
     return;
   }
 
-  for (const part of render(events, lines, locale)) {
-    await sendTelegramMessage(token, chatId, part);
+  for (const part of render(events, lines, locale, userId !== null)) {
+    if (part.links.length) {
+      await sendTelegramLinks(token, chatId, part.text, part.links);
+    } else {
+      await sendTelegramMessage(token, chatId, part.text);
+    }
   }
 }

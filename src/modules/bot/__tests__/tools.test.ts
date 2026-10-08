@@ -8,6 +8,7 @@ import {
   toolsFor,
   type ToolContext,
 } from "../service";
+import { offerPath } from "../service/offers";
 
 const jobId = "00000000-0000-4000-8000-000000000001";
 const guest: ToolContext = {
@@ -21,7 +22,12 @@ const user: ToolContext = { ...guest, userId: "user-1" };
 describe("bot tool layer (7A)", () => {
   it("P11: a guest is never offered user tools", () => {
     const names = toolsFor(null).map((tool) => tool.name);
-    expect(names).toEqual(["search_jobs", "get_job", "propose_profile_update"]);
+    expect(names).toEqual([
+      "search_jobs",
+      "get_job",
+      "offer_step",
+      "propose_profile_update",
+    ]);
     expect(toolsFor("user-1").map((tool) => tool.name)).toEqual(
       expect.arrayContaining([
         "apply_to_job",
@@ -154,6 +160,28 @@ describe("bot history (7A)", () => {
       },
       { role: "user", content: "[event] The user confirmed apply_to_job." },
     ]);
+  });
+
+  it("D359: a pay card is a site path, and a guest is sent to sign in", async () => {
+    const guestCard = await runTool(guest, "offer_step", { action: "pay_plus" });
+    expect(guestCard.client).toEqual({
+      kind: "offer",
+      data: { action: "pay_plus" },
+    });
+    expect(guestCard.llm).not.toContain("http");
+    expect(offerPath("pay_plus", false)).toBe("/login?next=billing-plus");
+    expect(offerPath("pay_team", true)).toBe("/billing/crypto?plan=team");
+    expect(offerPath("register", true)).toBeNull();
+    const signedIn = await runTool(user, "offer_step", { action: "pay_team" });
+    expect(signedIn.client).toEqual({
+      kind: "offer",
+      data: { action: "pay_team" },
+    });
+    const account = await runTool(user, "offer_step", { action: "register" });
+    expect(account.client).toBeUndefined();
+    await expect(
+      runTool(guest, "offer_step", { action: "https://evil.test" }),
+    ).rejects.toMatchObject({ status: 400 });
   });
 
   it("starts the context at a user turn", () => {

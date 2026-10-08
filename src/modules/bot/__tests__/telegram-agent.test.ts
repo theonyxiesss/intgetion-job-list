@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { BotEvent } from "../service/conversation";
 
-const sent: Array<{ chatId: number; text: string }> = [];
+const sent: Array<{
+  chatId: number;
+  text: string;
+  links?: { label: string; url: string }[];
+}> = [];
 const actions: string[] = [];
 let linkedUserId: string | null = null;
 let turn: (emit: (event: BotEvent) => void) => void | Promise<void> = () => {};
@@ -10,6 +14,15 @@ let lastInput: Record<string, unknown> | null = null;
 vi.mock("@/modules/auth/service", () => ({
   sendTelegramMessage: (_token: string, chatId: number, text: string) => {
     sent.push({ chatId, text });
+    return Promise.resolve();
+  },
+  sendTelegramLinks: (
+    _token: string,
+    chatId: number,
+    text: string,
+    links: { label: string; url: string }[],
+  ) => {
+    sent.push({ chatId, text, links });
     return Promise.resolve();
   },
   sendTelegramChatAction: (_t: string, _c: number, action: string) => {
@@ -82,7 +95,13 @@ describe("the agent inside the Telegram bot (D311)", () => {
     await handleTelegramAgentUpdate("token", update("solidity"));
     expect(sent).toHaveLength(2);
     expect(sent[1].text).toContain("Solidity Engineer — Acme");
-    expect(sent[1].text).toContain("https://example.test/jobs/job-1");
+    expect(sent[1].text).not.toContain("http");
+    expect(sent[1].links).toEqual([
+      {
+        label: "Solidity Engineer",
+        url: "https://example.test/jobs/job-1",
+      },
+    ]);
   });
 
   it("answers in Russian when Telegram says the person speaks it", async () => {
@@ -109,6 +128,25 @@ describe("the agent inside the Telegram bot (D311)", () => {
     expect(lastInput).toMatchObject({ locale: "en" });
   });
 
+  it("sends a pay step as a sign-in link when the chat is not linked", async () => {
+    turn = (emit) => {
+      emit({ type: "token", text: "Plus is a 30-day payment." });
+      emit({
+        type: "tool_result",
+        name: "offer_step",
+        kind: "offer",
+        data: { action: "pay_plus" },
+      });
+    };
+    await handleTelegramAgentUpdate("token", update("how do I pay for plus"));
+    expect(sent[1].links).toEqual([
+      {
+        label: "Pay for Plus",
+        url: "https://example.test/login?next=billing-plus",
+      },
+    ]);
+  });
+
   it("points a write action at the site instead of guessing consent", async () => {
     turn = (emit) =>
       emit({
@@ -117,7 +155,7 @@ describe("the agent inside the Telegram bot (D311)", () => {
         tool: "apply_to_job",
       } as BotEvent);
     await handleTelegramAgentUpdate("token", update("apply to the first one"));
-    expect(sent[0].text).toContain("/login");
+    expect(sent[0].links?.[0]?.url).toBe("https://example.test/login?next=chat");
   });
 
   it("keeps one thread per chat and starts a new one on /reset", async () => {

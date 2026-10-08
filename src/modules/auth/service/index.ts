@@ -46,7 +46,11 @@ export { handleSendEmailHook } from "./send-email-hook";
 export { createSessionHandoff } from "./handoff";
 export { beginEmailWait, claimEmailWait, readyEmailWait } from "./email-wait";
 export { canReceiveMail, mailChannelAvailable } from "./mail-ready";
-export { sendTelegramChatAction, sendTelegramMessage } from "./telegram-bot";
+export {
+  sendTelegramChatAction,
+  sendTelegramLinks,
+  sendTelegramMessage,
+} from "./telegram-bot";
 export {
   telegramAuthUrl,
   telegramBotId,

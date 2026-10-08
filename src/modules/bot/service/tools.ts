@@ -32,6 +32,7 @@ import {
 } from "@/modules/matching/service";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import { searchFiltersFromDraft } from "./memory";
+import { OFFER_ACTIONS, offerPath } from "./offers";
 
 /**
  * Tool layer of 12.3 (D173): the only way from the model to data. Every
@@ -174,6 +175,24 @@ export const TOOLS: readonly BotTool[] = [
           wrapUntrusted(`job:${job.id}`, job.description),
         ].join("\n"),
         client: { kind: "jobs", data: [jobCard(job)] },
+      };
+    },
+  }),
+  tool({
+    name: "offer_step",
+    description:
+      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, or post_job. Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet.",
+    input: z.object({ action: z.enum(OFFER_ACTIONS) }).strict(),
+    access: "guest",
+    confirm: never,
+    async run(ctx, input) {
+      const href = offerPath(input.action, ctx.userId !== null);
+      if (!href) {
+        return { llm: "That step is not available for this person." };
+      }
+      return {
+        llm: `A card is on screen for ${input.action}. Do not repeat the address.`,
+        client: { kind: "offer", data: { action: input.action } },
       };
     },
   }),

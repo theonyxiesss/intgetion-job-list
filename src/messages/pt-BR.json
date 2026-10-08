@@ -1410,7 +1410,44 @@
     "createAccount": "Criar conta",
     "fillSelf": "Preencher eu mesmo",
     "fillSpoki": "Deixar o Spoki preencher",
-    "reviewProfile": "Revisar perfil"
+    "reviewProfile": "Revisar perfil",
+    "offer": {
+      "pay_hire": {
+        "title": "Hire",
+        "text": "Uma vaga publicada, paga em USDT ou USDC.",
+        "action": "Pagar Hire"
+      },
+      "pay_team": {
+        "title": "Team",
+        "text": "30 dias pelo preço mensal. Não renova sozinho.",
+        "action": "Pagar Team"
+      },
+      "pay_plus": {
+        "title": "Plus",
+        "text": "30 dias pelo preço mensal. Não renova sozinho.",
+        "action": "Pagar Plus"
+      },
+      "pay_pro": {
+        "title": "Pro",
+        "text": "30 dias pelo preço mensal. Não renova sozinho.",
+        "action": "Pagar Pro"
+      },
+      "pricing": {
+        "title": "Planos",
+        "text": "Start continua grátis. Os planos pagos são um pagamento de 30 dias.",
+        "action": "Ver planos"
+      },
+      "register": {
+        "title": "Conta",
+        "text": "Salvar vagas e se candidatar pede uma conta.",
+        "action": "Criar conta"
+      },
+      "post_job": {
+        "title": "Publicar",
+        "text": "Publicar continua grátis no Start.",
+        "action": "Publicar uma vaga"
+      }
+    }
   },
   "cookies": {
     "label": "Escolha de cookies",

@@ -8,7 +8,9 @@ import { controlClass } from "@/components/ui/field";
 import { Alert } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
 import { TELEGRAM_BOT_URL } from "@/config/telegram";
+import { localePath } from "@/i18n/paths";
 import { Link, useRouter } from "@/i18n/navigation";
+import { isOfferAction, offerPath, type OfferAction } from "@/modules/bot/service/offers";
 
 type ExplainLine = {
   detail: { key: string; params: Record<string, string | number> };
@@ -26,6 +28,7 @@ type JobCard = {
 type Entry =
   | { key: string; kind: "user" | "assistant" | "event"; text: string }
   | { key: string; kind: "jobs" | "matches"; jobs: JobCard[] }
+  | { key: string; kind: "offer"; action: OfferAction }
   | { key: string; kind: "notice"; code: string }
   | {
       key: string;
@@ -205,6 +208,12 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
             kind: data.kind,
             jobs: data.data as JobCard[],
           });
+        } else if (data.type === "tool_result" && data.kind === "offer") {
+          const action = (data.data as { action?: unknown } | null)?.action;
+          if (isOfferAction(action) && offerPath(action, signedIn)) {
+            setThinking(false);
+            add({ key: nextKey(), kind: "offer", action });
+          }
         } else if (data.type === "confirm_request") {
           setThinking(false);
           add({
@@ -405,6 +414,29 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
                   </li>
                 ))}
               </ul>
+            );
+          }
+          if (entry.kind === "offer") {
+            const path = offerPath(entry.action, signedIn);
+            if (!path) return null;
+            return (
+              <div
+                key={entry.key}
+                className="flex max-w-md flex-col items-start gap-3 border border-line bg-surface-2 px-4 py-3"
+              >
+                <div>
+                  <p className="font-medium">{t(`offer.${entry.action}.title`)}</p>
+                  <p className="t-body-s text-fg-muted">
+                    {t(`offer.${entry.action}.text`)}
+                  </p>
+                </div>
+                <a
+                  href={localePath(locale, path)}
+                  className="inline-flex min-h-11 items-center bg-fg px-4 text-bg"
+                >
+                  {t(`offer.${entry.action}.action`)}
+                </a>
+              </div>
             );
           }
           if (entry.kind === "notice") {

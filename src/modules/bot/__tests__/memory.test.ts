@@ -89,6 +89,9 @@ describe("Spoki memory", () => {
     expect(prompt).toContain("about: role");
     expect(prompt).not.toContain("about: country");
     expect(prompt).toContain("Never promise employment");
+    expect(prompt).toContain("ROUTES");
+    expect(prompt).toContain("post_job");
+    expect(prompt).not.toContain("only when they ask");
   });
 
   it("does not filter remote search by the country of residence", () => {

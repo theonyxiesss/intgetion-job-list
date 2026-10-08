@@ -59,6 +59,26 @@ export function ensureTelegramWebhook(token: string): Promise<void> {
   return webhookCache;
 }
 
+/** A button that opens one page on our site. Telegram does not call us back. */
+export async function sendTelegramLinks(
+  token: string,
+  chatId: number,
+  text: string,
+  links: { label: string; url: string }[],
+): Promise<void> {
+  const rows = links
+    .filter((link) => link.url.startsWith("https://") && link.label.trim())
+    .slice(0, 8)
+    .map((link) => [{ text: link.label.slice(0, 64), url: link.url }]);
+  await telegramApi(token, "sendMessage", {
+    chat_id: chatId,
+    text,
+    ...(rows.length
+      ? { reply_markup: { inline_keyboard: rows } }
+      : {}),
+  });
+}
+
 export async function sendTelegramMessage(
   token: string,
   chatId: number,

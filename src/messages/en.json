@@ -1410,7 +1410,44 @@
     "createAccount": "Create account",
     "fillSelf": "Fill it in myself",
     "fillSpoki": "Let Spoki fill it in",
-    "reviewProfile": "Review profile"
+    "reviewProfile": "Review profile",
+    "offer": {
+      "pay_hire": {
+        "title": "Hire",
+        "text": "One published job, paid in USDT or USDC.",
+        "action": "Pay for Hire"
+      },
+      "pay_team": {
+        "title": "Team",
+        "text": "30 days at the monthly price. It does not renew.",
+        "action": "Pay for Team"
+      },
+      "pay_plus": {
+        "title": "Plus",
+        "text": "30 days at the monthly price. It does not renew.",
+        "action": "Pay for Plus"
+      },
+      "pay_pro": {
+        "title": "Pro",
+        "text": "30 days at the monthly price. It does not renew.",
+        "action": "Pay for Pro"
+      },
+      "pricing": {
+        "title": "Plans",
+        "text": "Start stays free. The paid plans are one payment for 30 days.",
+        "action": "See plans"
+      },
+      "register": {
+        "title": "Account",
+        "text": "Saving jobs and applying need an account.",
+        "action": "Create account"
+      },
+      "post_job": {
+        "title": "Post a job",
+        "text": "Posting stays free on Start.",
+        "action": "Post a job"
+      }
+    }
   },
   "cookies": {
     "label": "Cookie choice",
