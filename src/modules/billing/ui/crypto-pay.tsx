@@ -7,7 +7,7 @@ import { Button } from "@/components/ui";
 type Order = {
   id: string;
   status: string;
-  plan: "start" | "hire";
+  plan: "start" | "hire" | "team" | "plus" | "pro";
   chainId: number;
   token: string;
   tokenContract: string;
@@ -40,7 +40,7 @@ async function connectWallet(projectId: string): Promise<Wallet> {
       showQrModal: true,
       metadata: {
         name: "INTGETION JOB LIST",
-        description: "Pay for Hire",
+        description: "Pay for a plan",
         url: window.location.origin,
         icons: [`${window.location.origin}/icon.png`],
       },
@@ -55,10 +55,14 @@ async function connectWallet(projectId: string): Promise<Wallet> {
 }
 
 export function CryptoPay({
+  plan,
   jobId,
+  companyId,
   projectId,
 }: {
-  jobId: string;
+  plan: "hire" | "team" | "plus" | "pro";
+  jobId?: string;
+  companyId?: string;
   projectId: string;
 }) {
   const t = useTranslations("billing");
@@ -101,7 +105,12 @@ export function CryptoPay({
       const created = await fetch("/api/billing/crypto/order", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ jobId, token }),
+        body: JSON.stringify({
+          plan,
+          token,
+          ...(jobId ? { jobId } : {}),
+          ...(companyId ? { companyId } : {}),
+        }),
       });
       if (!created.ok) throw new Error("order");
       const next = (await created.json()) as Order;

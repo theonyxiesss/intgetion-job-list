@@ -1,7 +1,6 @@
 /**
- * Price list shown on /pricing (docs/PRICING.md, section 1A). Display only:
- * nothing is sold yet, so no code reads these to grant anything. When billing
- * lands, prices move to the `plans` table and this file goes away.
+ * Price list shown on /pricing (docs/PRICING.md, section 1A).
+ * The charge is the same dollars in `plans.price_minor` (D358).
  */
 export type PricingAudience = "companies" | "candidates";
 
@@ -77,9 +76,13 @@ export const ALWAYS_FREE = [
 ] as const;
 
 /** Where the free card goes. Posting continues to the job form (D347). */
-/** Hire is the only plan that takes money (D357). Other paid cards stay closed. */
-export function hirePlanHref(paymentsOn: boolean): string | null {
-  return paymentsOn ? "/billing/crypto" : null;
+/** Paid cards open crypto checkout. Start and Free stay free (D358). */
+export function planPayHref(paymentsOn: boolean, code: string): string | null {
+  if (!paymentsOn) return null;
+  if (code === "hire" || code === "team" || code === "plus" || code === "pro") {
+    return `/billing/crypto?plan=${code}`;
+  }
+  return null;
 }
 
 export function freePlanHref(

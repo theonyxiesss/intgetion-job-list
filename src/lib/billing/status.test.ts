@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { clientStatus, settlement } from "./status";
+import { PRICING } from "@/config/pricing";
+import { clientStatus, SALE_PLANS, salePlan, settlement } from "./status";
 
 const now = new Date("2026-10-08T12:00:00Z");
 const later = new Date("2026-10-08T12:30:00Z");
@@ -49,6 +50,27 @@ describe("clientStatus", () => {
         now,
       }),
     ).toBe("expired");
+  });
+});
+
+describe("sale plans", () => {
+  it("charges the monthly card price, not a yearly total", () => {
+    const dollars = (audience: "companies" | "candidates", code: string) =>
+      PRICING[audience].find((tier) => tier.code === code)?.price ?? null;
+    expect(SALE_PLANS.hire.priceMinor).toBe(
+      BigInt((dollars("companies", "hire") ?? 0) * 100),
+    );
+    expect(SALE_PLANS.team.priceMinor).toBe(
+      BigInt((dollars("companies", "team") ?? 0) * 100),
+    );
+    expect(SALE_PLANS.plus.priceMinor).toBe(
+      BigInt((dollars("candidates", "plus") ?? 0) * 100),
+    );
+    expect(SALE_PLANS.pro.priceMinor).toBe(
+      BigInt((dollars("candidates", "pro") ?? 0) * 100),
+    );
+    expect(salePlan("start")).toBeNull();
+    expect(salePlan("team")?.code).toBe("company_team");
   });
 });
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { freePlanHref, hirePlanHref } from "./pricing";
+import { freePlanHref, planPayHref } from "./pricing";
 
 describe("free plan link", () => {
   it("sends a poster to the job form", () => {
@@ -12,9 +12,13 @@ describe("free plan link", () => {
   });
 });
 
-describe("hire plan link", () => {
-  it("opens payment only when crypto payments are on", () => {
-    expect(hirePlanHref(true)).toBe("/billing/crypto");
-    expect(hirePlanHref(false)).toBeNull();
+describe("paid plan links", () => {
+  it("opens payment for Hire, Team, Plus and Pro when crypto is on", () => {
+    expect(planPayHref(true, "hire")).toBe("/billing/crypto?plan=hire");
+    expect(planPayHref(true, "team")).toBe("/billing/crypto?plan=team");
+    expect(planPayHref(true, "plus")).toBe("/billing/crypto?plan=plus");
+    expect(planPayHref(true, "pro")).toBe("/billing/crypto?plan=pro");
+    expect(planPayHref(true, "start")).toBeNull();
+    expect(planPayHref(false, "team")).toBeNull();
   });
 });

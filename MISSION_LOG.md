@@ -1,5 +1,17 @@
 # MISSION_LOG
 
+## [2026-10-08] — кнопки «Команда», Plus и Pro (D358) — DONE
+
+- Сделано: «Старт» бесплатный. «Команда» ($199), Plus ($5) и Pro ($15) открывают оплату и включают тариф на 30 дней после проверки перевода. Годовая цена не списывается, автопродления нет. Сумма берётся из `plans` и должна совпасть с карточкой.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 806 прошло, 1 пропущен. `pnpm db:migrate` → applied `0039_billing_plans.sql`. Первый прогон миграции упал на RLS (`plans` с FORCE); вставка идёт при снятом force и force возвращается.
+- P-тесты подфазы: живой перевод с кошелька не проводился. Лимиты и инструменты этих карточек платежом не включаются.
+- Миграции: `0039_billing_plans.sql` на облаке.
+- Изменённые файлы: оплата, тарифы, вход с возвратом на план, сообщения, документы.
+- Отклонения от ТЗ: подписка в PAYMENTS.md — это один платёж на 30 дней, не автосписание.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по команде.
+
+
 > Older entries: [docs/archive/mission-log/](docs/archive/mission-log/) — see [docs/archive/INDEX.md](docs/archive/INDEX.md).
 > Session protocol: [docs/tz/00-protocol.md](docs/tz/00-protocol.md). Status now: [docs/CURRENT.md](docs/CURRENT.md).
 

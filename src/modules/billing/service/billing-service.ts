@@ -9,11 +9,12 @@ import {
   HIRE_DAYS,
   HIRE_PLAN,
   formatTokenAmount,
-  HIRE_PRICE_MINOR,
   hireGrants,
+  SALE_PLANS,
   settlement,
   type ClientBillingStatus,
   type OrderStatus,
+  type SaleSlug,
 } from "@/lib/billing/status";
 import { tokenUnits, verifyTransfer } from "@/lib/billing/verify-transfer";
 import { forbidden, HttpError, notFound, validationError } from "@/lib/http";
@@ -23,8 +24,9 @@ type OrderRow = {
   id: string;
   purchase_id: string;
   user_id: string;
-  job_id: string;
-  company_id: string;
+  job_id: string | null;
+  company_id: string | null;
+  plan_code: string;
   chain: string;
   token: string;
   token_contract: string;
@@ -39,11 +41,13 @@ type OrderRow = {
   created_at: string;
 };
 
+export type GrantedPlan = "start" | "hire" | "team" | "plus" | "pro";
+
 export type OrderView = {
   id: string;
   jobId: string;
   status: ClientBillingStatus;
-  plan: "start" | "hire";
+  plan: GrantedPlan;
   chain: string;
   chainId: number;
   token: string;
@@ -54,9 +58,12 @@ export type OrderView = {
 };
 
 export type BillingMe = {
-  plan: "start" | "hire";
+  plan: "start" | "hire" | "team";
+  candidatePlan: "free" | "plus" | "pro";
   crypto: boolean;
   hires: { jobId: string; validUntil: string }[];
+  teamUntil: string | null;
+  candidateUntil: string | null;
 };
 
 function cryptoReady(chain: string, token: string): boolean {
@@ -78,9 +85,9 @@ function view(row: OrderRow, now = new Date()): OrderView {
   const chain = chainById(row.chain);
   return {
     id: row.id,
-    jobId: row.job_id,
+    jobId: row.job_id ?? "",
     status,
-    plan: status === "paid" ? "hire" : "start",
+    plan: status === "paid" ? grantedPlan(row.plan_code) : "start",
     chain: row.chain,
     chainId: chain?.chainId ?? 0,
     token: row.token,
@@ -91,9 +98,17 @@ function view(row: OrderRow, now = new Date()): OrderView {
   };
 }
 
+function grantedPlan(code: string): GrantedPlan {
+  if (code === SALE_PLANS.team.code) return "team";
+  if (code === SALE_PLANS.plus.code) return "plus";
+  if (code === SALE_PLANS.pro.code) return "pro";
+  if (code === SALE_PLANS.hire.code) return "hire";
+  return "start";
+}
+
 async function loadOrder(orderId: string, userId: string): Promise<OrderRow> {
   const rows = await getDb().execute<OrderRow>(sql`
-    select o.id, o.purchase_id, o.user_id, p.job_id, p.company_id, o.chain, o.token,
+    select o.id, o.purchase_id, o.user_id, p.job_id, p.company_id, p.plan_code, o.chain, o.token,
            o.token_contract, o.recipient, o.payer_address, o.amount_minor::text,
            o.token_amount, o.status, o.reason, o.tx_hash,
            o.expires_at::text, o.created_at::text
@@ -123,23 +138,66 @@ export async function payableJobs(
   `);
 }
 
-export async function billingMe(userId: string): Promise<BillingMe> {
-  const rows = await getDb().execute<{ job_id: string; valid_until: string }>(sql`
-    select p.job_id, p.valid_until::text
-    from purchases p
-    join company_members m on m.company_id = p.company_id
+/** Companies this owner can pay Team for. */
+export async function payableCompanies(
+  userId: string,
+): Promise<{ id: string; name: string }[]> {
+  return getDb().execute<{ id: string; name: string }>(sql`
+    select c.id, c.name
+    from companies c
+    join company_members m on m.company_id = c.id
     where m.user_id = ${userId}
-      and p.plan_code = ${HIRE_PLAN}
-      and p.status = 'paid'
-      and p.valid_until > now()
+      and m.role = 'owner'
+    order by c.created_at asc
+    limit 20
   `);
+}
+
+function latestUntil(
+  rows: { plan_code: string; valid_until: string }[],
+  code: string,
+): string | null {
+  const times = rows
+    .filter((row) => row.plan_code === code)
+    .map((row) => new Date(row.valid_until).getTime());
+  if (times.length === 0) return null;
+  return new Date(Math.max(...times)).toISOString();
+}
+
+export async function billingMe(userId: string): Promise<BillingMe> {
+  const rows = await getDb().execute<{
+    plan_code: string;
+    job_id: string | null;
+    valid_until: string;
+  }>(sql`
+    select p.plan_code, p.job_id, p.valid_until::text
+    from purchases p
+    where p.status = 'paid'
+      and p.valid_until > now()
+      and (
+        p.user_id = ${userId}
+        or exists (
+          select 1 from company_members m
+          where m.company_id = p.company_id and m.user_id = ${userId}
+        )
+      )
+  `);
+  const hires = rows.filter(
+    (row) => row.plan_code === HIRE_PLAN && row.job_id,
+  );
+  const teamUntil = latestUntil(rows, SALE_PLANS.team.code);
+  const proUntil = latestUntil(rows, SALE_PLANS.pro.code);
+  const plusUntil = latestUntil(rows, SALE_PLANS.plus.code);
   return {
-    plan: rows.length > 0 ? "hire" : "start",
+    plan: teamUntil ? "team" : hires.length > 0 ? "hire" : "start",
+    candidatePlan: proUntil ? "pro" : plusUntil ? "plus" : "free",
     crypto: cryptoReady("base", "USDC") || cryptoReady("base", "USDT"),
-    hires: rows.map((row) => ({
-      jobId: row.job_id,
+    hires: hires.map((row) => ({
+      jobId: row.job_id as string,
       validUntil: new Date(row.valid_until).toISOString(),
     })),
+    teamUntil,
+    candidateUntil: proUntil ?? plusUntil,
   };
 }
 
@@ -232,25 +290,91 @@ export async function verifyWalletSignature(
   `);
 }
 
+const ORDER_COLUMNS = sql`
+  o.id, o.purchase_id, o.user_id, p.job_id, p.company_id, p.plan_code, o.chain, o.token,
+  o.token_contract, o.recipient, o.payer_address, o.amount_minor::text,
+  o.token_amount, o.status, o.reason, o.tx_hash,
+  o.expires_at::text, o.created_at::text
+`;
+
 export async function createHireOrder(
   userId: string,
   jobId: string,
   token: "USDC" | "USDT",
 ): Promise<OrderView> {
-  const job = await getDb().execute<{
-    company_id: string;
-    source: string;
-    status: string;
-  }>(sql`
-    select company_id, source, status from jobs where id = ${jobId}
+  return createCryptoOrder(userId, { plan: "hire", token, jobId });
+}
+
+export async function createCryptoOrder(
+  userId: string,
+  input: {
+    plan: SaleSlug;
+    token: "USDC" | "USDT";
+    jobId?: string;
+    companyId?: string;
+  },
+): Promise<OrderView> {
+  const spec = SALE_PLANS[input.plan];
+  const priced = await getDb().execute<{ price_minor: string }>(sql`
+    select price_minor::text as price_minor
+    from plans
+    where code = ${spec.code} and active = true
   `);
-  const row = job[0];
-  if (!row || row.source !== "internal") throw notFound();
-  if (row.status !== "published") {
-    throw new HttpError(409, "JOB_NOT_PUBLISHED", "Publish the job first");
+  const priceMinor = priced[0] ? BigInt(priced[0].price_minor) : null;
+  if (priceMinor === null || priceMinor !== spec.priceMinor) {
+    throw new HttpError(409, "BILLING_UNAVAILABLE", "This plan is not on sale");
   }
-  const role = await findMemberRole(row.company_id, userId);
-  if (role !== "owner") throw forbidden();
+
+  let companyId: string | null = null;
+  let jobId: string | null = null;
+  let buyerId: string | null = null;
+
+  if (input.plan === "hire") {
+    if (!input.jobId) throw validationError("Choose a job");
+    const job = await getDb().execute<{
+      company_id: string;
+      source: string;
+      status: string;
+    }>(sql`
+      select company_id, source, status from jobs where id = ${input.jobId}
+    `);
+    const row = job[0];
+    if (!row || row.source !== "internal") throw notFound();
+    if (row.status !== "published") {
+      throw new HttpError(409, "JOB_NOT_PUBLISHED", "Publish the job first");
+    }
+    const role = await findMemberRole(row.company_id, userId);
+    if (role !== "owner") throw forbidden();
+    companyId = row.company_id;
+    jobId = input.jobId;
+
+    const existing = await getDb().execute<{ id: string }>(sql`
+      select o.id
+      from crypto_orders o
+      join purchases p on p.id = o.purchase_id
+      where p.job_id = ${jobId}
+        and p.plan_code = ${spec.code}
+        and p.status = 'paid'
+        and p.valid_until > now()
+      limit 1
+    `);
+    if (existing[0]) {
+      const paid = await getDb().execute<OrderRow>(sql`
+        select ${ORDER_COLUMNS}
+        from crypto_orders o
+        join purchases p on p.id = o.purchase_id
+        where o.id = ${existing[0].id}
+      `);
+      if (paid[0]) return view(paid[0]);
+    }
+  } else if (input.plan === "team") {
+    if (!input.companyId) throw validationError("Choose a company");
+    const role = await findMemberRole(input.companyId, userId);
+    if (role !== "owner") throw forbidden();
+    companyId = input.companyId;
+  } else {
+    buyerId = userId;
+  }
 
   const session = await getDb().execute<{
     address: string;
@@ -268,38 +392,18 @@ export async function createHireOrder(
   }
   const chainName = chainByChain(wallet.chain_id);
   const chain = chainById(chainName);
-  const contract = tokenContract(chainName, token);
+  const contract = tokenContract(chainName, input.token);
   const recipient = validAddress(process.env.COMPANY_WALLET_ADDRESS ?? "");
-  if (!chain || !contract || !recipient || !cryptoReady(chainName, token)) {
+  if (!chain || !contract || !recipient || !cryptoReady(chainName, input.token)) {
     throw new HttpError(409, "BILLING_UNAVAILABLE", "Crypto payments are not on");
   }
 
-  const existing = await getDb().execute<{ id: string }>(sql`
-    select o.id
-    from crypto_orders o
-    join purchases p on p.id = o.purchase_id
-    where p.job_id = ${jobId} and p.status = 'paid' and p.valid_until > now()
-    limit 1
-  `);
-  if (existing[0]) {
-    const paid = await getDb().execute<OrderRow>(sql`
-      select o.id, o.purchase_id, o.user_id, p.job_id, p.company_id, o.chain, o.token,
-             o.token_contract, o.recipient, o.payer_address, o.amount_minor::text,
-             o.token_amount, o.status, o.reason, o.tx_hash,
-             o.expires_at::text, o.created_at::text
-      from crypto_orders o
-      join purchases p on p.id = o.purchase_id
-      where o.id = ${existing[0].id}
-    `);
-    if (paid[0]) return view(paid[0]);
-  }
-
-  const units = tokenUnits(HIRE_PRICE_MINOR).toString();
+  const units = tokenUnits(priceMinor).toString();
   const expires = new Date(Date.now() + 30 * 60 * 1000).toISOString();
   const created = await getDb().transaction(async (tx) => {
     const purchase = await tx.execute<{ id: string }>(sql`
-      insert into purchases (company_id, job_id, plan_code, status)
-      values (${row.company_id}, ${jobId}, ${HIRE_PLAN}, 'pending')
+      insert into purchases (company_id, job_id, user_id, plan_code, status)
+      values (${companyId}, ${jobId}, ${buyerId}, ${spec.code}, 'pending')
       returning id
     `);
     const purchaseId = purchase[0]?.id;
@@ -310,9 +414,9 @@ export async function createHireOrder(
         amount_minor, token_amount, status, expires_at
       )
       values (
-        ${purchaseId}, ${userId}, ${chain.id}, ${token}, ${contract},
+        ${purchaseId}, ${userId}, ${chain.id}, ${input.token}, ${contract},
         ${recipient.toLowerCase()}, ${wallet.address.toLowerCase()},
-        ${HIRE_PRICE_MINOR.toString()}, ${units}, 'open', ${expires}
+        ${priceMinor.toString()}, ${units}, 'open', ${expires}
       )
       returning id
     `);

@@ -1,7 +1,9 @@
 export {
   billingMe,
+  payableCompanies,
   payableJobs,
   confirmHireOrder,
+  createCryptoOrder,
   createHireOrder,
   hireFeatures,
   hireForJob,

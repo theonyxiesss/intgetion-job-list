@@ -8,7 +8,7 @@ import { navForward } from "@/components/ui/page-transition";
 import {
   ALWAYS_FREE,
   freePlanHref,
-  hirePlanHref,
+  planPayHref,
   PRICING,
   PRICING_FAQ,
   type PricingAudience,
@@ -167,9 +167,9 @@ export default async function PricingPage({
                         ? t("continueFree")
                         : t("startFree")}
                     </Link>
-                  ) : hirePlanHref(paymentsOn && tier.code === "hire") ? (
+                  ) : planPayHref(paymentsOn, tier.code) ? (
                     <Link
-                      href="/billing/crypto"
+                      href={planPayHref(paymentsOn, tier.code) ?? "/billing/crypto"}
                       {...navForward}
                       className={buttonClass("primary", "md", "w-full")}
                     >

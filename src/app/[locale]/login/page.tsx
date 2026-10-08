@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthPage } from "@/components/auth/auth-page";
-import { LoginForm, type LoginNext } from "@/components/auth/login-form";
+import { isLoginNext, LoginForm, type LoginNext } from "@/components/auth/login-form";
 import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
 import { Link } from "@/i18n/navigation";
 
@@ -21,10 +21,7 @@ export default async function LoginPage({
   setRequestLocale(locale);
   const t = await getTranslations("auth");
   const { error, next: rawNext } = await searchParams;
-  const next: LoginNext | undefined =
-    rawNext === "chat" || rawNext === "post-job" || rawNext === "billing"
-      ? rawNext
-      : undefined;
+  const next: LoginNext | undefined = isLoginNext(rawNext) ? rawNext : undefined;
 
   return (
     <AuthPage

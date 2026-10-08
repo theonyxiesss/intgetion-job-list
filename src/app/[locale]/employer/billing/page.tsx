@@ -23,8 +23,19 @@ export default async function EmployerBillingPage({
     <main className="flex-1 py-10">
       <Container className="flex flex-col gap-6">
         <h1 className="t-display-l">{t("title")}</h1>
-        <p className="t-h3">{me.plan === "hire" ? t("hire") : t("start")}</p>
+        <p className="t-h3">
+          {me.plan === "team" ? t("team") : me.plan === "hire" ? t("hire") : t("start")}
+        </p>
+        {me.candidatePlan !== "free" ? (
+          <p className="t-h3">{t(me.candidatePlan)}</p>
+        ) : null}
         <p className="max-w-[60ch] text-fg-muted">{t("startHint")}</p>
+        {me.teamUntil ? (
+          <p>{t("teamUntil", { date: me.teamUntil.slice(0, 10) })}</p>
+        ) : null}
+        {me.candidateUntil ? (
+          <p>{t("planUntil", { date: me.candidateUntil.slice(0, 10) })}</p>
+        ) : null}
         <ul className="flex flex-col gap-2">
           {me.hires.map((hire) => (
             <li key={hire.jobId}>

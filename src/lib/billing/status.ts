@@ -56,6 +56,43 @@ export const HIRE_PLAN = "company_hire";
 export const HIRE_PRICE_MINOR = BigInt(7900);
 export const HIRE_DAYS = 30;
 
+/** Card prices in cents. The charge is this amount, read back from `plans`. */
+export const SALE_PLANS = {
+  hire: {
+    code: "company_hire",
+    audience: "company",
+    priceMinor: HIRE_PRICE_MINOR,
+    needsJob: true,
+  },
+  team: {
+    code: "company_team",
+    audience: "company",
+    priceMinor: BigInt(19900),
+    needsJob: false,
+  },
+  plus: {
+    code: "candidate_plus",
+    audience: "candidate",
+    priceMinor: BigInt(500),
+    needsJob: false,
+  },
+  pro: {
+    code: "candidate_pro",
+    audience: "candidate",
+    priceMinor: BigInt(1500),
+    needsJob: false,
+  },
+} as const;
+
+export type SaleSlug = keyof typeof SALE_PLANS;
+
+export function salePlan(slug: string) {
+  if (slug === "hire" || slug === "team" || slug === "plus" || slug === "pro") {
+    return { slug, ...SALE_PLANS[slug] };
+  }
+  return null;
+}
+
 export function formatTokenAmount(units: string): string {
   const scale = BigInt(1000000);
   const value = BigInt(units);
