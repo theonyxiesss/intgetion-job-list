@@ -30,6 +30,8 @@
     "anySource": "Cualquier origen",
     "internal": "Directo",
     "imported": "Importado",
+    "promoted": "Promocionado",
+    "promotedHeading": "Promocionado",
     "postedWithinLabel": "Publicado",
     "anyDate": "En cualquier momento",
     "day": "Último día",
@@ -1917,7 +1919,7 @@
     "payHire": "Pagar con USDT o USDC",
     "soon": "Próximamente",
     "soonNote": "Los planes de pago aún no están a la venta. Pronto se podrá pagar con tarjeta y con USDT / USDC; hasta entonces todo funciona en los planes gratuitos.",
-    "hireNote": "Start sigue gratis. Hire, Team, Plus y Pro se pagan en USDT o USDC. El botón cobra el precio mensual y activa el plan 30 días. No se renueva solo. Plus activa 100 mensajes de Spoki al día y Pro activa 300. El plan gratis se queda en 15. Un modelo más potente, un bloque promocionado, los puestos del equipo y un reembolso automático todavía no se activan con este pago.",
+    "hireNote": "Start sigue gratis. Hire, Team, Plus y Pro se pagan en USDT o USDC. El botón cobra el precio mensual y activa el plan 30 días. No se renueva solo. Hire incluye un bloque promocionado durante 7 días. Plus activa 100 mensajes de Spoki al día y Pro activa 300. El plan gratis se queda en 15. Un modelo más potente, los puestos del equipo y un reembolso automático todavía no se activan con este pago.",
     "market": "Publicar en los grandes portales de empleo remoto cuesta 250–300 $ por empleo sin reembolso. Aquí es gratis, o 79 $ con garantía.",
     "alwaysFreeTitle": "Lo que ningún plan vende nunca",
     "alwaysFree": {

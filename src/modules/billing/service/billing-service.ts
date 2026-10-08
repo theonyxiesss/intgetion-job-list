@@ -10,6 +10,7 @@ import {
   HIRE_PLAN,
   formatTokenAmount,
   hireGrants,
+  isHirePromoted,
   SALE_PLANS,
   settlement,
   type ClientBillingStatus,
@@ -199,6 +200,38 @@ export async function billingMe(userId: string): Promise<BillingMe> {
     teamUntil,
     candidateUntil: proUntil ?? plusUntil,
   };
+}
+
+/** Published Hire jobs still inside the 7-day promoted window (D366). */
+export async function promotedHireJobIds(now = new Date()): Promise<string[]> {
+  const since = new Date(
+    now.getTime() - hireGrants().promotedDays * 24 * 60 * 60 * 1000,
+  );
+  const rows = await getDb().execute<{ job_id: string; created_at: string }>(sql`
+    select p.job_id::text, p.created_at::text
+    from public.purchases p
+    join public.jobs j on j.id = p.job_id
+    join public.companies c on c.id = j.company_id
+    where p.plan_code = ${HIRE_PLAN}
+      and p.status = 'paid'
+      and p.job_id is not null
+      and p.valid_until > ${now.toISOString()}
+      and p.created_at > ${since.toISOString()}
+      and j.status = 'published'
+      and j.source = 'internal'
+      and c.status not in ('suspended', 'rejected')
+    order by p.created_at desc
+    limit 12
+  `);
+  const seen = new Set<string>();
+  const ids: string[] = [];
+  for (const row of rows) {
+    if (!row.job_id || seen.has(row.job_id)) continue;
+    if (!isHirePromoted(new Date(row.created_at), now)) continue;
+    seen.add(row.job_id);
+    ids.push(row.job_id);
+  }
+  return ids;
 }
 
 export async function hireForJob(jobId: string): Promise<boolean> {

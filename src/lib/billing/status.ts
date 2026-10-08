@@ -110,3 +110,10 @@ export function hireGrants() {
     guaranteeApplications: 10,
   } as const;
 }
+
+/** Hire stays in the promoted block for 7 days after the purchase row is created. */
+export function isHirePromoted(createdAt: Date, now: Date): boolean {
+  const windowMs = hireGrants().promotedDays * 24 * 60 * 60 * 1000;
+  const age = now.getTime() - createdAt.getTime();
+  return age >= 0 && age < windowMs;
+}

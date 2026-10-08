@@ -8,7 +8,7 @@ import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
 import { Input } from "@/components/ui/input";
 import { navForward } from "@/components/ui/page-transition";
-import { searchJobs } from "@/modules/jobs/service";
+import { listPromotedJobs, searchJobs } from "@/modules/jobs/service";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
 import { JsonLd } from "@/modules/seo/json-ld";
 import { faqPageJsonLd, homeGraphJsonLd } from "@/modules/seo/markup";
@@ -35,22 +35,46 @@ function pickTop(jobs: readonly FeedJob[]): FeedJob[] {
 
 async function JobFeed({ locale }: { locale: string }) {
   const t = await getTranslations("home");
+  const jobsT = await getTranslations("jobs");
+  const promoted = await listPromotedJobs(locale);
+  const promotedIds = new Set(promoted.map((job) => job.id));
   const result = await searchJobs(
     { limit: FEED_SIZE, minOverlap: 3, sort: "newest" },
     locale,
   );
-  if (result.items.length === 0) {
+  if (result.items.length === 0 && promoted.length === 0) {
     return (
       <Container>
         <EmptyState title={t("latestEmpty")} />
       </Container>
     );
   }
-  const top = pickTop(result.items);
+  const feed = result.items.filter((job) => !promotedIds.has(job.id));
+  const top = pickTop(feed);
   const topIds = new Set(top.map((job) => job.id));
-  const rest = result.items.filter((job) => !topIds.has(job.id));
+  const rest = feed.filter((job) => !topIds.has(job.id));
   return (
     <>
+      {promoted.length > 0 ? (
+        <section
+          aria-labelledby="promoted-jobs"
+          className="pt-8 pb-2 md:pt-10"
+        >
+          <Container className="flex flex-col gap-6">
+            <h2 id="promoted-jobs" className="t-h3">
+              {jobsT("promotedHeading")}
+            </h2>
+            <ul className="grid gap-4">
+              {promoted.map((job) => (
+                <li key={job.id}>
+                  <PublicJobCard job={job} locale={locale} />
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+      ) : null}
+      {top.length > 0 ? (
       <section
         aria-labelledby="top-jobs"
         className="pt-8 pb-6 md:pt-10 md:pb-8"
@@ -68,6 +92,8 @@ async function JobFeed({ locale }: { locale: string }) {
           </ul>
         </Container>
       </section>
+      ) : null}
+      {rest.length > 0 ? (
       <section
         aria-labelledby="all-jobs"
         className="pt-6 pb-12 md:pt-8 md:pb-16"
@@ -96,6 +122,7 @@ async function JobFeed({ locale }: { locale: string }) {
           </Link>
         </Container>
       </section>
+      ) : null}
     </>
   );
 }

@@ -26,6 +26,7 @@ export {
   getClosedJobContext,
   getJobForPublic,
   listPublicJobsByIds,
+  listPromotedJobs,
   listPublishedJobsForCompany,
   countPublicCatalog,
   searchJobs,

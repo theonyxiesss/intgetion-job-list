@@ -62,6 +62,9 @@ export async function PublicJobCard({
           {job.company.isTrusted ? (
             <Badge tone="trusted">{t("trusted")}</Badge>
           ) : null}
+          {job.promoted ? (
+            <Badge tone="new">{t("promoted")}</Badge>
+          ) : null}
           {job.source.type === "imported" ? (
             <Badge tone="imported">{t("imported")}</Badge>
           ) : null}

@@ -19,7 +19,11 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
-import { listSearchSkillOptions, searchJobs } from "@/modules/jobs/service";
+import {
+  listPromotedJobs,
+  listSearchSkillOptions,
+  searchJobs,
+} from "@/modules/jobs/service";
 import { FilterShell } from "@/modules/jobs/ui/filter-shell";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
 import { QuickFilters } from "@/modules/jobs/ui/quick-filters";
@@ -140,6 +144,11 @@ export default async function JobsPage({
   } catch {
     // No session → guest view.
   }
+  const showPromoted = activeCount(raw) === 0 && !text(raw, "cursor");
+  const promoted = showPromoted
+    ? await listPromotedJobs(locale, viewer)
+    : [];
+  const promotedIds = new Set(promoted.map((job) => job.id));
   const result = await searchJobs(
     parsed.success ? parsed.data : jobSearchQuery.parse({}),
     locale,
@@ -413,17 +422,33 @@ export default async function JobsPage({
                 ))}
               </ul>
             ) : null}
-            {result.items.length ? (
+            {promoted.length > 0 ? (
+              <section aria-labelledby="promoted-jobs" className="flex flex-col gap-4">
+                <h2 id="promoted-jobs" className="t-h3">
+                  {t("promotedHeading")}
+                </h2>
+                <ul className="grid gap-4">
+                  {promoted.map((job) => (
+                    <li key={job.id}>
+                      <PublicJobCard job={job} locale={locale} />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
+            {result.items.filter((job) => !promotedIds.has(job.id)).length ? (
               <ul className="grid gap-4">
-                {result.items.map((job) => (
+                {result.items
+                  .filter((job) => !promotedIds.has(job.id))
+                  .map((job) => (
                   <li key={job.id}>
                     <PublicJobCard job={job} locale={locale} />
                   </li>
                 ))}
               </ul>
-            ) : (
+            ) : promoted.length === 0 ? (
               <EmptyState title={t("empty")} />
-            )}
+            ) : null}
             {result.nextCursor ? (
               <Link
                 className={buttonClass("secondary")}

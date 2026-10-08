@@ -30,6 +30,8 @@
     "anySource": "Qualquer origem",
     "internal": "Direta",
     "imported": "Importada",
+    "promoted": "Promovido",
+    "promotedHeading": "Promovido",
     "postedWithinLabel": "Publicada",
     "anyDate": "A qualquer momento",
     "day": "Último dia",
@@ -1917,7 +1919,7 @@
     "payHire": "Pagar com USDT ou USDC",
     "soon": "Em breve",
     "soonNote": "Os planos pagos ainda não estão à venda. Pagamentos com cartão e USDT / USDC estão chegando; até lá, tudo nos planos gratuitos funciona.",
-    "hireNote": "Start continua grátis. Hire, Team, Plus e Pro são pagos em USDT ou USDC. O botão cobra o preço mensal e liga o plano por 30 dias. Não renova sozinho. Plus liga 100 mensagens do Spoki por dia e Pro liga 300. O plano grátis continua em 15. Um modelo mais forte, um bloco promovido, lugares na equipe e um reembolso automático ainda não são ligados por este pagamento.",
+    "hireNote": "Start continua grátis. Hire, Team, Plus e Pro são pagos em USDT ou USDC. O botão cobra o preço mensal e liga o plano por 30 dias. Não renova sozinho. Hire inclui um bloco promovido por 7 dias. Plus liga 100 mensagens do Spoki por dia e Pro liga 300. O plano grátis continua em 15. Um modelo mais forte, lugares na equipe e um reembolso automático ainda não são ligados por este pagamento.",
     "market": "Publicar nos grandes sites de vagas remotas custa US$ 250–300 por vaga, sem reembolso. Aqui é grátis, ou US$ 79 com garantia.",
     "alwaysFreeTitle": "O que nenhum plano jamais vende",
     "alwaysFree": {

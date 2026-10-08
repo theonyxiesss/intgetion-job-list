@@ -6,6 +6,7 @@ import {
   type FxRate,
 } from "@/lib/money";
 import { workHoursOverlap } from "@/lib/tz";
+import { promotedHireJobIds } from "@/modules/billing/service";
 import * as repo from "../repo/public-search-repo";
 import type { JobSearchQuery } from "../schemas/search";
 
@@ -130,6 +131,7 @@ export function toPublicJobDto(
     perks: job.perks ?? [],
     publishedAt: job.publishedAt?.toISOString() ?? null,
     expiresAt: job.expiresAt?.toISOString() ?? null,
+    promoted: false,
   };
 }
 
@@ -284,6 +286,12 @@ export async function searchJobs(
   const requirements = await repo.getJobRequirements(
     selected.map(({ row }) => row.job.id),
   );
+  let promotedIds = new Set<string>();
+  try {
+    promotedIds = new Set(await promotedHireJobIds());
+  } catch {
+    promotedIds = new Set();
+  }
   const items = selected.map(({ row, comparable }) => {
     const skills = requirements.skillRows.filter(
       (skill) => skill.jobId === row.job.id,
@@ -294,6 +302,7 @@ export async function searchJobs(
     return {
       ...toPublicJobDto(row, { skills, languages }, locale),
       salaryComparable: comparable,
+      promoted: promotedIds.has(row.job.id),
     };
   });
   const cursorRow =
@@ -321,6 +330,46 @@ export async function searchJobs(
       })
     : null;
   return { items, nextCursor };
+}
+
+/** Hire jobs inside the 7-day promoted window, newest payment first. */
+export async function listPromotedJobs(
+  locale = "en",
+  viewer: SearchViewer = { hidden: null },
+) {
+  let ids: string[] = [];
+  try {
+    ids = await promotedHireJobIds();
+  } catch {
+    return [];
+  }
+  const visible = ids.filter(
+    (id) =>
+      !viewer.hidden?.hiddenJobIds.has(id),
+  );
+  if (visible.length === 0) return [];
+  const rows = await repo.listPublicJobsByIds(visible);
+  const requirements = await repo.getJobRequirements(visible);
+  const order = new Map(visible.map((id, index) => [id, index]));
+  return rows
+    .filter(
+      (row) =>
+        row.job.source === "internal" &&
+        !viewer.hidden?.hiddenCompanyIds.has(row.company.id),
+    )
+    .map((row) => {
+      const skills = requirements.skillRows.filter(
+        (skill) => skill.jobId === row.job.id,
+      );
+      const languages = requirements.languageRows
+        .filter((language) => language.jobId === row.job.id)
+        .map(({ lang, minLevel }) => ({ lang: lang.trim(), minLevel }));
+      return {
+        ...toPublicJobDto(row, { skills, languages }, locale),
+        promoted: true,
+      };
+    })
+    .sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
 }
 
 export async function countPublicCatalog() {

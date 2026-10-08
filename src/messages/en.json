@@ -30,6 +30,8 @@
     "anySource": "Any source",
     "internal": "Direct",
     "imported": "Imported",
+    "promoted": "Promoted",
+    "promotedHeading": "Promoted",
     "postedWithinLabel": "Posted",
     "anyDate": "Any time",
     "day": "Last day",
@@ -1917,7 +1919,7 @@
     "payHire": "Pay with USDT or USDC",
     "soon": "Coming soon",
     "soonNote": "Paid plans are not on sale yet. Card and USDT / USDC payments are coming; until then everything on the free plans works.",
-    "hireNote": "Start stays free. Hire, Team, Plus and Pro are paid in USDT or USDC. The button charges the monthly price and turns the plan on for 30 days. It does not renew by itself. Plus turns on 100 Spoki messages a day and Pro turns on 300. The free plan stays at 15. A stronger model, a promoted block, teammate seats and an automatic refund are not switched on by this payment yet.",
+    "hireNote": "Start stays free. Hire, Team, Plus and Pro are paid in USDT or USDC. The button charges the monthly price and turns the plan on for 30 days. It does not renew by itself. Hire includes a promoted block for 7 days. Plus turns on 100 Spoki messages a day and Pro turns on 300. The free plan stays at 15. A stronger model, teammate seats and an automatic refund are not switched on by this payment yet.",
     "market": "Posting on the big remote boards costs $250–300 per job with no refund. Here it is free, or $79 with a guarantee.",
     "alwaysFreeTitle": "What no plan ever sells",
     "alwaysFree": {

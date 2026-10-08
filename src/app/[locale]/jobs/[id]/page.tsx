@@ -12,6 +12,7 @@ import { getCurrentUser } from "@/modules/auth/service";
 import { isJobSavedForUser } from "@/modules/feedback/service";
 import { ExternalApplyLink } from "@/modules/feedback/ui/external-apply-link";
 import { JobFeedbackActions } from "@/modules/feedback/ui/job-feedback-actions";
+import { promotedHireJobIds } from "@/modules/billing/service";
 import { getJobForPublic } from "@/modules/jobs/service";
 import { WhyItFits } from "@/modules/matching/ui/why-it-fits";
 import { jobPostingJsonLd } from "@/modules/seo/job-posting";
@@ -66,6 +67,12 @@ export default async function JobPage({
   const categories = await getTranslations("categories");
   const job = await getJobForPublic(id, { locale });
   if (!job) notFound();
+  let promoted = false;
+  try {
+    promoted = (await promotedHireJobIds()).includes(job.id);
+  } catch {
+    promoted = false;
+  }
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
   const initialSaved = user ? await isJobSavedForUser(user.id, job.id) : false;
@@ -115,6 +122,7 @@ export default async function JobPage({
                 <p className="t-label text-fg-muted">
                   {categories(job.category as "engineering")}
                 </p>
+                {promoted ? <Badge tone="new">{t("promoted")}</Badge> : null}
                 <Badge>{t(job.workFormat)}</Badge>
                 <Badge>{t(job.employmentType)}</Badge>
               </div>

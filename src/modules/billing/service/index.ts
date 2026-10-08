@@ -7,6 +7,7 @@ export {
   createHireOrder,
   hireFeatures,
   hireForJob,
+  promotedHireJobIds,
   issueWalletNonce,
   recordBillingInterest,
   recheckSubmittedOrders,
