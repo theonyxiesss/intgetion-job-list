@@ -22,7 +22,9 @@ export default async function LoginPage({
   const t = await getTranslations("auth");
   const { error, next: rawNext } = await searchParams;
   const next: LoginNext | undefined =
-    rawNext === "chat" || rawNext === "post-job" ? rawNext : undefined;
+    rawNext === "chat" || rawNext === "post-job" || rawNext === "billing"
+      ? rawNext
+      : undefined;
 
   return (
     <AuthPage

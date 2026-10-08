@@ -77,6 +77,11 @@ export const ALWAYS_FREE = [
 ] as const;
 
 /** Where the free card goes. Posting continues to the job form (D347). */
+/** Hire is the only plan that takes money (D357). Other paid cards stay closed. */
+export function hirePlanHref(paymentsOn: boolean): string | null {
+  return paymentsOn ? "/billing/crypto" : null;
+}
+
 export function freePlanHref(
   audience: PricingAudience,
   next?: string,

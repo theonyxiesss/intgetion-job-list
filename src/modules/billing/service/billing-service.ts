@@ -106,6 +106,23 @@ async function loadOrder(orderId: string, userId: string): Promise<OrderRow> {
   return row;
 }
 
+/** Published jobs this owner can pay Hire for. */
+export async function payableJobs(
+  userId: string,
+): Promise<{ id: string; title: string }[]> {
+  return getDb().execute<{ id: string; title: string }>(sql`
+    select j.id, j.title
+    from jobs j
+    join company_members m on m.company_id = j.company_id
+    where m.user_id = ${userId}
+      and m.role = 'owner'
+      and j.source = 'internal'
+      and j.status = 'published'
+    order by j.created_at desc
+    limit 20
+  `);
+}
+
 export async function billingMe(userId: string): Promise<BillingMe> {
   const rows = await getDb().execute<{ job_id: string; valid_until: string }>(sql`
     select p.job_id, p.valid_until::text

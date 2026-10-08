@@ -3,6 +3,17 @@
 > Older entries: [docs/archive/mission-log/](docs/archive/mission-log/) — see [docs/archive/INDEX.md](docs/archive/INDEX.md).
 > Session protocol: [docs/tz/00-protocol.md](docs/tz/00-protocol.md). Status now: [docs/CURRENT.md](docs/CURRENT.md).
 
+## [2026-10-08] — кнопка «Найм» на тарифах (D357) — DONE
+
+- Сделано: на `/pricing` карточка «Найм» — ссылка на `/billing/crypto`. Там владелец выбирает опубликованную вакансию. «Команда», Plus и Pro остаются «Скоро».
+- Команды проверки: `pnpm typecheck` → 0; eslint по страницам тарифов и оплаты → 0; `vitest run src/config/pricing.test.ts src/messages/messages.test.ts` → 12 прошло.
+- P-тесты подфазы: нет живого клика с кошельком.
+- Миграции: нет.
+- Изменённые файлы: `src/app/[locale]/pricing/page.tsx`, `src/app/[locale]/billing/crypto/page.tsx`, `src/config/pricing.ts`, `src/modules/billing/service/billing-service.ts`, сообщения.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по команде.
+
 ## [2026-10-08] — приём «Найма» на production (D356) — DONE
 
 - Сделано: страница оплаты берёт кошелёк из браузера, без Project ID WalletConnect. На production включены `BILLING_ENABLED`, провайдер `walletconnect`, официальные контракты USDC (Circle) и USDT (Tether / USDT0) и публичные RPC. На Base контракта USDT в официальных страницах нет, там только USDC. Выкладка `dpl_8sGLZVb4mHFdim4F2GEb5zkakTyh` стоит на https://intgetion.com. Без входа `/billing/crypto` уходит на `/login`.

@@ -8,6 +8,7 @@ import { navForward } from "@/components/ui/page-transition";
 import {
   ALWAYS_FREE,
   freePlanHref,
+  hirePlanHref,
   PRICING,
   PRICING_FAQ,
   type PricingAudience,
@@ -38,8 +39,8 @@ export async function generateMetadata({
 }
 
 /**
- * /pricing (docs/PRICING_UX.md, section 2). Static: nothing is sold yet, so
- * paid plans say «soon» instead of taking money (BILLING_ENABLED is off).
+ * /pricing (docs/PRICING_UX.md, section 2). Hire is the only card that
+ * takes money (D357). Team, Plus and Pro stay closed.
  */
 export default async function PricingPage({
   params,
@@ -61,6 +62,10 @@ export default async function PricingPage({
     query.for,
     query.next,
   );
+  const paymentsOn =
+    process.env.BILLING_ENABLED === "true" &&
+    process.env.BILLING_CRYPTO_PROVIDER === "walletconnect" &&
+    Boolean(process.env.COMPANY_WALLET_ADDRESS?.trim());
   const tiers = PRICING[audience];
   const faq = PRICING_FAQ.map((key) => ({
     question: t(`faq.${key}.q`),
@@ -162,6 +167,14 @@ export default async function PricingPage({
                         ? t("continueFree")
                         : t("startFree")}
                     </Link>
+                  ) : hirePlanHref(paymentsOn && tier.code === "hire") ? (
+                    <Link
+                      href="/billing/crypto"
+                      {...navForward}
+                      className={buttonClass("primary", "md", "w-full")}
+                    >
+                      {t("payHire")}
+                    </Link>
                   ) : (
                     <span
                       aria-disabled="true"
@@ -178,7 +191,9 @@ export default async function PricingPage({
               </li>
             ))}
           </ul>
-          <p className="t-body-s text-fg-muted">{t("soonNote")}</p>
+          <p className="t-body-s text-fg-muted">
+            {paymentsOn ? t("hireNote") : t("soonNote")}
+          </p>
           {audience === "companies" && (
             <p className="t-body-s text-fg-muted">{t("market")}</p>
           )}

@@ -22,7 +22,11 @@ const passwordLogin = z.object({
 const magicLogin = z.object({ email: emailSchema });
 
 /** Pages a sign-in may return to (allowlist: no open redirect). */
-const RETURN_PATHS = { chat: "/chat", "post-job": "/post-job" } as const;
+const RETURN_PATHS = {
+  chat: "/chat",
+  "post-job": "/post-job",
+  billing: "/billing/crypto",
+} as const;
 export type LoginNext = keyof typeof RETURN_PATHS;
 
 export function LoginForm({

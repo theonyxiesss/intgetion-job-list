@@ -505,3 +505,7 @@ USDT Ethereum, страница Tether [tether.to/en/supported-protocols](https:
 USDT Polygon и Arbitrum, страница Tether USDT0 [docs.usdt0.to/technical-documentation/deployments](https://docs.usdt0.to/technical-documentation/deployments): Polygon `0xc2132D05D31c914a87C6611C10748AEb04B58e8F` (`symbol` USDT0), Arbitrum `0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9` (`symbol` USD₮0). Оба `decimals` 6. На Base в этих двух официальных страницах контракта USDT нет, поэтому Base принимает только USDC.
 
 Живые значения лежат в `BILLING_TOKEN_CONTRACTS` и `RPC_URL_*` на production. RPC — публичные узлы publicnode. Если узел молчит, заказ остаётся «проверяется», cron повторяет. Санкционный список по-прежнему не подключён.
+
+## D357 — на странице тарифов оплачивается только «Найм»
+
+Основатель 2026-10-08: кнопки на `/pricing` должны работать. Карточка «Найм» ведёт на `/billing/crypto`. Там владелец выбирает свою опубликованную вакансию и платит за неё. «Команда», Plus и Pro остаются «Скоро»: эти подписки не сделаны, и кнопка не должна брать деньги за другую услугу.
