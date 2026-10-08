@@ -2043,6 +2043,18 @@
       "failed": "The transfer was not accepted. The plan is not on.",
       "frozen": "The payment is being reviewed."
     },
+    "payFor": "Paying for",
+    "forDays": "One payment. The plan stays on for 30 days and does not renew.",
+    "planName": {
+      "hire": "Hire",
+      "team": "Team",
+      "plus": "Plus",
+      "pro": "Pro"
+    },
+    "usdCoin": "USD Coin",
+    "tether": "Tether",
+    "payNow": "Pay ${amount} {token}",
+    "baseNote": "On Base, only USDC is accepted.",
     "checkWallet": "Check this address in your wallet before you approve.",
     "connect": "Connect wallet",
     "pickJob": "Choose a published job. Hire applies to that job.",

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui";
+
+import { Button, TokenMark, cn } from "@/components/ui";
 
 type Order = {
   id: string;
@@ -56,11 +57,13 @@ async function connectWallet(projectId: string): Promise<Wallet> {
 
 export function CryptoPay({
   plan,
+  amount,
   jobId,
   companyId,
   projectId,
 }: {
   plan: "hire" | "team" | "plus" | "pro";
+  amount: string;
   jobId?: string;
   companyId?: string;
   projectId: string;
@@ -153,33 +156,84 @@ export function CryptoPay({
     }
   }
 
+  const locked = busy || Boolean(order);
+  const shownToken: "USDC" | "USDT" =
+    order?.token === "USDC" || order?.token === "USDT" ? order.token : token;
+
   return (
-    <div className="flex max-w-xl flex-col gap-4">
-      <label className="flex flex-col gap-2 text-sm">
-        {t("token")}
-        <select
-          value={token}
-          onChange={(event) => setToken(event.target.value as "USDC" | "USDT")}
-          className="rounded-md border border-line bg-bg px-3 py-2"
-        >
-          <option value="USDC">{t("usdc")}</option>
-          <option value="USDT">{t("usdt")}</option>
-        </select>
-      </label>
-      <Button type="button" onClick={pay} disabled={busy}>
-        {t("connect")}
+    <section className="mx-auto flex w-full max-w-md flex-col gap-6 border border-line bg-surface p-6">
+      <header className="flex flex-col gap-2">
+        <p className="t-label text-fg-muted">{t("payFor")}</p>
+        <h2 className="t-h2">{t(`planName.${plan}`)}</h2>
+        <p className="t-data-l">${amount}</p>
+        <p className="t-body-s text-fg-muted">{t("forDays")}</p>
+      </header>
+      <div
+        role="radiogroup"
+        aria-label={t("token")}
+        className="grid grid-cols-2 gap-3"
+      >
+        {(["USDC", "USDT"] as const).map((code) => (
+          <button
+            key={code}
+            type="button"
+            role="radio"
+            aria-checked={token === code}
+            disabled={locked}
+            onClick={() => setToken(code)}
+            className={cn(
+              "flex min-h-20 items-center gap-3 border px-3 py-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+              token === code
+                ? "border-fg bg-surface-2"
+                : "border-line hover:border-line-strong",
+            )}
+          >
+            <TokenMark token={code} />
+            <span className="flex flex-col">
+              <span className="t-body-s">
+                {code === "USDC" ? t("usdCoin") : t("tether")}
+              </span>
+              <span className="t-label text-fg-muted">{code}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+      <p className="t-caption text-fg-muted">{t("baseNote")}</p>
+      <Button
+        type="button"
+        size="lg"
+        className="w-full"
+        onClick={pay}
+        loading={busy}
+        disabled={order?.status === "paid"}
+      >
+        {t("payNow", { amount, token: shownToken })}
       </Button>
       {order ? (
-        <div className="flex flex-col gap-2 text-sm">
-          <p>{t(`status.${order.status as "paid"}`)}</p>
-          <p>{t("checkWallet")}</p>
-          <p className="font-mono break-all">{order.recipient}</p>
-          <p>
-            {order.tokenAmount} {order.token}
+        <div className="flex flex-col gap-3 border border-line bg-bg p-4">
+          <p
+            className={cn(
+              "t-body-s",
+              order.status === "paid" && "text-success",
+              (order.status === "failed" ||
+                order.status === "underpaid" ||
+                order.status === "expired") &&
+                "text-danger",
+            )}
+          >
+            {t(`status.${order.status as "paid"}`)}
           </p>
+          <p className="flex items-center gap-3">
+            <TokenMark token={shownToken} />
+            <span className="t-h3">
+              {order.tokenAmount} {order.token}
+            </span>
+          </p>
+          <p className="t-caption text-fg-muted">{t("checkWallet")}</p>
+          <p className="font-mono text-sm break-all">{order.recipient}</p>
         </div>
       ) : null}
-      {error ? <p className="text-sm">{error}</p> : null}
-    </div>
+      {error ? <p className="t-body-s text-danger">{error}</p> : null}
+    </section>
   );
 }

@@ -60,6 +60,7 @@ const CLIENT_NAMESPACES = [
   "savedSearches",
   "follows",
   "miniApp",
+  "billing",
 ] as const;
 
 // Only an explicit "light" choice changes the default dark theme (D141).

@@ -2043,6 +2043,18 @@
       "failed": "La transferencia no se aceptó. El plan no está activo.",
       "frozen": "El pago está en revisión."
     },
+    "payFor": "Pago de",
+    "forDays": "Un pago. El plan queda activo 30 días y no se renueva solo.",
+    "planName": {
+      "hire": "Hire",
+      "team": "Team",
+      "plus": "Plus",
+      "pro": "Pro"
+    },
+    "usdCoin": "USD Coin",
+    "tether": "Tether",
+    "payNow": "Pagar ${amount} {token}",
+    "baseNote": "En Base solo se acepta USDC.",
     "checkWallet": "Comprueba esta dirección en tu monedero antes de aprobar.",
     "connect": "Conectar monedero",
     "pickJob": "Elige un empleo publicado. Hire se activa en ese empleo.",

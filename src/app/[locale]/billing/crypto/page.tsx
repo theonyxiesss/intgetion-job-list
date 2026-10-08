@@ -4,6 +4,7 @@ import { ButtonLink, Container } from "@/components/ui";
 import { localePrefix } from "@/i18n/paths";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
+import { SALE_PLANS } from "@/lib/billing/status";
 import { payableCompanies, payableJobs } from "@/modules/billing/service";
 import { CryptoPay } from "@/modules/billing/ui/crypto-pay";
 import { InterestForm } from "@/modules/billing/ui/interest-form";
@@ -54,24 +55,27 @@ export default async function CryptoBillingPage({
   const teamCompany =
     companies.find((item) => item.id === company) ??
     (companies.length === 1 ? companies[0] : undefined);
+  const amount = (SALE_PLANS[plan].priceMinor / BigInt(100)).toString();
+  const panel = "mx-auto flex w-full max-w-md flex-col gap-4 border border-line bg-surface p-6";
 
   return (
     <main className="flex-1 py-10">
       <Container className="flex flex-col gap-6">
-        <h1 className="t-display-l">{t("title")}</h1>
+        <h1 className="t-h2">{t("title")}</h1>
         {!ready ? (
           <InterestForm />
         ) : plan === "plus" || plan === "pro" ? (
-          <CryptoPay plan={plan} projectId={projectId} />
+          <CryptoPay plan={plan} amount={amount} projectId={projectId} />
         ) : plan === "team" ? (
           teamCompany ? (
             <CryptoPay
               plan="team"
+              amount={amount}
               companyId={teamCompany.id}
               projectId={projectId}
             />
           ) : companies.length > 0 ? (
-            <div className="flex max-w-xl flex-col gap-4">
+            <div className={panel}>
               <p className="text-fg-muted">{t("pickCompany")}</p>
               <ul className="flex flex-col gap-3">
                 {companies.map((item) => (
@@ -88,15 +92,15 @@ export default async function CryptoBillingPage({
               </ul>
             </div>
           ) : (
-            <div className="flex max-w-xl flex-col gap-4">
+            <div className={panel}>
               <p className="text-fg-muted">{t("noCompany")}</p>
               <ButtonLink href="/employer/company">{t("createCompany")}</ButtonLink>
             </div>
           )
         ) : job ? (
-          <CryptoPay plan="hire" jobId={job} projectId={projectId} />
+          <CryptoPay plan="hire" amount={amount} jobId={job} projectId={projectId} />
         ) : jobs.length > 0 ? (
-          <div className="flex max-w-xl flex-col gap-4">
+          <div className={panel}>
             <p className="text-fg-muted">{t("pickJob")}</p>
             <ul className="flex flex-col gap-3">
               {jobs.map((item) => (
@@ -113,7 +117,7 @@ export default async function CryptoBillingPage({
             </ul>
           </div>
         ) : (
-          <div className="flex max-w-xl flex-col gap-4">
+          <div className={panel}>
             <p className="text-fg-muted">{t("noJobs")}</p>
             <ButtonLink href="/employer/jobs/new">{t("postToPay")}</ButtonLink>
           </div>

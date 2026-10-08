@@ -8,6 +8,7 @@ export type { ButtonSize, ButtonVariant } from "./button";
 export { Field, FieldGroup, controlClass } from "./field";
 export { Input, Select, Textarea } from "./input";
 export { Choice, Switch } from "./choice";
+export { TokenMark } from "./token-mark";
 export { Badge, StatusBadge, StatusDot, Tag, statusTone } from "./badge";
 export type { BadgeTone } from "./badge";
 export { Stat, StatRow } from "./stat";
