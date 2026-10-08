@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthPage } from "@/components/auth/auth-page";
-import { isLoginNext, LoginForm, type LoginNext } from "@/components/auth/login-form";
+import { LoginForm } from "@/components/auth/login-form";
+import { isLoginNext, type LoginNext } from "@/components/auth/login-next";
 import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
 import { Link } from "@/i18n/navigation";
 
