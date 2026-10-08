@@ -352,7 +352,9 @@
       "logo": "Company logo (PNG, JPEG, or WebP; max 2 MB)",
       "save": "Save company",
       "error": "The company could not be saved. Check the fields and try again.",
-      "saved": "Company profile saved."
+      "saved": "Company profile saved.",
+      "timezone": "Time zone (IANA, for example Europe/Berlin)",
+      "timezoneHint": "The morning brief about candidates arrives at 08:00 in this zone. Empty means Europe/Berlin."
     },
     "verifyLink": "Verify the company",
     "createTitle": "Create a company",
@@ -433,7 +435,8 @@
       "phone": "Phone",
       "save": "Save profile",
       "sectors": "Sectors (up to 5)",
-      "seniority": "Seniority"
+      "seniority": "Seniority",
+      "jobSearchStatus": "Job search"
     },
     "weekdays": {
       "1": "Monday",
@@ -483,6 +486,11 @@
     "errors": {
       "generic": "The profile could not be saved. Check the fields and try again.",
       "timezone_confirm": "Confirm the timezone before saving."
+    },
+    "jobSearch": {
+      "active": "Actively looking",
+      "passive": "Open to offers",
+      "not_looking": "Not looking"
     }
   },
   "admin": {

@@ -66,6 +66,7 @@ export type CandidateDto = {
   minOverlapHours: number;
   summary: string | null;
   isHidden: boolean;
+  jobSearchStatus: "active" | "passive" | "not_looking";
   completeness: number;
   missing: CompletenessPart[];
   skills: CandidateSkillDto[];
@@ -95,6 +96,7 @@ export const CANDIDATE_DTO_KEYS = [
   "minOverlapHours",
   "summary",
   "isHidden",
+  "jobSearchStatus",
   "completeness",
   "missing",
   "skills",

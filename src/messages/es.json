@@ -352,7 +352,9 @@
       "logo": "Logotipo de la empresa (PNG, JPEG o WebP; máx. 2 MB)",
       "save": "Guardar empresa",
       "error": "No se ha podido guardar la empresa. Revisa los campos e inténtalo de nuevo.",
-      "saved": "Perfil de la empresa guardado."
+      "saved": "Perfil de la empresa guardado.",
+      "timezone": "Zona horaria (IANA, por ejemplo Europe/Berlin)",
+      "timezoneHint": "El resumen matutino de candidatos llega a las 08:00 en esta zona. Vacío equivale a Europe/Berlin."
     },
     "verifyLink": "Verificar la empresa",
     "createTitle": "Crear una empresa",
@@ -433,7 +435,8 @@
       "phone": "Teléfono",
       "save": "Guardar perfil",
       "sectors": "Sectores (hasta 5)",
-      "seniority": "Nivel"
+      "seniority": "Nivel",
+      "jobSearchStatus": "Búsqueda de empleo"
     },
     "weekdays": {
       "1": "Lunes",
@@ -483,6 +486,11 @@
     "errors": {
       "generic": "No se ha podido guardar el perfil. Revisa los campos e inténtalo de nuevo.",
       "timezone_confirm": "Confirma la zona horaria antes de guardar."
+    },
+    "jobSearch": {
+      "active": "Busco activamente",
+      "passive": "Abierto a ofertas",
+      "not_looking": "No busco"
     }
   },
   "admin": {

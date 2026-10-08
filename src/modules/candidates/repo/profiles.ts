@@ -132,6 +132,7 @@ export async function saveProfile(
       minOverlapHours: input.minOverlapHours,
       summary: input.summary,
       isHidden: input.isHidden,
+      jobSearchStatus: input.jobSearchStatus ?? "active",
       completeness,
     })
     .onConflictDoUpdate({
@@ -158,6 +159,9 @@ export async function saveProfile(
         minOverlapHours: input.minOverlapHours,
         summary: input.summary,
         isHidden: input.isHidden,
+        ...(input.jobSearchStatus
+          ? { jobSearchStatus: input.jobSearchStatus }
+          : {}),
         completeness,
       },
     });
@@ -277,6 +281,7 @@ export function presentProfile(
     minOverlapHours: profile.minOverlapHours,
     summary: profile.summary,
     isHidden: profile.isHidden,
+    jobSearchStatus: profile.jobSearchStatus,
     completeness: profile.completeness,
     skills: loaded.skills,
     experience: loaded.experience.map((item) => ({

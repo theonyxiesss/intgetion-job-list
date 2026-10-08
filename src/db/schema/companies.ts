@@ -37,7 +37,11 @@ export const companies = pgTable(
     isTrusted: boolean("is_trusted").notNull().default(false),
     trustedAt: timestamp("trusted_at", { withTimezone: true }),
     /** Morning briefs about candidates (D352); owner or admin switches it. */
-    agentBriefsEnabled: boolean("agent_briefs_enabled").notNull().default(false),
+    agentBriefsEnabled: boolean("agent_briefs_enabled")
+      .notNull()
+      .default(false),
+    /** IANA zone for the employer brief slot; NULL means `europe` (0040). */
+    timezone: text("timezone"),
     createdBy: uuid("created_by").references(() => users.id, {
       onDelete: "set null",
     }),

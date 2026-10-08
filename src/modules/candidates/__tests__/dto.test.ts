@@ -23,6 +23,7 @@ describe("candidate DTO", () => {
       minOverlapHours: 3,
       summary: null,
       isHidden: false,
+      jobSearchStatus: "active",
       completeness: 0,
       missing: ["contact_email"],
       skills: [],

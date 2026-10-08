@@ -692,3 +692,10 @@
 - `legal-sync.mjs` режет и `es`, `legalText` отдаёт `es`. Тест проверяет свой текст, отличие от en, совпадение плейсхолдеров и отсутствие `/en/`.
 - Prettier выровнял таблицы pt-BR в privacy и перевёл файлы на LF; в legal.json `\r\n` стали `\n`, смысл не менялся.
 - Проверки: legal:sync, vitest legal (5), typecheck, lint зелёные. `pnpm test`: 3 падения в auth-emails — нет `NEXT_PUBLIC_SITE_URL` локально, падают и без этих правок.
+
+## 2026-10-08 — пояс компании и флаг поиска (D365)
+
+- Миграции `0040_company_timezone.sql`, `0041_candidate_job_search_status.sql`; схема Drizzle обновлена. На облако не применены, не запушено.
+- Поле пояса в профиле компании (`isIanaTimeZone`), переключатель поиска в профиле кандидата, подписи en/ru/es/pt-BR.
+- Сводка: слот по поясу компании (`employerBriefTimeZone`), лог `no_employer_time_zone` только при смешанных/пустых поясах; кандидаты `not_looking` не попадают.
+- Проверки: typecheck, lint, vitest notifications/candidates/companies (119 + новые) зелёные. Интеграционные тесты с миграциями — в CI.

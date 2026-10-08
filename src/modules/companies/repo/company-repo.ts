@@ -81,6 +81,7 @@ export async function createCompany(userId: string, input: CreateCompanyInput) {
         websiteUrl: input.websiteUrl ?? null,
         description: input.description ?? null,
         country: input.country?.toUpperCase() ?? null,
+        timezone: input.timezone ?? null,
         size: input.size ?? null,
         createdBy: userId,
       })
@@ -174,6 +175,7 @@ export async function findCompaniesForUser(userId: string) {
       size: companies.size,
       status: companies.status,
       agentBriefsEnabled: companies.agentBriefsEnabled,
+      timezone: companies.timezone,
     })
     .from(companyMembers)
     .innerJoin(companies, eq(companyMembers.companyId, companies.id))

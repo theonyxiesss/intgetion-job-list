@@ -124,6 +124,7 @@ function toInput(dto: CandidateDto): Record<string, unknown> {
     minOverlapHours: dto.minOverlapHours,
     summary: dto.summary,
     isHidden: dto.isHidden,
+    jobSearchStatus: dto.jobSearchStatus,
     skills: dto.skills.map((skill) => ({
       raw: skill.slug,
       level: skill.level,

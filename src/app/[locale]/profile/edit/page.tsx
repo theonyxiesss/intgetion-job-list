@@ -40,6 +40,7 @@ function emptyForm(): ProfileFormValues {
     notes: null,
     sectors: [],
     seniority: "",
+    jobSearchStatus: "active",
   };
 }
 
@@ -92,6 +93,7 @@ export default async function EditProfilePage({
     initial.notes = profile.preferences.notes;
     initial.sectors = profile.preferences.sectors;
     initial.seniority = profile.preferences.seniority ?? "";
+    initial.jobSearchStatus = profile.jobSearchStatus;
   }
   if (contacts) {
     initial.contactEmail = contacts.email;

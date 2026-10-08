@@ -6,6 +6,7 @@ import { toAppLocale } from "@/i18n/locale";
 import {
   BRIEF_SLOT_IDS,
   dueSlotDate,
+  employerBriefTimeZone,
   slotForTimeZone,
   type BriefSlot,
   type BriefSlotId,
@@ -185,16 +186,24 @@ export async function runSlot(input: {
         logger.error({ err, userId: row.user_id, slotId }, "brief failed");
       }
     }
-    // Employers (D352) share the same counters. Neither `users` nor
-    // `companies` has a time zone column (20-morning-briefs §10.3), so they
-    // all fall into the default slot until a migration adds one.
-    if (slotForTimeZone(null, now) === slotId) {
-      logger.info(
-        { slotId, reason: "no_employer_time_zone" },
-        "employer briefs use the default slot",
-      );
+    // Employers (D352) share the same counters. The slot follows the
+    // companies' time zone; mixed or empty zones keep the default slot
+    // (20-morning-briefs §10.3).
+    {
       const cache = new Map<string, Promise<EmployerMatchRow[]>>();
       for (const recipient of await readEmployerRecipients(slotDate)) {
+        const zone = employerBriefTimeZone(recipient.companyTimeZones, now);
+        if (slotForTimeZone(zone, now) !== slotId) continue;
+        if (!zone) {
+          logger.info(
+            {
+              slotId,
+              userId: recipient.userId,
+              reason: "no_employer_time_zone",
+            },
+            "employer brief uses the default slot",
+          );
+        }
         result.checked += 1;
         result.checkedEmployers += 1;
         try {

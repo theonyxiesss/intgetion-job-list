@@ -84,3 +84,24 @@ export function nextSlotStart(slot: BriefSlot, now: Date): Date {
   if (+today > +now) return today;
   return slotStart(slot, new Date(+now + 24 * 60 * 60 * 1000)).startsAt;
 }
+
+/**
+ * The zone of an employer's brief: the companies' zone when all of them
+ * store the same valid IANA zone, otherwise null (the default slot,
+ * docs/tz/20-morning-briefs.md §10.3).
+ */
+export function employerBriefTimeZone(
+  zones: readonly (string | null)[],
+  now: Date,
+): string | null {
+  const unique = new Set(zones);
+  if (unique.size !== 1) return null;
+  const [zone] = unique;
+  if (!zone) return null;
+  try {
+    timeZoneOffsetMinutes(now, zone);
+    return zone;
+  } catch {
+    return null;
+  }
+}

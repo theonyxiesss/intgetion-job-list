@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isIanaTimeZone } from "@/modules/candidates/service";
 
 const optionalUrl = z.string().url().max(2048).nullable().optional();
 const domainInput = z
@@ -22,6 +23,13 @@ export const createCompanyInput = z.object({
     .optional(),
   size: z
     .enum(["s1_10", "s11_50", "s51_200", "s201_1000", "s1000_plus"])
+    .nullable()
+    .optional(),
+  timezone: z
+    .string()
+    .trim()
+    .max(80)
+    .refine(isIanaTimeZone, { error: "invalid_timezone" })
     .nullable()
     .optional(),
 });

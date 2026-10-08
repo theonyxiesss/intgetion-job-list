@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  employerBriefTimeZone,
   dueSlotDate,
   nextSlotStart,
   slotForOffset,
@@ -85,5 +86,28 @@ describe("nextSlotStart (D340)", () => {
     expect(nextSlotStart(moscow, at("2026-10-07T05:00:00Z"))).toEqual(
       at("2026-10-08T05:00:00Z"),
     );
+  });
+});
+
+describe("employerBriefTimeZone (20-morning-briefs §10.3)", () => {
+  const now = new Date("2026-03-10T07:00:00Z");
+
+  it("takes the companies' zone when all of them share one valid zone", () => {
+    expect(employerBriefTimeZone(["America/Chicago"], now)).toBe(
+      "America/Chicago",
+    );
+    expect(employerBriefTimeZone(["Europe/Moscow", "Europe/Moscow"], now)).toBe(
+      "Europe/Moscow",
+    );
+  });
+
+  it("falls back to null for mixed, empty or invalid zones", () => {
+    expect(
+      employerBriefTimeZone(["Europe/Moscow", "America/Chicago"], now),
+    ).toBeNull();
+    expect(employerBriefTimeZone(["Europe/Moscow", null], now)).toBeNull();
+    expect(employerBriefTimeZone([null], now)).toBeNull();
+    expect(employerBriefTimeZone([], now)).toBeNull();
+    expect(employerBriefTimeZone(["Not/AZone"], now)).toBeNull();
   });
 });

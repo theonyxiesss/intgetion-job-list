@@ -181,17 +181,14 @@ notifications (matches.digest / company.candidates_digest)
    нет (только ссылка в кабинет); кнопка — отдельная задача.
 2. Если работодатель живёт в одном поясе, а компания в другом — берём
    пояс пользователя (принято консервативно, можно поменять).
-3. **Пояс работодателя — дыра (2026-10-08).** Колонки пояса нет ни в
-   `users`, ни в `companies` (есть только `companies.country`, а по стране
-   пояс не определить: США, Россия, Бразилия). Поэтому все работодатели
-   сейчас в `europe`; cron пишет в лог `no_employer_time_zone`. Чтобы брать
-   пояс компании, нужна миграция: `companies.timezone text` (IANA, NULL →
-   `europe`) и поле в профиле компании. Без команды основателя не делаем.
-4. **«Кандидат в поиске» — колонки нет.** Сводка работодателя отсекает
-   только `candidate_profiles.is_hidden`. `users.account_type` — намерение
-   при регистрации, `availability_date` — дата выхода; ни то ни другое не
-   флаг поиска, фильтровать по ним наугад нельзя. Минимальная миграция:
-   `ALTER TABLE public.candidate_profiles ADD COLUMN job_search_status text
-   NOT NULL DEFAULT 'active' CHECK (job_search_status IN ('active',
-   'passive', 'not_looking'))`; сводка берёт `active` и `passive`,
-   переключатель — в профиле кандидата. Остановлено до команды.
+3. **Пояс работодателя (D365, миграция `0040`).** `companies.timezone`
+   (IANA, NULL → `europe`), поле в профиле компании, проверка
+   `isIanaTimeZone`. Пояс по стране не выводится, у `users` колонки нет.
+   Сводка берёт пояс компании; если у человека несколько компаний и пояса
+   разные или пустые — `europe` и лог `no_employer_time_zone`.
+4. **«Кандидат в поиске» (D365, миграция `0041`).**
+   `candidate_profiles.job_search_status`: `active` (по умолчанию, все
+   существующие), `passive`, `not_looking`. Сводка работодателя берёт
+   `active` и `passive`; `is_hidden` по-прежнему отсекает. `is_hidden` и
+   `availability_date` флагом поиска не считаются. Переключатель — в
+   профиле кандидата.

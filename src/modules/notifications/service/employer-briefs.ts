@@ -28,12 +28,14 @@ export type EmployerRecipient = {
   userId: string;
   locale: string;
   companyIds: string[];
+  /** `companies.timezone` per company, in the order of `companyIds`. */
+  companyTimeZones: (string | null)[];
 };
 
 /**
  * Recruiters and above of companies whose agent flag is on (D352), one row
- * per person, without a brief for this slot day yet. Neither users nor
- * companies store a time zone, so the slot is `europe` for now (D340).
+ * per person, without a brief for this slot day yet. The slot comes from
+ * the companies' time zones (0040); the cron picks it.
  */
 export async function readEmployerRecipients(
   slotDate: string,
@@ -42,8 +44,10 @@ export async function readEmployerRecipients(
     user_id: string;
     locale: string;
     company_ids: string[];
+    company_time_zones: (string | null)[];
   }>(sql`
-    select cm.user_id, u.locale, array_agg(cm.company_id::text order by cm.company_id) as company_ids
+    select cm.user_id, u.locale, array_agg(cm.company_id::text order by cm.company_id) as company_ids,
+      array_agg(c.timezone order by cm.company_id) as company_time_zones
     from public.company_members cm
     join public.companies c on c.id = cm.company_id
     join public.users u on u.id = cm.user_id
@@ -62,6 +66,7 @@ export async function readEmployerRecipients(
     userId: row.user_id,
     locale: row.locale,
     companyIds: row.company_ids,
+    companyTimeZones: row.company_time_zones,
   }));
 }
 
@@ -79,8 +84,8 @@ type StoredMatchRow = {
 
 /**
  * Stored matches of the given jobs at 0.65 or more (10.1). Hidden profiles
- * (`is_hidden`) and candidates who already applied to the company never
- * come back. Only role, experience, skills and the explain are read: no
+ * (`is_hidden`), candidates who are not looking (`job_search_status`, 0041)
+ * and candidates who already applied to the company never come back. Only role, experience, skills and the explain are read: no
  * name, email, phone or link column.
  */
 async function readStoredJobMatches(
@@ -113,6 +118,7 @@ async function readStoredJobMatches(
     )})
       and mr.score >= ${DIGEST_MIN_SCORE}
       and not cp.is_hidden
+      and cp.job_search_status in ('active', 'passive')
       and u.status = 'active'
       and not exists (
         select 1 from public.applications a
@@ -177,8 +183,7 @@ export async function listJobCandidateCards(
   const rows = await readStoredJobMatches([jobId], locale);
   return rows
     .sort(
-      (a, b) =>
-        b.score - a.score || a.candidateId.localeCompare(b.candidateId),
+      (a, b) => b.score - a.score || a.candidateId.localeCompare(b.candidateId),
     )
     .slice(0, 20)
     .map(toBriefCard);

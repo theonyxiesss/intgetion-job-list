@@ -68,6 +68,12 @@ export const candidateProfiles = pgTable(
     minOverlapHours: smallint("min_overlap_hours").notNull().default(3),
     summary: text("summary"),
     isHidden: boolean("is_hidden").notNull().default(false),
+    /** active | passive | not_looking (0041); employer briefs skip not_looking. */
+    jobSearchStatus: text("job_search_status", {
+      enum: ["active", "passive", "not_looking"],
+    })
+      .notNull()
+      .default("active"),
     completeness: smallint("completeness").notNull().default(0),
     lastDigestAt: timestamp("last_digest_at", { withTimezone: true }),
     /** Morning briefs from the agent (D340); the switch is on /notifications (D349). */

@@ -104,6 +104,13 @@ export const candidatePreferencesInput = z.object({
   notes: optionalText(500),
 });
 
+/** Whether the candidate is looking for work (0041); briefs skip not_looking. */
+export const JOB_SEARCH_STATUSES = [
+  "active",
+  "passive",
+  "not_looking",
+] as const;
+
 export const updateCandidateInput = z
   .object({
     fullName: optionalText(120),
@@ -140,6 +147,7 @@ export const updateCandidateInput = z
     minOverlapHours: z.number().int().min(0).max(12).optional(),
     summary: optionalText(2000),
     isHidden: z.boolean().optional(),
+    jobSearchStatus: z.enum(JOB_SEARCH_STATUSES).optional(),
     skills: z.array(candidateSkillInput).max(SKILL_LIMIT),
     experience: z.array(candidateExperienceInput).max(30),
     languages: z.array(candidateLanguageInput).max(20),

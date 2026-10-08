@@ -16,12 +16,15 @@ type CompanyFormProps = {
     domain: string | null;
     websiteUrl: string | null;
     description: string | null;
+    timezone: string | null;
   };
   text: {
     name: string;
     domain: string;
     website: string;
     description: string;
+    timezone: string;
+    timezoneHint: string;
     logo: string;
     save: string;
     error: string;
@@ -55,6 +58,7 @@ export function CompanyForm({
             domain: form.get("domain") || null,
             websiteUrl: form.get("websiteUrl") || null,
             description: form.get("description") || null,
+            timezone: String(form.get("timezone") ?? "").trim() || null,
           }),
         },
       );
@@ -116,6 +120,14 @@ export function CompanyForm({
           name="description"
           maxLength={5000}
           defaultValue={initial?.description ?? ""}
+        />
+      </Field>
+      <Field label={text.timezone} help={text.timezoneHint}>
+        <Input
+          name="timezone"
+          className="t-data"
+          maxLength={80}
+          defaultValue={initial?.timezone ?? ""}
         />
       </Field>
       <Field label={text.logo}>

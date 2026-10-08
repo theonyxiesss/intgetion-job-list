@@ -34,6 +34,7 @@ export type ProfileFormValues = {
   notes: string | null;
   sectors: string[];
   seniority: string;
+  jobSearchStatus: string;
 };
 
 export type ProfileMarkerOption = { value: string; label: string };
@@ -51,6 +52,7 @@ const LEVELS = ["novice", "intermediate", "advanced", "expert"] as const;
 const CEFR = ["A1", "A2", "B1", "B2", "C1", "C2", "native"] as const;
 const PERIODS = ["hour", "month", "year"] as const;
 const BASIS = ["gross", "net"] as const;
+const JOB_SEARCH = ["active", "passive", "not_looking"] as const;
 
 function blank(value: string): string | null {
   const trimmed = value.trim();
@@ -155,6 +157,7 @@ export function ProfileForm({
       minOverlapHours: Number(form.get("minOverlapHours") ?? 3),
       summary: blank(String(form.get("summary") ?? "")),
       isHidden: form.get("isHidden") === "on",
+      jobSearchStatus: String(form.get("jobSearchStatus") ?? "active"),
       skills,
       experience,
       languages: language
@@ -522,6 +525,21 @@ export function ProfileForm({
           {BASIS.map((basis) => (
             <option key={basis} value={basis}>
               {t(`basis.${basis}`)}
+            </option>
+          ))}
+        </select>
+      </label>
+      <label className="flex flex-col gap-1 font-medium" htmlFor="job-search">
+        {t("fields.jobSearchStatus")}
+        <select
+          id="job-search"
+          name="jobSearchStatus"
+          defaultValue={initial.jobSearchStatus}
+          className={controlClass}
+        >
+          {JOB_SEARCH.map((status) => (
+            <option key={status} value={status}>
+              {t(`jobSearch.${status}`)}
             </option>
           ))}
         </select>

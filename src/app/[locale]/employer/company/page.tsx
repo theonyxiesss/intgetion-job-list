@@ -32,6 +32,8 @@ export default async function EmployerCompanyPage({
     domain: t("form.domain"),
     website: t("form.website"),
     description: t("form.description"),
+    timezone: t("form.timezone"),
+    timezoneHint: t("form.timezoneHint"),
     logo: t("form.logo"),
     save: t("form.save"),
     error: t("form.error"),

@@ -352,7 +352,9 @@
       "logo": "Logotipo da empresa (PNG, JPEG ou WebP; máx. 2 MB)",
       "save": "Salvar empresa",
       "error": "Não foi possível salvar a empresa. Verifique os campos e tente novamente.",
-      "saved": "Perfil da empresa salvo."
+      "saved": "Perfil da empresa salvo.",
+      "timezone": "Fuso horário (IANA, por exemplo Europe/Berlin)",
+      "timezoneHint": "O resumo matinal de candidatos chega às 08:00 neste fuso. Vazio equivale a Europe/Berlin."
     },
     "verifyLink": "Verificar a empresa",
     "createTitle": "Criar uma empresa",
@@ -433,7 +435,8 @@
       "phone": "Telefone",
       "save": "Salvar perfil",
       "sectors": "Setores (até 5)",
-      "seniority": "Senioridade"
+      "seniority": "Senioridade",
+      "jobSearchStatus": "Busca de emprego"
     },
     "weekdays": {
       "1": "Segunda-feira",
@@ -483,6 +486,11 @@
     "errors": {
       "generic": "Não foi possível salvar o perfil. Verifique os campos e tente novamente.",
       "timezone_confirm": "Confirme o fuso horário antes de salvar."
+    },
+    "jobSearch": {
+      "active": "Procurando ativamente",
+      "passive": "Aberto a propostas",
+      "not_looking": "Não estou procurando"
     }
   },
   "admin": {
