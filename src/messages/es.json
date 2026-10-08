@@ -1909,7 +1909,7 @@
     "payHire": "Pagar con USDT o USDC",
     "soon": "Próximamente",
     "soonNote": "Los planes de pago aún no están a la venta. Pronto se podrá pagar con tarjeta y con USDT / USDC; hasta entonces todo funciona en los planes gratuitos.",
-    "hireNote": "Start sigue gratis. Hire, Team, Plus y Pro se pagan en USDT o USDC. El botón cobra el precio mensual y activa el plan 30 días. No se renueva solo.",
+    "hireNote": "Start sigue gratis. Hire, Team, Plus y Pro se pagan en USDT o USDC. El botón cobra el precio mensual y activa el plan 30 días. No se renueva solo. Plus activa 100 mensajes de Spoki al día y Pro activa 300. El plan gratis se queda en 15. Un modelo más potente, un bloque promocionado, los puestos del equipo y un reembolso automático todavía no se activan con este pago.",
     "market": "Publicar en los grandes portales de empleo remoto cuesta 250–300 $ por empleo sin reembolso. Aquí es gratis, o 79 $ con garantía.",
     "alwaysFreeTitle": "Lo que ningún plan vende nunca",
     "alwaysFree": {
@@ -1980,7 +1980,7 @@
         "name": "Pro",
         "for": "A por un gran puesto o un aumento.",
         "points": {
-          "agent": "Agente de carrera: 300 mensajes al día, modelo más potente",
+          "agent": "Agente de carrera: 300 mensajes al día",
           "interview": "Entrevistas de práctica con comentarios",
           "review": "Revisión completa del perfil con un plan",
           "salary": "Un informe salarial para negociar",
@@ -1992,15 +1992,15 @@
     "faq": {
       "guarantee": {
         "q": "¿Y si el empleo de pago recibe menos candidaturas de las prometidas?",
-        "a": "A los 30 días contamos las candidaturas de candidatos con una afinidad de al menos el 60 %. Si hay menos de 10, el dinero se devuelve automáticamente: no tienes que pedirlo."
+        "a": "A los 30 días, si un empleo Hire tiene menos de 10 candidaturas de candidatos con al menos un 60 % de afinidad, el reembolso se envía a mano desde el monedero de la empresa. Todavía no vuelve solo."
       },
       "cancel": {
         "q": "¿Puedo cancelar?",
-        "a": "Sí, con un clic. Una suscripción funciona hasta el final del periodo pagado; no hay permanencia anual."
+        "a": "No hay nada más que cancelar. Los 30 días terminan y el pago no se repite."
       },
       "crypto": {
         "q": "¿Puedo pagar en cripto?",
-        "a": "Sí: USDT y USDC directamente al monedero de la empresa, prepagado por un periodo. Los pagos con tarjeta se hacen a través de Stripe."
+        "a": "Sí. USDT o USDC al monedero de la empresa. Un pago cubre 30 días y no se renueva. Todavía no aceptamos tarjeta."
       },
       "seen": {
         "q": "¿Verán los empleadores que pago?",
@@ -2008,7 +2008,7 @@
       },
       "when": {
         "q": "¿Cuándo puedo comprar?",
-        "a": "Los planes de pago se están preparando. Todo lo de los planes gratuitos ya funciona."
+        "a": "Ahora. Start sigue gratis. Hire, Team, Plus y Pro se pagan en USDT o USDC."
       }
     }
   },

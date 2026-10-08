@@ -40,6 +40,7 @@ import {
   verifyTelegramAuth,
 } from "./telegram";
 import { localePrefix } from "@/i18n/paths";
+import type { LoginNext } from "@/components/auth/login-next";
 
 export type AuthClient = Pick<
   SupabaseClient["auth"],
@@ -66,7 +67,7 @@ export type RegisterResult = { status: "created" | "resent" };
 
 export function callbackUrl(
   locale: AppLocale,
-  next?: "reset" | "chat" | "account",
+  next?: "reset" | "account" | LoginNext,
   wait?: string,
 ): string {
   const url = new URL(`${siteUrl()}${localePrefix(locale)}/auth/callback`);
@@ -98,7 +99,7 @@ export type LinkedOAuth = { label: string | null };
 /** Sends the browser to Google. The secret stays in the Supabase project (D335). */
 export async function startGoogleSignIn(
   auth: AuthClient,
-  input: { locale: AppLocale; next?: "chat"; link?: boolean },
+  input: { locale: AppLocale; next?: LoginNext; link?: boolean },
 ): Promise<{ url: string }> {
   return startOAuthSignIn(auth, { ...input, provider: "google" });
 }
@@ -106,7 +107,7 @@ export async function startGoogleSignIn(
 /** Sends the browser to X. The secret stays in the Supabase project (D336). */
 export async function startXSignIn(
   auth: AuthClient,
-  input: { locale: AppLocale; next?: "chat"; link?: boolean },
+  input: { locale: AppLocale; next?: LoginNext; link?: boolean },
 ): Promise<{ url: string }> {
   return startOAuthSignIn(auth, { ...input, provider: "x" });
 }
@@ -116,7 +117,7 @@ async function startOAuthSignIn(
   input: {
     provider: OAuthProviderName;
     locale: AppLocale;
-    next?: "chat";
+    next?: LoginNext;
     link?: boolean;
   },
 ): Promise<{ url: string }> {

@@ -4,6 +4,7 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/request-ip";
 import { siteUrl } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { oauthNext } from "@/components/auth/login-next";
 import {
   getCurrentUser,
   GOOGLE_TERMS_COOKIE,
@@ -58,7 +59,7 @@ export async function redirectToOAuth(
   const query = new URL(request.url).searchParams;
   const locale = localeSchema.catch("en").parse(query.get("locale"));
   const link = query.get("link") === "1";
-  const next = !link && query.get("next") === "chat" ? "chat" : undefined;
+  const next = oauthNext(query.get("next"), link);
   const accept =
     provider === "google" ? isGoogleAuthorizeHost : isXAuthorizeHost;
   const start = provider === "google" ? startGoogleSignIn : startXSignIn;

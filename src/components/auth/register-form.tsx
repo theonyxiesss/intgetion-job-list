@@ -21,6 +21,7 @@ import {
   useAuthError,
 } from "./fields";
 import { localePrefix } from "@/i18n/paths";
+import type { LoginNext } from "./login-next";
 
 // The password rule sits on the field, so its error shows together with the
 // others instead of after they are fixed.
@@ -45,7 +46,7 @@ function schemaFor(magic: boolean) {
   });
 }
 
-export function RegisterForm({ next }: { next?: "chat" }) {
+export function RegisterForm({ next }: { next?: LoginNext }) {
   const t = useTranslations("auth");
   const errorText = useAuthError();
   const locale = useLocale();

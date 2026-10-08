@@ -5,6 +5,17 @@ import { privacyHash } from "@/lib/privacy-hash";
 
 export type RateRule = { limit: number; windowSeconds: number };
 
+export type CandidateMessagePlan = "free" | "plus" | "pro";
+
+/** Signed-in Spoki cap. Free stays on `botUser`. Pro wins over Plus (D364). */
+export function botMessageBucket(
+  plan: CandidateMessagePlan,
+): "botUser" | "botPlus" | "botPro" {
+  if (plan === "pro") return "botPro";
+  if (plan === "plus") return "botPlus";
+  return "botUser";
+}
+
 /** Section 6 limits that exist so far. Other rows arrive with their features. */
 export const rateRules = {
   /** login, keyed by IP + email: 5 per 15 minutes */
@@ -30,6 +41,10 @@ export const rateRules = {
   botGuest: { limit: 5, windowSeconds: 24 * 60 * 60 },
   /** bot messages from a user, keyed by user id (7A); free tier, D323 */
   botUser: { limit: 15, windowSeconds: 24 * 60 * 60 },
+  /** Plus plan: 100 Spoki messages a day (D323, D364) */
+  botPlus: { limit: 100, windowSeconds: 24 * 60 * 60 },
+  /** Pro plan: 300 Spoki messages a day (D323, D364) */
+  botPro: { limit: 300, windowSeconds: 24 * 60 * 60 },
   /** cookie choices sent to the consent journal, keyed by IP (D220) */
   consent: { limit: 30, windowSeconds: 60 * 60 },
   /** analytics beacons, keyed by IP; over the limit they are dropped (D225) */

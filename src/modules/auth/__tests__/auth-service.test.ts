@@ -433,6 +433,23 @@ describe("startGoogleSignIn", () => {
       },
     });
   });
+
+  it("carries a checkout return through the Google callback", async () => {
+    const auth = fakeAuth(null);
+    await startGoogleSignIn(asAuth(auth), {
+      locale: "en",
+      next: "billing-plus",
+    });
+    expect(auth.signInWithOAuth).toHaveBeenCalledWith({
+      provider: "google",
+      options: {
+        redirectTo:
+          "http://127.0.0.1:3000/auth/callback?next=billing-plus",
+        skipBrowserRedirect: true,
+        queryParams: { prompt: "select_account" },
+      },
+    });
+  });
 });
 
 describe("startXSignIn", () => {

@@ -3,7 +3,7 @@
  * Bump it when the texts in docs/content/legal-*.md change materially
  * (docs/ADMIN.md section 7).
  */
-export const TERMS_VERSION = "2026-10-05";
+export const TERMS_VERSION = "2026-10-08";
 
 /**
  * Facts the legal texts quote ({{key}} in docs/content/legal-*.md). Only

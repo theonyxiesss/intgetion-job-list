@@ -1909,7 +1909,7 @@
     "payHire": "Pay with USDT or USDC",
     "soon": "Coming soon",
     "soonNote": "Paid plans are not on sale yet. Card and USDT / USDC payments are coming; until then everything on the free plans works.",
-    "hireNote": "Start stays free. Hire, Team, Plus and Pro are paid in USDT or USDC. The button charges the monthly price and turns the plan on for 30 days. It does not renew by itself.",
+    "hireNote": "Start stays free. Hire, Team, Plus and Pro are paid in USDT or USDC. The button charges the monthly price and turns the plan on for 30 days. It does not renew by itself. Plus turns on 100 Spoki messages a day and Pro turns on 300. The free plan stays at 15. A stronger model, a promoted block, teammate seats and an automatic refund are not switched on by this payment yet.",
     "market": "Posting on the big remote boards costs $250–300 per job with no refund. Here it is free, or $79 with a guarantee.",
     "alwaysFreeTitle": "What no plan ever sells",
     "alwaysFree": {
@@ -1980,7 +1980,7 @@
         "name": "Pro",
         "for": "Going for a strong role or a raise.",
         "points": {
-          "agent": "Career agent: 300 messages a day, stronger model",
+          "agent": "Career agent: 300 messages a day",
           "interview": "Mock interviews with feedback",
           "review": "Full profile review with a plan",
           "salary": "A salary report for negotiating",
@@ -1992,15 +1992,15 @@
     "faq": {
       "guarantee": {
         "q": "What if the paid job gets fewer applications than promised?",
-        "a": "After 30 days we count applications from candidates who match at least 60%. If there are fewer than 10, the money goes back automatically — you do not need to ask."
+        "a": "After 30 days, if a Hire job has fewer than 10 applications from candidates who match at least 60%, the refund is sent by hand from the company wallet. It does not go back by itself yet."
       },
       "cancel": {
         "q": "Can I cancel?",
-        "a": "Yes, in one click. A subscription works to the end of the paid period; there is no yearly lock-in."
+        "a": "There is nothing further to cancel. The 30 days run out, and the payment does not repeat."
       },
       "crypto": {
         "q": "Can I pay in crypto?",
-        "a": "Yes — USDT and USDC straight to the company wallet, prepaid for a period. Card payments go through Stripe."
+        "a": "Yes. USDT or USDC to the company wallet. One payment covers 30 days and does not renew. Card payments are not accepted yet."
       },
       "seen": {
         "q": "Will employers see that I pay?",
@@ -2008,7 +2008,7 @@
       },
       "when": {
         "q": "When can I buy?",
-        "a": "Paid plans are being prepared. Everything on the free plans works now."
+        "a": "Now. Start stays free. Hire, Team, Plus and Pro are paid in USDT or USDC."
       }
     }
   },

@@ -14,6 +14,7 @@ import {
   telegramBotToken,
 } from "@/modules/auth/service";
 import { localePrefix } from "@/i18n/paths";
+import type { LoginNext } from "./login-next";
 
 /** The frozen widget sign-in, still behind its flag (D217, D246). */
 async function telegramHref(): Promise<string | null> {
@@ -33,12 +34,12 @@ async function telegramHref(): Promise<string | null> {
 /**
  * Google and X go through Supabase (D335, D336). Telegram is the bot button (D256).
  */
-export async function SocialSignInStubs({ next }: { next?: "chat" }) {
+export async function SocialSignInStubs({ next }: { next?: LoginNext }) {
   const t = await getTranslations("auth.social");
   const locale = await getLocale();
   const telegram = await telegramHref();
   const oauthParams = new URLSearchParams({ locale });
-  if (next === "chat") oauthParams.set("next", "chat");
+  if (next) oauthParams.set("next", next);
   const oauthQuery = oauthParams.toString();
   const terms = (chunks: ReactNode) => (
     <Link href="/terms" className="underline">

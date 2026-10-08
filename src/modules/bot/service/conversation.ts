@@ -18,7 +18,8 @@ import {
   type PriceTable,
 } from "@/lib/llm";
 import { logger } from "@/lib/logger";
-import { enforceRateLimit } from "@/lib/rate-limit";
+import { botMessageBucket, enforceRateLimit } from "@/lib/rate-limit";
+import { billingMe } from "@/modules/billing/service";
 import {
   candidatePatchInput,
   patchCandidateProfile,
@@ -296,9 +297,9 @@ function startOfUtcDay(now: Date) {
 }
 
 /**
- * 12.5 limits: a guest has 30 messages a day per IP and session, a user
- * 200. A user whose cost today is above 3× their median falls back to the
- * guest limit and an alert is logged.
+ * D323: a guest has 5 messages a day per IP and session, a free user 15.
+ * Plus is 100 and Pro is 300 (D364). A user whose cost today is above 3×
+ * their median falls back to the guest limit and an alert is logged.
  */
 async function enforceMessageLimits(
   userId: string | null,
@@ -310,7 +311,13 @@ async function enforceMessageLimits(
     await enforceRateLimit("botGuest", `${ip}:${tokenHash}`, now);
     return;
   }
-  await enforceRateLimit("botUser", userId, now);
+  let plan: "free" | "plus" | "pro" = "free";
+  try {
+    plan = (await billingMe(userId)).candidatePlan;
+  } catch (err) {
+    logger.warn({ err }, "bot: plan lookup failed, free cap");
+  }
+  await enforceRateLimit(botMessageBucket(plan), userId, now);
   const today = startOfUtcDay(now);
   const days = await repo.userDailyCosts(
     userId,

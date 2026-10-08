@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ACCOUNT_TYPES } from "@/config/account";
+import { RETURN_PATHS, type LoginNext } from "@/components/auth/login-next";
 import { routing } from "@/i18n/routing";
 import { COMMON_PASSWORDS } from "./common-passwords";
 
@@ -30,7 +31,11 @@ export const passwordSchema = z
     error: "password_too_common",
   });
 
-const authNext = z.enum(["chat"]).optional();
+const LOGIN_NEXT_KEYS = Object.keys(RETURN_PATHS) as [
+  LoginNext,
+  ...LoginNext[],
+];
+const authNext = z.enum(LOGIN_NEXT_KEYS).optional();
 
 /** `POST /api/auth/register`. Without a password the user gets a magic link. */
 export const registerInput = z.object({

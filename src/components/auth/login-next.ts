@@ -1,3 +1,5 @@
+import { localePath } from "@/i18n/paths";
+
 /** Pages a sign-in may return to (allowlist: no open redirect). */
 export const RETURN_PATHS = {
   chat: "/chat",
@@ -21,4 +23,25 @@ export function planLoginNext(code: string): LoginNext | null {
   if (code === "plus") return "billing-plus";
   if (code === "pro") return "billing-pro";
   return null;
+}
+
+/** Google and X may carry a return key. A link to an existing account may not. */
+export function oauthNext(
+  raw: string | null,
+  link: boolean,
+): LoginNext | undefined {
+  if (link || !isLoginNext(raw ?? undefined)) return undefined;
+  return raw as LoginNext;
+}
+
+/** Locale path for an allowlisted return, including a checkout query. */
+export function loginReturnLocation(
+  locale: string,
+  next: LoginNext,
+): { pathname: string; search: string } {
+  const path = RETURN_PATHS[next];
+  const queryAt = path.indexOf("?");
+  const pathname = queryAt === -1 ? path : path.slice(0, queryAt);
+  const search = queryAt === -1 ? "" : path.slice(queryAt);
+  return { pathname: localePath(locale, pathname), search };
 }

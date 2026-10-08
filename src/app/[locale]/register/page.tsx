@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthPage } from "@/components/auth/auth-page";
 import { RegisterForm } from "@/components/auth/register-form";
+import { isLoginNext, type LoginNext } from "@/components/auth/login-next";
 import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
 import { Link } from "@/i18n/navigation";
 
@@ -14,8 +15,8 @@ export default async function RegisterPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("auth");
-  const { next } = await searchParams;
-  const backToChat = next === "chat" ? "chat" : undefined;
+  const { next: rawNext } = await searchParams;
+  const next: LoginNext | undefined = isLoginNext(rawNext) ? rawNext : undefined;
 
   return (
     <AuthPage
@@ -25,8 +26,8 @@ export default async function RegisterPage({
           {t("haveAccount")}{" "}
           <Link
             href={
-              backToChat
-                ? { pathname: "/login", query: { next: "chat" } }
+              next
+                ? { pathname: "/login", query: { next } }
                 : "/login"
             }
             className="underline underline-offset-4"
@@ -36,8 +37,8 @@ export default async function RegisterPage({
         </p>
       }
     >
-      <RegisterForm next={backToChat} />
-      <SocialSignInStubs next={backToChat} />
+      <RegisterForm next={next} />
+      <SocialSignInStubs next={next} />
     </AuthPage>
   );
 }

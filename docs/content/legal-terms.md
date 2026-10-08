@@ -1,9 +1,9 @@
 <!--
-Пользовательское соглашение (версия текста 2026-10-05). Источник для
+Пользовательское соглашение (версия текста 2026-10-08). Источник для
 страницы /{locale}/terms: после правки запустить `pnpm legal:sync`.
 Значения в двойных фигурных скобках подставляются из src/config/legal.ts;
-пока они не заданы, на сайте показывается «уточняется». Описание сервиса
-соответствует тому, что он делает на 2026-10-05. Перед окончательной
+пока они не заданы, на сайте показывается «уточняется». Описание оплаты
+соответствует приёму на 2026-10-08. Перед окончательной
 публикацией — проверка юристом.
 -->
 
@@ -104,6 +104,8 @@
 10.3. Оценки совпадения, подсказки и ответы ИИ-агента — автоматические и информационные; решения вы принимаете сами.
 
 10.4. В пределах, разрешённых применимым законом, мы не отвечаем за упущенную выгоду и косвенные убытки. Ничто в этом соглашении не ограничивает ответственность, которую по закону ограничить нельзя, и права потребителей, которые нельзя изменить договором.
+
+10.5. Платные тарифы «Найм», «Команда», Plus и Pro оплачиваются переводом USDT или USDC на кошелёк компании. Один платёж включает тариф на 30 дней и сам не продлевается. Годовая цена на странице тарифов не списывается. Оплата картой пока не принимается. «Старт» и поиск работы остаются бесплатными. Тариф включается только после того, как сервер проверил перевод; надпись в браузере сама его не включает. Если через 30 дней на вакансию «Найм» пришло меньше 10 откликов от кандидатов с совпадением от 60 %, возврат делается вручную с кошелька компании. Plus включает 100 сообщений Spoki в день, Pro — 300. Бесплатный тариф остаётся на 15. Более сильная модель, блок «Продвигается», места в команде и автоматический возврат этим платежом пока не включаются.
 
 ## 11. Персональные данные и куки
 
@@ -236,6 +238,8 @@ Version of {{effectiveDate}}. Version id {{version}}.
 
 10.4. To the extent permitted by applicable law, we are not liable for lost profits or indirect damages. Nothing in these Terms limits liability that cannot be limited by law or consumer rights that cannot be waived by contract.
 
+10.5. The paid plans Hire, Team, Plus and Pro are paid by a USDT or USDC transfer to the company wallet. One payment turns the plan on for 30 days and does not renew. The yearly figure on the pricing page is not charged. Card payments are not accepted yet. Start and job search stay free. The plan turns on only after the server has checked the transfer; a message in the browser does not turn it on. If after 30 days a Hire job has fewer than 10 applications from candidates who match at least 60%, the refund is made by hand from the company wallet. Plus turns on 100 Spoki messages a day and Pro turns on 300. The free plan stays at 15. A stronger model, a promoted block, teammate seats and an automatic refund are not switched on by this payment yet.
+
 ## 11. Personal data and cookies
 
 11.1. The Privacy Policy explains how we collect, use and keep data. In short: we do not sell data; an employer sees a candidate's contacts only on mutual interest; visit statistics are collected without third parties and without cookies, and the analytics cookie is set only with your consent; the Global Privacy Control signal is honoured.
@@ -366,6 +370,8 @@ Redação de {{effectiveDate}}. Identificador da versão {{version}}.
 10.3. Pontuações de correspondência, dicas e respostas do agente de IA são automáticas e informativas; as decisões são suas.
 
 10.4. Na medida permitida pela lei aplicável, não respondemos por lucros cessantes ou danos indiretos. Nada nestes Termos limita uma responsabilidade que a lei não permite limitar nem direitos do consumidor que não podem ser renunciados por contrato.
+
+10.5. Os planos pagos Hire, Team, Plus e Pro são pagos com uma transferência de USDT ou USDC para a carteira da empresa. Um pagamento liga o plano por 30 dias e não renova. O valor anual na página de preços não é cobrado. Pagamento com cartão ainda não é aceito. Start e a busca de vagas continuam grátis. O plano liga somente depois que o servidor confere a transferência; um aviso no navegador não o liga. Se após 30 dias uma vaga Hire tiver menos de 10 candidaturas de candidatos com pelo menos 60% de correspondência, o reembolso é feito à mão a partir da carteira da empresa. Plus liga 100 mensagens do Spoki por dia e Pro liga 300. O plano grátis continua em 15. Um modelo mais forte, um bloco promovido, lugares na equipe e um reembolso automático ainda não são ligados por este pagamento.
 
 ## 11. Dados pessoais e cookies
 

@@ -185,9 +185,14 @@ export async function runSlot(input: {
         logger.error({ err, userId: row.user_id, slotId }, "brief failed");
       }
     }
-    // Employers (D352) share the same counters. No time zone is stored for
-    // them, so they all fall into the default slot.
+    // Employers (D352) share the same counters. Neither `users` nor
+    // `companies` has a time zone column (20-morning-briefs §10.3), so they
+    // all fall into the default slot until a migration adds one.
     if (slotForTimeZone(null, now) === slotId) {
+      logger.info(
+        { slotId, reason: "no_employer_time_zone" },
+        "employer briefs use the default slot",
+      );
       const cache = new Map<string, Promise<EmployerMatchRow[]>>();
       for (const recipient of await readEmployerRecipients(slotDate)) {
         result.checked += 1;

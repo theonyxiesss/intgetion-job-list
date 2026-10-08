@@ -15,6 +15,10 @@ import {
   signedInPath,
 } from "@/modules/auth/service/email-wait";
 import { localePrefix } from "@/i18n/paths";
+import {
+  isLoginNext,
+  loginReturnLocation,
+} from "@/components/auth/login-next";
 
 export async function GET(
   request: NextRequest,
@@ -45,7 +49,8 @@ export async function GET(
     terms.success ? terms.data : undefined,
   );
 
-  const backToAccount = query.get("next") === "account";
+  const rawNext = query.get("next") ?? undefined;
+  const backToAccount = rawNext === "account";
   if (result.ok && !backToAccount) {
     await auditSignIn(result.user, "email_link", clientIp(request.headers));
   }
@@ -56,11 +61,13 @@ export async function GET(
       ? `${localePrefix(locale)}/settings/account`
       : `${localePrefix(locale)}/login`;
     target.searchParams.set("error", result.reason);
-  } else if (query.get("next") === "reset") {
+  } else if (rawNext === "reset") {
     target.pathname = `${localePrefix(locale)}/reset-password`;
     target.searchParams.set("mode", "update");
-  } else if (query.get("next") === "chat") {
-    target.pathname = `${localePrefix(locale)}/chat`;
+  } else if (isLoginNext(rawNext)) {
+    const dest = loginReturnLocation(locale, rawNext);
+    target.pathname = dest.pathname;
+    target.search = dest.search;
   } else if (backToAccount) {
     target.pathname = `${localePrefix(locale)}/settings/account`;
   } else if (result.created && result.user.accountType === "employer") {

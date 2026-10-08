@@ -36,8 +36,8 @@ export default async function LoginPage({
             {t("noAccount")}{" "}
             <Link
               href={
-                next === "chat"
-                  ? { pathname: "/register", query: { next: "chat" } }
+                next
+                  ? { pathname: "/register", query: { next } }
                   : "/register"
               }
               className="underline underline-offset-4"
@@ -52,7 +52,7 @@ export default async function LoginPage({
         initialError={error && callbackErrors.has(error) ? error : undefined}
         next={next}
       />
-      <SocialSignInStubs next={next === "chat" ? "chat" : undefined} />
+      <SocialSignInStubs next={next} />
     </AuthPage>
   );
 }
