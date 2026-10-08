@@ -394,7 +394,13 @@ export async function createCryptoOrder(
   const chain = chainById(chainName);
   const contract = tokenContract(chainName, input.token);
   const recipient = validAddress(process.env.COMPANY_WALLET_ADDRESS ?? "");
-  if (!chain || !contract || !recipient || !cryptoReady(chainName, input.token)) {
+  if (!chain) {
+    throw new HttpError(409, "CHAIN_UNSUPPORTED", "Use a supported network");
+  }
+  if (!contract) {
+    throw new HttpError(409, "TOKEN_UNSUPPORTED", "This token is not on this network");
+  }
+  if (!recipient || !cryptoReady(chainName, input.token)) {
     throw new HttpError(409, "BILLING_UNAVAILABLE", "Crypto payments are not on");
   }
 

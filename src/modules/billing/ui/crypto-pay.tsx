@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { Button, TokenMark, cn } from "@/components/ui";
+import { classifyPayError, type PayErrorKind } from "./pay-error";
 
 type Order = {
   id: string;
@@ -25,6 +26,15 @@ function transferData(to: string, amount: bigint): `0x${string}` {
 function units(amount: string): bigint {
   const [whole, frac = ""] = amount.split(".");
   return BigInt(whole + frac.padEnd(6, "0").slice(0, 6));
+}
+
+async function errorCode(response: Response): Promise<string> {
+  try {
+    const body = (await response.json()) as { error?: { code?: string } };
+    return body.error?.code ?? "";
+  } catch {
+    return "";
+  }
 }
 
 type Wallet = {
@@ -71,8 +81,16 @@ export function CryptoPay({
   const t = useTranslations("billing");
   const [token, setToken] = useState<"USDC" | "USDT">("USDC");
   const [order, setOrder] = useState<Order | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<PayErrorKind | null>(null);
   const [busy, setBusy] = useState(false);
+  const poll = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (poll.current !== null) window.clearInterval(poll.current);
+    },
+    [],
+  );
 
   async function pay() {
     setBusy(true);
@@ -93,7 +111,10 @@ export function CryptoPay({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ address, chainId }),
       });
-      if (!nonce.ok) throw new Error("nonce");
+      if (!nonce.ok) {
+        const code = await errorCode(nonce);
+        throw new Error(code === "VALIDATION_ERROR" ? "network" : "nonce");
+      }
       const { message } = (await nonce.json()) as { message: string };
       const signature = (await provider.request({
         method: "personal_sign",
@@ -115,7 +136,12 @@ export function CryptoPay({
           ...(companyId ? { companyId } : {}),
         }),
       });
-      if (!created.ok) throw new Error("order");
+      if (!created.ok) {
+        const code = await errorCode(created);
+        if (code === "TOKEN_UNSUPPORTED") throw new Error("token");
+        if (code === "CHAIN_UNSUPPORTED") throw new Error("network");
+        throw new Error("order");
+      }
       const next = (await created.json()) as Order;
       setOrder(next);
       if (next.status === "paid") return;
@@ -136,27 +162,26 @@ export function CryptoPay({
       });
       if (!confirmed.ok) throw new Error("confirm");
       setOrder((await confirmed.json()) as Order);
-      const timer = window.setInterval(async () => {
+      if (poll.current !== null) window.clearInterval(poll.current);
+      poll.current = window.setInterval(async () => {
         const fresh = await fetch(`/api/billing/crypto/orders/${next.id}`);
         if (!fresh.ok) return;
         const body = (await fresh.json()) as Order;
         setOrder(body);
         if (body.status !== "awaiting_payment" && body.status !== "checking") {
-          window.clearInterval(timer);
+          if (poll.current !== null) window.clearInterval(poll.current);
+          poll.current = null;
         }
       }, 4000);
-    } catch (error) {
-      setError(
-        error instanceof Error && error.message === "wallet"
-          ? t("needWallet")
-          : t("status.failed"),
-      );
+    } catch (caught) {
+      setError(classifyPayError(caught));
     } finally {
       setBusy(false);
     }
   }
 
-  const locked = busy || Boolean(order);
+  const hold =
+    busy || order?.status === "checking" || order?.status === "paid";
   const shownToken: "USDC" | "USDT" =
     order?.token === "USDC" || order?.token === "USDT" ? order.token : token;
 
@@ -179,7 +204,7 @@ export function CryptoPay({
             type="button"
             role="radio"
             aria-checked={token === code}
-            disabled={locked}
+            disabled={hold}
             onClick={() => setToken(code)}
             className={cn(
               "flex min-h-20 items-center gap-3 border px-3 py-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-60",
@@ -205,7 +230,7 @@ export function CryptoPay({
         className="w-full"
         onClick={pay}
         loading={busy}
-        disabled={order?.status === "paid"}
+        disabled={hold}
       >
         {t("payNow", { amount, token: shownToken })}
       </Button>
@@ -233,7 +258,23 @@ export function CryptoPay({
           <p className="font-mono text-sm break-all">{order.recipient}</p>
         </div>
       ) : null}
-      {error ? <p className="t-body-s text-danger">{error}</p> : null}
+      {error ? (
+        <p
+          className={
+            error === "cancel" ? "t-body-s text-fg-muted" : "t-body-s text-danger"
+          }
+        >
+          {error === "wallet"
+            ? t("needWallet")
+            : error === "cancel"
+              ? t("cancelled")
+              : error === "network"
+                ? t("network")
+                : error === "token"
+                  ? t("tokenUnsupported")
+                  : t("status.failed")}
+        </p>
+      ) : null}
     </section>
   );
 }

@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     await enforceRateLimit("billingConfirm", user.id);
     const input = await readJson(request, body);
     const result = await confirmHireOrder(user.id, input.orderId, input.txHash);
-    if (result.granted) {
+    if (result.granted && result.plan === "hire" && result.jobId) {
       const authUser = await supabase.auth.getUser();
       await sendHireMail({
         to: authUser.data.user?.email ?? null,
