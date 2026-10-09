@@ -29,6 +29,7 @@ describe("IndexNow (D284)", () => {
       `${SITE}/ru/jobs/42`,
       `${SITE}/es/jobs/42`,
       `${SITE}/pt-BR/jobs/42`,
+      `${SITE}/de/jobs/42`,
     ]);
   });
 
@@ -66,6 +67,7 @@ describe("IndexNow (D284)", () => {
         `${SITE}/ru/jobs/7`,
         `${SITE}/es/jobs/7`,
         `${SITE}/pt-BR/jobs/7`,
+        `${SITE}/de/jobs/7`,
       ],
     });
   });

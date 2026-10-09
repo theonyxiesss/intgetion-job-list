@@ -80,6 +80,28 @@ const copy = {
     openJob: "Abrir",
     more: "Mais no catálogo: {site}/pt-BR/jobs",
   },
+  de: {
+    unavailable:
+      "Der Agent ruht gerade. Der Katalog funktioniert weiterhin: " +
+      "{site}/de/jobs",
+    tryLater:
+      "Bei mir ist etwas schiefgelaufen. Versuchen Sie es in einer Minute erneut.",
+    rateLimited:
+      "Das sind viele Fragen auf einmal. Versuchen Sie es in einer Minute erneut.",
+    budget:
+      "Der Agent hat sein Budget für heute erreicht. Versuchen Sie es morgen erneut.",
+    empty:
+      "Sagen Sie mir, was Sie suchen — eine Rolle, einen Skill, eine Zeitzone.",
+    reset: "Vergessen. Was suchen Sie?",
+    help:
+      "Fragen Sie mit Ihren Worten: «Remote-Jobs mit Solidity», «Design in Teilzeit in Europa». " +
+      "Melden Sie sich auf {site} an, um Jobs zu speichern und sich zu bewerben. /reset beginnt ein neues Gespräch.",
+    signIn:
+      "Um einen Job zu speichern oder sich zu bewerben, melden Sie sich an und kommen Sie dann hierher zurück.",
+    signInButton: "Anmelden",
+    openJob: "Öffnen",
+    more: "Mehr im Katalog: {site}/de/jobs",
+  },
 } as const;
 
 type Lines = { readonly [K in keyof (typeof copy)["en"]]: string };
@@ -112,6 +134,15 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     register: "Criar conta",
     post_job: "Publicar uma vaga",
   },
+  de: {
+    pay_hire: "Hire bezahlen",
+    pay_team: "Team bezahlen",
+    pay_plus: "Plus bezahlen",
+    pay_pro: "Pro bezahlen",
+    pricing: "Tarife ansehen",
+    register: "Konto erstellen",
+    post_job: "Job ausschreiben",
+  },
 };
 
 type LinkButton = { label: string; url: string };
@@ -132,6 +163,8 @@ function linesFor(languageCode: string | undefined): {
   const code = (languageCode ?? "").toLowerCase();
   // D350: Telegram sends "pt" or "pt-br"; both get Brazilian Portuguese.
   if (code.startsWith("pt")) return { lines: copy["pt-BR"], locale: "pt-BR" };
+  // D373: "de", "de-at", "de-ch" all get German.
+  if (code.startsWith("de")) return { lines: copy.de, locale: "de" };
   const ru = code.startsWith("ru");
   return { lines: ru ? copy.ru : copy.en, locale: ru ? "ru" : "en" };
 }

@@ -721,3 +721,14 @@
 - Поле пояса в профиле компании (`isIanaTimeZone`), переключатель поиска в профиле кандидата, подписи en/ru/es/pt-BR.
 - Сводка: слот по поясу компании (`employerBriefTimeZone`), лог `no_employer_time_zone` только при смешанных/пустых поясах; кандидаты `not_looking` не попадают.
 - Проверки: typecheck, lint, vitest notifications/candidates/companies (119 + новые) зелёные. Интеграционные тесты с миграциями — в CI.
+
+## [2026-10-09] — locale-de (немецкий, D373) — DONE
+- Сделано: язык `de` на `/de/...` по образцу pt-BR. `routing.ts`, `locale.ts` (`de-DE`), каталоги в `messages.ts`, `hire-mail.ts`, `auth-email-templates.ts`. `src/messages/de.json` — полный перевод en.json; подписи `de` (DE / Deutsch) во всех каталогах. Письма: ветка `de` в шаблонах Supabase и темах `config.toml`, письмо подтверждения домена. Бот: тексты агента, кнопки шагов, вход через Telegram, `de*` → `de`, язык в системном промпте. `SEO_LOCALES`, заголовок RSS. Юридические тексты: секции `<!-- de -->` в terms и privacy, `legal-sync`, `legalText`.
+- Проверено в браузере (dev на :3100): `/de` → 200, `lang="de"`, переключатель показывает «Deutsch» текущим; `/de/terms` и `/de/privacy` на немецком, юрлицо пустое.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` (с `NEXT_PUBLIC_SITE_URL=http://localhost:3000`) → 1: одно падение `public-search.test.ts` (в DTO есть `promoted`, а в списке теста нет). Падает и на чистом f89ad97 (проверено через stash): хвост D366, не этой подфазы. Тест не трогал. `decide.test.ts` один раз упал по таймауту импорта под нагрузкой; отдельно зелёный.
+- P-тесты подфазы: messages (de: те же ключи и плейсхолдеры), legal (de свой текст, те же плейсхолдеры и число разделов, `/de/privacy`), auth-emails (немецкое письмо), auth-email-templates (15 ссылок, шаблоны = код), telegram-agent (de, de-at), seo / indexnow (`/de`) ✅
+- Миграции: `src/db/migrations/0043_locale_de.sql` (номер 0042 занят `0042_company_social_urls.sql` в основной папке; на облако не применена)
+- Изменённые файлы: см. `git status` ветки `claude/locale-de`. Тест схемы `registerInput` теперь отклоняет `fr` вместо `de`.
+- Отклонения от ТЗ: решение D373 и миграция 0043: D368–D372 и 0042 заняты в основной папке. Полный `pnpm test` красный только на старом `public-search.test.ts` (поле `promoted`, D366, не эта подфаза); проверки языка зелёные.
+- OPEN QUESTION: нужен ли Impressum и правки под BDSG для `/de` — к юристу; кто чинит `public-search.test.ts` после D366.
+- Следующая подфаза: по команде основателя (французский не начат).

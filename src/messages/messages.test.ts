@@ -2,10 +2,11 @@ import { describe, expect, it } from "vitest";
 import { routing } from "@/i18n/routing";
 import en from "./en.json";
 import es from "./es.json";
+import de from "./de.json";
 import ptBR from "./pt-BR.json";
 import ru from "./ru.json";
 
-const catalogs = { en, ru, es, "pt-BR": ptBR } as const;
+const catalogs = { en, ru, es, "pt-BR": ptBR, de } as const;
 
 function entries(value: unknown, prefix = ""): [string, string][] {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
