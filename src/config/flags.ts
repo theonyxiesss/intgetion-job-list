@@ -2,7 +2,7 @@ function envFlag(name: string): boolean {
   return process.env[name] === "true";
 }
 
-/** Feature flags. Embeddings and live import stay off in MVP (D11, D18). */
+/** Feature flags. Embeddings stay off (D11). Live import runs only when IMPORT_LIVE_ENABLED=true (D18, D375). */
 export const flags = {
   embeddingsEnabled: envFlag("EMBEDDINGS_ENABLED"),
   importLiveEnabled: envFlag("IMPORT_LIVE_ENABLED"),

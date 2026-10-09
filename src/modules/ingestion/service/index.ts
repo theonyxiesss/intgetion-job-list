@@ -4,8 +4,10 @@
  */
 export {
   FIXTURE_ADAPTERS,
+  LIVE_SOURCES,
   runFixtureImport,
   runFixtureImports,
+  runLiveImports,
 } from "./ingest-fixtures";
 export type { ImportReport } from "./ingest-fixtures";
 export { applyExternal, recordNothing } from "./apply-external";

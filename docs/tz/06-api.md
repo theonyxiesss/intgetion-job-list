@@ -66,6 +66,7 @@
 - `GET /api/companies/:slug` — все — публичная часть + published вакансии.
 - `PATCH /api/companies/:id` — owner/admin.
 - `POST /api/companies/:id/logo` — owner/admin — image/png|jpeg|webp ≤ 2 MB, перекодировка sharp → webp 256×256, случайное имя.
+- `GET /api/companies/:slug/logo` — публично, только видимая компания и только файл `*.webp` из бакета (D372). Нет файла — 404, карточка показывает знак.
 - `POST /api/companies/:id/verification` `{ method, target }`; `POST /api/companies/:id/verification/confirm` `{ token }` (10B).
 
 **Candidates**

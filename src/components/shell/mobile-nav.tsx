@@ -21,12 +21,15 @@ export function MobileNav({
   openLabel,
   closeLabel,
   signedIn,
+  triggerClassName = "xl:hidden",
 }: {
   items: NavItem[];
   label: string;
   openLabel: string;
   closeLabel: string;
   signedIn: boolean;
+  /** When the wide bar takes over. Defaults to the xl breakpoint. */
+  triggerClassName?: string;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDialogElement>(null);
@@ -47,7 +50,7 @@ export function MobileNav({
         aria-expanded={open}
         onClick={() => setOpen(true)}
         icon={<Icon icon={Menu} />}
-        className="lg:hidden"
+        className={triggerClassName}
       />
       <dialog
         ref={ref}

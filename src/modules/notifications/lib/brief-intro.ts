@@ -1,5 +1,5 @@
 /**
- * The opening line of a morning brief (D355): written by the LLM from the
+ * The opening line of a morning brief (D370): written by the LLM from the
  * ready cards, or this template when the LLM is missing or fails.
  */
 import { messagesFor } from "@/i18n/messages";

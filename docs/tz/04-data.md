@@ -106,6 +106,7 @@ candidate_contacts(                               -- ОТДЕЛЬНАЯ табл
 companies(
   id, name text not null, slug text unique not null,
   domain citext unique null, website_url text,
+  linkedin_url text null, telegram_url text null, x_url text null,
   description text check(len<=5000), logo_path text,   -- Storage path
   country char(2), size company_size,
   legal_name text, registration_number text,           -- «реквизиты» для верификации

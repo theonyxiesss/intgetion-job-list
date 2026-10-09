@@ -17,16 +17,27 @@ export function LocaleSwitch() {
   const pathname = usePathname();
   const search = useSearchParams().toString();
   return (
-    <nav aria-label={nav("language")} className="flex gap-4">
-      {routing.locales.map((locale) =>
-        locale === current ? (
+    <nav
+      aria-label={nav("language")}
+      className="flex max-w-full flex-wrap items-center gap-x-3 gap-y-1"
+    >
+      {routing.locales.map((locale) => {
+        const native = t(`native.${locale}`);
+        const short = t(`short.${locale}`);
+        const label = (
+          <>
+            <span className="sm:hidden">{short}</span>
+            <span className="hidden sm:inline">{native}</span>
+          </>
+        );
+        return locale === current ? (
           <span
             key={locale}
             aria-current="true"
             className="t-caption text-fg"
             lang={locale}
           >
-            {t(`native.${locale}`)}
+            {label}
           </span>
         ) : (
           <Link
@@ -37,10 +48,10 @@ export function LocaleSwitch() {
             hrefLang={locale}
             className="t-caption text-fg-subtle transition-colors hover:text-fg"
           >
-            {t(`native.${locale}`)}
+            {label}
           </Link>
-        ),
-      )}
+        );
+      })}
     </nav>
   );
 }

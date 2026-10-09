@@ -55,7 +55,7 @@ async function count(table: "brief_deliveries" | "notifications") {
   return row?.count ?? 0;
 }
 
-describe("briefs admin run now (D354)", () => {
+describe("briefs admin run now (D369)", () => {
   it("a dry run counts but writes no delivery and no notification", async () => {
     const run = await runBriefSlotNow("cis", true, now, {
       loadJobs,

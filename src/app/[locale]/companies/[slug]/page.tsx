@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { CompanyLinks, CompanyMarkFor } from "@/components/ui/company-mark";
 import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
 import { LinkTabs } from "@/components/ui/tabs";
@@ -81,11 +82,6 @@ export default async function CompanyPage({
     viewerId ? isFollowing(viewerId, company.id) : false,
   ]);
   const jobsTab = tab === "jobs";
-  const initials = company.name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part.slice(0, 1).toUpperCase())
-    .join("");
 
   return (
     <main className="py-10 md:py-16">
@@ -99,26 +95,23 @@ export default async function CompanyPage({
         ])}
       />
       <Container className="flex flex-col gap-8">
-        <header className="flex flex-wrap items-end gap-4">
-          <span
-            role={company.logoPath ? "img" : undefined}
-            aria-label={company.logoPath ? t("companyLogo") : undefined}
-            aria-hidden={company.logoPath ? undefined : true}
-            className="t-h3 flex size-16 items-center justify-center border border-line"
-          >
-            {initials}
-          </span>
-          <PageHeader
-            title={company.name}
-            label={
-              company.isTrusted
-                ? t("trusted")
-                : company.status === "verified"
-                  ? t("verified")
-                  : undefined
-            }
-          />
-          <div className="ml-auto">
+        <header className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
+          <div className="flex min-w-0 items-start gap-4 sm:items-end">
+            <CompanyMarkFor company={company} size="profile" />
+            <div className="min-w-0 flex-1 sm:flex-none">
+              <PageHeader
+                title={company.name}
+                label={
+                  company.isTrusted
+                    ? t("trusted")
+                    : company.status === "verified"
+                      ? t("verified")
+                      : undefined
+                }
+              />
+            </div>
+          </div>
+          <div className="sm:ml-auto">
             <FollowButton
               slug={slug}
               initial={following}
@@ -154,10 +147,24 @@ export default async function CompanyPage({
           ) : (
             <EmptyState title={t("empty")} />
           )
-        ) : company.description ? (
-          <p className="max-w-[68ch] whitespace-pre-wrap">
-            {company.description}
-          </p>
+        ) : company.description ||
+          company.websiteUrl ||
+          company.linkedinUrl ||
+          company.telegramUrl ||
+          company.xUrl ? (
+          <div className="flex max-w-[68ch] flex-col gap-4">
+            <CompanyLinks
+              links={[
+                { href: company.websiteUrl, label: t("links.website") },
+                { href: company.linkedinUrl, label: t("links.linkedin") },
+                { href: company.telegramUrl, label: t("links.telegram") },
+                { href: company.xUrl, label: t("links.x") },
+              ]}
+            />
+            {company.description ? (
+              <p className="whitespace-pre-wrap">{company.description}</p>
+            ) : null}
+          </div>
         ) : (
           <EmptyState title={t("emptyAbout")} />
         )}

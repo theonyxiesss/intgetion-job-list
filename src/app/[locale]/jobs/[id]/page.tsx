@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { formatMoneyDto } from "@/lib/money";
 import { Badge } from "@/components/ui/badge";
+import { CompanyLinks, CompanyMarkFor } from "@/components/ui/company-mark";
 import { Container } from "@/components/ui/container";
 import { Morph, navBack, navForward } from "@/components/ui/page-transition";
 import { Stat, StatRow } from "@/components/ui/stat";
@@ -29,6 +30,7 @@ import { SimilarJobs } from "@/modules/jobs/ui/similar-jobs";
 import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 import { localePrefix } from "@/i18n/paths";
 import { intlLocale } from "@/i18n/locale";
+import { publicJobText } from "@/lib/public-job-text";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +44,7 @@ export async function generateMetadata({
   const job = await getJobForPublic(id, { locale });
   if (!job) return {};
   const title = `${job.title} — ${job.company.name}`;
-  const description = metaDescription(job.description);
+  const description = metaDescription(publicJobText(job.description));
   return {
     title,
     description,
@@ -62,6 +64,7 @@ export default async function JobPage({
   const { locale, id } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("jobs");
+  const companyPage = await getTranslations("companyPage");
   const seo = await getTranslations("seo");
   const actions = await getTranslations("jobActions");
   const categories = await getTranslations("categories");
@@ -80,11 +83,12 @@ export default async function JobPage({
   const salary = job.salaryMin
     ? `${formatMoneyDto(job.salaryMin, money)}${job.salaryMax ? ` – ${formatMoneyDto(job.salaryMax, money)}` : ""} / ${t(job.salaryMin.period)} (${t(job.salaryMin.basis)})`
     : t("salaryMissing");
-  const source = job.company.isTrusted
+  const sourceLabel = job.company.isTrusted
     ? t("trusted")
     : job.source.type === "imported"
-      ? `${t("importedFrom")} ${job.source.name ?? ""}`
+      ? null
       : t("company");
+  const description = publicJobText(job.description);
 
   return (
     <main className="py-10 md:py-16">
@@ -129,13 +133,40 @@ export default async function JobPage({
               <Morph name={`job-title-${job.id}`}>
                 <h1 className="t-display-l">{job.title}</h1>
               </Morph>
-              <Link
-                href={`/companies/${job.company.slug}`}
-                {...navForward}
-                className="t-body-s self-start text-fg-muted underline-offset-4 hover:underline"
-              >
-                {job.company.name}
-              </Link>
+              <div className="flex items-start gap-3">
+                <CompanyMarkFor company={job.company} size="page" />
+                <div className="flex min-w-0 flex-col gap-1">
+                  <Link
+                    href={`/companies/${job.company.slug}`}
+                    {...navForward}
+                    className="t-body-s self-start text-fg-muted underline-offset-4 hover:underline"
+                  >
+                    {job.company.name}
+                  </Link>
+                  <CompanyLinks
+                    links={[
+                      {
+                        href: job.company.websiteUrl,
+                        label: companyPage("links.website"),
+                      },
+                      {
+                        href: job.company.linkedinUrl,
+                        label: companyPage("links.linkedin"),
+                      },
+                      {
+                        href: job.company.telegramUrl,
+                        label: companyPage("links.telegram"),
+                      },
+                      { href: job.company.xUrl, label: companyPage("links.x") },
+                    ]}
+                  />
+                </div>
+              </div>
+              {job.company.description ? (
+                <p className="max-w-[68ch] whitespace-pre-wrap text-fg-muted">
+                  {job.company.description}
+                </p>
+              ) : null}
               {job.publishedAt ? (
                 <time
                   dateTime={job.publishedAt}
@@ -146,7 +177,9 @@ export default async function JobPage({
                   }).format(new Date(job.publishedAt))}
                 </time>
               ) : null}
-              <p className="t-label text-fg-muted">{source}</p>
+              {sourceLabel ? (
+                <p className="t-label text-fg-muted">{sourceLabel}</p>
+              ) : null}
             </header>
             <StatRow>
               <Stat
@@ -203,9 +236,11 @@ export default async function JobPage({
                 ) : null}
               </section>
             ) : null}
-            <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
-              {job.description}
-            </div>
+            {description ? (
+              <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
+                {description}
+              </div>
+            ) : null}
             {job.skills.length > 0 ? (
               <ul className="flex flex-wrap gap-2">
                 {job.skills.map((skill) => (

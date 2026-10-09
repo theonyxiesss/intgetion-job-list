@@ -6,7 +6,7 @@ import { runBriefSlotNow } from "@/modules/notifications/service";
 const runInput = z.object({ dryRun: z.boolean() });
 
 /**
- * "Run now" (D354). A dry run counts and sends nothing; a live run for a
+ * "Run now" (D369). A dry run counts and sends nothing; a live run for a
  * slot day that already had one is refused with 409.
  */
 export async function POST(

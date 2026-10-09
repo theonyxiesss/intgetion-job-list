@@ -9,7 +9,7 @@ const slotInput = z.object({
   enabled: z.boolean(),
 });
 
-/** Moves or pauses one morning slot (D354); the change goes to audit_log. */
+/** Moves or pauses one morning slot (D369); the change goes to audit_log. */
 export async function PATCH(
   request: Request,
   context: { params: Promise<{ id: string }> },

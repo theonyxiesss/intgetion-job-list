@@ -5,7 +5,7 @@ import { setBriefsPaused } from "@/modules/notifications/service";
 
 const settingsInput = z.object({ paused: z.boolean() });
 
-/** The global pause of every morning brief (D354), with an audit row. */
+/** The global pause of every morning brief (D369), with an audit row. */
 export async function PUT(request: Request) {
   try {
     const admin = await openAdminAction("jobs_scheduler.manage");

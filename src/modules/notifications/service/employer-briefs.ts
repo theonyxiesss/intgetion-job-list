@@ -33,7 +33,7 @@ export type EmployerRecipient = {
 };
 
 /**
- * Recruiters and above of companies whose agent flag is on (D352), one row
+ * Recruiters and above of companies whose agent flag is on (D368), one row
  * per person, without a brief for this slot day yet. The slot comes from
  * the companies' time zones (0040); the cron picks it.
  */
@@ -173,7 +173,7 @@ export const loadCompanyCandidates: EmployerCandidateLoader = async (
 };
 
 /**
- * The anonymous list on /employer/jobs/{id} (D352): stored matches only,
+ * The anonymous list on /employer/jobs/{id} (D368): stored matches only,
  * no recompute while the page renders. The caller checks membership.
  */
 export async function listJobCandidateCards(

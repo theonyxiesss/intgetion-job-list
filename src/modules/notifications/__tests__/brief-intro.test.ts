@@ -24,7 +24,7 @@ const answering = (text: string): LLMProvider => ({
   }),
 });
 
-describe("brief intro (D355)", () => {
+describe("brief intro (D370)", () => {
   it("an LLM error gives the template", async () => {
     const intro = await writeBriefIntro(
       { locale: "ru", audience: "candidate", cards },

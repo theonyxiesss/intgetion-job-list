@@ -133,6 +133,11 @@ describe("public job search contract", () => {
         name: "Acme",
         slug: "acme",
         logoPath: null,
+        websiteUrl: "https://acme.example",
+        linkedinUrl: null,
+        telegramUrl: null,
+        xUrl: null,
+        description: "Widgets",
         status: "verified",
         isTrusted: false,
       },
@@ -157,6 +162,7 @@ describe("public job search contract", () => {
         "locationCountry",
         "minOverlapHours",
         "perks",
+        "promoted",
         "publishedAt",
         // Public end date, Google JobPosting validThrough (D211).
         "expiresAt",
@@ -175,6 +181,13 @@ describe("public job search contract", () => {
         "workHoursStart",
       ].sort(),
     );
+    expect(dto.company).toMatchObject({
+      websiteUrl: "https://acme.example",
+      linkedinUrl: null,
+      telegramUrl: null,
+      xUrl: null,
+      description: "Widgets",
+    });
     expect(dto).not.toHaveProperty("riskScore");
     expect(dto).not.toHaveProperty("riskFlags");
     expect(dto).not.toHaveProperty("createdBy");

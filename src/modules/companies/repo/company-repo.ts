@@ -18,6 +18,9 @@ export type CompanySummary = Pick<
   | "slug"
   | "domain"
   | "websiteUrl"
+  | "linkedinUrl"
+  | "telegramUrl"
+  | "xUrl"
   | "description"
   | "logoPath"
   | "country"
@@ -79,6 +82,9 @@ export async function createCompany(userId: string, input: CreateCompanyInput) {
         slug: `${slug}-${randomUUID().slice(0, 8)}`,
         domain,
         websiteUrl: input.websiteUrl ?? null,
+        linkedinUrl: input.linkedinUrl ?? null,
+        telegramUrl: input.telegramUrl ?? null,
+        xUrl: input.xUrl ?? null,
         description: input.description ?? null,
         country: input.country?.toUpperCase() ?? null,
         timezone: input.timezone ?? null,
@@ -121,6 +127,9 @@ export async function findCompanyBySlug(
       slug: companies.slug,
       domain: companies.domain,
       websiteUrl: companies.websiteUrl,
+      linkedinUrl: companies.linkedinUrl,
+      telegramUrl: companies.telegramUrl,
+      xUrl: companies.xUrl,
       description: companies.description,
       logoPath: companies.logoPath,
       country: companies.country,
@@ -168,6 +177,9 @@ export async function findCompaniesForUser(userId: string) {
       role: companyMembers.role,
       origin: companies.origin,
       websiteUrl: companies.websiteUrl,
+      linkedinUrl: companies.linkedinUrl,
+      telegramUrl: companies.telegramUrl,
+      xUrl: companies.xUrl,
       description: companies.description,
       domain: companies.domain,
       logoPath: companies.logoPath,
@@ -319,7 +331,7 @@ export async function removeMember(companyId: string, userId: string) {
   });
 }
 
-/** The agent flag of every company where this user is owner or admin (D352). */
+/** The agent flag of every company where this user is owner or admin (D368). */
 export async function setAgentBriefsForManagedCompanies(
   userId: string,
   enabled: boolean,

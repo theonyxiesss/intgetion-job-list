@@ -26,7 +26,7 @@ export type RecipientRole =
   | "searchOwner"
   /** A user following the company (D240). */
   | "companyFollower"
-  /** Recruiter or higher of a company with the agent turned on (D352). */
+  /** Recruiter or higher of a company with the agent turned on (D368). */
   | "companyRecruiterPlusAgent";
 
 export const APPLICATION_STATUSES = [
@@ -104,7 +104,7 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
       )
       .max(5)
       .optional(),
-    /** The agent's opening line (D355): LLM or template, plain text. */
+    /** The agent's opening line (D370): LLM or template, plain text. */
     intro: z.string().min(1).max(300).optional(),
   }),
   searchAlert: strict({
@@ -120,7 +120,7 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
     matchCount: z.number().int().min(1),
     sampleJobIds: z.array(idSchema).max(5),
   }),
-  // D352: anonymous cards only — no candidate id, name, email or phone.
+  // D368: anonymous cards only — no candidate id, name, email or phone.
   companyCandidatesDigest: strict({
     matchCount: z.number().int().min(1),
     sampleCandidates: z
@@ -147,7 +147,7 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
       )
       .min(1)
       .max(5),
-    /** The agent's opening line (D355): LLM or template, plain text. */
+    /** The agent's opening line (D370): LLM or template, plain text. */
     intro: z.string().min(1).max(300).optional(),
   }),
   reportDecided: strict({
@@ -303,7 +303,7 @@ export const NOTIFICATION_CATALOG: Readonly<
     emailDefault: true,
     payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.companyNewJobs,
   },
-  // Not in section 15: the employer side of the morning brief (D352).
+  // Not in section 15: the employer side of the morning brief (D368).
   "company.candidates_digest": {
     type: "company.candidates_digest",
     i18nKey: "companyCandidatesDigest",

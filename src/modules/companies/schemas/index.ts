@@ -15,6 +15,9 @@ export const createCompanyInput = z.object({
   name: z.string().trim().min(2).max(160),
   domain: domainInput,
   websiteUrl: optionalUrl,
+  linkedinUrl: optionalUrl,
+  telegramUrl: optionalUrl,
+  xUrl: optionalUrl,
   description: z.string().trim().max(5000).nullable().optional(),
   country: z
     .string()

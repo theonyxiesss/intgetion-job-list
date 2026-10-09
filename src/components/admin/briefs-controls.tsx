@@ -22,7 +22,7 @@ async function send(path: string, method: string, body: unknown) {
   }).catch(() => null);
 }
 
-/** The global pause (D354). */
+/** The global pause (D369). */
 export function BriefsPauseSwitch({ paused }: { paused: boolean }) {
   const t = useTranslations("admin.briefs");
   const router = useRouter();

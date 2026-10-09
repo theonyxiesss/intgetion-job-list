@@ -2,6 +2,11 @@ import { matchesScamPattern } from "@/config/scam-patterns";
 import { expireImportedJobs, saveImportedJob } from "@/modules/jobs/service";
 import { normalizeSkill } from "@/modules/taxonomy/service";
 import { apiFixtureAdapter } from "../adapters/api-fixture";
+import { himalayasSource } from "../adapters/himalayas";
+import { jobicySource } from "../adapters/jobicy";
+import { withinCreateBudget, type LiveSource } from "../adapters/live";
+import { remoteOkSource } from "../adapters/remoteok";
+import { remotiveSource } from "../adapters/remotive";
 import { rssFixtureAdapter } from "../adapters/rss-fixture";
 import type { ImportAdapter, RawImportedJob } from "../adapters/types";
 import * as repo from "../repo/import-repo";
@@ -12,6 +17,19 @@ import { decideOutcome, isMissingEverywhere } from "./outcome";
 export const FIXTURE_ADAPTERS: readonly ImportAdapter[] = [
   apiFixtureAdapter,
   rssFixtureAdapter,
+];
+
+/**
+ * Official APIs the founder approved for republishing (D18, D375). Each one
+ * runs only when IMPORT_LIVE_ENABLED=true and its row is enabled with
+ * republish allowed. The first live run creates that row turned on. A later
+ * run does not turn a switched-off row back on.
+ */
+export const LIVE_SOURCES: readonly LiveSource[] = [
+  remotiveSource,
+  himalayasSource,
+  jobicySource,
+  remoteOkSource,
 ];
 
 /** A source is imported at most once an hour (section 7, cron ≥ 1 h). */
@@ -31,6 +49,12 @@ type Dependencies = {
   resolveSkill: SkillResolver;
   isScam: (text: string) => boolean;
   now: () => Date;
+  /** Live sources run less often, by their own terms (D375). */
+  minIntervalMs?: number;
+  /** When set, only this many new jobs are written; known ones still refresh. */
+  createLimit?: number;
+  /** Live sources: the stored row decides whether the source may run. */
+  live?: LiveSource;
 };
 
 const defaults: Dependencies = {
@@ -56,16 +80,10 @@ function emptyCounters(): repo.RunCounters {
   };
 }
 
-/**
- * Runs every fixture source once (8A). There is no network access at all:
- * IMPORT_LIVE_ENABLED=true is refused until 8B exists (D18).
- */
+/** Runs every fixture source once (8A); no network access at all. */
 export async function runFixtureImports(
   overrides: Partial<Dependencies> = {},
 ): Promise<ImportReport[]> {
-  if (process.env.IMPORT_LIVE_ENABLED === "true") {
-    throw new Error("Live imports are not implemented in 8A (D18)");
-  }
   const deps: Dependencies = { ...defaults, ...overrides };
   const reports: ImportReport[] = [];
   for (const adapter of deps.adapters) {
@@ -75,18 +93,55 @@ export async function runFixtureImports(
   return reports;
 }
 
+/**
+ * Runs every approved live source once (8B, D375), each by its own interval
+ * and with a budget of new jobs per run so the catalog grows evenly.
+ */
+export async function runLiveImports(
+  overrides: Partial<Dependencies> & { sources?: readonly LiveSource[] } = {},
+): Promise<ImportReport[]> {
+  const { sources = LIVE_SOURCES, ...rest } = overrides;
+  const now = rest.now ?? defaults.now;
+  const reports: ImportReport[] = [];
+  for (const live of sources) {
+    const adapter: ImportAdapter = {
+      sourceName: live.sourceName,
+      kind: live.kind,
+      loadFixture: () => live.fetch(),
+    };
+    reports.push(
+      await importSource(adapter, {
+        ...defaults,
+        load: () => live.fetch(),
+        ...rest,
+        minIntervalMs: live.minIntervalMs,
+        createLimit: live.newPerRun,
+        live,
+      }),
+    );
+  }
+  await repo.pruneImportRunHistory(now());
+  return reports;
+}
+
 async function importSource(
   adapter: ImportAdapter,
   deps: Dependencies,
 ): Promise<ImportReport> {
   const now = deps.now();
-  const source = await repo.ensureFixtureSource(adapter);
+  const source = deps.live
+    ? await repo.ensureLiveSource(deps.live)
+    : await repo.ensureFixtureSource(adapter);
   const counters = emptyCounters();
+  const switchedOff =
+    deps.live !== undefined && !(source.enabled && source.republishAllowed);
+  const interval = deps.minIntervalMs ?? MIN_RUN_INTERVAL_MS;
   if (
-    await repo.sourceStartedSince(
+    switchedOff ||
+    (await repo.sourceStartedSince(
       source.id,
-      new Date(now.getTime() - MIN_RUN_INTERVAL_MS),
-    )
+      new Date(now.getTime() - interval),
+    ))
   ) {
     return {
       ...counters,
@@ -98,7 +153,8 @@ async function importSource(
 
   const run = await repo.beginImportRun(source.id, now);
   try {
-    const records = (await deps.load(adapter)).slice(0, MAX_RECORDS_PER_RUN);
+    const loaded = (await deps.load(adapter)).slice(0, MAX_RECORDS_PER_RUN);
+    const records = await withinBudget(source.id, loaded, deps.createLimit);
     counters.fetched = records.length;
     for (const raw of records) {
       const job = await normalizeImportedJob(
@@ -183,6 +239,20 @@ async function importSource(
       error: message,
     };
   }
+}
+
+async function withinBudget(
+  sourceId: string,
+  records: RawImportedJob[],
+  limit: number | undefined,
+): Promise<RawImportedJob[]> {
+  if (limit === undefined) return records;
+  const linked = new Set<string>();
+  for (const record of records) {
+    const id = record.externalId.trim();
+    if (await repo.findLinkedJobId(sourceId, id)) linked.add(id);
+  }
+  return withinCreateBudget(records, linked, limit);
 }
 
 /** Published jobs from this source that every one of their sources lost. */

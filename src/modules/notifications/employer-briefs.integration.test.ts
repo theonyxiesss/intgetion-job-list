@@ -108,7 +108,7 @@ async function run(n: number) {
   });
 }
 
-describe("employer morning brief against the database (D352)", () => {
+describe("employer morning brief against the database (D368)", () => {
   it("sends nothing while the company flag is off", async () => {
     await run(2);
     expect(await briefs()).toHaveLength(0);

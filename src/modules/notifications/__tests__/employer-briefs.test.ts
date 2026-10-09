@@ -26,7 +26,7 @@ function row(overrides: Partial<EmployerMatchRow> = {}): EmployerMatchRow {
   };
 }
 
-describe("employer morning brief rules (D352)", () => {
+describe("employer morning brief rules (D368)", () => {
   it("keeps at most five candidates over all jobs, best first", () => {
     const rows = Array.from({ length: 8 }, (_, index) =>
       row({
@@ -86,7 +86,7 @@ describe("employer morning brief rules (D352)", () => {
   });
 });
 
-describe("employer brief privacy (D352)", () => {
+describe("employer brief privacy (D368)", () => {
   it("the card carries no candidate id, score or contact", () => {
     const card = toBriefCard(row({ candidateId: "secret-user-id" }));
     expect(Object.keys(card).sort()).toEqual([

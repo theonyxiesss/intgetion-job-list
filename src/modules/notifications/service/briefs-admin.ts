@@ -1,5 +1,5 @@
 /**
- * The admin side of the morning briefs (D354, spec 20 §7): slots, global
+ * The admin side of the morning briefs (D369, spec 20 §7): slots, global
  * pause, run now, the 30-day log and subscription counts. Routes check the
  * admin right and write the audit row; this file only reads and writes data.
  */
@@ -157,7 +157,7 @@ async function readRuns(now: Date): Promise<AdminRunRow[]> {
  * People with the agent on, per slot, and how many of them the Telegram
  * and email channels would reach (a linked Telegram; the channel not
  * turned off for their brief type). Employers have no time zone, so they
- * count in the default slot, as the cron sends them (D352).
+ * count in the default slot, as the cron sends them (D368).
  */
 async function readSubscriptions(
   now: Date,

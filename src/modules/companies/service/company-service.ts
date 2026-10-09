@@ -139,7 +139,7 @@ export async function addCompanyMember(
 }
 
 /**
- * Morning briefs about candidates (D352): only an owner or admin turns the
+ * Morning briefs about candidates (D368): only an owner or admin turns the
  * flag on or off, for each company they manage.
  */
 export async function setOwnCompanyAgentBriefs(

@@ -1,3 +1,4 @@
+import { isSafeLogoPath } from "@/lib/company-mark";
 import { requireUser } from "@/lib/auth-guards";
 import { HttpError, readFormDataLimited, toErrorResponse } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -8,9 +9,35 @@ import {
   setCompanyLogo,
   SupabaseLogoStorage,
 } from "@/modules/companies/service";
+import { getVisibleCompany } from "@/modules/jobs/service";
 
 // The 2 MB file plus room for multipart boundaries and headers.
 const MAX_BODY_BYTES = LOGO_MAX_BYTES + 64 * 1024;
+
+/** Public read of a visible company's logo. Missing file → 404, and the card shows a mark. */
+export async function GET(
+  _request: Request,
+  context: { params: Promise<{ identifier: string }> },
+) {
+  try {
+    const { identifier } = await context.params;
+    const company = await getVisibleCompany(identifier);
+    if (!company?.logoPath || !isSafeLogoPath(company.logoPath)) {
+      return new Response(null, { status: 404 });
+    }
+    const bytes = await new SupabaseLogoStorage().download(company.logoPath);
+    if (!bytes) return new Response(null, { status: 404 });
+    return new Response(new Uint8Array(bytes), {
+      headers: {
+        "content-type": "image/webp",
+        "cache-control": "public, max-age=300",
+        "x-content-type-options": "nosniff",
+      },
+    });
+  } catch {
+    return new Response(null, { status: 404 });
+  }
+}
 
 export async function POST(
   request: Request,

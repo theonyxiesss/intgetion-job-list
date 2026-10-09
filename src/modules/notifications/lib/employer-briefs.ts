@@ -1,5 +1,5 @@
 /**
- * The employer side of the morning brief (D352) as pure rules: which
+ * The employer side of the morning brief (D368) as pure rules: which
  * matched candidates go into one brief and what the anonymous card holds.
  * The database read lives in service/employer-briefs.ts.
  */

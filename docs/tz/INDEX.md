@@ -25,6 +25,7 @@
 | [20-morning-briefs.md](20-morning-briefs.md) | Утренние сводки агента, 3 часовых пояса, админка |
 | [21-jobs-alert.md](21-jobs-alert.md) | Канал Jobs Alert: пост бота при публикации вакансии (D341) |
 | [22-roadmap.md](22-roadmap.md) | §22 подфазы → [PARALLEL_WORK](../PARALLEL_WORK.md) |
-| [23-billing.md](23-billing.md) | Оплата услуг: WalletConnect на EVM-адрес компании (D351). Код не начат |
+| [23-billing.md](23-billing.md) | Оплата услуг: кошелёк в браузере на EVM-адрес компании (D351). Приём включён (D356) |
+| [24-claude-held.md](24-claude-held.md) | Очередь Клода: языки `de` → `fr` → `it`, санкции, Tron/Solana. Карты, сильная модель, автовозврат и новый код D328 не писать |
 
 Новые D — только в [../DECISIONS.md](../DECISIONS.md). Как в коде — [../how-it-works/](../how-it-works/INDEX.md).

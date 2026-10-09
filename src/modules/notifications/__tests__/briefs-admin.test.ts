@@ -14,7 +14,7 @@ const slot = {
 // 06:00 in Berlin (UTC+1 in March).
 const now = new Date("2031-03-03T05:00:00Z");
 
-describe("briefs admin (D354)", () => {
+describe("briefs admin (D369)", () => {
   it("moving the time moves the next run", () => {
     const before = slotView(slot, now);
     expect(before.nextRunUtc).toBe("2031-03-03T07:00:00.000Z");

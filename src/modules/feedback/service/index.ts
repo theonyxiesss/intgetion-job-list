@@ -205,7 +205,12 @@ export interface SavedJobView {
   job: {
     id: string;
     title: string;
-    company: { id: string; name: string; slug: string };
+    company: {
+      id: string;
+      name: string;
+      slug: string;
+      logoPath: string | null;
+    };
   };
   savedAt: string;
 }
@@ -241,6 +246,7 @@ export async function listSavedJobsForUser(
           id: job.company.id,
           name: job.company.name,
           slug: job.company.slug,
+          logoPath: job.company.logoPath,
         },
       },
       savedAt: createdAt.toISOString(),

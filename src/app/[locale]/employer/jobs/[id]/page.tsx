@@ -46,7 +46,7 @@ export default async function EmployerJobPage({
   const categories = await getTranslations("categories");
   const matched = await getTranslations("employerJobs.candidates");
   const reasons = await getTranslations("notifications.employerBrief.reasons");
-  // Anonymous cards only: role, experience, skills, why (D352).
+  // Anonymous cards only: role, experience, skills, why (D368).
   const candidates = await listJobCandidateCards(id, toAppLocale(locale));
   let hire = false;
   try {

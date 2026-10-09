@@ -117,6 +117,11 @@ export function toPublicJobDto(
       name: company.name,
       slug: company.slug,
       logoPath: company.logoPath,
+      websiteUrl: company.websiteUrl ?? null,
+      linkedinUrl: company.linkedinUrl ?? null,
+      telegramUrl: company.telegramUrl ?? null,
+      xUrl: company.xUrl ?? null,
+      description: company.description ?? null,
       status: company.status,
       isTrusted: company.isTrusted,
     },
@@ -343,10 +348,7 @@ export async function listPromotedJobs(
   } catch {
     return [];
   }
-  const visible = ids.filter(
-    (id) =>
-      !viewer.hidden?.hiddenJobIds.has(id),
-  );
+  const visible = ids.filter((id) => !viewer.hidden?.hiddenJobIds.has(id));
   if (visible.length === 0) return [];
   const rows = await repo.listPublicJobsByIds(visible);
   const requirements = await repo.getJobRequirements(visible);

@@ -38,6 +38,33 @@ export async function ensureFixtureSource(adapter: ImportAdapter) {
   return row;
 }
 
+/**
+ * Registers a live source. The first insert turns it on. A later run does
+ * not turn it back on, so an admin switch stays off.
+ */
+export async function ensureLiveSource(source: {
+  sourceName: string;
+  kind: "api" | "rss";
+  url: string;
+}) {
+  const [row] = await getDb()
+    .insert(importSources)
+    .values({
+      name: source.sourceName,
+      kind: source.kind,
+      url: source.url,
+      enabled: true,
+      republishAllowed: true,
+    })
+    .onConflictDoUpdate({
+      target: importSources.name,
+      set: { kind: source.kind, url: source.url },
+    })
+    .returning();
+  if (!row) throw new Error("Could not register live source");
+  return row;
+}
+
 export async function sourceStartedSince(sourceId: string, since: Date) {
   const [run] = await getDb()
     .select({ id: importRuns.id })

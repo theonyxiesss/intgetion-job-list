@@ -89,7 +89,7 @@ export function renderEmail(input: {
   if (!copy) return null;
   const subject = fillTemplate(copy.subject, input.values, input.locale);
   const filled = fillTemplate(copy.body, input.values, input.locale);
-  // Morning briefs open with the agent's line (D355), then the list.
+  // Morning briefs open with the agent's line (D370), then the list.
   const body =
     typeof input.values.intro === "string" && input.values.intro
       ? `${input.values.intro} ${filled}`
@@ -114,7 +114,7 @@ export function renderEmail(input: {
       : [];
   if (cards.length > 0) {
     const title = mail.jobs.title;
-    // The agent's own line when the brief has one (D355).
+    // The agent's own line when the brief has one (D370).
     const intro =
       typeof input.values.intro === "string" && input.values.intro
         ? input.values.intro
@@ -281,7 +281,7 @@ export function telegramText(input: {
   const values = templateValues(input.payload);
   const title = fillTemplate(block.inapp.title, values, input.locale);
   const filled = fillTemplate(block.inapp.body, values, input.locale);
-  // Morning briefs open with the agent's line (D355).
+  // Morning briefs open with the agent's line (D370).
   const body = values.intro ? `${values.intro}\n${filled}` : filled;
   const link = `${input.siteUrl}${localePrefix(input.locale)}${notificationPath(input.type, input.payload)}`;
   if (input.type === "company.candidates_digest") {
@@ -347,7 +347,7 @@ function digestJobLines(input: {
 }
 
 /**
- * Up to five anonymous cards (D352): "Role · N years — Job", skills and
+ * Up to five anonymous cards (D368): "Role · N years — Job", skills and
  * why it fits, then a link to the job in the employer's cabinet.
  */
 function candidateLines(input: {

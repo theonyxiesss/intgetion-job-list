@@ -2,16 +2,19 @@ import { getTranslations } from "next-intl/server";
 import { sectorsForCard } from "@/config/markers";
 import { formatMoneyDto } from "@/lib/money";
 import { Badge } from "@/components/ui/badge";
+import { CompanyMarkFor } from "@/components/ui/company-mark";
 import { JobCard } from "@/components/ui/job-card";
 import type { searchJobs } from "../service";
 import { intlLocale } from "@/i18n/locale";
+import { publicJobText } from "@/lib/public-job-text";
 
 type PublicJob = Awaited<ReturnType<typeof searchJobs>>["items"][number];
 
 /** Plain first lines of the description; the card clamps it to two lines. */
 function summaryOf(description: string | null): string | null {
-  if (!description) return null;
-  const plain = description
+  const visible = publicJobText(description);
+  if (!visible) return null;
+  const plain = visible
     .replace(/<[^>]*>/g, " ")
     .replace(/[#*_`>[\]]/g, "")
     .replace(/\s+/g, " ")
@@ -51,6 +54,9 @@ export async function PublicJobCard({
       category={categories(job.category)}
       companyName={job.company.name}
       companyHref={`/companies/${job.company.slug}`}
+      mark={
+        <CompanyMarkFor company={job.company} className="pointer-events-none" />
+      }
       badges={
         <>
           {sectorsForCard(job.sectors).map((sector) => (
@@ -62,16 +68,16 @@ export async function PublicJobCard({
           {job.company.isTrusted ? (
             <Badge tone="trusted">{t("trusted")}</Badge>
           ) : null}
-          {job.promoted ? (
-            <Badge tone="new">{t("promoted")}</Badge>
-          ) : null}
-          {job.source.type === "imported" ? (
-            <Badge tone="imported">{t("imported")}</Badge>
-          ) : null}
+          {job.promoted ? <Badge tone="new">{t("promoted")}</Badge> : null}
         </>
       }
       stats={[
-        { label: t("salaryMin"), value: salary, muted: !job.salaryMin },
+        {
+          label: t("salaryMin"),
+          value: salary,
+          muted: !job.salaryMin,
+          lead: true,
+        },
         {
           label: markers("seniorityLabel"),
           value: job.seniority

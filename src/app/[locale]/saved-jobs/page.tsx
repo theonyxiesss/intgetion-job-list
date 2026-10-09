@@ -6,6 +6,7 @@ import { listSavedJobsForUser } from "@/modules/feedback/service";
 import { UnsaveButton } from "@/modules/feedback/ui/unsave-button";
 import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
+import { CompanyMarkFor } from "@/components/ui/company-mark";
 import { JobCard } from "@/components/ui/job-card";
 import { Link } from "@/i18n/navigation";
 import { localePrefix } from "@/i18n/paths";
@@ -50,6 +51,12 @@ export default async function SavedJobsPage({
                     job.company.slug
                       ? `/companies/${job.company.slug}`
                       : undefined
+                  }
+                  mark={
+                    <CompanyMarkFor
+                      company={job.company}
+                      className="pointer-events-none"
+                    />
                   }
                   stats={[
                     {

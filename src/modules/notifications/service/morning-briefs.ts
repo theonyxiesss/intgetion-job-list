@@ -32,7 +32,7 @@ export type BriefRunResult = {
   slotDate: string;
   dryRun: boolean;
   checked: number;
-  /** Employers among `checked` (D354). */
+  /** Employers among `checked` (D369). */
   checkedEmployers: number;
   sent: number;
   empty: number;
@@ -93,9 +93,9 @@ export async function runMorningBriefsCron(input?: {
   now?: Date;
   /** Test seam: the feed source; matching itself is covered by 6B tests. */
   loadJobs?: DigestJobLoader;
-  /** Test seam: a company's matched candidates (D352). */
+  /** Test seam: a company's matched candidates (D368). */
   loadCandidates?: EmployerCandidateLoader;
-  /** Test seam: the intro writer (D355). */
+  /** Test seam: the intro writer (D370). */
   writeIntro?: BriefIntroWriter;
 }): Promise<{ paused: boolean; runs: BriefRunResult[] }> {
   const now = input?.now ?? new Date();
@@ -186,7 +186,7 @@ export async function runSlot(input: {
         logger.error({ err, userId: row.user_id, slotId }, "brief failed");
       }
     }
-    // Employers (D352) share the same counters. The slot follows the
+    // Employers (D368) share the same counters. The slot follows the
     // companies' time zone; mixed or empty zones keep the default slot
     // (20-morning-briefs §10.3).
     {
@@ -262,7 +262,7 @@ async function briefCandidate(
   if (jobs.length === 0) return "empty";
   if (ctx.dryRun) return "sent";
 
-  // Outside the transaction: a slow LLM must not hold a lock (D355).
+  // Outside the transaction: a slow LLM must not hold a lock (D370).
   const intro = await ctx.writeIntro({
     locale,
     audience: "candidate",

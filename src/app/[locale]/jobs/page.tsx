@@ -364,15 +364,6 @@ export default async function JobsPage({
                 <option value="net">{t("net")}</option>
               </Select>
               <Select
-                aria-label={t("sourceFilter")}
-                name="source"
-                defaultValue={text(raw, "source")}
-              >
-                <option value="">{t("anySource")}</option>
-                <option value="internal">{t("internal")}</option>
-                <option value="imported">{t("imported")}</option>
-              </Select>
-              <Select
                 aria-label={t("postedWithinLabel")}
                 name="postedWithin"
                 defaultValue={text(raw, "postedWithin")}

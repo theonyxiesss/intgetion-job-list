@@ -15,6 +15,9 @@ type CompanyFormProps = {
     name: string;
     domain: string | null;
     websiteUrl: string | null;
+    linkedinUrl: string | null;
+    telegramUrl: string | null;
+    xUrl: string | null;
     description: string | null;
     timezone: string | null;
   };
@@ -22,6 +25,9 @@ type CompanyFormProps = {
     name: string;
     domain: string;
     website: string;
+    linkedin: string;
+    telegram: string;
+    x: string;
     description: string;
     timezone: string;
     timezoneHint: string;
@@ -57,6 +63,9 @@ export function CompanyForm({
             name: form.get("name"),
             domain: form.get("domain") || null,
             websiteUrl: form.get("websiteUrl") || null,
+            linkedinUrl: form.get("linkedinUrl") || null,
+            telegramUrl: form.get("telegramUrl") || null,
+            xUrl: form.get("xUrl") || null,
             description: form.get("description") || null,
             timezone: String(form.get("timezone") ?? "").trim() || null,
           }),
@@ -113,6 +122,25 @@ export function CompanyForm({
             name="websiteUrl"
             defaultValue={initial?.websiteUrl ?? ""}
           />
+        </Field>
+      </div>
+      <div className="grid gap-6 md:grid-cols-3">
+        <Field label={text.linkedin}>
+          <Input
+            type="url"
+            name="linkedinUrl"
+            defaultValue={initial?.linkedinUrl ?? ""}
+          />
+        </Field>
+        <Field label={text.telegram}>
+          <Input
+            type="url"
+            name="telegramUrl"
+            defaultValue={initial?.telegramUrl ?? ""}
+          />
+        </Field>
+        <Field label={text.x}>
+          <Input type="url" name="xUrl" defaultValue={initial?.xUrl ?? ""} />
         </Field>
       </div>
       <Field label={text.description}>

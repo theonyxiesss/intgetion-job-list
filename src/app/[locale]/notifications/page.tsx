@@ -56,7 +56,7 @@ export default async function NotificationsPage({
       getCompaniesForUser(user.id),
     ]);
   const agentOn = profile ? await ownAgentBriefsEnabled(user.id) : false;
-  // Recruiter and above get the employer brief (D352).
+  // Recruiter and above get the employer brief (D368).
   const briefCompanies = companies.filter((company) =>
     ["owner", "admin", "recruiter"].includes(company.role),
   );

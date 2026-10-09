@@ -26,6 +26,9 @@ export const companies = pgTable(
     slug: text("slug").notNull().unique(),
     domain: text("domain"),
     websiteUrl: text("website_url"),
+    linkedinUrl: text("linkedin_url"),
+    telegramUrl: text("telegram_url"),
+    xUrl: text("x_url"),
     description: text("description"),
     logoPath: text("logo_path"),
     country: text("country"),
@@ -36,7 +39,7 @@ export const companies = pgTable(
     origin: companyOrigin("origin").notNull().default("internal"),
     isTrusted: boolean("is_trusted").notNull().default(false),
     trustedAt: timestamp("trusted_at", { withTimezone: true }),
-    /** Morning briefs about candidates (D352); owner or admin switches it. */
+    /** Morning briefs about candidates (D368); owner or admin switches it. */
     agentBriefsEnabled: boolean("agent_briefs_enabled")
       .notNull()
       .default(false),

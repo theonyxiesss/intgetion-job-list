@@ -13,7 +13,7 @@ import { readBriefsAdmin } from "@/modules/notifications/service";
 const time = (iso: string | null) =>
   iso ? iso.replace("T", " ").slice(0, 16) : "—";
 
-/** Morning briefs (D354, spec 20 §7): owner and admin only. */
+/** Morning briefs (D369, spec 20 §7): owner and admin only. */
 export default async function AdminBriefsPage({
   params,
 }: {

@@ -38,6 +38,9 @@ export default async function EmployerCompanyPage({
     name: t("form.name"),
     domain: t("form.domain"),
     website: t("form.website"),
+    linkedin: t("form.linkedin"),
+    telegram: t("form.telegram"),
+    x: t("form.x"),
     description: t("form.description"),
     timezone: t("form.timezone"),
     timezoneHint: t("form.timezoneHint"),
@@ -55,7 +58,9 @@ export default async function EmployerCompanyPage({
       ? company
       : null;
   const members = ownCompany ? await listCompanyMembers(ownCompany.id) : [];
-  const cap = ownCompany ? seatCap(await companyHasActiveTeam(ownCompany.id)) : 2;
+  const cap = ownCompany
+    ? seatCap(await companyHasActiveTeam(ownCompany.id))
+    : 2;
   const people = await Promise.all(
     members.map(async (member) => {
       const email = await getAuthUserEmail(member.auth_uid);

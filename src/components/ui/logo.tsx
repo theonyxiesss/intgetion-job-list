@@ -29,7 +29,7 @@ export function Logo({ name, sub }: { name: string; sub: string }) {
   return (
     <span className="inline-flex items-center gap-2 md:gap-3">
       <LogoMark />
-      <span className="font-display text-[15px] font-semibold tracking-[0.24em] uppercase">
+      <span className="font-display text-[13px] font-semibold tracking-[0.14em] uppercase sm:text-[15px] sm:tracking-[0.24em]">
         {name}
       </span>
       <span className="hidden font-display text-[12px] tracking-[0.24em] uppercase opacity-70 md:inline">

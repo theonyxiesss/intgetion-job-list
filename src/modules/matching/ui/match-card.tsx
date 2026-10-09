@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
+import { CompanyMarkFor } from "@/components/ui/company-mark";
 import { JobCard } from "@/components/ui/job-card";
 import { formatMoneyDto } from "@/lib/money";
 import type { MatchCard } from "../service";
@@ -36,6 +37,12 @@ export async function MatchCardView({
         category={categories(job.category as "engineering")}
         companyName={job.company.name}
         companyHref={`/companies/${job.company.slug}`}
+        mark={
+          <CompanyMarkFor
+            company={job.company}
+            className="pointer-events-none"
+          />
+        }
         badges={
           <>
             <span className="t-data text-signal">{`${Math.round(card.score * 100)}%`}</span>
@@ -44,13 +51,15 @@ export async function MatchCardView({
             {job.company.isTrusted ? (
               <Badge tone="trusted">{t("trusted")}</Badge>
             ) : null}
-            {job.source.type === "imported" ? (
-              <Badge tone="imported">{t("imported")}</Badge>
-            ) : null}
           </>
         }
         stats={[
-          { label: t("salaryMin"), value: salary, muted: !job.salaryMin },
+          {
+            label: t("salaryMin"),
+            value: salary,
+            muted: !job.salaryMin,
+            lead: true,
+          },
           {
             label: t("timezone"),
             value: job.timezoneRequired

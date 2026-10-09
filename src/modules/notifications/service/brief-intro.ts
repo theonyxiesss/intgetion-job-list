@@ -57,7 +57,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 }
 
 /**
- * The LLM intro (D355, D317 provider). Any failure — no key, an error, a
+ * The LLM intro (D370, D317 provider). Any failure — no key, an error, a
  * timeout, the limit, an empty or unusable answer — gives the template, so
  * the brief always goes out.
  */

@@ -89,7 +89,13 @@
     "about": "Sobre",
     "jobsTab": "Vagas",
     "tabsLabel": "Empresa",
-    "emptyAbout": "Esta empresa ainda não adicionou uma descrição."
+    "emptyAbout": "Esta empresa ainda não adicionou uma descrição.",
+    "links": {
+      "website": "Site",
+      "linkedin": "LinkedIn",
+      "telegram": "Telegram",
+      "x": "X"
+    }
   },
   "product": {
     "name": "INTGETION JOB LIST",
@@ -350,6 +356,9 @@
       "name": "Nome da empresa",
       "domain": "Domínio da empresa",
       "website": "Site",
+      "linkedin": "LinkedIn",
+      "telegram": "Telegram",
+      "x": "X",
       "description": "Sobre a empresa",
       "logo": "Logotipo da empresa (PNG, JPEG ou WebP; máx. 2 MB)",
       "save": "Salvar empresa",

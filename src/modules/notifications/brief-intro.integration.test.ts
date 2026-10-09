@@ -53,7 +53,7 @@ afterAll(async () => {
   await getDb().delete(users).where(inArray(users.id, [userId]));
 });
 
-describe("brief intro against the database (D355)", () => {
+describe("brief intro against the database (D370)", () => {
   it("an LLM error still sends the brief with the template intro", async () => {
     const run = await runSlot({
       slotId: "cis",

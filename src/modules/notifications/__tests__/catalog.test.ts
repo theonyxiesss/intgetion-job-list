@@ -27,7 +27,7 @@ const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
   ["search.alert", true],
   // D240: new jobs of a followed company.
   ["company.new_jobs", true],
-  // D352: the employer side of the morning brief.
+  // D368: the employer side of the morning brief.
   ["company.candidates_digest", true],
 ];
 

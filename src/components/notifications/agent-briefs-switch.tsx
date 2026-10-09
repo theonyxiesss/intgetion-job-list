@@ -20,7 +20,7 @@ type AgentLabels = {
 };
 
 /**
- * The agent flags plus the two new-job switches (D349, D352). With every
+ * The agent flags plus the two new-job switches (D349, D368). With every
  * agent that applies turned off, both switches are grey; they keep using
  * the shared preference writer.
  */

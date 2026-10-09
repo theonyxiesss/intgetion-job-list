@@ -89,7 +89,13 @@
     "about": "О компании",
     "jobsTab": "Вакансии",
     "tabsLabel": "Компания",
-    "emptyAbout": "Компания ещё не добавила описание."
+    "emptyAbout": "Компания ещё не добавила описание.",
+    "links": {
+      "website": "Сайт",
+      "linkedin": "LinkedIn",
+      "telegram": "Telegram",
+      "x": "X"
+    }
   },
   "product": {
     "name": "INTGETION JOB LIST",
@@ -350,6 +356,9 @@
       "name": "Название компании",
       "domain": "Домен компании",
       "website": "Сайт",
+      "linkedin": "LinkedIn",
+      "telegram": "Telegram",
+      "x": "X",
       "description": "О компании",
       "logo": "Логотип компании (PNG, JPEG или WebP; до 2 МБ)",
       "save": "Сохранить компанию",
