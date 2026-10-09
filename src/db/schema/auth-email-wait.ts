@@ -32,7 +32,7 @@ export const authEmailWaits = pgTable(
     ),
     check(
       "auth_email_waits_locale_check",
-      sql`${table.locale} in ('en', 'ru', 'es', 'pt-BR', 'de')`,
+      sql`${table.locale} in ('en', 'ru', 'es', 'pt-BR', 'de', 'fr')`,
     ),
   ],
 );

@@ -732,3 +732,14 @@
 - Отклонения от ТЗ: решение D373 и миграция 0043: D368–D372 и 0042 заняты в основной папке. Полный `pnpm test` красный только на старом `public-search.test.ts` (поле `promoted`, D366, не эта подфаза); проверки языка зелёные.
 - OPEN QUESTION: нужен ли Impressum и правки под BDSG для `/de` — к юристу; кто чинит `public-search.test.ts` после D366.
 - Следующая подфаза: по команде основателя (французский не начат).
+
+## [2026-10-09] — locale-fr (французский, D374) — DONE
+- Сделано: язык `fr` на `/fr/...` по образцу de и pt-BR. `routing.ts`, `locale.ts` (`fr-FR`), каталоги. `src/messages/fr.json` — полный перевод en.json; FR / Français во всех каталогах. Письма: ветка `fr` в шаблонах Supabase и темах `config.toml`, письмо подтверждения домена. Бот: тексты агента, кнопки шагов, вход через Telegram, `fr*` → `fr`, язык в промпте. `SEO_LOCALES`, заголовок RSS. Юридические тексты: секции `<!-- fr -->`, `legal-sync`, `legalText`.
+- Проверено на dev-сервере :3100: `/fr`, `/fr/terms`, `/fr/privacy` → 200, `lang="fr"`; в переключателе шесть языков, «Français» текущий; юрлицо «à préciser». `/de` по-прежнему 200.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; vitest языка (messages, legal, auth-email-templates, auth-emails, schemas, telegram-agent, seo) → 0, 91 тест. Полный `pnpm test` → 1: красный на старом `public-search.test.ts` (поле `promoted`, D366, не эта подфаза) и на нестабильном `decide.test.ts` (таймаут 5 с динамического импорта в параллельном прогоне; отдельно 3/3 зелёный). Тесты не трогал.
+- P-тесты подфазы: messages fr, legal fr (свой текст, те же плейсхолдеры и разделы, `/fr/privacy`), письмо fr, шаблоны (18 ссылок), бот fr/fr-fr/fr-ca/fr-be/fr-ch, seo/indexnow `/fr` ✅
+- Миграции: `src/db/migrations/0044_locale_fr.sql` (на облако не применена)
+- Изменённые файлы: см. коммит ветки `claude/locale-fr`. Тест схемы `registerInput` теперь отклоняет `it`.
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: mentions légales / CNIL для `/fr` — к юристу.
+- Следующая подфаза: по команде основателя (итальянский не начат).
