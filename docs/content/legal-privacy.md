@@ -824,3 +824,167 @@ Wesentliche Änderungen kündigen wir im Voraus per E-Mail und im Dienst an. Wen
 - Fragen zu Daten: {{privacyEmail}}
 - Allgemeine Fragen: {{supportEmail}}
 - Postanschrift: {{address}}
+
+<!-- fr -->
+
+# Politique de confidentialité
+
+Version du {{effectiveDate}}. Identifiant de version {{version}}.
+
+## 1. En bref
+
+- Nous collectons ce qui est nécessaire pour trouver un travail et recruter, et nous ne vendons pas de données.
+- Les coordonnées d’un candidat ne sont visibles que par un employeur en cas d’intérêt mutuel.
+- Nous comptons les visites nous-mêmes, sans Google Analytics ni autres tiers ; le cookie de statistiques n’est déposé qu’avec votre consentement, et le signal Global Privacy Control est respecté.
+- Vous pouvez télécharger vos données, les modifier, refuser les cookies facultatifs et supprimer votre compte à tout moment dans les Paramètres.
+
+## 2. Qui est responsable
+
+Le responsable du traitement est {{operator}}, {{address}}. Questions sur les données : {{privacyEmail}}.
+
+## 3. Ce que nous collectons
+
+### 3.1 Compte
+
+- E-mail et mot de passe (seul un hachage est conservé par notre fournisseur d’authentification ; nous ne le voyons jamais), ou les données Telegram lorsque vous vous connectez avec Telegram : identifiant numérique, nom et nom d’utilisateur. Nous ne recevons pas votre numéro de téléphone Telegram.
+- Langue de l’interface, date et version des conditions acceptées, abonnement à la newsletter (désactivé par défaut).
+- Historique des connexions : heure, pays et type d’appareil.
+
+### 3.2 Profil de candidat
+
+Nom, titre, postes souhaités, compétences et niveaux, expérience, langues, fuseau horaire et heures de travail, mode de travail et type de contrat, attentes salariales, préférences de secteur, visibilité du profil. Les coordonnées (e-mail, téléphone, Telegram, LinkedIn, site web) sont stockées séparément et ne sont montrées à un employeur qu’en cas d’intérêt mutuel.
+
+### 3.3 Employeurs et entreprises
+
+Nom et fonction du représentant, données de l’entreprise (nom, description, site web, logo, domaine de vérification), membres de l’entreprise, offres, historique de vérification.
+
+### 3.4 Activité
+
+Candidatures et leurs statuts, offres enregistrées et masquées, signalements, recherches enregistrées, entreprises suivies, scores de correspondance, notifications et leur remise, paramètres de notifications.
+
+### 3.5 Agent carrière (IA)
+
+Les messages échangés avec l’agent et les brouillons de modifications du profil. Les e-mails, numéros de téléphone et numéros ressemblant à des pièces d’identité sont retirés du texte avant qu’il n’atteigne le modèle. Les conversations des invités sont liées à un identifiant aléatoire dans un cookie, pas à une personne.
+
+### 3.6 Consentement
+
+Le registre des consentements aux cookies : les catégories autorisées, la version de la politique, si Global Privacy Control a été envoyé, l’endroit où le choix a été fait et un hachage de l’adresse IP. Il prouve que le consentement a été donné.
+
+### 3.7 Statistiques de visite
+
+- Pour tous les visiteurs, sans cookies : l’adresse de la page sans paramètres, le type d’événement (vue, offre ouverte, recherche, inscription, candidature), le texte de recherche (jusqu’à 60 caractères), le site référent, les balises de campagne, la catégorie d’appareil (téléphone, tablette, ordinateur). Les visiteurs uniques quotidiens sont comptés à l’aide d’une clé calculée à partir de la date, de l’adresse IP et du navigateur avec un secret du serveur ; l’IP et la chaîne du navigateur ne sont pas conservées, et la clé ne peut être ni inversée ni reliée d’un jour à l’autre.
+- Uniquement avec consentement aux statistiques : un identifiant aléatoire du navigateur dans le cookie « _ia » pour reconnaître les visites répétées. Il n’est pas lié à votre compte.
+
+### 3.8 Données techniques
+
+Journaux du serveur : heure, adresse de la requête, code de réponse, identifiant de requête ; les e-mails et numéros de téléphone sont masqués. Les adresses IP protègent le service contre les abus (limites de débit) et ne sont conservées que sous forme de hachage.
+
+## 4. Finalités et bases légales
+
+| Finalité                                                                                        | Données                     | Base légale (RGPD art. 6)                                                             |
+| ----------------------------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------- |
+| Compte, connexion, profil, catalogue, correspondance, candidatures, contact candidat–employeur | 3.1–3.4                     | contrat (Conditions d’utilisation)                                                    |
+| Notifications sur vos candidatures, correspondances, recherches                                 | 3.4                         | contrat ; canaux configurables                                                        |
+| Agent carrière                                                                                  | 3.5                         | contrat, à votre demande                                                              |
+| Newsletters                                                                                     | e-mail, Telegram            | consentement (abonnement), révocable à tout moment                                    |
+| Modération, prévention de la fraude et du spam, sécurité                                        | 3.1–3.4, 3.8                | intérêt légitime à protéger les utilisateurs et le service                            |
+| Statistiques sans cookies                                                                       | 3.7, première partie        | intérêt légitime à comprendre le service sans suivre les personnes                    |
+| Cookie de statistiques « _ia »                                                                  | 3.7, deuxième partie        | consentement                                                                          |
+| Mémorisation des filtres et des offres consultées                                               | cookies de préférences      | consentement                                                                          |
+| Registre des consentements                                                                      | 3.6                         | obligation légale de prouver le consentement                                          |
+| Demandes des autorités                                                                          | selon la demande            | obligation légale                                                                     |
+
+Le score de correspondance automatique aide à trier les offres et les candidats mais ne prend aucune décision produisant des effets juridiques à votre égard : ce sont des personnes qui décident des candidatures et des recrutements.
+
+## 5. Cookies et technologies similaires
+
+Les cookies nécessaires sont toujours actifs — le site ne peut pas fonctionner sans eux. Les autres ne sont déposés qu’après votre consentement dans le bandeau ou dans Paramètres → Confidentialité ; refuser est aussi simple qu’accepter, et retirer son consentement supprime les cookies correspondants.
+
+| Cookie             | Finalité                                                                  | Catégorie   | Durée                                                      |
+| ------------------ | ------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------- |
+| sb-…-auth-token    | connexion                                                                 | nécessaire  | tant que la session est active, renouvelé à la connexion   |
+| NEXT_LOCALE        | langue choisie                                                            | nécessaire  | jusqu’à la fermeture du navigateur                         |
+| cookie_consent     | votre choix de cookies, version de la politique et entrée du registre     | nécessaire  | 1 an                                                       |
+| bot_session        | conversation avec l’agent carrière avant la connexion                     | nécessaire  | 30 jours                                                   |
+| last_catalog_query | derniers filtres du catalogue                                             | préférences | 30 jours                                                   |
+| recent_jobs        | offres récemment consultées                                               | préférences | 30 jours                                                   |
+| _ia                | identifiant aléatoire pour les visites répétées                           | statistiques | 13 mois                                                   |
+
+Le thème clair ou sombre est conservé dans le stockage local du navigateur et n’est envoyé nulle part.
+
+Il n’y a sur le site ni cookies tiers, ni publicité, ni scripts de suivi. Si votre navigateur envoie Global Privacy Control, les statistiques restent désactivées quel que soit le choix.
+
+## 6. Avec qui nous partageons les données
+
+### 6.1 Autres utilisateurs
+
+- L’employeur d’une offre à laquelle vous avez postulé voit votre profil sans coordonnées ; les coordonnées uniquement en cas d’intérêt mutuel.
+- Les employeurs voient, dans la correspondance, votre profil sans coordonnées, sauf si vous le masquez dans les paramètres.
+- Les abonnés et tous les visiteurs voient les offres publiées et les pages d’entreprise.
+- Les statistiques d’offres d’un employeur ne contiennent que des totaux (vues, sources, appareils), rien sur les personnes.
+
+### 6.2 Sous-traitants agissant sur nos instructions
+
+| Service                                                                         | Finalité                                                                         | Lieu                                    |
+| ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------- |
+| Supabase                                                                        | base de données, connexion, stockage des logos                                   | UE (Francfort)                          |
+| Vercel                                                                          | hébergement du site et tâches planifiées                                         | réseau mondial, y compris les États-Unis |
+| Resend                                                                          | envoi des e-mails                                                                | États-Unis                              |
+| Telegram                                                                        | connexion Telegram et notifications du bot si vous les avez activées             | selon les conditions de Telegram        |
+| Fournisseur du modèle d’IA (OpenRouter ou Anthropic, selon celui qui est activé) | réponses de l’agent carrière ; sans e-mails ni numéros de téléphone (3.5)        | États-Unis                              |
+| Sentry (s’il est activé)                                                        | rapports d’erreurs du serveur sans données personnelles                          | UE ou États-Unis                        |
+
+Nous avons des accords de traitement des données avec les sous-traitants ; les transferts hors de l’EEE reposent sur les clauses contractuelles types de la Commission européenne ou sur d’autres mécanismes licites. Utilisation des données par le fournisseur d’IA pour l’entraînement : {{aiTraining}}.
+
+### 6.3 Autres
+
+Les autorités publiques uniquement sur demande légale. En cas de vente ou de réorganisation de l’activité, les données peuvent être transmises au successeur dans le cadre de la présente politique. Les données ne sont ni vendues ni partagées à des fins publicitaires.
+
+## 7. Conservation
+
+| Données                                    | Durée                                                                                    |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Compte et profil                           | tant que le compte existe ; anonymisés immédiatement à la suppression (section 9)        |
+| Coordonnées des candidats                  | jusqu’à la suppression du compte ou leur modification                                    |
+| Candidatures                               | tant que l’offre existe ; après suppression du compte, sans lien avec vous               |
+| Messages à l’agent carrière                | 180 jours                                                                                |
+| Conversations des invités avec l’agent     | 30 jours                                                                                 |
+| Notifications lues                         | 90 jours                                                                                 |
+| E-mails en file d’attente                  | 90 jours                                                                                 |
+| Offres masquées et signalées               | 365 jours                                                                                |
+| Scores de correspondance                   | recalculés ; supprimés après 30 jours                                                    |
+| Journal d’administration et de sécurité    | 365 jours                                                                                |
+| Registre des consentements                 | 3 ans                                                                                    |
+| Statistiques de visite                     | 395 jours                                                                                |
+| Compteurs de limites de débit              | 48 heures                                                                                |
+| Journaux du serveur                        | jusqu’à 30 jours                                                                         |
+| Sauvegardes de la base de données          | selon le cycle de sauvegarde du fournisseur : {{backupPeriod}}                           |
+
+## 8. Sécurité
+
+Connexions chiffrées (HTTPS, HSTS), disques chiffrés chez le fournisseur, accès fondé sur les rôles, rôles de base de données distincts sans modification du schéma depuis l’application, politique de sécurité du contenu stricte, limites de débit, journal des actions d’administration, authentification à deux facteurs obligatoire pour les administrateurs, et accès du personnel aux données personnelles uniquement avec un motif déclaré et consigné dans le journal. Si une violation menace vos droits, nous vous en informons, ainsi que l’autorité de contrôle, dans les délais prévus par la loi.
+
+## 9. Vos droits
+
+- **Accès et portabilité** : Paramètres → Confidentialité → Télécharger vos données — un fichier JSON contenant toutes les données vous concernant.
+- **Rectification** : dans le profil et les paramètres ; le reste sur demande.
+- **Effacement** : Paramètres → Confidentialité → Supprimer le compte. Le profil est anonymisé (« Utilisateur supprimé ») ; les coordonnées, les messages à l’agent, les offres enregistrées et les notifications sont supprimés ; le compte de connexion est supprimé ; les candidatures restent chez les employeurs sans vos coordonnées ; les entreprises dont vous êtes le seul propriétaire sont suspendues.
+- **Retrait du consentement** : cookies — dans le bandeau ou dans Paramètres → Confidentialité ; newsletters — dans les paramètres de notifications ou via le lien dans l’e-mail.
+- **Opposition et limitation** du traitement fondé sur l’intérêt légitime — sur demande à {{privacyEmail}}.
+- **Réclamation** auprès de l’autorité de protection des données de votre pays.
+
+Nous répondons aux demandes dans un délai d’un mois. Pour vous protéger, nous pouvons vous demander de confirmer la demande depuis votre compte.
+
+## 10. Enfants
+
+Le Service n’est pas destiné aux personnes de moins de {{minAge}}, et nous ne collectons pas sciemment leurs données. Si vous apprenez qu’un tel compte existe, prévenez-nous et nous le supprimerons.
+
+## 11. Modifications
+
+Nous annonçons les modifications importantes à l’avance par e-mail et dans le Service. Si des finalités fondées sur le consentement changent, nous redemanderons votre consentement — de la même manière que le bandeau des cookies le redemande après un changement de version de la politique.
+
+## 12. Contact
+
+- Questions sur les données : {{privacyEmail}}
+- Questions générales : {{supportEmail}}
+- Adresse postale : {{address}}

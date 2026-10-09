@@ -142,18 +142,21 @@
       "ru": "RU",
       "es": "ES",
       "pt-BR": "PT",
-      "de": "DE"
+      "de": "DE",
+      "fr": "FR"
     },
     "native": {
       "en": "English",
       "ru": "Русский",
       "es": "Español",
       "pt-BR": "Português (Brasil)",
-      "de": "Deutsch"
+      "de": "Deutsch",
+      "fr": "Français"
     },
     "es": "Spanish",
     "pt-BR": "Portuguese (Brazil)",
-    "de": "German"
+    "de": "German",
+    "fr": "French"
   },
   "home": {
     "tagline": "Remote work. Real matches.",

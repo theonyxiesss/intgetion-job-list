@@ -104,7 +104,7 @@ describe("registerInput", () => {
 
   it("rejects unknown locales", () => {
     expect(
-      registerInput.safeParse({ ...base, acceptTerms: true, locale: "fr" })
+      registerInput.safeParse({ ...base, acceptTerms: true, locale: "it" })
         .success,
     ).toBe(false);
   });
