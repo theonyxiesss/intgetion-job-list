@@ -141,16 +141,19 @@
       "en": "EN",
       "ru": "RU",
       "es": "ES",
-      "pt-BR": "PT"
+      "pt-BR": "PT",
+      "de": "DE"
     },
     "native": {
       "en": "English",
       "ru": "Русский",
       "es": "Español",
-      "pt-BR": "Português (Brasil)"
+      "pt-BR": "Português (Brasil)",
+      "de": "Deutsch"
     },
     "es": "Español",
-    "pt-BR": "Portugués (Brasil)"
+    "pt-BR": "Portugués (Brasil)",
+    "de": "Alemán"
   },
   "home": {
     "tagline": "Trabajo remoto. Coincidencias reales.",

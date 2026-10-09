@@ -46,16 +46,20 @@ describe("legal texts (D241)", () => {
     expect(legal.privacy.en).toContain("## 5. Cookies");
     expect(legal.privacy["pt-BR"]).toContain("## 5. Cookies");
     expect(legal.privacy.es).toContain("## 5. Cookies");
+    expect(legal.privacy.de).toContain("## 5. Cookies");
   });
 
-  it("gives ru, pt-BR and es their own text and every other language English (D350)", () => {
+  it("gives ru, pt-BR, es and de their own text and every other language English (D350)", () => {
     expect(legalText("terms", "pt-BR")).toBe(legal.terms["pt-BR"]);
     expect(legalText("terms", "ru")).toBe(legal.terms.ru);
     expect(legalText("terms", "es")).toBe(legal.terms.es);
     expect(legalText("privacy", "es")).toBe(legal.privacy.es);
-    expect(legalText("terms", "de")).toBe(legal.terms.en);
+    expect(legalText("terms", "de")).toBe(legal.terms.de);
+    expect(legalText("privacy", "de")).toBe(legal.privacy.de);
+    expect(legalText("terms", "fr")).toBe(legal.terms.en);
     expect(legal.terms["pt-BR"]).toContain("/pt-BR/privacy");
     expect(legal.terms.es).toContain("/es/privacy");
+    expect(legal.terms.de).toContain("/de/privacy");
     for (const doc of [legal.terms, legal.privacy]) {
       expect(doc.es).not.toBe(doc.en);
       expect(doc.es).not.toContain("/en/");
@@ -64,5 +68,17 @@ describe("legal texts (D241)", () => {
       );
     }
     expect(legal.terms.es).toContain("10.5.");
+  });
+
+  it("de is a full translation with the same placeholders as en (D373)", () => {
+    for (const doc of [legal.terms, legal.privacy]) {
+      expect(doc.de).not.toBe(doc.en);
+      expect(doc.de).not.toContain("/en/");
+      expect(doc.de.match(/{{w+}}/g)).toEqual(
+        doc.en.match(/{{w+}}/g),
+      );
+      expect(doc.de.match(/^## /gm)?.length).toBe(doc.en.match(/^## /gm)?.length);
+    }
+    expect(legal.terms.de).toContain("10.5.");
   });
 });

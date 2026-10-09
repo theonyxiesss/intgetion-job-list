@@ -831,3 +831,14 @@
 - Отклонения от ТЗ: полоса с 1280/1440, не с 1024 (D371)
 - OPEN QUESTION: нет
 - Следующая подфаза: выкладка пачки только по отдельной команде
+
+## [2026-10-09] — locale-de2 (немецкий, D373, перенос на актуальную базу) — DONE
+- Сделано: немецкий `de` на `/de/...` заново от origin/master 42412c5 в папке `Integetion jobs locale-de2`, ветка `claude/locale-de2`. Старая ветка `claude/locale-de` (от f89ad97) не вливалась и не перебазировалась. Код взят диффом `f89ad97..5e397d1` только по исходникам (без docs, `de.json`, `legal.json` и шаблонов), лёг без конфликтов. `de.json` собран по текущему en.json: 1661 строка из 5e397d1 — только где английский ключ с f89ad97 не менялся (изменённых нет); 7 новых ключей (ссылки компании, D372) переведены. Юридические тексты английского с f89ad97 не менялись — немецкие секции те же. `legal.json` и `supabase/templates` перегенерированы. D373 перенесено в конец DECISIONS тем же номером.
+- Проверено на dev-сервере :3200: `/de`, `/de/terms`, `/de/privacy` → 200, `lang="de"`; переключатель показывает «Deutsch» текущим; юрлицо «wird noch angegeben».
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` (с `NEXT_PUBLIC_SITE_URL=http://localhost:3000`) → 0, 835 тестов, 1 пропущен (`decide.test.ts` в этот раз уложился в таймаут; файл не менялся).
+- P-тесты подфазы: messages de, legal de, письмо de, шаблоны (15 ссылок), бот de/de-at, seo/indexnow `/de` ✅
+- Миграции: `src/db/migrations/0043_locale_de.sql` (users, notification_emails, telegram_login_challenges, auth_email_waits; на облако не применена)
+- Изменённые файлы: см. `git status` в `Integetion jobs locale-de2`. Не закоммичено.
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: Impressum / BDSG для `/de` — к юристу (как в D373).
+- Следующая подфаза: по команде основателя («следующая»): французский от этой ветки.

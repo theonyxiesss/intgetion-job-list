@@ -31,6 +31,7 @@ const LANGUAGE: Record<AppLocale, string> = {
   ru: "Russian",
   es: "Spanish",
   "pt-BR": "Brazilian Portuguese",
+  de: "German",
 };
 
 function systemPrompt(input: BriefIntroInput): string {
