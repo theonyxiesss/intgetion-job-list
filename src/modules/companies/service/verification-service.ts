@@ -38,18 +38,21 @@ const SUBJECT: Record<string, string> = {
   ru: "Подтвердите домен компании",
   es: "Confirma el dominio de tu empresa",
   "pt-BR": "Confirme o domínio da sua empresa",
+  de: "Bestätigen Sie die Domain Ihres Unternehmens",
 };
 const BODY: Record<string, string> = {
   en: "Open this link within 72 hours to confirm that you work at",
   ru: "Откройте ссылку в течение 72 часов, чтобы подтвердить, что вы работаете в",
   es: "Abre este enlace en 72 horas para confirmar que trabajas en",
   "pt-BR": "Abra este link em até 72 horas para confirmar que você trabalha na",
+  de: "Öffnen Sie diesen Link innerhalb von 72 Stunden, um zu bestätigen, dass Sie tätig sind bei",
 };
 const ACTION: Record<string, string> = {
   en: "Confirm domain",
   ru: "Подтвердить домен",
   es: "Confirmar dominio",
   "pt-BR": "Confirmar domínio",
+  de: "Domain bestätigen",
 };
 
 /**

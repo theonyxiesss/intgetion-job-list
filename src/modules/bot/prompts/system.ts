@@ -12,6 +12,7 @@ const LANGUAGE: Record<string, string> = {
   ru: "Russian",
   es: "Spanish",
   "pt-BR": "Brazilian Portuguese",
+  de: "German",
 };
 
 export function systemPrompt(input: {

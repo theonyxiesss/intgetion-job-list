@@ -9,19 +9,21 @@ import { fileURLToPath } from "node:url";
 const DOCS = { terms: "legal-terms.md", privacy: "legal-privacy.md" };
 
 /**
- * One document as { ru, en, "pt-BR", es }: comments dropped, split at
- * <!-- en -->, <!-- pt-BR --> and <!-- es --> (D350).
+ * One document as { ru, en, "pt-BR", es, de }: comments dropped, split at
+ * <!-- en -->, <!-- pt-BR -->, <!-- es --> and <!-- de --> (D350, D373).
  */
 export function splitLegal(markdown) {
   const [ru, rest] = markdown.split(/^<!-- en -->\s*$/m);
   const [en, ptRest] = (rest ?? "").split(/^<!-- pt-BR -->\s*$/m);
-  const [ptBR, es] = (ptRest ?? "").split(/^<!-- es -->\s*$/m);
+  const [ptBR, esRest] = (ptRest ?? "").split(/^<!-- es -->\s*$/m);
+  const [es, de] = (esRest ?? "").split(/^<!-- de -->\s*$/m);
   const clean = (text) => (text ?? "").replace(/<!--[\s\S]*?-->/g, "").trim();
   return {
     ru: clean(ru),
     en: clean(en),
     "pt-BR": clean(ptBR),
     es: clean(es),
+    de: clean(de),
   };
 }
 

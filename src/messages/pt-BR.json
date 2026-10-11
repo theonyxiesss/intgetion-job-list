@@ -142,16 +142,19 @@
       "en": "EN",
       "ru": "RU",
       "es": "ES",
-      "pt-BR": "PT"
+      "pt-BR": "PT",
+      "de": "DE"
     },
     "native": {
       "en": "English",
       "ru": "Русский",
       "es": "Español",
-      "pt-BR": "Português (Brasil)"
+      "pt-BR": "Português (Brasil)",
+      "de": "Deutsch"
     },
     "es": "Espanhol",
-    "pt-BR": "Português (Brasil)"
+    "pt-BR": "Português (Brasil)",
+    "de": "Alemão"
   },
   "home": {
     "tagline": "Trabalho remoto. Correspondências reais.",

@@ -1,0 +1,2191 @@
+{
+  "jobs": {
+    "title": "Remote-Jobs",
+    "subtitle": "Veröffentlichte Remote-Stellen durchsuchen.",
+    "filters": "Filter",
+    "closeFilters": "Schließen",
+    "clearFilter": "Filter zurücksetzen",
+    "backToJobs": "Zurück zu den Jobs",
+    "search": "Jobs suchen",
+    "category": "Kategorie",
+    "anyCategory": "Jede Kategorie",
+    "skillsFilter": "Skills",
+    "format": "Arbeitsmodell",
+    "employment": "Anstellungsart",
+    "anyEmployment": "Jede Art",
+    "country": "Ländercode",
+    "minimumOverlap": "Mindestüberschneidung (Stunden)",
+    "timezoneExample": "Beispiel: Europe/Berlin",
+    "salaryMin": "Mindestgehalt",
+    "currency": "Währung",
+    "currencyExample": "Beispiel: USD",
+    "period": "Gehaltszeitraum",
+    "basis": "Gehaltsbasis",
+    "hour": "Pro Stunde",
+    "month": "Pro Monat",
+    "year": "Pro Jahr",
+    "gross": "Brutto",
+    "net": "Netto",
+    "sourceFilter": "Quelle",
+    "anySource": "Jede Quelle",
+    "internal": "Direkt",
+    "imported": "Importiert",
+    "promoted": "Hervorgehoben",
+    "promotedHeading": "Hervorgehoben",
+    "postedWithinLabel": "Veröffentlicht",
+    "anyDate": "Jederzeit",
+    "day": "Letzter Tag",
+    "week": "Letzte Woche",
+    "monthPosted": "Letzte 30 Tage",
+    "sort": "Sortieren nach",
+    "newest": "Neueste",
+    "relevance": "Relevanz",
+    "highestSalary": "Höchstes Gehalt",
+    "any": "Jedes Modell",
+    "remote": "Remote",
+    "hybrid": "Hybrid",
+    "onsite": "Vor Ort",
+    "full_time": "Vollzeit",
+    "part_time": "Teilzeit",
+    "contract": "Vertrag",
+    "freelance": "Freiberuflich",
+    "internship": "Praktikum",
+    "applyFilters": "Suchen",
+    "empty": "Keine Jobs passen zu diesen Filtern.",
+    "next": "Nächste Seite",
+    "trusted": "Vertrauenswürdiger Arbeitgeber",
+    "importedFrom": "Importiert von",
+    "company": "Unternehmen",
+    "worldwide": "Weltweit",
+    "timezone": "Überschneidung der Arbeitszeiten",
+    "salaryMissing": "Gehalt nicht angegeben",
+    "apply": "Bewerben",
+    "talkToAssistant": "Mit dem Assistenten sprechen",
+    "sector": "Branche",
+    "seniority": "Erfahrungsstufe",
+    "perk": "Vorteile",
+    "restoreFilters": "Letzte Filter wiederherstellen",
+    "recentlyViewed": "Zuletzt angesehen",
+    "similar": "Ähnliche Jobs",
+    "share": {
+      "title": "Teilen",
+      "copy": "Link kopieren",
+      "copied": "Link kopiert",
+      "more": "Mehr"
+    },
+    "closedTitle": "Dieser Job ist nicht mehr offen",
+    "closedIntro": "Der Arbeitgeber hat ihn geschlossen oder er ist abgelaufen. Hier sind Jobs derselben Art.",
+    "missingTitle": "Job nicht gefunden",
+    "missingIntro": "Der Link ist möglicherweise falsch, oder der Job wurde entfernt.",
+    "browseAll": "Alle Jobs",
+    "viewJob": "Job ansehen"
+  },
+  "companyPage": {
+    "trusted": "Vertrauenswürdiger Arbeitgeber",
+    "verified": "Verifiziertes Unternehmen",
+    "openJobs": "{count, plural, =0 {Keine offenen Stellen} one {# offene Stelle} other {# offene Stellen}}",
+    "companyLogo": "Firmenlogo",
+    "openRoles": "Offene Stellen",
+    "empty": "Derzeit keine offenen Stellen.",
+    "about": "Über uns",
+    "jobsTab": "Jobs",
+    "tabsLabel": "Unternehmen",
+    "emptyAbout": "Dieses Unternehmen hat keine Beschreibung hinzugefügt.",
+    "links": {
+      "website": "Website",
+      "linkedin": "LinkedIn",
+      "telegram": "Telegram",
+      "x": "X"
+    }
+  },
+  "product": {
+    "name": "INTGETION JOB LIST",
+    "wordmark": "INTGETION",
+    "wordmarkSub": "Job list"
+  },
+  "meta": {
+    "description": "Remote-Arbeit. Echte Treffer.",
+    "homeTitle": "Remote-Jobs in Web3 & Krypto",
+    "homeDescription": "Finden Sie Remote-Jobs in Web3, Krypto und Blockchain: Engineering, Design, Marketing und Support. Gehaltsspannen, Überschneidung der Zeitzonen und Treffer passend zu Ihrem Profil.",
+    "ogAlt": "INTGETION Job List — Remote-Arbeit in Web3"
+  },
+  "nav": {
+    "home": "Startseite",
+    "main": "Hauptmenü",
+    "language": "Sprache",
+    "theme": "Farbschema",
+    "themeLight": "Helles Design",
+    "themeDark": "Dunkles Design",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "logout": "Abmelden",
+    "account": "Konto",
+    "skip": "Zum Inhalt springen",
+    "menu": "Menü",
+    "jobs": "Jobs",
+    "matches": "Treffer",
+    "employers": "Für Arbeitgeber",
+    "saved": "Gespeicherte Jobs",
+    "admin": "Administration",
+    "chat": "Spoki",
+    "chatWithAgent": "Mit dem Agenten chatten",
+    "bottom": "Hauptbereiche",
+    "pricing": "Preise",
+    "postJob": "Job ausschreiben",
+    "myJobs": "Meine Jobs",
+    "company": "Unternehmen"
+  },
+  "locale": {
+    "en": "Englisch",
+    "ru": "Russisch",
+    "short": {
+      "en": "EN",
+      "ru": "RU",
+      "es": "ES",
+      "pt-BR": "PT",
+      "de": "DE"
+    },
+    "native": {
+      "en": "English",
+      "ru": "Русский",
+      "es": "Español",
+      "pt-BR": "Português (Brasil)",
+      "de": "Deutsch"
+    },
+    "es": "Spanisch",
+    "pt-BR": "Portugiesisch (Brasilien)",
+    "de": "Deutsch"
+  },
+  "home": {
+    "tagline": "Remote-Arbeit. Echte Treffer.",
+    "searchLabel": "Suche",
+    "searchPlaceholder": "Rolle, Skill oder Unternehmen",
+    "searchSubmit": "Suchen",
+    "latestEmpty": "Veröffentlichte Stellen erscheinen hier.",
+    "feedTitle": "Remote-Jobs",
+    "topJobs": "Top-Jobs",
+    "allJobs": "Alle Jobs",
+    "moreJobs": "Mehr Jobs anzeigen",
+    "faqTitle": "Fragen",
+    "faq": {
+      "what": {
+        "q": "Was ist INTGETION JOB LIST?",
+        "a": "Ein Feed mit Remote-Jobs. Suchen, bewerben und den Assistenten Spoki Stellen vorschlagen lassen, die zu Ihrem Profil passen."
+      },
+      "free": {
+        "q": "Ist es kostenlos?",
+        "a": "Ja. Suchen, Bewerben und Ausschreiben von Jobs sind kostenlos. Bezahlte Tarife bringen Tempo und Reichweite — siehe Preise."
+      },
+      "apply": {
+        "q": "Wie bewerbe ich mich?",
+        "a": "Öffnen Sie einen Job und klicken Sie auf Bewerben. Bei importierten Jobs bewerben Sie sich auf der Website des Arbeitgebers."
+      },
+      "post": {
+        "q": "Wie schreibe ich einen Job aus?",
+        "a": "Klicken Sie auf Job ausschreiben, melden Sie sich an und füllen Sie das Formular aus. Der Job erscheint nach der Prüfung im Feed."
+      },
+      "contacts": {
+        "q": "Wer sieht meine Kontaktdaten?",
+        "a": "Ein Unternehmen sieht Ihre Kontaktdaten erst nach beidseitigem Interesse."
+      }
+    }
+  },
+  "categories": {
+    "engineering": "Engineering",
+    "data": "Daten",
+    "design": "Design",
+    "product": "Produkt",
+    "marketing": "Marketing",
+    "sales": "Vertrieb",
+    "support": "Support",
+    "operations": "Operations",
+    "finance": "Finanzen",
+    "hr": "HR",
+    "legal": "Recht",
+    "content": "Content",
+    "community": "Community",
+    "research": "Forschung"
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "body": "Diese Adresse gehört nicht zur Plattform.",
+    "code": "404",
+    "home": "Zurück zur Startseite"
+  },
+  "error": {
+    "title": "Etwas ist schiefgelaufen",
+    "body": "Die Seite konnte nicht angezeigt werden.",
+    "retry": "Erneut versuchen",
+    "code": "500"
+  },
+  "auth": {
+    "loginTitle": "Anmelden",
+    "registerTitle": "Konto erstellen",
+    "resetTitle": "Passwort zurücksetzen",
+    "updatePasswordTitle": "Neues Passwort festlegen",
+    "checkEmailTitle": "Prüfen Sie Ihre E-Mails",
+    "checkEmailBody": "Wir haben Ihnen einen Link gesendet. Öffnen Sie ihn in diesem Browser, um fortzufahren. Der Link funktioniert einmal.",
+    "checkEmailResentBody": "Diese Adresse wartete bereits auf Bestätigung. Wir haben einen neuen Link gesendet — öffnen Sie ihn, um abzuschließen.",
+    "checkEmailWaiting": "Diese Seite geht automatisch weiter, sobald die E-Mail bestätigt ist.",
+    "confirmedTitle": "E-Mail bestätigt",
+    "confirmedBody": "Ihre E-Mail ist bestätigt. Sie können auf diesem Gerät fortfahren.",
+    "confirmedContinue": "Weiter",
+    "signedInTitle": "Anmeldung bestätigt",
+    "signedInLoginBody": "Die Anmeldung ist bestätigt. Sie können dieses Fenster schließen — die Seite auf Ihrem Computer geht von selbst weiter.",
+    "signedInSignupBody": "Ihre E-Mail ist bestätigt. Sie können dieses Fenster schließen — die Seite auf Ihrem Computer geht von selbst weiter.",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "newPassword": "Neues Passwort",
+    "passwordHint": "Mindestens 10 Zeichen.",
+    "methodLabel": "Anmeldemethode",
+    "methodPassword": "Passwort",
+    "methodMagicLink": "Link per E-Mail",
+    "magicLinkHint": "Wir senden Ihnen einen einmaligen Anmeldelink per E-Mail.",
+    "acceptTerms": "Ich akzeptiere die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzerklärung</privacy>.",
+    "submitLogin": "Anmelden",
+    "submitMagicLink": "Link senden",
+    "submitRegister": "Konto erstellen",
+    "submitReset": "Link zum Zurücksetzen senden",
+    "submitNewPassword": "Passwort speichern",
+    "noAccount": "Kein Konto?",
+    "haveAccount": "Bereits registriert?",
+    "forgotPassword": "Passwort vergessen?",
+    "toRegister": "Registrieren",
+    "toLogin": "Anmelden",
+    "resetHint": "Wir senden einen Link zum Zurücksetzen, falls für diese Adresse ein Konto existiert.",
+    "errors": {
+      "invalid_email": "Geben Sie eine gültige E-Mail-Adresse ein.",
+      "password_too_short": "Das Passwort muss mindestens 10 Zeichen haben.",
+      "password_too_long": "Das Passwort darf höchstens 72 Zeichen haben.",
+      "password_too_common": "Dieses Passwort ist zu verbreitet. Wählen Sie ein anderes.",
+      "password_weak": "Dieses Passwort ist zu schwach. Wählen Sie ein anderes.",
+      "terms_required": "Akzeptieren Sie die Bedingungen, um fortzufahren.",
+      "invalid_credentials": "Falsche E-Mail oder falsches Passwort.",
+      "email_not_confirmed": "Bestätigen Sie zuerst Ihre E-Mail: Öffnen Sie den Link, den wir Ihnen gesendet haben.",
+      "email_already_registered": "Diese E-Mail ist bereits registriert. Melden Sie sich an oder nutzen Sie „Passwort vergessen?“.",
+      "invalid_link": "Der Link ist ungültig oder abgelaufen. Fordern Sie einen neuen an.",
+      "missing_terms": "Die Registrierung ist nicht abgeschlossen. Registrieren Sie sich erneut und akzeptieren Sie die Bedingungen.",
+      "rate_limited": "Zu viele Versuche. Versuchen Sie es später erneut.",
+      "session_missing": "Der Link zum Zurücksetzen ist abgelaufen. Fordern Sie einen neuen an.",
+      "generic": "Etwas ist schiefgelaufen. Versuchen Sie es erneut.",
+      "telegram_failed": "Die Anmeldung mit Telegram hat nicht funktioniert. Versuchen Sie es erneut oder nutzen Sie E-Mail.",
+      "telegram_taken": "Dieses Telegram ist bereits mit einem anderen Konto verknüpft.",
+      "account_type_required": "Wählen Sie, wer Sie sind.",
+      "oauth_unavailable": "Diese Anmeldung ist noch nicht verfügbar. Nutzen Sie E-Mail oder Telegram."
+    },
+    "social": {
+      "title": "Oder weiter mit",
+      "google": "Weiter mit Google",
+      "x": "Weiter mit X",
+      "telegram": "Weiter mit Telegram",
+      "soon": "Bald",
+      "telegramTitle": "Anmeldung mit Telegram",
+      "telegramProgress": "Telegram-Bestätigung wird geprüft…",
+      "telegramLinked": "Telegram ist mit Ihrem Konto verknüpft.",
+      "telegramWaiting": "Warten auf Ihre Bestätigung in Telegram…",
+      "telegramFailed": "Die Anmeldung mit Telegram ist nicht durchgegangen. Versuchen Sie es erneut.",
+      "continueTerms": "Indem Sie fortfahren, akzeptieren Sie die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzerklärung</privacy>."
+    },
+    "useMagicLink": "Link per E-Mail",
+    "usePassword": "Passwort verwenden",
+    "checkEmailHint": "Nichts erhalten? Prüfen Sie den Spam-Ordner oder fordern Sie in einer Minute einen neuen Link an.",
+    "backToLogin": "Zurück zur Anmeldung",
+    "accountTypeLabel": "Wer sind Sie?",
+    "accountType": {
+      "candidate": "Ich suche Arbeit",
+      "candidateHint": "Jobs finden und sich bewerben.",
+      "employer": "Ich stelle ein",
+      "employerHint": "Jobs für Ihr Unternehmen ausschreiben.",
+      "settingsLabel": "Kontotyp",
+      "saved": "Gespeichert",
+      "error": "Speichern fehlgeschlagen. Versuchen Sie es erneut."
+    }
+  },
+  "authEmails": {
+    "signup": {
+      "subject": "Bestätigen Sie Ihre E-Mail · INTGETION JOB LIST",
+      "headline": "Bestätigen Sie Ihre E-Mail",
+      "body": "Danke für Ihre Registrierung. Klicken Sie auf die Schaltfläche unten, um diese Adresse zu bestätigen und Ihr Konto fertig zu erstellen. Der Link funktioniert einmal und läuft nach etwa einer Stunde ab.",
+      "action": "E-Mail bestätigen",
+      "preheader": "Bestätigen Sie Ihre E-Mail, um die Registrierung abzuschließen"
+    },
+    "magiclink": {
+      "subject": "Ihr Anmeldelink · INTGETION JOB LIST",
+      "headline": "Anmelden",
+      "body": "Nutzen Sie die Schaltfläche unten, um sich bei INTGETION JOB LIST anzumelden. Der Link funktioniert einmal. Wenn Sie ihn nicht angefordert haben, können Sie diese E-Mail ignorieren.",
+      "action": "Anmelden",
+      "preheader": "Ihr einmaliger Anmeldelink"
+    },
+    "recovery": {
+      "subject": "Passwort zurücksetzen · INTGETION JOB LIST",
+      "headline": "Passwort zurücksetzen",
+      "body": "Wir haben eine Anfrage erhalten, das Passwort für dieses Konto zurückzusetzen. Klicken Sie auf die Schaltfläche unten, um ein neues Passwort zu wählen. Wenn Sie das nicht angefordert haben, ignorieren Sie diese E-Mail — Ihr Passwort bleibt unverändert.",
+      "action": "Neues Passwort wählen",
+      "preheader": "Wählen Sie ein neues Passwort für Ihr Konto"
+    },
+    "emailChange": {
+      "subject": "Bestätigen Sie Ihre neue E-Mail · INTGETION JOB LIST",
+      "headline": "Bestätigen Sie Ihre neue E-Mail",
+      "body": "Bestätigen Sie diese Adresse, um sie für die Anmeldung bei INTGETION JOB LIST zu verwenden.",
+      "action": "E-Mail bestätigen",
+      "preheader": "Bestätigen Sie Ihre neue E-Mail-Adresse"
+    },
+    "invite": {
+      "subject": "Sie sind eingeladen · INTGETION JOB LIST",
+      "headline": "Sie sind eingeladen",
+      "body": "Klicken Sie auf die Schaltfläche unten, um die Einladung anzunehmen und Ihr Konto einzurichten.",
+      "action": "Einladung annehmen",
+      "preheader": "Nehmen Sie Ihre Einladung an"
+    },
+    "emailAdd": {
+      "subject": "Bestätigen Sie Ihre E-Mail · INTGETION JOB LIST",
+      "headline": "Diese E-Mail zu Ihrem Konto hinzufügen",
+      "body": "Klicken Sie auf die Schaltfläche unten, um diese E-Mail zu Ihrem INTGETION JOB LIST-Konto hinzuzufügen. Danach können Sie sich damit anmelden, Ihr Passwort zurücksetzen und Benachrichtigungen erhalten. Der Link funktioniert 24 Stunden. Wenn Sie danach noch ein Passwort brauchen, nutzen Sie „Passwort vergessen?“ auf der Anmeldeseite.",
+      "action": "E-Mail bestätigen",
+      "preheader": "Diese E-Mail zu Ihrem Telegram-Konto hinzufügen"
+    }
+  },
+  "onboarding": {
+    "title": "Was führt Sie hierher?",
+    "candidate": "Ich suche Arbeit",
+    "candidateDescription": "Remote-Stellen entdecken und Ihr Profil aufbauen.",
+    "employer": "Ich stelle ein",
+    "employerDescription": "Richten Sie Ihr Firmenprofil ein und bereiten Sie Stellenanzeigen vor."
+  },
+  "company": {
+    "title": "Firmenprofil",
+    "status": "Status",
+    "importedReadonly": "Importierte Firmenprofile können nicht bearbeitet und es kann ihnen nicht beigetreten werden.",
+    "form": {
+      "name": "Firmenname",
+      "domain": "Firmendomain",
+      "website": "Website",
+      "linkedin": "LinkedIn",
+      "telegram": "Telegram",
+      "x": "X",
+      "description": "Über das Unternehmen",
+      "logo": "Firmenlogo (PNG, JPEG oder WebP; max. 2 MB)",
+      "save": "Unternehmen speichern",
+      "error": "Das Unternehmen konnte nicht gespeichert werden. Prüfen Sie die Felder und versuchen Sie es erneut.",
+      "saved": "Firmenprofil gespeichert.",
+      "timezone": "Zeitzone (IANA, zum Beispiel Europe/Berlin)",
+      "timezoneHint": "Der Morgenbericht über Kandidaten kommt um 08:00 in dieser Zone. Leer bedeutet Europe/Berlin."
+    },
+    "verifyLink": "Unternehmen verifizieren",
+    "createTitle": "Unternehmen erstellen",
+    "tabProfile": "Profil",
+    "tabVerify": "Verifizierung",
+    "imported": "Importiert",
+    "verifyHint": "Verifizierte Unternehmen veröffentlichen ohne Vorabmoderation und erhalten ein Abzeichen.",
+    "statusLabel": {
+      "unverified": "Nicht verifiziert",
+      "pending_verification": "Verifizierung ausstehend",
+      "verified": "Verifiziert",
+      "rejected": "Abgelehnt",
+      "suspended": "Gesperrt"
+    },
+    "team": {
+      "heading": "Teammitglieder",
+      "count": "{used} von {cap}",
+      "email": "E-Mail einer Person, die bereits ein Konto hat",
+      "add": "Hinzufügen",
+      "added": "Zum Unternehmen hinzugefügt.",
+      "remove": "Entfernen",
+      "removed": "Aus dem Unternehmen entfernt.",
+      "full": "Dieses Unternehmen hat sein Limit an Teammitgliedern erreicht.",
+      "missing": "Noch kein Konto nutzt diese E-Mail. Die Person muss sich zuerst registrieren.",
+      "already": "Diese Person gehört bereits zum Unternehmen.",
+      "error": "Das Team konnte nicht aktualisiert werden. Versuchen Sie es erneut.",
+      "upgrade": "Team erhöht dies auf 10.",
+      "atTeamCap": "Dieses Unternehmen hat 10 Teammitglieder.",
+      "roles": {
+        "owner": "Inhaber",
+        "admin": "Admin",
+        "recruiter": "Recruiter",
+        "member": "Mitglied"
+      }
+    }
+  },
+  "profile": {
+    "nav": "Profil",
+    "title": "Profil",
+    "editTitle": "Profil bearbeiten",
+    "empty": "Sie haben noch kein Profil.",
+    "create": "Profil erstellen",
+    "edit": "Profil bearbeiten",
+    "postJob": "Job ausschreiben",
+    "completenessLabel": "Vollständigkeit des Profils",
+    "completenessValue": "{score}%",
+    "missingTitle": "Was fehlt",
+    "missing": {
+      "full_name": "Namen hinzufügen (+5%)",
+      "headline": "Überschrift hinzufügen (+10%)",
+      "desired_titles": "Wunschposition hinzufügen (+10%)",
+      "timezone": "Zeitzone bestätigen (+10%)",
+      "work_schedule": "Arbeitszeiten und -tage bestätigen (+5%)",
+      "skills": "Mindestens 3 Skills hinzufügen (+15%)",
+      "experience_years": "Berufsjahre hinzufügen (+10%)",
+      "languages": "Sprache hinzufügen (+10%)",
+      "salary": "Gehaltsvorstellung hinzufügen (+10%)",
+      "work_preferences": "Arbeitsmodell und Anstellungsart bestätigen (+5%)",
+      "contact_email": "Kontakt-E-Mail hinzufügen (+10%)"
+    },
+    "contactsTitle": "Kontakte",
+    "contactsHint": "Ein Unternehmen sieht diese erst, nachdem es Interesse an Ihrer Bewerbung bekundet hat.",
+    "noContacts": "Noch keine Kontakt-E-Mail.",
+    "tocLabel": "Profilbereiche",
+    "toc": {
+      "basics": "Grunddaten",
+      "preferences": "Präferenzen",
+      "experience": "Erfahrung",
+      "skills": "Skills",
+      "languages": "Sprachen",
+      "salary": "Gehalt"
+    },
+    "fields": {
+      "fullName": "Vollständiger Name",
+      "headline": "Überschrift",
+      "desiredTitles": "Wunschpositionen",
+      "desiredTitlesHint": "Bis zu fünf, durch Kommas getrennt.",
+      "country": "Ländercode",
+      "city": "Stadt",
+      "timezone": "Zeitzone",
+      "timezoneHint": "Aus Ihrem Browser übernommen. Bestätigen Sie sie vor dem Speichern.",
+      "confirmTimezone": "Ich bestätige diese Zeitzone",
+      "workHoursStart": "Arbeitstag beginnt",
+      "workHoursEnd": "Arbeitstag endet",
+      "workDays": "Arbeitstage",
+      "workFormats": "Arbeitsmodell",
+      "employmentTypes": "Anstellungsart",
+      "experienceYears": "Berufsjahre",
+      "skills": "Skills",
+      "skillsHint": "Bis zu 30, durch Kommas getrennt. Unbekannte Namen werden als Vorschläge gespeichert.",
+      "skillLevel": "Skill-Niveau",
+      "language": "Sprachcode",
+      "languageLevel": "Sprachniveau",
+      "salaryMin": "Mindestgehalt, kleinste Einheit",
+      "salaryCurrency": "Gehaltswährung",
+      "salaryPeriod": "Gehaltszeitraum",
+      "salaryBasis": "Gehaltsbasis",
+      "contactEmail": "Kontakt-E-Mail",
+      "phone": "Telefon",
+      "save": "Profil speichern",
+      "sectors": "Branchen (bis zu 5)",
+      "seniority": "Erfahrungsstufe",
+      "jobSearchStatus": "Jobsuche"
+    },
+    "weekdays": {
+      "1": "Montag",
+      "2": "Dienstag",
+      "3": "Mittwoch",
+      "4": "Donnerstag",
+      "5": "Freitag",
+      "6": "Samstag",
+      "7": "Sonntag"
+    },
+    "formats": {
+      "remote": "Remote",
+      "hybrid": "Hybrid",
+      "onsite": "Vor Ort"
+    },
+    "employment": {
+      "full_time": "Vollzeit",
+      "part_time": "Teilzeit",
+      "contract": "Vertrag",
+      "freelance": "Freiberuflich",
+      "internship": "Praktikum"
+    },
+    "levels": {
+      "novice": "Anfänger",
+      "intermediate": "Fortgeschritten",
+      "advanced": "Erfahren",
+      "expert": "Experte"
+    },
+    "cefr": {
+      "A1": "A1",
+      "A2": "A2",
+      "B1": "B1",
+      "B2": "B2",
+      "C1": "C1",
+      "C2": "C2",
+      "native": "Muttersprache"
+    },
+    "periods": {
+      "hour": "Stunde",
+      "month": "Monat",
+      "year": "Jahr"
+    },
+    "basis": {
+      "gross": "Brutto",
+      "net": "Netto"
+    },
+    "errors": {
+      "generic": "Das Profil konnte nicht gespeichert werden. Prüfen Sie die Felder und versuchen Sie es erneut.",
+      "timezone_confirm": "Bestätigen Sie die Zeitzone vor dem Speichern."
+    },
+    "jobSearch": {
+      "active": "Aktiv auf der Suche",
+      "passive": "Offen für Angebote",
+      "not_looking": "Nicht auf der Suche"
+    }
+  },
+  "admin": {
+    "title": "Administration",
+    "navLabel": "Administration",
+    "navHome": "Übersicht",
+    "navUsers": "Nutzer",
+    "navCompanies": "Unternehmen",
+    "navAudit": "Audit-Log",
+    "navMetrics": "Kennzahlen",
+    "navTeam": "Team",
+    "navFlags": "Flags",
+    "navSessions": "Meine Sitzungen",
+    "searchSections": "Bereiche",
+    "searchPlaceholder": "Bereiche suchen",
+    "searchEmpty": "Kein Bereich passt.",
+    "loginTitle": "Admin-Anmeldung",
+    "loginIntro": "E-Mail und Passwort. Anmeldelinks und andere Anbieter werden hier nicht verwendet.",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "signIn": "Anmelden",
+    "loginFailed": "Falsche E-Mail oder falsches Passwort.",
+    "mfaTitle": "Zweiter Faktor",
+    "mfaIntro": "Bestätigen Sie einen Code aus Ihrer Authenticator-App, einen Passkey oder einen Wiederherstellungscode. Die Konsole bleibt bis dahin geschlossen.",
+    "mfaCode": "Code",
+    "mfaVerify": "Bestätigen",
+    "mfaSecret": "Geheimnis",
+    "mfaFailed": "Dieser Code wurde nicht akzeptiert.",
+    "passkey": "Passkey verwenden",
+    "recoveryTitle": "Wiederherstellungscodes",
+    "recoveryHint": "Speichern Sie diese jetzt. Sie werden einmal angezeigt.",
+    "logout": "Abmelden",
+    "sessionsTitle": "Meine Sitzungen",
+    "sessionsEmpty": "Keine anderen Sitzungen.",
+    "revoke": "Beenden",
+    "thisSession": "Diese Sitzung",
+    "teamTitle": "Team",
+    "teamIntro": "Das Einladen von Personen kommt später. Der Inhaber wird mit dem Grant-Skript ernannt.",
+    "flagsTitle": "Flags",
+    "flagsIntro": "Schalter kommen später.",
+    "continueHome": "Weiter",
+    "navTaxonomy": "Skill-Vorschläge",
+    "pendingSuggestions": "Skill-Vorschläge zur Prüfung: {count}",
+    "laterNote": "Live-Zähler. Überfällige Einträge (älter als 24 h) sind in der Warteschlange markiert.",
+    "usersTitle": "Nutzer",
+    "companiesTitle": "Unternehmen",
+    "peopleSearch": "Name, E-Mail oder ID",
+    "filterStatus": "Status",
+    "filterAll": "Alle",
+    "statusActive": "Aktiv",
+    "statusSuspended": "Gesperrt",
+    "statusBanned": "Verbannt",
+    "statusDeleted": "Gelöscht",
+    "filterRole": "Rolle",
+    "roleCandidate": "Kandidat",
+    "roleEmployer": "Arbeitgeber",
+    "roleBoth": "Beides",
+    "colName": "Name",
+    "colEmail": "E-Mail",
+    "colPhone": "Telefon",
+    "colTelegram": "Telegram",
+    "reasonLabel": "Grund",
+    "reasonPlaceholder": "Warum diese Aktion",
+    "ban": "Verbannen",
+    "deleteAccount": "Löschen",
+    "signOutAll": "Alle Sitzungen beenden",
+    "resetPassword": "Passwort zurücksetzen",
+    "showPii": "Anzeigen",
+    "noPii": "Nichts anzuzeigen",
+    "addNote": "Notiz hinzufügen",
+    "waitingSecond": "Wartet auf einen zweiten Admin",
+    "rejectRequest": "Ablehnen",
+    "trusted": "Vertrauenswürdig",
+    "jobsPublished": "{published} von {total} veröffentlicht",
+    "applicationsCount": "{count} Bewerbungen",
+    "openOnSite": "Auf der Website öffnen",
+    "auditTitle": "Audit-Log",
+    "taxonomyTitle": "Skill-Vorschläge",
+    "colId": "ID",
+    "colRole": "Rolle",
+    "colStatus": "Status",
+    "colCreated": "Erstellt",
+    "colActions": "Aktionen",
+    "colTime": "Zeit (UTC)",
+    "colAction": "Aktion",
+    "colEntity": "Objekt",
+    "colActor": "Akteur",
+    "colText": "Text",
+    "colOccurrences": "Gesehen",
+    "colSource": "Quelle",
+    "suspend": "Sperren",
+    "unsuspend": "Entsperren",
+    "map": "Zuordnen",
+    "reject": "Ablehnen",
+    "mapTo": "Skill zuordnen",
+    "chooseSkill": "Skill wählen",
+    "noSuggestions": "Keine Vorschläge warten.",
+    "nextPage": "Nächste Seite",
+    "actionFailed": "Die Aktion ist fehlgeschlagen. Laden Sie neu und versuchen Sie es erneut.",
+    "navModeration": "Moderation",
+    "navJobs": "Jobs",
+    "navImport": "Import",
+    "pendingQueue": "Einträge zur Moderation: {count}",
+    "moderationTitle": "Moderationswarteschlange",
+    "queueEmpty": "Nichts wartet auf Moderation.",
+    "colReason": "Grund",
+    "colRisk": "Risiko",
+    "colTitle": "Titel",
+    "colKind": "Art",
+    "colLastRun": "Letzter Lauf",
+    "colCounters": "Zähler",
+    "colError": "Fehler",
+    "overdue": "Überfällig",
+    "entityMissing": "Existiert nicht mehr",
+    "decisionNote": "Grund (zum Ablehnen erforderlich)",
+    "approve": "Freigeben",
+    "jobsTitle": "Jobs",
+    "searchTitle": "Nach Titel suchen",
+    "search": "Suchen",
+    "removeReason": "Grund für die Entfernung",
+    "remove": "Entfernen",
+    "importTitle": "Import",
+    "importSources": "Quellen",
+    "importRuns": "Letzte Läufe",
+    "importNote": "Bis eine Live-Quelle freigegeben ist, laufen nur Fixture-Quellen; Quellen können hier noch nicht umgeschaltet werden.",
+    "runCounters": "abgerufen {fetched} · erstellt {created} · aktualisiert {updated} · zusammengeführt {merged} · abgelehnt {rejected} · abgelaufen {expired}",
+    "navReports": "Meldungen",
+    "reportsTitle": "Meldungen",
+    "reportsEmpty": "Keine offenen Meldungen.",
+    "reportsNote": "Drei bestätigte Meldungen über ein Unternehmen innerhalb von 30 Tagen pausieren alle seine veröffentlichten Jobs und setzen das Unternehmen in die Moderationswarteschlange.",
+    "confirmReport": "Bestätigen",
+    "dismissReport": "Verwerfen",
+    "overviewTitle": "Übersicht",
+    "statQueue": "Moderationswarteschlange",
+    "statReports": "Offene Meldungen",
+    "statSuggestions": "Skill-Vorschläge",
+    "open": "Öffnen",
+    "moderationIntro": "Älteste zuerst. Eine Ablehnung braucht einen Grund; der Arbeitgeber sieht ihn.",
+    "tabJobs": "Jobs",
+    "tabCompanies": "Unternehmen",
+    "imported": "Importiert",
+    "internal": "Intern",
+    "jobsEmpty": "Keine Jobs passen.",
+    "auditEmpty": "Das Audit-Log ist leer.",
+    "importEmpty": "Hier ist noch nichts.",
+    "runFetched": "Abgerufen",
+    "runCreated": "Erstellt",
+    "runUpdated": "Aktualisiert",
+    "runMerged": "Zusammengeführt",
+    "runRejected": "Abgelehnt",
+    "runExpired": "Abgelaufen",
+    "reportStatus": {
+      "open": "Offen",
+      "confirmed": "Bestätigt",
+      "dismissed": "Verworfen"
+    },
+    "briefs": {
+      "title": "Morgenberichte",
+      "intro": "Slots, Pause, sofortiger Lauf und das Protokoll der Morgenberichte des Agenten.",
+      "pause": "Alle Berichte pausieren",
+      "pausedOn": "Pausiert: Kein Bericht wird versendet.",
+      "pausedOff": "Läuft nach Zeitplan.",
+      "slots": "Slots",
+      "nextRun": "Nächster Lauf: {utc} UTC · {local} lokal",
+      "subscriptions": "Mit Agent an: {agent} · Telegram: {telegram} · E-Mail: {email}",
+      "timezone": "Zeitzone (IANA)",
+      "time": "Uhrzeit",
+      "enabled": "An",
+      "save": "Speichern",
+      "runDry": "Probelauf",
+      "runLive": "Echter Lauf",
+      "confirmLive": "Die Berichte für diesen Slot jetzt senden? Das kann nicht rückgängig gemacht werden.",
+      "alreadyRan": "Für diesen Slot-Tag gab es bereits einen echten Lauf. Nichts wurde erneut gesendet.",
+      "failed": "Lauf fehlgeschlagen. Versuchen Sie es erneut.",
+      "invalid": "Prüfen Sie Zeitzone und Uhrzeit.",
+      "runResult": "Gesendet: {sent} · leer: {empty} · Fehler: {failed}",
+      "log": "Läufe, letzte 30 Tage",
+      "logEmpty": "Noch keine Läufe.",
+      "colSlot": "Slot",
+      "colDate": "Datum",
+      "colStarted": "Gestartet",
+      "colFinished": "Beendet",
+      "colCandidates": "Kandidaten",
+      "colEmployers": "Arbeitgeber",
+      "colSent": "Gesendet",
+      "colEmpty": "Leer",
+      "colFailed": "Fehler",
+      "colMode": "Modus",
+      "modeDry": "Probe",
+      "modeLive": "echt",
+      "slot": {
+        "americas": "Amerika",
+        "europe": "Europa",
+        "cis": "GUS"
+      }
+    },
+    "navBriefs": "Berichte"
+  },
+  "employerJobs": {
+    "title": "Ihre Jobs",
+    "newJob": "Job erstellen",
+    "empty": "Sie haben noch keine Jobs erstellt.",
+    "status": "Status",
+    "edit": "Job bearbeiten",
+    "back": "Zurück zu den Jobs",
+    "form": {
+      "title": "Jobtitel",
+      "description": "Beschreibung (mindestens 50 Zeichen)",
+      "category": "Kategorie",
+      "employmentType": "Anstellungsart",
+      "seniority": "Erfahrungsstufe",
+      "sectors": "Branchen",
+      "perks": "Vorteile",
+      "workFormat": "Arbeitsmodell",
+      "location": "Standort (erforderlich bei hybrid oder vor Ort)",
+      "applicationMethod": "Bewerbungsweg",
+      "applicationUrl": "Bewerbungs-URL",
+      "applicationEmail": "Bewerbungs-E-Mail",
+      "salaryCurrency": "Gehaltswährung (ISO 4217)",
+      "salaryMin": "Mindestgehalt in kleinster Einheit",
+      "salaryMax": "Höchstgehalt in kleinster Einheit",
+      "skills": "Skills (durch Kommas getrennt)",
+      "save": "Entwurf speichern",
+      "saving": "Wird gespeichert…",
+      "error": "Der Job konnte nicht gespeichert werden. Prüfen Sie die Pflichtfelder.",
+      "saved": "Job gespeichert.",
+      "groups": {
+        "basics": "Grunddaten",
+        "details": "Details",
+        "application": "Bewerbung",
+        "salary": "Gehalt",
+        "skills": "Skills",
+        "markers": "Branchen und Vorteile"
+      },
+      "methods": {
+        "internal": "Auf dieser Plattform",
+        "external_url": "Auf einer externen Website",
+        "email": "Per E-Mail"
+      }
+    },
+    "actions": {
+      "publish": "Veröffentlichen",
+      "pause": "Pausieren",
+      "close": "Schließen",
+      "extend": "Um 30 Tage verlängern",
+      "processing": "Wird bearbeitet…",
+      "error": "Der Status des Jobs konnte nicht geändert werden."
+    },
+    "colTitle": "Job",
+    "colPublished": "Veröffentlicht",
+    "colExpires": "Läuft ab",
+    "jobSections": "Job-Bereiche",
+    "tabJob": "Job",
+    "tabs": {
+      "published": "Veröffentlicht",
+      "moderation": "In Moderation",
+      "drafts": "Entwürfe",
+      "archive": "Archiv"
+    },
+    "tabEmpty": {
+      "published": "Keine veröffentlichten Jobs.",
+      "moderation": "Nichts wartet auf Moderation.",
+      "drafts": "Keine Entwürfe.",
+      "archive": "Das Archiv ist leer."
+    },
+    "statusLabel": {
+      "draft": "Entwurf",
+      "pending_moderation": "In Moderation",
+      "published": "Veröffentlicht",
+      "paused": "Pausiert",
+      "expired": "Abgelaufen",
+      "closed": "Geschlossen",
+      "removed": "Entfernt"
+    },
+    "tabStats": "Statistik",
+    "stats": {
+      "title": "Letzte {days} Tage",
+      "note": "Unsere eigene Statistik ohne Dritte. Besucher werden einmal pro Tag und Browser gezählt; nichts identifiziert eine Person.",
+      "views": "Aufrufe",
+      "visitors": "Besucher",
+      "applications": "Bewerbungen",
+      "conversion": "Besucher, die sich beworben haben",
+      "daily": "Aufrufe pro Tag",
+      "day": "Tag",
+      "sources": "Woher die Besucher kamen",
+      "source": "Quelle",
+      "direct": "Direkt oder unbekannt",
+      "devices": "Geräte",
+      "device": "Gerät",
+      "count": "Aufrufe",
+      "deviceNames": {
+        "mobile": "Telefon",
+        "tablet": "Tablet",
+        "desktop": "Computer"
+      },
+      "pipeline": "Bewerbungen nach Status",
+      "status": "Status",
+      "empty": "Noch keine Aufrufe. Teilen Sie den Link zum Job, um die ersten Besucher zu bekommen.",
+      "followers": "Folgen dem Unternehmen"
+    },
+    "candidates": {
+      "title": "Passende Kandidaten",
+      "text": "Anonyme Karten: kein Name und keine Kontakte bis zum beidseitigen Interesse.",
+      "empty": "Noch keine passenden Kandidaten.",
+      "why": "Warum",
+      "noRole": "Kandidat",
+      "years": "{count, plural, one {# Jahr} other {# Jahre}}"
+    }
+  },
+  "matches": {
+    "title": "Treffer",
+    "tabsLabel": "Trefferlisten",
+    "tabAll": "Alle",
+    "tabNew": "Neu",
+    "tabHidden": "Ausgeblendet",
+    "new": "Neu",
+    "more": "Mehr",
+    "dismiss": "Passt nicht",
+    "dismissTitle": "Warum passt das nicht?",
+    "dismissConfirm": "Diesen Job ausblenden",
+    "dismissCancel": "Abbrechen",
+    "dismissClose": "Schließen",
+    "dismissError": "Das konnte nicht gespeichert werden.",
+    "emptyProfileTitle": "Füllen Sie Ihr Profil aus",
+    "emptyProfileText": "Treffer brauchen Skills, eine Zeitzone und Arbeitspräferenzen.",
+    "emptyProfileAction": "Profil bearbeiten",
+    "whyTitle": "Warum das passt",
+    "hintTitle": "Profil aktualisieren",
+    "hints": {
+      "salary": "Gehalt",
+      "format": "Arbeitsmodell",
+      "timezone": "Zeitzone"
+    },
+    "empty": {
+      "all": "Noch keine Treffer.",
+      "new": "Keine neuen Treffer.",
+      "hidden": "Nichts ausgeblendet."
+    },
+    "reasons": {
+      "salary": "Gehalt",
+      "format": "Modell",
+      "timezone": "Zeitzone",
+      "company": "Unternehmen",
+      "role": "Rolle",
+      "other": "Sonstiges"
+    }
+  },
+  "explain": {
+    "skills": {
+      "matched": "Hat die geforderten Skills.",
+      "partial": "Deckt {percent}% des geforderten Skill-Gewichts ab.",
+      "neutral": "Der Job nennt keine Skill-Anforderungen.",
+      "failed": "Keiner der geforderten Skills ist vorhanden."
+    },
+    "role": {
+      "matched": "Die Rolle entspricht der Wunschposition.",
+      "partial": "Entspricht teilweise den Wunschpositionen ({percent}% Ähnlichkeit).",
+      "neutral": "Keine Wunschpositionen oder Kategorien im Profil.",
+      "failed": "Die Rolle entspricht nicht den Wunschpositionen.",
+      "sector": "Eine Branche, der Sie folgen, gehört zu diesem Job."
+    },
+    "seniority": {
+      "partial": "Die Erfahrungsstufe liegt mehr als eine Stufe von Ihrer entfernt."
+    },
+    "salary": {
+      "matched": "Das Gehalt entspricht Ihren Vorstellungen ({job}).",
+      "partial": "Das Gehalt liegt etwas unter Ihren Vorstellungen ({job}).",
+      "neutral": "Das Gehalt lässt sich nicht vergleichen — Währung, Zeitraum, Basis oder Wechselkursdaten fehlen oder sind veraltet.",
+      "failed": "Das angebotene Gehalt liegt weit unter Ihren Vorstellungen ({job})."
+    },
+    "tzOverlap": {
+      "matched": "Die Arbeitszeiten überschneiden sich ausreichend ({percent}% der geforderten Überschneidung).",
+      "partial": "Die Arbeitszeiten überschneiden sich teilweise ({percent}% der geforderten Überschneidung).",
+      "neutral": "Der Job hat keine Zeitzonen-Anforderung.",
+      "failed": "Die Arbeitszeiten überschneiden sich nicht."
+    },
+    "experience": {
+      "matched": "Die Erfahrung entspricht der Anforderung.",
+      "partial": "Die Erfahrung entspricht nur teilweise dem gewünschten Bereich ({percent}%).",
+      "neutral": "Der Job hat keine Erfahrungsanforderung.",
+      "failed": "Nicht genug Erfahrung für diese Rolle."
+    },
+    "languages": {
+      "matched": "Erfüllt die Sprachanforderungen.",
+      "partial": "Erfüllt die Sprachanforderungen teilweise ({percent}%).",
+      "neutral": "Der Job nennt keine Sprachanforderungen.",
+      "failed": "Erfüllt die Sprachanforderungen nicht."
+    }
+  },
+  "notifications": {
+    "nav": "Benachrichtigungen",
+    "title": "Benachrichtigungen",
+    "tabsLabel": "Benachrichtigungen",
+    "tabAll": "Alle",
+    "tabUnread": "Ungelesen",
+    "empty": "Noch keine Benachrichtigungen.",
+    "markAll": "Alle als gelesen markieren",
+    "unsubscribe": {
+      "link": "Von diesen E-Mails abmelden",
+      "title": "Abmelden",
+      "button": "Diese E-Mails ausschalten",
+      "done": "Diese E-Mails sind ausgeschaltet."
+    },
+    "types": {
+      "applicationCreated": {
+        "inapp": {
+          "title": "Neue Bewerbung",
+          "body": "Ein Kandidat hat sich auf {jobTitle} beworben."
+        },
+        "email": {
+          "subject": "Neue Bewerbungen",
+          "body": "Sie haben {count, plural, one {# neue Bewerbung} other {# neue Bewerbungen}}: {jobs}."
+        }
+      },
+      "applicationViewed": {
+        "inapp": {
+          "title": "Bewerbung angesehen",
+          "body": "Der Arbeitgeber hat Ihre Bewerbung auf {jobTitle} angesehen."
+        }
+      },
+      "applicationStatusChanged": {
+        "inapp": {
+          "title": "Bewerbungsstatus geändert",
+          "body": "Ihre Bewerbung auf {jobTitle} hat jetzt den Status „{status}“."
+        },
+        "email": {
+          "subject": "Der Status Ihrer Bewerbung hat sich geändert",
+          "body": "Ihre Bewerbung auf {jobTitle} ist in die Phase „{status}“ übergegangen."
+        }
+      },
+      "applicationWithdrawn": {
+        "inapp": {
+          "title": "Bewerbung zurückgezogen",
+          "body": "Ein Kandidat hat seine Bewerbung auf {jobTitle} zurückgezogen."
+        }
+      },
+      "mutualInterestRevealed": {
+        "inapp": {
+          "title": "Kontakte freigegeben",
+          "body": "Beidseitiges Interesse bei {jobTitle}: Die Kontakte sind jetzt verfügbar."
+        },
+        "email": {
+          "subject": "Kontakte sind jetzt verfügbar",
+          "body": "Es gibt beidseitiges Interesse bei {jobTitle}. Öffnen Sie die Bewerbung, um die Kontakte zu sehen."
+        }
+      },
+      "jobModerationDecided": {
+        "inapp": {
+          "title": "Job moderiert",
+          "body": "Ihr Job {jobTitle} wurde {decision}."
+        },
+        "email": {
+          "subject": "Ihr Job wurde moderiert",
+          "body": "Ihr Job {jobTitle} wurde von der Moderation {decision}."
+        }
+      },
+      "jobExpiring": {
+        "inapp": {
+          "title": "Job läuft bald ab",
+          "body": "{jobTitle} läuft am {date} ab."
+        },
+        "email": {
+          "subject": "Ihr Job läuft in 3 Tagen ab",
+          "body": "{jobTitle} läuft am {date} ab. Verlängern Sie ihn, um weiter Bewerbungen zu erhalten."
+        }
+      },
+      "jobClosed": {
+        "inapp": {
+          "title": "Job geschlossen",
+          "body": "{jobTitle} wurde vom Arbeitgeber geschlossen."
+        }
+      },
+      "companyVerificationDecided": {
+        "inapp": {
+          "title": "Verifizierung entschieden",
+          "body": "Ihr Unternehmen {companyName} wurde {decision}."
+        },
+        "email": {
+          "subject": "Über die Verifizierung des Unternehmens wurde entschieden",
+          "body": "Ihr Unternehmen {companyName} wurde {decision}."
+        }
+      },
+      "matchesDigest": {
+        "inapp": {
+          "title": "Neue Treffer",
+          "body": "{count, plural, one {# neuer Job passt zu Ihnen} other {# neue Jobs passen zu Ihnen}}."
+        },
+        "email": {
+          "subject": "Ihre Job-Treffer",
+          "body": "{count, plural, one {# neuer Job passt zu Ihrem Profil} other {# neue Jobs passen zu Ihrem Profil}}: {jobs}."
+        }
+      },
+      "reportDecided": {
+        "inapp": {
+          "title": "Meldung geprüft",
+          "body": "Ihre Meldung wurde geprüft: {decision}."
+        }
+      },
+      "searchAlert": {
+        "inapp": {
+          "title": "Neue Jobs für eine gespeicherte Suche",
+          "body": "{count, plural, one {# neuer Job} other {# neue Jobs}} für „{searchName}“."
+        },
+        "email": {
+          "subject": "Neue Jobs: {searchName}",
+          "body": "{count, plural, one {# neuer Job passt} other {# neue Jobs passen}} zu Ihrer gespeicherten Suche „{searchName}“: {jobs}."
+        }
+      },
+      "companyNewJobs": {
+        "inapp": {
+          "title": "Neue Jobs bei einem Unternehmen, dem Sie folgen",
+          "body": "{companyName}: {count, plural, one {# neuer Job} other {# neue Jobs}}."
+        },
+        "email": {
+          "subject": "Neue Jobs bei {companyName}",
+          "body": "{companyName} hat {count, plural, one {# neuen Job} other {# neue Jobs}} veröffentlicht: {jobs}."
+        }
+      },
+      "companyCandidatesDigest": {
+        "inapp": {
+          "title": "Neue passende Kandidaten",
+          "body": "{count, plural, one {# neuer Kandidat passt zu Ihren Jobs} other {# neue Kandidaten passen zu Ihren Jobs}}."
+        },
+        "email": {
+          "subject": "Kandidaten für Ihre Jobs",
+          "body": "{count, plural, one {# neuer Kandidat passt zu Ihren Jobs} other {# neue Kandidaten passen zu Ihren Jobs}}: {jobs}."
+        }
+      }
+    },
+    "bot": {
+      "title": "Neue Jobs im Telegram-Bot",
+      "text": "Neue Jobs sammeln sich immer hier auf der Website. Schalten Sie dies ein, um sie auch als Nachrichten von unserem Bot zu erhalten.",
+      "link": "Telegram in den Kontoeinstellungen verknüpfen",
+      "saved": "Gespeichert.",
+      "error": "Speichern fehlgeschlagen. Versuchen Sie es erneut.",
+      "titleEmployer": "Neue Kandidaten und Jobs im Telegram-Bot",
+      "textEmployer": "Kandidaten und Jobs sammeln sich immer hier auf der Website. Schalten Sie dies ein, um sie auch als Nachrichten von unserem Bot zu erhalten."
+    },
+    "emailAlerts": {
+      "title": "Neue Jobs per E-Mail",
+      "text": "Dieselben neuen Jobs, an Ihre E-Mail gesendet.",
+      "link": "E-Mail hinzufügen",
+      "saved": "Gespeichert.",
+      "error": "Speichern fehlgeschlagen. Versuchen Sie es erneut.",
+      "titleEmployer": "Neue Kandidaten und Jobs per E-Mail",
+      "textEmployer": "Dieselben Kandidaten und Jobs, per E-Mail."
+    },
+    "agentBriefs": {
+      "title": "Der Agent sucht Jobs für mich aus",
+      "text": "Am Morgen sendet der Agent passende Jobs. Schalten Sie dies aus, wenn Sie den Bericht nicht möchten.",
+      "saved": "Gespeichert.",
+      "error": "Speichern fehlgeschlagen. Versuchen Sie es erneut.",
+      "off": "Der Agent ist aus, daher senden diese Schalter nichts."
+    },
+    "brief": {
+      "allMatches": "Alle Treffer",
+      "turnOff": "Ausschalten",
+      "openCandidates": "Job öffnen"
+    },
+    "employerBrief": {
+      "chatEvent": "Der Morgenbericht ist fertig: {count} neue Kandidaten passen zu Ihren Jobs. Sie finden sie auf den Jobseiten in Ihrem Arbeitgeberbereich.",
+      "years": "{count, plural, one {# Jahr} other {# Jahre}}",
+      "noRole": "Kandidat",
+      "why": "Warum",
+      "reasons": {
+        "skills": "Skills",
+        "role": "Rolle",
+        "salary": "Gehalt",
+        "tzOverlap": "Arbeitszeiten",
+        "experience": "Erfahrung",
+        "languages": "Sprachen"
+      }
+    },
+    "companyAgent": {
+      "title": "Der Agent findet Kandidaten",
+      "text": "Am Morgen sendet der Agent Kandidaten, die zu den aktiven Jobs des Unternehmens passen. Gilt für das ganze Unternehmen.",
+      "saved": "Gespeichert.",
+      "error": "Speichern fehlgeschlagen. Versuchen Sie es erneut.",
+      "off": "Der Agent ist aus, daher senden diese Schalter nichts."
+    },
+    "briefIntro": {
+      "candidate": "Guten Morgen! Heute habe ich {count, plural, one {# Job gefunden, der zu Ihnen passt} other {# Jobs gefunden, die zu Ihnen passen}}.",
+      "employer": "Guten Morgen! Heute habe ich {count, plural, one {# Kandidaten gefunden, der zu Ihren Jobs passt} other {# Kandidaten gefunden, die zu Ihren Jobs passen}}."
+    }
+  },
+  "notificationSettings": {
+    "title": "Benachrichtigungseinstellungen",
+    "inapp": "In der App",
+    "email": "E-Mail",
+    "saved": "Gespeichert",
+    "error": "Diese Einstellung konnte nicht gespeichert werden.",
+    "telegram": "Telegram",
+    "alwaysOnTitle": "Konto- und Sicherheits-E-Mails",
+    "alwaysOnBody": "E-Mail-Bestätigung, Anmeldelinks und das Zurücksetzen des Passworts werden immer gesendet. Sie sind nötig, um den Zugang zu Ihrem Konto zu behalten."
+  },
+  "applications": {
+    "nav": "Bewerbungen",
+    "title": "Ihre Bewerbungen",
+    "tabsLabel": "Bewerbungen",
+    "tabActive": "Aktiv",
+    "tabProgress": "Gespräche und Angebote",
+    "tabArchive": "Archiv",
+    "empty": "Sie haben sich noch auf keinen Job beworben.",
+    "needProfile": "Erstellen Sie ein Kandidatenprofil, bevor Sie sich bewerben.",
+    "createProfile": "Profil erstellen",
+    "withdraw": "Zurückziehen",
+    "withdrawing": "Wird zurückgezogen…",
+    "withdrawFailed": "Diese Bewerbung konnte nicht zurückgezogen werden.",
+    "status": {
+      "applied": "Beworben",
+      "viewed": "Angesehen",
+      "shortlisted": "In der engeren Wahl",
+      "interview": "Gespräch",
+      "offer": "Angebot",
+      "hired": "Eingestellt",
+      "rejected": "Abgelehnt",
+      "withdrawn": "Zurückgezogen"
+    },
+    "emptyActive": "Keine aktiven Bewerbungen.",
+    "emptyProgress": "Keine Gespräche oder Angebote.",
+    "emptyArchive": "Nichts im Archiv."
+  },
+  "employerApplications": {
+    "open": "Bewerbungen",
+    "title": "Bewerbungen",
+    "empty": "Noch keine Bewerbungen.",
+    "unnamed": "Kandidat",
+    "back": "Zurück zum Job",
+    "backToList": "Zurück zu den Bewerbungen",
+    "profileTitle": "Kandidatenprofil",
+    "noProfile": "Dieser Kandidat hat kein Profil.",
+    "coverNote": "Anschreiben",
+    "next": "Nächste Seite",
+    "status": {
+      "applied": "Beworben",
+      "viewed": "Angesehen",
+      "shortlisted": "In der engeren Wahl",
+      "interview": "Gespräch",
+      "offer": "Angebot",
+      "hired": "Eingestellt",
+      "rejected": "Abgelehnt",
+      "withdrawn": "Zurückgezogen"
+    },
+    "actions": {
+      "rejected": "Abgelehnt",
+      "interview": "Gespräch",
+      "offer": "Angebot",
+      "hired": "Eingestellt",
+      "processing": "Wird bearbeitet…",
+      "error": "Der Status konnte nicht geändert werden."
+    },
+    "all": "Alle",
+    "emptyStatus": "Keine Bewerbungen mit diesem Status.",
+    "candidate": "Kandidat",
+    "appliedAt": "Beworben",
+    "experience": "Erfahrung, Jahre",
+    "timezone": "Zeitzone",
+    "hours": "Arbeitszeiten",
+    "formats": "Modell",
+    "languages": "Sprachen"
+  },
+  "expressInterest": {
+    "button": "Interesse bekunden",
+    "processing": "Wird bearbeitet…",
+    "error": "Interesse konnte nicht bekundet werden."
+  },
+  "contacts": {
+    "title": "Kontakte",
+    "empty": "Keine Kontakte sind freigegeben.",
+    "unnamed": "Kandidat",
+    "intro": "Kandidaten, deren Kontakte nach beidseitigem Interesse freigegeben sind.",
+    "job": "Job",
+    "contactsCol": "Kontakte"
+  },
+  "companyVerify": {
+    "title": "Verifizierung des Unternehmens",
+    "status": "Status des Unternehmens: {status}",
+    "trusted": "Vertrauenswürdig",
+    "stepsTitle": "Was die Verifizierung braucht",
+    "stepDomain": "Domain bestätigt per Firmen-E-Mail oder DNS-TXT-Eintrag",
+    "stepRequisites": "Rechtlicher Name, Land und eine Website auf der Firmendomain",
+    "stepFirstJob": "Der erste Job hat die manuelle Moderation bestanden",
+    "requisitesTitle": "Firmendaten",
+    "legalName": "Rechtlicher Name",
+    "country": "Land (Zwei-Buchstaben-Code)",
+    "website": "Website auf {domain}",
+    "saveRequisites": "Firmendaten speichern",
+    "saved": "Gespeichert.",
+    "requestTitle": "Domain bestätigen",
+    "method": "Methode",
+    "methodEmail": "Firmen-E-Mail",
+    "methodDns": "DNS-TXT-Eintrag auf {domain}",
+    "email": "Ihre E-Mail auf {domain}",
+    "request": "Senden",
+    "emailSent": "Wir haben einen Link an diese Adresse gesendet. Er funktioniert 72 Stunden.",
+    "emailNotConfigured": "Der E-Mail-Versand ist auf diesem Server noch nicht eingerichtet. Nutzen Sie stattdessen die DNS-Methode.",
+    "dnsAdd": "Fügen Sie den TXT-Eintrag unten zur Domain hinzu und bestätigen Sie dann.",
+    "dnsRecord": "TXT-Eintrag:",
+    "confirmTitle": "Bestätigen",
+    "token": "Code aus dem Link oder dem TXT-Eintrag",
+    "confirm": "Bestätigen",
+    "confirmed": "Domain bestätigt.",
+    "failed": "Das hat nicht funktioniert. Prüfen Sie die Felder und versuchen Sie es erneut.",
+    "errors": {
+      "FREE_EMAIL_DOMAIN": "Mit kostenlosen E-Mail-Domains lässt sich kein Unternehmen verifizieren.",
+      "DOMAIN_MISMATCH": "Die E-Mail muss auf der Firmendomain liegen.",
+      "DOMAIN_REQUIRED": "Legen Sie zuerst die Firmendomain im Firmenprofil fest.",
+      "REAPPLY_TOO_SOON": "Nach einer Ablehnung können Sie sich 7 Tage nach der letzten Anfrage erneut bewerben.",
+      "TOKEN_EXPIRED": "Der Code ist abgelaufen. Fordern Sie einen neuen an.",
+      "DNS_RECORD_NOT_FOUND": "Der TXT-Eintrag ist noch nicht sichtbar. DNS-Änderungen können eine Weile dauern.",
+      "RATE_LIMITED": "Zu viele Anfragen heute. Versuchen Sie es morgen erneut."
+    }
+  },
+  "savedJobs": {
+    "title": "Gespeicherte Jobs",
+    "empty": "Sie haben noch keine gespeicherten Jobs.",
+    "savedOn": "Gespeichert",
+    "unsave": "Aus Gespeicherten entfernen",
+    "unsaveError": "Der Job konnte nicht entfernt werden. Versuchen Sie es erneut."
+  },
+  "jobActions": {
+    "save": "Speichern",
+    "saved": "Gespeichert",
+    "unsave": "Nicht mehr speichern",
+    "saveError": "Der Job konnte nicht gespeichert werden. Versuchen Sie es erneut.",
+    "hide": "Ausblenden",
+    "hideTitle": "Diesen Job ausblenden",
+    "hideScopeJob": "Diesen Job ausblenden",
+    "hideScopeCompany": "Alle Jobs dieses Unternehmens ausblenden",
+    "reasonLabel": "Grund (optional)",
+    "reasonNone": "Kein Grund",
+    "confirm": "Bestätigen",
+    "cancel": "Abbrechen",
+    "hideError": "Der Job konnte nicht ausgeblendet werden. Versuchen Sie es erneut.",
+    "report": "Melden",
+    "reportTitle": "Diesen Job melden",
+    "detailsLabel": "Details (optional)",
+    "reportSuccess": "Danke. Ihre Meldung wurde zur Prüfung eingereicht.",
+    "alreadyReported": "Sie haben diesen Job bereits gemeldet.",
+    "rateLimited": "Zu viele Meldungen heute. Versuchen Sie es morgen erneut.",
+    "reportError": "Die Meldung konnte nicht eingereicht werden. Versuchen Sie es erneut.",
+    "reasons": {
+      "salary": "Gehalt",
+      "format": "Arbeitsmodell",
+      "timezone": "Zeitzone",
+      "company": "Unternehmen",
+      "role": "Rolle",
+      "other": "Sonstiges"
+    },
+    "reportReasons": {
+      "scam": "Betrug",
+      "spam": "Spam",
+      "fake_company": "Gefälschtes Unternehmen",
+      "discrimination": "Diskriminierung",
+      "wrong_info": "Falsche Angaben",
+      "inappropriate": "Unangemessener Inhalt",
+      "other": "Sonstiges"
+    }
+  },
+  "footer": {
+    "candidates": "Kandidaten",
+    "employers": "Arbeitgeber",
+    "account": "Konto",
+    "company": "Firmenprofil",
+    "contacts": "Freigegebene Kontakte",
+    "settings": "Benachrichtigungseinstellungen",
+    "rights": "Alle Rechte vorbehalten.",
+    "language": "Sprache der Fußzeile",
+    "employerJobs": "Jobs des Unternehmens",
+    "legal": "Rechtliches",
+    "platform": "Plattform",
+    "resources": "Ressourcen",
+    "faq": "FAQ",
+    "salaries": "Gehälter"
+  },
+  "ui": {
+    "close": "Schließen",
+    "requestId": "Anfrage-ID",
+    "moreSkills": "+{count}",
+    "notSpecified": "Nicht angegeben",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "copy": "Kopieren",
+    "copied": "Kopiert"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "tabNotifications": "Benachrichtigungen",
+    "tabPrivacy": "Datenschutz",
+    "tabAccount": "Konto",
+    "saved": "Gespeichert.",
+    "failed": "Speichern fehlgeschlagen. Versuchen Sie es erneut.",
+    "cancel": "Abbrechen",
+    "hideProfile": "Mein Profil vor Arbeitgebern verbergen",
+    "hideProfileText": "Unternehmen, bei denen Sie sich beworben haben, sehen Ihre Bewerbung weiterhin; sonst findet niemand Ihr Profil.",
+    "marketing": "Produktneuigkeiten per E-Mail",
+    "marketingText": "Seltene E-Mails über neue Funktionen. Standardmäßig aus.",
+    "exportTitle": "Ihre Daten herunterladen",
+    "exportText": "Eine JSON-Datei mit Ihrem Profil, Kontakten, Bewerbungen, gespeicherten Jobs, Feedback, Meldungen und Benachrichtigungen.",
+    "exportButton": "JSON herunterladen",
+    "emailLanguage": "Sprache der E-Mails",
+    "emailLanguageText": "Benachrichtigungen werden in dieser Sprache gesendet.",
+    "deleteTitle": "Konto löschen",
+    "deleteText": "Ihr Profil, Ihre Kontakte, gespeicherten Jobs und Benachrichtigungen werden sofort gelöscht und Ihre Anmeldung entfernt. Bewerbungen bleiben bei den Arbeitgebern als anonymer Kandidat ohne Kontakte. Unternehmen, deren einziger Inhaber Sie sind, werden gesperrt und ihre Jobs geschlossen. Das kann nicht rückgängig gemacht werden.",
+    "deleteType": "Geben Sie DELETE ein, um fortzufahren",
+    "deleteButton": "Konto löschen",
+    "deleteConfirmTitle": "Ihr Konto endgültig löschen?",
+    "deleteConfirmText": "Sie werden sofort abgemeldet.",
+    "deleteConfirm": "Endgültig löschen",
+    "deleteFailed": "Das Konto konnte nicht gelöscht werden. Versuchen Sie es später erneut.",
+    "adminCannotDelete": "Ein Admin-Konto kann sich nicht selbst löschen. Bitten Sie zuerst einen anderen Admin, Ihre Admin-Rolle zu entfernen.",
+    "security": {
+      "title": "Sicherheit",
+      "soon": "Bald",
+      "twoFactor": {
+        "title": "Zwei-Faktor-Anmeldung",
+        "text": "Ein Einmalcode aus einer Authenticator-App bei jeder Anmeldung."
+      },
+      "wallet": {
+        "title": "Krypto-Wallet",
+        "text": "Eine Wallet mit Ihrem Konto verknüpfen."
+      }
+    },
+    "cookies": {
+      "title": "Cookies",
+      "text": "Notwendige Cookies sind immer aktiv. Optionale funktionieren nur, solange ihr Schalter an ist; das Ausschalten löscht, was sie gespeichert haben.",
+      "necessary": "Notwendig",
+      "saved": "Gespeichert.",
+      "necessaryHint": "Anmeldung, Sprache, die Sitzung des Agenten und diese Auswahl.",
+      "preferences": "Präferenzen",
+      "preferencesHint": "Ihre letzten Katalogfilter merken.",
+      "analytics": "Analyse",
+      "analyticsHint": "Unsere eigene anonyme Nutzungsstatistik. Noch wird nichts erfasst.",
+      "gpcHint": "Ihr Browser sendet Global Privacy Control, daher bleibt die Analyse aus."
+    },
+    "email": {
+      "mail": {
+        "subject": "Bestätigen Sie Ihre E-Mail",
+        "body": "Öffnen Sie den Link, um diese E-Mail zu Ihrem INTGETION JOB LIST-Konto hinzuzufügen. Danach können Sie sich damit anmelden und Benachrichtigungen erhalten. Der Link funktioniert 24 Stunden.",
+        "action": "E-Mail bestätigen"
+      },
+      "confirmTitle": "E-Mail",
+      "confirmed": "Die E-Mail ist hinzugefügt. Sie können sich jetzt damit anmelden und Benachrichtigungen erhalten.",
+      "toAccount": "Zurück zu den Kontoeinstellungen",
+      "errors": {
+        "invalid_link": "Der Link ist ungültig oder abgelaufen. Fügen Sie die E-Mail in den Kontoeinstellungen erneut hinzu.",
+        "taken": "Diese E-Mail gehört bereits zu einem anderen Konto. Melden Sie sich mit diesem Konto an und verknüpfen Sie dort Telegram.",
+        "failed": "Die E-Mail konnte nicht hinzugefügt werden. Versuchen Sie es später erneut."
+      },
+      "confirmText": "Diese E-Mail zu Ihrem Konto hinzufügen?",
+      "confirmButton": "E-Mail bestätigen"
+    },
+    "signIn": {
+      "title": "Anmeldemethoden",
+      "emailLabel": "E-Mail",
+      "noEmail": "Nicht hinzugefügt — Benachrichtigungen können Sie nicht erreichen.",
+      "emailHint": "Wir senden einen Bestätigungslink.",
+      "addEmail": "E-Mail hinzufügen",
+      "sent": "Prüfen Sie Ihren Posteingang: Wir haben einen Bestätigungslink gesendet.",
+      "setPassword": "Passwort festlegen",
+      "setPasswordHint": "Die E-Mail ist verknüpft. Um sich mit Passwort anzumelden, fordern Sie einmal einen Link zum Zurücksetzen an.",
+      "telegramLabel": "Telegram",
+      "googleLabel": "Google",
+      "xLabel": "X",
+      "linked": "Verknüpft",
+      "notLinked": "Nicht verknüpft",
+      "linkTelegram": "Telegram verknüpfen",
+      "linkGoogle": "Google verknüpfen",
+      "linkX": "X verknüpfen",
+      "unlink": "Trennen",
+      "unlinked": "Telegram ist getrennt.",
+      "unlinkedGoogle": "Google ist getrennt.",
+      "unlinkedX": "X ist getrennt.",
+      "errors": {
+        "email_required": "Fügen Sie zuerst eine E-Mail hinzu: Telegram ist Ihre einzige Anmeldemöglichkeit.",
+        "last_sign_in": "Das ist Ihre letzte Anmeldemöglichkeit. Verknüpfen Sie zuerst eine andere.",
+        "identity_taken": "Dieses Konto ist bereits mit jemand anderem verknüpft.",
+        "invalid_link": "Das Konto konnte nicht verknüpft werden. Versuchen Sie es erneut.",
+        "oauth_unavailable": "Diese Anmeldemethode ist noch nicht verfügbar.",
+        "generic": "Etwas ist schiefgelaufen. Versuchen Sie es erneut.",
+        "rate_limited": "Zu viele Versuche. Versuchen Sie es später erneut.",
+        "unavailable": "E-Mail ist gerade nicht verfügbar."
+      }
+    }
+  },
+  "chat": {
+    "title": "Spoki Assistant",
+    "jobFocus": {
+      "discussing": "Gespräch über: {title} — {company}",
+      "back": "Zurück zum Job"
+    },
+    "intro": "Ein Gespräch, das lernt, welche Arbeit Sie wollen, und weitersucht.",
+    "log": "Gespräch",
+    "you": "Sie",
+    "agent": "Spoki Assistant",
+    "telegramHint": "Wenn Sie Telegram verbunden haben, können Sie bequem dort chatten.",
+    "telegramBot": "@intgetion_bot",
+    "emptyGuest": "Sagen Sie Spoki, wo Sie sind und welche Arbeit Sie wollen.",
+    "emptySignedIn": "Sagen Sie Spoki, was Sie finden möchten. Das Gespräch geht dort weiter, wo Sie aufgehört haben.",
+    "score": "{score}% Übereinstimmung",
+    "thinking": "Denkt nach…",
+    "suggestions": {
+      "one": "Remote-Jobs mit Solidity",
+      "two": "Design in Teilzeit in Europa",
+      "three": "Wer stellt Juniors ein?"
+    },
+    "placeholder": "Nachricht schreiben",
+    "send": "Senden",
+    "guestHint": "Zum Speichern von Jobs, Bewerben und für ein Profil brauchen Sie ein Konto.",
+    "signUp": "Registrieren",
+    "errors": {
+      "BOT_UNAVAILABLE": "Der Agent ist gerade nicht verfügbar. Nutzen Sie solange die Jobsuche.",
+      "BOT_BUDGET_EXCEEDED": "Der Agent hat das heutige Limit erreicht. Nutzen Sie die Jobsuche; der Agent ist morgen wieder da.",
+      "BOT_TRY_LATER": "Der Agent konnte nicht antworten. Versuchen Sie es in einer Minute erneut.",
+      "RATE_LIMITED": "Sie haben heute zu viele Nachrichten gesendet. Versuchen Sie es morgen erneut.",
+      "generic": "Etwas ist schiefgelaufen. Versuchen Sie es erneut."
+    },
+    "confirm": {
+      "applyTitle": "Auf diesen Job bewerben?",
+      "profileTitle": "Diese Profiländerungen speichern?",
+      "text": "Nichts passiert, bis Sie bestätigen.",
+      "accept": "Bestätigen",
+      "decline": "Abbrechen",
+      "accepted": "Bestätigt.",
+      "declined": "Abgebrochen.",
+      "failed": "Das konnte nicht abgeschlossen werden. Die Karte ist möglicherweise abgelaufen; fragen Sie erneut.",
+      "missing": "Im Profil fehlt noch: {fields}"
+    },
+    "createAccount": "Konto erstellen",
+    "fillSelf": "Selbst ausfüllen",
+    "fillSpoki": "Spoki ausfüllen lassen",
+    "reviewProfile": "Profil prüfen",
+    "offer": {
+      "pay_hire": {
+        "title": "Hire",
+        "text": "Ein veröffentlichter Job, bezahlt in USDT oder USDC.",
+        "action": "Hire bezahlen"
+      },
+      "pay_team": {
+        "title": "Team",
+        "text": "30 Tage zum Monatspreis. Verlängert sich nicht.",
+        "action": "Team bezahlen"
+      },
+      "pay_plus": {
+        "title": "Plus",
+        "text": "30 Tage zum Monatspreis. Verlängert sich nicht.",
+        "action": "Plus bezahlen"
+      },
+      "pay_pro": {
+        "title": "Pro",
+        "text": "30 Tage zum Monatspreis. Verlängert sich nicht.",
+        "action": "Pro bezahlen"
+      },
+      "pricing": {
+        "title": "Tarife",
+        "text": "Start bleibt kostenlos. Die bezahlten Tarife sind eine Zahlung für 30 Tage.",
+        "action": "Tarife ansehen"
+      },
+      "register": {
+        "title": "Konto",
+        "text": "Zum Speichern von Jobs und Bewerben brauchen Sie ein Konto.",
+        "action": "Konto erstellen"
+      },
+      "post_job": {
+        "title": "Job ausschreiben",
+        "text": "Ausschreiben bleibt mit Start kostenlos.",
+        "action": "Job ausschreiben"
+      }
+    }
+  },
+  "cookies": {
+    "label": "Cookie-Auswahl",
+    "text": "Nur notwendige Cookies. Der Rest nur mit Ihrer Einwilligung.",
+    "acceptAll": "Alle akzeptieren",
+    "necessaryOnly": "Nur notwendige",
+    "customize": "Anpassen",
+    "save": "Auswahl speichern",
+    "preferences": "Präferenzen",
+    "preferencesHint": "Ihre letzten Katalogfilter merken.",
+    "analytics": "Analyse",
+    "analyticsHint": "Unsere eigene anonyme Nutzungsstatistik. Noch wird nichts erfasst.",
+    "gpcHint": "Ihr Browser sendet Global Privacy Control, daher bleibt die Analyse aus.",
+    "more": "Details"
+  },
+  "forEmployers": {
+    "title": "Für Arbeitgeber",
+    "metaDescription": "Schreiben Sie Remote-Jobs kostenlos aus und erreichen Sie Menschen, deren Skills, Gehaltsvorstellungen und Arbeitszeiten passen.",
+    "label": "Für Arbeitgeber",
+    "heroTitle": "Stellen Sie Remote-Mitarbeiter ein, die zu Ihrer Zeitzone passen",
+    "heroText": "Schreiben Sie Jobs kostenlos aus. Wir zeigen sie Kandidaten, deren Skills, Gehaltsvorstellungen und Arbeitszeiten passen.",
+    "cta": "Job ausschreiben",
+    "stepsTitle": "So funktioniert es",
+    "steps": {
+      "company": {
+        "title": "Unternehmen",
+        "text": "Erstellen Sie Ihr Unternehmen und verifizieren Sie es mit einer Firmen-E-Mail oder einem DNS-Eintrag."
+      },
+      "job": {
+        "title": "Job",
+        "text": "Beschreiben Sie den Job: Skills, Gehaltsspanne, Arbeitsmodell, geforderte Überschneidung der Arbeitszeiten."
+      },
+      "match": {
+        "title": "Matching",
+        "text": "Wir zeigen ihn passenden Kandidaten und sagen ihnen, warum er passt."
+      },
+      "contacts": {
+        "title": "Kontakte",
+        "text": "Prüfen Sie Bewerbungen und markieren Sie die, die Ihnen gefallen — dann werden deren Kontakte freigegeben."
+      }
+    },
+    "whyTitle": "Warum hier",
+    "why": {
+      "match": "Matching nach Skills und Zeitzone, nicht nach Stichwörtern.",
+      "salary": "Kandidaten sehen Ihre Spanne unter Berücksichtigung von Währung und Steuern — weniger unpassende Bewerbungen.",
+      "both": "Web3 und klassische Remote-Arbeit an einem Ort, auf Englisch und Russisch.",
+      "trust": "Ein Verifizierungsabzeichen schafft Vertrauen und bringt mehr Antworten."
+    },
+    "verifyTitle": "Verifizierungsstufen",
+    "verify": {
+      "unverified": {
+        "title": "Nicht verifiziert",
+        "text": "Jobs werden moderiert, bis zu 5 Anzeigen pro Tag."
+      },
+      "verified": {
+        "title": "Verifiziert",
+        "text": "Firmen-E-Mail oder DNS plus Firmendaten. Bis zu 50 Anzeigen pro Tag und ein Abzeichen."
+      },
+      "trusted": {
+        "title": "Vertrauenswürdig",
+        "text": "Wird automatisch nach beständiger Aktivität ohne Beschwerden vergeben."
+      }
+    },
+    "faqTitle": "Fragen von Arbeitgebern",
+    "faq": {
+      "price": {
+        "q": "Was kostet es?",
+        "a": "Das Ausschreiben ist vorerst kostenlos."
+      },
+      "limit": {
+        "q": "Wie viele Jobs kann ich ausschreiben?",
+        "a": "5 pro Tag ohne Verifizierung, 50 nach der Verifizierung."
+      },
+      "review": {
+        "q": "Warum wird mein Job geprüft?",
+        "a": "Das Unternehmen ist noch nicht verifiziert oder die Anzeige wirkt riskant. Die Prüfung dauert meist bis zu einem Tag."
+      },
+      "contacts": {
+        "q": "Wann sehe ich die Kontakte eines Kandidaten?",
+        "a": "Nachdem Sie die Bewerbung als interessant markiert haben: Sie kommt in die engere Wahl und die Kontakte werden freigegeben."
+      },
+      "salary": {
+        "q": "Kann ich das Gehalt weglassen?",
+        "a": "Ja, aber solche Jobs stehen in den Treffern der Kandidaten weiter unten."
+      }
+    },
+    "finalTitle": "Bereit einzustellen?",
+    "finalText": "Schreiben Sie Ihren ersten Job aus — es dauert 5 Minuten.",
+    "pricingTitle": "Kostenlos oder bezahlt mit Garantie",
+    "pricingText": "Schreiben Sie kostenlos aus, oder zahlen Sie $79 pro Job und erhalten Sie 10 passende Bewerbungen — oder Ihr Geld zurück.",
+    "pricingLink": "Preise ansehen"
+  },
+  "rss": {
+    "title": "INTGETION JOB LIST — neueste Remote-Jobs",
+    "description": "Die 50 neuesten veröffentlichten Remote-Jobs.",
+    "feed": "RSS-Feed"
+  },
+  "markers": {
+    "showMore": "Mehr anzeigen ({count})",
+    "forYou": "Für Sie",
+    "anySeniority": "Jede Erfahrungsstufe",
+    "anySector": "Jede Branche",
+    "anyPerk": "Jeder Vorteil",
+    "sector": "Branche",
+    "seniorityLabel": "Erfahrungsstufe",
+    "perk": "Vorteile",
+    "tagTitle": "{name}-Jobs",
+    "tagIntro": "Veröffentlichte Stellen mit dem Merkmal {name}.",
+    "collectionJobs": "{count, plural, one {# offene Stelle} other {# offene Stellen}}",
+    "collectionJobsMore": "{count}+ offene Stellen",
+    "nearby": "Ähnliche Sammlungen",
+    "tagDescription": "Remote-Jobs für {name} in Web3, Krypto und KI — neue Stellen mit Gehalt, Zeitzone und Arbeitsmodell, auf Englisch und Russisch.",
+    "regions": {
+      "europe": "Europa",
+      "north-america": "Nordamerika",
+      "latam": "Lateinamerika",
+      "apac": "Asien und Pazifik",
+      "africa-mena": "Afrika und Naher Osten"
+    },
+    "faq": {
+      "title": "Fragen und Antworten",
+      "q1": "Wie kommen Jobs auf diese {name}-Liste?",
+      "a1": "Hier steht jeder veröffentlichte Job mit dem Merkmal {name} — die, die Arbeitgeber bei uns ausschreiben, und die, die wir aus Partner-Feeds importieren, immer mit einem Link zum Original. Nichts wird gegen Geld platziert.",
+      "q2": "Kann ich remote arbeiten und meine eigenen Zeiten behalten?",
+      "a2": "Jede Karte zeigt das Arbeitsmodell, die Anstellungsart und die Zeitzone, mit der sich Ihre Arbeitszeit überschneiden muss, damit Sie vor der Bewerbung sehen, ob {name}-Arbeit in Ihren Tag passt.",
+      "q3": "Wie verfolge ich neue {name}-Jobs?",
+      "a3": "Der RSS-Link oben auf dieser Seite enthält dieselbe Liste. Angemeldet sendet eine gespeicherte Suche neue Treffer per E-Mail oder Telegram, sobald sie erscheinen."
+    },
+    "highPayTitle": "Gut bezahlte Jobs",
+    "highPayIntro": "Bruttogehalt ab {threshold} pro Jahr.",
+    "highPayThreshold": "100000 USD",
+    "rss": "RSS",
+    "groups": {
+      "web3": "Web3",
+      "ai": "KI",
+      "finance": "Finanzen",
+      "products": "Produkte",
+      "games": "Spiele",
+      "health": "Gesundheit",
+      "society": "Gesellschaft",
+      "industry": "Industrie"
+    },
+    "sectors": {
+      "web3": "Web3",
+      "defi": "DeFi",
+      "nft": "NFT",
+      "gamefi": "GameFi",
+      "metaverse": "Metaverse",
+      "zk": "Zero Knowledge",
+      "dao": "DAO",
+      "infra-l1l2": "L1 / L2",
+      "exchange": "Börse",
+      "memecoins": "Memecoins",
+      "crypto-vc": "Krypto-VC",
+      "eco-ethereum": "Ethereum",
+      "eco-solana": "Solana",
+      "eco-fantom": "Fantom",
+      "eco-polkadot": "Polkadot",
+      "ai-ml": "KI / ML",
+      "genai": "Generative KI",
+      "computer-vision": "Computer Vision",
+      "robotics": "Robotik",
+      "data-analytics": "Datenanalyse",
+      "fintech": "Fintech",
+      "banking": "Banking",
+      "payments": "Zahlungen",
+      "insurtech": "Insurtech",
+      "quant-trading": "Quant-Trading",
+      "accounting-tax": "Buchhaltung",
+      "saas-b2b": "B2B-SaaS",
+      "devtools": "Entwicklertools",
+      "cloud-infra": "Cloud",
+      "open-source": "Open Source",
+      "cybersecurity": "Cybersicherheit",
+      "ecommerce": "E-Commerce",
+      "marketplaces": "Marktplätze",
+      "adtech-martech": "Adtech",
+      "hr-tech": "HR-Tech",
+      "gamedev": "Spieleentwicklung",
+      "igaming": "iGaming",
+      "ar-vr": "AR / VR",
+      "media-streaming": "Medien",
+      "creator-economy": "Creator Economy",
+      "music": "Musik",
+      "healthtech": "Healthtech",
+      "medtech": "Medtech",
+      "biotech": "Biotech",
+      "mental-health": "Psychische Gesundheit",
+      "fitness": "Fitness",
+      "edtech": "Edtech",
+      "govtech": "Govtech",
+      "legaltech": "Legaltech",
+      "nonprofit": "Gemeinnützig",
+      "climatetech": "Klima",
+      "energy": "Energie",
+      "logistics": "Logistik",
+      "proptech": "Proptech",
+      "autotech": "Autotech",
+      "agritech": "Agritech",
+      "foodtech": "Foodtech",
+      "travel": "Reisen",
+      "space": "Raumfahrt",
+      "hardware-iot": "Hardware / IoT",
+      "telecom": "Telekommunikation"
+    },
+    "perks": {
+      "crypto-pay": "Bezahlung in Krypto",
+      "token-equity": "Token-Beteiligung",
+      "async": "Asynchron",
+      "four-day-week": "Vier-Tage-Woche",
+      "visa-support": "Visa-Unterstützung",
+      "relocation": "Umzugshilfe",
+      "no-degree": "Kein Abschluss nötig",
+      "junior-friendly": "Junior-freundlich",
+      "own-timezone": "Ihre Zeitzone"
+    },
+    "seniority": {
+      "internship": "Praktikum",
+      "entry": "Einstieg",
+      "mid": "Mid",
+      "senior": "Senior",
+      "lead": "Lead"
+    },
+    "nonTechnical": "Nicht technisch"
+  },
+  "metrics": {
+    "title": "Plattform-Kennzahlen",
+    "description": "Wichtige Zähler, bei jedem Besuch aktualisiert. Überfällige Einträge (>24 h) sind in der Moderationswarteschlange hervorgehoben.",
+    "registrations": {
+      "total": "Registrierungen gesamt",
+      "last7d": "Letzte 7 Tage"
+    },
+    "jobs": {
+      "published": "Veröffentlichte Jobs",
+      "internal": "Interne Jobs",
+      "imported": "Importierte Jobs"
+    },
+    "applications": {
+      "last24h": "Bewerbungen (24 h)",
+      "last7d": "Bewerbungen (7 T)",
+      "mutualInterest": "Beidseitiges Interesse"
+    },
+    "matching": {
+      "avgScore": "Durchschn. Übereinstimmung",
+      "totalPairs": "Kandidat-Job-Paare gesamt",
+      "thresholdPairs": "Paare über dem Schwellenwert"
+    },
+    "moderation": {
+      "title": "Moderationswarteschlange",
+      "status": "Status",
+      "count": "Anzahl",
+      "pending": "Ausstehend",
+      "approved": "Freigegeben",
+      "rejected": "Abgelehnt",
+      "total": "Gesamt",
+      "queueSize": "Länge der Warteschlange"
+    },
+    "emails": {
+      "title": "E-Mails",
+      "status": "Status",
+      "type": "Typ",
+      "count": "Anzahl",
+      "pending": "Ausstehend",
+      "sent": "Gesendet",
+      "skipped": "Übersprungen",
+      "failed": "Fehlgeschlagen"
+    },
+    "analytics": {
+      "title": "Besucher, letzte {days} Tage",
+      "note": "Unsere eigene Statistik, ohne Dritte. Besucher werden für alle ohne Cookies gezählt (eindeutig pro Tag). Wiederkehrende Besucher und der Trichter über Besuche hinweg umfassen nur Personen, die Analyse-Cookies erlaubt haben.",
+      "visitors": "Besucher",
+      "views": "Seitenaufrufe",
+      "consented": "Mit Einwilligung zur Analyse",
+      "returning": "Wiederkehrend",
+      "funnel": "Trichter",
+      "step": "Schritt",
+      "sameDay": "Besucher (gleicher Tag)",
+      "acrossVisits": "Über Besuche hinweg (mit Einwilligung)",
+      "steps": {
+        "page_view": "Besucht",
+        "search": "Gesucht",
+        "job_view": "Job geöffnet",
+        "signup": "Registriert",
+        "apply": "Beworben"
+      },
+      "daily": "Pro Tag",
+      "day": "Tag",
+      "pages": "Top-Seiten",
+      "page": "Seite",
+      "searches": "Top-Suchen",
+      "term": "Suche",
+      "count": "Anzahl",
+      "jobs": "Meistgesehene Jobs",
+      "job": "Job",
+      "sources": "Quellen",
+      "source": "Quelle",
+      "direct": "Direkt oder unbekannt",
+      "devices": "Geräte",
+      "device": "Gerät",
+      "deviceNames": {
+        "mobile": "Telefon",
+        "tablet": "Tablet",
+        "desktop": "Computer"
+      }
+    },
+    "env": {
+      "title": "Produktionseinstellungen",
+      "note": "Womit der Server konfiguriert ist. Werte werden nie angezeigt, nur ob sie gesetzt sind.",
+      "setting": "Einstellung",
+      "state": "Zustand",
+      "detail": "Detail",
+      "states": {
+        "ok": "Gesetzt",
+        "warning": "Prüfen",
+        "missing": "Nicht gesetzt"
+      },
+      "keys": {
+        "database": "Datenbankverbindung",
+        "siteUrl": "Website-Adresse",
+        "supabaseAdmin": "Supabase-Admin-Schlüssel",
+        "email": "E-Mail (Resend)",
+        "telegram": "Telegram-Anmeldung",
+        "bot": "Modell des Agenten",
+        "secrets": "Server-Geheimnisse",
+        "sentry": "Fehlerberichte (Sentry)"
+      },
+      "details": {
+        "session": "Session-Pooler ({value}): Verbindungen gehen aus, nutzen Sie den Transaction-Pooler (6543)",
+        "transaction": "Transaction-Pooler ({value})",
+        "direct": "Direkte Verbindung",
+        "format": "Das Token ist gesetzt, aber sein Format ist falsch",
+        "frozen": "Token ist gesetzt; Anmeldung ist eingefroren (D246), Benachrichtigungen funktionieren"
+      }
+    },
+    "traffic": {
+      "title": "Woher die Besuche kommen ({days} Tage)",
+      "note": "Ermittelt aus dem bereits gespeicherten Referrer, ohne Tracker von Dritten. Ein markierter Kampagnenlink zählt als das, womit wir ihn markiert haben.",
+      "channel": {
+        "search": "Aus der Suche",
+        "social": "Soziale Netzwerke und Messenger",
+        "referral": "Andere Websites",
+        "direct": "Direkt"
+      },
+      "searchShare": "Anteil der Suche",
+      "engines": "Suchmaschinen",
+      "engine": "Suchmaschine",
+      "visitors": "Besucher",
+      "landings": "Seiten, auf die die Suche führt",
+      "page": "Seite",
+      "byDay": "Pro Tag",
+      "day": "Tag",
+      "fromSearch": "Aus der Suche",
+      "allVisitors": "Alle Besucher"
+    }
+  },
+  "digest": {
+    "chatEvent": "Ihre Morgenübersicht ist fertig: {count} neue passende Jobs. Sie finden sie auf der Seite Treffer.",
+    "openMatches": "Treffer öffnen"
+  },
+  "savedSearches": {
+    "title": "Gespeicherte Suchen und Unternehmen",
+    "intro": "Suchen, die Sie im Katalog gespeichert haben. Mit eingeschalteter Benachrichtigung senden wir die neuen Jobs einmal täglich.",
+    "empty": "Noch keine gespeicherten Suchen. Setzen Sie Filter im Katalog und klicken Sie auf „Suche speichern“.",
+    "open": "Öffnen",
+    "alert": "Tägliche Benachrichtigung",
+    "delete": "Löschen",
+    "deleted": "Gelöscht.",
+    "save": "Suche speichern",
+    "saved": "Suche gespeichert. Neue Jobs kommen einmal täglich.",
+    "manage": "Gespeicherte Suchen",
+    "openSearch": "Suche öffnen",
+    "limit": "Sie haben 10 gespeicherte Suchen. Löschen Sie eine, um eine weitere zu speichern.",
+    "failed": "Speichern fehlgeschlagen. Versuchen Sie es erneut.",
+    "signIn": "Anmelden, um Suchen zu speichern"
+  },
+  "follows": {
+    "follow": "Folgen",
+    "following": "Sie folgen",
+    "unfollow": "Nicht mehr folgen",
+    "hint": "Neue Jobs dieses Unternehmens einmal täglich, in der App, per E-Mail oder in Telegram, wie in den Benachrichtigungen eingestellt.",
+    "limit": "Sie folgen 50 Unternehmen. Entfolgen Sie einem, um einem anderen zu folgen.",
+    "failed": "Änderung fehlgeschlagen. Versuchen Sie es erneut.",
+    "title": "Gefolgte Unternehmen",
+    "empty": "Sie folgen noch keinem Unternehmen. Klicken Sie auf einer Unternehmensseite auf „Folgen“.",
+    "openCompany": "Unternehmen öffnen",
+    "signIn": "Anmelden, um zu folgen"
+  },
+  "legal": {
+    "termsTitle": "Nutzungsbedingungen",
+    "privacyTitle": "Datenschutzerklärung",
+    "toBeSpecified": "wird noch angegeben",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutzerklärung",
+    "cookies": "Cookie-Einstellungen"
+  },
+  "salaries": {
+    "title": "Web3-Gehälter nach Skill",
+    "intro": "Typisches Jahresgehalt in USD aus den Gehaltsspannen der Jobs, die in den letzten {days} Tagen auf INTGETION veröffentlicht wurden.",
+    "method": "So rechnen wir: die Mitte jeder Spanne, nur Bruttogehalt, monatliche und jährliche Spannen zum Kurs der Europäischen Zentralbank in USD umgerechnet. Stunden- und Nettospannen bleiben außen vor. Ein Skill erscheint ab mindestens {min} solchen Jobs; eine Zeile nach Erfahrungsstufe braucht {row}.",
+    "emptyTitle": "Noch nicht genug Gehaltsdaten",
+    "emptyText": "Gehaltszahlen erscheinen, sobald ein Skill mindestens {min} Jobs mit veröffentlichter Spanne hat. Sehen Sie sich solange die offenen Jobs an.",
+    "browseJobs": "Jobs ansehen",
+    "skill": "Skill",
+    "jobs": "Jobs",
+    "p25": "25. Perzentil",
+    "median": "Median",
+    "p75": "75. Perzentil",
+    "perYear": "USD pro Jahr",
+    "skillTitle": "Gehälter für {skill}",
+    "skillIntro": "Jahresgehalt für {skill}-Stellen in USD, aus {count} Jobs, die in den letzten {days} Tagen auf INTGETION veröffentlicht wurden.",
+    "skillEmptyTitle": "Noch nicht genug Gehaltsdaten für {skill}",
+    "skillJobs": "{skill}-Jobs",
+    "bySeniority": "Nach Erfahrungsstufe",
+    "allSalaries": "Alle Gehälter",
+    "seniority": {
+      "internship": "Praktikum",
+      "entry": "Einstieg",
+      "mid": "Mid",
+      "senior": "Senior",
+      "lead": "Lead"
+    }
+  },
+  "seo": {
+    "home": "Startseite",
+    "jobs": "Jobs",
+    "inOurWords": "In unseren Worten",
+    "originalOn": "Originalanzeige auf {source}"
+  },
+  "miniApp": {
+    "intro": "Sie sind über Telegram angemeldet. Öffnen Sie die Website in Ihrem eigenen Browser, um die App zu installieren und dieses Konto dort zu behalten.",
+    "install": "Für den Startbildschirm: Auf dem iPhone tippen Sie auf Teilen und dann auf Zum Home-Bildschirm; anderswo öffnen Sie das Browsermenü und wählen App installieren.",
+    "open": "In meinem Browser öffnen",
+    "addEmail": "E-Mail hinzufügen",
+    "copyHint": "Wenn sich Ihr Browser nicht geöffnet hat, kopieren Sie diese Adresse und fügen Sie sie dort ein. Sie meldet dieses Konto einmal an.",
+    "copy": "Link kopieren",
+    "copied": "Kopiert",
+    "failed": "Der Link konnte nicht geöffnet werden. Versuchen Sie es in einer Minute erneut."
+  },
+  "pricing": {
+    "metaTitle": "Preise — kostenlose Jobsuche, bezahltes Tempo",
+    "metaDescription": "INTGETION-Preise für Unternehmen und Kandidaten. Jobs ausschreiben und suchen bleibt kostenlos; bezahlte Tarife bringen Tempo, Reichweite und eine Rückerstattung, wenn die Einstellung nicht klappt.",
+    "label": "Preise",
+    "title": "Kostenlos für alles, was Sie brauchen. Bezahlt, um schneller zu sein.",
+    "intro": "Einen Job ausschreiben und einen finden ist kostenlos und bleibt kostenlos. Bezahlte Tarife bringen Reichweite, Tempo und Werkzeuge — und der Unternehmenstarif kommt mit einer Rückerstattung, wenn die Kandidaten ausbleiben.",
+    "switchLabel": "Tarife anzeigen für",
+    "for": {
+      "candidates": "Für Kandidaten",
+      "companies": "Für Unternehmen"
+    },
+    "recommended": "Empfohlen",
+    "free": "Kostenlos",
+    "per": {
+      "job": "pro Job",
+      "month": "pro Monat"
+    },
+    "yearly": "oder ${price} pro Jahr",
+    "startFree": "Kostenlos starten",
+    "continueFree": "Mit dem kostenlosen Tarif weitermachen",
+    "payHire": "Mit USDT oder USDC bezahlen",
+    "soon": "Demnächst",
+    "soonNote": "Bezahlte Tarife sind noch nicht im Verkauf. Zahlungen per Karte und USDT / USDC kommen; bis dahin funktioniert alles in den kostenlosen Tarifen.",
+    "hireNote": "Start bleibt kostenlos. Hire, Team, Plus und Pro werden in USDT oder USDC bezahlt. Die Schaltfläche berechnet den Monatspreis und schaltet den Tarif für 30 Tage ein. Er verlängert sich nicht von selbst. Hire enthält einen hervorgehobenen Block für 7 Tage. Plus schaltet 100 Spoki-Nachrichten pro Tag frei und Pro 300. Der kostenlose Tarif bleibt bei 15. Start und Hire umfassen 2 Teammitglieder. Team erhöht das für dieses Unternehmen auf 10. Ein stärkeres Modell und eine automatische Rückerstattung werden mit dieser Zahlung noch nicht eingeschaltet.",
+    "market": "Eine Anzeige auf den großen Remote-Jobbörsen kostet $250–300 pro Job ohne Rückerstattung. Hier ist sie kostenlos oder kostet $79 mit Garantie.",
+    "alwaysFreeTitle": "Was kein Tarif je verkauft",
+    "alwaysFree": {
+      "posting": "Jobs ausschreiben — ein kostenloser Tarif bleibt, mit derselben Moderation und demselben Katalog.",
+      "trust": "Das Abzeichen für verifizierte Unternehmen und der Status Vertrauenswürdig werden verdient, nicht gekauft.",
+      "contacts": "Kontakte von Kandidaten werden nur bei beidseitigem Interesse freigegeben, in jedem Tarif.",
+      "match": "Die Übereinstimmung in Prozent und die Reihenfolge von «Für Sie» sind für alle gleich.",
+      "apply": "Kandidaten zahlen nie dafür, sich zu bewerben oder gesehen zu werden.",
+      "imported": "Von anderen Jobbörsen importierte Jobs werden nie gegen Geld hervorgehoben."
+    },
+    "tiers": {
+      "start": {
+        "name": "Start",
+        "for": "Ihr erster Job oder zum Ausprobieren der Plattform.",
+        "points": {
+          "jobs": "2 Jobs gleichzeitig aktiv, je 30 Tage",
+          "catalog": "Katalog, Sammlungen und «Für Sie»-Matching",
+          "applications": "Bewerbungen, Status, beidseitiges Interesse",
+          "digest": "Passenden Kandidaten in der täglichen Übersicht gezeigt",
+          "stats": "Aufrufe und Bewerbungen"
+        }
+      },
+      "hire": {
+        "name": "Hire",
+        "for": "Eine bis fünf Einstellungen pro Jahr.",
+        "points": {
+          "guarantee": "10 Bewerbungen von Kandidaten mit 60%+ Übereinstimmung — oder Ihr Geld zurück",
+          "instant": "Sofort an Kandidaten mit 70%+ Übereinstimmung gesendet",
+          "promoted": "Hervorgehobener Block für 7 Tage",
+          "forecast": "Sehen Sie vor dem Bezahlen, wie viele passende Kandidaten es gibt",
+          "firstFree": "Der erste ist für ein verifiziertes Unternehmen kostenlos"
+        }
+      },
+      "team": {
+        "name": "Team",
+        "for": "Ganzjährige Einstellungen oder eine Agentur.",
+        "points": {
+          "jobs": "10 Jobs gleichzeitig aktiv, je 45 Tage",
+          "promoted": "3 hervorgehobene Jobs pro Monat",
+          "team": "Bis zu 10 Teammitglieder",
+          "api": "API für Ihre eigenen Jobs",
+          "channel": "3 Beiträge pro Monat im Telegram-Kanal der Plattform"
+        }
+      },
+      "free": {
+        "name": "Free",
+        "for": "Alle.",
+        "points": {
+          "search": "Jeder Job, jede Sammlung und jede Gehaltsseite",
+          "apply": "Unbegrenzte Bewerbungen",
+          "match": "«Für Sie» mit derselben Übereinstimmung in % für alle",
+          "alerts": "Tägliche Benachrichtigungen für gespeicherte Suchen",
+          "agent": "Karriere-Agent: 15 Nachrichten pro Tag"
+        }
+      },
+      "plus": {
+        "name": "Plus",
+        "for": "Aktiv auf der Suche.",
+        "points": {
+          "instant": "Neue passende Jobs, sobald sie erscheinen",
+          "agent": "Karriere-Agent: 100 Nachrichten pro Tag",
+          "letters": "Ein Anschreiben für jeden Job",
+          "views": "Welche Unternehmen Ihr Profil angesehen haben",
+          "hidden": "Vor Ihrem aktuellen Arbeitgeber verborgen"
+        }
+      },
+      "pro": {
+        "name": "Pro",
+        "for": "Für eine starke Rolle oder eine Gehaltserhöhung.",
+        "points": {
+          "agent": "Karriere-Agent: 300 Nachrichten pro Tag",
+          "interview": "Probeinterviews mit Feedback",
+          "review": "Vollständige Profilprüfung mit Plan",
+          "salary": "Ein Gehaltsbericht für Verhandlungen",
+          "views": "Wann und wie oft Unternehmen Sie angesehen haben"
+        }
+      }
+    },
+    "faqTitle": "Fragen",
+    "faq": {
+      "guarantee": {
+        "q": "Was, wenn der bezahlte Job weniger Bewerbungen bekommt als versprochen?",
+        "a": "Hat ein Hire-Job nach 30 Tagen weniger als 10 Bewerbungen von Kandidaten mit mindestens 60% Übereinstimmung, wird die Rückerstattung von Hand aus der Firmen-Wallet gesendet. Sie geht noch nicht automatisch zurück."
+      },
+      "cancel": {
+        "q": "Kann ich kündigen?",
+        "a": "Es gibt nichts weiter zu kündigen. Die 30 Tage laufen aus, und die Zahlung wiederholt sich nicht."
+      },
+      "crypto": {
+        "q": "Kann ich in Krypto bezahlen?",
+        "a": "Ja. USDT oder USDC an die Firmen-Wallet. Eine Zahlung deckt 30 Tage und verlängert sich nicht. Kartenzahlungen werden noch nicht akzeptiert."
+      },
+      "seen": {
+        "q": "Sehen Arbeitgeber, dass ich zahle?",
+        "a": "Nein. Ein Kandidatentarif wird Arbeitgebern nie gezeigt — weder in Bewerbungen noch im Profil."
+      },
+      "when": {
+        "q": "Wann kann ich kaufen?",
+        "a": "Jetzt. Start bleibt kostenlos. Hire, Team, Plus und Pro werden in USDT oder USDC bezahlt."
+      }
+    }
+  },
+  "email": {
+    "fallback": "Wenn die Schaltfläche nicht funktioniert, kopieren Sie diesen Link in Ihren Browser:",
+    "footerAccount": "Sie erhalten diese E-Mail, weil diese Adresse für ein Konto bei INTGETION JOB LIST verwendet wird.",
+    "footerAlerts": "Sie erhalten Job-Benachrichtigungen, weil sie in Ihren Benachrichtigungseinstellungen eingeschaltet sind.",
+    "manage": "Benachrichtigungseinstellungen",
+    "confirm": {
+      "subject": "Bestätigen Sie Ihre E-Mail",
+      "title": "Bestätigen Sie Ihre E-Mail",
+      "body": "Willkommen bei INTGETION JOB LIST. Bestätigen Sie diese Adresse, um die Erstellung Ihres Kontos abzuschließen.",
+      "action": "E-Mail bestätigen",
+      "expiry": "Der Link funktioniert einmal und läuft nach 1 Stunde ab.",
+      "ignore": "Wenn Sie kein Konto erstellt haben, ignorieren Sie diese E-Mail."
+    },
+    "reset": {
+      "subject": "Passwort zurücksetzen",
+      "title": "Passwort zurücksetzen",
+      "body": "Sie haben das Zurücksetzen des Passworts für Ihr INTGETION JOB LIST-Konto angefordert. Wählen Sie mit der Schaltfläche unten ein neues Passwort.",
+      "action": "Passwort zurücksetzen",
+      "expiry": "Der Link funktioniert einmal und läuft nach 1 Stunde ab.",
+      "ignore": "Wenn Sie das Zurücksetzen nicht angefordert haben, ignorieren Sie diese E-Mail. Ihr Passwort bleibt unverändert."
+    },
+    "magic": {
+      "subject": "Ihr Anmeldelink",
+      "title": "Bei INTGETION JOB LIST anmelden",
+      "body": "Nutzen Sie die Schaltfläche unten, um sich anzumelden. Sie brauchen kein Passwort.",
+      "action": "Anmelden",
+      "expiry": "Der Link funktioniert einmal und läuft nach 1 Stunde ab.",
+      "ignore": "Wenn Sie nicht versucht haben, sich anzumelden, ignorieren Sie diese E-Mail."
+    },
+    "jobs": {
+      "title": "Neue Jobs passend zu Ihrem Profil",
+      "intro": "{count, plural, one {# neuer Job passt} other {# neue Jobs passen}} zu Ihrem Profil. Hier sind die besten Treffer.",
+      "viewJob": "Job ansehen",
+      "viewAll": "Alle Jobs ansehen",
+      "per": {
+        "hour": "Stunde",
+        "month": "Monat",
+        "year": "Jahr"
+      },
+      "formats": {
+        "remote": "Remote",
+        "hybrid": "Hybrid",
+        "onsite": "Vor Ort"
+      }
+    }
+  },
+  "billing": {
+    "nav": "Abrechnung",
+    "title": "Zahlung und Tarif",
+    "start": "Ihr Tarif: Start",
+    "hire": "Ihr Tarif: Hire",
+    "team": "Ihr Tarif: Team",
+    "plus": "Ihr Tarif: Plus",
+    "pro": "Ihr Tarif: Pro",
+    "hireUntil": "Hire ist für diesen Job bis {date} aktiv.",
+    "teamUntil": "Team ist bis {date} aktiv.",
+    "planUntil": "Dieser Tarif ist bis {date} aktiv.",
+    "startHint": "Start ist kostenlos. Hire kostet $79 für einen veröffentlichten Job. Team kostet $199, Plus $5 und Pro $15, jeweils für 30 Tage, in USDT oder USDC.",
+    "pay": "Mit USDT oder USDC bezahlen",
+    "status": {
+      "awaiting_payment": "Warten auf die Überweisung",
+      "checking": "Überweisung wird geprüft",
+      "paid": "Bezahlt. Der Tarif ist 30 Tage aktiv.",
+      "underpaid": "Die Überweisung war zu niedrig. Der Tarif ist nicht aktiv.",
+      "expired": "Diese Bestellung ist abgelaufen. Der Tarif ist nicht aktiv.",
+      "failed": "Die Überweisung wurde nicht akzeptiert. Der Tarif ist nicht aktiv.",
+      "frozen": "Die Zahlung wird geprüft."
+    },
+    "payFor": "Bezahlung für",
+    "forDays": "Eine Zahlung. Der Tarif bleibt 30 Tage aktiv und verlängert sich nicht.",
+    "planName": {
+      "hire": "Hire",
+      "team": "Team",
+      "plus": "Plus",
+      "pro": "Pro"
+    },
+    "usdCoin": "USD Coin",
+    "tether": "Tether",
+    "payNow": "${amount} {token} bezahlen",
+    "baseNote": "Auf Base wird nur USDC akzeptiert.",
+    "checkWallet": "Prüfen Sie diese Adresse in Ihrer Wallet, bevor Sie bestätigen.",
+    "connect": "Wallet verbinden",
+    "pickJob": "Wählen Sie einen veröffentlichten Job. Hire gilt für diesen Job.",
+    "noJobs": "Veröffentlichen Sie zuerst einen Job. Hire wird für einen veröffentlichten Job bezahlt.",
+    "postToPay": "Job ausschreiben",
+    "pickCompany": "Wählen Sie das Unternehmen. Team gilt 30 Tage dafür.",
+    "noCompany": "Erstellen Sie zuerst ein Unternehmen. Team wird für dieses Unternehmen bezahlt.",
+    "createCompany": "Unternehmen erstellen",
+    "needWallet": "Installieren Sie MetaMask oder eine andere Wallet in diesem Browser und versuchen Sie es erneut.",
+    "cancelled": "In der Wallet abgebrochen. Es wurde nichts belastet.",
+    "network": "Stellen Sie die Wallet auf Ethereum, Polygon, Arbitrum oder Base um.",
+    "tokenUnsupported": "Dieser Token ist in diesem Netzwerk nicht verfügbar. Wählen Sie auf Base USDC.",
+    "interestTitle": "USDT und USDC sind noch nicht aktiv",
+    "interestBody": "Hinterlassen Sie eine E-Mail, und wir sagen Ihnen, wann Sie bezahlen können. Es wird nichts belastet.",
+    "interestEmail": "E-Mail",
+    "interestSend": "Sagen Sie mir, wann ich bezahlen kann",
+    "interestDone": "Gespeichert. Wir schreiben, wenn Zahlungen aktiv sind.",
+    "token": "Token",
+    "usdc": "USDC",
+    "usdt": "USDT",
+    "mail": {
+      "subject": "Hire ist aktiv",
+      "body": "Hire ist für Ihren Job aktiv. Öffnen Sie ihn: {url}"
+    },
+    "nonEvm": {
+      "title": "Oder auf Tron oder Solana bezahlen",
+      "network": "Netzwerk",
+      "name": {
+        "tron": "Tron (TRC-20)",
+        "solana": "Solana"
+      },
+      "tronNote": "Auf Tron wird nur USDT akzeptiert.",
+      "prove": "Meine Wallet bestätigen",
+      "sendExact": "Senden Sie genau diesen Betrag von der bestätigten Wallet an diese Adresse und fügen Sie dann die Transaktions-ID ein.",
+      "txLabel": "Transaktions-ID",
+      "check": "Überweisung prüfen",
+      "txFailed": "Diese Transaktions-ID konnte nicht geprüft werden. Prüfen Sie sie und versuchen Sie es erneut.",
+      "needWallet": {
+        "tron": "Öffnen Sie die Website in einem Browser mit TronLink.",
+        "solana": "Öffnen Sie die Website in einem Browser mit einer Solana-Wallet, zum Beispiel Phantom."
+      }
+    }
+  },
+  "postJob": {
+    "title": "Job ausschreiben",
+    "guest": "Um einen Job auszuschreiben, melden Sie sich an oder erstellen Sie ein Konto.",
+    "register": "Registrieren"
+  }
+}
