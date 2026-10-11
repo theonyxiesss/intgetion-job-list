@@ -7,6 +7,7 @@ import {
   type Sector,
   type Seniority,
 } from "@/config/markers";
+import { publicHttpUrl } from "@/lib/company-mark";
 import { resolveTimeZone } from "@/lib/tz-aliases";
 import type { RawImportedJob } from "../adapters/types";
 
@@ -63,7 +64,9 @@ export async function normalizeImportedJob(
   )
     ? (raw.employmentType as EmploymentType)
     : "full_time";
-  const applyUrl = raw.applyUrl.trim();
+  const trimmedApplyUrl = raw.applyUrl.trim();
+  const applyUrl = publicHttpUrl(trimmedApplyUrl) ?? "";
+  const unsafeApplyUrl = trimmedApplyUrl.length > 0 && applyUrl.length === 0;
   return {
     externalId: raw.externalId.trim(),
     companyName: squash(raw.companyName),
@@ -84,6 +87,7 @@ export async function normalizeImportedJob(
       raw.expiresAt && Date.parse(raw.expiresAt) < now.getTime(),
     ),
     // The apply link counts too: link shorteners are a scam signal (13.4).
-    scam: isScam(`${title}\n${description}\n${applyUrl}`),
+    scam:
+      unsafeApplyUrl || isScam(`${title}\n${description}\n${trimmedApplyUrl}`),
   };
 }

@@ -1,4 +1,5 @@
 import type { JobRow } from "../repo/jobs-repo";
+import { publicHttpUrl } from "@/lib/company-mark";
 import { toMoneyDto } from "@/lib/money";
 
 export function toJobDto(job: JobRow) {
@@ -53,7 +54,7 @@ export function toJobDto(job: JobRow) {
             moneyInfo.basis,
           ),
     applicationMethod: job.applicationMethod,
-    applicationUrl: job.applicationUrl,
+    applicationUrl: publicHttpUrl(job.applicationUrl),
     applicationEmail: job.applicationEmail,
     status: job.status,
     // risk_score and risk_flags never leave the server (5.3).

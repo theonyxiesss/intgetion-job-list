@@ -1,6 +1,7 @@
 "use client";
 
 import { buttonClass } from "@/components/ui/button";
+import { publicHttpUrl } from "@/lib/company-mark";
 
 /**
  * Imported jobs: a click records applied_external, then opens the posting.
@@ -15,27 +16,32 @@ export function ExternalApplyLink({
   href: string;
   label: string;
 }) {
+  const safeHref = publicHttpUrl(href);
+  if (!safeHref) return null;
+
   async function onClick(event: { preventDefault: () => void }) {
     event.preventDefault();
-    let next = href;
+    let next = safeHref;
+    if (!next) return;
     try {
       const response = await fetch(`/api/jobs/${jobId}/apply-external`, {
         method: "POST",
       });
       if (response.ok) {
         const body = (await response.json()) as { externalUrl?: string };
-        if (body.externalUrl) next = body.externalUrl;
+        const fromServer = publicHttpUrl(body.externalUrl);
+        if (fromServer) next = fromServer;
       }
     } catch {
-      next = href;
+      next = safeHref;
     }
-    window.location.assign(next);
+    if (next) window.location.assign(next);
   }
 
   return (
     <a
       className={buttonClass("primary")}
-      href={href}
+      href={safeHref}
       rel="noreferrer"
       onClick={onClick}
     >

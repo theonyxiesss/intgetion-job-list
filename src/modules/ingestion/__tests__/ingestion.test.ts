@@ -184,6 +184,17 @@ describe("normalizeImportedJob", () => {
     expect(job.expired).toBe(true);
   });
 
+  it("drops an apply link that is not http or https and rejects the job", async () => {
+    const job = await normalizeImportedJob(
+      raw({ applyUrl: "javascript:alert(1)" }),
+      resolveSkill,
+      now,
+      () => false,
+    );
+    expect(job.scam).toBe(true);
+    expect(job.applyUrl).toBe("");
+  });
+
   it("runs the scam check over title, description and apply URL", async () => {
     const shortened = await normalizeImportedJob(
       raw({ applyUrl: "https://bit.ly/abc" }),

@@ -30,6 +30,7 @@ import { SimilarJobs } from "@/modules/jobs/ui/similar-jobs";
 import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 import { localePrefix } from "@/i18n/paths";
 import { intlLocale } from "@/i18n/locale";
+import { publicHttpUrl } from "@/lib/company-mark";
 import { publicJobText } from "@/lib/public-job-text";
 
 export const dynamic = "force-dynamic";
@@ -89,6 +90,8 @@ export default async function JobPage({
       ? null
       : t("company");
   const description = publicJobText(job.description);
+  const applyHref = publicHttpUrl(job.applicationUrl);
+  const sourceHref = publicHttpUrl(job.source.url);
 
   return (
     <main className="py-10 md:py-16">
@@ -225,9 +228,9 @@ export default async function JobPage({
                     {job.company.name}
                   </Link>
                 </div>
-                {job.source.url ? (
+                {sourceHref ? (
                   <a
-                    href={job.source.url}
+                    href={sourceHref}
                     rel="noopener noreferrer"
                     className="t-body-s self-start underline-offset-4 hover:underline"
                   >
@@ -265,11 +268,10 @@ export default async function JobPage({
           </article>
           <aside className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg p-4 lg:sticky lg:top-24 lg:border lg:p-5">
             <div className="flex flex-col gap-3">
-              {job.applicationUrl &&
-              job.applicationMethod === "external_url" ? (
+              {applyHref && job.applicationMethod === "external_url" ? (
                 <ExternalApplyLink
                   jobId={job.id}
-                  href={job.applicationUrl}
+                  href={applyHref}
                   label={t("apply")}
                 />
               ) : null}

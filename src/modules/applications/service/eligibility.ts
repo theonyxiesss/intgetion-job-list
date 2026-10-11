@@ -1,3 +1,4 @@
+import { publicHttpUrl } from "@/lib/company-mark";
 import {
   type CompletenessInput,
   type CompletenessPart,
@@ -73,7 +74,7 @@ export function checkApplyTarget(target: ApplyTarget): void {
       422,
       errorCodes.externalApply,
       "Apply on the external site",
-      { externalUrl: target.externalUrl },
+      { externalUrl: publicHttpUrl(target.externalUrl) },
     );
   }
   if (target.status !== "published") {

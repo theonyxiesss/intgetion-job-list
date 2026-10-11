@@ -1,4 +1,5 @@
 import { HIGH_PAY_USD_YEAR } from "@/config/markers";
+import { publicHttpUrl } from "@/lib/company-mark";
 import {
   compareSalaries,
   jobSalaryReference,
@@ -106,11 +107,16 @@ export function toPublicJobDto(
     salaryComparable: null as boolean | null,
     applicationMethod:
       job.source === "imported" ? "external_url" : job.applicationMethod,
-    applicationUrl:
+    applicationUrl: publicHttpUrl(
       job.source === "imported" ? row.sourceUrl : job.applicationUrl,
+    ),
     source:
       job.source === "imported"
-        ? { type: "imported", name: row.sourceName, url: row.sourceUrl }
+        ? {
+            type: "imported",
+            name: row.sourceName,
+            url: publicHttpUrl(row.sourceUrl),
+          }
         : { type: "internal", name: null, url: null },
     company: {
       id: company.id,

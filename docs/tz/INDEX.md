@@ -27,5 +27,6 @@
 | [22-roadmap.md](22-roadmap.md) | §22 подфазы → [PARALLEL_WORK](../PARALLEL_WORK.md) |
 | [23-billing.md](23-billing.md) | Оплата услуг: кошелёк в браузере на EVM-адрес компании (D351). Приём включён (D356) |
 | [24-claude-held.md](24-claude-held.md) | Очередь Клода: языки `de` → `fr` → `it`, санкции, Tron/Solana. Карты, сильная модель, автовозврат и новый код D328 не писать |
+| [25-held-tails.md](25-held-tails.md) | Карта хвостов после каталога: санкции у Клода, Tron/Solana, живой импорт, языки, дыры оплаты. Кода нет, один промпт на план |
 
 Новые D — только в [../DECISIONS.md](../DECISIONS.md). Как в коде — [../how-it-works/](../how-it-works/INDEX.md).

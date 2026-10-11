@@ -1,3 +1,4 @@
+import { publicHttpUrl } from "@/lib/company-mark";
 import { notFound } from "@/lib/http";
 import { getJobForPublic } from "@/modules/jobs/service";
 
@@ -25,9 +26,10 @@ export async function applyExternal(
 ): Promise<{ externalUrl: string }> {
   // Without a viewer this returns published jobs of visible companies only.
   const job = await getJobForPublic(jobId);
-  if (!job || job.applicationMethod !== "external_url" || !job.applicationUrl) {
+  const externalUrl = publicHttpUrl(job?.applicationUrl);
+  if (!job || job.applicationMethod !== "external_url" || !externalUrl) {
     throw notFound();
   }
   if (userId) await record({ userId, jobId: job.id });
-  return { externalUrl: job.applicationUrl };
+  return { externalUrl };
 }

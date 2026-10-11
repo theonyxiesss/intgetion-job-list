@@ -1,7 +1,14 @@
 import { z } from "zod";
+import { publicHttpUrl } from "@/lib/company-mark";
 import { isIanaTimeZone } from "@/modules/candidates/service";
 
-const optionalUrl = z.string().url().max(2048).nullable().optional();
+const optionalUrl = z
+  .string()
+  .trim()
+  .max(2048)
+  .refine((value) => publicHttpUrl(value) !== null, "http_url_required")
+  .nullable()
+  .optional();
 const domainInput = z
   .string()
   .trim()

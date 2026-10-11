@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { publicHttpUrl } from "@/lib/company-mark";
 import { isValidTimeZone } from "@/lib/tz";
 import {
   EMPLOYMENT_TYPES,
@@ -86,7 +87,13 @@ export const jobFields = z.object({
   salaryPeriod: z.enum(["hour", "month", "year"]).nullable().optional(),
   salaryBasis: z.enum(["gross", "net"]).nullable().optional(),
   applicationMethod: z.enum(["internal", "external_url", "email"]),
-  applicationUrl: z.string().url().max(2048).nullable().optional(),
+  applicationUrl: z
+    .string()
+    .trim()
+    .max(2048)
+    .refine((value) => publicHttpUrl(value) !== null, "http_url_required")
+    .nullable()
+    .optional(),
   applicationEmail: z.string().email().max(320).nullable().optional(),
   skills: z.array(skillInput).max(50).default([]),
   languages: z.array(languageInput).max(20).default([]),

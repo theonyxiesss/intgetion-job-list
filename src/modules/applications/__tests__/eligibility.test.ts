@@ -127,6 +127,17 @@ describe("apply target", () => {
     });
   });
 
+  it("does not hand back an apply address that is not http or https", () => {
+    const error = thrown(() =>
+      checkApplyTarget({
+        origin: "imported",
+        externalUrl: "javascript:alert(1)",
+        status: "published",
+      }),
+    );
+    expect(error.details).toEqual({ externalUrl: null });
+  });
+
   it("prefers the external error when an imported job is also unpublished", () => {
     const error = thrown(() =>
       checkApplyTarget({
