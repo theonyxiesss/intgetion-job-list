@@ -1305,8 +1305,11 @@
     "legal": "Mentions juridiques",
     "platform": "Plateforme",
     "resources": "Ressources",
+    "sites": "Sites",
     "faq": "FAQ",
-    "salaries": "Salaires"
+    "salaries": "Salaires",
+    "companySite": "Entreprise",
+    "portfolio": "Portfolio"
   },
   "ui": {
     "close": "Fermer",

@@ -70,6 +70,27 @@ describe("buildCsp", () => {
     expect(csp).toContain("connect-src 'self' https://ref.supabase.co");
     expect(csp).toContain("frame-ancestors 'none'");
     expect(csp).toContain("object-src 'none'");
+    expect(csp).not.toContain("frame-src");
+    expect(csp).not.toContain("vercel.app");
+  });
+
+  it("frames only an allowlisted site, and only when asked (D388)", () => {
+    const framed = buildCsp({
+      nonce: "abc123",
+      supabaseUrl: "https://ref.supabase.co/",
+      isDev: false,
+      embedOrigin: "https://intgetion.vercel.app",
+    });
+    expect(framed).toContain("frame-src 'self' https://intgetion.vercel.app");
+    expect(framed).not.toContain("theonyxis.vercel.app");
+    const refused = buildCsp({
+      nonce: "abc123",
+      supabaseUrl: "https://ref.supabase.co/",
+      isDev: false,
+      embedOrigin: "https://evil.example",
+    });
+    expect(refused).not.toContain("frame-src");
+    expect(refused).not.toContain("evil.example");
   });
 
   it("allows eval only in development", () => {

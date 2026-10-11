@@ -1,3 +1,5 @@
+import { isEmbeddedOrigin } from "./embedded-sites";
+
 /** Official Mini App bridge. Phone clients often expose initData only through it (D324). */
 export const TELEGRAM_WEB_APP_SCRIPT =
   "https://telegram.org/js/telegram-web-app.js";
@@ -9,6 +11,7 @@ export function buildCsp({
   isDev,
   includeSupabase = true,
   allowTelegramFrame = false,
+  embedOrigin,
 }: {
   nonce: string;
   supabaseUrl: string;
@@ -16,6 +19,8 @@ export function buildCsp({
   includeSupabase?: boolean;
   /** Telegram Web shows a Mini App in a frame, so it must be allowed (D259). */
   allowTelegramFrame?: boolean;
+  /** One https origin this page may show in a frame (D388). */
+  embedOrigin?: string;
 }): string {
   const supabase = new URL(supabaseUrl).origin;
   // Phone Mini Apps need telegram-web-app.js; Desktop often injects initData
@@ -36,6 +41,10 @@ export function buildCsp({
     allowTelegramFrame
       ? "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org"
       : "frame-ancestors 'none'",
+    // Other pages stay on default-src 'self', so they cannot frame a foreign site.
+    ...(embedOrigin && isEmbeddedOrigin(embedOrigin)
+      ? [`frame-src 'self' ${embedOrigin}`]
+      : []),
   ].join("; ");
 }
 

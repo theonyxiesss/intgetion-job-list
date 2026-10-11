@@ -1305,8 +1305,11 @@
     "legal": "Note legali",
     "platform": "Piattaforma",
     "resources": "Risorse",
+    "sites": "Siti",
     "faq": "FAQ",
-    "salaries": "Stipendi"
+    "salaries": "Stipendi",
+    "companySite": "Azienda",
+    "portfolio": "Portfolio"
   },
   "ui": {
     "close": "Chiudi",

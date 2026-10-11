@@ -6,6 +6,7 @@ import { getOwnCandidate } from "@/modules/candidates/service";
 import type { CompletenessPart } from "@/modules/candidates/service";
 import { getOwnContacts } from "@/modules/contacts/service";
 import { Link, redirect } from "@/i18n/navigation";
+import { AccountSignIn } from "@/components/settings/account-sign-in";
 import { Tag } from "@/components/ui/badge";
 import { buttonClass } from "@/components/ui/button";
 import { Container, PageHeader } from "@/components/ui/container";
@@ -87,6 +88,7 @@ export default async function ProfilePage({
             </span>
           }
         />
+        <AccountSignIn locale={locale} user={user} />
         <section id="completeness" className="flex flex-col gap-3">
           <h2 className="t-h3">{t("completenessLabel")}</h2>
           <div

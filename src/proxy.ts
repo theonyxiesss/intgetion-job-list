@@ -10,6 +10,7 @@ import {
 import { LOCALE_COOKIE, LOCALE_COOKIE_MAX_AGE, routing } from "./i18n/routing";
 import { isAllowedOrigin, needsOriginCheck } from "./lib/origin";
 import { normalizeRequestId, REQUEST_ID_HEADER } from "./lib/request-id";
+import { embedOriginForPath } from "./lib/embedded-sites";
 import {
   buildCsp,
   createNonce,
@@ -159,6 +160,10 @@ export async function proxy(request: NextRequest) {
     includeSupabase: !adminHost,
     // Never on the admin host: it is framed by nobody (D251, D259).
     allowTelegramFrame: !adminHost && flags.telegramMiniAppEnabled,
+    // Company and portfolio pages only (D388). The admin host stays closed.
+    embedOrigin: adminHost
+      ? undefined
+      : embedOriginForPath(request.nextUrl.pathname),
   });
   // Next.js reads the nonce from the request CSP header while rendering.
   request.headers.set("x-nonce", nonce);

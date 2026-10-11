@@ -6,8 +6,9 @@ import { SCRAPER_TRAP_PATH } from "@/modules/seo/site";
 import { LocaleSwitch } from "./locale-switch";
 
 /**
- * D333: three short groups, real routes only. There are no About, Contact,
+ * D333: short groups, real routes only. There are no About, Contact,
  * help or social pages yet, so the footer does not pretend there are.
+ * Company and portfolio are pages of this site (D388).
  */
 const groups = [
   {
@@ -25,6 +26,13 @@ const groups = [
       { href: "/for-employers", label: "nav.employers" },
       { href: "/salaries", label: "footer.salaries" },
       { href: "/#faq", label: "footer.faq" },
+    ],
+  },
+  {
+    title: "footer.sites",
+    links: [
+      { href: "/company", label: "footer.companySite" },
+      { href: "/portfolio", label: "footer.portfolio" },
     ],
   },
   {
@@ -58,7 +66,7 @@ export function Footer() {
             {t("home.tagline")}
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-4">
           {groups.map((group) => (
             <nav
               key={group.title}
