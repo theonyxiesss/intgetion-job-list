@@ -109,6 +109,26 @@ describe("Spoki memory", () => {
     expect(prompt).not.toMatch(/\banswer only in English\b/i);
   });
 
+  it("greets without a country question and answers an account complaint in words", () => {
+    const prompt = systemPrompt({ locale: "ru", signedIn: false });
+    expect(SYSTEM_PROMPT_VERSION).toBe(10);
+    expect(prompt).toContain(
+      "On a greeting (привет, здравствуйте, hello, hi, or the same words in other languages), greet them and ask how you can help. Do not ask for country, role, or work format on a greeting.",
+    );
+    expect(prompt).toContain(
+      "If the conversation already has messages, do not start the reply with a greeting",
+    );
+    expect(prompt).toContain(
+      "the field can be named here in the chat",
+    );
+    expect(prompt).toContain(
+      "Do not greet again and do not copy the previous question word for word.",
+    );
+    expect(prompt).not.toContain(
+      "Looking, and a needed fact is missing (country, role, or work format): ask only that one fact.",
+    );
+  });
+
   it("does not filter remote search by the country of residence", () => {
     expect(
       searchFiltersFromDraft({
