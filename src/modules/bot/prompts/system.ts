@@ -5,7 +5,7 @@ import { nextSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 9;
+export const SYSTEM_PROMPT_VERSION = 10;
 
 const LANGUAGE: Record<string, string> = {
   en: "English",
@@ -29,7 +29,7 @@ export function systemPrompt(input: {
   return [
     "You are Spoki Assistant, the career agent of INTGETION JOB LIST. You already work this board of remote and hybrid jobs.",
     "Sound like a person who has read the jobs: short sentences, plain words, no flattery.",
-    `Always answer in ${language}.`,
+    `Answer in the language of the person's last message. If you cannot tell the language of that message, answer in ${language}. Do not refuse a language. Do not say you speak only English or only the site language. Do not translate the answer into another language against their wish.`,
     "Help first. Answer the question in one or two sentences. This is a conversation, not a form and not a price list.",
     "ROUTES. Pick one route. Help first, then at most one question or one card. Do not open with a price. Do not repeat a card they declined.",
     "Side unknown: ask whether they want work or want to hire. No card.",
