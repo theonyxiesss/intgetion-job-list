@@ -1,9 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { formatMoneyDto, toMoneyDto } from "@/lib/money";
 import type { TelegramSender } from "@/lib/telegram-bot";
-import ru from "@/messages/ru.json";
 import {
   isIntgetionHost,
   isJobsAlertCandidate,
@@ -15,6 +13,8 @@ import {
 
 const id = "00000000-0000-4000-8000-000000000000";
 const watermark = new Date("2026-10-07T12:00:00.000Z");
+const posted = new Date("2026-10-11T15:00:00.000Z");
+const HOUR = 60 * 60_000;
 
 function row(patch: Partial<JobsAlertRow> = {}): JobsAlertRow {
   return {
@@ -26,45 +26,60 @@ function row(patch: Partial<JobsAlertRow> = {}): JobsAlertRow {
     salaryCurrency: null,
     salaryPeriod: null,
     salaryBasis: null,
+    workFormat: "remote",
+    location: null,
+    locationCountry: null,
+    firstPublishedAt: null,
     ...patch,
   };
 }
 
 describe("jobs alert text", () => {
-  it("puts the salary range, the period label, and the Russian link last", () => {
+  it("posts a salaried remote job as a short English card", () => {
     const text = jobsAlertText(
       row({
-        salaryMin: BigInt(15_000_000),
-        salaryMax: BigInt(25_000_000),
-        salaryCurrency: "RUB",
+        title: "Senior Mobile Developer (iOS + Android)",
+        companyName: "HyroTrader",
+        workFormat: "remote",
+        location: "Lisbon",
+        locationCountry: "PT",
+        salaryMin: BigInt(600_000),
+        salaryMax: BigInt(1_100_000),
+        salaryCurrency: "USD",
         salaryPeriod: "month",
         salaryBasis: "gross",
+        firstPublishedAt: posted,
       }),
-    );
-    const min = formatMoneyDto(
-      toMoneyDto(BigInt(15_000_000), "RUB", "month", "gross"),
-      "ru-RU",
-    );
-    const max = formatMoneyDto(
-      toMoneyDto(BigInt(25_000_000), "RUB", "month", "gross"),
-      "ru-RU",
+      new Date(posted.getTime() + 60_000),
     );
     expect(text).toBe(
       [
-        "Вакансия: Backend-разработчик",
-        "Компания: Northwind",
-        `Зарплата: ${min} – ${max} / ${ru.jobs.month}`,
+        "💼 Senior Mobile Developer (iOS + Android)",
+        "🏛️ at HyroTrader",
+        "🌍 Remote",
+        "💰 $6k-11k/month",
+        "💥 New! Posted 1 minute ago",
+        `✅ Apply → https://intgetion.com/jobs/${id}`,
         "",
-        `https://intgetion.com/ru/jobs/${id}`,
+        "Or forward to a friend!",
       ].join("\n"),
     );
+    expect(text).toContain(`✅ Apply → https://intgetion.com/jobs/${id}`);
+    expect(text).not.toContain("/ru/");
+    expect(text).not.toContain("cjl.ist");
+    expect(text.endsWith("Or forward to a friend!")).toBe(true);
     expect(text).not.toContain("описание");
+    expect(text).not.toContain("description");
+    expect(text).not.toContain("skills");
+    expect(text).not.toContain("не указана");
   });
 
-  it("keeps a salary line when the amount is missing", () => {
+  it("omits the money line when both amounts are missing", () => {
     const text = jobsAlertText(row());
-    expect(text).toContain("Зарплата: не указана");
-    expect(text.endsWith(`https://intgetion.com/ru/jobs/${id}`)).toBe(true);
+    expect(text).not.toContain("💰");
+    expect(text).not.toContain("не указана");
+    expect(text).toContain(`✅ Apply → https://intgetion.com/jobs/${id}`);
+    expect(text.endsWith("\n\nOr forward to a friend!")).toBe(true);
   });
 
   it("uses the employer currency, and USD when the job has none", () => {
@@ -84,27 +99,127 @@ describe("jobs alert text", () => {
         salaryBasis: "gross",
       }),
     );
-    expect(euros).toContain(
-      formatMoneyDto(
-        toMoneyDto(BigInt(400_000), "EUR", "month", "gross"),
-        "ru-RU",
-      ),
+    const onlyMax = jobsAlertText(
+      row({
+        salaryMax: BigInt(1_100_000),
+        salaryCurrency: "USD",
+        salaryPeriod: "month",
+        salaryBasis: "gross",
+      }),
     );
-    expect(dollars).toContain(
-      formatMoneyDto(
-        toMoneyDto(BigInt(400_000), "USD", "month", "gross"),
-        "ru-RU",
-      ),
+    expect(euros).toContain("💰 €4k/month");
+    expect(dollars).toContain("💰 $4k/month");
+    expect(onlyMax.split("\n").find((line) => line.startsWith("💰"))).toBe(
+      "💰 $11k/month",
     );
     expect(dollars).not.toContain("не указана");
+  });
+
+  it("prints hour and year on the money line", () => {
+    const hour = jobsAlertText(
+      row({
+        salaryMin: BigInt(5_000),
+        salaryCurrency: "USD",
+        salaryPeriod: "hour",
+        salaryBasis: "gross",
+      }),
+    );
+    const year = jobsAlertText(
+      row({
+        salaryMin: BigInt(8_000_000),
+        salaryCurrency: "USD",
+        salaryPeriod: "year",
+        salaryBasis: "gross",
+      }),
+    );
+    expect(hour).toContain("💰 $50/hour");
+    expect(year).toContain("💰 $80k/year");
+  });
+
+  it("names remote, hybrid, and onsite", () => {
+    const place = (patch: Partial<JobsAlertRow>) =>
+      jobsAlertText(row(patch)).split("\n")[2];
+    expect(place({ workFormat: "remote", location: "Berlin" })).toBe(
+      "🌍 Remote",
+    );
+    expect(place({ workFormat: "hybrid", location: "Berlin" })).toBe(
+      "🌍 Hybrid · Berlin",
+    );
+    expect(place({ workFormat: "hybrid", location: "Berlin\noffice" })).toBe(
+      "🌍 Hybrid · Berlin office",
+    );
+    expect(place({ workFormat: "hybrid", location: null })).toBe("🌍 Hybrid");
+    expect(place({ workFormat: "onsite", location: "Berlin" })).toBe(
+      "🌍 Berlin",
+    );
+    expect(
+      place({ workFormat: "onsite", location: null, locationCountry: "DE" }),
+    ).toBe("🌍 DE");
+    expect(
+      place({
+        workFormat: "onsite",
+        location: " \n ",
+        locationCountry: "DE",
+      }),
+    ).toBe("🌍 DE");
+    expect(
+      place({ workFormat: "onsite", location: null, locationCountry: null }),
+    ).toBe("🌍 On-site");
+  });
+
+  it("says New! under a day and Posted after that", () => {
+    const line = (at: Date) =>
+      jobsAlertText(row({ firstPublishedAt: posted }), at)
+        .split("\n")
+        .find((item) => item.startsWith("💥"));
+    expect(line(new Date(posted.getTime() + 30_000))).toBe(
+      "💥 New! Posted just now",
+    );
+    expect(line(new Date(posted.getTime() + 60_000))).toBe(
+      "💥 New! Posted 1 minute ago",
+    );
+    expect(line(new Date(posted.getTime() + 12 * 60_000))).toBe(
+      "💥 New! Posted 12 minutes ago",
+    );
+    expect(line(new Date(posted.getTime() + HOUR))).toBe(
+      "💥 New! Posted 1 hour ago",
+    );
+    expect(line(new Date(posted.getTime() + 3 * HOUR))).toBe(
+      "💥 New! Posted 3 hours ago",
+    );
+    expect(line(new Date(posted.getTime() + 23 * HOUR))).toBe(
+      "💥 New! Posted 23 hours ago",
+    );
+    expect(line(new Date(posted.getTime() + 24 * HOUR))).toBe(
+      "💥 Posted 1 day ago",
+    );
+    expect(line(new Date(posted.getTime() + 4 * 24 * HOUR))).toBe(
+      "💥 Posted 4 days ago",
+    );
+    expect(jobsAlertText(row({ firstPublishedAt: null }))).not.toContain("💥");
+    expect(jobsAlertText(row({ firstPublishedAt: null }))).not.toContain(
+      "New!",
+    );
   });
 
   it("turns a line break in the title into a space", () => {
     const text = jobsAlertText(
       row({ title: "Редактор\nленты", companyName: "North\r\nwind" }),
     );
-    expect(text.split("\n")[0]).toBe("Вакансия: Редактор ленты");
-    expect(text.split("\n")[1]).toBe("Компания: North wind");
+    expect(text.split("\n")[0]).toBe("💼 Редактор ленты");
+    expect(text.split("\n")[1]).toBe("🏛️ at North wind");
+  });
+
+  it("reads place and the first publish time, and does not clear the stamp", () => {
+    const source = readFileSync(
+      resolve(process.cwd(), "src/modules/jobs/service/jobs-alert.ts"),
+      "utf8",
+    );
+    expect(source).toContain("j.work_format::text as work_format");
+    expect(source).toMatch(/j\.location,/);
+    expect(source).toContain("j.location_country");
+    expect(source).toContain("as first_published_at");
+    expect(source).not.toContain("jobs_alert_sent_at = null");
   });
 });
 
