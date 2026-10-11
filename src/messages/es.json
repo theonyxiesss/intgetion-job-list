@@ -2160,6 +2160,24 @@
     "mail": {
       "subject": "Hire está activo",
       "body": "Hire está activo para tu empleo. Ábrelo: {url}"
+    },
+    "nonEvm": {
+      "title": "O paga en Tron o Solana",
+      "network": "Red",
+      "name": {
+        "tron": "Tron (TRC-20)",
+        "solana": "Solana"
+      },
+      "tronNote": "En Tron solo se acepta USDT.",
+      "prove": "Confirmar mi billetera",
+      "sendExact": "Envía exactamente este monto desde la billetera confirmada a esta dirección y pega el ID de la transacción.",
+      "txLabel": "ID de la transacción",
+      "check": "Comprobar la transferencia",
+      "txFailed": "No pudimos comprobar este ID de transacción. Revísalo e inténtalo de nuevo.",
+      "needWallet": {
+        "tron": "Abre el sitio en un navegador con TronLink.",
+        "solana": "Abre el sitio en un navegador con una billetera de Solana, como Phantom."
+      }
     }
   },
   "postJob": {

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { planLoginNext } from "@/components/auth/login-next";
 import { Button, TokenMark, cn } from "@/components/ui";
 import { useRouter } from "@/i18n/navigation";
+import { NonEvmPay, type NonEvmOption } from "./non-evm-pay";
 import { classifyPayError, type PayErrorKind } from "./pay-error";
 
 type Order = {
@@ -73,12 +74,16 @@ export function CryptoPay({
   jobId,
   companyId,
   projectId,
+  evm = true,
+  networks = [],
 }: {
   plan: "hire" | "team" | "plus" | "pro";
   amount: string;
   jobId?: string;
   companyId?: string;
   projectId: string;
+  evm?: boolean;
+  networks?: NonEvmOption[];
 }) {
   const t = useTranslations("billing");
   const router = useRouter();
@@ -200,8 +205,7 @@ export function CryptoPay({
     }
   }
 
-  const hold =
-    busy || order?.status === "checking" || order?.status === "paid";
+  const hold = busy || order?.status === "checking" || order?.status === "paid";
   const shownToken: "USDC" | "USDT" =
     order?.token === "USDC" || order?.token === "USDT" ? order.token : token;
 
@@ -213,87 +217,101 @@ export function CryptoPay({
         <p className="t-data-l">${amount}</p>
         <p className="t-body-s text-fg-muted">{t("forDays")}</p>
       </header>
-      <div
-        role="radiogroup"
-        aria-label={t("token")}
-        className="grid grid-cols-2 gap-3"
-      >
-        {(["USDC", "USDT"] as const).map((code) => (
-          <button
-            key={code}
+      {evm ? (
+        <>
+          <div
+            role="radiogroup"
+            aria-label={t("token")}
+            className="grid grid-cols-2 gap-3"
+          >
+            {(["USDC", "USDT"] as const).map((code) => (
+              <button
+                key={code}
+                type="button"
+                role="radio"
+                aria-checked={token === code}
+                disabled={hold}
+                onClick={() => setToken(code)}
+                className={cn(
+                  "flex min-h-20 items-center gap-3 border px-3 py-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+                  token === code
+                    ? "border-fg bg-surface-2"
+                    : "border-line hover:border-line-strong",
+                )}
+              >
+                <TokenMark token={code} />
+                <span className="flex flex-col">
+                  <span className="t-body-s">
+                    {code === "USDC" ? t("usdCoin") : t("tether")}
+                  </span>
+                  <span className="t-label text-fg-muted">{code}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+          <p className="t-caption text-fg-muted">{t("baseNote")}</p>
+          <Button
             type="button"
-            role="radio"
-            aria-checked={token === code}
+            size="lg"
+            className="w-full"
+            onClick={pay}
+            loading={busy}
             disabled={hold}
-            onClick={() => setToken(code)}
-            className={cn(
-              "flex min-h-20 items-center gap-3 border px-3 py-3 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-60",
-              token === code
-                ? "border-fg bg-surface-2"
-                : "border-line hover:border-line-strong",
-            )}
           >
-            <TokenMark token={code} />
-            <span className="flex flex-col">
-              <span className="t-body-s">
-                {code === "USDC" ? t("usdCoin") : t("tether")}
-              </span>
-              <span className="t-label text-fg-muted">{code}</span>
-            </span>
-          </button>
-        ))}
-      </div>
-      <p className="t-caption text-fg-muted">{t("baseNote")}</p>
-      <Button
-        type="button"
-        size="lg"
-        className="w-full"
-        onClick={pay}
-        loading={busy}
-        disabled={hold}
-      >
-        {t("payNow", { amount, token: shownToken })}
-      </Button>
-      {order ? (
-        <div className="flex flex-col gap-3 border border-line bg-bg p-4">
-          <p
-            className={cn(
-              "t-body-s",
-              order.status === "paid" && "text-success",
-              (order.status === "failed" ||
-                order.status === "underpaid" ||
-                order.status === "expired") &&
-                "text-danger",
-            )}
-          >
-            {t(`status.${order.status as "paid"}`)}
-          </p>
-          <p className="flex items-center gap-3">
-            <TokenMark token={shownToken} />
-            <span className="t-h3">
-              {order.tokenAmount} {order.token}
-            </span>
-          </p>
-          <p className="t-caption text-fg-muted">{t("checkWallet")}</p>
-          <p className="font-mono text-sm break-all">{order.recipient}</p>
-        </div>
+            {t("payNow", { amount, token: shownToken })}
+          </Button>
+          {order ? (
+            <div className="flex flex-col gap-3 border border-line bg-bg p-4">
+              <p
+                className={cn(
+                  "t-body-s",
+                  order.status === "paid" && "text-success",
+                  (order.status === "failed" ||
+                    order.status === "underpaid" ||
+                    order.status === "expired") &&
+                    "text-danger",
+                )}
+              >
+                {t(`status.${order.status as "paid"}`)}
+              </p>
+              <p className="flex items-center gap-3">
+                <TokenMark token={shownToken} />
+                <span className="t-h3">
+                  {order.tokenAmount} {order.token}
+                </span>
+              </p>
+              <p className="t-caption text-fg-muted">{t("checkWallet")}</p>
+              <p className="font-mono text-sm break-all">{order.recipient}</p>
+            </div>
+          ) : null}
+          {error ? (
+            <p
+              className={
+                error === "cancel"
+                  ? "t-body-s text-fg-muted"
+                  : "t-body-s text-danger"
+              }
+            >
+              {error === "wallet"
+                ? t("needWallet")
+                : error === "cancel"
+                  ? t("cancelled")
+                  : error === "network"
+                    ? t("network")
+                    : error === "token"
+                      ? t("tokenUnsupported")
+                      : t("status.failed")}
+            </p>
+          ) : null}
+        </>
       ) : null}
-      {error ? (
-        <p
-          className={
-            error === "cancel" ? "t-body-s text-fg-muted" : "t-body-s text-danger"
-          }
-        >
-          {error === "wallet"
-            ? t("needWallet")
-            : error === "cancel"
-              ? t("cancelled")
-              : error === "network"
-                ? t("network")
-                : error === "token"
-                  ? t("tokenUnsupported")
-                  : t("status.failed")}
-        </p>
+      {networks.length > 0 ? (
+        <NonEvmPay
+          plan={plan}
+          jobId={jobId}
+          companyId={companyId}
+          networks={networks}
+        />
       ) : null}
     </section>
   );

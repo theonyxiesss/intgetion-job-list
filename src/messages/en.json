@@ -2160,6 +2160,24 @@
     "mail": {
       "subject": "Hire is on",
       "body": "Hire is on for your job. Open it: {url}"
+    },
+    "nonEvm": {
+      "title": "Or pay on Tron or Solana",
+      "network": "Network",
+      "name": {
+        "tron": "Tron (TRC-20)",
+        "solana": "Solana"
+      },
+      "tronNote": "On Tron, only USDT is accepted.",
+      "prove": "Confirm my wallet",
+      "sendExact": "Send exactly this amount from the confirmed wallet to this address, then paste the transaction ID.",
+      "txLabel": "Transaction ID",
+      "check": "Check the transfer",
+      "txFailed": "We could not check this transaction ID. Check it and try again.",
+      "needWallet": {
+        "tron": "Open the site in a browser with TronLink.",
+        "solana": "Open the site in a browser with a Solana wallet such as Phantom."
+      }
     }
   },
   "postJob": {

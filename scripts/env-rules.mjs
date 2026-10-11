@@ -68,12 +68,16 @@ const ALL_KNOWN = new Set([
   "BILLING_ENABLED",
   "BILLING_CRYPTO_PROVIDER",
   "COMPANY_WALLET_ADDRESS",
+  "COMPANY_WALLET_TRON",
+  "COMPANY_WALLET_SOLANA",
   "BILLING_TOKEN_CONTRACTS",
   "NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID",
   "RPC_URL_ETHEREUM",
   "RPC_URL_POLYGON",
   "RPC_URL_ARBITRUM",
   "RPC_URL_BASE",
+  "RPC_URL_TRON",
+  "RPC_URL_SOLANA",
   "CRON_SECRET",
   "PRIVACY_HASH_SECRET",
   "SENTRY_DSN",
@@ -261,6 +265,25 @@ function validateVar(name, value, mode) {
           name,
           status: "INVALID",
           reason: "must be an EVM address",
+        };
+      }
+      break;
+    case "COMPANY_WALLET_TRON":
+    case "COMPANY_WALLET_SOLANA":
+      // D384: each network has its own address; an EVM 0x address is wrong here.
+      if (
+        trimmed.startsWith("0x") ||
+        (name === "COMPANY_WALLET_TRON"
+          ? !/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(trimmed)
+          : !/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(trimmed))
+      ) {
+        return {
+          name,
+          status: "INVALID",
+          reason:
+            name === "COMPANY_WALLET_TRON"
+              ? "must be a Tron address (T…)"
+              : "must be a Solana address",
         };
       }
       break;

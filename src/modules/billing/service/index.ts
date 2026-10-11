@@ -9,6 +9,7 @@ export {
   hireFeatures,
   hireForJob,
   promotedHireJobIds,
+  issueNonEvmNonce,
   issueWalletNonce,
   isSanctionedAddress,
   recordBillingInterest,

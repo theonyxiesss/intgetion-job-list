@@ -3,7 +3,30 @@ import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { chainById, tokenContract } from "@/lib/billing/chains";
 import { readChain } from "@/lib/billing/rpc";
-import { recoverSiweAddress, siweMessage, validAddress } from "@/lib/billing/siwe";
+import {
+  nonEvmByChainId,
+  nonEvmNetwork,
+  nonEvmRecipient,
+  nonEvmToken,
+  readyNonEvmNetworks,
+  validNonEvmAddress,
+  validTxId,
+  type NonEvmNetworkId,
+} from "@/lib/billing/non-evm/networks";
+import { readSolana, readTron } from "@/lib/billing/non-evm/rpc";
+import {
+  nonEvmMessage,
+  verifyNonEvmSignature,
+} from "@/lib/billing/non-evm/signature";
+import {
+  verifySolanaTransfer,
+  verifyTronTransfer,
+} from "@/lib/billing/non-evm/verify-receipt";
+import {
+  recoverSiweAddress,
+  siweMessage,
+  validAddress,
+} from "@/lib/billing/siwe";
 import {
   clientStatus,
   HIRE_DAYS,
@@ -90,7 +113,7 @@ function view(row: OrderRow, now = new Date()): OrderView {
     expiresAt: new Date(row.expires_at),
     now,
   });
-  const chain = chainById(row.chain);
+  const chain = chainById(row.chain) ?? nonEvmNetwork(row.chain);
   return {
     id: row.id,
     jobId: row.job_id ?? "",
@@ -147,7 +170,9 @@ export async function payableJobs(
 }
 
 /** A paid Team plan that is still inside its 30 days (D367). */
-export async function companyHasActiveTeam(companyId: string): Promise<boolean> {
+export async function companyHasActiveTeam(
+  companyId: string,
+): Promise<boolean> {
   const rows = await getDb().execute<{ ok: number }>(sql`
     select 1 as ok
     from public.purchases
@@ -204,9 +229,7 @@ export async function billingMe(userId: string): Promise<BillingMe> {
         )
       )
   `);
-  const hires = rows.filter(
-    (row) => row.plan_code === HIRE_PLAN && row.job_id,
-  );
+  const hires = rows.filter((row) => row.plan_code === HIRE_PLAN && row.job_id);
   const teamUntil = latestUntil(rows, SALE_PLANS.team.code);
   const proUntil = latestUntil(rows, SALE_PLANS.pro.code);
   const plusUntil = latestUntil(rows, SALE_PLANS.plus.code);
@@ -228,7 +251,10 @@ export async function promotedHireJobIds(now = new Date()): Promise<string[]> {
   const since = new Date(
     now.getTime() - hireGrants().promotedDays * 24 * 60 * 60 * 1000,
   );
-  const rows = await getDb().execute<{ job_id: string; created_at: string }>(sql`
+  const rows = await getDb().execute<{
+    job_id: string;
+    created_at: string;
+  }>(sql`
     select p.job_id::text, p.created_at::text
     from public.purchases p
     join public.jobs j on j.id = p.job_id
@@ -277,9 +303,7 @@ export async function issueWalletNonce(
   chainId: number,
 ): Promise<{ message: string }> {
   const checksum = validAddress(address);
-  const chain = chainById(
-    chainByChain(chainId),
-  );
+  const chain = chainById(chainByChain(chainId));
   if (!checksum || !chain) throw validationError("Unknown wallet or network");
   const nonce = randomBytes(16).toString("hex");
   const issuedAt = new Date();
@@ -304,7 +328,46 @@ export async function issueWalletNonce(
   return { message };
 }
 
+/** Tron / Solana: the buyer proves the sender address by signing (D384). */
+export async function issueNonEvmNonce(
+  userId: string,
+  network: string,
+  address: string,
+): Promise<{ message: string }> {
+  const found = nonEvmNetwork(network);
+  const trimmed = address.trim();
+  if (!found || !readyNonEvmNetworks().includes(found.id)) {
+    throw new HttpError(409, "CHAIN_UNSUPPORTED", "Use a supported network");
+  }
+  if (!validNonEvmAddress(found.id, trimmed)) {
+    throw validationError("Unknown wallet or network");
+  }
+  const nonce = randomBytes(16).toString("hex");
+  const issuedAt = new Date();
+  const expiration = new Date(issuedAt.getTime() + 10 * 60 * 1000);
+  const message = nonEvmMessage({
+    network: found.id,
+    address: trimmed,
+    nonce,
+    issuedAt: issuedAt.toISOString(),
+    expirationTime: expiration.toISOString(),
+  });
+  await getDb().execute(sql`
+    insert into billing_wallet_sessions (user_id, address, chain_id, nonce, message, expires_at)
+    values (${userId}, ${trimmed}, ${found.chainId}, ${nonce}, ${message}, ${expiration.toISOString()})
+    on conflict (user_id) do update
+      set address = excluded.address,
+          chain_id = excluded.chain_id,
+          nonce = excluded.nonce,
+          message = excluded.message,
+          expires_at = excluded.expires_at
+  `);
+  return { message };
+}
+
 function chainByChain(chainId: number): string {
+  const nonEvm = nonEvmByChainId(chainId);
+  if (nonEvm) return nonEvm.id;
   if (chainId === 1) return "ethereum";
   if (chainId === 137) return "polygon";
   if (chainId === 42161) return "arbitrum";
@@ -316,14 +379,15 @@ export async function verifyWalletSignature(
   userId: string,
   signature: string,
 ): Promise<void> {
-  if (!signature.startsWith("0x")) throw validationError("Missing signature");
+  if (!signature) throw validationError("Missing signature");
   const rows = await getDb().execute<{
+    chain_id: number;
     address: string;
     message: string | null;
     expires_at: string;
     nonce: string;
   }>(sql`
-    select address, message, expires_at::text, nonce
+    select chain_id, address, message, expires_at::text, nonce
     from billing_wallet_sessions
     where user_id = ${userId}
   `);
@@ -331,11 +395,24 @@ export async function verifyWalletSignature(
   if (!session?.message || new Date(session.expires_at) <= new Date()) {
     throw forbidden();
   }
-  const recovered = await recoverSiweAddress(
-    session.message,
-    signature as `0x${string}`,
-  );
-  if (!recovered || recovered !== session.address.toLowerCase()) throw forbidden();
+  const nonEvm = nonEvmByChainId(session.chain_id);
+  if (nonEvm) {
+    const proven = await verifyNonEvmSignature(
+      nonEvm.id,
+      session.message,
+      signature,
+      session.address,
+    );
+    if (!proven) throw forbidden();
+  } else {
+    if (!signature.startsWith("0x")) throw validationError("Missing signature");
+    const recovered = await recoverSiweAddress(
+      session.message,
+      signature as `0x${string}`,
+    );
+    if (!recovered || recovered !== session.address.toLowerCase())
+      throw forbidden();
+  }
   const until = new Date(Date.now() + 30 * 60 * 1000).toISOString();
   await getDb().execute(sql`
     update billing_wallet_sessions
@@ -441,21 +518,46 @@ export async function createCryptoOrder(
     where user_id = ${userId}
   `);
   const wallet = session[0];
-  if (!wallet || wallet.nonce !== "verified" || new Date(wallet.expires_at) <= new Date()) {
-    throw new HttpError(409, "WALLET_REQUIRED", "Sign in with the wallet first");
+  if (
+    !wallet ||
+    wallet.nonce !== "verified" ||
+    new Date(wallet.expires_at) <= new Date()
+  ) {
+    throw new HttpError(
+      409,
+      "WALLET_REQUIRED",
+      "Sign in with the wallet first",
+    );
   }
   const chainName = chainByChain(wallet.chain_id);
-  const chain = chainById(chainName);
-  const contract = tokenContract(chainName, input.token);
-  const recipient = validAddress(process.env.COMPANY_WALLET_ADDRESS ?? "");
+  const nonEvm = nonEvmNetwork(chainName);
+  const chain = chainById(chainName) ?? nonEvm;
+  const contract = nonEvm
+    ? nonEvmToken(nonEvm.id, input.token)
+    : tokenContract(chainName, input.token);
+  const recipient = nonEvm
+    ? nonEvmRecipient(nonEvm.id)
+    : (validAddress(process.env.COMPANY_WALLET_ADDRESS ?? "")?.toLowerCase() ??
+      null);
+  const ready = nonEvm
+    ? readyNonEvmNetworks().includes(nonEvm.id)
+    : cryptoReady(chainName, input.token);
   if (!chain) {
     throw new HttpError(409, "CHAIN_UNSUPPORTED", "Use a supported network");
   }
   if (!contract) {
-    throw new HttpError(409, "TOKEN_UNSUPPORTED", "This token is not on this network");
+    throw new HttpError(
+      409,
+      "TOKEN_UNSUPPORTED",
+      "This token is not on this network",
+    );
   }
-  if (!recipient || !cryptoReady(chainName, input.token)) {
-    throw new HttpError(409, "BILLING_UNAVAILABLE", "Crypto payments are not on");
+  if (!recipient || !ready) {
+    throw new HttpError(
+      409,
+      "BILLING_UNAVAILABLE",
+      "Crypto payments are not on",
+    );
   }
 
   const units = tokenUnits(priceMinor).toString();
@@ -467,7 +569,8 @@ export async function createCryptoOrder(
       returning id
     `);
     const purchaseId = purchase[0]?.id;
-    if (!purchaseId) throw new HttpError(500, "BILLING_FAILED", "Could not open the order");
+    if (!purchaseId)
+      throw new HttpError(500, "BILLING_FAILED", "Could not open the order");
     const order = await tx.execute<{ id: string }>(sql`
       insert into crypto_orders (
         purchase_id, user_id, chain, token, token_contract, recipient, payer_address,
@@ -475,14 +578,15 @@ export async function createCryptoOrder(
       )
       values (
         ${purchaseId}, ${userId}, ${chain.id}, ${input.token}, ${contract},
-        ${recipient.toLowerCase()}, ${wallet.address.toLowerCase()},
+        ${recipient}, ${nonEvm ? wallet.address : wallet.address.toLowerCase()},
         ${priceMinor.toString()}, ${units}, 'open', ${expires}
       )
       returning id
     `);
     return order[0]?.id;
   });
-  if (!created) throw new HttpError(500, "BILLING_FAILED", "Could not open the order");
+  if (!created)
+    throw new HttpError(500, "BILLING_FAILED", "Could not open the order");
   return view(await loadOrder(created, userId));
 }
 
@@ -491,25 +595,18 @@ export async function confirmHireOrder(
   orderId: string,
   txHash: string,
 ): Promise<OrderView & { granted: boolean }> {
-  if (!/^0x[0-9a-fA-F]{64}$/.test(txHash)) throw validationError("Missing transaction");
   const order = await loadOrder(orderId, userId);
+  const nonEvm = nonEvmNetwork(order.chain);
+  if (nonEvm) {
+    if (!validTxId(nonEvm.id, txHash))
+      throw validationError("Missing transaction");
+  } else if (!/^0x[0-9a-fA-F]{64}$/.test(txHash)) {
+    throw validationError("Missing transaction");
+  }
   if (order.status === "confirmed") return { ...view(order), granted: false };
-  const chain = chainById(order.chain);
-  if (!chain) throw notFound();
-  const snapshot = await readChain(order.chain, txHash as `0x${string}`);
-  const verified = verifyTransfer({
-    receipt: snapshot.receipt,
-    blockTimestamp: snapshot.blockTimestamp,
-    confirmations: snapshot.confirmations,
-    requiredConfirmations: chain.confirmations,
-    tokenContract: order.token_contract,
-    recipient: order.recipient,
-    payer: order.payer_address,
-    amount: BigInt(order.token_amount),
-    orderCreatedAt: Math.floor(new Date(order.created_at).getTime() / 1000),
-    // D380: verifyTransfer has already matched this to the transfer's sender.
-    sanctioned: await isSanctionedAddress(order.payer_address),
-  });
+  const verified = nonEvm
+    ? await verifyNonEvmOrder(order, nonEvm.id, txHash)
+    : await verifyEvmOrder(order, txHash);
   const next = settlement(verified);
   if (!next.grant) {
     await getDb().execute(sql`
@@ -522,7 +619,9 @@ export async function confirmHireOrder(
     }
     return { ...view(await loadOrder(order.id, userId)), granted: false };
   }
-  const until = new Date(Date.now() + HIRE_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const until = new Date(
+    Date.now() + HIRE_DAYS * 24 * 60 * 60 * 1000,
+  ).toISOString();
   try {
     await getDb().transaction(async (tx) => {
       const used = await tx.execute<{ id: string }>(sql`
@@ -554,6 +653,58 @@ export async function confirmHireOrder(
   return { ...view(await loadOrder(order.id, userId)), granted: true };
 }
 
+function checkInput(order: OrderRow, required: number) {
+  return {
+    requiredConfirmations: required,
+    tokenContract: order.token_contract,
+    recipient: order.recipient,
+    payer: order.payer_address,
+    amount: BigInt(order.token_amount),
+    orderCreatedAt: Math.floor(new Date(order.created_at).getTime() / 1000),
+  };
+}
+
+async function verifyEvmOrder(order: OrderRow, txHash: string) {
+  const chain = chainById(order.chain);
+  if (!chain) throw notFound();
+  const snapshot = await readChain(order.chain, txHash as `0x${string}`);
+  return verifyTransfer({
+    ...checkInput(order, chain.confirmations),
+    receipt: snapshot.receipt,
+    blockTimestamp: snapshot.blockTimestamp,
+    confirmations: snapshot.confirmations,
+    // D380: verifyTransfer has already matched this to the transfer's sender.
+    sanctioned: await isSanctionedAddress(order.payer_address),
+  });
+}
+
+/** D384: the server reads the receipt itself; the sender must be the signed address. */
+async function verifyNonEvmOrder(
+  order: OrderRow,
+  network: NonEvmNetworkId,
+  txId: string,
+) {
+  const spec = nonEvmNetwork(network);
+  if (!spec) throw notFound();
+  const sanctioned = await isSanctionedAddress(order.payer_address);
+  if (network === "tron") {
+    const read = await readTron(txId);
+    return verifyTronTransfer({
+      ...checkInput(order, spec.confirmations),
+      info: read.info,
+      confirmations: read.confirmations,
+      sanctioned,
+    });
+  }
+  const read = await readSolana(txId);
+  return verifySolanaTransfer({
+    ...checkInput(order, spec.confirmations),
+    tx: read.tx,
+    confirmations: read.confirmations,
+    sanctioned,
+  });
+}
+
 /** True when the address is on the stored OFAC SDN crypto list (D380). */
 export async function isSanctionedAddress(address: string): Promise<boolean> {
   const rows = await getDb().execute<{ address: string }>(sql`
@@ -569,8 +720,15 @@ export async function isSanctionedAddress(address: string): Promise<boolean> {
  * review"; nothing moves the money (PAYMENTS §4.5). The log carries the
  * order, not the address.
  */
-async function alertFrozenOrder(orderId: string, chain: string, txHash: string) {
-  logger.warn({ orderId, chain }, "billing order frozen: sender on sanctions list");
+async function alertFrozenOrder(
+  orderId: string,
+  chain: string,
+  txHash: string,
+) {
+  logger.warn(
+    { orderId, chain },
+    "billing order frozen: sender on sanctions list",
+  );
   try {
     await notifyPlatformOwners(
       "Payment frozen for review",
@@ -603,14 +761,17 @@ export async function refreshSanctionsList(
     return { stored: 0, replaced: false };
   }
   await getDb().transaction(async (tx) => {
-    await tx.execute(sql`delete from sanctioned_addresses where source = 'ofac_sdn'`);
+    await tx.execute(
+      sql`delete from sanctioned_addresses where source = 'ofac_sdn'`,
+    );
     for (let start = 0; start < addresses.length; start += 500) {
       const chunk = addresses.slice(start, start + 500);
       await tx.execute(sql`
         insert into sanctioned_addresses (address, currency, source, updated_at)
         values ${sql.join(
           chunk.map(
-            (entry) => sql`(${entry.address}, ${entry.currency}, 'ofac_sdn', now())`,
+            (entry) =>
+              sql`(${entry.address}, ${entry.currency}, 'ofac_sdn', now())`,
           ),
           sql`, `,
         )}
@@ -626,12 +787,19 @@ async function fetchOfacSdn(): Promise<string> {
   const url = process.env.OFAC_SDN_URL?.trim() || OFAC_SDN_URL;
   const response = await fetch(url, { signal: AbortSignal.timeout(60_000) });
   if (!response.ok) {
-    throw new HttpError(502, "SANCTIONS_FETCH_FAILED", "The OFAC list did not load");
+    throw new HttpError(
+      502,
+      "SANCTIONS_FETCH_FAILED",
+      "The OFAC list did not load",
+    );
   }
   return response.text();
 }
 
-export async function refreshHireOrder(userId: string, orderId: string): Promise<OrderView> {
+export async function refreshHireOrder(
+  userId: string,
+  orderId: string,
+): Promise<OrderView> {
   const order = await loadOrder(orderId, userId);
   if (order.status === "submitted" && order.tx_hash) {
     return confirmHireOrder(userId, orderId, order.tx_hash);
@@ -640,7 +808,11 @@ export async function refreshHireOrder(userId: string, orderId: string): Promise
 }
 
 export async function recheckSubmittedOrders(): Promise<number> {
-  const rows = await getDb().execute<{ id: string; user_id: string; tx_hash: string }>(sql`
+  const rows = await getDb().execute<{
+    id: string;
+    user_id: string;
+    tx_hash: string;
+  }>(sql`
     select id, user_id, tx_hash
     from crypto_orders
     where status = 'submitted' and tx_hash is not null
