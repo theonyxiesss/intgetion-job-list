@@ -40,6 +40,16 @@ function slugify(name: string) {
   return slug || "company";
 }
 
+export async function setEmployerFullName(userId: string, fullName: string) {
+  await getDb()
+    .insert(employerProfiles)
+    .values({ userId, fullName })
+    .onConflictDoUpdate({
+      target: employerProfiles.userId,
+      set: { fullName, updatedAt: new Date() },
+    });
+}
+
 export async function findMemberRole(companyId: string, userId: string) {
   const rows = await getDb()
     .select({ role: companyMembers.role })

@@ -190,6 +190,7 @@ describe("6B feedback and publish recalc", () => {
 
   it("publishing a job enqueues it and the cron scores it for a candidate", async () => {
     await transitionOwnedJob(draftJob, "publish", ownerId);
+    await transitionOwnedJob(draftJob, "approve", ownerId, "admin");
     const queued = await getDb().execute<{ status: string }>(sql`
       select status from public.matching_jobs
       where job_id = ${draftJob} and status in ('pending', 'running')

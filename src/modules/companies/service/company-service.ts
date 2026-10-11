@@ -23,6 +23,10 @@ export function assertCompanyEditable(
   if (role !== "owner" && role !== "admin") throw forbidden();
 }
 
+export async function setEmployerFullName(userId: string, fullName: string) {
+  await repo.setEmployerFullName(userId, fullName);
+}
+
 export async function createCompany(
   user: CurrentUser,
   input: CreateCompanyInput,

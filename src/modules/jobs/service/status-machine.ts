@@ -102,12 +102,9 @@ export function transitionJob(input: {
       input.companyStatus === "suspended"
     )
       throw new HttpError(403, "FORBIDDEN", "This company cannot publish jobs");
-    if (
-      input.sensitiveSector ||
-      input.companyStatus !== "verified" ||
-      (input.riskScore ?? 0) >= 4
-    )
-      return "pending_moderation";
+    // D391: a member never puts an internal job on the public list.
+    // Only an admin `approve` does. Imported jobs do not use this action.
+    return "pending_moderation";
   }
   if (
     input.action === "edit" &&

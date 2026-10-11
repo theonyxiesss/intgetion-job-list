@@ -774,7 +774,7 @@
       }
     },
     "actions": {
-      "publish": "Publicar",
+      "publish": "Enviar a revisión",
       "pause": "Pausar",
       "close": "Cerrar",
       "extend": "Ampliar 30 días",
@@ -2195,6 +2195,64 @@
   "postJob": {
     "title": "Publicar empleo",
     "guest": "Para publicar un empleo, inicia sesión o crea una cuenta.",
-    "register": "Registrarse"
+    "register": "Registrarse",
+    "form": {
+      "intro": "Indica el puesto, el sueldo y cómo deben postularse. Un administrador lo revisa antes de que aparezca en la lista.",
+      "introLive": "Indica el puesto, el sueldo y cómo deben postularse. Al enviarlo, el empleo entra en la lista.",
+      "company": "Nombre de la empresa",
+      "companyHelp": "Nombre corto, sin Inc. ni Ltd.",
+      "title": "Título del puesto",
+      "description": "Descripción",
+      "location": "Lugar de trabajo",
+      "locationHelp": "Déjalo vacío si el puesto es totalmente remoto.",
+      "salaryMin": "Salario mínimo",
+      "salaryMax": "Salario máximo",
+      "currency": "Moneda",
+      "period": "Periodo de pago",
+      "periods": { "month": "Mes", "year": "Año" },
+      "countries": "Países que pueden postularse",
+      "countriesHelp": "Vacío significa cualquier país. Los botones añaden códigos de país.",
+      "regions": {
+        "europe": "Europa",
+        "northAmerica": "América del Norte",
+        "southAmerica": "América del Sur",
+        "latam": "LATAM",
+        "apac": "APAC",
+        "sea": "SEA",
+        "emea": "EMEA",
+        "africa": "África",
+        "oceania": "Oceanía"
+      },
+      "category": "Categoría",
+      "employment": "Tipo de empleo",
+      "application": "Cómo postularse",
+      "methods": {
+        "internal": "En este sitio",
+        "email": "Correo",
+        "external_url": "Ir a un formulario"
+      },
+      "applicationEmail": "Correo para candidaturas",
+      "applicationEmailHelp": "Se queda en privado. No aparece en la página del empleo.",
+      "applicationUrl": "URL del formulario",
+      "website": "Sitio de la empresa",
+      "logo": "Imagen",
+      "logoHelp": "PNG, JPEG o WebP, hasta 2 MB. Se muestra como el logo de la empresa.",
+      "logoError": "El empleo se envió, pero la imagen no se guardó.",
+      "x": "Usuario de X",
+      "telegram": "Telegram",
+      "manager": "Persona que contrata",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "questions": "Preguntas de selección",
+      "questionsHelp": "Hasta tres preguntas. Se añaden al final de la descripción.",
+      "question": "Pregunta {n}",
+      "reviewNote": "Enviar esto no publica el empleo. Solo un administrador puede ponerlo en la lista.",
+      "reviewNoteLive": "Este empleo entra en la lista en cuanto lo envías.",
+      "submit": "Enviar a revisión",
+      "submitLive": "Publicar el empleo",
+      "submitting": "Enviando…",
+      "submittingLive": "Publicando…",
+      "error": "No se pudo enviar el empleo. Revisa los campos obligatorios."
+    }
   }
 }

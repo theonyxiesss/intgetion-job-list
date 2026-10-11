@@ -774,7 +774,7 @@
       }
     },
     "actions": {
-      "publish": "Publish",
+      "publish": "Submit for review",
       "pause": "Pause",
       "close": "Close",
       "extend": "Extend for 30 days",
@@ -2195,6 +2195,64 @@
   "postJob": {
     "title": "Post a job",
     "guest": "To post a job, sign in or create an account.",
-    "register": "Register"
+    "register": "Register",
+    "form": {
+      "intro": "Fill in the role, the pay, and how people should apply. An admin checks it before it appears on the list.",
+      "introLive": "Fill in the role, the pay, and how people should apply. Sending it puts the job on the list.",
+      "company": "Company name",
+      "companyHelp": "Short name, without Inc. or Ltd.",
+      "title": "Job title",
+      "description": "Job description",
+      "location": "Job location",
+      "locationHelp": "Leave this empty for a fully remote role.",
+      "salaryMin": "Minimum salary",
+      "salaryMax": "Maximum salary",
+      "currency": "Currency",
+      "period": "Pay period",
+      "periods": { "month": "Month", "year": "Year" },
+      "countries": "Countries that can apply",
+      "countriesHelp": "Leave empty to accept every country. Presets add country codes.",
+      "regions": {
+        "europe": "Europe",
+        "northAmerica": "North America",
+        "southAmerica": "South America",
+        "latam": "LATAM",
+        "apac": "APAC",
+        "sea": "SEA",
+        "emea": "EMEA",
+        "africa": "Africa",
+        "oceania": "Oceania"
+      },
+      "category": "Category",
+      "employment": "Employment type",
+      "application": "How to apply",
+      "methods": {
+        "internal": "On this site",
+        "email": "Email",
+        "external_url": "Redirect to a form"
+      },
+      "applicationEmail": "Email for applications",
+      "applicationEmailHelp": "Stays private. It is not shown on the job page.",
+      "applicationUrl": "Application form URL",
+      "website": "Company website",
+      "logo": "Picture",
+      "logoHelp": "PNG, JPEG or WebP, up to 2 MB. It is shown as the company logo.",
+      "logoError": "The job was sent, but the picture was not saved.",
+      "x": "X handle",
+      "telegram": "Telegram",
+      "manager": "Hiring manager",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "questions": "Screening questions",
+      "questionsHelp": "Up to three questions. They are added at the end of the description.",
+      "question": "Question {n}",
+      "reviewNote": "Sending this does not publish the job. An admin is the only one who can put it on the list.",
+      "reviewNoteLive": "This post goes on the list as soon as you send it.",
+      "submit": "Submit for review",
+      "submitLive": "Post the job",
+      "submitting": "Sending…",
+      "submittingLive": "Posting…",
+      "error": "Could not submit the job. Check the required fields."
+    }
   }
 }

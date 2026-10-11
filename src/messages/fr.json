@@ -774,7 +774,7 @@
       }
     },
     "actions": {
-      "publish": "Publier",
+      "publish": "Envoyer pour vérification",
       "pause": "Mettre en pause",
       "close": "Fermer",
       "extend": "Prolonger de 30 jours",
@@ -2195,6 +2195,64 @@
   "postJob": {
     "title": "Publier une offre",
     "guest": "Pour publier une offre, connectez-vous ou créez un compte.",
-    "register": "S’inscrire"
+    "register": "S’inscrire",
+    "form": {
+      "intro": "Indiquez le poste, la rémunération et le mode de candidature. Un admin vérifie l’offre avant qu’elle n’apparaisse dans la liste.",
+      "introLive": "Indiquez le poste, la rémunération et le mode de candidature. L’envoi met l’offre dans la liste.",
+      "company": "Nom de l’entreprise",
+      "companyHelp": "Nom court, sans Inc. ni Ltd.",
+      "title": "Intitulé du poste",
+      "description": "Description",
+      "location": "Lieu de travail",
+      "locationHelp": "Laissez vide si le poste est entièrement à distance.",
+      "salaryMin": "Salaire minimum",
+      "salaryMax": "Salaire maximum",
+      "currency": "Devise",
+      "period": "Période de paie",
+      "periods": { "month": "Mois", "year": "Année" },
+      "countries": "Pays pouvant candidater",
+      "countriesHelp": "Vide signifie tous les pays. Les boutons ajoutent des codes pays.",
+      "regions": {
+        "europe": "Europe",
+        "northAmerica": "Amérique du Nord",
+        "southAmerica": "Amérique du Sud",
+        "latam": "LATAM",
+        "apac": "APAC",
+        "sea": "SEA",
+        "emea": "EMEA",
+        "africa": "Afrique",
+        "oceania": "Océanie"
+      },
+      "category": "Catégorie",
+      "employment": "Type d’emploi",
+      "application": "Comment candidater",
+      "methods": {
+        "internal": "Sur ce site",
+        "email": "E-mail",
+        "external_url": "Vers un formulaire"
+      },
+      "applicationEmail": "E-mail pour les candidatures",
+      "applicationEmailHelp": "Reste privé. Il n’apparaît pas sur la page de l’offre.",
+      "applicationUrl": "Adresse du formulaire",
+      "website": "Site de l’entreprise",
+      "logo": "Image",
+      "logoHelp": "PNG, JPEG ou WebP, jusqu’à 2 Mo. Elle s’affiche comme logo de l’entreprise.",
+      "logoError": "L’offre a été envoyée, mais l’image n’a pas été enregistrée.",
+      "x": "Nom sur X",
+      "telegram": "Telegram",
+      "manager": "Personne qui recrute",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "questions": "Questions de sélection",
+      "questionsHelp": "Jusqu’à trois questions. Elles sont ajoutées à la fin de la description.",
+      "question": "Question {n}",
+      "reviewNote": "L’envoi ne publie pas l’offre. Seul un admin peut la mettre dans la liste.",
+      "reviewNoteLive": "Cette offre entre dans la liste dès que vous l’envoyez.",
+      "submit": "Envoyer pour vérification",
+      "submitLive": "Publier l’offre",
+      "submitting": "Envoi…",
+      "submittingLive": "Publication…",
+      "error": "Impossible d’envoyer l’offre. Vérifiez les champs obligatoires."
+    }
   }
 }

@@ -774,7 +774,7 @@
       }
     },
     "actions": {
-      "publish": "Veröffentlichen",
+      "publish": "Zur Prüfung senden",
       "pause": "Pausieren",
       "close": "Schließen",
       "extend": "Um 30 Tage verlängern",
@@ -2195,6 +2195,64 @@
   "postJob": {
     "title": "Job ausschreiben",
     "guest": "Um einen Job auszuschreiben, melden Sie sich an oder erstellen Sie ein Konto.",
-    "register": "Registrieren"
+    "register": "Registrieren",
+    "form": {
+      "intro": "Rolle, Bezahlung und Bewerbungsweg eintragen. Ein Admin prüft die Stelle, bevor sie in der Liste steht.",
+      "introLive": "Rolle, Bezahlung und Bewerbungsweg eintragen. Mit dem Senden steht die Stelle in der Liste.",
+      "company": "Firmenname",
+      "companyHelp": "Kurzer Name, ohne Inc. oder Ltd.",
+      "title": "Stellentitel",
+      "description": "Beschreibung",
+      "location": "Arbeitsort",
+      "locationHelp": "Leer lassen, wenn die Stelle vollständig remote ist.",
+      "salaryMin": "Gehalt von",
+      "salaryMax": "Gehalt bis",
+      "currency": "Währung",
+      "period": "Zahlungszeitraum",
+      "periods": { "month": "Monat", "year": "Jahr" },
+      "countries": "Länder, aus denen man sich bewerben kann",
+      "countriesHelp": "Leer heißt jedes Land. Die Schaltflächen fügen Ländercodes hinzu.",
+      "regions": {
+        "europe": "Europa",
+        "northAmerica": "Nordamerika",
+        "southAmerica": "Südamerika",
+        "latam": "LATAM",
+        "apac": "APAC",
+        "sea": "SEA",
+        "emea": "EMEA",
+        "africa": "Afrika",
+        "oceania": "Ozeanien"
+      },
+      "category": "Kategorie",
+      "employment": "Beschäftigungsart",
+      "application": "Wie bewerben",
+      "methods": {
+        "internal": "Auf dieser Website",
+        "email": "E-Mail",
+        "external_url": "Weiter zum Formular"
+      },
+      "applicationEmail": "E-Mail für Bewerbungen",
+      "applicationEmailHelp": "Bleibt privat. Sie steht nicht auf der Stellenseite.",
+      "applicationUrl": "Adresse des Bewerbungsformulars",
+      "website": "Website der Firma",
+      "logo": "Bild",
+      "logoHelp": "PNG, JPEG oder WebP, bis 2 MB. Es wird als Firmenlogo gezeigt.",
+      "logoError": "Die Stelle wurde gesendet, aber das Bild wurde nicht gespeichert.",
+      "x": "Name auf X",
+      "telegram": "Telegram",
+      "manager": "Wer einstellt",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "questions": "Auswahlfragen",
+      "questionsHelp": "Bis zu drei Fragen. Sie werden ans Ende der Beschreibung gesetzt.",
+      "question": "Frage {n}",
+      "reviewNote": "Das Absenden veröffentlicht die Stelle nicht. Nur ein Admin setzt sie auf die Liste.",
+      "reviewNoteLive": "Diese Stelle steht in der Liste, sobald Sie sie senden.",
+      "submit": "Zur Prüfung senden",
+      "submitLive": "Stelle veröffentlichen",
+      "submitting": "Wird gesendet…",
+      "submittingLive": "Wird veröffentlicht…",
+      "error": "Die Stelle konnte nicht gesendet werden. Prüfen Sie die Pflichtfelder."
+    }
   }
 }

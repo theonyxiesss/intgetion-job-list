@@ -28,16 +28,25 @@ describe("job transition table from TZ 4.3", () => {
     expect(legal).toHaveLength(19);
   });
 
-  it("gates publish by verification and risk score", () => {
+  it("sends every member publish and extend to admin review (D391)", () => {
     expect(
       transitionJob({
         status: "draft",
         action: "publish",
         actor: "member",
         companyStatus: "verified",
-        riskScore: 3,
+        riskScore: 0,
       }),
-    ).toBe("published");
+    ).toBe("pending_moderation");
+    expect(
+      transitionJob({
+        status: "paused",
+        action: "extend",
+        actor: "member",
+        companyStatus: "verified",
+        riskScore: 0,
+      }),
+    ).toBe("pending_moderation");
     expect(
       transitionJob({
         status: "draft",

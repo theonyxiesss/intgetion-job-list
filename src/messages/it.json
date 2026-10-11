@@ -774,7 +774,7 @@
       }
     },
     "actions": {
-      "publish": "Pubblica",
+      "publish": "Invia per la verifica",
       "pause": "Metti in pausa",
       "close": "Chiudi",
       "extend": "Proroga di 30 giorni",
@@ -2195,6 +2195,64 @@
   "postJob": {
     "title": "Pubblica un’offerta",
     "guest": "Per pubblicare un’offerta, accedi o crea un account.",
-    "register": "Registrati"
+    "register": "Registrati",
+    "form": {
+      "intro": "Indica il ruolo, la retribuzione e come candidarsi. Un admin controlla l’offerta prima che compaia nell’elenco.",
+      "introLive": "Indica il ruolo, la retribuzione e come candidarsi. L’invio mette l’offerta nell’elenco.",
+      "company": "Nome dell’azienda",
+      "companyHelp": "Nome breve, senza Inc. o Ltd.",
+      "title": "Titolo della posizione",
+      "description": "Descrizione",
+      "location": "Luogo di lavoro",
+      "locationHelp": "Lascia vuoto se il ruolo è completamente da remoto.",
+      "salaryMin": "Retribuzione minima",
+      "salaryMax": "Retribuzione massima",
+      "currency": "Valuta",
+      "period": "Periodo di pagamento",
+      "periods": { "month": "Mese", "year": "Anno" },
+      "countries": "Paesi da cui ci si può candidare",
+      "countriesHelp": "Vuoto significa qualsiasi paese. I pulsanti aggiungono i codici paese.",
+      "regions": {
+        "europe": "Europa",
+        "northAmerica": "Nord America",
+        "southAmerica": "Sud America",
+        "latam": "LATAM",
+        "apac": "APAC",
+        "sea": "SEA",
+        "emea": "EMEA",
+        "africa": "Africa",
+        "oceania": "Oceania"
+      },
+      "category": "Categoria",
+      "employment": "Tipo di impiego",
+      "application": "Come candidarsi",
+      "methods": {
+        "internal": "Su questo sito",
+        "email": "Email",
+        "external_url": "Vai a un modulo"
+      },
+      "applicationEmail": "Email per le candidature",
+      "applicationEmailHelp": "Resta privata. Non compare nella pagina dell’offerta.",
+      "applicationUrl": "Indirizzo del modulo",
+      "website": "Sito dell’azienda",
+      "logo": "Immagine",
+      "logoHelp": "PNG, JPEG o WebP, fino a 2 MB. Viene mostrata come logo dell’azienda.",
+      "logoError": "L’offerta è stata inviata, ma l’immagine non è stata salvata.",
+      "x": "Nome su X",
+      "telegram": "Telegram",
+      "manager": "Chi assume",
+      "firstName": "Nome",
+      "lastName": "Cognome",
+      "questions": "Domande di selezione",
+      "questionsHelp": "Fino a tre domande. Vengono aggiunte in fondo alla descrizione.",
+      "question": "Domanda {n}",
+      "reviewNote": "L’invio non pubblica l’offerta. Solo un admin può metterla nell’elenco.",
+      "reviewNoteLive": "Questa offerta entra nell’elenco appena la invii.",
+      "submit": "Invia per la verifica",
+      "submitLive": "Pubblica l’offerta",
+      "submitting": "Invio…",
+      "submittingLive": "Pubblicazione…",
+      "error": "Impossibile inviare l’offerta. Controlla i campi obbligatori."
+    }
   }
 }

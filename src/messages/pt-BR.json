@@ -774,7 +774,7 @@
       }
     },
     "actions": {
-      "publish": "Publicar",
+      "publish": "Enviar para revisão",
       "pause": "Pausar",
       "close": "Encerrar",
       "extend": "Prorrogar por 30 dias",
@@ -2195,6 +2195,64 @@
   "postJob": {
     "title": "Publicar vaga",
     "guest": "Para publicar uma vaga, entre ou crie uma conta.",
-    "register": "Cadastrar"
+    "register": "Cadastrar",
+    "form": {
+      "intro": "Informe o cargo, o pagamento e como as pessoas devem se candidatar. Um administrador confere antes de a vaga aparecer na lista.",
+      "introLive": "Informe o cargo, o pagamento e como as pessoas devem se candidatar. Ao enviar, a vaga entra na lista.",
+      "company": "Nome da empresa",
+      "companyHelp": "Nome curto, sem Inc. ou Ltd.",
+      "title": "Título da vaga",
+      "description": "Descrição",
+      "location": "Local de trabalho",
+      "locationHelp": "Deixe em branco se a vaga for totalmente remota.",
+      "salaryMin": "Salário mínimo",
+      "salaryMax": "Salário máximo",
+      "currency": "Moeda",
+      "period": "Período de pagamento",
+      "periods": { "month": "Mês", "year": "Ano" },
+      "countries": "Países que podem se candidatar",
+      "countriesHelp": "Em branco vale para qualquer país. Os botões adicionam códigos de país.",
+      "regions": {
+        "europe": "Europa",
+        "northAmerica": "América do Norte",
+        "southAmerica": "América do Sul",
+        "latam": "LATAM",
+        "apac": "APAC",
+        "sea": "SEA",
+        "emea": "EMEA",
+        "africa": "África",
+        "oceania": "Oceania"
+      },
+      "category": "Categoria",
+      "employment": "Tipo de emprego",
+      "application": "Como se candidatar",
+      "methods": {
+        "internal": "Neste site",
+        "email": "E-mail",
+        "external_url": "Ir para um formulário"
+      },
+      "applicationEmail": "E-mail para candidaturas",
+      "applicationEmailHelp": "Fica privado. Não aparece na página da vaga.",
+      "applicationUrl": "URL do formulário",
+      "website": "Site da empresa",
+      "logo": "Imagem",
+      "logoHelp": "PNG, JPEG ou WebP, até 2 MB. Ela aparece como o logo da empresa.",
+      "logoError": "A vaga foi enviada, mas a imagem não foi salva.",
+      "x": "Usuário no X",
+      "telegram": "Telegram",
+      "manager": "Quem contrata",
+      "firstName": "Nome",
+      "lastName": "Sobrenome",
+      "questions": "Perguntas de triagem",
+      "questionsHelp": "Até três perguntas. Elas entram no fim da descrição.",
+      "question": "Pergunta {n}",
+      "reviewNote": "Enviar isto não publica a vaga. Só um administrador pode colocá-la na lista.",
+      "reviewNoteLive": "Esta vaga entra na lista assim que você envia.",
+      "submit": "Enviar para revisão",
+      "submitLive": "Publicar a vaga",
+      "submitting": "Enviando…",
+      "submittingLive": "Publicando…",
+      "error": "Não foi possível enviar a vaga. Confira os campos obrigatórios."
+    }
   }
 }
