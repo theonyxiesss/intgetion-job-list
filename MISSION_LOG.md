@@ -853,3 +853,15 @@
 - Отклонения от ТЗ: нет
 - OPEN QUESTION: mentions légales / CNIL для `/fr` — к юристу.
 - Следующая подфаза: по команде основателя («следующая»).
+
+## [2026-10-09] — locale-it (итальянский, D379) — DONE
+- Сделано: французский закоммичен локально в `claude/locale-fr2` (744348e, без push). Папка `Integetion jobs locale-it`, ветка `claude/locale-it` от 744348e. Итальянский `it` на `/it/...` по образцу fr: routing, `it-IT`, каталоги, схемы Drizzle, письма (шаблоны Supabase, темы `config.toml`, подтверждение домена), бот (тексты, кнопки, вход через Telegram, `it*` → `it`, язык в промпте), SEO, RSS. `it.json` переведён целиком с текущего en.json (fr.json не использовался); подписи IT / Italiano во всех каталогах, в de и fr добавлены только они. Юридические тексты: секции `<!-- it -->` дословно с английского, `legal-sync`, `legalText`. D379 в конце DECISIONS.
+- Найдено и исправлено: в `legal.test.ts` проверка плейсхолдеров de/fr была ослаблена при прошлом переносе (`/{{w+}}/g` ничего не находило). Восстановлена как `/\{\{\w+\}\}/g` и проверяет de, fr, it; все проходят. В `messages.test.ts` импорт итальянского назван `itMessages`, чтобы не затенять `it` из vitest.
+- Проверено на dev-сервере :3400: `/it`, `/it/terms`, `/it/privacy` → 200, `lang="it"`; переключатель — семь языков, «Italiano» текущий; юрлицо «da specificare»; `/de` и `/fr` → 200.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` (с `NEXT_PUBLIC_SITE_URL=http://localhost:3000`) → 0, 843 теста, 1 пропущен.
+- P-тесты подфазы: messages it, legal it (свой текст, те же плейсхолдеры и разделы, `/it/privacy`), письмо it, шаблоны (21 ссылка), бот it/it-it/it-ch, seo/indexnow `/it`, схема отклоняет `nl` ✅
+- Миграции: `src/db/migrations/0045_locale_it.sql` (users, notification_emails, telegram_login_challenges, auth_email_waits; en, ru, es, pt-BR, de, fr, it; на облако не применена)
+- Изменённые файлы: см. `git status` в `Integetion jobs locale-it`. Итальянский не закоммичен.
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: требования итальянского права (Garante, Codice del consumo) для `/it` — к юристу.
+- Следующая подфаза: по команде основателя («следующая»).

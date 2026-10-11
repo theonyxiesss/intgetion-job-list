@@ -50,6 +50,16 @@ describe("auth email letters (D325)", () => {
     expect(letter.html).toContain('lang="fr"');
   });
 
+  it("builds the Italian magic link letter (D379)", () => {
+    const letter = renderAuthEmail({
+      kind: "magiclink",
+      locale: "it",
+      actionHref: "https://example.supabase.co/auth/v1/verify?token=abc",
+    });
+    expect(letter.subject).toContain("Il tuo link di accesso");
+    expect(letter.html).toContain('lang="it"');
+  });
+
   it("builds a branded recovery letter", () => {
     const letter = renderAuthEmail({
       kind: "recovery",

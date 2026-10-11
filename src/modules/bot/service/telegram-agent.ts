@@ -124,6 +124,25 @@ const copy = {
     openJob: "Ouvrir",
     more: "Plus dans le catalogue : {site}/fr/jobs",
   },
+  it: {
+    unavailable:
+      "L’agente sta riposando. Il catalogo funziona ancora: " +
+      "{site}/it/jobs",
+    tryLater: "Qualcosa è andato storto da parte mia. Riprova tra un minuto.",
+    rateLimited: "Sono tante domande tutte insieme. Riprova tra un minuto.",
+    budget: "L’agente ha raggiunto il budget di oggi. Riprova domani.",
+    empty:
+      "Dimmi cosa cerchi — un ruolo, una competenza, un fuso orario.",
+    reset: "Dimenticato. Cosa cerchi?",
+    help:
+      "Chiedi con parole tue: «lavori Solidity da remoto», «design part-time in Europa». " +
+      "Accedi su {site} per salvare offerte e candidarti. /reset avvia una nuova conversazione.",
+    signIn:
+      "Per salvare un’offerta o candidarti, accedi e poi torna qui.",
+    signInButton: "Accedi",
+    openJob: "Apri",
+    more: "Altro nel catalogo: {site}/it/jobs",
+  },
 } as const;
 
 type Lines = { readonly [K in keyof (typeof copy)["en"]]: string };
@@ -174,6 +193,15 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     register: "Créer un compte",
     post_job: "Publier une offre",
   },
+  it: {
+    pay_hire: "Paga Hire",
+    pay_team: "Paga Team",
+    pay_plus: "Paga Plus",
+    pay_pro: "Paga Pro",
+    pricing: "Vedi i piani",
+    register: "Crea un account",
+    post_job: "Pubblica un’offerta",
+  },
 };
 
 type LinkButton = { label: string; url: string };
@@ -198,6 +226,8 @@ function linesFor(languageCode: string | undefined): {
   if (code.startsWith("de")) return { lines: copy.de, locale: "de" };
   // D374: "fr", "fr-fr", "fr-ca", "fr-be", "fr-ch" all get French.
   if (code.startsWith("fr")) return { lines: copy.fr, locale: "fr" };
+  // D379: "it", "it-it", "it-ch" all get Italian.
+  if (code.startsWith("it")) return { lines: copy.it, locale: "it" };
   const ru = code.startsWith("ru");
   return { lines: ru ? copy.ru : copy.en, locale: ru ? "ru" : "en" };
 }

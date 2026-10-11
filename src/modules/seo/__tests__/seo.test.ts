@@ -148,6 +148,7 @@ describe("languageAlternates (D276)", () => {
       "pt-BR": "http://localhost:3000/pt-BR/jobs",
       de: "http://localhost:3000/de/jobs",
       fr: "http://localhost:3000/fr/jobs",
+      it: "http://localhost:3000/it/jobs",
       "x-default": "http://localhost:3000/jobs",
     });
   });

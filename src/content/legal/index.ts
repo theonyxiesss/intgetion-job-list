@@ -3,7 +3,7 @@ import legal from "./legal.json";
 /** Legal texts synced from docs/content/legal-*.md (`pnpm legal:sync`, D241). */
 export type LegalDocumentKey = keyof typeof legal;
 
-/** ru, pt-BR, es, de and fr have their own text (D350, D373, D374); every other language reads en. */
+/** ru, pt-BR, es, de, fr and it have their own text (D350, D373, D374, D379); every other language reads en. */
 export function legalText(document: LegalDocumentKey, locale: string): string {
   const texts = legal[document];
   if (locale === "ru") return texts.ru;
@@ -11,5 +11,6 @@ export function legalText(document: LegalDocumentKey, locale: string): string {
   if (locale === "es") return texts.es;
   if (locale === "de") return texts.de;
   if (locale === "fr") return texts.fr;
+  if (locale === "it") return texts.it;
   return texts.en;
 }

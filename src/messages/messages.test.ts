@@ -4,10 +4,11 @@ import en from "./en.json";
 import es from "./es.json";
 import de from "./de.json";
 import fr from "./fr.json";
+import itMessages from "./it.json";
 import ptBR from "./pt-BR.json";
 import ru from "./ru.json";
 
-const catalogs = { en, ru, es, "pt-BR": ptBR, de, fr } as const;
+const catalogs = { en, ru, es, "pt-BR": ptBR, de, fr, it: itMessages } as const;
 
 function entries(value: unknown, prefix = ""): [string, string][] {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {

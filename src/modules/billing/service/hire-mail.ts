@@ -2,12 +2,13 @@ import en from "@/messages/en.json";
 import es from "@/messages/es.json";
 import de from "@/messages/de.json";
 import fr from "@/messages/fr.json";
+import it from "@/messages/it.json";
 import ptBR from "@/messages/pt-BR.json";
 import ru from "@/messages/ru.json";
 import { siteUrl } from "@/modules/seo/site";
 import { localePrefix } from "@/i18n/paths";
 
-const catalogs = { en, ru, es, "pt-BR": ptBR, de, fr } as const;
+const catalogs = { en, ru, es, "pt-BR": ptBR, de, fr, it } as const;
 
 export async function sendHireMail(input: {
   to: string | null;
