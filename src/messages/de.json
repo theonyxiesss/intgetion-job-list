@@ -143,18 +143,24 @@
       "ru": "RU",
       "es": "ES",
       "pt-BR": "PT",
-      "de": "DE"
+      "de": "DE",
+      "fr": "FR",
+      "it": "IT"
     },
     "native": {
       "en": "English",
       "ru": "Русский",
       "es": "Español",
       "pt-BR": "Português (Brasil)",
-      "de": "Deutsch"
+      "de": "Deutsch",
+      "fr": "Français",
+      "it": "Italiano"
     },
     "es": "Spanisch",
     "pt-BR": "Portugiesisch (Brasilien)",
-    "de": "Deutsch"
+    "de": "Deutsch",
+    "fr": "Französisch",
+    "it": "Italienisch"
   },
   "home": {
     "tagline": "Remote-Arbeit. Echte Treffer.",

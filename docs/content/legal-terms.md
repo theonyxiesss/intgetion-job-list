@@ -669,3 +669,269 @@ Fassung vom {{effectiveDate}}. Versionskennung {{version}}.
 - Personenbezogene Daten: {{privacyEmail}}
 - Meldungen von Schwachstellen: {{securityEmail}} — wir verfolgen keine Forschenden, die in gutem Glauben eine Schwachstelle melden, sie nicht zum Schaden ausnutzen und sie nicht vor einer Behebung offenlegen.
 - Postanschrift: {{address}}
+
+<!-- fr -->
+
+# Conditions d’utilisation d’INTGETION JOB LIST
+
+Version du {{effectiveDate}}. Identifiant de version {{version}}.
+
+## 1. Qui nous sommes et ce qu’est cet accord
+
+1.1. INTGETION JOB LIST (le « Service ») désigne le site https://intgetion.com, ses sous-domaines, son bot Telegram et les fonctionnalités associées qui aident les personnes à trouver un travail à distance et les entreprises à trouver des personnes.
+
+1.2. Le Service est fourni par {{operator}}, {{address}} (« nous »).
+
+1.3. Les présentes Conditions constituent un contrat entre nous et vous (l’« Utilisateur »). En vous inscrivant, en vous connectant avec Telegram ou en utilisant d’une autre manière les fonctionnalités réservées aux utilisateurs inscrits, vous confirmez avoir lu et accepté les présentes Conditions et la [Politique de confidentialité](/fr/privacy). Les pages publiques peuvent être consultées sans compte ; les sections 6 et 9 à 12 s’appliquent à cet usage.
+
+1.4. Si vous acceptez au nom d’une entreprise, vous confirmez y être autorisé, et les Conditions engagent l’entreprise.
+
+## 2. Conditions d’accès
+
+2.1. Vous devez avoir au moins {{minAge}}. Les employeurs doivent être des personnes ou des organisations juridiquement capables.
+
+2.2. Vous ne pouvez pas utiliser le Service si nous avons déjà banni votre compte ou si la loi qui vous est applicable l’interdit.
+
+## 3. Compte
+
+3.1. Vous pouvez vous connecter par e-mail (mot de passe ou lien à usage unique) ou avec Telegram. Avec Telegram, nous recevons de Telegram votre identifiant numérique, votre nom et votre nom d’utilisateur (le cas échéant) ; nous ne recevons pas votre numéro de téléphone. Vous pouvez ajouter un e-mail et lier Telegram à un même compte.
+
+3.2. Vous êtes responsable de la sécurité de l’accès à votre e-mail, à votre mot de passe et à Telegram, ainsi que de tout ce qui est fait depuis votre compte. Si vous soupçonnez qu’une autre personne y a accès, changez votre mot de passe, déconnectez-vous des sessions et contactez-nous (section 15).
+
+3.3. Fournissez des informations véridiques. Une personne, un compte candidat ; les employeurs agissent pour leur entreprise via le profil de celle-ci.
+
+3.4. Vous pouvez supprimer votre compte à tout moment dans Paramètres → Confidentialité. La Politique de confidentialité en explique les effets : le profil est anonymisé, les coordonnées sont supprimées, les candidatures restent chez les employeurs sans vos coordonnées.
+
+## 4. Ce que fait le Service
+
+4.1. **Catalogue d’offres** : offres publiées par des entreprises sur le Service et offres provenant de sources publiques (section 6).
+
+4.2. **Correspondance** : le Service compare le profil d’un candidat aux offres (compétences, fuseau horaire et chevauchement des heures de travail, mode de travail, attentes salariales) et affiche un score de correspondance accompagné d’une explication. Le score est une indication automatique, pas une promesse d’entretien ou d’emploi.
+
+4.3. **Candidatures et contact** : les candidats postulent ; les employeurs voient le profil du candidat sans ses coordonnées ; les coordonnées ne s’ouvrent qu’en cas d’intérêt mutuel.
+
+4.4. **Agent carrière (IA)** : aide à rechercher des offres et à remplir le profil. Les réponses proviennent d’un modèle d’intelligence artificielle et peuvent être inexactes ; vérifiez ce qui compte. L’agent ne modifie jamais votre profil et ne postule jamais sans votre confirmation explicite. Ne lui communiquez pas de données personnelles inutiles : numéros d’identité, coordonnées bancaires, mots de passe.
+
+4.5. **Notifications** : dans l’application, par e-mail et dans Telegram — sur les candidatures, les correspondances, les recherches enregistrées et les entreprises suivies. Les canaux et les types se règlent dans Paramètres → Notifications ; les messages de service (connexion, sécurité, modifications des présentes Conditions) sont toujours envoyés.
+
+4.6. **Pour les employeurs** : profil d’entreprise, publication d’offres après modération, vérification de l’entreprise (domaine de l’e-mail professionnel ou enregistrement DNS), gestion des candidatures, statistiques de consultation des offres (totaux anonymes uniquement).
+
+4.7. Le Service est actuellement gratuit. Les fonctionnalités payantes (par exemple, une API partenaire) seront annoncées à l’avance et régies par des conditions distinctes.
+
+## 5. Règles
+
+5.1. **Vous ne devez pas** :
+
+- publier des informations fausses, trompeuses ou appartenant à autrui sur vous-même ou une entreprise ;
+- publier des offres qui ne sont pas un vrai travail : « emplois » avec paiement préalable, marketing de réseau déguisé en recrutement, « formations » payantes, systèmes d’encaissement, coursiers pour des marchandises inconnues, collecte de documents ou de coordonnées bancaires, mules financières et assimilés ;
+- demander aux candidats de l’argent, un paiement pour une formation ou un équipement, des copies de documents avant un contrat, des données de carte ou l’accès à un portefeuille ;
+- discriminer pour des motifs interdits par la loi applicable ;
+- envoyer du spam, de la publicité sans rapport avec le recrutement ou des messages non sollicités ;
+- collecter les données d’autres utilisateurs ou les offres du Service par des moyens automatisés (scraping, bots) en dehors de l’API officielle, ou contourner les limites techniques, y compris `robots.txt` et les limites de débit ;
+- perturber le Service, rechercher ou exploiter des vulnérabilités (sauf signalement de bonne foi — section 15), usurper l’identité d’une autre personne ou la nôtre ;
+- utiliser les coordonnées obtenues via le Service à d’autres fins que le recrutement ;
+- porter atteinte aux droits d’autrui ou à la loi.
+
+5.2. **Vous ne devez pas publier** de contenu illicite, portant atteinte aux droits d’autrui, contenant des menaces, des injures, du contenu sexuel, des logiciels malveillants ou des liens vers ceux-ci.
+
+## 6. Offres provenant de sources publiques
+
+6.1. Certaines offres proviennent de flux et de sites d’emploi publics. Elles sont étiquetées avec leur source et renvoient vers celle-ci pour postuler.
+
+6.2. Nous ne sommes pas l’auteur de ces offres et ne les vérifions pas une par une. Les droits sur leurs textes appartiennent aux sources et aux employeurs ; vous ne pouvez pas les copier ni les redistribuer via le Service.
+
+## 7. Modération et vérification
+
+7.1. Les offres et les entreprises font l’objet de contrôles automatiques et manuels ; une offre peut être publiée plus tard ou refusée avec un motif.
+
+7.2. Vous pouvez signaler une offre, une entreprise ou un utilisateur avec le bouton Signaler. Nous examinons les signalements et pouvons retirer une offre ou suspendre une entreprise ou un compte.
+
+7.3. « Entreprise vérifiée » et « Employeur de confiance » signifient que l’entreprise a passé nos contrôles selon les critères décrits sur le site ; ils ne constituent pas une garantie concernant une offre particulière. Vérifiez toujours l’employeur vous-même et ne payez jamais pour obtenir un emploi.
+
+## 8. Nos droits en cas de manquement
+
+8.1. Si vous enfreignez les présentes Conditions ou la loi, ou s’il existe un soupçon raisonnable de fraude, nous pouvons sans préavis masquer ou retirer du contenu, suspendre un compte pour une durée déterminée ou dans l’attente d’un examen, ou le bannir définitivement et empêcher une nouvelle inscription.
+
+8.2. Nous vous indiquons le motif, sauf si cela entraverait une enquête ou est interdit par la loi. Vous pouvez contester en nous contactant (section 15) ; nous répondrons dans un délai de {{appealDays}} jours.
+
+## 9. Propriété intellectuelle
+
+9.1. Le Service, son design, son code, sa base de données, ses logos et ses textes nous appartiennent ou appartiennent à nos concédants. Nous vous accordons un droit non exclusif et non transférable d’utiliser le Service conformément à sa finalité.
+
+9.2. Lorsque vous publiez du contenu (profil, description d’entreprise, offre, logo), vous conservez vos droits et nous accordez une licence gratuite, non exclusive et mondiale pour le stocker, le traiter, le montrer aux utilisateurs, l’adapter au format du Service et l’afficher dans les moteurs de recherche (offres et pages d’entreprise) tant qu’il est publié et pendant une durée raisonnable après sa suppression pour les sauvegardes. Vous confirmez détenir les droits sur ce contenu.
+
+## 10. Responsabilité
+
+10.1. Le Service est fourni « en l’état ». Nous nous efforçons de le maintenir disponible et correct mais ne le garantissons pas ; des maintenances planifiées ou imprévues peuvent avoir lieu.
+
+10.2. Nous sommes une plateforme, pas une partie à la relation de travail. Nous ne sommes ni employeur, ni agence de recrutement, ni représentant de l’une ou l’autre partie ; nous ne garantissons pas qu’un candidat obtienne un emploi ni qu’un employeur recrute ; nous ne sommes pas responsables du contenu des offres et des profils, des accords et actions entre utilisateurs, de la rémunération ou des conditions de travail.
+
+10.3. Les scores de correspondance, les indications et les réponses de l’agent IA sont automatiques et informatifs ; les décisions vous appartiennent.
+
+10.4. Dans la mesure permise par la loi applicable, nous ne sommes pas responsables du manque à gagner ni des dommages indirects. Rien dans les présentes Conditions ne limite une responsabilité qui ne peut être limitée par la loi ni les droits des consommateurs auxquels il ne peut être renoncé par contrat.
+
+10.5. Les formules payantes Hire, Team, Plus et Pro se paient par un virement d’USDT ou d’USDC vers le portefeuille de l’entreprise. Un paiement active la formule pour 30 jours et ne se renouvelle pas. Le montant annuel indiqué sur la page des tarifs n’est pas facturé. Les paiements par carte ne sont pas encore acceptés. Start et la recherche d’emploi restent gratuits. La formule ne s’active qu’après la vérification du virement par le serveur ; un message dans le navigateur ne l’active pas. Si, après 30 jours, une offre Hire a moins de 10 candidatures de candidats correspondant à au moins 60 %, le remboursement est effectué manuellement depuis le portefeuille de l’entreprise. Hire inclut un bloc mis en avant pendant 7 jours. Plus active 100 messages Spoki par jour et Pro 300. La formule gratuite reste à 15. Start et Hire incluent 2 membres d’équipe. Team porte ce nombre à 10 pour cette entreprise. Un modèle plus puissant et un remboursement automatique ne sont pas encore activés par ce paiement.
+
+## 11. Données personnelles et cookies
+
+11.1. La Politique de confidentialité explique comment nous collectons, utilisons et conservons les données. En bref : nous ne vendons pas de données ; un employeur ne voit les coordonnées d’un candidat qu’en cas d’intérêt mutuel ; les statistiques de visite sont collectées sans tiers et sans cookies, et le cookie de statistiques n’est déposé qu’avec votre consentement ; le signal Global Privacy Control est respecté.
+
+11.2. Vous pouvez modifier votre choix de cookies dans Paramètres → Confidentialité ou dans le bandeau ; refuser est aussi simple qu’accepter.
+
+## 12. Modifications
+
+12.1. Nous pouvons modifier les présentes Conditions. Nous annonçons les modifications importantes au moins 30 jours à l’avance par e-mail et dans le Service ; la nouvelle version s’applique à compter de la date indiquée. Si vous n’êtes pas d’accord, vous pouvez supprimer votre compte avant cette date ; continuer à utiliser le Service après celle-ci signifie que vous acceptez la nouvelle version.
+
+12.2. Nous pouvons modifier, ajouter et supprimer des fonctionnalités. Si une modification limite de manière importante l’accès à un contenu que vous avez déjà publié, nous vous en informerons à l’avance.
+
+## 13. Résiliation
+
+13.1. Vous pouvez cesser d’utiliser le Service et supprimer votre compte à tout moment.
+
+13.2. Nous pouvons cesser le Service avec un préavis d’au moins 30 jours et un moyen d’exporter vos données.
+
+## 14. Droit applicable et litiges
+
+14.1. Les présentes Conditions sont régies par le droit de {{lawCountry}}. Si vous êtes un consommateur dans un pays dont la loi vous accorde une protection plus forte, cette protection demeure.
+
+14.2. Nous essayons d’abord de résoudre les litiges par correspondance (section 15). À défaut, {{court}} tranche, sauf disposition impérative contraire.
+
+## 15. Contact
+
+- Questions générales et litiges : {{supportEmail}}
+- Données personnelles : {{privacyEmail}}
+- Signalement de vulnérabilités : {{securityEmail}} — nous ne poursuivons pas les chercheurs de bonne foi qui signalent une vulnérabilité, ne l’exploitent pas pour nuire et ne la divulguent pas avant sa correction.
+- Adresse postale : {{address}}
+
+<!-- it -->
+
+# Termini di utilizzo di INTGETION JOB LIST
+
+Versione del {{effectiveDate}}. Identificativo di versione {{version}}.
+
+## 1. Chi siamo e che cos’è questo accordo
+
+1.1. INTGETION JOB LIST (il «Servizio») è il sito https://intgetion.com, i suoi sottodomini, il suo bot Telegram e le relative funzioni che aiutano le persone a trovare lavoro da remoto e le aziende a trovare persone.
+
+1.2. Il Servizio è fornito da {{operator}}, {{address}} («noi»).
+
+1.3. I presenti Termini sono un contratto tra noi e te («Utente»). Registrandoti, accedendo con Telegram o utilizzando in altro modo le funzioni per gli utenti registrati, confermi di aver letto e di accettare i presenti Termini e l’[Informativa sulla privacy](/it/privacy). Le pagine pubbliche si possono consultare senza un account; a tale uso si applicano le sezioni 6 e da 9 a 12.
+
+1.4. Se accetti per conto di un’azienda, confermi di essere autorizzato a farlo, e i Termini vincolano l’azienda.
+
+## 2. Requisiti
+
+2.1. Devi avere almeno {{minAge}}. I datori di lavoro devono essere persone o organizzazioni giuridicamente capaci.
+
+2.2. Non puoi usare il Servizio se in precedenza abbiamo bannato il tuo account o se la legge a te applicabile lo vieta.
+
+## 3. Account
+
+3.1. Puoi accedere con l’email (password o link monouso) oppure con Telegram. Con Telegram riceviamo da Telegram il tuo ID numerico, il nome e il nome utente (se presente); non riceviamo il tuo numero di telefono. Puoi aggiungere un’email e collegare Telegram a un unico account.
+
+3.2. Sei responsabile della sicurezza dell’accesso alla tua email, alla password e a Telegram, e di tutto ciò che viene fatto dal tuo account. Se sospetti che qualcun altro vi abbia accesso, cambia la password, esci dalle sessioni e contattaci (sezione 15).
+
+3.3. Fornisci informazioni veritiere. Una persona, un account da candidato; i datori di lavoro agiscono per la loro azienda tramite il suo profilo aziendale.
+
+3.4. Puoi eliminare il tuo account in qualsiasi momento in Impostazioni → Privacy. L’Informativa sulla privacy ne spiega gli effetti: il profilo viene anonimizzato, i contatti vengono eliminati, le candidature restano ai datori di lavoro senza i tuoi contatti.
+
+## 4. Cosa fa il Servizio
+
+4.1. **Catalogo delle offerte**: offerte pubblicate dalle aziende sul Servizio e offerte da fonti pubbliche (sezione 6).
+
+4.2. **Corrispondenza**: il Servizio confronta il profilo di un candidato con le offerte (competenze, fuso orario e sovrapposizione degli orari di lavoro, modalità di lavoro, aspettative di stipendio) e mostra un punteggio di corrispondenza con una spiegazione. Il punteggio è un’indicazione automatica, non una promessa di colloquio o di lavoro.
+
+4.3. **Candidature e contatto**: i candidati si candidano; i datori di lavoro vedono il profilo del candidato senza i contatti; i contatti diventano visibili solo con l’interesse reciproco.
+
+4.4. **Agente di carriera (IA)**: aiuta a cercare offerte e a compilare il profilo. Le risposte provengono da un modello di intelligenza artificiale e possono essere imprecise; verifica ciò che conta. L’agente non modifica mai il tuo profilo né si candida senza la tua conferma esplicita. Non condividere con lui dati personali non necessari: numeri di documenti, coordinate bancarie, password.
+
+4.5. **Notifiche**: nell’app, via email e in Telegram — su candidature, corrispondenze, ricerche salvate e aziende seguite. Canali e tipi si impostano in Impostazioni → Notifiche; i messaggi di servizio (accesso, sicurezza, modifiche ai presenti Termini) vengono sempre inviati.
+
+4.6. **Per i datori di lavoro**: profilo aziendale, pubblicazione delle offerte dopo la moderazione, verifica dell’azienda (dominio dell’email aziendale o record DNS), gestione delle candidature, statistiche di visualizzazione delle offerte (solo totali anonimi).
+
+4.7. Il Servizio è attualmente gratuito. Le funzioni a pagamento (ad esempio un’API per partner) saranno annunciate in anticipo e regolate da termini separati.
+
+## 5. Regole
+
+5.1. **Non devi**:
+
+- pubblicare informazioni false, ingannevoli o altrui su di te o su un’azienda;
+- pubblicare offerte che non sono un vero lavoro: «lavori» con pagamenti anticipati, marketing multilivello travestito da assunzione, «formazione» a pagamento, schemi di incasso, corrieri per merci sconosciute, raccolta di documenti o coordinate bancarie, money mule e simili;
+- chiedere ai candidati denaro, pagamenti per formazione o attrezzature, copie di documenti prima di un contratto, dati della carta o accesso al wallet;
+- discriminare per motivi vietati dalla legge applicabile;
+- inviare spam, pubblicità non legata alle assunzioni o messaggi non richiesti;
+- raccogliere con mezzi automatici (scraping, bot) i dati di altri utenti o le offerte del Servizio al di fuori dell’API ufficiale, o aggirare i limiti tecnici, compresi `robots.txt` e i limiti di frequenza;
+- interferire con il Servizio, cercare o sfruttare vulnerabilità (salvo segnalazioni in buona fede — sezione 15), spacciarti per un’altra persona o per noi;
+- usare i contatti ottenuti tramite il Servizio per scopi diversi dall’assunzione;
+- violare i diritti altrui o la legge.
+
+5.2. **Non devi pubblicare** contenuti illeciti, che violano i diritti altrui, che contengono minacce, insulti, materiale sessuale, malware o link a essi.
+
+## 6. Offerte da fonti pubbliche
+
+6.1. Alcune offerte provengono da feed e siti di lavoro pubblici. Sono contrassegnate con la loro fonte e rimandano a essa per la candidatura.
+
+6.2. Non siamo gli autori di queste offerte e non le verifichiamo una per una. I diritti sui loro testi appartengono alle fonti e ai datori di lavoro; non puoi copiarli né ridistribuirli tramite il Servizio.
+
+## 7. Moderazione e verifica
+
+7.1. Offerte e aziende sono sottoposte a controlli automatici e manuali; un’offerta può essere pubblicata più tardi o rifiutata con una motivazione.
+
+7.2. Puoi segnalare un’offerta, un’azienda o un utente con il pulsante Segnala. Esaminiamo le segnalazioni e possiamo rimuovere un’offerta o sospendere un’azienda o un account.
+
+7.3. «Azienda verificata» e «Datore di lavoro affidabile» significano che l’azienda ha superato i nostri controlli secondo i criteri descritti sul sito; non sono una garanzia su un’offerta specifica. Verifica sempre tu stesso il datore di lavoro e non pagare mai per ottenere un lavoro.
+
+## 8. I nostri diritti in caso di violazioni
+
+8.1. Se violi i presenti Termini o la legge, o se c’è un ragionevole sospetto di frode, possiamo senza preavviso nascondere o rimuovere contenuti, sospendere un account per un periodo o in attesa di verifica, oppure bannarlo definitivamente e impedire una nuova registrazione.
+
+8.2. Ti comunichiamo il motivo, salvo che ciò ostacoli un’indagine o sia vietato dalla legge. Puoi presentare ricorso contattandoci (sezione 15); risponderemo entro {{appealDays}} giorni.
+
+## 9. Proprietà intellettuale
+
+9.1. Il Servizio, il suo design, il codice, il database, i loghi e i testi appartengono a noi o ai nostri licenzianti. Ti concediamo un diritto non esclusivo e non trasferibile di usare il Servizio secondo il suo scopo.
+
+9.2. Quando pubblichi contenuti (profilo, descrizione dell’azienda, offerta, logo), conservi i tuoi diritti e ci concedi una licenza gratuita, non esclusiva e mondiale per conservarli, elaborarli, mostrarli agli utenti, adattarli al formato del Servizio e mostrarli nei motori di ricerca (offerte e pagine aziendali) finché sono pubblicati e per un tempo ragionevole dopo la cancellazione per i backup. Confermi di avere i diritti su tali contenuti.
+
+## 10. Responsabilità
+
+10.1. Il Servizio è fornito «così com’è». Lavoriamo per mantenerlo disponibile e corretto ma non lo garantiamo; possono avvenire manutenzioni programmate e non programmate.
+
+10.2. Siamo una piattaforma, non una parte del rapporto di lavoro. Non siamo datore di lavoro, agenzia di selezione o rappresentante di una delle parti; non garantiamo che un candidato ottenga un lavoro o che un datore di lavoro assuma; non siamo responsabili del contenuto delle offerte e dei profili, degli accordi e delle azioni tra utenti, della retribuzione o delle condizioni di lavoro.
+
+10.3. I punteggi di corrispondenza, le indicazioni e le risposte dell’agente IA sono automatici e informativi; le decisioni spettano a te.
+
+10.4. Nella misura consentita dalla legge applicabile, non siamo responsabili per mancati guadagni o danni indiretti. Nulla nei presenti Termini limita una responsabilità che non può essere limitata per legge o i diritti dei consumatori a cui non si può rinunciare per contratto.
+
+10.5. I piani a pagamento Hire, Team, Plus e Pro si pagano con un trasferimento di USDT o USDC al wallet dell’azienda. Un pagamento attiva il piano per 30 giorni e non si rinnova. L’importo annuale indicato nella pagina dei prezzi non viene addebitato. I pagamenti con carta non sono ancora accettati. Start e la ricerca di lavoro restano gratuiti. Il piano si attiva solo dopo che il server ha verificato il trasferimento; un messaggio nel browser non lo attiva. Se dopo 30 giorni un’offerta Hire ha meno di 10 candidature da candidati con almeno il 60% di corrispondenza, il rimborso viene effettuato manualmente dal wallet dell’azienda. Hire include un blocco in evidenza per 7 giorni. Plus attiva 100 messaggi Spoki al giorno e Pro 300. Il piano gratuito resta a 15. Start e Hire includono 2 membri del team. Team porta quell’azienda a 10. Un modello più potente e un rimborso automatico non vengono ancora attivati da questo pagamento.
+
+## 11. Dati personali e cookie
+
+11.1. L’Informativa sulla privacy spiega come raccogliamo, usiamo e conserviamo i dati. In breve: non vendiamo dati; un datore di lavoro vede i contatti di un candidato solo con l’interesse reciproco; le statistiche delle visite sono raccolte senza terze parti e senza cookie, e il cookie di statistica viene impostato solo con il tuo consenso; il segnale Global Privacy Control viene rispettato.
+
+11.2. Puoi cambiare la tua scelta sui cookie in Impostazioni → Privacy o nel banner; rifiutare è semplice quanto accettare.
+
+## 12. Modifiche
+
+12.1. Possiamo modificare i presenti Termini. Annunciamo le modifiche sostanziali con almeno 30 giorni di anticipo via email e nel Servizio; la nuova versione si applica dalla data indicata. Se non sei d’accordo, puoi eliminare il tuo account prima di tale data; continuare a usare il Servizio dopo di essa significa accettare la nuova versione.
+
+12.2. Possiamo modificare, aggiungere e rimuovere funzioni. Se una modifica limita in modo sostanziale l’accesso a contenuti che hai già pubblicato, te lo comunicheremo in anticipo.
+
+## 13. Cessazione
+
+13.1. Puoi smettere di usare il Servizio ed eliminare il tuo account in qualsiasi momento.
+
+13.2. Possiamo cessare il Servizio con un preavviso di almeno 30 giorni e un modo per esportare i tuoi dati.
+
+## 14. Legge applicabile e controversie
+
+14.1. I presenti Termini sono regolati dalla legge di {{lawCountry}}. Se sei un consumatore in un paese la cui legge ti offre una tutela più forte, tale tutela resta valida.
+
+14.2. Cerchiamo prima di risolvere le controversie per corrispondenza (sezione 15). Se ciò non riesce, decide {{court}}, salvo diversa disposizione di legge inderogabile.
+
+## 15. Contatti
+
+- Domande generali e controversie: {{supportEmail}}
+- Dati personali: {{privacyEmail}}
+- Segnalazione di vulnerabilità: {{securityEmail}} — non perseguiamo i ricercatori in buona fede che segnalano una vulnerabilità, non la sfruttano per causare danni e non la rendono pubblica prima della correzione.
+- Indirizzo postale: {{address}}

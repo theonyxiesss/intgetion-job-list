@@ -132,6 +132,28 @@ describe("the agent inside the Telegram bot (D311)", () => {
     expect(lastInput).toMatchObject({ locale: "de" });
   });
 
+  it("answers in French for fr, fr-fr, fr-ca, fr-be and fr-ch (D374)", async () => {
+    turn = (emit) => emit({ type: "error", code: "BOT_UNAVAILABLE" });
+    for (const code of ["fr", "fr-fr", "fr-ca", "fr-be", "fr-ch"]) {
+      sent.length = 0;
+      await handleTelegramAgentUpdate("token", update("offres", code));
+      expect(sent[0].text).toContain("L’agent se repose");
+      expect(sent[0].text).toContain("/fr/jobs");
+      expect(lastInput).toMatchObject({ locale: "fr" });
+    }
+  });
+
+  it("answers in Italian for it, it-it and it-ch (D379)", async () => {
+    turn = (emit) => emit({ type: "error", code: "BOT_UNAVAILABLE" });
+    for (const code of ["it", "it-it", "it-ch"]) {
+      sent.length = 0;
+      await handleTelegramAgentUpdate("token", update("offerte", code));
+      expect(sent[0].text).toContain("L’agente sta riposando");
+      expect(sent[0].text).toContain("/it/jobs");
+      expect(lastInput).toMatchObject({ locale: "it" });
+    }
+  });
+
   it("falls back to English for languages without their own copy", async () => {
     turn = (emit) => emit({ type: "error", code: "BOT_UNAVAILABLE" });
     await handleTelegramAgentUpdate("token", update("empleos", "es"));

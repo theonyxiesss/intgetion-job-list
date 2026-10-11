@@ -1,6 +1,8 @@
 import en from "@/messages/en.json";
 import es from "@/messages/es.json";
 import de from "@/messages/de.json";
+import fr from "@/messages/fr.json";
+import it from "@/messages/it.json";
 import ptBR from "@/messages/pt-BR.json";
 import ru from "@/messages/ru.json";
 import { raw, renderEmailLayout } from "./email-html";
@@ -15,8 +17,8 @@ import { raw, renderEmailLayout } from "./email-html";
  *
  * Language: registration stores `locale` in user metadata, which Supabase
  * exposes as `.Data`. `printf "%v"` keeps a missing value from breaking the
- * Go template; ru, es, pt-BR and de get their own copy, anything else English
- * (D350, D373). The live letters go through the Send Email Hook; these files only
+ * Go template; ru, es, pt-BR, de, fr and it get their own copy, anything else English
+ * (D350, D373, D374, D379). The live letters go through the Send Email Hook; these files only
  * keep local Inbucket in step with it.
  */
 
@@ -33,12 +35,12 @@ const copyKey = {
   magic_link: "magic",
 } as const satisfies Record<AuthTemplateKind, keyof typeof en.email>;
 
-type TemplateLocale = "en" | "ru" | "es" | "pt-BR" | "de";
+type TemplateLocale = "en" | "ru" | "es" | "pt-BR" | "de" | "fr" | "it";
 
-const catalogs = { en, ru, es, "pt-BR": ptBR, de } as const;
+const catalogs = { en, ru, es, "pt-BR": ptBR, de, fr, it } as const;
 
 /** Languages with their own branch, in the order the template tests them. */
-const BRANCHES = ["ru", "es", "pt-BR", "de"] as const;
+const BRANCHES = ["ru", "es", "pt-BR", "de", "fr", "it"] as const;
 
 /** `{{ if ru }}…{{ else if es }}…{{ else if pt-BR }}…{{ else }}en{{ end }}`. */
 function byLocale(render: (locale: TemplateLocale) => string): string {

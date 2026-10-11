@@ -20,6 +20,10 @@ export function intlLocale(locale: string): string {
       return "pt-BR";
     case "de":
       return "de-DE";
+    case "fr":
+      return "fr-FR";
+    case "it":
+      return "it-IT";
     default:
       return "en-US";
   }
