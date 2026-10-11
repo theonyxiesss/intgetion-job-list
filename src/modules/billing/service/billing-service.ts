@@ -17,8 +17,15 @@ import {
   type OrderStatus,
   type SaleSlug,
 } from "@/lib/billing/status";
+import {
+  normalizeAddress,
+  OFAC_SDN_URL,
+  parseSdnCryptoAddresses,
+} from "@/lib/billing/sanctions";
 import { tokenUnits, verifyTransfer } from "@/lib/billing/verify-transfer";
 import { forbidden, HttpError, notFound, validationError } from "@/lib/http";
+import { logger } from "@/lib/logger";
+import { notifyPlatformOwners } from "@/modules/admin-console/service";
 import { findMemberRole } from "@/modules/companies/service";
 
 type OrderRow = {
@@ -500,7 +507,8 @@ export async function confirmHireOrder(
     payer: order.payer_address,
     amount: BigInt(order.token_amount),
     orderCreatedAt: Math.floor(new Date(order.created_at).getTime() / 1000),
-    sanctioned: false,
+    // D380: verifyTransfer has already matched this to the transfer's sender.
+    sanctioned: await isSanctionedAddress(order.payer_address),
   });
   const next = settlement(verified);
   if (!next.grant) {
@@ -509,6 +517,9 @@ export async function confirmHireOrder(
       set status = ${next.status}, reason = ${next.reason}, tx_hash = ${txHash}
       where id = ${order.id} and status <> 'confirmed'
     `);
+    if (next.status === "frozen" && order.status !== "frozen") {
+      await alertFrozenOrder(order.id, order.chain, txHash);
+    }
     return { ...view(await loadOrder(order.id, userId)), granted: false };
   }
   const until = new Date(Date.now() + HIRE_DAYS * 24 * 60 * 60 * 1000).toISOString();
@@ -541,6 +552,83 @@ export async function confirmHireOrder(
     throw new HttpError(409, "HASH_USED", "Already counted");
   }
   return { ...view(await loadOrder(order.id, userId)), granted: true };
+}
+
+/** True when the address is on the stored OFAC SDN crypto list (D380). */
+export async function isSanctionedAddress(address: string): Promise<boolean> {
+  const rows = await getDb().execute<{ address: string }>(sql`
+    select address from sanctioned_addresses
+    where address = ${normalizeAddress(address)}
+    limit 1
+  `);
+  return rows.length > 0;
+}
+
+/**
+ * The owner's signal for a frozen order. The buyer only sees "payment under
+ * review"; nothing moves the money (PAYMENTS §4.5). The log carries the
+ * order, not the address.
+ */
+async function alertFrozenOrder(orderId: string, chain: string, txHash: string) {
+  logger.warn({ orderId, chain }, "billing order frozen: sender on sanctions list");
+  try {
+    await notifyPlatformOwners(
+      "Payment frozen for review",
+      [
+        "A crypto payment was frozen: the sender is on the OFAC SDN list.",
+        `Order: ${orderId}`,
+        `Network: ${chain}`,
+        `Transaction: ${txHash}`,
+        "No plan was granted and no money was moved. The decision is yours.",
+      ].join("\n"),
+    );
+  } catch (error) {
+    logger.error({ err: error, orderId }, "frozen order alert failed");
+  }
+}
+
+export type SanctionsRefresh = { stored: number; replaced: boolean };
+
+/**
+ * Daily refresh of the OFAC SDN crypto addresses (D380). The set is replaced
+ * in one transaction. An empty or broken download keeps the old list, so a
+ * bad fetch never clears the check.
+ */
+export async function refreshSanctionsList(
+  fetchXml: () => Promise<string> = fetchOfacSdn,
+): Promise<SanctionsRefresh> {
+  const addresses = parseSdnCryptoAddresses(await fetchXml());
+  if (addresses.length === 0) {
+    logger.warn("sanctions refresh found no crypto addresses; list kept");
+    return { stored: 0, replaced: false };
+  }
+  await getDb().transaction(async (tx) => {
+    await tx.execute(sql`delete from sanctioned_addresses where source = 'ofac_sdn'`);
+    for (let start = 0; start < addresses.length; start += 500) {
+      const chunk = addresses.slice(start, start + 500);
+      await tx.execute(sql`
+        insert into sanctioned_addresses (address, currency, source, updated_at)
+        values ${sql.join(
+          chunk.map(
+            (entry) => sql`(${entry.address}, ${entry.currency}, 'ofac_sdn', now())`,
+          ),
+          sql`, `,
+        )}
+        on conflict (address) do update
+        set currency = excluded.currency, updated_at = excluded.updated_at
+      `);
+    }
+  });
+  return { stored: addresses.length, replaced: true };
+}
+
+async function fetchOfacSdn(): Promise<string> {
+  const url = process.env.OFAC_SDN_URL?.trim() || OFAC_SDN_URL;
+  const response = await fetch(url, { signal: AbortSignal.timeout(60_000) });
+  if (!response.ok) {
+    throw new HttpError(502, "SANCTIONS_FETCH_FAILED", "The OFAC list did not load");
+  }
+  return response.text();
 }
 
 export async function refreshHireOrder(userId: string, orderId: string): Promise<OrderView> {

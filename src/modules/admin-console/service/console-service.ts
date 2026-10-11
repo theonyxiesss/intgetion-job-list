@@ -374,17 +374,24 @@ async function notifyNewDevice(
 }
 
 async function notifyOwnersLocked(): Promise<void> {
+  await notifyPlatformOwners(
+    "Admin sign-in locked",
+    "An admin sign-in was locked after repeated failures.",
+  );
+}
+
+/** Plain email to every platform owner; silent when mail is not set up. */
+export async function notifyPlatformOwners(
+  subject: string,
+  text: string,
+): Promise<void> {
   const ids = await repo.listOwnerIds();
   for (const id of ids) {
     const user = await repo.findUserRow(id);
     if (!user) continue;
     const email = await getAuthUserEmail(user.authUid);
     if (!email) continue;
-    await sendAdminMail(
-      email,
-      "Admin sign-in locked",
-      "An admin sign-in was locked after repeated failures.",
-    );
+    await sendAdminMail(email, subject, text);
   }
 }
 

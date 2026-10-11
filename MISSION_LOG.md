@@ -831,3 +831,14 @@
 - Отклонения от ТЗ: полоса с 1280/1440, не с 1024 (D371)
 - OPEN QUESTION: нет
 - Следующая подфаза: выкладка пачки только по отдельной команде
+
+## [2026-10-09] — sanctions (D380) — DONE
+- Сделано (две сессии): миграция `0046_sanctions.sql` (таблица `sanctioned_addresses`), `src/lib/billing/sanctions.ts` (разбор OFAC SDN, только крипто-адреса), сверка отправителя в `confirmHireOrder` → `frozen` без покупки, письмо владельцам платформы через `notifyPlatformOwners`, `refreshSanctionsList` (пустая выгрузка не стирает список), cron `/api/cron/sanctions` раз в сутки с `CRON_SECRET`, `vercel.json`. Эта сессия: тесты `src/lib/billing/sanctions.test.ts` и `src/modules/billing/__tests__/sanctions-flow.test.ts`, D380.
+- Проверка теста на регрессию: при временно возвращённом `sanctioned: false` два теста заморозки падают; код восстановлен.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` (с `NEXT_PUBLIC_SITE_URL=http://localhost:3000`) → 0, 840 тестов, 1 пропущен.
+- P-тесты подфазы: адрес из списка → `frozen`, покупка `pending`, `payments` пусто, письмо владельцу одно ✅; чистый адрес → `paid` ✅; пустая выгрузка список не трогает ✅; разбор берёт адрес, не имя ✅
+- Миграции: `src/db/migrations/0046_sanctions.sql` (на облако не применена)
+- Изменённые файлы: `billing-service.ts`, `billing/service/index.ts`, `admin-console/service/{console-service,index}.ts`, `vercel.json`, новые `sanctions.ts`, тесты, cron, миграция, docs.
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: URL выгрузки OFAC сверить на живом сайте перед включением cron на проде; решение по замороженным суммам — основатель с юристом.
+- Следующая подфаза: по команде основателя. Не закоммичено.
