@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { systemPrompt } from "../prompts/system";
+import { SYSTEM_PROMPT_VERSION, systemPrompt } from "../prompts/system";
 import { countryFromText, countryToIso } from "../service/country";
 import {
   catalogSkillSlug,
@@ -92,6 +92,22 @@ describe("Spoki memory", () => {
     expect(prompt).toContain("ROUTES");
     expect(prompt).toContain("post_job");
     expect(prompt).not.toContain("only when they ask");
+  });
+
+  it("forbids a second greeting once the conversation has started", () => {
+    const prompt = systemPrompt({ locale: "ru", signedIn: false });
+    expect(SYSTEM_PROMPT_VERSION).toBe(10);
+    expect(prompt).toContain(
+      "If the conversation already has messages, do not start the reply with a greeting",
+    );
+    expect(prompt).toContain("привет");
+    expect(prompt).toContain("здравствуйте");
+    expect(prompt).toContain("hello");
+    expect(prompt).toContain("hi");
+    expect(prompt).toContain("Answer the last phrase");
+    expect(prompt).toContain(
+      "do not repeat that question. Say the country is not in the profile and ask for it without a greeting",
+    );
   });
 
   it("does not filter remote search by the country of residence", () => {
