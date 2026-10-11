@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { systemPrompt } from "../prompts/system";
+import { SYSTEM_PROMPT_VERSION, systemPrompt } from "../prompts/system";
 import { countryFromText, countryToIso } from "../service/country";
 import {
   catalogSkillSlug,
@@ -92,6 +92,21 @@ describe("Spoki memory", () => {
     expect(prompt).toContain("ROUTES");
     expect(prompt).toContain("post_job");
     expect(prompt).not.toContain("only when they ask");
+  });
+
+  it("follows the last message language and does not lock the reply to the locale (D385)", () => {
+    const prompt = systemPrompt({ locale: "en", signedIn: false });
+    expect(SYSTEM_PROMPT_VERSION).toBe(10);
+    expect(prompt).toContain(
+      "Answer in the language of the person's last message",
+    );
+    expect(prompt).toContain(
+      "If you cannot tell the language of that message, answer in English",
+    );
+    expect(prompt).toContain("Do not refuse a language");
+    expect(prompt).not.toContain("Always answer in");
+    expect(prompt).not.toMatch(/Always answer in English/);
+    expect(prompt).not.toMatch(/\banswer only in English\b/i);
   });
 
   it("does not filter remote search by the country of residence", () => {
