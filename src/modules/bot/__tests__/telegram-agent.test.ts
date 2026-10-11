@@ -49,6 +49,22 @@ vi.mock("../service/conversation", () => ({
 
 const { handleTelegramAgentUpdate } = await import("../service/telegram-agent");
 
+/** The reply a person saw in Telegram on 2026-10-09. It is text, not a tool call. */
+const LEAKED_OFFER = `<tool_call>
+<function=offer_step>
+<parameter=step>
+pay_plus
+</parameter>
+</function>
+</tool_call>`;
+
+function assertNoToolMarkup(text: string) {
+  expect(text).not.toContain("<tool_call");
+  expect(text).not.toContain("</tool_call>");
+  expect(text).not.toContain("function=");
+  expect(text).not.toContain("<parameter=");
+}
+
 const update = (text: string, language = "en") => ({
   message: {
     text,
@@ -81,6 +97,16 @@ describe("the agent inside the Telegram bot (D311)", () => {
     expect(lastInput).toMatchObject({ text: "solidity jobs", locale: "en" });
   });
 
+  it("does not send a tool call the model only wrote as text", async () => {
+    turn = (emit) => {
+      emit({ type: "token", text: LEAKED_OFFER });
+    };
+    await handleTelegramAgentUpdate("token", update("комюнити менеджер", "ru"));
+    expect(sent.length).toBeGreaterThan(0);
+    assertNoToolMarkup(sent.map((item) => item.text).join("\n"));
+    expect(sent.map((item) => item.text).join("\n")).not.toContain("pay_plus");
+  });
+
   it("sends job cards as links to our own pages", async () => {
     turn = (emit) => {
       emit({ type: "token", text: "Here you go." });
@@ -99,6 +125,35 @@ describe("the agent inside the Telegram bot (D311)", () => {
     expect(sent[1].links).toEqual([
       {
         label: "Solidity Engineer",
+        url: "https://example.test/jobs/job-1",
+      },
+    ]);
+  });
+
+  it("keeps the job line and link when the same turn also leaked tool markup", async () => {
+    turn = (emit) => {
+      emit({ type: "token", text: `Here you go.\n${LEAKED_OFFER}` });
+      emit({
+        type: "tool_result",
+        kind: "jobs",
+        data: [
+          {
+            id: "job-1",
+            title: "Community Manager",
+            companyName: "Acme",
+          },
+        ],
+      } as BotEvent);
+    };
+    await handleTelegramAgentUpdate("token", update("community manager"));
+    const blob = sent.map((item) => item.text).join("\n");
+    assertNoToolMarkup(blob);
+    expect(blob).toContain("Here you go.");
+    expect(blob).toContain("Community Manager — Acme");
+    expect(sent.some((item) => item.links?.[0]?.url)).toBe(true);
+    expect(sent.find((item) => item.links?.length)?.links).toEqual([
+      {
+        label: "Community Manager",
         url: "https://example.test/jobs/job-1",
       },
     ]);

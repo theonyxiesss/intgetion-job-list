@@ -32,6 +32,10 @@ import {
   readJobFocus,
 } from "./job-focus";
 import {
+  shouldSearchDespiteLeak,
+  stripLeakedToolMarkup,
+} from "./leaked-tool";
+import {
   followUp,
   hasSearchFact,
   mergeDraft,
@@ -665,6 +669,8 @@ export async function handleMessage(
   const tools = toolsFor(userId);
   let spoke = false;
   let waiting = false;
+  let showedJobs = false;
+  let recoveredSearch = false;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS + 1; round += 1) {
     const rows = await repo.listMessages(conversation.id, HISTORY_READ);
@@ -693,11 +699,26 @@ export async function handleMessage(
       return finish(input, state, emit, now);
     }
     const cost = costMicroUsd(llm.model, response.usage, llm.prices);
-    const calls = lastRound ? [] : response.toolCalls;
+    const modelCalls = lastRound ? [] : response.toolCalls;
+    const visible = stripLeakedToolMarkup(response.text);
+    const recover =
+      !recoveredSearch &&
+      shouldSearchDespiteLeak({
+        text: response.text,
+        toolNames: modelCalls.map((call) => call.name),
+        draft: state.draft,
+      });
+    const recoveredCall: LLMToolCall | null = recover
+      ? { id: "call_recovered_search", name: "search_jobs", input: {} }
+      : null;
+    if (recoveredCall) recoveredSearch = true;
+    // Search first. A real offer_step may follow the jobs. The leaked
+    // XML is never turned into offer_step.
+    const calls = recoveredCall ? [recoveredCall, ...modelCalls] : modelCalls;
     await repo.insertMessage({
       conversationId: conversation.id,
       role: "assistant",
-      content: response.text,
+      content: visible,
       toolCall: calls.length
         ? { calls, promptVersion: SYSTEM_PROMPT_VERSION }
         : { promptVersion: SYSTEM_PROMPT_VERSION },
@@ -705,9 +726,9 @@ export async function handleMessage(
       tokensOut: response.usage.tokensOut,
       costMicroUsd: cost,
     });
-    if (response.text) {
+    if (visible) {
       spoke = true;
-      emit({ type: "token", text: response.text });
+      emit({ type: "token", text: visible });
     }
     if (!calls.length) break;
 
@@ -720,6 +741,7 @@ export async function handleMessage(
       };
       const content = await callTool(ctx, call, emit, now);
       if (content.state) state = content.state;
+      if (content.jobs) showedJobs = true;
       if (content.waiting) waiting = true;
       await repo.insertMessage({
         conversationId: conversation.id,
@@ -729,8 +751,10 @@ export async function handleMessage(
       });
     }
     if (waiting) break;
+    // The leaked text was not a real tool round. The job list is the reply.
+    if (recoveredCall && modelCalls.length === 0) break;
   }
-  if (!spoke && !waiting) {
+  if (!spoke && !waiting && !showedJobs) {
     const text = followUp(input.locale, state.draft);
     await repo.insertMessage({
       conversationId: conversation.id,
@@ -747,7 +771,7 @@ async function callTool(
   call: LLMToolCall,
   emit: Emit,
   now: Date,
-): Promise<{ llm: string; state?: BotState; waiting?: boolean }> {
+): Promise<{ llm: string; state?: BotState; waiting?: boolean; jobs?: boolean }> {
   if (ctx.userId && toolNeedsConfirmation(ctx, call.name)) {
     const confirmation = await repo.createConfirmation({
       conversationId: ctx.conversationId,
@@ -779,7 +803,12 @@ async function callTool(
         data: outcome.client.data,
       });
     }
-    return { llm: outcome.llm, state: outcome.state };
+    const data = outcome.client?.data;
+    const jobs =
+      (outcome.client?.kind === "jobs" || outcome.client?.kind === "matches") &&
+      Array.isArray(data) &&
+      data.length > 0;
+    return { llm: outcome.llm, state: outcome.state, jobs };
   } catch (error) {
     if (error instanceof HttpError) {
       const details =
@@ -947,18 +976,25 @@ export async function confirmAction(
 /** `GET /api/bot/conversation`: the last 50 visible messages. */
 export async function conversationHistory(conversationId: string) {
   const rows = await repo.listMessages(conversationId, 50);
-  return rows
-    .filter(
-      (row) =>
-        (row.role === "user" ||
-          row.role === "assistant" ||
-          row.role === "system_event") &&
-        row.content,
-    )
-    .map((row) => ({
-      id: row.id,
-      role: row.role,
-      content: row.content,
-      createdAt: row.createdAt.toISOString(),
-    }));
+  const visible = rows.flatMap((row) => {
+    if (
+      row.role !== "user" &&
+      row.role !== "assistant" &&
+      row.role !== "system_event"
+    ) {
+      return [];
+    }
+    const content =
+      row.role === "user" ? row.content : stripLeakedToolMarkup(row.content);
+    if (!content) return [];
+    return [
+      {
+        id: row.id,
+        role: row.role,
+        content,
+        createdAt: row.createdAt.toISOString(),
+      },
+    ];
+  });
+  return visible;
 }

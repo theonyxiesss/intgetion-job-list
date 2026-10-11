@@ -13,6 +13,7 @@ import {
   type BotEvent,
 } from "./conversation";
 import { localePrefix } from "@/i18n/paths";
+import { stripLeakedToolMarkup } from "./leaked-tool";
 import { isOfferAction, offerPath, type OfferAction } from "./offers";
 
 /** One Telegram message is 4096 characters; leave room for the job list. */
@@ -275,7 +276,9 @@ function render(
       answer += event.text;
     }
   }
-  const said = answer.trim().slice(0, TELEGRAM_TEXT_LIMIT);
+  const said = stripLeakedToolMarkup(answer)
+    .trim()
+    .slice(0, TELEGRAM_TEXT_LIMIT);
   if (said) out.push({ text: said, links: [] });
 
   for (const event of events) {
