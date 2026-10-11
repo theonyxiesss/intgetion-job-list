@@ -17,6 +17,7 @@ export {
   listMySessions,
   needsRecoveryCodes,
   noteAdminLoginFailure,
+  notifyPlatformOwners,
   readLiveSession,
   requestAuditContext,
   revokeAdminSession,

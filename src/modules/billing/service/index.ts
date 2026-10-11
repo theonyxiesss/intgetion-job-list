@@ -10,9 +10,15 @@ export {
   hireForJob,
   promotedHireJobIds,
   issueWalletNonce,
+  isSanctionedAddress,
   recordBillingInterest,
   recheckSubmittedOrders,
   refreshHireOrder,
+  refreshSanctionsList,
   verifyWalletSignature,
 } from "./billing-service";
-export type { BillingMe, OrderView } from "./billing-service";
+export type {
+  BillingMe,
+  OrderView,
+  SanctionsRefresh,
+} from "./billing-service";
