@@ -94,19 +94,23 @@ describe("Spoki memory", () => {
     expect(prompt).not.toContain("only when they ask");
   });
 
-  it("forbids a second greeting once the conversation has started", () => {
+  it("greets without a country question and answers an account complaint in words", () => {
     const prompt = systemPrompt({ locale: "ru", signedIn: false });
-    expect(SYSTEM_PROMPT_VERSION).toBe(10);
+    expect(SYSTEM_PROMPT_VERSION).toBe(11);
+    expect(prompt).toContain(
+      "On a greeting (привет, здравствуйте, hello, hi, or the same words in other languages), greet them and ask how you can help. Do not ask for country, role, or work format on a greeting.",
+    );
     expect(prompt).toContain(
       "If the conversation already has messages, do not start the reply with a greeting",
     );
-    expect(prompt).toContain("привет");
-    expect(prompt).toContain("здравствуйте");
-    expect(prompt).toContain("hello");
-    expect(prompt).toContain("hi");
-    expect(prompt).toContain("Answer the last phrase");
     expect(prompt).toContain(
-      "do not repeat that question. Say the country is not in the profile and ask for it without a greeting",
+      "the field can be named here in the chat",
+    );
+    expect(prompt).toContain(
+      "Do not greet again and do not copy the previous question word for word.",
+    );
+    expect(prompt).not.toContain(
+      "Looking, and a needed fact is missing (country, role, or work format): ask only that one fact.",
     );
   });
 
