@@ -1412,7 +1412,7 @@
       "errors": {
         "email_required": "Ajoutez d’abord un e-mail : Telegram est votre seul moyen de connexion.",
         "last_sign_in": "C’est votre dernier moyen de connexion. Liez-en d’abord un autre.",
-        "identity_taken": "Ce compte est déjà lié à quelqu’un d’autre.",
+        "identity_taken": "Ce compte Google ou X est déjà un compte séparé d’INTGETION JOB LIST. Connectez-vous avec lui au lieu de le lier ici.",
         "invalid_link": "Impossible de lier le compte. Réessayez.",
         "oauth_unavailable": "Ce mode de connexion n’est pas encore disponible.",
         "generic": "Une erreur s’est produite. Réessayez.",

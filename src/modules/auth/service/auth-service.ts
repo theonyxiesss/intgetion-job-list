@@ -388,6 +388,8 @@ export type CallbackParams = {
   code?: string | null;
   tokenHash?: string | null;
   type?: string | null;
+  errorCode?: string | null;
+  errorDescription?: string | null;
 };
 
 const otpTypes = new Set<EmailOtpType>([
@@ -411,6 +413,23 @@ function callbackFailureReason(error: {
   return "invalid_link";
 }
 
+/** Supabase sends the link failure on the redirect, not as a session code. */
+export function providerCallbackFailure(params: {
+  errorCode?: string | null;
+  errorDescription?: string | null;
+}): "invalid_link" | "identity_taken" | null {
+  const code = params.errorCode ?? "";
+  const description = (params.errorDescription ?? "").toLowerCase();
+  if (!code && !description) return null;
+  if (
+    code === "identity_already_exists" ||
+    description.includes("already linked")
+  ) {
+    return "identity_taken";
+  }
+  return "invalid_link";
+}
+
 /**
  * `/auth/callback`: turns the email link into a session, then makes sure the
  * `users` row exists. `code` is the PKCE flow; `token_hash` is the OTP flow.
@@ -420,6 +439,8 @@ export async function completeCallback(
   params: CallbackParams,
   fallback?: SignupMetadata,
 ): Promise<CallbackResult> {
+  const providerError = providerCallbackFailure(params);
+  if (providerError) return { ok: false, reason: providerError };
   if (params.code) {
     const { error } = await auth.exchangeCodeForSession(params.code);
     if (error) return { ok: false, reason: callbackFailureReason(error) };

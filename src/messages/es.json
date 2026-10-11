@@ -1406,7 +1406,7 @@
         "rate_limited": "Demasiados intentos. Inténtalo más tarde.",
         "unavailable": "El correo no está disponible en este momento.",
         "last_sign_in": "Es tu última forma de entrar. Vincula otra antes.",
-        "identity_taken": "Esta cuenta ya está vinculada a otra persona.",
+        "identity_taken": "Esta cuenta de Google o X ya es una cuenta aparte de INTGETION JOB LIST. Entra con ella, no la vincules aquí.",
         "invalid_link": "No se pudo vincular la cuenta. Inténtalo de nuevo.",
         "oauth_unavailable": "Este método de acceso aún no está disponible."
       },

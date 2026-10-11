@@ -1412,7 +1412,7 @@
       "errors": {
         "email_required": "Aggiungi prima un’email: Telegram è il tuo unico modo per accedere.",
         "last_sign_in": "È il tuo ultimo modo per accedere. Collegane prima un altro.",
-        "identity_taken": "Questo account è già collegato a qualcun altro.",
+        "identity_taken": "Questo account Google o X è già un account separato di INTGETION JOB LIST. Accedi con quello, invece di collegarlo qui.",
         "invalid_link": "Impossibile collegare l’account. Riprova.",
         "oauth_unavailable": "Questo metodo di accesso non è ancora disponibile.",
         "generic": "Qualcosa è andato storto. Riprova.",

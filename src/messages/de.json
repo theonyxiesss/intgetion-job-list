@@ -1412,7 +1412,7 @@
       "errors": {
         "email_required": "Fügen Sie zuerst eine E-Mail hinzu: Telegram ist Ihre einzige Anmeldemöglichkeit.",
         "last_sign_in": "Das ist Ihre letzte Anmeldemöglichkeit. Verknüpfen Sie zuerst eine andere.",
-        "identity_taken": "Dieses Konto ist bereits mit jemand anderem verknüpft.",
+        "identity_taken": "Dieses Google- oder X-Konto ist bereits ein eigenes Konto von INTGETION JOB LIST. Melden Sie sich damit an, statt es hier zu verknüpfen.",
         "invalid_link": "Das Konto konnte nicht verknüpft werden. Versuchen Sie es erneut.",
         "oauth_unavailable": "Diese Anmeldemethode ist noch nicht verfügbar.",
         "generic": "Etwas ist schiefgelaufen. Versuchen Sie es erneut.",

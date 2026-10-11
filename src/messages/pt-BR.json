@@ -1412,7 +1412,7 @@
       "errors": {
         "email_required": "Adicione um e-mail primeiro: o Telegram é sua única forma de entrar.",
         "last_sign_in": "Esta é sua última forma de entrar. Vincule outra primeiro.",
-        "identity_taken": "Esta conta já está vinculada a outra pessoa.",
+        "identity_taken": "Esta conta Google ou X já é uma conta separada do INTGETION JOB LIST. Entre com ela em vez de vinculá-la aqui.",
         "invalid_link": "Não foi possível vincular a conta. Tente novamente.",
         "oauth_unavailable": "Esta forma de login ainda não está disponível.",
         "generic": "Algo deu errado. Tente novamente.",

@@ -1412,7 +1412,7 @@
       "errors": {
         "email_required": "Add an email first: Telegram is your only way to sign in.",
         "last_sign_in": "This is your last way to sign in. Link another one first.",
-        "identity_taken": "This account is already linked to someone else.",
+        "identity_taken": "This Google or X account is already a separate INTGETION JOB LIST account. Sign in with it instead of linking it here.",
         "invalid_link": "Could not link the account. Try again.",
         "oauth_unavailable": "This sign-in method is not available yet.",
         "generic": "Something went wrong. Try again.",

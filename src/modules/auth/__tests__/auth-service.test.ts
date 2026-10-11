@@ -403,6 +403,17 @@ describe("completeCallback", () => {
     expect(auth.signOut).not.toHaveBeenCalled();
   });
 
+  it("reads the already-linked error from the redirect, without exchanging a code", async () => {
+    const auth = fakeAuth(null);
+    expect(
+      await completeCallback(asAuth(auth), {
+        errorCode: "identity_already_exists",
+        errorDescription: "Identity is already linked to another user",
+      }),
+    ).toEqual({ ok: false, reason: "identity_taken" });
+    expect(auth.exchangeCodeForSession).not.toHaveBeenCalled();
+  });
+
   it("reports an identity that already belongs to someone else", async () => {
     const auth = fakeAuth(null);
     auth.exchangeCodeForSession.mockResolvedValue({

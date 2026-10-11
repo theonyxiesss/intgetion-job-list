@@ -45,6 +45,8 @@ export async function GET(
       code: query.get("code"),
       tokenHash: query.get("token_hash"),
       type: query.get("type"),
+      errorCode: query.get("error_code"),
+      errorDescription: query.get("error_description"),
     },
     terms.success ? terms.data : undefined,
   );
