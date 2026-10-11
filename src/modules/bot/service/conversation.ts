@@ -27,6 +27,11 @@ import {
 import { matchSkillSlug } from "@/modules/taxonomy/service";
 import { systemPrompt, SYSTEM_PROMPT_VERSION } from "../prompts/system";
 import {
+  jobFocusBlock,
+  jobFocusOpener,
+  readJobFocus,
+} from "./job-focus";
+import {
   followUp,
   hasSearchFact,
   mergeDraft,
@@ -150,6 +155,97 @@ async function claimGuestConversation(input: {
  * to another user starts a new conversation. A guest cookie is attached
  * to the signed-in user (D182). Returns the token to set.
  */
+function postgresCode(error: unknown): string | undefined {
+  if (!error || typeof error !== "object") return undefined;
+  const row = error as { code?: string; cause?: { code?: string } };
+  return row.code ?? row.cause?.code;
+}
+
+/**
+ * Opens the thread for one vacancy. A signed-in person keeps a separate
+ * history per job. The general chat stays the thread with no job id (D382).
+ */
+export async function openJobConversation(input: {
+  userId: string | null;
+  token: string | undefined;
+  locale: string;
+  jobId: string;
+}): Promise<{ conversation: repo.ConversationRow; token: string } | null> {
+  const focus = await readJobFocus(input.userId, input.jobId, input.locale);
+  if (!focus) return null;
+  let conversation: repo.ConversationRow | undefined;
+  let token = input.token;
+  if (input.userId) {
+    conversation = await repo.findConversationForUserJob(
+      input.userId,
+      input.jobId,
+    );
+  } else if (input.token) {
+    const byCookie = await repo.findConversationByToken(
+      hashSessionToken(input.token),
+    );
+    if (
+      byCookie &&
+      byCookie.userId === null &&
+      byCookie.jobId === input.jobId
+    ) {
+      conversation = byCookie;
+    }
+  }
+  if (!conversation && input.userId && input.token) {
+    const byCookie = await repo.findConversationByToken(
+      hashSessionToken(input.token),
+    );
+    if (
+      byCookie &&
+      byCookie.userId === null &&
+      byCookie.jobId === input.jobId
+    ) {
+      conversation = await repo.claimConversation(
+        byCookie.id,
+        input.userId,
+        byCookie.state,
+      );
+      token = input.token;
+    }
+  }
+  if (!conversation) {
+    token = newSessionToken();
+    try {
+      conversation = await repo.createConversation({
+        userId: input.userId,
+        tokenHash: hashSessionToken(token),
+        locale: input.locale,
+        jobId: input.jobId,
+      });
+    } catch (error) {
+      if (!input.userId || postgresCode(error) !== "23505") throw error;
+      conversation = await repo.findConversationForUserJob(
+        input.userId,
+        input.jobId,
+      );
+      if (!conversation) throw error;
+    }
+  }
+  if (!token || hashSessionToken(token) !== conversation.sessionTokenHash) {
+    token = newSessionToken();
+    await repo.replaceSessionToken(conversation.id, hashSessionToken(token));
+    conversation = {
+      ...conversation,
+      sessionTokenHash: hashSessionToken(token),
+    };
+  }
+  const existing = await repo.listMessages(conversation.id, 1);
+  if (existing.length === 0) {
+    await repo.insertMessage({
+      conversationId: conversation.id,
+      role: "assistant",
+      content: jobFocusOpener(input.locale, focus.title, focus.company),
+    });
+  }
+  return { conversation, token };
+}
+
 export async function resolveConversation(input: {
   userId: string | null;
   token: string | undefined;
@@ -165,7 +261,7 @@ export async function resolveConversation(input: {
     }
   }
   if (input.userId) {
-    const latest = await repo.latestConversationForUser(input.userId);
+    const latest = await repo.latestGeneralConversationForUser(input.userId);
     if (latest) {
       const token = newSessionToken();
       await repo.replaceSessionToken(latest.id, hashSessionToken(token));
@@ -224,6 +320,8 @@ export async function takeDraftOffer(
 export async function resumeConversation(input: {
   userId: string | null;
   token: string | undefined;
+  locale?: string;
+  jobId?: string;
 }): Promise<{
   conversation: repo.ConversationRow | null;
   offer: Extract<BotEvent, { type: "confirm_request" }> | null;
@@ -235,6 +333,25 @@ export async function resumeConversation(input: {
     offer: null,
     actions: chatActions(input.userId, {}),
   };
+  if (input.jobId) {
+    const opened = await openJobConversation({
+      userId: input.userId,
+      token: input.token,
+      locale: input.locale ?? "en",
+      jobId: input.jobId,
+    });
+    if (!opened) return empty;
+    const offer = await takeDraftOffer(opened.conversation, input.userId, new Date());
+    return {
+      conversation: opened.conversation,
+      offer,
+      token: opened.token,
+      actions: chatActions(
+        input.userId,
+        (opened.conversation.state ?? {}) as BotState,
+      ),
+    };
+  }
   let found: repo.ConversationRow | undefined;
   let issued: string | undefined;
   if (input.token) {
@@ -242,10 +359,12 @@ export async function resumeConversation(input: {
     const byCookie =
       claimed ??
       (await repo.findConversationByToken(hashSessionToken(input.token)));
-    if (byCookie && byCookie.userId === input.userId) found = byCookie;
+    if (byCookie && byCookie.userId === input.userId && byCookie.jobId === null) {
+      found = byCookie;
+    }
   }
   if (!found && input.userId) {
-    const latest = await repo.latestConversationForUser(input.userId);
+    const latest = await repo.latestGeneralConversationForUser(input.userId);
     if (latest) {
       issued = newSessionToken();
       await repo.replaceSessionToken(latest.id, hashSessionToken(issued));
@@ -533,11 +652,15 @@ export async function handleMessage(
 
   state = await absorbExtraction(input, llm, state, emit);
 
+  const focus = current.jobId
+    ? await readJobFocus(userId, current.jobId, input.locale)
+    : null;
   const system = systemPrompt({
     locale: input.locale,
     signedIn: userId !== null,
     draft: state.draft,
     notes: state.notes,
+    jobFocus: focus ? jobFocusBlock(focus) : undefined,
   });
   const tools = toolsFor(userId);
   let spoke = false;

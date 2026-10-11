@@ -60,6 +60,7 @@
     "timezone": "Coincidencia de horario laboral",
     "salaryMissing": "Salario no indicado",
     "apply": "Postularme",
+    "talkToAssistant": "Hablar con el asistente",
     "sector": "Sector",
     "seniority": "Nivel",
     "perk": "Beneficios",
@@ -1410,6 +1411,10 @@
   },
   "chat": {
     "title": "Agente de carrera",
+    "jobFocus": {
+      "discussing": "Hablamos de: {title} — {company}",
+      "back": "Volver a la vacante"
+    },
     "intro": "Dile al agente qué trabajo buscas. Encuentra empleos, mantiene tu perfil al día y te pregunta antes de cambiar algo.",
     "log": "Conversación",
     "you": "Tú",

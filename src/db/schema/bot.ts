@@ -5,12 +5,14 @@ import {
   check,
   index,
   integer,
+  uniqueIndex,
   jsonb,
   pgTable,
   text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+import { jobs } from "./jobs";
 import { users } from "./users";
 
 export const botConversations = pgTable(
@@ -23,6 +25,7 @@ export const botConversations = pgTable(
     channel: text("channel").notNull().default("web"),
     sessionTokenHash: text("session_token_hash").notNull().unique(),
     locale: text("locale"),
+    jobId: uuid("job_id").references(() => jobs.id, { onDelete: "cascade" }),
     state: jsonb("state").notNull().default({}),
     summary: text("summary"),
     linkedAt: timestamp("linked_at", { withTimezone: true }),
@@ -35,6 +38,9 @@ export const botConversations = pgTable(
   },
   (table) => [
     index("bot_conversations_user_idx").on(table.userId, table.lastMessageAt),
+    uniqueIndex("bot_conversations_user_job_idx")
+      .on(table.userId, table.jobId)
+      .where(sql`${table.userId} is not null and ${table.jobId} is not null`),
     check("bot_conversations_channel_check", sql`${table.channel} in ('web')`),
   ],
 );

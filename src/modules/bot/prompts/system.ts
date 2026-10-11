@@ -19,6 +19,8 @@ export function systemPrompt(input: {
   signedIn: boolean;
   draft?: Record<string, unknown>;
   notes?: string;
+  /** Set only while the thread is about one vacancy (D382). */
+  jobFocus?: string;
 }): string {
   const language = LANGUAGE[input.locale] ?? "English";
   const slot = nextSlot(input.draft);
@@ -68,6 +70,7 @@ export function systemPrompt(input: {
     input.signedIn
       ? "The person is signed in."
       : "The person is a guest. Profile changes stay in a draft until they sign up; saving, hiding and applying need an account.",
+    input.jobFocus ?? "",
   ]
     .filter((line) => line.length > 0)
     .join("\n");

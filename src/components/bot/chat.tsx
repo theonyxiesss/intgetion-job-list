@@ -85,7 +85,15 @@ async function* readEvents(body: ReadableStream<Uint8Array>) {
  * pages. Streamed tokens grow one answer instead of stacking one bubble per
  * token.
  */
-export function Chat({ signedIn }: { signedIn: boolean }) {
+export function Chat({
+  signedIn,
+  jobId,
+  focus,
+}: {
+  signedIn: boolean;
+  jobId?: string;
+  focus?: { title: string; company: string };
+}) {
   const t = useTranslations("chat");
   const explain = useTranslations("explain");
   const locale = useLocale();
@@ -115,7 +123,13 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
   }
 
   useEffect(() => {
-    fetch("/api/bot/conversation")
+    const params = new URLSearchParams();
+    if (jobId) {
+      params.set("job", jobId);
+      params.set("locale", locale);
+    }
+    const query = params.size > 0 ? `?${params.toString()}` : "";
+    fetch(`/api/bot/conversation${query}`)
       .then((response) => (response.ok ? response.json() : null))
       .then(
         (
@@ -153,7 +167,7 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
         },
       )
       .catch(() => undefined);
-  }, []);
+  }, [jobId, locale]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
@@ -327,6 +341,20 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
     <div className="chat-shell mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-3 px-4 max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:max-w-none max-md:bg-bg md:px-6">
       <div className="shrink-0 py-3">
         <h1 className="text-sm font-medium">{t("title")}</h1>
+        {focus && jobId ? (
+          <p className="t-body-s mt-2 text-fg">
+            {t("jobFocus.discussing", {
+              title: focus.title,
+              company: focus.company,
+            })}{" "}
+            <Link
+              href={`/jobs/${jobId}`}
+              className="underline underline-offset-4"
+            >
+              {t("jobFocus.back")}
+            </Link>
+          </p>
+        ) : null}
         <p className="t-body-s mt-1 text-fg-muted">
           {t("telegramHint")}{" "}
           <a

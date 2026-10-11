@@ -21,6 +21,7 @@ export async function createConversation(input: {
   userId: string | null;
   tokenHash: string;
   locale: string;
+  jobId?: string | null;
 }): Promise<ConversationRow> {
   const [row] = await getDb()
     .insert(botConversations)
@@ -28,9 +29,38 @@ export async function createConversation(input: {
       userId: input.userId,
       sessionTokenHash: input.tokenHash,
       locale: input.locale,
+      jobId: input.jobId ?? null,
     })
     .returning();
   return row!;
+}
+
+/** The signed-in thread for one vacancy, if they already opened it (D382). */
+export async function findConversationForUserJob(
+  userId: string,
+  jobId: string,
+): Promise<ConversationRow | undefined> {
+  const [row] = await getDb()
+    .select()
+    .from(botConversations)
+    .where(
+      and(eq(botConversations.userId, userId), eq(botConversations.jobId, jobId)),
+    )
+    .limit(1);
+  return row;
+}
+
+/** Newest web conversation that is not tied to one vacancy. */
+export async function latestGeneralConversationForUser(
+  userId: string,
+): Promise<ConversationRow | undefined> {
+  const [row] = await getDb()
+    .select()
+    .from(botConversations)
+    .where(and(eq(botConversations.userId, userId), isNull(botConversations.jobId)))
+    .orderBy(desc(botConversations.lastMessageAt))
+    .limit(1);
+  return row;
 }
 
 /** Points an existing conversation at a new session cookie. */

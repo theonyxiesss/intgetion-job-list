@@ -60,6 +60,7 @@
     "timezone": "Working hours overlap",
     "salaryMissing": "Salary not specified",
     "apply": "Apply",
+    "talkToAssistant": "Talk to the assistant",
     "sector": "Sector",
     "seniority": "Seniority",
     "perk": "Perks",
@@ -1410,6 +1411,10 @@
   },
   "chat": {
     "title": "Spoki Assistant",
+    "jobFocus": {
+      "discussing": "Discussing: {title} — {company}",
+      "back": "Back to the job"
+    },
     "intro": "A conversation that learns what work you want and keeps looking.",
     "log": "Conversation",
     "you": "You",
