@@ -1084,3 +1084,14 @@
 - Отклонения от ТЗ: нет
 - OPEN QUESTION: живой перевод в Tron и Solana не проверялся (нет переменных и денег); TronLink и Phantom на телефоне не проверялись.
 - Следующая подфаза: только по команде основателя (вливание, переменные Vercel, выкладка — не эта сессия).
+
+## [2026-10-11] — выкладка приёма Tron и Solana (D384) — DONE (живой перевод не делался)
+
+- Сделано: `COMPANY_WALLET_TRON` и `COMPANY_WALLET_SOLANA` заданы на Vercel production проекта `intgetion-job-list` (команда marks-projects) до сборки. Preview и development не трогались. `COMPANY_WALLET_ADDRESS` и `IMPORT_LIVE_ENABLED` не менялись. `claude/non-evm` (`d1a2875`) влит в master fast-forward, затем статус в `docs/CURRENT.md` (`fa64b6a`), чтобы не откатить уже включённый живой импорт. `git push` уже на `origin/master`. Выкладка `intgetion-job-list-5jpdyrb8r` (`dpl_E9ZKZh1fXxb6metebQr1ZhxH1v9p`) — READY, алиас `intgetion.com` смотрит на неё. Повторно не выкладывалось.
+- Команды проверки: `GET https://intgetion.com/billing/crypto?plan=plus` → 307 на `/login?next=billing-plus`, итоговая страница 200, в HTML `data-dpl-id` этой выкладки. Имена Tron и Solana есть только в словаре переводов, не отдельным блоком кассы. Адресов в странице нет. Публичный TronGrid `getnowblock` с этой машины → HTTP 200; Solana `getHealth` → `ok`. Эти вызовы шли не из функции Vercel. Деньги не переводились. `pnpm db:migrate` не запускался.
+- P-тесты подфазы: нет в этой сессии (код D384 уже был в `d1a2875`).
+- Миграции: нет
+- Изменённые файлы: статус после READY оставлен локально в `docs/CURRENT.md` и этой записи, без второго push, чтобы не заменить готовую выкладку.
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: ответит ли публичный RPC из сети Vercel, не проверялось: чтение квитанции запускается только после входа и идентификатора транзакции. Чужой ключ не подставлялся.
+- Следующая подфаза: только по команде основателя. Языки, Telegram D381, карты, возврат, WalletConnect и D328 не начинать.
