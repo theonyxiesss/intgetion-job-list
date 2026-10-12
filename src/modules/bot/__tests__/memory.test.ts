@@ -7,6 +7,7 @@ import {
   type Extraction,
 } from "../service/extract";
 import {
+  directedSlot,
   followUp,
   mergeDraft,
   nextSlot,
@@ -96,7 +97,7 @@ describe("Spoki memory", () => {
 
   it("follows the last message language and does not lock the reply to the locale (D385)", () => {
     const prompt = systemPrompt({ locale: "en", signedIn: false });
-    expect(SYSTEM_PROMPT_VERSION).toBe(10);
+    expect(SYSTEM_PROMPT_VERSION).toBe(11);
     expect(prompt).toContain(
       "Answer in the language of the person's last message",
     );
@@ -111,7 +112,7 @@ describe("Spoki memory", () => {
 
   it("greets without a country question and answers an account complaint in words", () => {
     const prompt = systemPrompt({ locale: "ru", signedIn: false });
-    expect(SYSTEM_PROMPT_VERSION).toBe(10);
+    expect(SYSTEM_PROMPT_VERSION).toBe(11);
     expect(prompt).toContain(
       "On a greeting (привет, здравствуйте, hello, hi, or the same words in other languages), greet them and ask how you can help. Do not ask for country, role, or work format on a greeting.",
     );
@@ -127,6 +128,32 @@ describe("Spoki memory", () => {
     expect(prompt).not.toContain(
       "Looking, and a needed fact is missing (country, role, or work format): ask only that one fact.",
     );
+    expect(prompt).toContain("whether this vacancy suits them");
+    expect(prompt).toContain(
+      "A yes that this vacancy suits them is not a request to apply",
+    );
+    expect(prompt).toContain("One question beats an upsell");
+  });
+
+  it("does not ask city once the search can already run", () => {
+    const draft = {
+      country: "IT",
+      desiredTitles: ["customer support"],
+      workFormats: ["remote"],
+    };
+    expect(directedSlot(draft)).toBeNull();
+    expect(directedSlot(draft, true)).toBe("city");
+    expect(followUp("ru", draft)).not.toContain("В каком городе");
+    const prompt = systemPrompt({ locale: "ru", signedIn: false, draft });
+    expect(prompt).not.toContain("about: city");
+    expect(
+      systemPrompt({
+        locale: "ru",
+        signedIn: true,
+        draft,
+        profileFill: true,
+      }),
+    ).toContain("about: city");
   });
 
   it("does not filter remote search by the country of residence", () => {
