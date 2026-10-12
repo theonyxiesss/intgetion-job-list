@@ -20,6 +20,7 @@
   --accent: #ffffff;
   --accent-fg: #000000;
   --signal: #5b8cff;
+  --signal-fg: #ffffff;
   --success: #3ddc97;
   --warning: #f5b544;
   --danger: #ff5c5c;
@@ -39,6 +40,7 @@
   --accent: #000000;
   --accent-fg: #ffffff;
   --signal: #2f5bd3;
+  --signal-fg: #ffffff;
   --success: #0f8a5f;
   --warning: #a86400;
   --danger: #c62828;
@@ -58,6 +60,7 @@
   --color-accent: var(--accent);
   --color-accent-fg: var(--accent-fg);
   --color-signal: var(--signal);
+  --color-signal-fg: var(--signal-fg);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);

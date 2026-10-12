@@ -1312,3 +1312,15 @@
 - Отклонения от ТЗ: `legal.spec.ts` — локаторы ссылок подвала стали `exact: true`, иначе «Terms & Privacy Policy» совпадает с «Privacy Policy» по подстроке (D396). Старая ссылка «Company» в группе Sites заменена пунктом About Us (D396).
 - OPEN QUESTION: адреса для Feedback, Email Support, Ambassador Program, Media & Press Kit, API Access, Verify Official Accounts (D396). Предупреждение lint в `hire-form.tsx` на master — чинить отдельной задачей.
 - Следующая подфаза: только по команде основателя.
+
+## [2026-10-12] — region-fra1 + chat-look (D402, D403) — NOT DONE (ждёт выкладки)
+- Сделано: ветка `claude/region-fra1` (папка `Integetion jobs region`, коммит 1cfe90e) — `"regions": ["fra1"]` в `vercel.json`. Ветка `claude/chat-look` от неё (папка `Integetion jobs chat`) — чат как у ChatGPT, строки `chat.welcome` и `chat.disclaimer` на семи языках, токен `--signal-fg`, DESIGN.md.
+- Проверено: прод до правки — `/ru` 1,7–1,8 с, `/ru/jobs` 1,6–1,9 с, пустой поиск 1,0–1,1 с, `/ru/login` 0,2–0,4 с; функция `iad1`, Supabase `eu-central-1`, запросы 7–9 мс (pg_stat_statements). Чат на dev :3700 с подменённым ответом бота (в базу не писалось): пустой — поле в середине (top 418 из 800), после сообщения — внизу (703), пузырь справа, радиус 24 px, капсула 28 px.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 7–8 падений и на чистой базе тоже: `auth-emails` без `NEXT_PUBLIC_SITE_URL`, `legal.test` (концы строк в папке), один таймаут `decide.test` (при повторе прошёл). e2e не запускались (Chromium/Supabase локально нет) — CI.
+- P-тесты подфазы: `chat.spec.ts` не менялся — h1, подпись поля, кнопка «Send», лента «Conversation» и рост поля сохранены.
+- Миграции: нет
+- Изменённые файлы: `vercel.json`; `src/components/bot/chat.tsx`, `src/app/globals.css`, `src/messages/*.json`, `docs/DESIGN.md`, `docs/DECISIONS.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: в основной папке не закоммичены чужие правки (126 файлов, в том числе D400 и D401 в DECISIONS). Номера D402/D403 взяты после них. Скорость после выкладки не замерена.
+- Замечено, не трогалось: на снимке основателя Spoki ответил дважды на один вопрос, второй ответ смешал английский — это сервер бота, отдельная задача.
+- Следующая подфаза: по команде основателя.

@@ -1433,6 +1433,8 @@
   },
   "chat": {
     "title": "Spoki Assistant",
+    "welcome": "Por onde começamos?",
+    "disclaimer": "O Spoki pode errar. Confira o que for importante. Também no Telegram:",
     "jobFocus": {
       "discussing": "Falando de: {title} — {company}",
       "back": "Voltar à vaga"

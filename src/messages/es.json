@@ -1433,6 +1433,8 @@
   },
   "chat": {
     "title": "Agente de carrera",
+    "welcome": "¿Por dónde empezamos?",
+    "disclaimer": "Spoki puede equivocarse. Comprueba lo importante. También en Telegram:",
     "jobFocus": {
       "discussing": "Hablamos de: {title} — {company}",
       "back": "Volver a la vacante"
