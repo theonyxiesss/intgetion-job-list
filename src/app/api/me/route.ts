@@ -57,6 +57,7 @@ export async function DELETE(request: Request) {
     const user = await requireCurrentUser(supabase.auth);
     await readJson(request, deleteAccountInput);
     const result = await deleteMyAccount(user, clientIp(request.headers));
+    // Global on purpose: deleting the account ends every device (D392).
     await supabase.auth.signOut().catch(() => undefined);
     return Response.json(result);
   } catch (error) {

@@ -145,8 +145,16 @@ export async function proxy(request: NextRequest) {
         adminHost,
       );
     }
+    // API routes write their own response, so the refresh has to happen
+    // here — before the handler — or two parallel calls both rotate the
+    // same refresh token (D392). The admin host keeps its own session.
+    const session = adminHost ? null : await refreshSession(request);
+    if (session) markSession(request.headers, session.signedIn);
+    const response = NextResponse.next({
+      request: { headers: request.headers },
+    });
     return stamp(
-      NextResponse.next({ request: { headers: request.headers } }),
+      session ? session.apply(response) : response,
       requestId,
       adminHost,
     );
