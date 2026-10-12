@@ -1,33 +1,43 @@
-import { createServerClient } from "@supabase/ssr";
+import { workUnitAsyncStorage } from "next/dist/server/app-render/work-unit-async-storage.external";
 import { cookies } from "next/headers";
-import { authCookieOptions } from "./cookie-options";
-import { supabaseAnonKey, supabaseUrl } from "./env";
+import { createSessionClient } from "./session-client";
 
 /**
- * Supabase client for Server Components and Route Handlers. Auth only (D22).
- * Server Components cannot set cookies; the proxy refreshes the session
- * before they render, so a failed write there is safe to ignore.
+ * Supabase client for Server Components, Server Actions and Route Handlers.
+ * Auth only (D22).
+ *
+ * A Server Component cannot set cookies. Refreshing there would burn the
+ * only refresh token and then throw the new cookie away (D398). The proxy
+ * refreshes before a page renders, and route handlers refresh where the
+ * write reaches the response. Here a render only reads.
  */
 export async function createSupabaseServerClient(
   options: { framed?: boolean } = {},
 ) {
   const cookieStore = await cookies();
-  return createServerClient(supabaseUrl(), supabaseAnonKey(), {
-    // The session is closed to scripts (D314).
-    cookieOptions: authCookieOptions(options),
-    cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
-        try {
-          for (const { name, value, options } of cookiesToSet) {
-            cookieStore.set(name, value, options);
-          }
-        } catch {
-          // Called from a Server Component.
+  const writable = requestCookiesAreWritable();
+  return createSessionClient({
+    framed: options.framed,
+    writable,
+    getAll: () => cookieStore.getAll(),
+    setAll(cookiesToSet) {
+      if (!writable) return;
+      try {
+        for (const { name, value, options: cookieOptions } of cookiesToSet) {
+          cookieStore.set(name, value, cookieOptions);
         }
-      },
+      } catch {
+        // The phase can change after the check. A missed write must not
+        // become a thrown error on the page; the refresh itself is refused
+        // when `writable` is false.
+      }
     },
   });
+}
+
+/** Route handlers and Server Actions may set cookies. A render may not. */
+function requestCookiesAreWritable(): boolean {
+  const store = workUnitAsyncStorage.getStore();
+  if (!store || store.type !== "request") return false;
+  return store.phase === "action";
 }

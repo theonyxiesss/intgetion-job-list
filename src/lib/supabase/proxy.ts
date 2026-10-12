@@ -1,7 +1,6 @@
-import { createServerClient } from "@supabase/ssr";
 import type { NextRequest, NextResponse } from "next/server";
-import { authCookieOptions, isFramedRequest } from "./cookie-options";
-import { supabaseAnonKey, supabaseUrl } from "./env";
+import { isFramedRequest } from "./cookie-options";
+import { createSessionClient } from "./session-client";
 
 type PendingCookie = {
   name: string;
@@ -21,20 +20,16 @@ export async function refreshSession(request: NextRequest) {
   const pending: PendingCookie[] = [];
   const pendingHeaders: Record<string, string> = {};
 
-  const supabase = createServerClient(supabaseUrl(), supabaseAnonKey(), {
-    // Same rules as every other write of these cookies (D314).
-    cookieOptions: authCookieOptions({ framed }),
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet, headers) {
-        for (const { name, value, options } of cookiesToSet) {
-          request.cookies.set(name, value);
-          pending.push({ name, value, options });
-        }
-        Object.assign(pendingHeaders, headers);
-      },
+  const supabase = createSessionClient({
+    framed,
+    writable: true,
+    getAll: () => request.cookies.getAll(),
+    setAll(cookiesToSet, headers) {
+      for (const { name, value, options } of cookiesToSet) {
+        request.cookies.set(name, value);
+        pending.push({ name, value, options });
+      }
+      Object.assign(pendingHeaders, headers);
     },
   });
 

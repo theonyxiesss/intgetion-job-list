@@ -331,7 +331,7 @@ export async function signIn(
     ? await usersRepo.findUserByAuthUid(data.user.id)
     : undefined;
   if (!row || row.status !== "active" || !isEmailConfirmed(data.user)) {
-    await auth.signOut();
+    await auth.signOut({ scope: "local" });
     throw new HttpError(401, errorCodes.unauthenticated, "Sign-in failed", {
       reason: "invalid_credentials",
     });
@@ -469,7 +469,7 @@ export async function completeCallback(
     ? fromProvider
     : signupMetadata.safeParse(fallback);
   if (!accepted.success) {
-    await auth.signOut();
+    await auth.signOut({ scope: "local" });
     return { ok: false, reason: "missing_terms" };
   }
   const user = await usersRepo.insertUserIfMissing(data.user.id, accepted.data);
@@ -612,7 +612,7 @@ export async function signInWithTelegramProfile(
       stored.success ? stored.data : metadata,
     ));
   if (row.status !== "active") {
-    await auth.signOut();
+    await auth.signOut({ scope: "local" });
     throw telegramFailed();
   }
   await telegramAccounts.link(telegram.id, row.id, username);
@@ -677,12 +677,15 @@ export async function telegramLinkOf(user: CurrentUser) {
 }
 
 /** Public user id for an auth uid, or null when that account cannot be added. */
-export async function userIdForAuthUid(authUid: string): Promise<string | null> {
+export async function userIdForAuthUid(
+  authUid: string,
+): Promise<string | null> {
   const row = await usersRepo.findUserByAuthUid(authUid);
   if (!row || row.deletedAt || row.status !== "active") return null;
   return row.id;
 }
 
+/** This browser only. Other devices stay signed in (D398). */
 export async function logout(auth: AuthClient): Promise<void> {
-  await auth.signOut();
+  await auth.signOut({ scope: "local" });
 }

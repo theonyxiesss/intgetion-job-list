@@ -39,4 +39,12 @@ describe("proxy matcher", () => {
   it("also matches robots.txt so the admin host can refuse crawlers", () => {
     expect(matchers).toContain("/robots.txt");
   });
+
+  it("refreshes the session on API routes before the handler runs", () => {
+    const api = source.slice(source.indexOf('pathname.startsWith("/api/")'));
+    const refreshAt = api.indexOf("await refreshSession(request)");
+    const nextAt = api.indexOf("NextResponse.next");
+    expect(refreshAt).toBeGreaterThan(0);
+    expect(nextAt).toBeGreaterThan(refreshAt);
+  });
 });

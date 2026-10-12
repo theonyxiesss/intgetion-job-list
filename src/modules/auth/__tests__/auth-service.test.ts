@@ -18,6 +18,7 @@ import {
   requireCurrentUser,
   sendMagicLink,
   signIn,
+  logout,
   type AuthClient,
   type CurrentUser,
 } from "../service/auth-service";
@@ -378,7 +379,7 @@ describe("completeCallback", () => {
     repo.findUserByAuthUid.mockResolvedValue(undefined);
     const result = await completeCallback(asAuth(auth), { code: "abc" });
     expect(result).toEqual({ ok: false, reason: "missing_terms" });
-    expect(auth.signOut).toHaveBeenCalled();
+    expect(auth.signOut).toHaveBeenCalledWith({ scope: "local" });
     expect(repo.insertUserIfMissing).not.toHaveBeenCalled();
   });
 
@@ -454,8 +455,7 @@ describe("startGoogleSignIn", () => {
     expect(auth.signInWithOAuth).toHaveBeenCalledWith({
       provider: "google",
       options: {
-        redirectTo:
-          "http://127.0.0.1:3000/auth/callback?next=billing-plus",
+        redirectTo: "http://127.0.0.1:3000/auth/callback?next=billing-plus",
         skipBrowserRedirect: true,
         queryParams: { prompt: "select_account" },
       },
@@ -663,7 +663,15 @@ describe("signIn (server password login, D38)", () => {
     await expect(signIn(asAuth(auth), input)).rejects.toMatchObject({
       status: 401,
     });
-    expect(auth.signOut).toHaveBeenCalled();
+    expect(auth.signOut).toHaveBeenCalledWith({ scope: "local" });
+  });
+});
+
+describe("logout", () => {
+  it("ends this browser only", async () => {
+    const auth = fakeAuth(confirmed);
+    await logout(asAuth(auth));
+    expect(auth.signOut).toHaveBeenCalledWith({ scope: "local" });
   });
 });
 
