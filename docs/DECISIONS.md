@@ -780,3 +780,17 @@ D392 остаётся: у пункта знак 24 px, подпись остаё
 Cron `GET /api/cron/telegram` уже идёт по `*/5 * * * *` в `vercel.json`. Расписание не менять. В `runJobsAlert` за тик один пост (`BATCH = 1`). Сон на 5 минут внутри запроса не ставить: он не уложится в таймаут функции, а паузу уже даёт cron. Остаток очереди ждёт следующие тики. Метка `jobs_alert_sent_at` по-прежнему пишется только после ответа sender `"sent"`, не до отправки, как у личного диспетчера. Уже отправленные посты не отправлять снова. Метки в этой сессии не сбрасывались, в канал ничего не отправлялось.
 
 Существующий тест не требовал пачки из многих отправок за один вызов: он проверяет повтор после сбоя. Добавлен тест: несколько неотправленных вакансий — один вызов шлёт не больше одного поста, следующий вызов шлёт следующую.
+
+## D396 — группа Company в подвале
+
+Основатель 2026-10-12: в подвале группа `Company` с пунктами дословно и в этом порядке: About Us, Feedback, Email Support, Ambassador Program, Media & Press Kit, API Access, Verify Official Accounts, Terms & Privacy Policy. Это подписи, новых продуктов нет.
+
+About Us ведёт на уже существующую `/company` (D388); адрес страницы и встроенный сайт не менялись, заголовок страницы по-прежнему `footer.companySite`. Terms & Privacy Policy ведёт на `/terms`. Остальные шесть видны текстом, не ссылкой: страниц, ящика, формы, программы, пресс-кита, публичного API и проверки аккаунтов нет, на 404 и на чужие сайты они не ведут, «скоро» не пишется. Цвет текста тот же `--fg-muted`, что у ссылок: `--fg-subtle` на чёрном не дотягивает до AA (D286).
+
+Группы теперь: Platform, Resources, Company, Sites, Legal. В Sites осталась ссылка Portfolio на `/portfolio`; старая ссылка «Company» из Sites заменена пунктом About Us, чтобы `/company` не стоял в подвале дважды. Legal не разбиралась: Terms of Use, Privacy Policy и Cookie settings на месте. На широком экране пять колонок, на узком две. Подписи переносятся, не обрезаются.
+
+Новые ключи внутри `footer`: `companyGroup`, `aboutUs`, `feedback`, `emailSupport`, `ambassadorProgram`, `mediaPressKit`, `apiAccess`, `verifyOfficialAccounts`, `termsPrivacy`. `footer.company` («профиль компании») не переиспользован. Переведены на ru, es, pt-BR, de, fr и it по смыслу, без новых обещаний. Данные групп лежат в `src/components/shell/footer-groups.ts`.
+
+`tests/e2e/legal.spec.ts`: локаторы ссылок подвала Terms of Use и Privacy Policy стали `exact: true`. Playwright по умолчанию ищет подстроку, и «Terms & Privacy Policy» тоже совпала бы с «Privacy Policy», строгий режим уронил бы тест. Проверка стала строже, не слабее.
+
+OPEN QUESTION: адрес для каждого из шести пунктов без ссылки — Feedback, Email Support, Ambassador Program, Media & Press Kit, API Access, Verify Official Accounts. Когда основатель назовёт адрес, пункт получает `href` в `footer-groups.ts`. Миграции нет.

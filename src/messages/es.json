@@ -1310,7 +1310,16 @@
     "faq": "Preguntas frecuentes",
     "salaries": "Salarios",
     "companySite": "Empresa",
-    "portfolio": "Portafolio"
+    "portfolio": "Portafolio",
+    "companyGroup": "Empresa",
+    "aboutUs": "Sobre nosotros",
+    "feedback": "Comentarios",
+    "emailSupport": "Soporte por correo",
+    "ambassadorProgram": "Programa de embajadores",
+    "mediaPressKit": "Medios y kit de prensa",
+    "apiAccess": "Acceso a la API",
+    "verifyOfficialAccounts": "Verificar cuentas oficiales",
+    "termsPrivacy": "Condiciones y política de privacidad"
   },
   "ui": {
     "close": "Cerrar",

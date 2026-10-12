@@ -1310,7 +1310,16 @@
     "faq": "FAQ",
     "salaries": "Stipendi",
     "companySite": "Azienda",
-    "portfolio": "Portfolio"
+    "portfolio": "Portfolio",
+    "companyGroup": "Azienda",
+    "aboutUs": "Chi siamo",
+    "feedback": "Feedback",
+    "emailSupport": "Assistenza via e-mail",
+    "ambassadorProgram": "Programma ambassador",
+    "mediaPressKit": "Media e press kit",
+    "apiAccess": "Accesso API",
+    "verifyOfficialAccounts": "Verifica account ufficiali",
+    "termsPrivacy": "Termini e informativa sulla privacy"
   },
   "ui": {
     "close": "Chiudi",

@@ -1281,3 +1281,14 @@
 - Отклонения от ТЗ: нет
 - OPEN QUESTION: требования итальянского права (Garante, Codice del consumo) для `/it` — к юристу.
 - Следующая подфаза: по команде основателя («следующая»).
+
+## [2026-10-12] — footer-company (группа Company в подвале, D396) — NOT DONE
+- Сделано: папка `Integetion jobs footer-company`, ветка `claude/footer-company` от origin/master 91353ce. В подвале группа Company: About Us → `/company`, Feedback, Email Support, Ambassador Program, Media & Press Kit, API Access, Verify Official Accounts — текстом, Terms & Privacy Policy → `/terms`. Группы: Platform, Resources, Company, Sites (Portfolio), Legal (без изменений). Сетка `lg:grid-cols-5`, на узком экране две колонки. Данные групп вынесены в `footer-groups.ts`. Девять новых ключей `footer.*` на семи языках.
+- Проверено на dev-сервере :3000 (сайт из этой папки): `/terms` при 1440 — пять колонок по 163 px, восемь пунктов Company в порядке, About Us → `/company`, Terms & Privacy Policy → `/terms`, ровно одна ссылка с именем Terms of Use (`/terms`) и одна Privacy Policy (`/privacy`), Cookie settings на месте; `/de/terms` при 1024 и 375 и `/ru/terms` при 640 — ни одна подпись не обрезана, за край ничего не выходит.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 1: одно предупреждение `@next/next/no-img-element` в `src/modules/jobs/ui/hire-form.tsx:318` — файл не менялся, совпадает с origin/master (91353ce); `eslint --max-warnings 0` по изменённым файлам → 0; `pnpm test` без `NEXT_PUBLIC_SITE_URL` → 1 (8 падений: письма входа требуют переменную, и legal.test); `NEXT_PUBLIC_SITE_URL=http://localhost:3000 pnpm test` → 1: 915 прошли, 2 упали — `legal.test.ts` (рабочая копия свежей папки получила CRLF через `core.autocrlf=true`; в git файлы с LF, разница только `\r\n`) и `decide.test.ts` (таймаут 5 с, отдельно 8/8 зелёные). `footer-groups.test.ts` и `messages.test.ts` → 27/27. e2e локально не запускались.
+- P-тесты подфазы: `footer-groups.test.ts` (порядок групп, английский дословно, адреса, шесть без ссылки, Legal/Portfolio/Platform/Resources на месте, ключи на семи языках) ✅
+- Миграции: нет
+- Изменённые файлы: `src/components/shell/footer.tsx`, `src/components/shell/footer-groups.ts` (новый), `src/components/shell/footer-groups.test.ts` (новый), `src/messages/{en,ru,es,pt-BR,de,fr,it}.json`, `tests/e2e/legal.spec.ts`, `docs/DECISIONS.md`, `docs/CURRENT.md`, `MISSION_LOG.md`
+- Отклонения от ТЗ: `legal.spec.ts` — локаторы ссылок подвала стали `exact: true`, иначе «Terms & Privacy Policy» совпадает с «Privacy Policy» по подстроке (D396). Старая ссылка «Company» в группе Sites заменена пунктом About Us (D396).
+- OPEN QUESTION: адреса для Feedback, Email Support, Ambassador Program, Media & Press Kit, API Access, Verify Official Accounts (D396). Предупреждение lint в `hire-form.tsx` на master — чинить отдельной задачей.
+- Следующая подфаза: только по команде основателя.

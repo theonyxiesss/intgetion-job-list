@@ -1310,7 +1310,16 @@
     "faq": "Частые вопросы",
     "salaries": "Зарплаты",
     "companySite": "Компания",
-    "portfolio": "Портфолио"
+    "portfolio": "Портфолио",
+    "companyGroup": "Компания",
+    "aboutUs": "О нас",
+    "feedback": "Обратная связь",
+    "emailSupport": "Поддержка по почте",
+    "ambassadorProgram": "Программа амбассадоров",
+    "mediaPressKit": "Медиа и пресс-кит",
+    "apiAccess": "Доступ к API",
+    "verifyOfficialAccounts": "Проверка официальных аккаунтов",
+    "termsPrivacy": "Условия и политика конфиденциальности"
   },
   "ui": {
     "close": "Закрыть",
