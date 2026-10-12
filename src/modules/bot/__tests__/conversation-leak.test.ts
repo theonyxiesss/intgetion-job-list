@@ -4,6 +4,7 @@ import {
   fakeText,
   fakeToolCall,
 } from "@/lib/llm";
+import { setVacancyReaderForTests } from "../service/fit";
 import { searchFiltersFromDraft } from "../service/memory";
 import type { BotEvent } from "../service/conversation";
 
@@ -114,6 +115,7 @@ function visibleText(events: BotEvent[]): string {
 describe("a tool call written as text (D381)", () => {
   beforeEach(() => {
     messages.length = 0;
+    setVacancyReaderForTests(async () => null);
     runToolMock.mockReset();
     runToolMock.mockResolvedValue({
       llm: "one job",

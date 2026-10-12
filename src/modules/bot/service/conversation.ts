@@ -25,22 +25,44 @@ import {
   patchCandidateProfile,
 } from "@/modules/candidates/service";
 import { matchSkillSlug } from "@/modules/taxonomy/service";
+import { getJobForPublic } from "@/modules/jobs/service";
 import { systemPrompt, SYSTEM_PROMPT_VERSION } from "../prompts/system";
+import {
+  askWhy,
+  chooseVacancy,
+  hadOffGoal,
+  installVacancyReader,
+  isPoliteNo,
+  isPoliteYes,
+  judgeFit,
+  passedIdsOf,
+  personAskedOffGoal,
+  personFromDraft,
+  presentVacancy,
+  rememberPass,
+  replyLanguage,
+  shapeToolCalls,
+  stripOffGoalEnding,
+  suitsAck,
+  vacancyFromPublic,
+  vacancyReader,
+  type FitJudgement,
+  type JobCardFacts,
+  type VacancyFacts,
+} from "./fit";
 import {
   jobFocusBlock,
   jobFocusOpener,
   readJobFocus,
 } from "./job-focus";
-import {
-  shouldSearchDespiteLeak,
-  stripLeakedToolMarkup,
-} from "./leaked-tool";
+import { stripLeakedToolMarkup } from "./leaked-tool";
 import {
   followUp,
   hasSearchFact,
   mergeDraft,
   mergeNotes,
   profileSavedLine,
+  readyToSearch,
   rememberUtterance,
   resumeAck,
   signupHint,
@@ -664,13 +686,74 @@ export async function handleMessage(
     signedIn: userId !== null,
     draft: state.draft,
     notes: state.notes,
+    profileFill: state.fillMode === "spoki",
     jobFocus: focus ? jobFocusBlock(focus) : undefined,
   });
   const tools = toolsFor(userId);
+  const lang = replyLanguage(input.text, input.locale);
+  const focusedId = current.jobId;
+  const knownJobId = state.presentedJobId ?? focusedId ?? null;
+  if (isPoliteYes(input.text) && knownJobId) {
+    state = { ...state, presentedJobId: knownJobId, verdict: "suits" };
+    const text = suitsAck(lang);
+    await repo.insertMessage({
+      conversationId: current.id,
+      role: "assistant",
+      content: text,
+    });
+    emit({ type: "token", text });
+    return finish(input, state, emit, now);
+  }
+  if (isPoliteNo(input.text) && knownJobId) {
+    const passed = rememberPass(passedIdsOf(state), knownJobId);
+    state = {
+      ...state,
+      passedJobIds: passed,
+      presentedJobId: undefined,
+      verdict: "declined",
+    };
+    const declined = await callTool(
+      {
+        userId,
+        conversationId: current.id,
+        locale: input.locale,
+        state,
+      },
+      { id: "call_server_search", name: "search_jobs", input: {} },
+      emit,
+      now,
+    );
+    if (declined.state) state = { ...state, ...declined.state, passedJobIds: passed, verdict: "declined" };
+    await repo.insertMessage({
+      conversationId: current.id,
+      role: "tool",
+      content: declined.llm,
+      toolCall: { toolCallId: "call_server_search", name: "search_jobs" },
+    });
+    const choice = await chooseVacancy({
+      cards: declined.jobCards ?? [],
+      person: personFromDraft(state.draft),
+      skipIds: passed,
+      locale: input.locale,
+    });
+    const text =
+      choice.kind === "show"
+        ? presentVacancy(lang, choice.job, choice.judgement)
+        : askWhy(lang);
+    if (choice.kind === "show") state = { ...state, presentedJobId: choice.job.id };
+    await repo.insertMessage({
+      conversationId: current.id,
+      role: "assistant",
+      content: text,
+    });
+    emit({ type: "token", text });
+    return finish(input, state, emit, now);
+  }
+
   let spoke = false;
   let waiting = false;
   let showedJobs = false;
-  let recoveredSearch = false;
+  let fitSpoken = false;
 
   for (let round = 0; round < MAX_TOOL_ROUNDS + 1; round += 1) {
     const rows = await repo.listMessages(conversation.id, HISTORY_READ);
@@ -700,21 +783,23 @@ export async function handleMessage(
     }
     const cost = costMicroUsd(llm.model, response.usage, llm.prices);
     const modelCalls = lastRound ? [] : response.toolCalls;
-    const visible = stripLeakedToolMarkup(response.text);
-    const recover =
-      !recoveredSearch &&
-      shouldSearchDespiteLeak({
-        text: response.text,
-        toolNames: modelCalls.map((call) => call.name),
-        draft: state.draft,
-      });
-    const recoveredCall: LLMToolCall | null = recover
-      ? { id: "call_recovered_search", name: "search_jobs", input: {} }
-      : null;
-    if (recoveredCall) recoveredSearch = true;
-    // Search first. A real offer_step may follow the jobs. The leaked
-    // XML is never turned into offer_step.
-    const calls = recoveredCall ? [recoveredCall, ...modelCalls] : modelCalls;
+    const calls = shapeToolCalls(modelCalls, {
+      userText: input.text,
+      ready: readyToSearch(state.draft),
+      jobThread: Boolean(focusedId),
+      showedJobs,
+      waiting,
+    });
+    const stripped = stripOffGoalEnding(
+      stripLeakedToolMarkup(response.text),
+      input.text,
+    );
+    const askedOffGoal = personAskedOffGoal(input.text);
+    const visible = askedOffGoal
+      ? stripped
+      : hadOffGoal(response.text)
+        ? ""
+        : stripped;
     await repo.insertMessage({
       conversationId: conversation.id,
       role: "assistant",
@@ -730,32 +815,64 @@ export async function handleMessage(
       spoke = true;
       emit({ type: "token", text: visible });
     }
-    if (!calls.length) break;
 
-    for (const call of calls) {
-      const ctx: ToolContext = {
-        userId,
-        conversationId: conversation.id,
+    let roundCards: JobCardFacts[] = [];
+    if (calls.length) {
+      for (const call of calls) {
+        const ctx: ToolContext = {
+          userId,
+          conversationId: conversation.id,
+          locale: input.locale,
+          state,
+        };
+        const content = await callTool(ctx, call, emit, now);
+        if (content.state) state = content.state;
+        if (content.jobs) showedJobs = true;
+        if (content.jobCards?.length) roundCards = content.jobCards;
+        if (content.waiting) waiting = true;
+        await repo.insertMessage({
+          conversationId: conversation.id,
+          role: "tool",
+          content: content.llm,
+          toolCall: { toolCallId: call.id, name: call.name },
+        });
+      }
+    }
+    if (!waiting && !fitSpoken) {
+      const line = await fitLineForTurn({
         locale: input.locale,
+        lang,
+        focusedId,
+        focus,
+        cards: roundCards,
         state,
-      };
-      const content = await callTool(ctx, call, emit, now);
-      if (content.state) state = content.state;
-      if (content.jobs) showedJobs = true;
-      if (content.waiting) waiting = true;
-      await repo.insertMessage({
-        conversationId: conversation.id,
-        role: "tool",
-        content: content.llm,
-        toolCall: { toolCallId: call.id, name: call.name },
       });
+      if (line && (!spoke || hadOffGoal(response.text))) {
+        state = {
+          ...state,
+          ...(line.presentedJobId ? { presentedJobId: line.presentedJobId } : {}),
+        };
+        await repo.insertMessage({
+          conversationId: conversation.id,
+          role: "assistant",
+          content: line.text,
+        });
+        emit({ type: "token", text: line.text });
+        spoke = true;
+        fitSpoken = true;
+      }
     }
     if (waiting) break;
-    // The leaked text was not a real tool round. The job list is the reply.
-    if (recoveredCall && modelCalls.length === 0) break;
+    if (!calls.length) break;
+    // The server search is the reply. Do not take another model round.
+    if (calls.every((call) => call.id === "call_server_search")) break;
   }
   if (!spoke && !waiting && !showedJobs) {
-    const text = followUp(input.locale, state.draft);
+    const text = followUp(
+      input.locale,
+      state.draft,
+      state.fillMode === "spoki",
+    );
     await repo.insertMessage({
       conversationId: conversation.id,
       role: "assistant",
@@ -766,12 +883,88 @@ export async function handleMessage(
   return finish(input, state, emit, now);
 }
 
+function cardsFrom(data: unknown): JobCardFacts[] {
+  if (!Array.isArray(data)) return [];
+  return data.flatMap((row) => {
+    if (!row || typeof row !== "object") return [];
+    const card = row as Record<string, unknown>;
+    if (typeof card.id !== "string") return [];
+    return [
+      {
+        id: card.id,
+        title: typeof card.title === "string" ? card.title : "",
+        companyName:
+          typeof card.companyName === "string" ? card.companyName : "",
+        workFormat: typeof card.workFormat === "string" ? card.workFormat : "",
+      },
+    ];
+  });
+}
+
+async function fitLineForTurn(input: {
+  locale: string;
+  lang: string;
+  focusedId: string | null;
+  focus: { jobId: string; title: string; company: string } | null;
+  cards: JobCardFacts[];
+  state: BotState;
+}): Promise<{ text: string; presentedJobId?: string } | null> {
+  const passed = passedIdsOf(input.state);
+  const person = personFromDraft(input.state.draft);
+  if (input.focusedId && !passed.includes(input.focusedId)) {
+    let vacancy: VacancyFacts | null = null;
+    try {
+      vacancy = await vacancyReader(input.focusedId, input.locale);
+    } catch {
+      vacancy = null;
+    }
+    if (!vacancy && input.focus) {
+      vacancy = {
+        id: input.focus.jobId,
+        title: input.focus.title,
+        company: input.focus.company,
+        workFormat: "",
+        skills: [],
+      };
+    }
+    if (!vacancy) return null;
+    const judged = judgeFit(person, vacancy);
+    const judgement: Extract<FitJudgement, { show: true }> = judged.show
+      ? judged
+      : { show: true, kind: "good", matches: [], gaps: [] };
+    return {
+      text: presentVacancy(input.lang, vacancy, judgement),
+      presentedJobId: vacancy.id,
+    };
+  }
+  if (!readyToSearch(input.state.draft) || input.cards.length === 0) return null;
+  const choice = await chooseVacancy({
+    cards: input.cards,
+    person,
+    skipIds: passed,
+    locale: input.locale,
+  });
+  if (choice.kind === "show") {
+    return {
+      text: presentVacancy(input.lang, choice.job, choice.judgement),
+      presentedJobId: choice.job.id,
+    };
+  }
+  return { text: askWhy(input.lang) };
+}
+
 async function callTool(
   ctx: ToolContext,
   call: LLMToolCall,
   emit: Emit,
   now: Date,
-): Promise<{ llm: string; state?: BotState; waiting?: boolean; jobs?: boolean }> {
+): Promise<{
+  llm: string;
+  state?: BotState;
+  waiting?: boolean;
+  jobs?: boolean;
+  jobCards?: JobCardFacts[];
+}> {
   if (ctx.userId && toolNeedsConfirmation(ctx, call.name)) {
     const confirmation = await repo.createConfirmation({
       conversationId: ctx.conversationId,
@@ -808,7 +1001,12 @@ async function callTool(
       (outcome.client?.kind === "jobs" || outcome.client?.kind === "matches") &&
       Array.isArray(data) &&
       data.length > 0;
-    return { llm: outcome.llm, state: outcome.state, jobs };
+    return {
+      llm: outcome.llm,
+      state: outcome.state,
+      jobs,
+      jobCards: jobs ? cardsFrom(data) : [],
+    };
   } catch (error) {
     if (error instanceof HttpError) {
       const details =
@@ -998,3 +1196,12 @@ export async function conversationHistory(conversationId: string) {
   });
   return visible;
 }
+
+installVacancyReader(async (id, locale) => {
+  try {
+    const job = await getJobForPublic(id, { locale });
+    return job ? vacancyFromPublic(job) : null;
+  } catch {
+    return null;
+  }
+});

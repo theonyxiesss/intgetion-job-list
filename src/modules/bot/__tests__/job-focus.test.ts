@@ -20,6 +20,10 @@ describe("job focus", () => {
     expect(block).toContain("Bluprynt");
     expect(block).toContain("Their status on this vacancy: saved");
     expect(block).toContain("Do not call apply_to_job unless they explicitly ask to apply");
+    expect(block).toContain("whether this vacancy suits the person");
+    expect(block).not.toContain("cover note");
+    expect(block).not.toContain("questions for the employer");
+    expect(block).not.toContain("interview questions");
     expect(block).toContain("<untrusted_data");
     expect(block).not.toContain("<script");
   });
@@ -30,6 +34,21 @@ describe("job focus", () => {
     );
     expect(jobFocusOpener("ru", "Data Systems Engineer", "Bluprynt")).toContain(
       "Bluprynt",
+    );
+    expect(jobFocusOpener("ru", "Data Systems Engineer", "Bluprynt")).toContain(
+      "Вам подходит эта вакансия?",
+    );
+    expect(jobFocusOpener("ru", "Data Systems Engineer", "Bluprynt")).not.toContain(
+      "сопроводительн",
+    );
+    expect(jobFocusOpener("en", "Data Systems Engineer", "Bluprynt")).toContain(
+      "Does this vacancy suit you?",
+    );
+    expect(jobFocusOpener("en", "Data Systems Engineer", "Bluprynt")).not.toContain(
+      "cover note",
+    );
+    expect(jobFocusOpener("en", "Data Systems Engineer", "Bluprynt")).not.toContain(
+      "interview questions",
     );
     expect(jobFocusOpener("en", "Data Systems Engineer", "Bluprynt")).toContain(
       "will not apply",

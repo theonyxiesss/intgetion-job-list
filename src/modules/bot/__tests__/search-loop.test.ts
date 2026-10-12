@@ -1,0 +1,319 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { FakeLLMProvider, type LLMResponse } from "@/lib/llm";
+import { setVacancyReaderForTests, vacancyFromPublic } from "../service/fit";
+import type { BotState } from "../service/tools";
+import type { BotEvent } from "../service/conversation";
+
+const JOB = "00000000-0000-4000-8000-0000000000aa";
+const OTHER = "00000000-0000-4000-8000-0000000000bb";
+
+const australian = {
+  id: JOB,
+  title: "Content and sales contractor",
+  description: "Australian hours with flexibility.",
+  company: { name: "Australian real-estate agency" },
+  location: null,
+  locationCountry: "AU",
+  workFormat: "remote",
+  employmentType: "contract",
+  experienceMin: null,
+  skills: [
+    { id: "1", name: "content" },
+    { id: "2", name: "sales" },
+    { id: "3", name: "client support" },
+  ],
+  languages: [],
+  salaryMin: {
+    amountMinor: "150000",
+    currency: "AUD",
+    period: "month",
+    basis: "gross",
+  },
+  salaryMax: {
+    amountMinor: "200000",
+    currency: "AUD",
+    period: "month",
+    basis: "gross",
+  },
+  timezoneRequired: "Australia/Sydney",
+  workHoursStart: "09:00:00",
+  workHoursEnd: "17:00:00",
+  minOverlapHours: 4,
+  perks: [],
+  source: { type: "internal", name: null, url: null },
+};
+
+const runToolMock = vi.hoisted(() => vi.fn());
+const savedStates = vi.hoisted(() => [] as BotState[]);
+const messages = vi.hoisted(
+  () =>
+    [] as Array<{
+      id: string;
+      role: string;
+      content: string;
+      toolCall: unknown;
+      createdAt: Date;
+    }>,
+);
+
+vi.mock("@/lib/rate-limit", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/rate-limit")>(
+    "@/lib/rate-limit",
+  );
+  return { ...actual, enforceRateLimit: () => Promise.resolve() };
+});
+
+vi.mock("@/modules/applications/service", async () => {
+  const actual = await vi.importActual<
+    typeof import("@/modules/applications/service")
+  >("@/modules/applications/service");
+  return {
+    ...actual,
+    listOwnApplications: () => Promise.resolve([]),
+  };
+});
+
+vi.mock("@/modules/feedback/service", async () => {
+  const actual = await vi.importActual<typeof import("@/modules/feedback/service")>(
+    "@/modules/feedback/service",
+  );
+  return {
+    ...actual,
+    isJobSavedForUser: () => Promise.resolve(false),
+    getHiddenSetsForViewer: () =>
+      Promise.resolve({
+        hiddenJobIds: new Set<string>(),
+        hiddenCompanyIds: new Set<string>(),
+      }),
+  };
+});
+
+vi.mock("@/modules/jobs/service", async () => {
+  const actual = await vi.importActual<typeof import("@/modules/jobs/service")>(
+    "@/modules/jobs/service",
+  );
+  return {
+    ...actual,
+    getJobForPublic: (id: string) =>
+      Promise.resolve(id === JOB ? australian : null),
+  };
+});
+
+vi.mock("../repo/bot-repo", () => ({
+  takeResumeAck: () => Promise.resolve(undefined),
+  takeDraftOfferFlag: () => Promise.resolve(undefined),
+  spentSince: () => Promise.resolve(BigInt(0)),
+  updateConversation: (_id: string, patch: { state?: BotState }) => {
+    if (patch.state) savedStates.push(patch.state);
+    return Promise.resolve();
+  },
+  userDailyCosts: () => Promise.resolve([]),
+  insertMessage: (input: { role: string; content: string; toolCall?: unknown }) => {
+    const row = {
+      id: `m${messages.length + 1}`,
+      role: input.role,
+      content: input.content,
+      toolCall: input.toolCall ?? null,
+      createdAt: new Date(),
+    };
+    messages.push(row);
+    return Promise.resolve(row);
+  },
+  listMessages: () => Promise.resolve(messages.map((row) => ({ ...row }))),
+}));
+
+vi.mock("../service/tools", async () => {
+  const actual = await vi.importActual<typeof import("../service/tools")>(
+    "../service/tools",
+  );
+  return {
+    ...actual,
+    runTool: (...args: unknown[]) => runToolMock(...args),
+  };
+});
+
+const { handleMessage, setBotLLMForTests } = await import("../service/conversation");
+
+const prices = {
+  "fake-model": {
+    inputMicroUsdPerMTok: BigInt(1),
+    outputMicroUsdPerMTok: BigInt(1),
+  },
+};
+
+function conversation(state: BotState, jobId: string | null = null) {
+  return {
+    id: "c-spoki",
+    userId: null,
+    channel: "web",
+    sessionTokenHash: "hash",
+    jobId,
+    locale: "en",
+    state,
+    summary: null,
+    linkedAt: null,
+    createdAt: new Date(),
+    lastMessageAt: new Date(),
+  };
+}
+
+function visibleText(events: BotEvent[]): string {
+  return events
+    .map((event) => ("text" in event ? event.text : ""))
+    .join("\n");
+}
+
+function reply(text: string, toolName?: string, input?: unknown): LLMResponse {
+  return {
+    text,
+    toolCalls: toolName
+      ? [{ id: `call_${toolName}`, name: toolName, input: input ?? {} }]
+      : [],
+    usage: { tokensIn: 0, tokensOut: 0 },
+    stopReason: toolName ? "tool_use" : "end",
+  };
+}
+
+describe("Spoki search loop", () => {
+  beforeEach(() => {
+    messages.length = 0;
+    savedStates.length = 0;
+    runToolMock.mockReset();
+    setVacancyReaderForTests(async (id) =>
+      id === JOB ? vacancyFromPublic(australian) : null,
+    );
+  });
+
+  it("states the Australian vacancy in Russian and does not apply", async () => {
+    setBotLLMForTests({
+      provider: new FakeLLMProvider([
+        reply(
+          "Могу написать сопроводительное письмо и вопросы для работодателя. A cover letter and interview questions.",
+          "apply_to_job",
+          { jobId: JOB, coverNote: "hire me" },
+        ),
+      ]),
+      model: "fake-model",
+      prices,
+    });
+    const events: BotEvent[] = [];
+    await handleMessage(
+      {
+        userId: "user-1",
+        conversation: conversation({}, JOB),
+        text: "Посмотри эту вакансию",
+        ip: "203.0.113.20",
+        locale: "en",
+      },
+      (event) => events.push(event),
+    );
+    const shown = visibleText(events);
+    expect(shown).toContain("Удалённый подряд");
+    expect(shown).toContain("Australian real-estate agency");
+    expect(shown).toContain("1.5–2k AUD");
+    expect(shown).toContain("Часы AU 9–17");
+    expect(shown).toContain("с гибкостью");
+    expect(shown).toContain("content");
+    expect(shown).toContain("sales");
+    expect(shown).toContain("client support");
+    expect(shown.trim().endsWith("Вам подходит эта вакансия?")).toBe(true);
+    for (const banned of [
+      "осопроводительн",
+      "сопроводительн",
+      "cover note",
+      "cover letter",
+      "вопросы для работодателя",
+      "interview questions",
+      "отклик отправлен",
+    ]) {
+      expect(shown.toLowerCase()).not.toContain(banned.toLowerCase());
+    }
+    expect(runToolMock.mock.calls.map((call) => call[1])).not.toContain(
+      "apply_to_job",
+    );
+  });
+
+  it("does not call apply_to_job on a polite yes", async () => {
+    setBotLLMForTests({
+      provider: new FakeLLMProvider([
+        reply("", "apply_to_job", { jobId: JOB, coverNote: "please" }),
+      ]),
+      model: "fake-model",
+      prices,
+    });
+    const events: BotEvent[] = [];
+    await handleMessage(
+      {
+        userId: "user-1",
+        conversation: conversation({ presentedJobId: JOB, draft: {} }, null),
+        text: "да, мне подходит",
+        ip: "203.0.113.21",
+        locale: "en",
+      },
+      (event) => events.push(event),
+    );
+    expect(runToolMock).not.toHaveBeenCalled();
+    expect(visibleText(events)).not.toContain("отклик отправлен");
+    expect(savedStates.at(-1)?.verdict).toBe("suits");
+    expect(savedStates.at(-1)?.presentedJobId).toBe(JOB);
+  });
+
+  it("searches again after no and does not repeat the passed id", async () => {
+    runToolMock.mockResolvedValue({
+      llm: "two jobs",
+      client: {
+        kind: "jobs",
+        data: [
+          { id: JOB, title: "First", companyName: "Kept", workFormat: "remote" },
+          { id: OTHER, title: "Second", companyName: "Next agency", workFormat: "remote" },
+        ],
+      },
+    });
+    setBotLLMForTests({
+      provider: new FakeLLMProvider([reply("")]),
+      model: "fake-model",
+      prices,
+    });
+    const draft = {
+      country: "IT",
+      desiredTitles: ["support"],
+      workFormats: ["remote"],
+    };
+    const first: BotEvent[] = [];
+    await handleMessage(
+      {
+        userId: null,
+        conversation: conversation({ draft }),
+        text: "покажи вакансии",
+        ip: "203.0.113.22",
+        locale: "ru",
+      },
+      (event) => first.push(event),
+    );
+    expect(visibleText(first)).toContain("Australian real-estate agency");
+    expect(visibleText(first)).not.toContain("Next agency");
+    const after = savedStates.at(-1);
+    expect(after?.presentedJobId).toBe(JOB);
+
+    messages.length = 0;
+    const second: BotEvent[] = [];
+    await handleMessage(
+      {
+        userId: null,
+        conversation: conversation(after ?? { draft }),
+        text: "нет",
+        ip: "203.0.113.23",
+        locale: "ru",
+      },
+      (event) => second.push(event),
+    );
+    const shown = visibleText(second);
+    expect(shown).toContain("Next agency");
+    expect(shown).not.toContain("Australian real-estate agency");
+    expect(savedStates.at(-1)?.passedJobIds).toContain(JOB);
+    expect(savedStates.at(-1)?.presentedJobId).toBe(OTHER);
+    expect(runToolMock.mock.calls.map((call) => call[1])).not.toContain(
+      "apply_to_job",
+    );
+  });
+});

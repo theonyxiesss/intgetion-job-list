@@ -162,9 +162,35 @@ function knownLine(locale: string, draft: Draft | undefined): string {
   return country ? `Noted. ${country}.` : "Noted.";
 }
 
-/** Spoken when the model returns no text, so the dialogue does not stop. */
-export function followUp(locale: string, draft: Draft | undefined): string {
+const PROGRESSIVE = new Set<SearchSlot>([
+  "city",
+  "experience",
+  "languages",
+  "salary",
+]);
+
+/**
+ * The one fact a search turn may still ask. Once the search can run, city,
+ * experience, languages and salary stay on the profile-fill path.
+ */
+export function directedSlot(
+  draft: Draft | undefined,
+  profileFill = false,
+): SearchSlot | null {
   const slot = nextSlot(draft);
+  if (!slot) return null;
+  if (profileFill || !readyToSearch(draft)) return slot;
+  if (PROGRESSIVE.has(slot)) return null;
+  return slot;
+}
+
+/** Spoken when the model returns no text, so the dialogue does not stop. */
+export function followUp(
+  locale: string,
+  draft: Draft | undefined,
+  profileFill = false,
+): string {
+  const slot = directedSlot(draft, profileFill);
   const question = slot
     ? (isRu(locale) ? QUESTIONS_RU : QUESTIONS_EN)[slot]
     : isRu(locale)

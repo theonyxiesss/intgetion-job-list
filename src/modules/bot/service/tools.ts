@@ -57,6 +57,12 @@ export type BotState = {
   resumeAckPending?: boolean;
   /** Continuation was shown; the fill choice stays until they pick. */
   resumeAckShown?: boolean;
+  /** The vacancy this turn is asking about. */
+  presentedJobId?: string;
+  /** Vacancies the person already passed. Short list, no new table. */
+  passedJobIds?: string[];
+  /** Whether the shown vacancy suits them. A yes is not an application. */
+  verdict?: "suits" | "declined";
 };
 
 export type ToolContext = {
