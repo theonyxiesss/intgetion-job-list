@@ -1309,7 +1309,16 @@
     "faq": "FAQ",
     "salaries": "Gehälter",
     "companySite": "Unternehmen",
-    "portfolio": "Portfolio"
+    "portfolio": "Portfolio",
+    "companyGroup": "Unternehmen",
+    "aboutUs": "Über uns",
+    "feedback": "Feedback",
+    "emailSupport": "E-Mail-Support",
+    "ambassadorProgram": "Botschafterprogramm",
+    "mediaPressKit": "Medien & Pressekit",
+    "apiAccess": "API-Zugang",
+    "verifyOfficialAccounts": "Offizielle Konten verifizieren",
+    "termsPrivacy": "Nutzungsbedingungen & Datenschutz"
   },
   "ui": {
     "close": "Schließen",

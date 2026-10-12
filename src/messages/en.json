@@ -1309,7 +1309,16 @@
     "faq": "FAQ",
     "salaries": "Salaries",
     "companySite": "Company",
-    "portfolio": "Portfolio"
+    "portfolio": "Portfolio",
+    "companyGroup": "Company",
+    "aboutUs": "About Us",
+    "feedback": "Feedback",
+    "emailSupport": "Email Support",
+    "ambassadorProgram": "Ambassador Program",
+    "mediaPressKit": "Media & Press Kit",
+    "apiAccess": "API Access",
+    "verifyOfficialAccounts": "Verify Official Accounts",
+    "termsPrivacy": "Terms & Privacy Policy"
   },
   "ui": {
     "close": "Close",

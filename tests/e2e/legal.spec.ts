@@ -22,12 +22,13 @@ test("legal pages render and are linked where people consent", async ({
       .getByRole("checkbox", { name: /Analytics/ }),
   ).toBeVisible();
 
+  // Exact names: the Company group also links "Terms & Privacy Policy" (D396).
   const footer = page.locator("footer");
   await expect(
-    footer.getByRole("link", { name: "Terms of Use" }),
+    footer.getByRole("link", { name: "Terms of Use", exact: true }),
   ).toHaveAttribute("href", "/terms");
   await expect(
-    footer.getByRole("link", { name: "Privacy Policy" }),
+    footer.getByRole("link", { name: "Privacy Policy", exact: true }),
   ).toHaveAttribute("href", "/privacy");
 
   await page.goto("/en/register");
