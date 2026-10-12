@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  loginReturnHref,
   loginReturnLocation,
   oauthNext,
   planLoginNext,
@@ -29,5 +30,12 @@ describe("oauth return", () => {
       search: "",
     });
     expect(planLoginNext("plus")).toBe("billing-plus");
+  });
+
+  it("sends an existing session to the return page, or home", () => {
+    expect(loginReturnHref("ru", "chat")).toBe("/ru/chat");
+    expect(loginReturnHref("en", "billing")).toBe("/billing/crypto?plan=hire");
+    expect(loginReturnHref("ru", undefined)).toBe("/ru");
+    expect(loginReturnHref("en", undefined)).toBe("/");
   });
 });

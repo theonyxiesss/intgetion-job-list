@@ -43,6 +43,8 @@ const copy = {
       "Sign in on {site} to save jobs and apply. /reset starts a new conversation.",
     signIn: "To save a job or apply, sign in, then come back here.",
     signInButton: "Sign in",
+    confirmOnSite: "Confirm this on the site, then come back here.",
+    openChat: "Open the chat",
     openJob: "Open",
     more: "More in the catalogue: {site}/en/jobs",
   },
@@ -58,6 +60,8 @@ const copy = {
       "Войдите на {site}, чтобы сохранять вакансии и откликаться. /reset — начать заново.",
     signIn: "Чтобы сохранить вакансию или откликнуться, войдите и возвращайтесь сюда.",
     signInButton: "Войти",
+    confirmOnSite: "Подтвердите это на сайте и возвращайтесь сюда.",
+    openChat: "Открыть чат",
     openJob: "Открыть",
     more: "Ещё в каталоге: {site}/ru/jobs",
   },
@@ -78,6 +82,8 @@ const copy = {
     signIn:
       "Para salvar uma vaga ou se candidatar, entre e depois volte aqui.",
     signInButton: "Entrar",
+    confirmOnSite: "Confirme isso no site e depois volte aqui.",
+    openChat: "Abrir o chat",
     openJob: "Abrir",
     more: "Mais no catálogo: {site}/pt-BR/jobs",
   },
@@ -100,6 +106,9 @@ const copy = {
     signIn:
       "Um einen Job zu speichern oder sich zu bewerben, melden Sie sich an und kommen Sie dann hierher zurück.",
     signInButton: "Anmelden",
+    confirmOnSite:
+      "Bestätigen Sie das auf der Website und kommen Sie dann hierher zurück.",
+    openChat: "Chat öffnen",
     openJob: "Öffnen",
     more: "Mehr im Katalog: {site}/de/jobs",
   },
@@ -122,6 +131,8 @@ const copy = {
     signIn:
       "Pour enregistrer une offre ou postuler, connectez-vous, puis revenez ici.",
     signInButton: "Se connecter",
+    confirmOnSite: "Confirmez cela sur le site, puis revenez ici.",
+    openChat: "Ouvrir le chat",
     openJob: "Ouvrir",
     more: "Plus dans le catalogue : {site}/fr/jobs",
   },
@@ -141,6 +152,8 @@ const copy = {
     signIn:
       "Per salvare un’offerta o candidarti, accedi e poi torna qui.",
     signInButton: "Accedi",
+    confirmOnSite: "Confermalo sul sito e poi torna qui.",
+    openChat: "Apri la chat",
     openJob: "Apri",
     more: "Altro nel catalogo: {site}/it/jobs",
   },
@@ -315,13 +328,15 @@ function render(
 
   for (const event of events) {
     if (event.type === "confirm_request") {
-      // A write needs an account and a confirmation this chat cannot press.
+      // A write needs a confirmation this chat cannot press.
+      // A linked account opens the site chat. A guest still gets sign-in;
+      // the login page sends an existing browser session straight to chat.
       out.push({
-        text: fill(lines.signIn),
+        text: fill(signedIn ? lines.confirmOnSite : lines.signIn),
         links: [
           {
-            label: lines.signInButton,
-            url: pageUrl(locale, "/login?next=chat"),
+            label: signedIn ? lines.openChat : lines.signInButton,
+            url: pageUrl(locale, signedIn ? "/chat" : "/login?next=chat"),
           },
         ],
       });

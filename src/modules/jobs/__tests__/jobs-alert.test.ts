@@ -321,6 +321,50 @@ describe("jobs alert send", () => {
     expect(sender).toHaveBeenCalledTimes(2);
   });
 
+  it("sends at most one post per call when several jobs are waiting", async () => {
+    const queue = [
+      row({ id: "00000000-0000-4000-8000-000000000001", title: "First" }),
+      row({ id: "00000000-0000-4000-8000-000000000002", title: "Second" }),
+      row({ id: "00000000-0000-4000-8000-000000000003", title: "Third" }),
+    ];
+    const sent = new Set<string>();
+    const sender = vi.fn<TelegramSender>(async () => "sent");
+    const deliver = async (exclude: readonly string[]) => {
+      const job = queue.find(
+        (item) => !sent.has(item.id) && !exclude.includes(item.id),
+      );
+      if (!job) return { status: "empty" as const };
+      const result = await sender(-100, jobsAlertText(job));
+      if (result !== "sent") return { status: "failed" as const, id: job.id };
+      sent.add(job.id);
+      return { status: "sent" as const };
+    };
+
+    const first = await runJobsAlert({
+      sender,
+      host: "localhost",
+      chatIdRaw: "-100",
+      deliver,
+    });
+    expect(first).toEqual({ sent: 1, failed: 0 });
+    expect(sender).toHaveBeenCalledTimes(1);
+    expect(sender.mock.calls[0]?.[1]).toContain(queue[0]!.id);
+    expect(sent.size).toBe(1);
+
+    const second = await runJobsAlert({
+      sender,
+      host: "localhost",
+      chatIdRaw: "-100",
+      deliver,
+    });
+    expect(second).toEqual({ sent: 1, failed: 0 });
+    expect(sender).toHaveBeenCalledTimes(2);
+    expect(sender.mock.calls[1]?.[1]).toContain(queue[1]!.id);
+    expect(sent.has(queue[0]!.id)).toBe(true);
+    expect(sent.has(queue[1]!.id)).toBe(true);
+    expect(sent.has(queue[2]!.id)).toBe(false);
+  });
+
   it("does not stamp a blocked send", async () => {
     const sender = vi.fn<TelegramSender>(async () => "blocked");
     let stamped = false;

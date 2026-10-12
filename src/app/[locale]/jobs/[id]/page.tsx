@@ -27,7 +27,7 @@ import {
 } from "@/modules/seo/site";
 import { RememberViewedJob } from "@/modules/jobs/ui/remember-viewed-job";
 import { ShareJob } from "@/modules/jobs/ui/share-job";
-import { SimilarJobs } from "@/modules/jobs/ui/similar-jobs";
+import { RelatedJobs } from "@/modules/jobs/ui/related-jobs";
 import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 import { localePrefix } from "@/i18n/paths";
 import { intlLocale } from "@/i18n/locale";
@@ -266,6 +266,13 @@ export default async function JobPage({
                   .join(" · ")}
               </p>
             ) : null}
+            <RelatedJobs
+              job={job}
+              locale={locale}
+              viewer={{
+                hidden: user ? await getHiddenSetsForViewer(user.id) : null,
+              }}
+            />
           </article>
           <aside className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg p-4 lg:sticky lg:top-24 lg:border lg:p-5">
             <div className="flex flex-col gap-3">
@@ -352,13 +359,6 @@ export default async function JobPage({
             }}
           />
         </div>
-        <SimilarJobs
-          job={job}
-          locale={locale}
-          viewer={{
-            hidden: user ? await getHiddenSetsForViewer(user.id) : null,
-          }}
-        />
       </Container>
     </main>
   );

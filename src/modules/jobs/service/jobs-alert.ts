@@ -7,7 +7,8 @@ import type { TelegramSender } from "@/lib/telegram-bot";
 /** This file's applied_at is the watermark (D341). */
 export const JOBS_ALERT_MIGRATION = "0033_jobs_alert.sql";
 
-const BATCH = 20;
+/** One channel post per cron tick. `/api/cron/telegram` already runs every 5 minutes (D395). */
+const BATCH = 1;
 const MINUTE_MS = 60_000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;

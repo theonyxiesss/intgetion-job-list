@@ -1,6 +1,7 @@
 "use client";
 
 import { Send } from "lucide-react";
+import Image from "next/image";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { HIRE_REGION_KEYS, HIRE_REGIONS } from "@/config/hire-regions";
 import { EMPLOYMENT_TYPES, JOB_CATEGORIES } from "@/config/markers";
@@ -283,7 +284,12 @@ export function HireForm({
             help={text.applicationEmailHelp}
             required
           >
-            <Input name="applicationEmail" type="email" required maxLength={320} />
+            <Input
+              name="applicationEmail"
+              type="email"
+              required
+              maxLength={320}
+            />
           </Field>
         ) : null}
         {method === "external_url" ? (
@@ -315,9 +321,12 @@ export function HireForm({
           />
         </Field>
         {preview ? (
-          <img
+          <Image
             src={preview}
             alt=""
+            width={96}
+            height={96}
+            unoptimized
             className="size-24 border border-line object-cover"
           />
         ) : null}

@@ -129,7 +129,7 @@ describe("company verification (10B)", () => {
     expect(result).toMatchObject({ emailSent: true });
     const link = new URL(sentLinks.at(-1)!);
     const emailed = link.searchParams.get("token")!;
-    expect(link.pathname).toBe("/en/employer/company/verify");
+    expect(link.pathname).toBe("/employer/company/verify");
     const stored = await getDb().execute<{ token_hash: string }>(
       sql`select token_hash from public.company_verifications where company_id = ${emailCompanyId}`,
     );

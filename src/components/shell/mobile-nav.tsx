@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/icon";
 import { navFade } from "@/components/ui/page-transition";
 import { Link } from "@/i18n/navigation";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { iconForNav } from "./nav-icons";
 import { ThemeToggle } from "./theme-toggle";
 
 export type NavItem = { href: string; label: string };
@@ -68,18 +69,24 @@ export function MobileNav({
           />
         </div>
         <nav aria-label={label} className="flex flex-col px-4 py-6">
-          {items.map((item, i) => (
-            <Link
-              {...navFade}
-              key={item.href}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              data-i={Math.min(i, 5)}
-              className="t-h2 ui-menu-item flex min-h-14 items-center border-b border-line"
-            >
-              {item.label}
-            </Link>
-          ))}
+          {items.map((item, i) => {
+            const Mark = iconForNav(item.href);
+            return (
+              <Link
+                {...navFade}
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                data-i={Math.min(i, 5)}
+                className="t-h2 ui-menu-item flex min-h-14 items-center overflow-hidden border-b border-line text-[clamp(20px,6.5vw,28px)] whitespace-nowrap"
+              >
+                <span className="inline-flex min-w-0 items-center gap-4">
+                  {Mark ? <Mark size={24} className="shrink-0" /> : null}
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
         </nav>
         <div className="flex items-center gap-2 px-4">
           <ThemeToggle />

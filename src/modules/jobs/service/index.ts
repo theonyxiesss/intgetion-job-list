@@ -41,4 +41,5 @@ export { parseEcbCsv, refreshFxRates } from "./fx-rates";
 export { expireImportedJobs, saveImportedJob } from "./imported-jobs";
 export type { ImportedJobStatus, ImportedJobWrite } from "./imported-jobs";
 export { findSimilarJobs } from "./similar-jobs";
+export { findRelatedPublishedJobs } from "./related-jobs";
 export { runJobsAlert } from "./jobs-alert";

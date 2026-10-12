@@ -1,7 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import pg from "pg";
-import { isLoopback, loadLocalEnv, pgConfig, redact } from "./db-url.mjs";
+import {
+  decideMigrationTarget,
+  isLoopback,
+  loadLocalEnv,
+  pgConfig,
+  redact,
+} from "./db-url.mjs";
 
 const migrationsDir = path.join("src", "db", "migrations");
 const localPassword = "app_rw_local_only";
@@ -13,6 +19,12 @@ if (!connectionString) {
   console.error(
     "DATABASE_MIGRATION_URL is not set. Put the schema-owner URL in .env.local or the CI environment.",
   );
+  process.exit(1);
+}
+
+const target = decideMigrationTarget(connectionString, process.argv.slice(2));
+if (!target.ok) {
+  console.error(target.reason);
   process.exit(1);
 }
 

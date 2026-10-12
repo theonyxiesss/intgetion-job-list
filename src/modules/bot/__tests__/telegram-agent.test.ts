@@ -246,6 +246,22 @@ describe("the agent inside the Telegram bot (D311)", () => {
     expect(sent[0].links?.[0]?.url).toBe("https://example.test/login?next=chat");
   });
 
+  it("opens the site chat when this Telegram account is already linked", async () => {
+    linkedUserId = "user-1";
+    turn = (emit) =>
+      emit({
+        type: "confirm_request",
+        confirmationId: "x",
+        tool: "apply_to_job",
+      } as BotEvent);
+    await handleTelegramAgentUpdate("token", update("откликнуться", "ru"));
+    expect(sent[0].text).toContain("Подтвердите это на сайте");
+    expect(sent[0].links?.[0]).toEqual({
+      label: "Открыть чат",
+      url: "https://example.test/ru/chat",
+    });
+  });
+
   it("keeps one thread per chat and starts a new one on /reset", async () => {
     turn = (emit) => emit({ type: "token", text: "ok" });
     await handleTelegramAgentUpdate("token", update("first"));

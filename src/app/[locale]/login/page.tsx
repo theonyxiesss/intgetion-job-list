@@ -1,9 +1,16 @@
+import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthPage } from "@/components/auth/auth-page";
 import { LoginForm } from "@/components/auth/login-form";
-import { isLoginNext, type LoginNext } from "@/components/auth/login-next";
+import {
+  isLoginNext,
+  loginReturnHref,
+  type LoginNext,
+} from "@/components/auth/login-next";
 import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
 import { Link } from "@/i18n/navigation";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/modules/auth/service";
 
 const callbackErrors = new Set([
   "invalid_link",
@@ -23,6 +30,12 @@ export default async function LoginPage({
   const t = await getTranslations("auth");
   const { error, next: rawNext } = await searchParams;
   const next: LoginNext | undefined = isLoginNext(rawNext) ? rawNext : undefined;
+  const failed = error && callbackErrors.has(error) ? error : undefined;
+  if (!failed) {
+    const supabase = await createSupabaseServerClient();
+    const user = await getCurrentUser(supabase.auth);
+    if (user) redirect(loginReturnHref(locale, next));
+  }
 
   return (
     <AuthPage
@@ -49,7 +62,7 @@ export default async function LoginPage({
       }
     >
       <LoginForm
-        initialError={error && callbackErrors.has(error) ? error : undefined}
+        initialError={failed}
         next={next}
       />
       <SocialSignInStubs next={next} />

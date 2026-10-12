@@ -53,7 +53,7 @@ describe("Telegram dispatch against the database (D237)", () => {
     await runTelegramDispatch({ sender, siteUrl: "https://intgetion.com" });
     const mine = sent.filter((message) => message.chatId === telegramId);
     expect(mine).toHaveLength(1);
-    expect(mine[0]!.text).toContain("https://intgetion.com/en/matches");
+    expect(mine[0]!.text).toContain("https://intgetion.com/matches");
 
     await runTelegramDispatch({ sender, siteUrl: "https://intgetion.com" });
     expect(

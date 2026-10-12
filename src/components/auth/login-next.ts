@@ -45,3 +45,13 @@ export function loginReturnLocation(
   const search = queryAt === -1 ? "" : path.slice(queryAt);
   return { pathname: localePath(locale, pathname), search };
 }
+
+/** Where a person who is already signed in goes instead of the login form. */
+export function loginReturnHref(
+  locale: string,
+  next: LoginNext | undefined,
+): string {
+  if (!next) return localePath(locale, "");
+  const dest = loginReturnLocation(locale, next);
+  return `${dest.pathname}${dest.search}`;
+}
