@@ -6,21 +6,9 @@ import { CompanyMarkFor } from "@/components/ui/company-mark";
 import { JobCard } from "@/components/ui/job-card";
 import type { searchJobs } from "../service";
 import { intlLocale } from "@/i18n/locale";
-import { publicJobText } from "@/lib/public-job-text";
+import { jobCardSummary } from "./job-summary";
 
 type PublicJob = Awaited<ReturnType<typeof searchJobs>>["items"][number];
-
-/** Plain first lines of the description; the card clamps it to two lines. */
-function summaryOf(description: string | null): string | null {
-  const visible = publicJobText(description);
-  if (!visible) return null;
-  const plain = visible
-    .replace(/<[^>]*>/g, " ")
-    .replace(/[#*_`>[\]]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-  return plain ? plain.slice(0, 240) : null;
-}
 
 export async function PublicJobCard({
   job,
@@ -102,7 +90,7 @@ export async function PublicJobCard({
       ]}
       moreSkillsLabel={(hidden) => `+${hidden + job.skillsMore}`}
       meta={meta}
-      summary={summaryOf(job.description)}
+      summary={jobCardSummary(job.description)}
       viewLabel={t("viewJob")}
     />
   );

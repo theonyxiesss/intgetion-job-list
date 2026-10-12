@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { formatMoneyDto } from "@/lib/money";
-import { Badge } from "@/components/ui/badge";
+import { Badge, Tag } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { CompanyLinks, CompanyMarkFor } from "@/components/ui/company-mark";
 import { Container } from "@/components/ui/container";
@@ -167,7 +167,7 @@ export default async function JobPage({
                 </div>
               </div>
               {job.company.description ? (
-                <p className="max-w-[68ch] whitespace-pre-wrap text-fg-muted">
+                <p className="max-w-[56ch] whitespace-pre-wrap text-fg-muted">
                   {job.company.description}
                 </p>
               ) : null}
@@ -206,7 +206,7 @@ export default async function JobPage({
             {job.source.type === "imported" ? (
               <section className="flex flex-col gap-4 border border-line p-4">
                 <h2 className="t-h3">{seo("inOurWords")}</h2>
-                <p className="max-w-[68ch]">
+                <p className="max-w-[56ch]">
                   {importedJobSummary({
                     title: job.title,
                     company: job.company.name,
@@ -240,8 +240,9 @@ export default async function JobPage({
                 ) : null}
               </section>
             ) : null}
+            {/* 56ch of the system font is about 68 letters (DESIGN 4.2, D398). */}
             {description ? (
-              <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
+              <div className="t-body-l max-w-[56ch] whitespace-pre-wrap">
                 {description}
               </div>
             ) : null}
@@ -249,12 +250,12 @@ export default async function JobPage({
               <ul className="flex flex-wrap gap-2">
                 {job.skills.map((skill) => (
                   <li key={skill.id}>
-                    <Badge>{skill.name}</Badge>
+                    <Tag>{skill.name}</Tag>
                   </li>
                 ))}
                 {job.skillsMore > 0 ? (
                   <li>
-                    <Badge>{`+${job.skillsMore}`}</Badge>
+                    <Tag>{`+${job.skillsMore}`}</Tag>
                   </li>
                 ) : null}
               </ul>

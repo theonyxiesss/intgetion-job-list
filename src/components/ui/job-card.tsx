@@ -57,7 +57,7 @@ export function JobCard({
   transitionName?: string;
   /** One quiet line under the company: place · format · date. */
   meta?: string[];
-  /** Two lines of the description at most. */
+  /** First words of the description: three lines narrow, two wide (D398). */
   summary?: string | null;
   /** Visible "View job" control; the whole card stays the link. */
   viewLabel?: string;
@@ -153,8 +153,10 @@ export function JobCard({
             )}
           </div>
         )}
+        {/* Shown on narrow cards too, or the card says nothing about the job.
+            No display utility here: one would override line-clamp (D398). */}
         {summary && !compact && (
-          <p className="t-body-s line-clamp-2 hidden max-w-[65ch] break-words text-fg-muted @min-[640px]:block">
+          <p className="t-body-s line-clamp-3 max-w-[65ch] break-words text-fg-muted @min-[640px]:line-clamp-2">
             {summary}
           </p>
         )}
