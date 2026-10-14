@@ -34,9 +34,7 @@ function receipt(overrides?: {
   };
 }
 
-function check(
-  overrides: Partial<Parameters<typeof verifyTransfer>[0]> = {},
-) {
+function check(overrides: Partial<Parameters<typeof verifyTransfer>[0]> = {}) {
   return verifyTransfer({
     receipt: receipt(),
     blockTimestamp: created,
@@ -68,9 +66,9 @@ describe("verifyTransfer", () => {
     expect(
       check({ receipt: receipt({ contract: "0x" + "ab".repeat(20) }) }),
     ).toEqual({ ok: false, reason: "no_transfer" });
-    expect(
-      check({ receipt: receipt({ to: "0x" + "44".repeat(20) }) }),
-    ).toEqual({ ok: false, reason: "wrong_recipient" });
+    expect(check({ receipt: receipt({ to: "0x" + "44".repeat(20) }) })).toEqual(
+      { ok: false, reason: "wrong_recipient" },
+    );
     expect(
       check({ receipt: receipt({ from: "0x" + "55".repeat(20) }) }),
     ).toEqual({ ok: false, reason: "wrong_payer" });

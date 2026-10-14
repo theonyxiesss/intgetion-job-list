@@ -13,6 +13,7 @@ import {
   telegramAuthUrl,
   telegramBotId,
   telegramBotToken,
+  signInInsteadOfLink,
   telegramLinkOf,
   type CurrentUser,
 } from "@/modules/auth/service";
@@ -28,10 +29,12 @@ export async function AccountSignIn({
   locale,
   user,
   error,
+  provider,
 }: {
   locale: string;
   user: CurrentUser;
   error?: string;
+  provider?: string;
 }) {
   const supabase = await createSupabaseServerClient();
   const [loginEmail, telegram, oauth] = await Promise.all([
@@ -57,6 +60,11 @@ export async function AccountSignIn({
       google={oauth.google}
       x={oauth.x}
       notice={error && accountNotices.has(error) ? error : null}
+      enterHref={
+        error === "identity_taken"
+          ? signInInsteadOfLink(locale, "account", error, provider ?? null)
+          : null
+      }
     />
   );
 }

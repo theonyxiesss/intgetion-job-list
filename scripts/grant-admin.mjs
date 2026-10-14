@@ -1,5 +1,10 @@
 import pg from "pg";
-import { loadLocalEnv, pgConfig, redact } from "./db-url.mjs";
+import {
+  loadLocalEnv,
+  pgConfig,
+  redact,
+  requireDatabaseTarget,
+} from "./db-url.mjs";
 
 // D21 / D253: platform admins are appointed by this script, never through the
 // UI. Usage:
@@ -25,6 +30,13 @@ if (!email || !email.includes("@") || !roles.has(role)) {
 const connectionString = process.env.DATABASE_MIGRATION_URL;
 if (!connectionString) {
   console.error("DATABASE_MIGRATION_URL is not set.");
+  process.exit(1);
+}
+
+try {
+  requireDatabaseTarget(connectionString, process.argv.slice(2));
+} catch (error) {
+  console.error(error instanceof Error ? error.message : error);
   process.exit(1);
 }
 

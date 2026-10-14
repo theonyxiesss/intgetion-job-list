@@ -4,6 +4,7 @@
 > Карта: [tz/INDEX.md](INDEX.md) · сейчас: [CURRENT.md](../CURRENT.md).
 
 ## 17. ПРИВАТНОСТЬ / GDPR / RETENTION
+
 - Согласие: чекбокс условий и политики при регистрации (`terms_version`);
   маркетинг — отдельный opt-in, по умолчанию выключен. Cookie-баннер — только
   если появятся неnecessary cookies (в MVP аналитика без cookies).
@@ -16,15 +17,15 @@
   пользователь единственный owner, — `suspended`, вакансии `closed`.
 - Retention (cron ежесуточно):
 
-| Данные | Срок |
-|--------|------|
-| bot_messages | 180 дней |
-| гостевые bot_conversations без привязки | 30 дней |
-| notifications | 90 дней (прочитанные) |
-| user_job_feedback | 365 дней |
-| audit_logs | 365 дней |
-| matching_results | пересчитываемые, удалять старше 30 дней |
-| rate_limit_counters | 48 часов |
-| import_runs | 180 дней |
+| Данные                                  | Срок                                    |
+| --------------------------------------- | --------------------------------------- |
+| bot_messages                            | 180 дней                                |
+| гостевые bot_conversations без привязки | 30 дней                                 |
+| notifications                           | 90 дней (прочитанные)                   |
+| user_job_feedback                       | 365 дней                                |
+| audit_logs                              | 365 дней                                |
+| matching_results                        | пересчитываемые, удалять старше 30 дней |
+| rate_limit_counters                     | 48 часов                                |
+| import_runs                             | 180 дней                                |
 
 ---

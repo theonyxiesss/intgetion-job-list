@@ -55,8 +55,7 @@ export function AgentBriefsControls({
   const [companyMessage, setCompanyMessage] = useState("");
   const applies = hasProfile || company.member;
   const locked =
-    applies &&
-    !((hasProfile && agentOn) || (company.member && companyOn));
+    applies && !((hasProfile && agentOn) || (company.member && companyOn));
 
   async function toggleCompany(next: boolean) {
     setCompanyOn(next);

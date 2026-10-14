@@ -52,13 +52,20 @@ function run(query: SQL) {
   const { sql: text, params } = dialect.sqlToQuery(query);
   const flat = text.replace(/\s+/g, " ").trim();
   state.statements.push(flat);
-  if (flat.includes("from crypto_orders o")) return state.order ? [state.order] : [];
+  if (flat.includes("from crypto_orders o"))
+    return state.order ? [state.order] : [];
   if (flat.startsWith("select address from sanctioned_addresses")) {
-    return state.sanctioned.has(String(params[0])) ? [{ address: params[0] }] : [];
+    return state.sanctioned.has(String(params[0]))
+      ? [{ address: params[0] }]
+      : [];
   }
   if (flat.startsWith("update crypto_orders") && state.order) {
     if (flat.includes("status = 'confirmed'")) {
-      state.order = { ...state.order, status: "confirmed", tx_hash: String(params[0]) };
+      state.order = {
+        ...state.order,
+        status: "confirmed",
+        tx_hash: String(params[0]),
+      };
     } else {
       state.order = {
         ...state.order,
@@ -83,7 +90,8 @@ function run(query: SQL) {
     return [];
   }
   if (flat.startsWith("insert into sanctioned_addresses")) {
-    for (let i = 0; i < params.length; i += 2) state.sanctioned.add(String(params[i]));
+    for (let i = 0; i < params.length; i += 2)
+      state.sanctioned.add(String(params[i]));
     return [];
   }
   throw new Error(`unexpected SQL in test: ${flat}`);
@@ -91,7 +99,9 @@ function run(query: SQL) {
 
 const db = {
   execute: vi.fn(async (query: SQL) => run(query)),
-  transaction: vi.fn(async (work: (tx: typeof db) => Promise<unknown>) => work(db)),
+  transaction: vi.fn(async (work: (tx: typeof db) => Promise<unknown>) =>
+    work(db),
+  ),
 };
 
 vi.mock("@/db/client", () => ({ getDb: () => db }));
@@ -109,9 +119,8 @@ vi.mock("@/modules/admin-console/service", () => ({
 
 vi.mock("@/modules/companies/service", () => ({ findMemberRole: vi.fn() }));
 
-const { confirmHireOrder, refreshSanctionsList } = await import(
-  "../service/billing-service"
-);
+const { confirmHireOrder, refreshSanctionsList } =
+  await import("../service/billing-service");
 
 function topic(address: string) {
   return `0x${address.slice(2).padStart(64, "0")}`;
@@ -195,7 +204,11 @@ describe("sanctions on the payment path (D380)", () => {
   });
 
   it("does not alert the owner twice for an order already frozen", async () => {
-    state.order = { ...orderFor(LISTED_PAYER), status: "frozen", reason: "sanctioned" };
+    state.order = {
+      ...orderFor(LISTED_PAYER),
+      status: "frozen",
+      reason: "sanctioned",
+    };
     goodTransferFrom(LISTED_PAYER);
     await confirmHireOrder(USER_ID, ORDER_ID, TX);
     expect(notifyPlatformOwners).not.toHaveBeenCalled();
@@ -220,7 +233,9 @@ describe("sanctions list refresh (D380)", () => {
     expect(result).toEqual({ stored: 0, replaced: false });
     expect(state.sanctioned.has(LISTED_PAYER)).toBe(true);
     expect(
-      state.statements.some((text) => text.startsWith("delete from sanctioned_addresses")),
+      state.statements.some((text) =>
+        text.startsWith("delete from sanctioned_addresses"),
+      ),
     ).toBe(false);
   });
 

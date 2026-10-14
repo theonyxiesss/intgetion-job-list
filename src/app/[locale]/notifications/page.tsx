@@ -91,7 +91,10 @@ export default async function NotificationsPage({
               (company) => company.agentBriefsEnabled,
             ),
           }}
-          telegram={{ linked: Boolean(telegram), enabled: channelOn("telegram") }}
+          telegram={{
+            linked: Boolean(telegram),
+            enabled: channelOn("telegram"),
+          }}
           email={{ linked: mailReady, enabled: channelOn("email") }}
           labels={{
             agentTitle: agent("title"),

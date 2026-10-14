@@ -57,6 +57,7 @@ frontend, БД, безопасность). Реализуешь платформ
 ## 1. ПРОДУКТ
 
 ### 1.1 Суть
+
 - `PRODUCT_NAME = "INTGETION JOB LIST"` — константа в `src/config/product.ts`
   и i18n. Считать название опечаткой и «исправлять» запрещено (D1).
 - **Remote-first** двусторонняя платформа: кандидаты ↔ работодатели. Onsite и
@@ -78,6 +79,7 @@ Employer  → Company → Job → Moderation → Applications → Mutual Interes
   возвращается с новыми совпадениями (раздел 12).
 
 ### 1.2 Рынок и объёмы
+
 - Международный remote-рынок. Языки UI: RU + EN. i18n с первого дня, хардкод
   строк в компонентах запрещён (lint-правило).
 - Объёмы MVP: ≤ 10 000 пользователей, ≤ 5 000 активных вакансий,
@@ -85,6 +87,7 @@ Employer  → Company → Job → Moderation → Applications → Mutual Interes
   этими числами; архитектура не должна блокировать рост ×100.
 
 ### 1.3 Один пользователь — несколько ролей
+
 - `users` — аккаунт. Кандидатская сторона = наличие `candidate_profiles`
   (0..1). Работодательская сторона = членство в `company_members` (0..N
   компаний) + `employer_profiles` (0..1).
@@ -97,38 +100,38 @@ Employer  → Company → Job → Moderation → Applications → Mutual Interes
 
 ## 2. РЕЕСТР РЕШЕНИЙ (менять запрещено; новые — только дописывать в DECISIONS.md)
 
-| ID | Решение |
-|----|---------|
-| D1 | Название не менять. Константа `PRODUCT_NAME`. |
-| D2 | Статусы отклика — один полный набор в БД с первого дня; переходы только через единственную функцию `transitionApplication()` (сервис) с таблицей разрешённых переходов (4.2). Прямой UPDATE статуса вне неё запрещён (проверяется тестом + grep в CI). |
-| D3 | Контакты открывает только `POST /express-interest`: переход в `shortlisted` + INSERT в `application_reveals` в одной транзакции. `viewed` не открывает. Перевести в `shortlisted` через общий PATCH статуса нельзя. |
-| D4 | Валюта — не hard-фильтр. Разные валюты сравниваются через `fx_rates` (курс не старше 7 дней); курса нет → зарплатный компонент нейтрален. |
-| D5 | gross/net между собой не сравниваются (налогового движка нет). month↔year конвертируются (×12); hour не конвертируется ни во что. Несравнимо → нейтрально. |
-| D6 | Часовые пояса — только IANA (`Europe/Berlin`). Пересечение рабочих часов считается в UTC по дням с учётом DST. Хранить смещения (`UTC+3`) запрещено. |
-| D7 | Аутентификация: email+пароль И magic link через Supabase Auth. Своей таблицы паролей/identities нет. OAuth — V2. |
-| D8 | Отклик на импортированную вакансию = переход по внешней ссылке. Строка `applications` не создаётся; пишется `user_job_feedback(action='applied_external')`. |
-| D9 | Импортированные компании (`origin='imported'`) нельзя claim-ить, в них нельзя вступить, бейдж «проверено» на них не ставится. |
-| D10 | Мессенджер — V2. Таблиц переписки и роута `/messages` в MVP нет. После reveal — карточка контактов. |
-| D11 | Эмбеддинги/векторы выключены (`EMBEDDINGS_ENABLED=false`). MVP-семантика = таксономия навыков + pg_trgm по названиям. Интерфейс `SemanticProvider` + `NoopSemanticProvider` зарезервированы. |
-| D12 | Модерация двухступенчатая: в 3B минимальная публикация (unverified → `pending_moderation`, verified → `published`), полная админ-очередь — 10A. |
-| D13 | Права — по членству в компании (`company_members`) и владению профилем, не по единственной роли пользователя. |
-| D14 | Бот вызывает тот же сервисный слой от имени конкретного `user_id` с теми же проверками. Гостевая сессия привязывается к аккаунту при регистрации. Критичные write-действия — только после явного подтверждения в UI. |
-| D15 | Отклик доступен при полноте профиля ≥ 60% **и** наличии обязательных полей: timezone, ≥ 3 навыка, контактный email (4.1, формула полноты — раздел 11.3). |
-| D16 | Контакты — отдельная таблица `candidate_contacts`; читает только `contactsService`. До reveal ключ `contacts` в JSON отсутствует (не `null`). Чужой объект — 404, не 403. |
-| D17 | LLM: allowlist полей на вход, без PII; токен-бюджеты; LLM не имеет доступа к БД — только tool layer. |
-| D18 | Импорт в MVP — на фикстурах. Живой источник — только при записи `founder approved: republish allowed — <источник>` в MISSION_LOG. Скрейпинг HTML запрещён: только официальные API/RSS с соблюдением их ToS (атрибуция, ссылка на оригинал). |
-| D19 | Деньги: `bigint` в минорных единицах + ISO 4217 `char(3)`; период и база — отдельные поля. Float/real/double для денег запрещены. Курсы — `numeric(18,8)`. |
-| D20 | Конец сессии — запись в MISSION_LOG.md с результатами команд. |
-| D21 | Админ — `users.platform_role='admin'`; назначается только SQL-скриптом/seed, не через UI. Admin-роуты для не-админа → 404. |
-| D22 | Все данные читаются/пишутся на сервере (Route Handlers / Server Actions) через Drizzle под ролью БД `app_rw`. Браузер использует supabase-js только для Auth. RLS включён на всех таблицах, политики для `anon`/`authenticated` — deny all. |
-| D23 | Контакты доступны компании, только пока отклик в статусе `shortlisted | interview | offer | hired`. `withdrawn`, `rejected`, удаление аккаунта → доступ закрыт (строка reveal остаётся для аудита). |
-| D24 | Профиль кандидата видят: он сам; члены компании, на вакансию которой он откликнулся (без контактов до reveal). Остальным — 404. Поиск кандидатов работодателем — V3. |
-| D25 | Очереди и фоновые задачи — pg-boss (собственная схема `pgboss`). Cron — Vercel Cron → `/api/cron/*` с секретом `CRON_SECRET`. Redis на MVP не используется. |
-| D26 | Rate limiting — в Postgres (`rate_limit_counters`, фиксированное окно). |
-| D27 | Повторный отклик: partial unique `(job_id, candidate_id) WHERE status <> 'withdrawn'`. Активный дубль → 409 `ALREADY_APPLIED`. После `withdrawn` повторный отклик разрешён один раз (вторая отмена → 409 `REAPPLY_LIMIT`). |
-| D28 | Удаление аккаунта = soft delete + немедленная анонимизация PII (раздел 17). |
-| D29 | LLM-провайдер за интерфейсом `LLMProvider`; модели задаются env. По умолчанию: диалог — `claude-sonnet-5-5`, извлечение/маппинг — `claude-haiku-4-5-20251001`. |
-| D30 | Explain для рекомендаций генерируется детерминированно из breakdown; LLM его не пишет. |
+| ID  | Решение                                                                                                                                                                                                                                                |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| D1  | Название не менять. Константа `PRODUCT_NAME`.                                                                                                                                                                                                          |
+| D2  | Статусы отклика — один полный набор в БД с первого дня; переходы только через единственную функцию `transitionApplication()` (сервис) с таблицей разрешённых переходов (4.2). Прямой UPDATE статуса вне неё запрещён (проверяется тестом + grep в CI). |
+| D3  | Контакты открывает только `POST /express-interest`: переход в `shortlisted` + INSERT в `application_reveals` в одной транзакции. `viewed` не открывает. Перевести в `shortlisted` через общий PATCH статуса нельзя.                                    |
+| D4  | Валюта — не hard-фильтр. Разные валюты сравниваются через `fx_rates` (курс не старше 7 дней); курса нет → зарплатный компонент нейтрален.                                                                                                              |
+| D5  | gross/net между собой не сравниваются (налогового движка нет). month↔year конвертируются (×12); hour не конвертируется ни во что. Несравнимо → нейтрально.                                                                                             |
+| D6  | Часовые пояса — только IANA (`Europe/Berlin`). Пересечение рабочих часов считается в UTC по дням с учётом DST. Хранить смещения (`UTC+3`) запрещено.                                                                                                   |
+| D7  | Аутентификация: email+пароль И magic link через Supabase Auth. Своей таблицы паролей/identities нет. OAuth — V2.                                                                                                                                       |
+| D8  | Отклик на импортированную вакансию = переход по внешней ссылке. Строка `applications` не создаётся; пишется `user_job_feedback(action='applied_external')`.                                                                                            |
+| D9  | Импортированные компании (`origin='imported'`) нельзя claim-ить, в них нельзя вступить, бейдж «проверено» на них не ставится.                                                                                                                          |
+| D10 | Мессенджер — V2. Таблиц переписки и роута `/messages` в MVP нет. После reveal — карточка контактов.                                                                                                                                                    |
+| D11 | Эмбеддинги/векторы выключены (`EMBEDDINGS_ENABLED=false`). MVP-семантика = таксономия навыков + pg_trgm по названиям. Интерфейс `SemanticProvider` + `NoopSemanticProvider` зарезервированы.                                                           |
+| D12 | Модерация двухступенчатая: в 3B минимальная публикация (unverified → `pending_moderation`, verified → `published`), полная админ-очередь — 10A.                                                                                                        |
+| D13 | Права — по членству в компании (`company_members`) и владению профилем, не по единственной роли пользователя.                                                                                                                                          |
+| D14 | Бот вызывает тот же сервисный слой от имени конкретного `user_id` с теми же проверками. Гостевая сессия привязывается к аккаунту при регистрации. Критичные write-действия — только после явного подтверждения в UI.                                   |
+| D15 | Отклик доступен при полноте профиля ≥ 60% **и** наличии обязательных полей: timezone, ≥ 3 навыка, контактный email (4.1, формула полноты — раздел 11.3).                                                                                               |
+| D16 | Контакты — отдельная таблица `candidate_contacts`; читает только `contactsService`. До reveal ключ `contacts` в JSON отсутствует (не `null`). Чужой объект — 404, не 403.                                                                              |
+| D17 | LLM: allowlist полей на вход, без PII; токен-бюджеты; LLM не имеет доступа к БД — только tool layer.                                                                                                                                                   |
+| D18 | Импорт в MVP — на фикстурах. Живой источник — только при записи `founder approved: republish allowed — <источник>` в MISSION_LOG. Скрейпинг HTML запрещён: только официальные API/RSS с соблюдением их ToS (атрибуция, ссылка на оригинал).            |
+| D19 | Деньги: `bigint` в минорных единицах + ISO 4217 `char(3)`; период и база — отдельные поля. Float/real/double для денег запрещены. Курсы — `numeric(18,8)`.                                                                                             |
+| D20 | Конец сессии — запись в MISSION_LOG.md с результатами команд.                                                                                                                                                                                          |
+| D21 | Админ — `users.platform_role='admin'`; назначается только SQL-скриптом/seed, не через UI. Admin-роуты для не-админа → 404.                                                                                                                             |
+| D22 | Все данные читаются/пишутся на сервере (Route Handlers / Server Actions) через Drizzle под ролью БД `app_rw`. Браузер использует supabase-js только для Auth. RLS включён на всех таблицах, политики для `anon`/`authenticated` — deny all.            |
+| D23 | Контакты доступны компании, только пока отклик в статусе `shortlisted                                                                                                                                                                                  | interview | offer | hired`. `withdrawn`, `rejected`, удаление аккаунта → доступ закрыт (строка reveal остаётся для аудита). |
+| D24 | Профиль кандидата видят: он сам; члены компании, на вакансию которой он откликнулся (без контактов до reveal). Остальным — 404. Поиск кандидатов работодателем — V3.                                                                                   |
+| D25 | Очереди и фоновые задачи — pg-boss (собственная схема `pgboss`). Cron — Vercel Cron → `/api/cron/*` с секретом `CRON_SECRET`. Redis на MVP не используется.                                                                                            |
+| D26 | Rate limiting — в Postgres (`rate_limit_counters`, фиксированное окно).                                                                                                                                                                                |
+| D27 | Повторный отклик: partial unique `(job_id, candidate_id) WHERE status <> 'withdrawn'`. Активный дубль → 409 `ALREADY_APPLIED`. После `withdrawn` повторный отклик разрешён один раз (вторая отмена → 409 `REAPPLY_LIMIT`).                             |
+| D28 | Удаление аккаунта = soft delete + немедленная анонимизация PII (раздел 17).                                                                                                                                                                            |
+| D29 | LLM-провайдер за интерфейсом `LLMProvider`; модели задаются env. По умолчанию: диалог — `claude-sonnet-5-5`, извлечение/маппинг — `claude-haiku-4-5-20251001`.                                                                                         |
+| D30 | Explain для рекомендаций генерируется детерминированно из breakdown; LLM его не пишет.                                                                                                                                                                 |
 
 ---
 
@@ -136,25 +139,26 @@ Employer  → Company → Job → Moderation → Applications → Mutual Interes
 
 ### 3.1 Стек (выбран, сравнение не повторять)
 
-| Слой | Выбор | Почему |
-|------|-------|--------|
-| Язык | TypeScript strict везде | один язык front/back, лучшие LLM SDK, скорость MVP |
-| Web | Next.js (App Router), Route Handlers, Server Components | SSR/SEO для вакансий, один деплой |
-| UI | Tailwind + shadcn/ui + lucide | доступные примитивы (Radix), без своей дизайн-системы |
-| Формы | react-hook-form + zod (схемы общие с API) | одна валидация на клиенте и сервере |
-| Данные на клиенте | TanStack Query (только для интерактивных списков/чата) | кэш, ретраи; SC — по умолчанию |
-| i18n | next-intl, префикс локали в URL (`/en`, `/ru`) | SEO страниц вакансий |
-| БД | Supabase Postgres 15+, расширения `pg_trgm`, `citext`, `pgcrypto` | одна БД на всё |
-| ORM/миграции | Drizzle ORM; миграции — SQL-файлы в `src/db/migrations` | единственный способ менять схему |
-| Auth | Supabase Auth через `@supabase/ssr` | D7 |
-| Storage | Supabase Storage (логотипы) | — |
-| Очереди | pg-boss | D25 |
-| Email | Resend + React Email шаблоны (RU/EN) | — |
-| LLM | `LLMProvider` → Anthropic SDK | D29 |
-| Тесты | vitest, Playwright. Интеграция и миграции с нуля — GitHub Actions, `supabase start` (D32). Разработка — облачный проект `intgetion-dev`, без локального Docker | D32 |
-| Ошибки/логи | Sentry, pino (JSON-логи без PII) | — |
+| Слой              | Выбор                                                                                                                                                          | Почему                                                |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Язык              | TypeScript strict везде                                                                                                                                        | один язык front/back, лучшие LLM SDK, скорость MVP    |
+| Web               | Next.js (App Router), Route Handlers, Server Components                                                                                                        | SSR/SEO для вакансий, один деплой                     |
+| UI                | Tailwind + shadcn/ui + lucide                                                                                                                                  | доступные примитивы (Radix), без своей дизайн-системы |
+| Формы             | react-hook-form + zod (схемы общие с API)                                                                                                                      | одна валидация на клиенте и сервере                   |
+| Данные на клиенте | TanStack Query (только для интерактивных списков/чата)                                                                                                         | кэш, ретраи; SC — по умолчанию                        |
+| i18n              | next-intl, префикс локали в URL (`/en`, `/ru`)                                                                                                                 | SEO страниц вакансий                                  |
+| БД                | Supabase Postgres 15+, расширения `pg_trgm`, `citext`, `pgcrypto`                                                                                              | одна БД на всё                                        |
+| ORM/миграции      | Drizzle ORM; миграции — SQL-файлы в `src/db/migrations`                                                                                                        | единственный способ менять схему                      |
+| Auth              | Supabase Auth через `@supabase/ssr`                                                                                                                            | D7                                                    |
+| Storage           | Supabase Storage (логотипы)                                                                                                                                    | —                                                     |
+| Очереди           | pg-boss                                                                                                                                                        | D25                                                   |
+| Email             | Resend + React Email шаблоны (RU/EN)                                                                                                                           | —                                                     |
+| LLM               | `LLMProvider` → Anthropic SDK                                                                                                                                  | D29                                                   |
+| Тесты             | vitest, Playwright. Интеграция и миграции с нуля — GitHub Actions, `supabase start` (D32). Разработка — облачный проект `intgetion-dev`, без локального Docker | D32                                                   |
+| Ошибки/логи       | Sentry, pino (JSON-логи без PII)                                                                                                                               | —                                                     |
 
 ### 3.2 Modular monolith
+
 Модули: `auth, users, candidates, companies, jobs, applications, contacts,
 matching, taxonomy, bot, ingestion, notifications, moderation, admin, privacy`.
 
@@ -175,6 +179,7 @@ src/modules/<m>/
   выносу в отдельный worker.
 
 ### 3.3 Структура репозитория
+
 ```
 src/app/[locale]/...        страницы (раздел 8)
 src/app/api/...             REST (раздел 7)
@@ -195,6 +200,7 @@ MISSION_LOG.md
 ```
 
 ### 3.4 Производительность (бюджеты)
+
 - `GET /api/jobs` p95 < 500 ms server-side на seed 5 000 опубликованных вакансий.
 - `GET /api/matches` p95 < 1 500 ms при холодном пересчёте, < 300 ms из кэша.
 - LCP < 2.5 s на 4G для `/`, `/jobs`, `/jobs/[id]`; JS главной < 150 KB gz.
@@ -204,14 +210,14 @@ MISSION_LOG.md
 
 **MVP (ориентир < $100/мес без LLM):**
 
-| Компонент | Сервис | ≈ $/мес |
-|-----------|--------|---------|
-| Frontend + API + Cron | Vercel Pro | 20 |
-| Postgres, Auth, Storage, бэкапы | Supabase Pro | 25 |
-| Email | Resend (до 50k писем) | 0–20 |
-| Ошибки | Sentry Developer | 0 |
-| Uptime | Better Stack / UptimeRobot free | 0 |
-| LLM | Anthropic API, отдельный бюджет, алерт | 30–80 |
+| Компонент                       | Сервис                                 | ≈ $/мес |
+| ------------------------------- | -------------------------------------- | ------- |
+| Frontend + API + Cron           | Vercel Pro                             | 20      |
+| Postgres, Auth, Storage, бэкапы | Supabase Pro                           | 25      |
+| Email                           | Resend (до 50k писем)                  | 0–20    |
+| Ошибки                          | Sentry Developer                       | 0       |
+| Uptime                          | Better Stack / UptimeRobot free        | 0       |
+| LLM                             | Anthropic API, отдельный бюджет, алерт | 30–80   |
 
 Фоновая обработка: Vercel Cron раз в минуту дёргает `/api/cron/queue`,
 который забирает пачку задач pg-boss (≤ 50 c работы). Бэкапы: ежедневные
@@ -223,6 +229,7 @@ CDN для статики и логотипов; Redis — только если
 станет узким местом (метрика: > 20% времени БД).
 
 ### 3.6 Переменные окружения (`.env.example`)
+
 ```
 NEXT_PUBLIC_SITE_URL=
 NEXT_PUBLIC_SUPABASE_URL=
@@ -241,6 +248,7 @@ IMPORT_LIVE_ENABLED=false
 CRON_SECRET=
 SENTRY_DSN=
 ```
+
 Секреты в репозитории запрещены; в CI — gitleaks.
 
 ---
@@ -252,6 +260,7 @@ SENTRY_DSN=
 через `check`; enum — Postgres enum-типы; удаление пользователя — soft (D28).
 
 ### 4.0 Enum-типы
+
 ```
 user_status:        active | suspended | deleted
 platform_role:      user | admin
@@ -508,16 +517,17 @@ rate_limit_counters(key text, window_start timestamptz, count int not null,
 
 ### 4.2 Статус-машина отклика (единственная, D2)
 
-| Из \ В | viewed | shortlisted | interview | offer | hired | rejected | withdrawn |
-|--------|--------|-------------|-----------|-------|-------|----------|-----------|
-| applied | E (авто при открытии) | E, только express-interest | — | — | — | E | C |
-| viewed | — | E, только express-interest | — | — | — | E | C |
-| shortlisted | — | — | E | — | — | E | C |
-| interview | — | — | — | E | — | E | C |
-| offer | — | — | — | — | E | E | C |
-| hired / rejected / withdrawn | терминальные | | | | | | |
+| Из \ В                       | viewed                | shortlisted                | interview | offer | hired | rejected | withdrawn |
+| ---------------------------- | --------------------- | -------------------------- | --------- | ----- | ----- | -------- | --------- |
+| applied                      | E (авто при открытии) | E, только express-interest | —         | —     | —     | E        | C         |
+| viewed                       | —                     | E, только express-interest | —         | —     | —     | E        | C         |
+| shortlisted                  | —                     | —                          | E         | —     | —     | E        | C         |
+| interview                    | —                     | —                          | —         | E     | —     | E        | C         |
+| offer                        | —                     | —                          | —         | —     | E     | E        | C         |
+| hired / rejected / withdrawn | терминальные          |                            |           |       |       |          |           |
 
 E — член компании (owner/admin/recruiter), C — кандидат-владелец.
+
 - Каждый переход: проверка таблицы → UPDATE → INSERT history → событие
   уведомления — одна транзакция. Недопустимый переход → 409 `INVALID_TRANSITION`.
 - Переход в `shortlisted` = `express-interest`: `SELECT … FOR UPDATE`, UPDATE
@@ -531,16 +541,16 @@ E — член компании (owner/admin/recruiter), C — кандидат-
 
 **job**
 
-| Переход | Кто | Условие |
-|---------|-----|---------|
-| draft → pending_moderation | member | publish, компания unverified/pending или risk_score ≥ 4 |
-| draft → published | member | publish, компания verified и risk_score < 4 |
-| pending_moderation → published / draft(rejected) | admin | решение в очереди (причина обязательна при отказе) |
-| published ⇄ paused | member | — |
-| published/paused → closed | member | — |
-| published → expired | system | cron по `expires_at`; imported — исчезла из источника 2 прогона подряд |
-| any → removed | admin | модерация/жалобы; viewable только админу |
-| paused/expired → published | member | продление `expires_at` (+30 дн.), повторная проверка risk |
+| Переход                                          | Кто    | Условие                                                                |
+| ------------------------------------------------ | ------ | ---------------------------------------------------------------------- |
+| draft → pending_moderation                       | member | publish, компания unverified/pending или risk_score ≥ 4                |
+| draft → published                                | member | publish, компания verified и risk_score < 4                            |
+| pending_moderation → published / draft(rejected) | admin  | решение в очереди (причина обязательна при отказе)                     |
+| published ⇄ paused                               | member | —                                                                      |
+| published/paused → closed                        | member | —                                                                      |
+| published → expired                              | system | cron по `expires_at`; imported — исчезла из источника 2 прогона подряд |
+| any → removed                                    | admin  | модерация/жалобы; viewable только админу                               |
+| paused/expired → published                       | member | продление `expires_at` (+30 дн.), повторная проверка risk              |
 
 Каждый переход — запись в `job_status_history`. Imported-вакансии меняют
 статус только system/admin (D9).
@@ -553,6 +563,7 @@ E — член компании (owner/admin/recruiter), C — кандидат-
 необратимо, анонимизация D28).
 
 ### 4.4 ERD (ядро; полный — в docs/ERD.md, генерируется из раздела 4.1)
+
 ```mermaid
 erDiagram
   users ||--o| candidate_profiles : has
@@ -594,6 +605,7 @@ erDiagram
 ## 5. ПРАВА И ПРИВАТНОСТЬ
 
 ### 5.1 Правила
+
 - Каждый запрос: `requireUser()` → загрузка объекта **в рамках доступного
   пользователю скоупа** (WHERE с ownership/membership) → нет строки = 404.
   Никогда не «загрузить по id, потом проверить права» с ответом 403.
@@ -605,21 +617,22 @@ erDiagram
 
 ### 5.2 Матрица прав (MVP)
 
-| Действие | Гость | Кандидат | Member компании | owner/admin компании | Platform admin |
-|----------|-------|----------|-----------------|----------------------|----------------|
-| Смотреть published вакансии | ✅ | ✅ | ✅ | ✅ | ✅ (все статусы) |
-| Создать/редактировать вакансию | — | — | recruiter+ | ✅ | только статус |
-| Публиковать/закрывать | — | — | recruiter+ | ✅ | ✅ |
-| Отклик | — | ✅ (D15) | — | — | — |
-| Смотреть отклики на вакансию | — | — | ✅ | ✅ | ✅ |
-| Express interest / статусы | — | — | recruiter+ | ✅ | — |
-| Контакты кандидата | — | свои | после reveal (D23) | после reveal | только через аудит-лог действия |
-| Профиль компании | ✅ публичная часть | ✅ | ✅ | редактирование | ✅ |
-| Члены компании | — | — | список | управление (V2: инвайты) | ✅ |
-| Бот: поиск/просмотр | ✅ | ✅ | ✅ | ✅ | — |
-| Бот: запись в профиль, apply | — | ✅ с подтверждением | — | — | — |
+| Действие                       | Гость              | Кандидат            | Member компании    | owner/admin компании     | Platform admin                  |
+| ------------------------------ | ------------------ | ------------------- | ------------------ | ------------------------ | ------------------------------- |
+| Смотреть published вакансии    | ✅                 | ✅                  | ✅                 | ✅                       | ✅ (все статусы)                |
+| Создать/редактировать вакансию | —                  | —                   | recruiter+         | ✅                       | только статус                   |
+| Публиковать/закрывать          | —                  | —                   | recruiter+         | ✅                       | ✅                              |
+| Отклик                         | —                  | ✅ (D15)            | —                  | —                        | —                               |
+| Смотреть отклики на вакансию   | —                  | —                   | ✅                 | ✅                       | ✅                              |
+| Express interest / статусы     | —                  | —                   | recruiter+         | ✅                       | —                               |
+| Контакты кандидата             | —                  | свои                | после reveal (D23) | после reveal             | только через аудит-лог действия |
+| Профиль компании               | ✅ публичная часть | ✅                  | ✅                 | редактирование           | ✅                              |
+| Члены компании                 | —                  | —                   | список             | управление (V2: инвайты) | ✅                              |
+| Бот: поиск/просмотр            | ✅                 | ✅                  | ✅                 | ✅                       | —                               |
+| Бот: запись в профиль, apply   | —                  | ✅ с подтверждением | —                  | —                        | —                               |
 
 ### 5.3 Никогда не отдаётся на клиент
+
 - контакты до reveal и после отзыва доступа (ключ `contacts` отсутствует, D16/D23);
 - `breakdown` целиком, веса и сырые компоненты скора (наружу — только `explain`
   и округлённый `score` до 2 знаков);
@@ -635,6 +648,7 @@ DTO-маппинг — явный allowlist полей в `api/` каждого 
 ---
 
 ## 6. ОБЩИЕ ПРАВИЛА API
+
 - REST под `/api`, JSON, zod на вход; ответ ошибки: `{ "error": { "code", "message", "details"? } }`.
 - Пагинация — курсорная: `?cursor=&limit=` (limit ≤ 50, default 20), ответ
   `{ items, nextCursor }`.
@@ -645,28 +659,28 @@ DTO-маппинг — явный allowlist полей в `api/` каждого 
 
 **Каталог ошибок**
 
-| HTTP | code | Когда |
-|------|------|-------|
-| 400 | VALIDATION_ERROR | zod |
-| 401 | UNAUTHENTICATED | нет сессии |
-| 403 | FORBIDDEN | объект виден, действие запрещено |
-| 404 | NOT_FOUND | нет / чужое / admin для не-админа |
-| 409 | ALREADY_APPLIED, REAPPLY_LIMIT, INVALID_TRANSITION, SLUG_TAKEN, DOMAIN_TAKEN | конфликты |
-| 422 | EXTERNAL_APPLY (`details.externalUrl`), PROFILE_INCOMPLETE (`details.completeness`, `details.missing[]`), JOB_NOT_PUBLISHED, IMPORTED_READONLY, CONFIRMATION_REQUIRED | бизнес-правила |
-| 429 | RATE_LIMITED (`Retry-After`), BOT_BUDGET_EXCEEDED | лимиты |
+| HTTP | code                                                                                                                                                                  | Когда                             |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| 400  | VALIDATION_ERROR                                                                                                                                                      | zod                               |
+| 401  | UNAUTHENTICATED                                                                                                                                                       | нет сессии                        |
+| 403  | FORBIDDEN                                                                                                                                                             | объект виден, действие запрещено  |
+| 404  | NOT_FOUND                                                                                                                                                             | нет / чужое / admin для не-админа |
+| 409  | ALREADY_APPLIED, REAPPLY_LIMIT, INVALID_TRANSITION, SLUG_TAKEN, DOMAIN_TAKEN                                                                                          | конфликты                         |
+| 422  | EXTERNAL_APPLY (`details.externalUrl`), PROFILE_INCOMPLETE (`details.completeness`, `details.missing[]`), JOB_NOT_PUBLISHED, IMPORTED_READONLY, CONFIRMATION_REQUIRED | бизнес-правила                    |
+| 429  | RATE_LIMITED (`Retry-After`), BOT_BUDGET_EXCEEDED                                                                                                                     | лимиты                            |
 
 **Rate limits (D26)**
 
-| Ключ | Лимит |
-|------|-------|
-| login (IP+email) | 5 / 15 мин |
-| magic link / reset (email) | 3 / час |
-| register (IP) | 10 / час |
-| apply (user) | 30 / сутки |
-| создание вакансий (company) | unverified 5 / сутки, verified 50 / сутки |
-| reports (user) | 10 / сутки |
-| bot (гость: IP+session / user) | 30 / 200 сообщений в сутки |
-| глобально (IP) | 300 запросов / мин |
+| Ключ                           | Лимит                                     |
+| ------------------------------ | ----------------------------------------- |
+| login (IP+email)               | 5 / 15 мин                                |
+| magic link / reset (email)     | 3 / час                                   |
+| register (IP)                  | 10 / час                                  |
+| apply (user)                   | 30 / сутки                                |
+| создание вакансий (company)    | unverified 5 / сутки, verified 50 / сутки |
+| reports (user)                 | 10 / сутки                                |
+| bot (гость: IP+session / user) | 30 / 200 сообщений в сутки                |
+| глобально (IP)                 | 300 запросов / мин                        |
 
 ---
 
@@ -675,6 +689,7 @@ DTO-маппинг — явный allowlist полей в `api/` каждого 
 Формат: метод путь — доступ — назначение — тело/параметры — ответ/правила.
 
 **Auth / аккаунт** (Supabase Auth на клиенте + серверные хуки)
+
 - `POST /api/auth/register` — гость — email+пароль или magic link; `{ email, password?, locale, acceptTerms: true }` → создаёт `users` после подтверждения email (callback). Пароль ≥ 10 символов, проверка по HIBP k-anon (V2 — OPEN QUESTION; MVP — список топ-10k).
 - `GET /auth/callback` — подтверждение email/magic link → создаёт `users`, привязывает гостевую бот-сессию (cookie `bot_session`).
 - `POST /api/auth/logout`, `POST /api/auth/reset` — стандартно, ответ всегда 200 (anti-enumeration).
@@ -684,6 +699,7 @@ DTO-маппинг — явный allowlist полей в `api/` каждого 
 - `DELETE /api/me` — user — `{ confirm: "DELETE" }` → D28.
 
 **Jobs**
+
 - `GET /api/jobs` — все — `q, category, skills[], workFormat[], employmentType[], tzOverlapWith (IANA) + minOverlap, salaryMin+currency+period+basis (фильтр применяется только к сравнимым вакансиям; несравнимые остаются, помечаются), country, source, postedWithin (1|7|30), sort (relevance|newest|salary)` → карточки (раздел 9.2). Скрытые пользователем вакансии/компании исключаются.
 - `GET /api/jobs/:id` — все; не-published → 404 (кроме членов компании и админа). Imported → с `source{name,url}`, без кнопок редактирования.
 - `POST /api/jobs` — member recruiter+ — создаёт `draft`; навыки только `skill_id` (+ нераспознанные → `skill_suggestions`).
@@ -693,6 +709,7 @@ DTO-маппинг — явный allowlist полей в `api/` каждого 
 - `POST /api/jobs/:id/report` `{ reason, details? }`.
 
 **Companies**
+
 - `POST /api/companies` — user — создаёт компанию (`unverified`), автор = owner; проверка дубля по domain/trgm(name) ≥ 0.8 → компания создаётся, но в `moderation_queue` с флагом `possible_duplicate`.
 - `GET /api/companies/:slug` — все — публичная часть + published вакансии.
 - `PATCH /api/companies/:id` — owner/admin.
@@ -700,11 +717,13 @@ DTO-маппинг — явный allowlist полей в `api/` каждого 
 - `POST /api/companies/:id/verification` `{ method, target }`; `POST /api/companies/:id/verification/confirm` `{ token }` (10B).
 
 **Candidates**
+
 - `GET /api/candidates/me`, `PATCH /api/candidates/me` (профиль, навыки, опыт, языки, предпочтения) — пересчёт `completeness` в той же транзакции.
 - `GET /api/candidates/me/contacts`, `PUT /api/candidates/me/contacts` — только владелец.
 - `GET /api/candidates/:id` — D24; ключа `contacts` нет никогда.
 
 **Applications**
+
 - `POST /api/applications` — кандидат — `{ jobId, coverNote? }`; imported → 422 EXTERNAL_APPLY; неполный профиль → 422 PROFILE_INCOMPLETE; дубль → 409 (D27).
 - `GET /api/applications` — role-scoped: `?as=candidate` свои; `?as=employer&jobId=` по своим вакансиям (member).
 - `GET /api/applications/:id` — кандидат-владелец или member; при открытии member-ом статус `applied` → `viewed` (идемпотентно).
@@ -714,18 +733,22 @@ DTO-маппинг — явный allowlist полей в `api/` каждого 
 - `GET /api/applications/:id/contacts` — member компании, статус по D23, иначе 404. Каждый вызов → `audit_logs(action='contacts.read')`.
 
 **Matching**
+
 - `GET /api/matches` — кандидат — `{ items:[{ job, score, explain[] }], lowData: bool }`, только score ≥ 0.55.
 - `POST /api/matches/:jobId/feedback` `{ action: 'dismissed', reason? }`.
 
 **Bot**
+
 - `POST /api/bot/message` — гость/user — `{ conversationId?, text }` → SSE-стрим: `token`, `tool_result`, `confirm_request`, `done`.
 - `POST /api/bot/confirm` — user — `{ conversationId, confirmationId, accept: bool }` (подтверждение критичного действия, TTL 10 мин, одноразово).
 - `GET /api/bot/conversation` — история текущей сессии (последние 50).
 
 **Notifications**
+
 - `GET /api/notifications`, `POST /api/notifications/read` `{ ids[] | all }`, `GET|PUT /api/notifications/preferences`.
 
 **Admin** (`requireAdmin`, иначе 404; каждое действие → audit_logs)
+
 - `GET /api/admin/queue`, `POST /api/admin/queue/:id/decide` `{ decision, note }`
 - `GET /api/admin/reports`, `POST /api/admin/reports/:id/decide`
 - `GET /api/admin/users|companies|jobs` (поиск), `POST /api/admin/users/:id/suspend|unsuspend`, `POST /api/admin/companies/:id/suspend`, `POST /api/admin/jobs/:id/remove`
@@ -734,6 +757,7 @@ DTO-маппинг — явный allowlist полей в `api/` каждого 
 - `GET /api/admin/metrics` (раздел 18.2), `GET /api/admin/audit`
 
 **Cron** (`Authorization: Bearer CRON_SECRET`)
+
 - `/api/cron/queue` (1 мин), `/api/cron/expire-jobs` (час), `/api/cron/fx-rates` (сутки),
   `/api/cron/import` (по источнику, ≥ 1 час), `/api/cron/trusted` (сутки),
   `/api/cron/digest` (сутки, по локальному утру пользователя), `/api/cron/retention` (сутки),
@@ -743,29 +767,29 @@ DTO-маппинг — явный allowlist полей в `api/` каждого 
 
 ## 8. КАРТА СТРАНИЦ (все под `/[locale]`)
 
-| Route | Доступ | Назначение / ключевые компоненты | API |
-|-------|--------|----------------------------------|-----|
-| `/` | все | Hero, поиск, CTA, категории, последние вакансии, преимущества | jobs |
-| `/jobs` | все | Фильтры (формат, tz-overlap, вилка, навыки, категория, источник), список карточек, пагинация | jobs |
-| `/jobs/[id]` | все | Детальная, Apply/Save/Hide/Report, «почему подходит» (если залогинен) | jobs, matches |
-| `/companies/[slug]` | все | Профиль компании, бейджи, вакансии | companies |
-| `/chat` | все | Веб-чат бота (SSE), карточки подтверждения | bot |
-| `/login`, `/register`, `/reset-password`, `/auth/callback`, `/auth/check-email` | гость | Auth | auth |
-| `/onboarding` | user | Выбор: «Ищу работу» (→ чат или форма) / «Нанимаю» (→ компания) | me |
-| `/matches` | кандидат | Рекомендации с explain, dismiss | matches |
-| `/profile`, `/profile/edit` | кандидат | Профиль, полнота (прогресс-бар + что добавить), контакты | candidates |
-| `/applications` | кандидат | Отклики по статусам, withdraw | applications |
-| `/saved-jobs` | кандидат | Сохранённые | jobs |
-| `/notifications` | user | Лента | notifications |
-| `/settings`, `/settings/notifications`, `/settings/privacy`, `/settings/account` | user | Язык, уведомления, скрытие профиля, экспорт, удаление | me |
-| `/employer` | member | Дашборд: вакансии, новые отклики | — |
-| `/employer/company`, `/employer/company/verify` | member / owner | Профиль компании, верификация | companies |
-| `/employer/jobs`, `/employer/jobs/new`, `/employer/jobs/[id]`, `/employer/jobs/[id]/edit` | member | CRUD, статусы | jobs |
-| `/employer/jobs/[id]/applications`, `/employer/applications/[id]` | member | Пайплайн откликов, профиль кандидата, express interest, контакты | applications |
-| `/employer/settings` | member | Уведомления работодателя | — |
-| `/admin`, `/admin/moderation`, `/admin/reports`, `/admin/users`, `/admin/companies`, `/admin/jobs`, `/admin/taxonomy`, `/admin/import`, `/admin/metrics`, `/admin/audit` | admin (иначе 404) | Модерация и управление | admin |
-| `/legal/terms`, `/legal/privacy` | все | Юр. страницы (тексты — OPEN QUESTION) | — |
-| `not-found`, `error` | все | 404/500 с i18n | — |
+| Route                                                                                                                                                                    | Доступ            | Назначение / ключевые компоненты                                                             | API           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------- | -------------------------------------------------------------------------------------------- | ------------- |
+| `/`                                                                                                                                                                      | все               | Hero, поиск, CTA, категории, последние вакансии, преимущества                                | jobs          |
+| `/jobs`                                                                                                                                                                  | все               | Фильтры (формат, tz-overlap, вилка, навыки, категория, источник), список карточек, пагинация | jobs          |
+| `/jobs/[id]`                                                                                                                                                             | все               | Детальная, Apply/Save/Hide/Report, «почему подходит» (если залогинен)                        | jobs, matches |
+| `/companies/[slug]`                                                                                                                                                      | все               | Профиль компании, бейджи, вакансии                                                           | companies     |
+| `/chat`                                                                                                                                                                  | все               | Веб-чат бота (SSE), карточки подтверждения                                                   | bot           |
+| `/login`, `/register`, `/reset-password`, `/auth/callback`, `/auth/check-email`                                                                                          | гость             | Auth                                                                                         | auth          |
+| `/onboarding`                                                                                                                                                            | user              | Выбор: «Ищу работу» (→ чат или форма) / «Нанимаю» (→ компания)                               | me            |
+| `/matches`                                                                                                                                                               | кандидат          | Рекомендации с explain, dismiss                                                              | matches       |
+| `/profile`, `/profile/edit`                                                                                                                                              | кандидат          | Профиль, полнота (прогресс-бар + что добавить), контакты                                     | candidates    |
+| `/applications`                                                                                                                                                          | кандидат          | Отклики по статусам, withdraw                                                                | applications  |
+| `/saved-jobs`                                                                                                                                                            | кандидат          | Сохранённые                                                                                  | jobs          |
+| `/notifications`                                                                                                                                                         | user              | Лента                                                                                        | notifications |
+| `/settings`, `/settings/notifications`, `/settings/privacy`, `/settings/account`                                                                                         | user              | Язык, уведомления, скрытие профиля, экспорт, удаление                                        | me            |
+| `/employer`                                                                                                                                                              | member            | Дашборд: вакансии, новые отклики                                                             | —             |
+| `/employer/company`, `/employer/company/verify`                                                                                                                          | member / owner    | Профиль компании, верификация                                                                | companies     |
+| `/employer/jobs`, `/employer/jobs/new`, `/employer/jobs/[id]`, `/employer/jobs/[id]/edit`                                                                                | member            | CRUD, статусы                                                                                | jobs          |
+| `/employer/jobs/[id]/applications`, `/employer/applications/[id]`                                                                                                        | member            | Пайплайн откликов, профиль кандидата, express interest, контакты                             | applications  |
+| `/employer/settings`                                                                                                                                                     | member            | Уведомления работодателя                                                                     | —             |
+| `/admin`, `/admin/moderation`, `/admin/reports`, `/admin/users`, `/admin/companies`, `/admin/jobs`, `/admin/taxonomy`, `/admin/import`, `/admin/metrics`, `/admin/audit` | admin (иначе 404) | Модерация и управление                                                                       | admin         |
+| `/legal/terms`, `/legal/privacy`                                                                                                                                         | все               | Юр. страницы (тексты — OPEN QUESTION)                                                        | —             |
+| `not-found`, `error`                                                                                                                                                     | все               | 404/500 с i18n                                                                               | —             |
 
 **Не создавать в MVP:** `/messages` (V2), `/employer/candidates` (V3).
 
@@ -774,18 +798,21 @@ DTO-маппинг — явный allowlist полей в `api/` каждого 
 ## 9. UX / UI
 
 ### 9.1 Главная
+
 ```
 INTGETION JOB LIST
 Remote work. Real matches.
 Find work. Find people. Connect directly.
 [Find a Remote Job]   [Post a Job]
 ```
+
 RU-строки — в `ru.json` (перевод, название не переводится). Ниже: строка
 поиска, 8 категорий, 10 последних вакансий, 3 преимущества (бот-агент,
 совпадения с объяснениями, контакты только по взаимному интересу). Без
 каруселей, видео и тяжёлых анимаций.
 
 ### 9.2 Карточка вакансии (список) / страница вакансии
+
 Обязательные поля: title; компания + бейдж (`verified`, `trusted`, или
 «импортировано из <source>»); формат (remote по умолчанию, иконка);
 ограничения по странам («весь мир» / список); требования к tz
@@ -798,12 +825,14 @@ gross/net, или «не указана»); тип занятости; опыт;
 Для залогиненного кандидата — блок «Почему подходит» из `explain`.
 
 ### 9.3 Профиль кандидата
+
 Прогресс-бар полноты с конкретными подсказками («Добавьте ещё 2 навыка
 (+10%)»). Контакты — отдельный блок с пояснением «видны компании только после
 её интереса к вашему отклику». Timezone по умолчанию — из
 `Intl.DateTimeFormat().resolvedOptions().timeZone`, с подтверждением.
 
 ### 9.4 Доступность и качество
+
 - WCAG 2.1 AA: контраст ≥ 4.5:1, видимый фокус, вся навигация с клавиатуры,
   `aria-live="polite"` для потока сообщений бота, подписи у всех полей,
   ошибки форм связаны `aria-describedby`.
@@ -816,17 +845,20 @@ gross/net, или «не указана»); тип занятости; опыт;
 ## 10. MATCHING v1
 
 ### 10.1 Конвейер
+
 ```
 SQL-префильтр (hard-фильтры + ≥1 общий навык или категория, лимит 500)
  → скоринг в TS (чистые функции, src/modules/matching/score/*)
  → feedback-множители → штрафы → порог 0.55 → top-200 в matching_results
 ```
+
 Пересчёт: по запросу `/api/matches`, если кэш старше 6 ч или
 `candidate_profiles.updated_at > computed_at`; при публикации вакансии —
 задача pg-boss считает её для кандидатов, прошедших SQL-префильтр (≤ 2 000).
 `algo_version` инкрементится при изменении формул → кэш инвалидируется.
 
 ### 10.2 Hard-фильтры (исключают вакансию)
+
 1. `job.work_format ∉ candidate.work_formats`.
 2. `country_restrictions` не null и `candidate.country ∉` списка.
 3. `job.employment_type ∉ candidate.employment_types`.
@@ -839,14 +871,14 @@ SQL-префильтр (hard-фильтры + ≥1 общий навык или 
 
 ### 10.3 Компоненты скора (0..1) и веса
 
-| Компонент | Вес | Формула | Нейтрально, если |
-|-----------|-----|---------|------------------|
-| skills | 0.35 | `Σ w_j·m_j / Σ w_j`, где `w_j` = job_skills.weight; `m_j` = 1 если навык есть и уровень ≥ min_level; 0.5 если есть, но уровень ниже; 0 — нет | у вакансии нет навыков |
-| role/title | 0.15 | `max(similarity(desired_title_i, job.title))` (pg_trgm); если `job.category ∈ preferences.categories` → `max(·, 0.7)` | нет desired_titles и категорий |
-| salary | 0.20 | раздел 10.4 | несравнимо (D4/D5) или нет данных у одной из сторон |
-| tz overlap | 0.10 | `min(1, O / max(R,1))`, O — среднее пересечение (ч), R = max(job.min_overlap, cand.min_overlap) | нет timezone_required |
-| experience | 0.10 | cand ≥ min → 1; cand = min−1 → 0.5; иначе 0; если задан max и cand > max+3 → 0.7 | experience_min null |
-| languages | 0.10 | среднее по требуемым: уровень ≥ min → 1; на 1 ступень CEFR ниже → 0.5; иначе 0 | нет job_languages |
+| Компонент  | Вес  | Формула                                                                                                                                      | Нейтрально, если                                    |
+| ---------- | ---- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| skills     | 0.35 | `Σ w_j·m_j / Σ w_j`, где `w_j` = job_skills.weight; `m_j` = 1 если навык есть и уровень ≥ min_level; 0.5 если есть, но уровень ниже; 0 — нет | у вакансии нет навыков                              |
+| role/title | 0.15 | `max(similarity(desired_title_i, job.title))` (pg_trgm); если `job.category ∈ preferences.categories` → `max(·, 0.7)`                        | нет desired_titles и категорий                      |
+| salary     | 0.20 | раздел 10.4                                                                                                                                  | несравнимо (D4/D5) или нет данных у одной из сторон |
+| tz overlap | 0.10 | `min(1, O / max(R,1))`, O — среднее пересечение (ч), R = max(job.min_overlap, cand.min_overlap)                                              | нет timezone_required                               |
+| experience | 0.10 | cand ≥ min → 1; cand = min−1 → 0.5; иначе 0; если задан max и cand > max+3 → 0.7                                                             | experience_min null                                 |
+| languages  | 0.10 | среднее по требуемым: уровень ≥ min → 1; на 1 ступень CEFR ниже → 0.5; иначе 0                                                               | нет job_languages                                   |
 
 **Сборка:** `base = Σ wᵢ·sᵢ / Σ wᵢ` по ненейтральным компонентам (вес
 перераспределяется пропорционально). Если `Σ wᵢ` активных < 0.4 → результат
@@ -859,6 +891,7 @@ SQL-префильтр (hard-фильтры + ≥1 общий навык или 
 Порог показа: **≥ 0.55**.
 
 ### 10.4 Зарплата
+
 1. Приведение периода: year → month `/12` (целочисленно, банковское округление
    в минорных единицах); hour не приводится. Разные периоды после приведения →
    нейтрально.
@@ -871,6 +904,7 @@ SQL-префильтр (hard-фильтры + ≥1 общий навык или 
    округление, переполнение, нулевые значения.
 
 ### 10.5 Feedback loop
+
 - `hidden_company` → компания исключается (hard).
 - `hidden`/`dismissed` в категории за 90 дней, n событий → `×0.9ⁿ`, не ниже 0.6.
 - Навык, встречающийся в ≥ 2 сохранённых/откликнутых вакансиях за 90 дней →
@@ -880,6 +914,7 @@ SQL-префильтр (hard-фильтры + ≥1 общий навык или 
 - Все множители пишутся в `breakdown.feedback`.
 
 ### 10.6 Пересечение часов (D6)
+
 ```
 for day in next 14 days (по календарю UTC):
   if day ∉ candidate.work_days (в tz кандидата) → skip
@@ -888,6 +923,7 @@ for day in next 14 days (по календарю UTC):
   overlap += max(0, min(ends) − max(starts))
 O = overlap / числоРабочихДней
 ```
+
 - `localToUtc` через `Intl.DateTimeFormat(…, { timeZone })` — подбор смещения
   на конкретную дату; фиксированные смещения запрещены.
 - Окна через полночь (end < start) поддерживаются.
@@ -896,17 +932,20 @@ O = overlap / числоРабочихДней
   окно через полночь.
 
 ### 10.7 Explain (D30)
+
 Массив `{ criterion, verdict: matched|partial|neutral|failed, detail }`, где
 `detail` — ключ i18n + параметры, напр.
 `{ "criterion":"salary", "verdict":"matched", "detail":{"key":"explain.salary.inRange","params":{"job":"5000–7000 USD/mo gross"}} }`.
 Порядок: matched → partial → neutral → failed; в карточке — до 4 пунктов.
 
 ### 10.8 Метрики качества
+
 CTR рекомендаций, apply rate из рекомендаций, dismissal rate, доля откликов
 с ответом работодателя (≠ applied за 7 дней), доля `lowData`. Считаются
 SQL-представлениями, показываются в `/admin/metrics`.
 
 ### 10.9 Semantic
+
 `interface SemanticProvider { similarity(a: string, b: string): Promise<number|null> }`,
 реализация `NoopSemanticProvider` → `null` (компонент не используется).
 Эмбеддинги — отдельная подфаза после MVP (D11).
@@ -916,8 +955,9 @@ SQL-представлениями, показываются в `/admin/metrics`
 ## 11. ТАКСОНОМИЯ И ПОЛНОТА ПРОФИЛЯ
 
 ### 11.1 Навыки
+
 - Bootstrap: 80–120 канонических навыков в категориях `engineering, data,
-  design, product, marketing, sales, support, operations, finance, hr`;
+design, product, marketing, sales, support, operations, finance, hr`;
   у каждого `name_en`, `name_ru`, ≥ 2 алиаса.
 - `normalizeSkill(raw)`: lower → trim → удалить версии/суффиксы (`.js`, `js`,
   цифры версий) и пунктуацию → поиск в `skills_aliases` → точное совпадение
@@ -929,24 +969,25 @@ SQL-представлениями, показываются в `/admin/metrics`
 - Админ раз в неделю разбирает `skill_suggestions` (≥ 3 occurrences — сверху).
 
 ### 11.2 Категории вакансий
+
 `jobs.category` ∈ списку категорий навыков; выбирается работодателем,
 для импорта — по большинству навыков.
 
 ### 11.3 Формула полноты (сумма 100)
 
-| Поле | % |
-|------|---|
-| full_name | 5 |
-| headline | 10 |
-| desired_titles ≥ 1 | 10 |
-| timezone (обязательно для apply) | 10 |
-| рабочие часы/дни подтверждены | 5 |
-| ≥ 3 навыка (обязательно для apply) | 15 |
-| experience_years | 10 |
-| ≥ 1 язык | 10 |
-| зарплатные ожидания (min + currency + period + basis) | 10 |
-| work_formats + employment_types подтверждены | 5 |
-| контактный email (обязательно для apply) | 10 |
+| Поле                                                  | %   |
+| ----------------------------------------------------- | --- |
+| full_name                                             | 5   |
+| headline                                              | 10  |
+| desired_titles ≥ 1                                    | 10  |
+| timezone (обязательно для apply)                      | 10  |
+| рабочие часы/дни подтверждены                         | 5   |
+| ≥ 3 навыка (обязательно для apply)                    | 15  |
+| experience_years                                      | 10  |
+| ≥ 1 язык                                              | 10  |
+| зарплатные ожидания (min + currency + period + basis) | 10  |
+| work_formats + employment_types подтверждены          | 5   |
+| контактный email (обязательно для apply)              | 10  |
 
 Порог отклика — 60% + три обязательных поля (D15). Ответ 422 перечисляет
 `missing[]` ключами i18n.
@@ -956,6 +997,7 @@ SQL-представлениями, показываются в `/admin/metrics`
 ## 12. БОТ (MVP: web chat)
 
 ### 12.1 Архитектура
+
 ```
 ChannelAdapter (web SSE; Telegram/WhatsApp — V2)
  → BotInterface (нормализованное сообщение, локаль, user/guest)
@@ -968,9 +1010,11 @@ ChannelAdapter (web SSE; Telegram/WhatsApp — V2)
  → Matching
  → Response (+ системные события из Notification Service)
 ```
+
 Ядро не зависит от канала; канал — адаптер (D14).
 
 ### 12.2 Этапы диалога
+
 1. `greeting` → определение стороны: ищу работу / нанимаю. Работодателя бот в
    MVP направляет в форму компании/вакансии (бот-сценарии работодателя — V2).
 2. `collect_min` — минимум для первых вакансий: роль/desired_titles **или**
@@ -992,16 +1036,16 @@ ChannelAdapter (web SSE; Telegram/WhatsApp — V2)
 
 ### 12.3 Tools
 
-| Tool | Гость | Кандидат | Подтверждение |
-|------|-------|----------|---------------|
-| `search_jobs(filters)` | ✅ | ✅ | — |
-| `get_job(id)` | ✅ | ✅ | — |
-| `get_my_profile()` | — | ✅ (без контактов) | — |
-| `propose_profile_update(fields)` | ✅ (в state) | ✅ | **да**: карточка, запись после accept |
-| `get_matches()` | — | ✅ | — |
-| `save_job(id)` / `hide_job(id, reason)` | — | ✅ | — |
-| `apply_to_job(id, coverNote?)` | — | ✅ | **да**: карточка «Откликнуться на X?»; imported → только ссылка (D8) |
-| `get_my_applications()` | — | ✅ | — |
+| Tool                                    | Гость        | Кандидат           | Подтверждение                                                        |
+| --------------------------------------- | ------------ | ------------------ | -------------------------------------------------------------------- |
+| `search_jobs(filters)`                  | ✅           | ✅                 | —                                                                    |
+| `get_job(id)`                           | ✅           | ✅                 | —                                                                    |
+| `get_my_profile()`                      | —            | ✅ (без контактов) | —                                                                    |
+| `propose_profile_update(fields)`        | ✅ (в state) | ✅                 | **да**: карточка, запись после accept                                |
+| `get_matches()`                         | —            | ✅                 | —                                                                    |
+| `save_job(id)` / `hide_job(id, reason)` | —            | ✅                 | —                                                                    |
+| `apply_to_job(id, coverNote?)`          | —            | ✅                 | **да**: карточка «Откликнуться на X?»; imported → только ссылка (D8) |
+| `get_my_applications()`                 | —            | ✅                 | —                                                                    |
 
 - Allowlist полей `propose_profile_update`: headline, desired_titles, skills
   (только slug), experience_years, languages, timezone, work_hours, work_days,
@@ -1012,6 +1056,7 @@ ChannelAdapter (web SSE; Telegram/WhatsApp — V2)
   возвращает 422 CONFIRMATION_REQUIRED (P8).
 
 ### 12.4 Промпт и данные
+
 - System prompt (в `src/modules/bot/prompts/*.md`, версионируется): роль
   карьерного агента; язык ответа = локаль пользователя; не обещать
   трудоустройство; не давать юридических/налоговых советов; инструкции внутри
@@ -1026,6 +1071,7 @@ ChannelAdapter (web SSE; Telegram/WhatsApp — V2)
   `[email]`, `[phone]`, `[link]`).
 
 ### 12.5 Бюджеты и стоимость
+
 - Гость 30 сообщений/сутки, пользователь 200/сутки; ≤ 800 токенов на ответ;
   контекст ≤ 6 000 входных токенов.
 - `tokens_in/out` и `cost_micro_usd` пишутся в `bot_messages`.
@@ -1034,6 +1080,7 @@ ChannelAdapter (web SSE; Telegram/WhatsApp — V2)
 - Аномалия: пользователь > 3× медианы суточной стоимости → алерт + лимит 30.
 
 ### 12.6 Проактивность (подфаза 9B)
+
 Шаблонные (без LLM) системные сообщения в чате и in-app/email по
 предпочтениям: «появились N новых вакансий под вас» (дайджест не чаще 1/сутки,
 только score ≥ 0.65), «работодатель посмотрел отклик», «компания проявила
@@ -1045,10 +1092,12 @@ ChannelAdapter (web SSE; Telegram/WhatsApp — V2)
 ## 13. ИМПОРТ (INGESTION)
 
 ### 13.1 Пайплайн
+
 ```
 Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прогон, уважать rate limits источника)
  → Parse → Normalize → Dedup → Auto-moderation → Upsert (source=imported) → Matching-задача
 ```
+
 - Адаптер источника: `interface ImportAdapter { fetch(): AsyncIterable<RawJob>; map(raw): NormalizedJob }`.
 - 8A: адаптеры на фикстурах `fixtures/import/<source>/*.json|xml`, 10–20
   реалистичных записей на источник, включая дубли, scam-пример, вакансию без
@@ -1058,6 +1107,7 @@ Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прог
   Конкретные источники и их ToS — OPEN QUESTION для основателя.
 
 ### 13.2 Нормализация
+
 - Навыки → канон (11.1); нераспознанное → `skill_suggestions`, в вакансию не
   пишется.
 - Зарплата → минорные единицы (D19); если в тексте только «$100k» —
@@ -1071,6 +1121,7 @@ Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прог
 - `application_method='external_url'`, `application_url` = оригинал.
 
 ### 13.3 Дедупликация
+
 - Ключ: `lower(unaccent(title)) | company_domain||company_name | location|'remote'`.
 - Совпадение ключа или trgm(title) ≥ 0.85 у той же компании и trgm(description
   первые 500 символов) ≥ 0.8 → merge: обновление полей, добавление строки в
@@ -1079,6 +1130,7 @@ Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прог
 - Дубль-кейс в тестах обязателен.
 
 ### 13.4 Автомодерация и жизненный цикл
+
 - Scam/spam-правила (`src/config/scam-patterns.ts`): предоплата/«оплата
   обучения», оплата в крипте, мессенджер вместо email для отклика, обещание
   дохода без опыта, сокращатели ссылок → `rejected` (в очередь админа на
@@ -1092,6 +1144,7 @@ Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прог
 ## 14. ВЕРИФИКАЦИЯ И МОДЕРАЦИЯ
 
 ### 14.1 Unverified → Verified (все три условия)
+
 1. Подтверждён корпоративный email на домене компании (ссылка с токеном,
    72 ч) **или** DNS TXT `intgetion-verify=<token>` на домене. Домены из
    `free-email-domains.ts` (gmail, outlook, yandex, mail.ru, proton и т.п.)
@@ -1104,23 +1157,25 @@ Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прог
 `verified`.
 
 ### 14.2 Verified → Trusted (флаг, cron ежесуточно)
+
 ≥ 5 вакансий, бывших `published`; 0 подтверждённых жалоб за 90 дней;
 медиана времени от `applied` до первого действия работодателя ≤ 7 дней
 (при ≥ 10 откликах). Нарушение условия → флаг снимается.
 
 ### 14.3 Risk-флаги (баллы; ≥ 4 → ручная проверка даже для verified)
 
-| Флаг | Баллы |
-|------|-------|
-| аккаунт создателя моложе 24 ч | 2 |
-| email создателя на бесплатном домене | 2 |
-| ≥ 5 вакансий компании за 24 ч | 3 |
-| описание похоже (trgm ≥ 0.9) на вакансию другой компании | 3 |
-| домен `application_url` ≠ домену компании | 1 |
-| совпадение со scam-паттернами | 4 |
-| зарплата > 3× медианы категории | 2 |
+| Флаг                                                     | Баллы |
+| -------------------------------------------------------- | ----- |
+| аккаунт создателя моложе 24 ч                            | 2     |
+| email создателя на бесплатном домене                     | 2     |
+| ≥ 5 вакансий компании за 24 ч                            | 3     |
+| описание похоже (trgm ≥ 0.9) на вакансию другой компании | 3     |
+| домен `application_url` ≠ домену компании                | 1     |
+| совпадение со scam-паттернами                            | 4     |
+| зарплата > 3× медианы категории                          | 2     |
 
 ### 14.4 Модерация
+
 - Внутренние: pre-moderation для unverified/pending, post-moderation для
   verified+ (выборка 10% + все с risk ≥ 4).
 - Импорт: автомодерация + реактивно по жалобам.
@@ -1130,6 +1185,7 @@ Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прог
 - Каждое действие админа → `audit_logs`.
 
 ### 14.5 Жалобы
+
 Кандидат/пользователь подаёт жалобу (одна на объект). ≥ 3 подтверждённых
 жалоб на компанию за 30 дней → авто-пауза всех её published вакансий +
 компания в очередь. Жалобщик получает уведомление о решении.
@@ -1138,19 +1194,19 @@ Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прог
 
 ## 15. УВЕДОМЛЕНИЯ
 
-| type | Кому | inapp | email по умолчанию |
-|------|------|-------|--------------------|
-| application.created | members компании (recruiter+) | ✅ | ✅ (батч раз в час) |
-| application.viewed | кандидат | ✅ | — |
-| application.status_changed | кандидат | ✅ | ✅ |
-| application.withdrawn | members | ✅ | — |
-| mutual_interest.revealed | кандидат + members | ✅ | ✅ |
-| job.moderation_decided | создатель вакансии | ✅ | ✅ |
-| job.expiring (за 3 дня) | создатель | ✅ | ✅ |
-| job.closed (на которую откликнулся) | кандидат | ✅ | — |
-| company.verification_decided | owner | ✅ | ✅ |
-| matches.digest | кандидат | ✅ | ✅ (≤ 1/сутки, утро по tz) |
-| report.decided | жалобщик | ✅ | — |
+| type                                | Кому                          | inapp | email по умолчанию         |
+| ----------------------------------- | ----------------------------- | ----- | -------------------------- |
+| application.created                 | members компании (recruiter+) | ✅    | ✅ (батч раз в час)        |
+| application.viewed                  | кандидат                      | ✅    | —                          |
+| application.status_changed          | кандидат                      | ✅    | ✅                         |
+| application.withdrawn               | members                       | ✅    | —                          |
+| mutual_interest.revealed            | кандидат + members            | ✅    | ✅                         |
+| job.moderation_decided              | создатель вакансии            | ✅    | ✅                         |
+| job.expiring (за 3 дня)             | создатель                     | ✅    | ✅                         |
+| job.closed (на которую откликнулся) | кандидат                      | ✅    | —                          |
+| company.verification_decided        | owner                         | ✅    | ✅                         |
+| matches.digest                      | кандидат                      | ✅    | ✅ (≤ 1/сутки, утро по tz) |
+| report.decided                      | жалобщик                      | ✅    | —                          |
 
 - Отправка через pg-boss; email — Resend, шаблоны React Email на языке
   получателя; ссылка отписки в каждом письме (кроме транзакционных
@@ -1162,6 +1218,7 @@ Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прог
 ## 16. БЕЗОПАСНОСТЬ
 
 ### 16.1 Классический периметр
+
 - **AuthN:** Supabase Auth, подтверждение email обязательно до любых write;
   access token 1 ч, refresh rotation включён, revoke при смене пароля и
   удалении.
@@ -1188,6 +1245,7 @@ Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прог
   смены статуса компании, удаления аккаунта, входов админа.
 
 ### 16.2 LLM security
+
 - Indirect prompt injection: все UGC — untrusted (12.4); LLM не может
   инициировать write без подтверждения; tool-слой проверяет права заново.
 - PII: allowlist + редакция (12.4); логи без PII; провайдер — с DPA и
@@ -1199,6 +1257,7 @@ Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прог
 ---
 
 ## 17. ПРИВАТНОСТЬ / GDPR / RETENTION
+
 - Согласие: чекбокс условий и политики при регистрации (`terms_version`);
   маркетинг — отдельный opt-in, по умолчанию выключен. Cookie-баннер — только
   если появятся неnecessary cookies (в MVP аналитика без cookies).
@@ -1211,39 +1270,41 @@ Source (API/RSS) → Fetch (таймаут 15 c, ≤ 500 записей/прог
   пользователь единственный owner, — `suspended`, вакансии `closed`.
 - Retention (cron ежесуточно):
 
-| Данные | Срок |
-|--------|------|
-| bot_messages | 180 дней |
-| гостевые bot_conversations без привязки | 30 дней |
-| notifications | 90 дней (прочитанные) |
-| user_job_feedback | 365 дней |
-| audit_logs | 365 дней |
-| matching_results | пересчитываемые, удалять старше 30 дней |
-| rate_limit_counters | 48 часов |
-| import_runs | 180 дней |
+| Данные                                  | Срок                                    |
+| --------------------------------------- | --------------------------------------- |
+| bot_messages                            | 180 дней                                |
+| гостевые bot_conversations без привязки | 30 дней                                 |
+| notifications                           | 90 дней (прочитанные)                   |
+| user_job_feedback                       | 365 дней                                |
+| audit_logs                              | 365 дней                                |
+| matching_results                        | пересчитываемые, удалять старше 30 дней |
+| rate_limit_counters                     | 48 часов                                |
+| import_runs                             | 180 дней                                |
 
 ---
 
 ## 18. МОНИТОРИНГ
 
 ### 18.1 Технические сигналы и алерты
-| Сигнал | Алерт |
-|--------|-------|
-| Ошибки фронт/бэк (Sentry) | error rate > 2% за 5 мин |
-| Латентность API p50/p95/p99 | p95 `/api/jobs` > 800 ms 15 мин |
-| Медленные запросы (pg_stat_statements) | запрос > 500 ms в топ-10 |
-| Неудачные отклики (5xx на POST /applications) | ≥ 5 за 10 мин |
-| Бот: таймауты/ошибки LLM | > 5% за 15 мин |
-| Стоимость LLM | > 80% `LLM_DAILY_BUDGET_USD` |
-| Импорт | 2 неудачных прогона подряд; дубли > 30% или rejected > 50% прогона |
-| Очередь pg-boss | задачи старше 15 мин |
-| Подозрительная активность | регистрации > 5× медианы часа; > 20 откликов/час с одного аккаунта; ≥ 3 жалобы на компанию за сутки |
-| Auth | > 50 неудачных входов с IP за 10 мин |
-| Uptime | `/api/health` недоступен 2 мин |
+
+| Сигнал                                        | Алерт                                                                                               |
+| --------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Ошибки фронт/бэк (Sentry)                     | error rate > 2% за 5 мин                                                                            |
+| Латентность API p50/p95/p99                   | p95 `/api/jobs` > 800 ms 15 мин                                                                     |
+| Медленные запросы (pg_stat_statements)        | запрос > 500 ms в топ-10                                                                            |
+| Неудачные отклики (5xx на POST /applications) | ≥ 5 за 10 мин                                                                                       |
+| Бот: таймауты/ошибки LLM                      | > 5% за 15 мин                                                                                      |
+| Стоимость LLM                                 | > 80% `LLM_DAILY_BUDGET_USD`                                                                        |
+| Импорт                                        | 2 неудачных прогона подряд; дубли > 30% или rejected > 50% прогона                                  |
+| Очередь pg-boss                               | задачи старше 15 мин                                                                                |
+| Подозрительная активность                     | регистрации > 5× медианы часа; > 20 откликов/час с одного аккаунта; ≥ 3 жалобы на компанию за сутки |
+| Auth                                          | > 50 неудачных входов с IP за 10 мин                                                                |
+| Uptime                                        | `/api/health` недоступен 2 мин                                                                      |
 
 Логи — pino JSON, `requestId`, без PII (email/телефоны маскируются).
 
 ### 18.2 Бизнес-метрики (`/admin/metrics`, SQL-представления)
+
 Регистрации (кандидаты/работодатели), распределение полноты профилей,
 вакансии (internal/imported, по статусам), отклики/день, взаимные интересы,
 время до первого ответа работодателя, matching quality (10.8), стоимость
@@ -1254,6 +1315,7 @@ LLM на диалог и на день, очередь модерации и с�
 ## 19. ТЕСТЫ
 
 ### 19.1 Уровни
+
 - **unit (vitest):** статус-машины (вся таблица 4.2/4.3), скоринг (все
   нейтральные случаи D4/D5, штрафы, feedback), деньги (D19), tz/DST (10.6),
   полнота профиля, normalizeSkill, risk-скоринг, guards.
@@ -1269,6 +1331,7 @@ LLM на диалог и на день, очередь модерации и с�
 - **a11y:** axe на 6 страницах.
 
 ### 19.2 Обязательный P-набор
+
 - **P1** кандидат B запрашивает профиль кандидата A → 404, контактов в теле нет.
 - **P2** чужой работодатель PATCH draft-вакансии → 404.
 - **P3** до reveal ответ не содержит ключа `contacts` (отсутствует, не null).
@@ -1289,6 +1352,7 @@ LLM на диалог и на день, очередь модерации и с�
 P-тесты пишутся в той подфазе, которая открывает соответствующие данные.
 
 ### 19.3 LLM evals
+
 - MVP: `evals/onboarding/*.json` — 20 golden-диалогов → ожидаемый профиль
   (навыки — slug, числа, IANA); метрики: precision/recall навыков, точность
   полей; скрипт `pnpm eval` запускается вручную при смене промпта/модели,
@@ -1303,34 +1367,35 @@ P-тесты пишутся в той подфазе, которая откры�
 
 ## 20. РИСКИ
 
-| Риск | Митигация |
-|------|-----------|
+| Риск                                       | Митигация                                                                                 |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------- |
 | Cold start (нет вакансий → нет кандидатов) | импорт 1–2 источников, бот показывает вакансии сразу, ручной онбординг первых 20 компаний |
-| Fake employers / scam | верификация, risk-флаги, pre-moderation, жалобы с авто-паузой |
-| Утечка контактов | отдельная таблица, один сервис, ключ отсутствует, P1–P5, P13–P14, аудит чтений |
-| Prompt injection / PII в LLM | untrusted-обёртки, allowlist, подтверждения, adversarial-набор |
-| Стоимость LLM | бюджеты, circuit breaker, дешёвая модель для извлечения |
-| Плохие рекомендации | hard-фильтры, порог 0.55, штрафы must-have, feedback loop, метрики |
-| Ошибки DST/валют | только IANA + Intl, BigInt-деньги, нейтральность вместо угадывания |
-| Юр. риски импорта | только API/RSS с разрешением, атрибуция, founder approval |
-| Расползание скоупа агентом | одна подфаза за сессию, раздел «Запрещено», DoD |
-| Производительность FTS | индексы, seed 5k, perf-тест в 4A |
+| Fake employers / scam                      | верификация, risk-флаги, pre-moderation, жалобы с авто-паузой                             |
+| Утечка контактов                           | отдельная таблица, один сервис, ключ отсутствует, P1–P5, P13–P14, аудит чтений            |
+| Prompt injection / PII в LLM               | untrusted-обёртки, allowlist, подтверждения, adversarial-набор                            |
+| Стоимость LLM                              | бюджеты, circuit breaker, дешёвая модель для извлечения                                   |
+| Плохие рекомендации                        | hard-фильтры, порог 0.55, штрафы must-have, feedback loop, метрики                        |
+| Ошибки DST/валют                           | только IANA + Intl, BigInt-деньги, нейтральность вместо угадывания                        |
+| Юр. риски импорта                          | только API/RSS с разрешением, атрибуция, founder approval                                 |
+| Расползание скоупа агентом                 | одна подфаза за сессию, раздел «Запрещено», DoD                                           |
+| Производительность FTS                     | индексы, seed 5k, perf-тест в 4A                                                          |
 
 ---
 
 ## 21. SCOPE
 
 **MVP — ровно 14 пунктов:**
-1) регистрация кандидата (пароль / magic link) · 2) bot onboarding (web chat) ·
-3) профиль кандидата + bootstrap-таксономия · 4) регистрация работодателя ·
-5) компания + базовая верификация · 6) создание вакансии + модерация ·
-7) листинг + страница вакансии (фильтры: tz, вилка, формат) · 8) apply +
-статусы · 9) взаимный интерес → раскрытие контактов · 10) matching v1 +
-объяснения · 11) импорт 1–2 источников (фикстуры; живой — по разрешению) ·
-12) admin moderation (очередь, жалобы, блокировки) · 13) уведомления (in-app +
-email, дайджест) · 14) feedback loop.
-Сквозные требования MVP: i18n RU/EN, WCAG AA, приватность/экспорт/удаление,
-мониторинг.
+
+1. регистрация кандидата (пароль / magic link) · 2) bot onboarding (web chat) ·
+2. профиль кандидата + bootstrap-таксономия · 4) регистрация работодателя ·
+3. компания + базовая верификация · 6) создание вакансии + модерация ·
+4. листинг + страница вакансии (фильтры: tz, вилка, формат) · 8) apply +
+   статусы · 9) взаимный интерес → раскрытие контактов · 10) matching v1 +
+   объяснения · 11) импорт 1–2 источников (фикстуры; живой — по разрешению) ·
+5. admin moderation (очередь, жалобы, блокировки) · 13) уведомления (in-app +
+   email, дайджест) · 14) feedback loop.
+   Сквозные требования MVP: i18n RU/EN, WCAG AA, приватность/экспорт/удаление,
+   мониторинг.
 
 **V2:** Telegram-бот-агент, бот-сценарии работодателя, CV upload/parsing,
 messaging, OAuth, инвайты в компанию, advanced semantic (эмбеддинги), LLM evals
@@ -1345,37 +1410,38 @@ messaging, OAuth, инвайты в компанию, advanced semantic (эмб�
 
 ## 22. ROADMAP — ПОДФАЗЫ (порядок сессий — D33; выполнять строго по порядку)
 
-| Код | Цель | Зависит от | Вне скоупа | Проверка (DoD подфазы) | Риск |
-|-----|------|------------|------------|------------------------|------|
-| 0A | Repo: Next.js + TS strict, pnpm, ESLint (+ import-правила, jsx-a11y), Prettier, vitest, Playwright-каркас, CI (lint/typecheck/test/build/gitleaks), `.env.example`, структура 3.3, `MISSION_LOG.md`, `.cursor/rules/spec.mdc` | — | фичи | CI зелёный; `pnpm lint typecheck test build` = 0 | — |
-| 0B | Локальный Supabase, Drizzle, миграция №1 (enum-типы, `users`), роли `app_rw`, RLS deny-all шаблон, `docs/ERD.md`, `docs/DECISIONS.md` (D1–D30), `src/lib/http` (ошибки, 404/403-конвенция), `/api/health` | 0A | фичи | миграция с нуля в CI; ERD = раздел 4 | — |
-| 0C | UI-оболочка: next-intl (en/ru, префикс), layout, шапка/футер, тема, главная (статичные блоки), 404/500, lint-запрет хардкод-строк | 0B | данные | axe без критичных; LCP главной < 2.5 s (Lighthouse) | — |
-| 1A | Supabase Auth: пароль + magic link, `/auth/callback` → `users`, terms, middleware сессии, `/login /register /reset-password`, `/api/me` | 0C | роли | e2e обоих способов; email не подтверждён → write запрещён | — |
-| 1B | Guards (requireUser/Candidate/Membership/Admin), `audit_logs`, `rate_limit_counters` + лимиты auth, CSRF-проверка Origin, заголовки безопасности/CSP | 1A | UI | unit guards; P12, P15 (auth) | — |
-| 2A | `skills`, `skills_aliases`, `skill_suggestions`, bootstrap 80–120 навыков (en/ru), `normalizeSkill()` | 0B | LLM-маппинг | `'React.js'`,`'ReactJS'` → `react`; неизвестное → suggestions | грязные алиасы |
-| 2B | Профиль кандидата: таблицы 4.1, `candidate_contacts` + `contactsService`, формы `/profile/edit`, полнота (11.3), timezone из браузера, i18n | 2A, 1B | бот | unit полноты; P1 | — |
-| 3A | `companies`, `company_members`, `employer_profiles`, `/onboarding`, `/employer/company`, логотип, проверка дублей | 1B | инвайты, верификация | тест membership; P2-заготовка; импорт-компанию нельзя редактировать | — |
-| 3B | Jobs CRUD (internal), `job_skills`, `job_languages`, `job_status_history`, publish (D12), risk-score v1, `/employer/jobs*`, cron expire | 3A, 2A | фильтры | переходы 4.3; P2 | — |
-| 4A | `/jobs`, `/jobs/[id]`, фильтры (tz-overlap, зарплата по D4/D5), FTS, курсорная пагинация, seed 5k, `/companies/[slug]`, главная с живыми данными, `fx_rates` + cron | 3B | matching | perf p95 < 500 ms; unit фильтров | производительность FTS |
-| 4B | Save/Hide/hide_company/report + `user_job_feedback`, `/saved-jobs` | 4A | loop | hidden исчез из листинга; P-лимиты reports | — |
-| 5A | Applications: apply (D15, D27), `transitionApplication`, history, withdraw, `/applications` | 3B, 2B | интерес | P9; таблица переходов; повтор → 409 | — |
-| 5B | Пайплайн работодателя: список откликов, просмотр профиля (D24), auto-viewed, rejected, interview/offer/hired (без shortlisted) | 5A | reveal | P3, P5 | преждевременный reveal |
-| 5C | Express interest: shortlisted + reveal в одной транзакции, `/contacts`, D23, аудит чтений | 5B | чат | P4, P14, P16 (contacts); тест атомарности | «забытые» контакты |
-| 6A | Matching v1: hard-фильтры, компоненты, штрафы, explain, `matching_results`, tz-алгоритм 10.6 | 4B, 2B | эмбеддинги | кейсы нейтральной зарплаты, gross/net, DST, полночь | DST-ошибки |
-| 6B | Feedback loop (10.5), `/api/matches`, `/matches`, «почему подходит» на странице вакансии, пересчёт при публикации (pg-boss) | 6A | ML | dismissed понижает категорию; hidden_company исключает | — |
-| 7A | Бот-каркас: `LLMProvider`, SSE-чат `/chat`, conversations, ConversationManager, tool layer + permissions, подтверждения, бюджеты, редакция PII | 6B, 5A | сценарии | P8, P11; лимиты работают; circuit breaker | утечка полей |
-| 7B | Сценарии: onboarding-экстракция, карточка профиля, показ вакансий, apply с подтверждением, привязка гостя, golden evals (20) + adversarial (15) | 7A | telegram, работодатель | P10; evals ≥ порогов | injection |
-| 8A | Импорт на фикстурах: адаптеры, нормализация, дедуп, external apply (D8), автомодерация, `import_runs`, expire | 3B, 2A | живой источник | P6; дедуп-кейс; scam отклонён | дубли |
-| 8B | Живой источник (только при founder approval в MISSION_LOG; иначе BLOCKED) | 8A | скрейпинг | e2e на 20 записях, дублей 0 | доступность API |
-| 9A | Notifications: in-app + email, preferences, события раздела 15, батчинг, отписка | 5C | проактив бота | preferences уважаются; шаблоны en/ru | — |
-| 9B | Проактивность: дайджест совпадений (cron по tz), `system_event` в чате | 9A, 6B, 7A | Telegram | ≤ 1 дайджест/сутки; score ≥ 0.65 | спам |
-| 10A | Admin: списки, moderation_queue, reports + авто-пауза, блокировки, таксономия, импорт-панель, audit | 3B | — | P7, P16 | — |
-| 10B | Верификация: corporate email / DNS TXT, реквизиты, risk-флаги 14.3, trusted-cron, бейджи | 10A | авто-Trusted без критериев | free-email + mass → pending; trusted по критериям | — |
-| 10C | Приватность: экспорт, удаление/анонимизация, retention-cron, `/settings/privacy` | 9A | — | P13; retention-тест | — |
-| 11A | Hardening: ревизия rate limits, CSP, security-ревизия по разделу 16, нагрузочный тест, LLM security review | все | фичи | P1–P16 все зелёные; perf-бюджеты | — |
-| 11B | Launch: Sentry, алерты 18.1, `/admin/metrics`, бэкапы + restore-тест, RUNBOOK, prod seed | 11A | фичи | алерты срабатывают на тестовом событии; restore успешен | — |
+| Код | Цель                                                                                                                                                                                                                          | Зависит от | Вне скоупа                 | Проверка (DoD подфазы)                                              | Риск                   |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | -------------------------- | ------------------------------------------------------------------- | ---------------------- |
+| 0A  | Repo: Next.js + TS strict, pnpm, ESLint (+ import-правила, jsx-a11y), Prettier, vitest, Playwright-каркас, CI (lint/typecheck/test/build/gitleaks), `.env.example`, структура 3.3, `MISSION_LOG.md`, `.cursor/rules/spec.mdc` | —          | фичи                       | CI зелёный; `pnpm lint typecheck test build` = 0                    | —                      |
+| 0B  | Локальный Supabase, Drizzle, миграция №1 (enum-типы, `users`), роли `app_rw`, RLS deny-all шаблон, `docs/ERD.md`, `docs/DECISIONS.md` (D1–D30), `src/lib/http` (ошибки, 404/403-конвенция), `/api/health`                     | 0A         | фичи                       | миграция с нуля в CI; ERD = раздел 4                                | —                      |
+| 0C  | UI-оболочка: next-intl (en/ru, префикс), layout, шапка/футер, тема, главная (статичные блоки), 404/500, lint-запрет хардкод-строк                                                                                             | 0B         | данные                     | axe без критичных; LCP главной < 2.5 s (Lighthouse)                 | —                      |
+| 1A  | Supabase Auth: пароль + magic link, `/auth/callback` → `users`, terms, middleware сессии, `/login /register /reset-password`, `/api/me`                                                                                       | 0C         | роли                       | e2e обоих способов; email не подтверждён → write запрещён           | —                      |
+| 1B  | Guards (requireUser/Candidate/Membership/Admin), `audit_logs`, `rate_limit_counters` + лимиты auth, CSRF-проверка Origin, заголовки безопасности/CSP                                                                          | 1A         | UI                         | unit guards; P12, P15 (auth)                                        | —                      |
+| 2A  | `skills`, `skills_aliases`, `skill_suggestions`, bootstrap 80–120 навыков (en/ru), `normalizeSkill()`                                                                                                                         | 0B         | LLM-маппинг                | `'React.js'`,`'ReactJS'` → `react`; неизвестное → suggestions       | грязные алиасы         |
+| 2B  | Профиль кандидата: таблицы 4.1, `candidate_contacts` + `contactsService`, формы `/profile/edit`, полнота (11.3), timezone из браузера, i18n                                                                                   | 2A, 1B     | бот                        | unit полноты; P1                                                    | —                      |
+| 3A  | `companies`, `company_members`, `employer_profiles`, `/onboarding`, `/employer/company`, логотип, проверка дублей                                                                                                             | 1B         | инвайты, верификация       | тест membership; P2-заготовка; импорт-компанию нельзя редактировать | —                      |
+| 3B  | Jobs CRUD (internal), `job_skills`, `job_languages`, `job_status_history`, publish (D12), risk-score v1, `/employer/jobs*`, cron expire                                                                                       | 3A, 2A     | фильтры                    | переходы 4.3; P2                                                    | —                      |
+| 4A  | `/jobs`, `/jobs/[id]`, фильтры (tz-overlap, зарплата по D4/D5), FTS, курсорная пагинация, seed 5k, `/companies/[slug]`, главная с живыми данными, `fx_rates` + cron                                                           | 3B         | matching                   | perf p95 < 500 ms; unit фильтров                                    | производительность FTS |
+| 4B  | Save/Hide/hide_company/report + `user_job_feedback`, `/saved-jobs`                                                                                                                                                            | 4A         | loop                       | hidden исчез из листинга; P-лимиты reports                          | —                      |
+| 5A  | Applications: apply (D15, D27), `transitionApplication`, history, withdraw, `/applications`                                                                                                                                   | 3B, 2B     | интерес                    | P9; таблица переходов; повтор → 409                                 | —                      |
+| 5B  | Пайплайн работодателя: список откликов, просмотр профиля (D24), auto-viewed, rejected, interview/offer/hired (без shortlisted)                                                                                                | 5A         | reveal                     | P3, P5                                                              | преждевременный reveal |
+| 5C  | Express interest: shortlisted + reveal в одной транзакции, `/contacts`, D23, аудит чтений                                                                                                                                     | 5B         | чат                        | P4, P14, P16 (contacts); тест атомарности                           | «забытые» контакты     |
+| 6A  | Matching v1: hard-фильтры, компоненты, штрафы, explain, `matching_results`, tz-алгоритм 10.6                                                                                                                                  | 4B, 2B     | эмбеддинги                 | кейсы нейтральной зарплаты, gross/net, DST, полночь                 | DST-ошибки             |
+| 6B  | Feedback loop (10.5), `/api/matches`, `/matches`, «почему подходит» на странице вакансии, пересчёт при публикации (pg-boss)                                                                                                   | 6A         | ML                         | dismissed понижает категорию; hidden_company исключает              | —                      |
+| 7A  | Бот-каркас: `LLMProvider`, SSE-чат `/chat`, conversations, ConversationManager, tool layer + permissions, подтверждения, бюджеты, редакция PII                                                                                | 6B, 5A     | сценарии                   | P8, P11; лимиты работают; circuit breaker                           | утечка полей           |
+| 7B  | Сценарии: onboarding-экстракция, карточка профиля, показ вакансий, apply с подтверждением, привязка гостя, golden evals (20) + adversarial (15)                                                                               | 7A         | telegram, работодатель     | P10; evals ≥ порогов                                                | injection              |
+| 8A  | Импорт на фикстурах: адаптеры, нормализация, дедуп, external apply (D8), автомодерация, `import_runs`, expire                                                                                                                 | 3B, 2A     | живой источник             | P6; дедуп-кейс; scam отклонён                                       | дубли                  |
+| 8B  | Живой источник (только при founder approval в MISSION_LOG; иначе BLOCKED)                                                                                                                                                     | 8A         | скрейпинг                  | e2e на 20 записях, дублей 0                                         | доступность API        |
+| 9A  | Notifications: in-app + email, preferences, события раздела 15, батчинг, отписка                                                                                                                                              | 5C         | проактив бота              | preferences уважаются; шаблоны en/ru                                | —                      |
+| 9B  | Проактивность: дайджест совпадений (cron по tz), `system_event` в чате                                                                                                                                                        | 9A, 6B, 7A | Telegram                   | ≤ 1 дайджест/сутки; score ≥ 0.65                                    | спам                   |
+| 10A | Admin: списки, moderation_queue, reports + авто-пауза, блокировки, таксономия, импорт-панель, audit                                                                                                                           | 3B         | —                          | P7, P16                                                             | —                      |
+| 10B | Верификация: corporate email / DNS TXT, реквизиты, risk-флаги 14.3, trusted-cron, бейджи                                                                                                                                      | 10A        | авто-Trusted без критериев | free-email + mass → pending; trusted по критериям                   | —                      |
+| 10C | Приватность: экспорт, удаление/анонимизация, retention-cron, `/settings/privacy`                                                                                                                                              | 9A         | —                          | P13; retention-тест                                                 | —                      |
+| 11A | Hardening: ревизия rate limits, CSP, security-ревизия по разделу 16, нагрузочный тест, LLM security review                                                                                                                    | все        | фичи                       | P1–P16 все зелёные; perf-бюджеты                                    | —                      |
+| 11B | Launch: Sentry, алерты 18.1, `/admin/metrics`, бэкапы + restore-тест, RUNBOOK, prod seed                                                                                                                                      | 11A        | фичи                       | алерты срабатывают на тестовом событии; restore успешен             | —                      |
 
 Примечания:
+
 - 5B намеренно не включает shortlisted: он появляется только в 5C вместе с
   reveal (D3).
 - Бот (7A/7B) идёт после откликов (5A), потому что `apply_to_job`
@@ -1385,6 +1451,7 @@ messaging, OAuth, инвайты в компанию, advanced semantic (эмб�
 ---
 
 ## 23. DEFINITION OF DONE (каждой подфазы)
+
 1. `pnpm typecheck`, `pnpm lint`, `pnpm test` (и e2e подфазы) — код выхода 0.
 2. Миграции применяются с нуля на чистой БД.
 3. P-тесты подфазы зелёные.
@@ -1397,6 +1464,7 @@ messaging, OAuth, инвайты в компанию, advanced semantic (эмб�
 ---
 
 ## 24. ЗАПРЕЩЕНО
+
 Менять `PRODUCT_NAME`; создавать таблицы/роуты сверх документа без записи в
 DECISIONS.md; скрейпинг; хранить пароли вне Supabase Auth; отдавать `contacts`
 до reveal или после отзыва доступа; отвечать 403 на чужие объекты; float для
@@ -1409,6 +1477,7 @@ DECISIONS.md; скрейпинг; хранить пароли вне Supabase Au
 ---
 
 ## 25. OPEN QUESTIONS ДЛЯ ОСНОВАТЕЛЯ (агент не решает сам)
+
 1. Источники импорта (8B) и подтверждение их ToS на републикацию.
 2. LLM-провайдер: условия DPA / zero-retention; дневной бюджет `LLM_DAILY_BUDGET_USD`.
 3. Домен и адрес отправителя email (`EMAIL_FROM`), SPF/DKIM.
@@ -1420,5 +1489,6 @@ DECISIONS.md; скрейпинг; хранить пароли вне Supabase Au
 ---
 
 ## 26. СТАРТ
+
 Подтверди протокол раздела 0 одним абзацем, создай `MISSION_LOG.md`, выполни
 подфазу **0A**, обнови лог, выведи отчёт и остановись в ожидании команды.

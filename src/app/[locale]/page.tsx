@@ -56,10 +56,7 @@ async function JobFeed({ locale }: { locale: string }) {
   return (
     <>
       {promoted.length > 0 ? (
-        <section
-          aria-labelledby="promoted-jobs"
-          className="pt-8 pb-2 md:pt-10"
-        >
+        <section aria-labelledby="promoted-jobs" className="pt-8 pb-2 md:pt-10">
           <Container className="flex flex-col gap-6">
             <h2 id="promoted-jobs" className="t-h3">
               {jobsT("promotedHeading")}
@@ -75,53 +72,53 @@ async function JobFeed({ locale }: { locale: string }) {
         </section>
       ) : null}
       {top.length > 0 ? (
-      <section
-        aria-labelledby="top-jobs"
-        className="pt-8 pb-6 md:pt-10 md:pb-8"
-      >
-        <Container className="flex flex-col gap-6">
-          <h2 id="top-jobs" className="t-h3">
-            {t("topJobs")}
-          </h2>
-          <ul className="grid gap-4">
-            {top.map((job) => (
-              <li key={job.id}>
-                <PublicJobCard job={job} locale={locale} />
-              </li>
-            ))}
-          </ul>
-        </Container>
-      </section>
+        <section
+          aria-labelledby="top-jobs"
+          className="pt-8 pb-6 md:pt-10 md:pb-8"
+        >
+          <Container className="flex flex-col gap-6">
+            <h2 id="top-jobs" className="t-h3">
+              {t("topJobs")}
+            </h2>
+            <ul className="grid gap-4">
+              {top.map((job) => (
+                <li key={job.id}>
+                  <PublicJobCard job={job} locale={locale} />
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
       ) : null}
       {rest.length > 0 ? (
-      <section
-        aria-labelledby="all-jobs"
-        className="pt-6 pb-12 md:pt-8 md:pb-16"
-      >
-        <Container className="flex flex-col gap-6">
-          <h2 id="all-jobs" className="t-h3">
-            {t("allJobs")}
-          </h2>
-          <ul className="grid gap-4">
-            {rest.map((job) => (
-              <li key={job.id}>
-                <PublicJobCard job={job} locale={locale} />
-              </li>
-            ))}
-          </ul>
-          <Link
-            href={
-              result.nextCursor
-                ? `/jobs?cursor=${encodeURIComponent(result.nextCursor)}`
-                : "/jobs"
-            }
-            {...navForward}
-            className={buttonClass("secondary", "md", "self-start")}
-          >
-            {t("moreJobs")}
-          </Link>
-        </Container>
-      </section>
+        <section
+          aria-labelledby="all-jobs"
+          className="pt-6 pb-12 md:pt-8 md:pb-16"
+        >
+          <Container className="flex flex-col gap-6">
+            <h2 id="all-jobs" className="t-h3">
+              {t("allJobs")}
+            </h2>
+            <ul className="grid gap-4">
+              {rest.map((job) => (
+                <li key={job.id}>
+                  <PublicJobCard job={job} locale={locale} />
+                </li>
+              ))}
+            </ul>
+            <Link
+              href={
+                result.nextCursor
+                  ? `/jobs?cursor=${encodeURIComponent(result.nextCursor)}`
+                  : "/jobs"
+              }
+              {...navForward}
+              className={buttonClass("secondary", "md", "self-start")}
+            >
+              {t("moreJobs")}
+            </Link>
+          </Container>
+        </section>
       ) : null}
     </>
   );

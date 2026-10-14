@@ -1,12 +1,7 @@
 import type { VerifyResult } from "./verify-transfer";
 
 export type OrderStatus =
-  | "open"
-  | "submitted"
-  | "confirmed"
-  | "expired"
-  | "frozen"
-  | "failed";
+  "open" | "submitted" | "confirmed" | "expired" | "frozen" | "failed";
 
 /** What the client is allowed to see. The browser never sends this. */
 export type ClientBillingStatus =

@@ -16,6 +16,7 @@ import {
   createNonce,
   TELEGRAM_WEB_APP_SCRIPT,
 } from "./lib/security-headers";
+import { isCryptoPayPath } from "./lib/crypto-pay-path";
 import { siteUrl, supabaseUrl } from "./lib/supabase/env";
 import { flags } from "./config/flags";
 import { refreshSession } from "./lib/supabase/proxy";
@@ -168,10 +169,13 @@ export async function proxy(request: NextRequest) {
     includeSupabase: !adminHost,
     // Never on the admin host: it is framed by nobody (D251, D259).
     allowTelegramFrame: !adminHost && flags.telegramMiniAppEnabled,
-    // Company and portfolio pages only (D388). The admin host stays closed.
+    // No foreign frame (D400). The admin host stays closed.
     embedOrigin: adminHost
       ? undefined
       : embedOriginForPath(request.nextUrl.pathname),
+    // WalletConnect relay, verify, and the AppKit modal only while paying (D403, D406).
+    allowWalletConnect:
+      !adminHost && isCryptoPayPath(request.nextUrl.pathname),
   });
   // Next.js reads the nonce from the request CSP header while rendering.
   request.headers.set("x-nonce", nonce);

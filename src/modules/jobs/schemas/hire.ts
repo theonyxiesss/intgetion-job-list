@@ -5,7 +5,10 @@ import { currencyExponent } from "@/lib/money";
 import { SKILL_CATEGORIES } from "@/modules/taxonomy/service";
 import type { CreateJobInput } from "./index";
 
-const majorUnits = z.string().trim().regex(/^(0|[1-9]\d{0,12})$/);
+const majorUnits = z
+  .string()
+  .trim()
+  .regex(/^(0|[1-9]\d{0,12})$/);
 const optionalText = (max: number) => z.string().trim().max(max).optional();
 
 /** A platform admin posting from this form goes live. Everyone else waits. */
@@ -47,9 +50,15 @@ export const hireInput = z
     location: optionalText(200),
     salaryMin: majorUnits,
     salaryMax: majorUnits,
-    salaryCurrency: z.string().trim().regex(/^[A-Za-z]{3}$/),
+    salaryCurrency: z
+      .string()
+      .trim()
+      .regex(/^[A-Za-z]{3}$/),
     salaryPeriod: z.enum(["month", "year"]),
-    countries: z.array(z.string().regex(/^[A-Za-z]{2}$/)).max(100).optional(),
+    countries: z
+      .array(z.string().regex(/^[A-Za-z]{2}$/))
+      .max(100)
+      .optional(),
     applicationMethod: z.enum(["internal", "email", "external_url"]),
     applicationEmail: z.string().trim().email().max(320).optional(),
     applicationUrl: optionalText(2048),
@@ -102,7 +111,10 @@ export const hireInput = z
         message: "handle_invalid",
       });
     }
-    if (value.telegram?.trim() && !socialProfileUrl("telegram", value.telegram)) {
+    if (
+      value.telegram?.trim() &&
+      !socialProfileUrl("telegram", value.telegram)
+    ) {
       context.addIssue({
         code: "custom",
         path: ["telegram"],
@@ -128,7 +140,10 @@ export function descriptionWithQuestions(
   description: string,
   questions: readonly string[],
 ): string {
-  const lines = questions.map((item) => item.trim()).filter(Boolean).slice(0, 3);
+  const lines = questions
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 3);
   if (lines.length === 0) return description.trim();
   return `${description.trim()}\n\n${lines.map((line, index) => `${index + 1}. ${line}`).join("\n")}`;
 }
@@ -146,7 +161,10 @@ export function hireToJobFields(
   return {
     companyId,
     title: input.title.trim(),
-    description: descriptionWithQuestions(input.description, input.questions ?? []),
+    description: descriptionWithQuestions(
+      input.description,
+      input.questions ?? [],
+    ),
     category: input.category,
     employmentType: input.employmentType,
     workFormat: location ? "onsite" : "remote",

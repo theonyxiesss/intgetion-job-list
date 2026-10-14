@@ -66,6 +66,9 @@ export const remoteOkSource: LiveSource = {
   newPerRun: 15,
   async fetch(fetchImpl) {
     // The first element is the legal notice; it has no url and is dropped.
-    return mapRows(await fetchJson(REMOTEOK_JOBS_URL, fetchImpl), mapRemoteOkJob);
+    return mapRows(
+      await fetchJson(REMOTEOK_JOBS_URL, fetchImpl),
+      mapRemoteOkJob,
+    );
   },
 };

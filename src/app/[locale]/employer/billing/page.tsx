@@ -24,7 +24,11 @@ export default async function EmployerBillingPage({
       <Container className="flex flex-col gap-6">
         <h1 className="t-display-l">{t("title")}</h1>
         <p className="t-h3">
-          {me.plan === "team" ? t("team") : me.plan === "hire" ? t("hire") : t("start")}
+          {me.plan === "team"
+            ? t("team")
+            : me.plan === "hire"
+              ? t("hire")
+              : t("start")}
         </p>
         {me.candidatePlan !== "free" ? (
           <p className="t-h3">{t(me.candidatePlan)}</p>

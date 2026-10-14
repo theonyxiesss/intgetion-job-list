@@ -1,5 +1,34 @@
 import { isEmbeddedOrigin } from "./embedded-sites";
 
+/**
+ * Relay, verify, WalletConnect RPC, and the AppKit wallet list.
+ * Pay page only (D403, D406). Telemetry (pulse) stays off.
+ */
+const WALLETCONNECT_CONNECT = [
+  "wss://relay.walletconnect.org",
+  "https://verify.walletconnect.org",
+  "https://verify.walletconnect.com",
+  "https://rpc.walletconnect.org",
+  "https://api.web3modal.org",
+  "https://secure.walletconnect.org",
+] as const;
+
+/** AppKit (Lit) adopts its stylesheet without our nonce. Pay page only (D406). */
+const WALLETCONNECT_STYLE = "'unsafe-inline'";
+
+/** Modal font and wallet icons. Pay page only (D406). */
+const WALLETCONNECT_FONT = "https://fonts.reown.com";
+const WALLETCONNECT_IMG = [
+  "https://api.web3modal.org",
+  "https://walletconnect.org",
+] as const;
+
+/** Attestation runs in a hidden frame on the verify host (D403). */
+const WALLETCONNECT_FRAME = [
+  "https://verify.walletconnect.org",
+  "https://verify.walletconnect.com",
+] as const;
+
 /** Official Mini App bridge. Phone clients often expose initData only through it (D324). */
 export const TELEGRAM_WEB_APP_SCRIPT =
   "https://telegram.org/js/telegram-web-app.js";
@@ -12,6 +41,7 @@ export function buildCsp({
   includeSupabase = true,
   allowTelegramFrame = false,
   embedOrigin,
+  allowWalletConnect = false,
 }: {
   nonce: string;
   supabaseUrl: string;
@@ -19,8 +49,10 @@ export function buildCsp({
   includeSupabase?: boolean;
   /** Telegram Web shows a Mini App in a frame, so it must be allowed (D259). */
   allowTelegramFrame?: boolean;
-  /** One https origin this page may show in a frame (D388). */
+  /** A foreign origin is framed only when it is still allowlisted. None are (D400). */
   embedOrigin?: string;
+  /** Relay, verify, and the AppKit modal, only on the crypto pay page (D403, D406). */
+  allowWalletConnect?: boolean;
 }): string {
   const supabase = new URL(supabaseUrl).origin;
   // Phone Mini Apps need telegram-web-app.js; Desktop often injects initData
@@ -28,13 +60,35 @@ export function buildCsp({
   const scriptSrc = allowTelegramFrame
     ? `script-src 'self' 'nonce-${nonce}' https://telegram.org${isDev ? " 'unsafe-eval'" : ""}`
     : `script-src 'self' 'nonce-${nonce}'${isDev ? " 'unsafe-eval'" : ""}`;
+  const styleSrc = allowWalletConnect
+    ? `style-src 'self' 'nonce-${nonce}' ${WALLETCONNECT_STYLE}`
+    : `style-src 'self' 'nonce-${nonce}'`;
+  const imgSrc = [
+    "img-src 'self' data:",
+    supabase,
+    ...(allowWalletConnect ? WALLETCONNECT_IMG : []),
+  ].join(" ");
+  const fontSrc = allowWalletConnect
+    ? `font-src 'self' ${WALLETCONNECT_FONT}`
+    : "font-src 'self'";
+  const connectSrc = [
+    "'self'",
+    ...(includeSupabase ? [supabase] : []),
+    ...(allowWalletConnect ? WALLETCONNECT_CONNECT : []),
+  ].join(" ");
+  const frameSrc = [
+    ...(embedOrigin && isEmbeddedOrigin(embedOrigin)
+      ? ["'self'", embedOrigin]
+      : []),
+    ...(allowWalletConnect ? WALLETCONNECT_FRAME : []),
+  ];
   return [
     "default-src 'self'",
     scriptSrc,
-    `style-src 'self' 'nonce-${nonce}'`,
-    `img-src 'self' data: ${supabase}`,
-    "font-src 'self'",
-    `connect-src 'self'${includeSupabase ? ` ${supabase}` : ""}`,
+    styleSrc,
+    imgSrc,
+    fontSrc,
+    `connect-src ${connectSrc}`,
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -42,9 +96,7 @@ export function buildCsp({
       ? "frame-ancestors 'self' https://web.telegram.org https://*.telegram.org"
       : "frame-ancestors 'none'",
     // Other pages stay on default-src 'self', so they cannot frame a foreign site.
-    ...(embedOrigin && isEmbeddedOrigin(embedOrigin)
-      ? [`frame-src 'self' ${embedOrigin}`]
-      : []),
+    ...(frameSrc.length > 0 ? [`frame-src ${frameSrc.join(" ")}`] : []),
   ].join("; ");
 }
 

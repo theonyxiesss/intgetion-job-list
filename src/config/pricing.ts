@@ -91,10 +91,7 @@ export function planPayHref(
   return RETURN_PATHS[next];
 }
 
-export function freePlanHref(
-  audience: PricingAudience,
-  next?: string,
-): string {
+export function freePlanHref(audience: PricingAudience, next?: string): string {
   if (audience === "companies" && next === "post") return "/employer/jobs/new";
   if (audience === "companies") return "/for-employers";
   return "/register";

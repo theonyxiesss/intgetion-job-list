@@ -25,6 +25,7 @@ describe("bot tool layer (7A)", () => {
     expect(names).toEqual([
       "search_jobs",
       "get_job",
+      "published_demand",
       "offer_step",
       "propose_profile_update",
     ]);
@@ -34,6 +35,9 @@ describe("bot tool layer (7A)", () => {
         "save_job",
         "hide_job",
         "get_matches",
+        "get_my_standing",
+        "propose_team_job",
+        "published_demand",
       ]),
     );
   });
@@ -45,6 +49,17 @@ describe("bot tool layer (7A)", () => {
     ["get_my_profile", {}],
     ["get_my_applications", {}],
     ["get_matches", {}],
+    ["get_my_standing", {}],
+    [
+      "propose_team_job",
+      {
+        title: "Support engineer",
+        criteria:
+          "A person who has done customer support for a year and can write in English.",
+        category: "support",
+        employmentType: "contract",
+      },
+    ],
   ])(
     "P11: a guest calling %s gets 403 before anything runs",
     async (name, args) => {
@@ -62,7 +77,7 @@ describe("bot tool layer (7A)", () => {
         "propose_profile_update",
       ),
     ).toBe(false);
-    expect(toolNeedsConfirmation(user, "propose_profile_update")).toBe(true);
+    expect(toolNeedsConfirmation(user, "propose_team_job")).toBe(true);
     expect(
       toolNeedsConfirmation(
         { ...user, state: { fillMode: "spoki" } },
@@ -163,7 +178,9 @@ describe("bot history (7A)", () => {
   });
 
   it("D359: a pay card is a site path, and a guest is sent to sign in", async () => {
-    const guestCard = await runTool(guest, "offer_step", { action: "pay_plus" });
+    const guestCard = await runTool(guest, "offer_step", {
+      action: "pay_plus",
+    });
     expect(guestCard.client).toEqual({
       kind: "offer",
       data: { action: "pay_plus" },

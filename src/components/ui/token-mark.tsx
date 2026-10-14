@@ -5,11 +5,7 @@
 export function TokenMark({ token }: { token: "USDC" | "USDT" }) {
   if (token === "USDC") {
     return (
-      <svg
-        viewBox="0 0 32 32"
-        className="size-9 shrink-0"
-        aria-hidden="true"
-      >
+      <svg viewBox="0 0 32 32" className="size-9 shrink-0" aria-hidden="true">
         <circle fill="#3E73C4" cx="16" cy="16" r="16" />
         <path
           fill="#fff"

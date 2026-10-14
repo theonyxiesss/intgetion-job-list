@@ -96,7 +96,9 @@ export async function readJobFocus(
   }
   const requirements = [
     job.skills.map((skill) => skill.name).join(", "),
-    job.languages.map((language) => `${language.lang} ${language.minLevel}`).join(", "),
+    job.languages
+      .map((language) => `${language.lang} ${language.minLevel}`)
+      .join(", "),
     job.experienceMin !== null ? `experience from ${job.experienceMin}` : "",
   ]
     .filter((part) => part.length > 0)

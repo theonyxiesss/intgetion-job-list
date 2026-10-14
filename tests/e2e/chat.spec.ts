@@ -61,7 +61,9 @@ test("chat composer grows a few lines, then scrolls inside", async ({
     expect(Math.round(shell?.height ?? 0)).toBe(
       Math.round(shellBefore?.height ?? 0),
     );
-    const log = await page.getByRole("log", { name: "Conversation" }).boundingBox();
+    const log = await page
+      .getByRole("log", { name: "Conversation" })
+      .boundingBox();
     expect(log?.height ?? 0).toBeGreaterThan(capped);
   }
 });

@@ -1,0 +1,175 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ui1-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "../Integetion jobs ui1",
+        "dev",
+        "--port",
+        "3100"
+      ],
+      "port": 3100,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache"
+      }
+    },
+    {
+      "name": "stubs-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "../Integetion jobs stubs",
+        "dev",
+        "--port",
+        "3000"
+      ],
+      "port": 3000,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache"
+      }
+    },
+    {
+      "name": "emp-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "../Integetion jobs emp",
+        "dev",
+        "--port",
+        "3000"
+      ],
+      "port": 3000,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache"
+      }
+    },
+    {
+      "name": "seo-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "../Integetion jobs seo",
+        "dev",
+        "--port",
+        "3000"
+      ],
+      "port": 3000,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache"
+      }
+    },
+    {
+      "name": "master-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "dev",
+        "--port",
+        "3000"
+      ],
+      "port": 3000,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache"
+      }
+    },
+    {
+      "name": "seo2-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "../Integetion jobs intseo2",
+        "dev",
+        "--port",
+        "3400"
+      ],
+      "port": 3400,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache",
+        "NEXT_PUBLIC_SITE_URL": "http://localhost:3400"
+      }
+    },
+    {
+      "name": "batch-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "../Integetion jobs batch",
+        "dev",
+        "--port",
+        "3200"
+      ],
+      "port": 3200,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache",
+        "NEXT_PUBLIC_SITE_URL": "http://localhost:3200"
+      }
+    },
+    {
+      "name": "home-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "../Integetion jobs home",
+        "dev",
+        "--port",
+        "3500"
+      ],
+      "port": 3500,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache",
+        "NEXT_PUBLIC_SITE_URL": "http://localhost:3500"
+      }
+    },
+    {
+      "name": "home-dev-tg",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "../Integetion jobs home",
+        "dev",
+        "--port",
+        "3501"
+      ],
+      "port": 3501,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache",
+        "NEXT_PUBLIC_SITE_URL": "http://localhost:3501",
+        "TELEGRAM_MINI_APP_ENABLED": "true"
+      }
+    },
+    {
+      "name": "es-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "../Integetion jobs es",
+        "dev",
+        "--port",
+        "3600"
+      ],
+      "port": 3600,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache",
+        "NEXT_PUBLIC_SITE_URL": "http://localhost:3600"
+      }
+    },
+    {
+      "name": "chat-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "../Integetion jobs chat",
+        "dev",
+        "--port",
+        "3700"
+      ],
+      "port": 3700,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache",
+        "NEXT_PUBLIC_SITE_URL": "http://localhost:3700"
+      }
+    }
+  ]
+}

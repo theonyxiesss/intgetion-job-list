@@ -717,18 +717,18 @@ Server-Logs: Zeit, Adresse der Anfrage, Antwortcode, Anfrage-ID; E-Mail-Adressen
 
 ## 4. Zwecke und Rechtsgrundlagen
 
-| Zweck                                                                                       | Daten                    | Rechtsgrundlage (DSGVO Art. 6)                                                       |
-| ------------------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------ |
-| Konto, Anmeldung, Profil, Katalog, Matching, Bewerbungen, Kontakt Kandidat–Arbeitgeber      | 3.1–3.4                  | Vertrag (Nutzungsbedingungen)                                                        |
-| Benachrichtigungen über Ihre Bewerbungen, Treffer, Suchen                                   | 3.4                      | Vertrag; Kanäle sind einstellbar                                                     |
-| Karriere-Agent                                                                              | 3.5                      | Vertrag, auf Ihre Anfrage                                                            |
-| Newsletter                                                                                  | E-Mail, Telegram         | Einwilligung (Abonnement), jederzeit widerrufbar                                     |
-| Moderation, Verhinderung von Betrug und Spam, Sicherheit                                    | 3.1–3.4, 3.8             | berechtigtes Interesse am Schutz der Nutzer und des Dienstes                         |
-| Statistik ohne Cookies                                                                      | 3.7, erster Teil         | berechtigtes Interesse, den Dienst zu verstehen, ohne Personen zu verfolgen          |
-| Analyse-Cookie „_ia“                                                                        | 3.7, zweiter Teil        | Einwilligung                                                                         |
-| Merken von Filtern und angesehenen Jobs                                                     | Präferenz-Cookies        | Einwilligung                                                                         |
-| Einwilligungsprotokoll                                                                      | 3.6                      | rechtliche Pflicht, die Einwilligung nachzuweisen                                    |
-| Anfragen von Behörden                                                                       | wie angefordert          | rechtliche Pflicht                                                                   |
+| Zweck                                                                                  | Daten             | Rechtsgrundlage (DSGVO Art. 6)                                              |
+| -------------------------------------------------------------------------------------- | ----------------- | --------------------------------------------------------------------------- |
+| Konto, Anmeldung, Profil, Katalog, Matching, Bewerbungen, Kontakt Kandidat–Arbeitgeber | 3.1–3.4           | Vertrag (Nutzungsbedingungen)                                               |
+| Benachrichtigungen über Ihre Bewerbungen, Treffer, Suchen                              | 3.4               | Vertrag; Kanäle sind einstellbar                                            |
+| Karriere-Agent                                                                         | 3.5               | Vertrag, auf Ihre Anfrage                                                   |
+| Newsletter                                                                             | E-Mail, Telegram  | Einwilligung (Abonnement), jederzeit widerrufbar                            |
+| Moderation, Verhinderung von Betrug und Spam, Sicherheit                               | 3.1–3.4, 3.8      | berechtigtes Interesse am Schutz der Nutzer und des Dienstes                |
+| Statistik ohne Cookies                                                                 | 3.7, erster Teil  | berechtigtes Interesse, den Dienst zu verstehen, ohne Personen zu verfolgen |
+| Analyse-Cookie „_ia“                                                                   | 3.7, zweiter Teil | Einwilligung                                                                |
+| Merken von Filtern und angesehenen Jobs                                                | Präferenz-Cookies | Einwilligung                                                                |
+| Einwilligungsprotokoll                                                                 | 3.6               | rechtliche Pflicht, die Einwilligung nachzuweisen                           |
+| Anfragen von Behörden                                                                  | wie angefordert   | rechtliche Pflicht                                                          |
 
 Die automatische Übereinstimmung hilft, Jobs und Kandidaten zu sortieren, trifft aber keine Entscheidungen mit rechtlicher Wirkung für Sie: Über Bewerbungen und Einstellungen entscheiden Menschen.
 
@@ -736,15 +736,15 @@ Die automatische Übereinstimmung hilft, Jobs und Kandidaten zu sortieren, triff
 
 Notwendige Cookies sind immer aktiv — ohne sie funktioniert die Website nicht. Andere werden nur nach Ihrer Einwilligung im Banner oder unter Einstellungen → Datenschutz gesetzt; Ablehnen ist so einfach wie Akzeptieren, und der Widerruf der Einwilligung löscht die zugehörigen Cookies.
 
-| Cookie             | Zweck                                                                    | Kategorie   | Laufzeit                                                |
-| ------------------ | ------------------------------------------------------------------------ | ----------- | ------------------------------------------------------- |
-| sb-…-auth-token    | Anmeldung                                                                | notwendig   | solange die Sitzung aktiv ist, bei Anmeldung erneuert   |
-| NEXT_LOCALE        | gewählte Sprache                                                         | notwendig   | bis der Browser geschlossen wird                        |
-| cookie_consent     | Ihre Cookie-Auswahl, Version der Richtlinie und Eintrag im Protokoll     | notwendig   | 1 Jahr                                                  |
-| bot_session        | Chat mit dem Karriere-Agenten vor der Anmeldung                          | notwendig   | 30 Tage                                                 |
-| last_catalog_query | letzte Katalogfilter                                                     | Präferenzen | 30 Tage                                                 |
-| recent_jobs        | zuletzt angesehene Jobs                                                  | Präferenzen | 30 Tage                                                 |
-| _ia                | zufällige Kennung für wiederkehrende Besuche                             | Analyse     | 13 Monate                                               |
+| Cookie             | Zweck                                                                | Kategorie   | Laufzeit                                              |
+| ------------------ | -------------------------------------------------------------------- | ----------- | ----------------------------------------------------- |
+| sb-…-auth-token    | Anmeldung                                                            | notwendig   | solange die Sitzung aktiv ist, bei Anmeldung erneuert |
+| NEXT_LOCALE        | gewählte Sprache                                                     | notwendig   | bis der Browser geschlossen wird                      |
+| cookie_consent     | Ihre Cookie-Auswahl, Version der Richtlinie und Eintrag im Protokoll | notwendig   | 1 Jahr                                                |
+| bot_session        | Chat mit dem Karriere-Agenten vor der Anmeldung                      | notwendig   | 30 Tage                                               |
+| last_catalog_query | letzte Katalogfilter                                                 | Präferenzen | 30 Tage                                               |
+| recent_jobs        | zuletzt angesehene Jobs                                              | Präferenzen | 30 Tage                                               |
+| _ia                | zufällige Kennung für wiederkehrende Besuche                         | Analyse     | 13 Monate                                             |
 
 Das helle oder dunkle Design wird im lokalen Speicher des Browsers gehalten und nirgendwohin gesendet.
 
@@ -761,14 +761,14 @@ Auf der Website gibt es keine Cookies von Dritten, keine Werbung und keine Track
 
 ### 6.2 Auftragsverarbeiter, die nach unseren Weisungen handeln
 
-| Dienst                                                                    | Zweck                                                                        | Wo                                    |
-| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------- |
-| Supabase                                                                  | Datenbank, Anmeldung, Speicherung von Logos                                  | EU (Frankfurt)                        |
-| Vercel                                                                    | Hosting der Website und geplante Aufgaben                                    | globales Netz, einschließlich der USA |
-| Resend                                                                    | Versand von E-Mails                                                          | USA                                   |
-| Telegram                                                                  | Anmeldung mit Telegram und Bot-Benachrichtigungen, wenn Sie sie aktiviert haben | gemäß den Bedingungen von Telegram    |
-| Anbieter des KI-Modells (OpenRouter oder Anthropic, je nachdem, welcher aktiviert ist) | Antworten des Karriere-Agenten; ohne E-Mail-Adressen und Telefonnummern (3.5) | USA                                   |
-| Sentry (falls aktiviert)                                                  | Fehlerberichte des Servers ohne personenbezogene Daten                       | EU oder USA                           |
+| Dienst                                                                                 | Zweck                                                                           | Wo                                    |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------- |
+| Supabase                                                                               | Datenbank, Anmeldung, Speicherung von Logos                                     | EU (Frankfurt)                        |
+| Vercel                                                                                 | Hosting der Website und geplante Aufgaben                                       | globales Netz, einschließlich der USA |
+| Resend                                                                                 | Versand von E-Mails                                                             | USA                                   |
+| Telegram                                                                               | Anmeldung mit Telegram und Bot-Benachrichtigungen, wenn Sie sie aktiviert haben | gemäß den Bedingungen von Telegram    |
+| Anbieter des KI-Modells (OpenRouter oder Anthropic, je nachdem, welcher aktiviert ist) | Antworten des Karriere-Agenten; ohne E-Mail-Adressen und Telefonnummern (3.5)   | USA                                   |
+| Sentry (falls aktiviert)                                                               | Fehlerberichte des Servers ohne personenbezogene Daten                          | EU oder USA                           |
 
 Mit den Auftragsverarbeitern haben wir Verträge zur Auftragsverarbeitung; Übermittlungen außerhalb des EWR stützen sich auf die Standardvertragsklauseln der Europäischen Kommission oder andere rechtmäßige Mechanismen. Nutzung der Daten durch den KI-Anbieter zum Training: {{aiTraining}}.
 
@@ -778,23 +778,23 @@ Behörden nur auf rechtmäßige Anfrage. Bei einem Verkauf oder einer Umstruktur
 
 ## 7. Aufbewahrung
 
-| Daten                                   | Frist                                                                           |
-| --------------------------------------- | ------------------------------------------------------------------------------- |
-| Konto und Profil                        | solange das Konto besteht; bei Löschung sofort anonymisiert (Abschnitt 9)       |
-| Kontakte von Kandidaten                 | bis zur Löschung des Kontos oder Änderung                                       |
-| Bewerbungen                             | solange der Job besteht; nach Löschung des Kontos ohne Verbindung zu Ihnen      |
-| Nachrichten an den Karriere-Agenten     | 180 Tage                                                                        |
-| Gast-Chats mit dem Agenten              | 30 Tage                                                                         |
-| Gelesene Benachrichtigungen             | 90 Tage                                                                         |
-| E-Mails in der Warteschlange            | 90 Tage                                                                         |
-| Ausgeblendete und gemeldete Jobs        | 365 Tage                                                                        |
-| Übereinstimmungen                       | werden neu berechnet; nach 30 Tagen gelöscht                                    |
-| Admin- und Sicherheitsprotokoll         | 365 Tage                                                                        |
-| Einwilligungsprotokoll                  | 3 Jahre                                                                         |
-| Besuchsstatistik                        | 395 Tage                                                                        |
-| Zähler der Ratenbegrenzung              | 48 Stunden                                                                      |
-| Server-Logs                             | bis zu 30 Tage                                                                  |
-| Datenbanksicherungen                    | gemäß dem Sicherungszyklus des Anbieters: {{backupPeriod}}                      |
+| Daten                               | Frist                                                                      |
+| ----------------------------------- | -------------------------------------------------------------------------- |
+| Konto und Profil                    | solange das Konto besteht; bei Löschung sofort anonymisiert (Abschnitt 9)  |
+| Kontakte von Kandidaten             | bis zur Löschung des Kontos oder Änderung                                  |
+| Bewerbungen                         | solange der Job besteht; nach Löschung des Kontos ohne Verbindung zu Ihnen |
+| Nachrichten an den Karriere-Agenten | 180 Tage                                                                   |
+| Gast-Chats mit dem Agenten          | 30 Tage                                                                    |
+| Gelesene Benachrichtigungen         | 90 Tage                                                                    |
+| E-Mails in der Warteschlange        | 90 Tage                                                                    |
+| Ausgeblendete und gemeldete Jobs    | 365 Tage                                                                   |
+| Übereinstimmungen                   | werden neu berechnet; nach 30 Tagen gelöscht                               |
+| Admin- und Sicherheitsprotokoll     | 365 Tage                                                                   |
+| Einwilligungsprotokoll              | 3 Jahre                                                                    |
+| Besuchsstatistik                    | 395 Tage                                                                   |
+| Zähler der Ratenbegrenzung          | 48 Stunden                                                                 |
+| Server-Logs                         | bis zu 30 Tage                                                             |
+| Datenbanksicherungen                | gemäß dem Sicherungszyklus des Anbieters: {{backupPeriod}}                 |
 
 ## 8. Sicherheit
 
@@ -881,18 +881,18 @@ Journaux du serveur : heure, adresse de la requête, code de réponse, identifia
 
 ## 4. Finalités et bases légales
 
-| Finalité                                                                                        | Données                     | Base légale (RGPD art. 6)                                                             |
-| ----------------------------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------- |
-| Compte, connexion, profil, catalogue, correspondance, candidatures, contact candidat–employeur | 3.1–3.4                     | contrat (Conditions d’utilisation)                                                    |
-| Notifications sur vos candidatures, correspondances, recherches                                 | 3.4                         | contrat ; canaux configurables                                                        |
-| Agent carrière                                                                                  | 3.5                         | contrat, à votre demande                                                              |
-| Newsletters                                                                                     | e-mail, Telegram            | consentement (abonnement), révocable à tout moment                                    |
-| Modération, prévention de la fraude et du spam, sécurité                                        | 3.1–3.4, 3.8                | intérêt légitime à protéger les utilisateurs et le service                            |
-| Statistiques sans cookies                                                                       | 3.7, première partie        | intérêt légitime à comprendre le service sans suivre les personnes                    |
-| Cookie de statistiques « _ia »                                                                  | 3.7, deuxième partie        | consentement                                                                          |
-| Mémorisation des filtres et des offres consultées                                               | cookies de préférences      | consentement                                                                          |
-| Registre des consentements                                                                      | 3.6                         | obligation légale de prouver le consentement                                          |
-| Demandes des autorités                                                                          | selon la demande            | obligation légale                                                                     |
+| Finalité                                                                                       | Données                | Base légale (RGPD art. 6)                                          |
+| ---------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------ |
+| Compte, connexion, profil, catalogue, correspondance, candidatures, contact candidat–employeur | 3.1–3.4                | contrat (Conditions d’utilisation)                                 |
+| Notifications sur vos candidatures, correspondances, recherches                                | 3.4                    | contrat ; canaux configurables                                     |
+| Agent carrière                                                                                 | 3.5                    | contrat, à votre demande                                           |
+| Newsletters                                                                                    | e-mail, Telegram       | consentement (abonnement), révocable à tout moment                 |
+| Modération, prévention de la fraude et du spam, sécurité                                       | 3.1–3.4, 3.8           | intérêt légitime à protéger les utilisateurs et le service         |
+| Statistiques sans cookies                                                                      | 3.7, première partie   | intérêt légitime à comprendre le service sans suivre les personnes |
+| Cookie de statistiques « _ia »                                                                 | 3.7, deuxième partie   | consentement                                                       |
+| Mémorisation des filtres et des offres consultées                                              | cookies de préférences | consentement                                                       |
+| Registre des consentements                                                                     | 3.6                    | obligation légale de prouver le consentement                       |
+| Demandes des autorités                                                                         | selon la demande       | obligation légale                                                  |
 
 Le score de correspondance automatique aide à trier les offres et les candidats mais ne prend aucune décision produisant des effets juridiques à votre égard : ce sont des personnes qui décident des candidatures et des recrutements.
 
@@ -900,15 +900,15 @@ Le score de correspondance automatique aide à trier les offres et les candidats
 
 Les cookies nécessaires sont toujours actifs — le site ne peut pas fonctionner sans eux. Les autres ne sont déposés qu’après votre consentement dans le bandeau ou dans Paramètres → Confidentialité ; refuser est aussi simple qu’accepter, et retirer son consentement supprime les cookies correspondants.
 
-| Cookie             | Finalité                                                                  | Catégorie   | Durée                                                      |
-| ------------------ | ------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------- |
-| sb-…-auth-token    | connexion                                                                 | nécessaire  | tant que la session est active, renouvelé à la connexion   |
-| NEXT_LOCALE        | langue choisie                                                            | nécessaire  | jusqu’à la fermeture du navigateur                         |
-| cookie_consent     | votre choix de cookies, version de la politique et entrée du registre     | nécessaire  | 1 an                                                       |
-| bot_session        | conversation avec l’agent carrière avant la connexion                     | nécessaire  | 30 jours                                                   |
-| last_catalog_query | derniers filtres du catalogue                                             | préférences | 30 jours                                                   |
-| recent_jobs        | offres récemment consultées                                               | préférences | 30 jours                                                   |
-| _ia                | identifiant aléatoire pour les visites répétées                           | statistiques | 13 mois                                                   |
+| Cookie             | Finalité                                                              | Catégorie    | Durée                                                    |
+| ------------------ | --------------------------------------------------------------------- | ------------ | -------------------------------------------------------- |
+| sb-…-auth-token    | connexion                                                             | nécessaire   | tant que la session est active, renouvelé à la connexion |
+| NEXT_LOCALE        | langue choisie                                                        | nécessaire   | jusqu’à la fermeture du navigateur                       |
+| cookie_consent     | votre choix de cookies, version de la politique et entrée du registre | nécessaire   | 1 an                                                     |
+| bot_session        | conversation avec l’agent carrière avant la connexion                 | nécessaire   | 30 jours                                                 |
+| last_catalog_query | derniers filtres du catalogue                                         | préférences  | 30 jours                                                 |
+| recent_jobs        | offres récemment consultées                                           | préférences  | 30 jours                                                 |
+| _ia                | identifiant aléatoire pour les visites répétées                       | statistiques | 13 mois                                                  |
 
 Le thème clair ou sombre est conservé dans le stockage local du navigateur et n’est envoyé nulle part.
 
@@ -925,14 +925,14 @@ Il n’y a sur le site ni cookies tiers, ni publicité, ni scripts de suivi. Si 
 
 ### 6.2 Sous-traitants agissant sur nos instructions
 
-| Service                                                                         | Finalité                                                                         | Lieu                                    |
-| ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | --------------------------------------- |
-| Supabase                                                                        | base de données, connexion, stockage des logos                                   | UE (Francfort)                          |
-| Vercel                                                                          | hébergement du site et tâches planifiées                                         | réseau mondial, y compris les États-Unis |
-| Resend                                                                          | envoi des e-mails                                                                | États-Unis                              |
-| Telegram                                                                        | connexion Telegram et notifications du bot si vous les avez activées             | selon les conditions de Telegram        |
-| Fournisseur du modèle d’IA (OpenRouter ou Anthropic, selon celui qui est activé) | réponses de l’agent carrière ; sans e-mails ni numéros de téléphone (3.5)        | États-Unis                              |
-| Sentry (s’il est activé)                                                        | rapports d’erreurs du serveur sans données personnelles                          | UE ou États-Unis                        |
+| Service                                                                          | Finalité                                                                  | Lieu                                     |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------- |
+| Supabase                                                                         | base de données, connexion, stockage des logos                            | UE (Francfort)                           |
+| Vercel                                                                           | hébergement du site et tâches planifiées                                  | réseau mondial, y compris les États-Unis |
+| Resend                                                                           | envoi des e-mails                                                         | États-Unis                               |
+| Telegram                                                                         | connexion Telegram et notifications du bot si vous les avez activées      | selon les conditions de Telegram         |
+| Fournisseur du modèle d’IA (OpenRouter ou Anthropic, selon celui qui est activé) | réponses de l’agent carrière ; sans e-mails ni numéros de téléphone (3.5) | États-Unis                               |
+| Sentry (s’il est activé)                                                         | rapports d’erreurs du serveur sans données personnelles                   | UE ou États-Unis                         |
 
 Nous avons des accords de traitement des données avec les sous-traitants ; les transferts hors de l’EEE reposent sur les clauses contractuelles types de la Commission européenne ou sur d’autres mécanismes licites. Utilisation des données par le fournisseur d’IA pour l’entraînement : {{aiTraining}}.
 
@@ -942,23 +942,23 @@ Les autorités publiques uniquement sur demande légale. En cas de vente ou de r
 
 ## 7. Conservation
 
-| Données                                    | Durée                                                                                    |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| Compte et profil                           | tant que le compte existe ; anonymisés immédiatement à la suppression (section 9)        |
-| Coordonnées des candidats                  | jusqu’à la suppression du compte ou leur modification                                    |
-| Candidatures                               | tant que l’offre existe ; après suppression du compte, sans lien avec vous               |
-| Messages à l’agent carrière                | 180 jours                                                                                |
-| Conversations des invités avec l’agent     | 30 jours                                                                                 |
-| Notifications lues                         | 90 jours                                                                                 |
-| E-mails en file d’attente                  | 90 jours                                                                                 |
-| Offres masquées et signalées               | 365 jours                                                                                |
-| Scores de correspondance                   | recalculés ; supprimés après 30 jours                                                    |
-| Journal d’administration et de sécurité    | 365 jours                                                                                |
-| Registre des consentements                 | 3 ans                                                                                    |
-| Statistiques de visite                     | 395 jours                                                                                |
-| Compteurs de limites de débit              | 48 heures                                                                                |
-| Journaux du serveur                        | jusqu’à 30 jours                                                                         |
-| Sauvegardes de la base de données          | selon le cycle de sauvegarde du fournisseur : {{backupPeriod}}                           |
+| Données                                 | Durée                                                                             |
+| --------------------------------------- | --------------------------------------------------------------------------------- |
+| Compte et profil                        | tant que le compte existe ; anonymisés immédiatement à la suppression (section 9) |
+| Coordonnées des candidats               | jusqu’à la suppression du compte ou leur modification                             |
+| Candidatures                            | tant que l’offre existe ; après suppression du compte, sans lien avec vous        |
+| Messages à l’agent carrière             | 180 jours                                                                         |
+| Conversations des invités avec l’agent  | 30 jours                                                                          |
+| Notifications lues                      | 90 jours                                                                          |
+| E-mails en file d’attente               | 90 jours                                                                          |
+| Offres masquées et signalées            | 365 jours                                                                         |
+| Scores de correspondance                | recalculés ; supprimés après 30 jours                                             |
+| Journal d’administration et de sécurité | 365 jours                                                                         |
+| Registre des consentements              | 3 ans                                                                             |
+| Statistiques de visite                  | 395 jours                                                                         |
+| Compteurs de limites de débit           | 48 heures                                                                         |
+| Journaux du serveur                     | jusqu’à 30 jours                                                                  |
+| Sauvegardes de la base de données       | selon le cycle de sauvegarde du fournisseur : {{backupPeriod}}                    |
 
 ## 8. Sécurité
 
@@ -1045,18 +1045,18 @@ Log del server: ora, indirizzo della richiesta, codice di risposta, ID della ric
 
 ## 4. Finalità e basi giuridiche
 
-| Finalità                                                                                       | Dati                     | Base giuridica (GDPR art. 6)                                                       |
-| ---------------------------------------------------------------------------------------------- | ------------------------ | ---------------------------------------------------------------------------------- |
-| Account, accesso, profilo, catalogo, corrispondenza, candidature, contatto candidato–datore    | 3.1–3.4                  | contratto (Termini di utilizzo)                                                    |
-| Notifiche su candidature, corrispondenze, ricerche                                             | 3.4                      | contratto; i canali sono configurabili                                             |
-| Agente di carriera                                                                             | 3.5                      | contratto, su tua richiesta                                                        |
-| Newsletter                                                                                     | email, Telegram          | consenso (iscrizione), revocabile in qualsiasi momento                             |
-| Moderazione, prevenzione di frodi e spam, sicurezza                                            | 3.1–3.4, 3.8             | legittimo interesse a proteggere gli utenti e il servizio                          |
-| Statistiche senza cookie                                                                       | 3.7, prima parte         | legittimo interesse a comprendere il servizio senza tracciare le persone           |
-| Cookie di statistica «_ia»                                                                     | 3.7, seconda parte       | consenso                                                                           |
-| Memorizzazione di filtri e offerte viste                                                       | cookie di preferenza     | consenso                                                                           |
-| Registro dei consensi                                                                          | 3.6                      | obbligo legale di dimostrare il consenso                                           |
-| Richieste delle autorità                                                                       | secondo la richiesta     | obbligo legale                                                                     |
+| Finalità                                                                                    | Dati                 | Base giuridica (GDPR art. 6)                                             |
+| ------------------------------------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------ |
+| Account, accesso, profilo, catalogo, corrispondenza, candidature, contatto candidato–datore | 3.1–3.4              | contratto (Termini di utilizzo)                                          |
+| Notifiche su candidature, corrispondenze, ricerche                                          | 3.4                  | contratto; i canali sono configurabili                                   |
+| Agente di carriera                                                                          | 3.5                  | contratto, su tua richiesta                                              |
+| Newsletter                                                                                  | email, Telegram      | consenso (iscrizione), revocabile in qualsiasi momento                   |
+| Moderazione, prevenzione di frodi e spam, sicurezza                                         | 3.1–3.4, 3.8         | legittimo interesse a proteggere gli utenti e il servizio                |
+| Statistiche senza cookie                                                                    | 3.7, prima parte     | legittimo interesse a comprendere il servizio senza tracciare le persone |
+| Cookie di statistica «_ia»                                                                  | 3.7, seconda parte   | consenso                                                                 |
+| Memorizzazione di filtri e offerte viste                                                    | cookie di preferenza | consenso                                                                 |
+| Registro dei consensi                                                                       | 3.6                  | obbligo legale di dimostrare il consenso                                 |
+| Richieste delle autorità                                                                    | secondo la richiesta | obbligo legale                                                           |
 
 Il punteggio di corrispondenza automatico aiuta a ordinare offerte e candidati ma non prende decisioni con effetti giuridici su di te: sulle candidature e sulle assunzioni decidono le persone.
 
@@ -1064,15 +1064,15 @@ Il punteggio di corrispondenza automatico aiuta a ordinare offerte e candidati m
 
 I cookie necessari sono sempre attivi — il sito non può funzionare senza di essi. Gli altri vengono impostati solo dopo il tuo consenso nel banner o in Impostazioni → Privacy; rifiutare è semplice quanto accettare, e revocare il consenso elimina i relativi cookie.
 
-| Cookie             | Finalità                                                                     | Categoria    | Durata                                                        |
-| ------------------ | ---------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------- |
-| sb-…-auth-token    | accesso                                                                      | necessario   | finché la sessione è attiva, rinnovato all’accesso            |
-| NEXT_LOCALE        | lingua scelta                                                                | necessario   | fino alla chiusura del browser                                |
-| cookie_consent     | la tua scelta sui cookie, versione dell’informativa e voce del registro      | necessario   | 1 anno                                                        |
-| bot_session        | chat con l’agente di carriera prima dell’accesso                             | necessario   | 30 giorni                                                     |
-| last_catalog_query | ultimi filtri del catalogo                                                   | preferenze   | 30 giorni                                                     |
-| recent_jobs        | offerte viste di recente                                                     | preferenze   | 30 giorni                                                     |
-| _ia                | identificativo casuale per le visite di ritorno                              | statistiche  | 13 mesi                                                       |
+| Cookie             | Finalità                                                                | Categoria   | Durata                                             |
+| ------------------ | ----------------------------------------------------------------------- | ----------- | -------------------------------------------------- |
+| sb-…-auth-token    | accesso                                                                 | necessario  | finché la sessione è attiva, rinnovato all’accesso |
+| NEXT_LOCALE        | lingua scelta                                                           | necessario  | fino alla chiusura del browser                     |
+| cookie_consent     | la tua scelta sui cookie, versione dell’informativa e voce del registro | necessario  | 1 anno                                             |
+| bot_session        | chat con l’agente di carriera prima dell’accesso                        | necessario  | 30 giorni                                          |
+| last_catalog_query | ultimi filtri del catalogo                                              | preferenze  | 30 giorni                                          |
+| recent_jobs        | offerte viste di recente                                                | preferenze  | 30 giorni                                          |
+| _ia                | identificativo casuale per le visite di ritorno                         | statistiche | 13 mesi                                            |
 
 Il tema chiaro o scuro è conservato nella memoria locale del browser e non viene inviato da nessuna parte.
 
@@ -1089,14 +1089,14 @@ Sul sito non ci sono cookie di terze parti, pubblicità né script di tracciamen
 
 ### 6.2 Responsabili del trattamento che agiscono su nostra istruzione
 
-| Servizio                                                                     | Finalità                                                                        | Dove                                  |
-| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------- |
-| Supabase                                                                     | database, accesso, archiviazione dei loghi                                      | UE (Francoforte)                      |
-| Vercel                                                                       | hosting del sito e attività pianificate                                         | rete globale, inclusi gli Stati Uniti |
-| Resend                                                                       | invio di email                                                                  | Stati Uniti                           |
-| Telegram                                                                     | accesso con Telegram e notifiche del bot se le hai attivate                     | secondo i termini di Telegram         |
-| Fornitore del modello di IA (OpenRouter o Anthropic, quello attivato)        | risposte dell’agente di carriera; senza email e numeri di telefono (3.5)        | Stati Uniti                           |
-| Sentry (se attivato)                                                         | segnalazioni di errori del server senza dati personali                          | UE o Stati Uniti                      |
+| Servizio                                                              | Finalità                                                                 | Dove                                  |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------- |
+| Supabase                                                              | database, accesso, archiviazione dei loghi                               | UE (Francoforte)                      |
+| Vercel                                                                | hosting del sito e attività pianificate                                  | rete globale, inclusi gli Stati Uniti |
+| Resend                                                                | invio di email                                                           | Stati Uniti                           |
+| Telegram                                                              | accesso con Telegram e notifiche del bot se le hai attivate              | secondo i termini di Telegram         |
+| Fornitore del modello di IA (OpenRouter o Anthropic, quello attivato) | risposte dell’agente di carriera; senza email e numeri di telefono (3.5) | Stati Uniti                           |
+| Sentry (se attivato)                                                  | segnalazioni di errori del server senza dati personali                   | UE o Stati Uniti                      |
 
 Abbiamo accordi sul trattamento dei dati con i responsabili; i trasferimenti al di fuori del SEE si basano sulle clausole contrattuali tipo della Commissione europea o su altri meccanismi leciti. Uso dei dati da parte del fornitore di IA per l’addestramento: {{aiTraining}}.
 
@@ -1106,23 +1106,23 @@ Le autorità pubbliche solo su richiesta legittima. In caso di vendita o riorgan
 
 ## 7. Conservazione
 
-| Dati                                       | Periodo                                                                               |
-| ------------------------------------------ | ------------------------------------------------------------------------------------- |
-| Account e profilo                          | finché l’account esiste; anonimizzati subito alla cancellazione (sezione 9)           |
-| Contatti dei candidati                     | fino alla cancellazione dell’account o alla modifica                                  |
-| Candidature                                | finché l’offerta esiste; dopo la cancellazione dell’account senza collegamento a te   |
-| Messaggi all’agente di carriera            | 180 giorni                                                                            |
-| Chat degli ospiti con l’agente             | 30 giorni                                                                             |
-| Notifiche lette                            | 90 giorni                                                                             |
-| Email in coda                              | 90 giorni                                                                             |
-| Offerte nascoste e segnalate               | 365 giorni                                                                            |
-| Punteggi di corrispondenza                 | ricalcolati; eliminati dopo 30 giorni                                                 |
-| Registro di amministrazione e sicurezza    | 365 giorni                                                                            |
-| Registro dei consensi                      | 3 anni                                                                                |
-| Statistiche delle visite                   | 395 giorni                                                                            |
-| Contatori dei limiti di frequenza          | 48 ore                                                                                |
-| Log del server                             | fino a 30 giorni                                                                      |
-| Backup del database                        | secondo il ciclo di backup del fornitore: {{backupPeriod}}                            |
+| Dati                                    | Periodo                                                                             |
+| --------------------------------------- | ----------------------------------------------------------------------------------- |
+| Account e profilo                       | finché l’account esiste; anonimizzati subito alla cancellazione (sezione 9)         |
+| Contatti dei candidati                  | fino alla cancellazione dell’account o alla modifica                                |
+| Candidature                             | finché l’offerta esiste; dopo la cancellazione dell’account senza collegamento a te |
+| Messaggi all’agente di carriera         | 180 giorni                                                                          |
+| Chat degli ospiti con l’agente          | 30 giorni                                                                           |
+| Notifiche lette                         | 90 giorni                                                                           |
+| Email in coda                           | 90 giorni                                                                           |
+| Offerte nascoste e segnalate            | 365 giorni                                                                          |
+| Punteggi di corrispondenza              | ricalcolati; eliminati dopo 30 giorni                                               |
+| Registro di amministrazione e sicurezza | 365 giorni                                                                          |
+| Registro dei consensi                   | 3 anni                                                                              |
+| Statistiche delle visite                | 395 giorni                                                                          |
+| Contatori dei limiti di frequenza       | 48 ore                                                                              |
+| Log del server                          | fino a 30 giorni                                                                    |
+| Backup del database                     | secondo il ciclo di backup del fornitore: {{backupPeriod}}                          |
 
 ## 8. Sicurezza
 

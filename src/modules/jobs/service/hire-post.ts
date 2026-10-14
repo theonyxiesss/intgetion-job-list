@@ -35,7 +35,8 @@ export async function submitHireListing(
   );
   let companyId = input.companyId ?? companies[0]?.id ?? null;
   const owned = companies.find((company) => company.id === companyId);
-  if (companyId && !owned) throw new HttpError(404, "NOT_FOUND", "Company not found");
+  if (companyId && !owned)
+    throw new HttpError(404, "NOT_FOUND", "Company not found");
 
   const website = input.website
     ? publicHttpUrl(withHttpScheme(input.website))
@@ -66,7 +67,11 @@ export async function submitHireListing(
     user.id,
     `${input.firstName.trim()} ${input.lastName.trim()}`,
   );
-  const created = await createJob(user, email, hireToJobFields(input, companyId));
+  const created = await createJob(
+    user,
+    email,
+    hireToJobFields(input, companyId),
+  );
   const queued = await transitionOwnedJob(created.id, "publish", user.id);
   if (!hirePublishesNow(user.platformRole)) return queued;
   return transitionOwnedJob(queued.id, "approve", user.id, "admin");

@@ -12,6 +12,7 @@
 через `check`; enum — Postgres enum-типы; удаление пользователя — soft (D28).
 
 ### 4.0 Enum-типы
+
 ```
 user_status:        active | suspended | deleted
 platform_role:      user | admin
@@ -269,16 +270,17 @@ rate_limit_counters(key text, window_start timestamptz, count int not null,
 
 ### 4.2 Статус-машина отклика (единственная, D2)
 
-| Из \ В | viewed | shortlisted | interview | offer | hired | rejected | withdrawn |
-|--------|--------|-------------|-----------|-------|-------|----------|-----------|
-| applied | E (авто при открытии) | E, только express-interest | — | — | — | E | C |
-| viewed | — | E, только express-interest | — | — | — | E | C |
-| shortlisted | — | — | E | — | — | E | C |
-| interview | — | — | — | E | — | E | C |
-| offer | — | — | — | — | E | E | C |
-| hired / rejected / withdrawn | терминальные | | | | | | |
+| Из \ В                       | viewed                | shortlisted                | interview | offer | hired | rejected | withdrawn |
+| ---------------------------- | --------------------- | -------------------------- | --------- | ----- | ----- | -------- | --------- |
+| applied                      | E (авто при открытии) | E, только express-interest | —         | —     | —     | E        | C         |
+| viewed                       | —                     | E, только express-interest | —         | —     | —     | E        | C         |
+| shortlisted                  | —                     | —                          | E         | —     | —     | E        | C         |
+| interview                    | —                     | —                          | —         | E     | —     | E        | C         |
+| offer                        | —                     | —                          | —         | —     | E     | E        | C         |
+| hired / rejected / withdrawn | терминальные          |                            |           |       |       |          |           |
 
 E — член компании (owner/admin/recruiter), C — кандидат-владелец.
+
 - Каждый переход: проверка таблицы → UPDATE → INSERT history → событие
   уведомления — одна транзакция. Недопустимый переход → 409 `INVALID_TRANSITION`.
 - Переход в `shortlisted` = `express-interest`: `SELECT … FOR UPDATE`, UPDATE
@@ -292,16 +294,16 @@ E — член компании (owner/admin/recruiter), C — кандидат-
 
 **job**
 
-| Переход | Кто | Условие |
-|---------|-----|---------|
-| draft → pending_moderation | member | publish, компания unverified/pending или risk_score ≥ 4 |
-| draft → published | member | publish, компания verified и risk_score < 4 |
-| pending_moderation → published / draft(rejected) | admin | решение в очереди (причина обязательна при отказе) |
-| published ⇄ paused | member | — |
-| published/paused → closed | member | — |
-| published → expired | system | cron по `expires_at`; imported — исчезла из источника 2 прогона подряд |
-| any → removed | admin | модерация/жалобы; viewable только админу |
-| paused/expired → published | member | продление `expires_at` (+30 дн.), повторная проверка risk |
+| Переход                                          | Кто    | Условие                                                                |
+| ------------------------------------------------ | ------ | ---------------------------------------------------------------------- |
+| draft → pending_moderation                       | member | publish, компания unverified/pending или risk_score ≥ 4                |
+| draft → published                                | member | publish, компания verified и risk_score < 4                            |
+| pending_moderation → published / draft(rejected) | admin  | решение в очереди (причина обязательна при отказе)                     |
+| published ⇄ paused                               | member | —                                                                      |
+| published/paused → closed                        | member | —                                                                      |
+| published → expired                              | system | cron по `expires_at`; imported — исчезла из источника 2 прогона подряд |
+| any → removed                                    | admin  | модерация/жалобы; viewable только админу                               |
+| paused/expired → published                       | member | продление `expires_at` (+30 дн.), повторная проверка risk              |
 
 Каждый переход — запись в `job_status_history`. Imported-вакансии меняют
 статус только system/admin (D9).
@@ -314,6 +316,7 @@ E — член компании (owner/admin/recruiter), C — кандидат-
 необратимо, анонимизация D28).
 
 ### 4.4 ERD (ядро; полный — в docs/ERD.md, генерируется из раздела 4.1)
+
 ```mermaid
 erDiagram
   users ||--o| candidate_profiles : has

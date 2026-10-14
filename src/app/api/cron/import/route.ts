@@ -1,10 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { flags } from "@/config/flags";
 import { notFound, toErrorResponse } from "@/lib/http";
-import {
-  runFixtureImports,
-  runLiveImports,
-} from "@/modules/ingestion/service";
+import { runFixtureImports, runLiveImports } from "@/modules/ingestion/service";
 
 export const dynamic = "force-dynamic";
 

@@ -79,7 +79,10 @@ export default async function EmployerJobPage({
               {hire ? billing("hire") : billing("start")}
             </p>
             {hire ? null : (
-              <ButtonLink href={`/billing/crypto?job=${id}`} variant="secondary">
+              <ButtonLink
+                href={`/billing/crypto?job=${id}`}
+                variant="secondary"
+              >
                 {billing("pay")}
               </ButtonLink>
             )}

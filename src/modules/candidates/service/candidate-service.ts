@@ -185,7 +185,8 @@ export async function setOwnAgentBriefsEnabled(
   userId: string,
   enabled: boolean,
 ): Promise<boolean> {
-  if (!(await profiles.setAgentBriefsEnabled(userId, enabled))) throw notFound();
+  if (!(await profiles.setAgentBriefsEnabled(userId, enabled)))
+    throw notFound();
   return enabled;
 }
 

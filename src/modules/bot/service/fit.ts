@@ -51,7 +51,12 @@ export type HardReason = "format" | "pay" | "hours";
 
 export type FitJudgement =
   | { show: false; hard: HardReason }
-  | { show: true; kind: "good" | "neutral"; matches: FitMatch[]; gaps: FitGap[] };
+  | {
+      show: true;
+      kind: "good" | "neutral";
+      matches: FitMatch[];
+      gaps: FitGap[];
+    };
 
 const FORMATS = new Set(["remote", "hybrid", "onsite"]);
 const PERIODS = new Set<SalaryPeriod>(["hour", "month", "year"]);
@@ -100,7 +105,11 @@ export function explicitlyAsksToApply(text: string): boolean {
 }
 
 function normalized(text: string): string {
-  return text.trim().toLowerCase().replace(/[!?.]+$/g, "").replace(/\s+/g, " ");
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/[!?.]+$/g, "")
+    .replace(/\s+/g, " ");
 }
 
 /** A polite yes is agreement, not an application. */
@@ -220,7 +229,8 @@ function asBasis(value: unknown): SalaryBasis | null {
 }
 
 function minorString(value: unknown): string | null {
-  if (typeof value === "string" && /^(0|[1-9]\d{0,14})$/.test(value)) return value;
+  if (typeof value === "string" && /^(0|[1-9]\d{0,14})$/.test(value))
+    return value;
   if (typeof value === "bigint" && value >= BigInt(0)) return value.toString();
   return null;
 }
@@ -250,7 +260,10 @@ export function personFromDraft(
   const workDays = Array.isArray(data.workDays)
     ? data.workDays.filter(
         (day): day is number =>
-          typeof day === "number" && Number.isInteger(day) && day >= 1 && day <= 7,
+          typeof day === "number" &&
+          Number.isInteger(day) &&
+          day >= 1 &&
+          day <= 7,
       )
     : [];
   return {
@@ -383,7 +396,11 @@ export function judgeFit(
   now = new Date(),
 ): FitJudgement {
   const formats = person.workFormats ?? [];
-  if (formats.length > 0 && job.workFormat && !formats.includes(job.workFormat)) {
+  if (
+    formats.length > 0 &&
+    job.workFormat &&
+    !formats.includes(job.workFormat)
+  ) {
     return { show: false, hard: "format" };
   }
   const pay = payRelation(person, job, now);
@@ -393,7 +410,8 @@ export function judgeFit(
 
   const matches: FitMatch[] = [];
   const gaps: FitGap[] = [];
-  if (formats.length > 0 && formats.includes(job.workFormat)) matches.push("format");
+  if (formats.length > 0 && formats.includes(job.workFormat))
+    matches.push("format");
   if (pay === "match") matches.push("pay");
   if (pay === "missing") gaps.push("pay");
   if (hours === "match") matches.push("hours");
@@ -416,7 +434,11 @@ export function judgeFit(
 }
 
 export type PickResult =
-  | { kind: "show"; job: VacancyFacts; judgement: Extract<FitJudgement, { show: true }> }
+  | {
+      kind: "show";
+      job: VacancyFacts;
+      judgement: Extract<FitJudgement, { show: true }>;
+    }
   | { kind: "repeat" };
 
 /** Drops passed ids. A hard contradiction takes the next result. */
@@ -729,7 +751,10 @@ export function shapeToolCalls(
   },
 ): LLMToolCall[] {
   let next = calls.filter((call) => {
-    if (call.name === "apply_to_job" && !explicitlyAsksToApply(input.userText)) {
+    if (
+      call.name === "apply_to_job" &&
+      !explicitlyAsksToApply(input.userText)
+    ) {
       return false;
     }
     return true;

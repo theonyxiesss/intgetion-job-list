@@ -100,7 +100,8 @@ describe("jobs CRUD and status history in Postgres", () => {
       (await transitionOwnedJob(created.id, "publish", ownerId)).status,
     ).toBe("pending_moderation");
     expect(
-      (await transitionOwnedJob(created.id, "approve", ownerId, "admin")).status,
+      (await transitionOwnedJob(created.id, "approve", ownerId, "admin"))
+        .status,
     ).toBe("published");
     expect(
       (await transitionOwnedJob(created.id, "pause", ownerId)).status,
@@ -109,7 +110,8 @@ describe("jobs CRUD and status history in Postgres", () => {
       (await transitionOwnedJob(created.id, "extend", ownerId)).status,
     ).toBe("pending_moderation");
     expect(
-      (await transitionOwnedJob(created.id, "approve", ownerId, "admin")).status,
+      (await transitionOwnedJob(created.id, "approve", ownerId, "admin"))
+        .status,
     ).toBe("published");
     expect(
       (await transitionOwnedJob(created.id, "close", ownerId)).status,

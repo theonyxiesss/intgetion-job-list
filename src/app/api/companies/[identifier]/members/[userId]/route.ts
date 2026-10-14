@@ -19,7 +19,11 @@ export async function DELETE(
     const user = await requireUser(() => getCurrentUser(supabase.auth));
     const role = await findMemberRole(identifier, user.id);
     if (role !== "owner") {
-      throw new HttpError(403, "FORBIDDEN", "Only the owner can remove teammates");
+      throw new HttpError(
+        403,
+        "FORBIDDEN",
+        "Only the owner can remove teammates",
+      );
     }
     await removeCompanyMember(identifier, userId);
     return Response.json({ ok: true });

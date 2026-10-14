@@ -1415,6 +1415,8 @@
       "linkTelegram": "Link Telegram",
       "linkGoogle": "Link Google",
       "linkX": "Link X",
+      "splitEnter": "Sign in with this account",
+      "splitStay": "Stay in this account",
       "unlink": "Unlink",
       "unlinked": "Telegram is unlinked.",
       "unlinkedGoogle": "Google is unlinked.",
@@ -1433,6 +1435,8 @@
   },
   "chat": {
     "title": "Spoki Assistant",
+    "welcome": "Where should we start?",
+    "disclaimer": "Spoki can make mistakes. Check what matters. Also in Telegram:",
     "jobFocus": {
       "discussing": "Discussing: {title} — {company}",
       "back": "Back to the job"
@@ -1452,6 +1456,50 @@
       "two": "Part-time design in Europe",
       "three": "Who is hiring juniors?"
     },
+    "starters": {
+      "label": "Ways to start",
+      "lanes": {
+        "find": "Help me find work",
+        "hire": "I want to hire for my project",
+        "demand": "What work is in demand now"
+      },
+      "questions": {
+        "find01": "Help me find remote work",
+        "find02": "What jobs match my profile?",
+        "find03": "Show me part-time roles",
+        "find04": "I want remote work. Where do I start?",
+        "find05": "Which skills should I name so the search is sharper?",
+        "find06": "Find work I can do from another country",
+        "find07": "I am just starting. What junior roles are open?",
+        "find08": "What is still missing in my profile for a better match?",
+        "hire01": "I want to hire someone for my project",
+        "hire02": "How do I post a job?",
+        "hire03": "What does it cost to publish one role?",
+        "hire04": "I need a person for a short project",
+        "hire05": "How many people can join my company?",
+        "hire06": "I want one role to be seen faster",
+        "demand01": "What kind of work has the most open jobs right now?",
+        "demand02": "Which category has the most published jobs?",
+        "demand03": "How many jobs are open on the board?",
+        "demand04": "Where should I look first?",
+        "demand05": "Show me the roles companies are posting the most",
+        "demand06": "I want work in the busiest category"
+      }
+    },
+    "applicationStatus": {
+      "line": "The application is {status}.",
+      "applied": "sent",
+      "viewed": "seen by the employer",
+      "shortlisted": "on the short list",
+      "interview": "at the interview stage",
+      "offer": "at the offer stage",
+      "hired": "hired",
+      "rejected": "declined",
+      "withdrawn": "withdrawn"
+    },
+    "jobQueued": {
+      "line": "{title} is waiting for a review. It is not in the list yet."
+    },
     "placeholder": "Write a message",
     "send": "Send",
     "guestHint": "Saving jobs, applying and keeping a profile need an account.",
@@ -1461,11 +1509,14 @@
       "BOT_BUDGET_EXCEEDED": "The agent has reached today's limit. Use the job search; the agent is back tomorrow.",
       "BOT_TRY_LATER": "The agent could not answer. Try again in a minute.",
       "RATE_LIMITED": "You have sent too many messages today. Try again tomorrow.",
+      "JOB_NEEDS_TEAM": "This needs the Team plan. The form can still post a job.",
+      "JOB_NEEDS_COMPANY": "Add a company on the post form first.",
       "generic": "Something went wrong. Try again."
     },
     "confirm": {
       "applyTitle": "Apply to this job?",
       "profileTitle": "Save these profile changes?",
+      "jobTitle": "Post this job for review?",
       "text": "Nothing happens until you confirm.",
       "accept": "Confirm",
       "decline": "Cancel",
@@ -2263,6 +2314,1086 @@
       "submitting": "Sending…",
       "submittingLive": "Posting…",
       "error": "Could not submit the job. Check the required fields."
+    }
+  },
+  "companyMarketing": {
+    "metaTitle": "INTGETION — Managed Teams for Community, Growth & Operations",
+    "metaDescription": "INTGETION builds and manages on-demand Web3 teams for community, growth, marketing and operations. One contract. One point of contact. Tell us what you need.",
+    "body": {
+      "nav": [
+        {
+          "href": "#solutions",
+          "label": "Solutions"
+        },
+        {
+          "href": "#services",
+          "label": "Services"
+        },
+        {
+          "href": "#approach",
+          "label": "Approach"
+        },
+        {
+          "href": "#work",
+          "label": "Work"
+        },
+        {
+          "href": "#about",
+          "label": "About"
+        },
+        {
+          "href": "#contact",
+          "label": "Contact"
+        }
+      ],
+      "brand": "INTGETION",
+      "heroTitle": "Tell us what you need. We build and manage the right team.",
+      "heroText": "On-demand Web3 teams for community, growth, marketing and operations — assembled around your objective, not a hiring plan.",
+      "explore": "Explore solutions",
+      "start": "Start a conversation",
+      "problem": {
+        "kicker": "01 — The problem",
+        "title": "Business is changing.",
+        "text": "Companies need coverage, execution and specialists — without building an entire team from scratch, and without coordinating a roster of contractors. INTGETION is built for a defined problem: one contract, a managed team, sized to the work.",
+        "items": [
+          {
+            "title": "Fragmented execution",
+            "text": "Channels, growth and operations split across people who do not share a plan."
+          },
+          {
+            "title": "Manual coordination",
+            "text": "Hiring one specialist at a time becomes a second job."
+          },
+          {
+            "title": "Disconnected systems",
+            "text": "Tools, workflows and handoff sit with individuals, not with an owner."
+          },
+          {
+            "title": "Hard to scale",
+            "text": "Scope changes, but the roster cannot change with it."
+          }
+        ]
+      },
+      "services": {
+        "kicker": "02 — What we do",
+        "title": "On-demand teams for Web3 and crypto",
+        "lead": "A managed team for a defined Web3 problem — community, growth, marketing or operations — instead of hiring one specialist at a time. Additional capabilities below are specialists we can assemble. Scope depends on your brief.",
+        "groups": [
+          {
+            "num": "01",
+            "name": "Operations",
+            "meta": "Support · Customer ops",
+            "blocks": [
+              {
+                "title": "Support & Operations",
+                "text": "Chat operators, community moderators, support specialists, virtual assistants, QA, onboarding, help desk, documentation."
+              },
+              {
+                "title": "Customer Operations",
+                "text": "Support and success specialists we can put on a managed workflow.",
+                "caps": [
+                  "Customer Support",
+                  "Customer Success",
+                  "Technical Support",
+                  "Customer Onboarding",
+                  "Helpdesk Management"
+                ]
+              }
+            ]
+          },
+          {
+            "num": "02",
+            "name": "Community",
+            "meta": "Content · Localization",
+            "blocks": [
+              {
+                "title": "Community & Content",
+                "text": "Community managers, Telegram & Discord admins, social media managers, content writers, copywriters, video producers, engagement specialists."
+              },
+              {
+                "title": "Localization & Globalization",
+                "text": "Language and market-entry specialists we can staff for multilingual growth.",
+                "caps": [
+                  "Translation",
+                  "Localization",
+                  "Multilingual Content",
+                  "Market Entry Support",
+                  "Local Community Management"
+                ]
+              }
+            ]
+          },
+          {
+            "num": "03",
+            "name": "Growth",
+            "meta": "Sales · Marketing · PR",
+            "blocks": [
+              {
+                "title": "Sales & Growth",
+                "text": "SDR/BDR, affiliate & partnership managers, account executives, business development, revenue operations, CRM managers."
+              },
+              {
+                "title": "Non-Technical Marketing",
+                "text": "Performance & paid media, SMM leads, Telegram growth, content & SEO specialists, influencer & brand managers, analytics."
+              },
+              {
+                "title": "PR & Communications",
+                "text": "Communications specialists we can assemble for media, brand and community messaging.",
+                "caps": [
+                  "Public Relations",
+                  "Media Outreach",
+                  "Press Relations",
+                  "Brand Communications",
+                  "Community Communications"
+                ]
+              }
+            ]
+          },
+          {
+            "num": "04",
+            "name": "Product & development",
+            "meta": "Design · Engineering",
+            "blocks": [
+              {
+                "title": "Product & Design",
+                "text": "Product specialists we can staff around a defined brief.",
+                "caps": [
+                  "Product Management",
+                  "Product Strategy",
+                  "UX/UI Design",
+                  "Product Research",
+                  "MVP Development",
+                  "QA & Testing"
+                ]
+              },
+              {
+                "title": "Development",
+                "text": "Engineering specialists we can assemble for web, product and protocol work.",
+                "caps": [
+                  "Web Development",
+                  "Frontend Development",
+                  "Backend Development",
+                  "Full-Stack Development",
+                  "Mobile Development",
+                  "Web3 Development",
+                  "Smart Contract Development",
+                  "API Development"
+                ]
+              }
+            ]
+          },
+          {
+            "num": "05",
+            "name": "Web3 systems",
+            "meta": "Protocol · Ecosystem",
+            "blocks": [
+              {
+                "title": "Web3-Specific",
+                "text": "Ambassadors, KOL managers, mods, airdrop & whitelist managers, holder engagement, community builders."
+              },
+              {
+                "title": "Additional Web3",
+                "text": "Further Web3 specialists we can assemble beyond the core Web3-Specific team.",
+                "caps": [
+                  "Token Ecosystem Support",
+                  "DAO Operations",
+                  "Governance Support",
+                  "Protocol Community Management",
+                  "Ecosystem Growth",
+                  "Ambassador Programs",
+                  "Web3 Research",
+                  "Crypto Content",
+                  "Discord & Telegram Operations"
+                ]
+              }
+            ]
+          },
+          {
+            "num": "06",
+            "name": "Talent & intelligence",
+            "meta": "Advisory · Research · HR",
+            "blocks": [
+              {
+                "title": "Consulting",
+                "text": "Advice on team structure and operations for Web3 companies."
+              },
+              {
+                "title": "HR & Talent",
+                "text": "Talent and workforce specialists we can assemble for hiring and team operations.",
+                "caps": [
+                  "Talent Sourcing",
+                  "Recruitment",
+                  "Remote Team Staffing",
+                  "Team Building",
+                  "Contractor Management",
+                  "Workforce Operations"
+                ]
+              },
+              {
+                "title": "Research & Intelligence",
+                "text": "Research specialists we can staff for market, customer and ecosystem intelligence.",
+                "caps": [
+                  "Market Research",
+                  "Competitor Analysis",
+                  "Customer Research",
+                  "Web3 Ecosystem Research",
+                  "Trend Analysis",
+                  "Data Collection",
+                  "Business Intelligence"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "approach": {
+        "kicker": "03 — How we work",
+        "title": "From brief to a working team",
+        "lead": "Four steps. Timing depends on the brief — we do not quote a fixed start date here.",
+        "steps": [
+          {
+            "num": "01",
+            "title": "Discover",
+            "text": "We learn about your goals, current challenges and required capabilities."
+          },
+          {
+            "num": "02",
+            "title": "Design",
+            "text": "We define the team shape, workflow and how specialists will work against the objective."
+          },
+          {
+            "num": "03",
+            "title": "Build",
+            "text": "We assemble the right specialists. The team starts working within the agreed scope and workflow."
+          },
+          {
+            "num": "04",
+            "title": "Optimize",
+            "text": "We monitor the work and adjust the team as your needs evolve."
+          }
+        ],
+        "engagementTitle": "Engagement",
+        "engagementLead": "Pick the model that matches the work. We quote after we understand scope and specialists.",
+        "models": [
+          {
+            "num": "01",
+            "title": "Project-based",
+            "text": "For defined projects with clear scope and deliverables."
+          },
+          {
+            "num": "02",
+            "title": "Monthly team",
+            "text": "For companies that need ongoing support without building an internal team."
+          },
+          {
+            "num": "03",
+            "title": "Dedicated team",
+            "text": "For companies that need a continuously managed team."
+          }
+        ],
+        "priceNote": "Pricing depends on team size, scope and required specialists."
+      },
+      "solutions": {
+        "kicker": "04 — Solutions",
+        "title": "Team packages",
+        "lead": "Common Web3 setups. We confirm specialists and scope before we quote.",
+        "packages": [
+          {
+            "num": "01",
+            "title": "Community Team",
+            "roles": [
+              "Community Manager",
+              "Moderators",
+              "Content Specialist"
+            ],
+            "text": "Operators for Telegram, Discord, and community channels — moderation, engagement, and content in one group."
+          },
+          {
+            "num": "02",
+            "title": "Growth Team",
+            "roles": [
+              "Business Development",
+              "SDR",
+              "Partnerships",
+              "Growth Specialist"
+            ],
+            "text": "A pod for pipeline: outreach, partnerships, and business development against a defined target."
+          },
+          {
+            "num": "03",
+            "title": "Marketing Team",
+            "roles": [
+              "Content",
+              "Social Media",
+              "KOL / Influencer Relations",
+              "Paid Media"
+            ],
+            "text": "Content, social, KOL relations, and paid media in one managed group — not four separate contractors."
+          },
+          {
+            "num": "04",
+            "title": "Custom Team",
+            "text": "Need a different mix? We will build the team around the work."
+          }
+        ],
+        "builderLabel": "Assemble a team",
+        "builderLead": "Choose what you need. We’ll show you the specialists around it.",
+        "categories": [
+          {
+            "title": "Community",
+            "roles": [
+              "Community Manager",
+              "Moderators",
+              "Content Specialist"
+            ]
+          },
+          {
+            "title": "Growth",
+            "roles": [
+              "SDR",
+              "Business Development",
+              "Partnerships",
+              "Growth Specialist"
+            ]
+          },
+          {
+            "title": "Marketing",
+            "roles": [
+              "Content Specialist",
+              "Social Media",
+              "KOL / Influencer Relations",
+              "Paid Media"
+            ]
+          },
+          {
+            "title": "Operations",
+            "roles": [
+              "Operations Specialist",
+              "Project Manager",
+              "Business Analyst",
+              "Automation Specialist"
+            ]
+          }
+        ],
+        "builderOther": "Need a different combination?",
+        "builderCta": "Build a custom team"
+      },
+      "stack": {
+        "kicker": "05 — Technology",
+        "title": "The stack we staff around",
+        "lead": "Capabilities we can assemble specialists for — not a vendor logo wall, and not a claim of exclusive partnerships.",
+        "items": [
+          "Web",
+          "Frontend",
+          "Backend",
+          "Full-stack",
+          "Mobile",
+          "API",
+          "Web3",
+          "Smart contracts",
+          "Data",
+          "Business intelligence"
+        ]
+      },
+      "work": {
+        "kicker": "06 — Selected work",
+        "title": "Typical engagements",
+        "lead": "How we usually structure the work. These are not published client case studies.",
+        "kickerItem": "Typical engagement",
+        "challengeLabel": "The challenge",
+        "doLabel": "What we do",
+        "outcomeLabel": "The outcome",
+        "items": [
+          {
+            "title": "Community operations",
+            "challenge": "Telegram and Discord need coverage, moderation and a consistent voice — without managing several contractors.",
+            "do": "A managed community pod: manager, moderators and content in one workflow, one point of contact.",
+            "outcome": "Channels have an owner. Cadence and handoff sit with the team, not with you."
+          },
+          {
+            "title": "Growth and partnerships",
+            "challenge": "Pipeline work exists, but there is no dedicated group for outreach, partnerships and follow-up.",
+            "do": "A growth pod against a defined target: BD, SDR and partnerships under one managed team.",
+            "outcome": "Outreach has a rhythm and an owner. You review progress, not a roster of freelancers."
+          },
+          {
+            "title": "Marketing execution",
+            "challenge": "Content, social, KOLs and paid media are split across people who do not share a plan.",
+            "do": "One marketing group for the channels that matter, coordinated by INTGETION.",
+            "outcome": "The work runs as one program. Scope can change without a new hiring round."
+          }
+        ],
+        "comingKicker": "Selected projects",
+        "comingTitle": "Coming soon",
+        "comingText": "Published case studies will appear here when they can be shared."
+      },
+      "why": {
+        "kicker": "07 — Why INTGETION",
+        "title": "A managed team, not a hiring project",
+        "lead": "One contract, a managed Web3 team, sized to the work.",
+        "principles": [
+          {
+            "title": "One contract",
+            "text": "One point of contact instead of coordinating multiple freelancers."
+          },
+          {
+            "title": "Systems, not tools",
+            "text": "INTGETION organizes specialists around the client’s business objective."
+          },
+          {
+            "title": "Built to scale",
+            "text": "Teams can scale according to changing business needs. We understand Web3 workflows, communities and crypto-native tools."
+          }
+        ]
+      },
+      "about": {
+        "kicker": "08 — About",
+        "title": "About INTGETION",
+        "paragraphs": [
+          "INTGETION is built around a simple idea: companies should be able to access the right specialists without building an entire team from scratch.",
+          "We assemble and manage the team. You stay focused on the business."
+        ]
+      },
+      "faq": {
+        "kicker": "Questions",
+        "items": [
+          {
+            "q": "How much does an INTGETION team cost?",
+            "a": "There is no fixed price. The quote depends on team size, scope, required specialists, and engagement model. We price after we understand the work — not before."
+          },
+          {
+            "q": "How quickly can a team start?",
+            "a": "It depends on the roles and how complete the brief is. We give a start window after the first conversation — not as a blanket promise."
+          },
+          {
+            "q": "Who manages the team?",
+            "a": "INTGETION does. You have one point of contact. We organize the specialists, the workflow, and the handoff."
+          },
+          {
+            "q": "Can I hire only one specialist?",
+            "a": "Yes, if that is what the work needs. A small team is often enough so you are not coordinating several contractors. We will say if a single specialist is the better fit."
+          },
+          {
+            "q": "Can the team be scaled later?",
+            "a": "Yes. You can add or reduce people as the workload changes, without a new hiring round. How fast we can change the mix depends on the roles you need."
+          },
+          {
+            "q": "Do you work with startups?",
+            "a": "Yes, when there is a clear objective and a budget for a team. Fit depends on the work, not on whether you call yourselves a startup."
+          },
+          {
+            "q": "Where are your specialists located?",
+            "a": "They work remotely. Time zones and languages are matched to the project. Exact locations depend on the team we assemble for you."
+          },
+          {
+            "q": "What happens if a specialist is not a good fit?",
+            "a": "Tell us. We replace them. Timing depends on the role and who is available — we do not quote a fixed replacement SLA on this page."
+          },
+          {
+            "q": "What information do you need before starting?",
+            "a": "The objective, channels or products, what “done” looks like, timing, and constraints (tools, languages, time zones)."
+          },
+          {
+            "q": "How does the onboarding process work?",
+            "a": "We agree scope and team shape, then introduce your point of contact and the specialists. Access, tools, and working rhythm are set at the start of the engagement. The exact steps depend on your stack and how you prefer to work."
+          }
+        ]
+      },
+      "contact": {
+        "kicker": "09 — Contact",
+        "title": "Have a business problem to solve? Let’s talk.",
+        "text": "Don’t know what team you need? Tell us what you’re trying to achieve. We’ll help define the right team and scope.",
+        "links": [
+          {
+            "label": "Telegram",
+            "href": "https://t.me/theonyxis"
+          },
+          {
+            "label": "Discord",
+            "href": "https://discord.com/users/theonyxis"
+          },
+          {
+            "label": "LinkedIn",
+            "href": "https://www.linkedin.com/company/intgetion"
+          }
+        ],
+        "trust": [
+          "Clear scope",
+          "Flexible team size",
+          "Transparent engagement",
+          "Confidentiality"
+        ]
+      },
+      "privacy": {
+        "title": "Privacy",
+        "text": "Details you share with INTGETION are used only to follow up about a possible engagement. We do not sell this information."
+      }
+    }
+  },
+  "portfolioPage": {
+    "metaTitle": "THE ONYXIS — Digital Systems, Operations & Growth",
+    "metaDescription": "THE ONYXIS builds digital systems, operations and growth engines — from AI automation and web products to lead generation and process design.",
+    "body": {
+      "nav": [
+        {
+          "href": "#services",
+          "label": "Services"
+        },
+        {
+          "href": "#capabilities",
+          "label": "Capabilities"
+        },
+        {
+          "href": "#about",
+          "label": "About"
+        },
+        {
+          "href": "#profile",
+          "label": "Profile"
+        },
+        {
+          "href": "#social",
+          "label": "Connect"
+        }
+      ],
+      "heroEyebrow": "Digital systems · Operations · Growth",
+      "heroTitle": "THE ONYXIS",
+      "heroSubtitle": "THE ONYXIS is a personal brand and operating hub for digital systems, team leadership and growth — from AI automation and web products to lead generation and process design.",
+      "heroValue": "I help build what scales: processes, product and acquisition channels.",
+      "cta": "Start a project",
+      "ctaSecondary": "View profile",
+      "services": {
+        "index": "01",
+        "title": "Services",
+        "lead": "Not a tech dump — practical business problems solved end to end.",
+        "items": [
+          {
+            "id": "01",
+            "title": "AI & Automation",
+            "text": "Automating routines, AI agents and pipelines that reduce operational load and accelerate execution."
+          },
+          {
+            "id": "02",
+            "title": "Web & Digital Products",
+            "text": "Prototypes and digital products on a modern stack — from MVP to working infrastructure."
+          },
+          {
+            "id": "03",
+            "title": "Growth & Marketing",
+            "text": "Systematic lead generation and funnels across key channels, focused on conversion and monetization."
+          },
+          {
+            "id": "04",
+            "title": "Operations & Process Design",
+            "text": "Team structure, KPI and process design — so a service or product can scale without chaos."
+          }
+        ]
+      },
+      "capabilities": {
+        "index": "02",
+        "title": "Capabilities",
+        "lead": "Selected work — systems shipped or piloted.",
+        "stackLabel": "Stack",
+        "outcomeLabel": "Outcome",
+        "roleLabel": "Role",
+        "items": [
+          {
+            "id": "01",
+            "status": "PUBLIC",
+            "title": "Lead intake instead of a group chat",
+            "text": "A small service team took inbound from Instagram, Telegram and manual forwards. Qualification lived in one manager’s head — warm leads died overnight. Built one intake path (form / Telegram → table → status: new / qualified / call / dead), short qualification rules, and an owner ping if no reply in 12 working hours. Weekly review of why a lead died — not a vanity report.",
+            "stack": "Telegram bot · spreadsheet / Notion · webhooks · first-reply templates",
+            "outcome": "First reply from “whenever someone remembered” to under 2 hours on working days. Lost warm leads in a month: 8 → 2. Qualified calls: +6 on the same traffic.",
+            "role": "Operations + funnel design · 6 weeks"
+          },
+          {
+            "id": "02",
+            "status": "PILOT",
+            "title": "Research queue with a human in the loop",
+            "text": "Company cards were assembled by hand: site, socials, offer, “do we write?”. 25–40 minutes per card — sales waited on research. Built: domain list → public pages → short card (offer, geo, do-not-contact signals) → human accept / edit / reject. Rejected cards never reach outreach.",
+            "stack": "Python · LLM via OpenRouter · light RAG / saved pages · Notion as the card queue",
+            "outcome": "Card time ~35 min → ~8 min with review. 120 companies in the pilot, 18 dropped before the first message. No send without review.",
+            "role": "System design + agent workflow · 3 weeks"
+          },
+          {
+            "id": "03",
+            "status": "INTERNAL",
+            "title": "Delivery pipeline for a 4-person team",
+            "text": "Traffic, design, account, sales. Tasks lived in Telegram; “yesterday” was the default deadline — the owner could not see whether the bottleneck was sales or delivery. Built one deal pipeline: lead → proposal → delivery → done. Each stage has one owner and one artifact. Weekly review of three numbers only: new qualified, deals in progress, overdue tasks. Backlog separated from on-fire work. Telegram is an alert, not the database.",
+            "stack": "Notion (or Linear) · brief templates · Telegram alerts",
+            "outcome": "Overdue tasks at week-end: 11 → 3. Time from payment to work start: 5–6 days → 2 days. Account stopped being the only project memory.",
+            "role": "Team lead / process design · 8 weeks"
+          }
+        ],
+        "technologies": "Stack",
+        "stackLead": "Not a list for the sake of it — directions I actually use to build systems.",
+        "categories": [
+          {
+            "id": "01",
+            "title": "AI & Intelligence",
+            "status": "ACTIVE",
+            "items": [
+              "AI Agents",
+              "LLMs",
+              "Prompt Engineering",
+              "RAG",
+              "Knowledge Bases",
+              "AI Research",
+              "Multi-Agent Systems",
+              "OpenRouter"
+            ]
+          },
+          {
+            "id": "02",
+            "title": "Development",
+            "status": "ACTIVE",
+            "items": [
+              "Python",
+              "JavaScript",
+              "HTML / CSS",
+              "Git",
+              "GitHub",
+              "Cursor",
+              "VS Code"
+            ]
+          },
+          {
+            "id": "03",
+            "title": "Web & Infrastructure",
+            "status": "USED",
+            "items": [
+              "Vercel",
+              "Railway",
+              "APIs",
+              "Webhooks",
+              "ngrok",
+              "Telegram Bots"
+            ]
+          },
+          {
+            "id": "04",
+            "title": "Data & Research",
+            "status": "ACTIVE",
+            "items": [
+              "Qdrant",
+              "Data Processing",
+              "Web Research",
+              "Lead Research",
+              "Information Architecture",
+              "Structured Knowledge"
+            ]
+          },
+          {
+            "id": "05",
+            "title": "Systems & Automation",
+            "status": "ACTIVE",
+            "items": [
+              "Workflow Design",
+              "Process Automation",
+              "AI Automation",
+              "Agent Workflows",
+              "API Integration",
+              "Business Process Design"
+            ]
+          },
+          {
+            "id": "06",
+            "title": "Business & Growth",
+            "status": "ACTIVE",
+            "items": [
+              "Lead Generation",
+              "Prospecting",
+              "Content Strategy",
+              "SMM",
+              "Digital Marketing",
+              "Business Analysis",
+              "Product Thinking",
+              "Growth Experiments"
+            ]
+          }
+        ],
+        "exploring": "Exploring",
+        "exploringStatus": "EXPLORING",
+        "exploringLead": "Directions I am researching or want to grow. Not claimed expertise.",
+        "exploringItems": [
+          "Robotics",
+          "Web3",
+          "AI Products",
+          "Content Systems",
+          "Lead Generation",
+          "Digital Businesses",
+          "Personal Knowledge Systems"
+        ],
+        "whatIBuild": "What I Build",
+        "whatIBuildLead": "What I can create and which systems I know how to assemble.",
+        "builds": [
+          {
+            "title": "AI Agents",
+            "text": "Research, lead generation, content and task automation."
+          },
+          {
+            "title": "Business Systems",
+            "text": "Turning manual processes into repeatable workflows."
+          },
+          {
+            "title": "Web Projects",
+            "text": "Websites, dashboards and digital products."
+          },
+          {
+            "title": "Lead Generation",
+            "text": "Prospect research, qualification and outreach systems."
+          },
+          {
+            "title": "Content Systems",
+            "text": "Research, production and distribution."
+          },
+          {
+            "title": "Research Systems",
+            "text": "Structured research, knowledge bases and iterative search."
+          }
+        ],
+        "casesTitle": "Cases, experiments & research",
+        "casesLead": "Some of my projects and experiments are documented in more detail on Medium and Substack. I also occasionally share statistics, results and short updates on X.",
+        "cases": [
+          {
+            "title": "Medium / Substack",
+            "text": "Long-form cases, research and experiments.",
+            "links": [
+              {
+                "name": "Medium",
+                "href": "https://medium.com/@ap1m3n"
+              },
+              {
+                "name": "Substack",
+                "href": "https://substack.com/@markevans499986"
+              }
+            ]
+          },
+          {
+            "title": "X",
+            "text": "Short updates, statistics and progress.",
+            "links": [
+              {
+                "name": "X",
+                "href": "https://x.com/TheOnyxis"
+              }
+            ]
+          }
+        ]
+      },
+      "about": {
+        "index": "03",
+        "title": "About",
+        "statement": "Managing projects and teams, building systematic lead generation, and preparing processes for scale and the launch of own products.",
+        "basedInLabel": "Based in",
+        "basedIn": "Remote / EU",
+        "focusLabel": "Focus",
+        "focus": "Team Lead / Operations / Project / BD",
+        "currentlyLabel": "Currently",
+        "currently": "Building systems & ventures"
+      },
+      "profile": {
+        "index": "04",
+        "title": "Profile",
+        "coreFocus": "Core Focus",
+        "rolesLabel": "Focus roles",
+        "roles": [
+          "Team Lead",
+          "Operations Manager",
+          "Project Manager",
+          "Business Development Lead"
+        ],
+        "goalLabel": "Primary goal",
+        "goal": "Managing projects and teams, building systematic lead generation, preparing processes for scaling and launching own products.",
+        "domains": [
+          {
+            "id": "01",
+            "title": "Management & Leadership",
+            "subtitle": "Management & processes",
+            "items": [
+              {
+                "name": "Team Leadership",
+                "text": "Experience assembling, coordinating and aligning cross-functional teams (developers, marketers, designers)."
+              },
+              {
+                "name": "Process Design",
+                "text": "Understanding of management architecture: from task setting and KPI control to deadlines and final outcomes."
+              },
+              {
+                "name": "Strategic Planning",
+                "text": "Ability to break a global goal (service business → product) into staged team tasks."
+              }
+            ]
+          },
+          {
+            "id": "02",
+            "title": "Marketing, Sales & Lead Generation",
+            "subtitle": "Marketing & sales",
+            "items": [
+              {
+                "name": "Lead Generation & Sales Funnels",
+                "text": "Building lead acquisition funnels across key channels (Telegram, Instagram, TikTok, Facebook)."
+              },
+              {
+                "name": "B2B & Outreach",
+                "text": "Understanding of client acquisition, cold and warm traffic, networking and negotiations."
+              },
+              {
+                "name": "Growth Focus",
+                "text": "Focus on monetization, capital generation and rapid hypothesis testing."
+              }
+            ]
+          },
+          {
+            "id": "03",
+            "title": "Tech Stack & Crypto Competencies",
+            "subtitle": "Technology stack",
+            "note": "Hands-on / pet-projects / MVP experience. Architecture understanding, systems thinking, AI-assisted prototyping and clear communication with developers.",
+            "groups": [
+              {
+                "title": "Web3, Crypto & Economics",
+                "items": [
+                  {
+                    "name": "Crypto Foundations",
+                    "text": "Deep understanding of tokenomics, crypto-economics, emission mechanics, token distribution and Web3 monetization."
+                  },
+                  {
+                    "name": "Web3 Integration",
+                    "text": "Thirdweb SDK, WalletConnect Cloud APIs, EVM networks setup and work in MetaMask."
+                  },
+                  {
+                    "name": "Blockchain Data & Tools",
+                    "text": "The Graph (indexing and data), Remix IDE (smart contracts)."
+                  },
+                  {
+                    "name": "Telegram Crypto Ecosystem",
+                    "text": "Telegram Mini Apps development, payment mechanics and Telegram Stars (XTR) integration."
+                  }
+                ]
+              },
+              {
+                "title": "AI Tools & Autonomous Agents",
+                "items": [
+                  {
+                    "name": "AI Agents",
+                    "text": "Hermes Agent — research and practical setup of autonomous AI agents."
+                  },
+                  {
+                    "name": "AI CLI & Code Assistants",
+                    "text": "Cursor AI, Claude Code CLI, Gemini CLI, OpenAI Codex CLI, Google Antigravity."
+                  },
+                  {
+                    "name": "LLM Infrastructure",
+                    "text": "OpenRouter — LLM API aggregation and routing."
+                  }
+                ]
+              },
+              {
+                "title": "Backend, Data & Automation",
+                "items": [
+                  {
+                    "name": "Languages & Runtime",
+                    "text": "Python, Node.js (JavaScript)."
+                  },
+                  {
+                    "name": "Databases & BaaS",
+                    "text": "SQL (database design), Supabase (PostgreSQL, Auth, Realtime)."
+                  },
+                  {
+                    "name": "Automation & Integration",
+                    "text": "Workflow design, API integrations and business process automation."
+                  }
+                ]
+              },
+              {
+                "title": "Frontend & Mobile Development",
+                "items": [
+                  {
+                    "name": "Web Frontend",
+                    "text": "React, Next.js (14), Vue 3, Vite."
+                  },
+                  {
+                    "name": "Styling & UI",
+                    "text": "Tailwind CSS."
+                  },
+                  {
+                    "name": "Mobile & Cross-Platform",
+                    "text": "Flutter, Dart."
+                  }
+                ]
+              },
+              {
+                "title": "Infrastructure & Services",
+                "items": [
+                  {
+                    "name": "Deployment & Hosting",
+                    "text": "Vercel, Railway."
+                  },
+                  {
+                    "name": "Dev Utilities",
+                    "text": "Ngrok — tunneling and API testing."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "04",
+            "title": "Trading, Finance & Operations",
+            "subtitle": "Trading, finance & operations",
+            "groups": [
+              {
+                "title": "Trading & Financial Advisory",
+                "items": [
+                  {
+                    "name": "Crypto & Markets",
+                    "text": "Spot and futures crypto trading, market mechanics, fundamental and technical analysis."
+                  },
+                  {
+                    "name": "Risk & Portfolio Management",
+                    "text": "Risk management (Risk/Reward, Position Sizing), capital control and trading psychology."
+                  },
+                  {
+                    "name": "Financial Advisory",
+                    "text": "Advisory experience in personal finance, investment planning and asset structuring."
+                  }
+                ]
+              },
+              {
+                "title": "Analytics & Conversion Management",
+                "items": [
+                  {
+                    "name": "Funnel Analytics",
+                    "text": "Conversion analysis across the full funnel — from first contact to subscription or purchase."
+                  },
+                  {
+                    "name": "Data Organization",
+                    "text": "Collecting, processing and structuring data for traffic and sales decisions."
+                  }
+                ]
+              },
+              {
+                "title": "Knowledge & Project Systems",
+                "items": [
+                  {
+                    "name": "Second Brain Systems",
+                    "text": "Building personal and work knowledge bases in Notion and Obsidian (PARA / CODE)."
+                  },
+                  {
+                    "name": "Task Management",
+                    "text": "Project systematization, note-taking and task structuring for self and team."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "05",
+            "title": "Languages",
+            "subtitle": "Languages",
+            "items": [
+              {
+                "name": "Russian / Ukrainian",
+                "text": "Native"
+              },
+              {
+                "name": "English",
+                "text": "Intermediate (B1/B2) — written and working communication."
+              },
+              {
+                "name": "Italian / German",
+                "text": "Basic / conversational level."
+              }
+            ]
+          }
+        ]
+      },
+      "social": {
+        "index": "05",
+        "title": "Connect",
+        "channelsLabel": "Contact",
+        "channels": [
+          {
+            "label": "Telegram",
+            "hint": "fastest",
+            "href": "https://t.me/TheOnyxis"
+          },
+          {
+            "label": "Email",
+            "hint": "ap1m3n@gmail.com",
+            "href": "mailto:ap1m3n@gmail.com"
+          },
+          {
+            "label": "Discord",
+            "hint": "async",
+            "href": "https://discord.com/users/TheOnyxis"
+          },
+          {
+            "label": "X",
+            "hint": "public",
+            "href": "https://x.com/TheOnyxis"
+          }
+        ],
+        "links": [
+          {
+            "name": "The Onyxis",
+            "handle": "Personal brand / website",
+            "href": "#top"
+          },
+          {
+            "name": "LinkedIn",
+            "handle": "Personal",
+            "href": "https://www.linkedin.com/in/igor-kushnir-2a38272b5"
+          },
+          {
+            "name": "GitHub",
+            "handle": "Personal",
+            "href": "https://github.com/theonyxiesss"
+          },
+          {
+            "name": "Intgetion",
+            "handle": "Digital marketing agency",
+            "href": "/company"
+          },
+          {
+            "name": "INTGETION LinkedIn",
+            "handle": "Company",
+            "href": "https://www.linkedin.com/company/intgetion/"
+          },
+          {
+            "name": "X",
+            "handle": "@TheOnyxis",
+            "href": "https://x.com/TheOnyxis"
+          },
+          {
+            "name": "Telegram",
+            "handle": "@TheOnyxis",
+            "href": "https://t.me/TheOnyxis"
+          },
+          {
+            "name": "Medium",
+            "handle": "@ap1m3n",
+            "href": "https://medium.com/@ap1m3n"
+          },
+          {
+            "name": "Substack",
+            "handle": "@markevans499986",
+            "href": "https://substack.com/@markevans499986"
+          },
+          {
+            "name": "Instagram",
+            "handle": "@TheOnyxis",
+            "href": "https://instagram.com/TheOnyxis"
+          },
+          {
+            "name": "Discord",
+            "handle": "@TheOnyxis",
+            "href": "https://discord.com/users/TheOnyxis"
+          }
+        ]
+      },
+      "footerBlurb": "Digital systems, operations and growth — in one working hub.",
+      "copyright": "© 2026 THE ONYXIS"
     }
   }
 }

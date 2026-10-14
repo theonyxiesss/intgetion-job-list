@@ -69,10 +69,12 @@ export function callbackUrl(
   locale: AppLocale,
   next?: "reset" | "account" | LoginNext,
   wait?: string,
+  provider?: OAuthProviderName,
 ): string {
   const url = new URL(`${siteUrl()}${localePrefix(locale)}/auth/callback`);
   if (next) url.searchParams.set("next", next);
   if (wait) url.searchParams.set("wait", wait);
+  if (provider) url.searchParams.set("provider", provider);
   return url.toString();
 }
 
@@ -122,7 +124,12 @@ async function startOAuthSignIn(
   },
 ): Promise<{ url: string }> {
   const options = {
-    redirectTo: callbackUrl(input.locale, input.link ? "account" : input.next),
+    redirectTo: callbackUrl(
+      input.locale,
+      input.link ? "account" : input.next,
+      undefined,
+      input.link ? input.provider : undefined,
+    ),
     skipBrowserRedirect: true as const,
     ...(input.provider === "google"
       ? { queryParams: { prompt: "select_account" } }
@@ -413,6 +420,22 @@ function callbackFailureReason(error: {
   return "invalid_link";
 }
 
+/**
+ * Linking was refused because this Google or X already belongs to another
+ * account (D390). Sign in with that account instead of stopping on the notice.
+ * Returns a same-site path, or nothing when this return is not that refusal.
+ */
+export function signInInsteadOfLink(
+  locale: string,
+  next: string | null,
+  reason: string,
+  provider: string | null,
+): string | null {
+  if (reason !== "identity_taken" || next !== "account") return null;
+  if (provider !== "google" && provider !== "x") return null;
+  return `/api/auth/${provider}?locale=${encodeURIComponent(locale)}`;
+}
+
 /** Supabase sends the link failure on the redirect, not as a session code. */
 export function providerCallbackFailure(params: {
   errorCode?: string | null;
@@ -674,6 +697,13 @@ export async function unlinkTelegram(user: CurrentUser): Promise<void> {
 
 export async function telegramLinkOf(user: CurrentUser) {
   return telegramAccounts.findByUserId(user.id);
+}
+
+/** Active account by public id, or null when it cannot post. */
+export async function requireActiveUserById(id: string) {
+  const row = await usersRepo.findUserById(id);
+  if (!row || row.deletedAt || row.status !== "active") return null;
+  return row;
 }
 
 /** Public user id for an auth uid, or null when that account cannot be added. */

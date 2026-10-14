@@ -1,8 +1,8 @@
 /**
  * Footer groups (D333, D388, D396). Real routes only: an item without
  * `href` is shown as plain text, not as a link to a page that does not
- * exist. The six Company items without an address wait for the founder
- * to name one (D396 OPEN QUESTION).
+ * exist. The six Company items without an address are an open question
+ * with no code task until the founder names an address (D396, D404).
  */
 export type FooterItem = { label: string; href?: string };
 export type FooterGroup = { title: string; items: readonly FooterItem[] };

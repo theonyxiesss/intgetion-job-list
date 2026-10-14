@@ -5,19 +5,19 @@
 
 ## 15. УВЕДОМЛЕНИЯ
 
-| type | Кому | inapp | email по умолчанию |
-|------|------|-------|--------------------|
-| application.created | members компании (recruiter+) | ✅ | ✅ (батч раз в час) |
-| application.viewed | кандидат | ✅ | — |
-| application.status_changed | кандидат | ✅ | ✅ |
-| application.withdrawn | members | ✅ | — |
-| mutual_interest.revealed | кандидат + members | ✅ | ✅ |
-| job.moderation_decided | создатель вакансии | ✅ | ✅ |
-| job.expiring (за 3 дня) | создатель | ✅ | ✅ |
-| job.closed (на которую откликнулся) | кандидат | ✅ | — |
-| company.verification_decided | owner | ✅ | ✅ |
-| matches.digest | кандидат | ✅ | ✅ (≤ 1/сутки, утро своего слота — D340, [20-morning-briefs.md](20-morning-briefs.md)) |
-| report.decided | жалобщик | ✅ | — |
+| type                                | Кому                          | inapp | email по умолчанию                                                                     |
+| ----------------------------------- | ----------------------------- | ----- | -------------------------------------------------------------------------------------- |
+| application.created                 | members компании (recruiter+) | ✅    | ✅ (батч раз в час)                                                                    |
+| application.viewed                  | кандидат                      | ✅    | —                                                                                      |
+| application.status_changed          | кандидат                      | ✅    | ✅                                                                                     |
+| application.withdrawn               | members                       | ✅    | —                                                                                      |
+| mutual_interest.revealed            | кандидат + members            | ✅    | ✅                                                                                     |
+| job.moderation_decided              | создатель вакансии            | ✅    | ✅                                                                                     |
+| job.expiring (за 3 дня)             | создатель                     | ✅    | ✅                                                                                     |
+| job.closed (на которую откликнулся) | кандидат                      | ✅    | —                                                                                      |
+| company.verification_decided        | owner                         | ✅    | ✅                                                                                     |
+| matches.digest                      | кандидат                      | ✅    | ✅ (≤ 1/сутки, утро своего слота — D340, [20-morning-briefs.md](20-morning-briefs.md)) |
+| report.decided                      | жалобщик                      | ✅    | —                                                                                      |
 
 - Отправка через pg-boss; email — Resend, шаблоны React Email на языке
   получателя; ссылка отписки в каждом письме (кроме транзакционных

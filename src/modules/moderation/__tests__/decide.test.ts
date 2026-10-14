@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { isOverdue, planDecision } from "../service/decide";
+import { reachesAutoPause } from "../service/reports-service";
 
 const internal = (status: string) =>
   ({ kind: "job", source: "internal", status }) as const;
@@ -72,8 +73,7 @@ describe("isOverdue", () => {
 });
 
 describe("reachesAutoPause", () => {
-  it("pauses from the third confirmed report on", async () => {
-    const { reachesAutoPause } = await import("../service/reports-service");
+  it("pauses from the third confirmed report on", () => {
     expect(reachesAutoPause(2)).toBe(false);
     expect(reachesAutoPause(3)).toBe(true);
   });

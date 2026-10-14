@@ -243,7 +243,9 @@ describe("the agent inside the Telegram bot (D311)", () => {
         tool: "apply_to_job",
       } as BotEvent);
     await handleTelegramAgentUpdate("token", update("apply to the first one"));
-    expect(sent[0].links?.[0]?.url).toBe("https://example.test/login?next=chat");
+    expect(sent[0].links?.[0]?.url).toBe(
+      "https://example.test/login?next=chat",
+    );
   });
 
   it("opens the site chat when this Telegram account is already linked", async () => {

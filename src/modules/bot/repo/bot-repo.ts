@@ -44,7 +44,10 @@ export async function findConversationForUserJob(
     .select()
     .from(botConversations)
     .where(
-      and(eq(botConversations.userId, userId), eq(botConversations.jobId, jobId)),
+      and(
+        eq(botConversations.userId, userId),
+        eq(botConversations.jobId, jobId),
+      ),
     )
     .limit(1);
   return row;
@@ -57,7 +60,9 @@ export async function latestGeneralConversationForUser(
   const [row] = await getDb()
     .select()
     .from(botConversations)
-    .where(and(eq(botConversations.userId, userId), isNull(botConversations.jobId)))
+    .where(
+      and(eq(botConversations.userId, userId), isNull(botConversations.jobId)),
+    )
     .orderBy(desc(botConversations.lastMessageAt))
     .limit(1);
   return row;

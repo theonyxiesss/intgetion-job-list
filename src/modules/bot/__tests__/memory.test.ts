@@ -39,6 +39,18 @@ describe("Spoki memory", () => {
     expect(nextSlot(next)).not.toBe("country");
   });
 
+  it("does not treat an English function word as a country code", () => {
+    expect(countryFromText("IT")).toBe("IT");
+    expect(countryFromText("I live in Italy")).toBe("IT");
+    expect(countryFromText("I am a backend engineer in Berlin")).toBeNull();
+    expect(
+      countryFromText("Find a role. Mail me at jane@example.com or call"),
+    ).toBeNull();
+    expect(
+      rememberUtterance(undefined, "I am a backend engineer in Berlin").country,
+    ).toBeUndefined();
+  });
+
   it("takes the country where the person lives, not a demonym", () => {
     const text =
       "Я украинец, сейчас живу в Италии, хочу удалённую работу в customer support";
@@ -97,7 +109,7 @@ describe("Spoki memory", () => {
 
   it("follows the last message language and does not lock the reply to the locale (D385)", () => {
     const prompt = systemPrompt({ locale: "en", signedIn: false });
-    expect(SYSTEM_PROMPT_VERSION).toBe(11);
+    expect(SYSTEM_PROMPT_VERSION).toBe(13);
     expect(prompt).toContain(
       "Answer in the language of the person's last message",
     );
@@ -112,16 +124,14 @@ describe("Spoki memory", () => {
 
   it("greets without a country question and answers an account complaint in words", () => {
     const prompt = systemPrompt({ locale: "ru", signedIn: false });
-    expect(SYSTEM_PROMPT_VERSION).toBe(11);
+    expect(SYSTEM_PROMPT_VERSION).toBe(13);
     expect(prompt).toContain(
       "On a greeting (привет, здравствуйте, hello, hi, or the same words in other languages), greet them and ask how you can help. Do not ask for country, role, or work format on a greeting.",
     );
     expect(prompt).toContain(
       "If the conversation already has messages, do not start the reply with a greeting",
     );
-    expect(prompt).toContain(
-      "the field can be named here in the chat",
-    );
+    expect(prompt).toContain("the field can be named here in the chat");
     expect(prompt).toContain(
       "Do not greet again and do not copy the previous question word for word.",
     );
@@ -133,6 +143,17 @@ describe("Spoki memory", () => {
       "A yes that this vacancy suits them is not a request to apply",
     );
     expect(prompt).toContain("One question beats an upsell");
+  });
+
+  it("reads the live plan, match reasons, application status, and demand from tools", () => {
+    const prompt = systemPrompt({ locale: "en", signedIn: true });
+    expect(prompt).toContain("call get_my_standing");
+    expect(prompt).toContain("explain reasons from that tool result");
+    expect(prompt).toContain("call get_my_applications");
+    expect(prompt).toContain("call published_demand");
+    expect(prompt).toContain("call propose_team_job");
+    expect(prompt).toContain("Employer plan is not team");
+    expect(prompt).not.toContain("you cannot see the payment");
   });
 
   it("does not ask city once the search can already run", () => {

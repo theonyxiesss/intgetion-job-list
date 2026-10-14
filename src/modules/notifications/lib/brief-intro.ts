@@ -53,5 +53,7 @@ export function cleanIntro(text: string): string | null {
   if (line.length <= BRIEF_INTRO_MAX) return line;
   const cut = line.slice(0, BRIEF_INTRO_MAX);
   const end = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "));
-  return end > 40 ? cut.slice(0, end + 1) : `${cut.slice(0, BRIEF_INTRO_MAX - 1)}…`;
+  return end > 40
+    ? cut.slice(0, end + 1)
+    : `${cut.slice(0, BRIEF_INTRO_MAX - 1)}…`;
 }

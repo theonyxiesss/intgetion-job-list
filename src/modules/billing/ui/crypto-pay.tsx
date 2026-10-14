@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { planLoginNext } from "@/components/auth/login-next";
 import { Button, TokenMark, cn } from "@/components/ui";
 import { useRouter } from "@/i18n/navigation";
+import { connectWallet } from "./connect-wallet";
 import { NonEvmPay, type NonEvmOption } from "./non-evm-pay";
 import { classifyPayError, type PayErrorKind } from "./pay-error";
 
@@ -38,34 +39,6 @@ async function errorCode(response: Response): Promise<string> {
   } catch {
     return "";
   }
-}
-
-type Wallet = {
-  request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
-};
-
-async function connectWallet(projectId: string): Promise<Wallet> {
-  if (projectId) {
-    const mod = await import("@walletconnect/ethereum-provider");
-    const provider = await mod.EthereumProvider.init({
-      projectId,
-      chains: [1],
-      optionalChains: [137, 42161, 8453],
-      showQrModal: true,
-      metadata: {
-        name: "INTGETION JOB LIST",
-        description: "Pay for a plan",
-        url: window.location.origin,
-        icons: [`${window.location.origin}/icon.png`],
-      },
-    });
-    await provider.connect();
-    return provider;
-  }
-  const injected = (window as Window & { ethereum?: Wallet }).ethereum;
-  if (!injected?.request) throw new Error("wallet");
-  await injected.request({ method: "eth_requestAccounts" });
-  return injected;
 }
 
 export function CryptoPay({

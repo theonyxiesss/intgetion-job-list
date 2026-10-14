@@ -137,6 +137,21 @@ export function decideMigrationTarget(
   return { ok: true, code: "remote", host };
 }
 
+/** Same host rules as migrate. Throws the refusal and does not connect. */
+export function requireDatabaseTarget(
+  connectionString,
+  argv = [],
+  options = {},
+) {
+  const target = decideMigrationTarget(connectionString, argv, options);
+  if (!target.ok) {
+    const error = new Error(target.reason);
+    error.code = target.code;
+    throw error;
+  }
+  return target;
+}
+
 // Supabase Root 2021 CA. src/db/ssl.ts embeds the same bytes for the app.
 const supabaseRootCa = fs.readFileSync(
   new URL("../src/db/supabase-root-2021-ca.pem", import.meta.url),

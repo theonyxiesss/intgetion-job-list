@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { jobFocusBlock, jobFocusOpener, type JobFocus } from "../service/job-focus";
+import {
+  jobFocusBlock,
+  jobFocusOpener,
+  type JobFocus,
+} from "../service/job-focus";
 
 const focus: JobFocus = {
   jobId: "00000000-0000-4000-8000-000000000001",
@@ -19,7 +23,9 @@ describe("job focus", () => {
     expect(block).toContain("Data Systems Engineer");
     expect(block).toContain("Bluprynt");
     expect(block).toContain("Their status on this vacancy: saved");
-    expect(block).toContain("Do not call apply_to_job unless they explicitly ask to apply");
+    expect(block).toContain(
+      "Do not call apply_to_job unless they explicitly ask to apply",
+    );
     expect(block).toContain("whether this vacancy suits the person");
     expect(block).not.toContain("cover note");
     expect(block).not.toContain("questions for the employer");
@@ -38,18 +44,18 @@ describe("job focus", () => {
     expect(jobFocusOpener("ru", "Data Systems Engineer", "Bluprynt")).toContain(
       "Вам подходит эта вакансия?",
     );
-    expect(jobFocusOpener("ru", "Data Systems Engineer", "Bluprynt")).not.toContain(
-      "сопроводительн",
-    );
+    expect(
+      jobFocusOpener("ru", "Data Systems Engineer", "Bluprynt"),
+    ).not.toContain("сопроводительн");
     expect(jobFocusOpener("en", "Data Systems Engineer", "Bluprynt")).toContain(
       "Does this vacancy suit you?",
     );
-    expect(jobFocusOpener("en", "Data Systems Engineer", "Bluprynt")).not.toContain(
-      "cover note",
-    );
-    expect(jobFocusOpener("en", "Data Systems Engineer", "Bluprynt")).not.toContain(
-      "interview questions",
-    );
+    expect(
+      jobFocusOpener("en", "Data Systems Engineer", "Bluprynt"),
+    ).not.toContain("cover note");
+    expect(
+      jobFocusOpener("en", "Data Systems Engineer", "Bluprynt"),
+    ).not.toContain("interview questions");
     expect(jobFocusOpener("en", "Data Systems Engineer", "Bluprynt")).toContain(
       "will not apply",
     );

@@ -18,6 +18,7 @@ import {
   requireCurrentUser,
   sendMagicLink,
   signIn,
+  signInInsteadOfLink,
   logout,
   type AuthClient,
   type CurrentUser,
@@ -481,6 +482,37 @@ describe("startXSignIn", () => {
   });
 });
 
+describe("sign in when linking is refused", () => {
+  it("builds the sign-in half of the split", () => {
+    expect(
+      signInInsteadOfLink("ru", "account", "identity_taken", "google"),
+    ).toBe("/api/auth/google?locale=ru");
+    expect(signInInsteadOfLink("en", "account", "identity_taken", "x")).toBe(
+      "/api/auth/x?locale=en",
+    );
+  });
+
+  it("does not leave the current page for any other refusal", () => {
+    expect(
+      signInInsteadOfLink("ru", "account", "invalid_link", "google"),
+    ).toBeNull();
+    expect(
+      signInInsteadOfLink("ru", "billing-plus", "identity_taken", "google"),
+    ).toBeNull();
+    expect(
+      signInInsteadOfLink(
+        "ru",
+        "account",
+        "identity_taken",
+        "https://evil.test",
+      ),
+    ).toBeNull();
+    expect(signInInsteadOfLink("ru", "account", "identity_taken", null)).toBe(
+      null,
+    );
+  });
+});
+
 describe("linking Google and X", () => {
   it("asks Supabase to attach Google to the current account", async () => {
     const auth = fakeAuth(confirmed);
@@ -488,7 +520,8 @@ describe("linking Google and X", () => {
     expect(auth.linkIdentity).toHaveBeenCalledWith({
       provider: "google",
       options: {
-        redirectTo: "http://127.0.0.1:3000/ru/auth/callback?next=account",
+        redirectTo:
+          "http://127.0.0.1:3000/ru/auth/callback?next=account&provider=google",
         skipBrowserRedirect: true,
         queryParams: { prompt: "select_account" },
       },
@@ -502,7 +535,8 @@ describe("linking Google and X", () => {
     expect(auth.linkIdentity).toHaveBeenCalledWith({
       provider: "x",
       options: {
-        redirectTo: "http://127.0.0.1:3000/auth/callback?next=account",
+        redirectTo:
+          "http://127.0.0.1:3000/auth/callback?next=account&provider=x",
         skipBrowserRedirect: true,
       },
     });

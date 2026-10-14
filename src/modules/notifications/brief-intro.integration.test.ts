@@ -50,7 +50,9 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await getDb().delete(users).where(inArray(users.id, [userId]));
+  await getDb()
+    .delete(users)
+    .where(inArray(users.id, [userId]));
 });
 
 describe("brief intro against the database (D370)", () => {

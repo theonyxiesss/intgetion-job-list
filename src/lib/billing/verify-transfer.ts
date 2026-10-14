@@ -29,8 +29,7 @@ export type VerifyFailure =
   | "confirmations";
 
 export type VerifyResult =
-  | { ok: true; value: bigint }
-  | { ok: false; reason: VerifyFailure };
+  { ok: true; value: bigint } | { ok: false; reason: VerifyFailure };
 
 export type VerifyInput = {
   receipt: TransferReceipt | null;
@@ -57,7 +56,8 @@ function succeeded(status: string | number): boolean {
 
 export function verifyTransfer(input: VerifyInput): VerifyResult {
   if (!input.receipt) return { ok: false, reason: "missing" };
-  if (!succeeded(input.receipt.status)) return { ok: false, reason: "reverted" };
+  if (!succeeded(input.receipt.status))
+    return { ok: false, reason: "reverted" };
 
   const wanted = input.tokenContract.toLowerCase();
   const log = input.receipt.logs.find(

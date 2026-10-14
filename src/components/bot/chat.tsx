@@ -1,16 +1,36 @@
 "use client";
 
-import { Send } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import { ConfirmCard } from "@/components/ui/dialog";
-import { controlClass } from "@/components/ui/field";
 import { Alert } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
 import { TELEGRAM_BOT_URL } from "@/config/telegram";
 import { localePath } from "@/i18n/paths";
 import { Link, useRouter } from "@/i18n/navigation";
-import { isOfferAction, offerPath, type OfferAction } from "@/modules/bot/service/offers";
+import {
+  appliedStatusFromConfirm,
+  teamJobFromConfirm,
+} from "@/modules/bot/service/application-status";
+import {
+  isOfferAction,
+  offerPath,
+  type OfferAction,
+} from "@/modules/bot/service/offers";
+import {
+  STARTER_KEYS,
+  STARTER_LANES,
+  STARTER_SHOW,
+  pickStarterKeys,
+  type StarterLane,
+} from "@/modules/bot/service/starters";
 
 type ExplainLine = {
   detail: { key: string; params: Record<string, string | number> };
@@ -45,6 +65,8 @@ const ERROR_CODES = new Set([
   "BOT_BUDGET_EXCEEDED",
   "BOT_TRY_LATER",
   "RATE_LIMITED",
+  "JOB_NEEDS_TEAM",
+  "JOB_NEEDS_COMPANY",
 ]);
 
 type ChatActions = {
@@ -99,6 +121,9 @@ export function Chat({
   const locale = useLocale();
   const router = useRouter();
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [historyReady, setHistoryReady] = useState(false);
+  const [lane, setLane] = useState<StarterLane>("find");
+  const [starterSeed, setStarterSeed] = useState(1);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [thinking, setThinking] = useState(false);
@@ -109,6 +134,8 @@ export function Chat({
   });
   const endRef = useRef<HTMLDivElement>(null);
   const fieldRef = useRef<HTMLTextAreaElement>(null);
+  /** Empty chat sits mid-screen; a started conversation pins the field to the bottom. */
+  const welcome = entries.length === 0;
 
   /** One line, then a few more, then a fixed cap. Past that, the field scrolls. */
   function fitComposer(node: HTMLTextAreaElement) {
@@ -166,7 +193,11 @@ export function Chat({
           if (history.length) setEntries(history);
         },
       )
-      .catch(() => undefined);
+      .catch(() => undefined)
+      .finally(() => {
+        setStarterSeed(Math.floor(Math.random() * 0x7fffffff) || 1);
+        setHistoryReady(true);
+      });
   }, [jobId, locale]);
 
   useEffect(() => {
@@ -308,7 +339,32 @@ export function Chat({
       }
       return setState("failed");
     }
+    const body = await response.json().catch(() => null);
     setState(accept ? "accepted" : "declined");
+    const status = accept ? appliedStatusFromConfirm(body) : null;
+    if (status) {
+      add({
+        key: nextKey(),
+        kind: "event",
+        text: t("applicationStatus.line", {
+          status: t(`applicationStatus.${status}`),
+        }),
+      });
+    }
+    const queued = accept ? teamJobFromConfirm(body) : null;
+    if (queued?.posted) {
+      add({
+        key: nextKey(),
+        kind: "event",
+        text: t("jobQueued.line", { title: queued.title }),
+      });
+    } else if (queued) {
+      add({
+        key: nextKey(),
+        kind: "notice",
+        code: queued.reason === "plan" ? "JOB_NEEDS_TEAM" : "JOB_NEEDS_COMPANY",
+      });
+    }
   }
 
   async function chooseFill(mode: "self" | "spoki") {
@@ -355,35 +411,69 @@ export function Chat({
             </Link>
           </p>
         ) : null}
-        <p className="t-body-s mt-1 text-fg-muted">
-          {t("telegramHint")}{" "}
-          <a
-            href={TELEGRAM_BOT_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline underline-offset-4"
-          >
-            {t("telegramBot")}
-          </a>
-        </p>
       </div>
       <div
         role="log"
         aria-live="polite"
         aria-label={t("log")}
-        className="flex min-h-0 flex-1 flex-col gap-5 overflow-x-hidden overflow-y-auto"
+        className="flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto"
       >
-        {entries.length === 0 && (
-          <p className="t-body-s m-auto max-w-md py-8 text-center text-fg-muted">
-            {signedIn ? t("emptySignedIn") : t("emptyGuest")}
-          </p>
+        {welcome && (
+          <div className="mt-auto flex w-full flex-col items-center gap-4 pb-2 text-center">
+            <h2 className="text-2xl font-medium md:text-3xl">{t("welcome")}</h2>
+            <p className="t-body-s max-w-md text-fg-muted">
+              {signedIn ? t("emptySignedIn") : t("emptyGuest")}
+            </p>
+            {historyReady && !jobId && (
+              <div className="flex w-full max-w-md flex-col gap-3">
+                <div
+                  role="tablist"
+                  aria-label={t("starters.label")}
+                  className="flex flex-col gap-2"
+                >
+                  {STARTER_LANES.map((id) => (
+                    <button
+                      key={id}
+                      type="button"
+                      role="tab"
+                      aria-selected={lane === id}
+                      className={`min-h-11 rounded-full border px-5 text-left ${
+                        lane === id
+                          ? "border-line-strong bg-surface-2"
+                          : "border-line"
+                      }`}
+                      onClick={() => setLane(id)}
+                    >
+                      {t(`starters.lanes.${id}`)}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-col gap-2">
+                  {pickStarterKeys(
+                    STARTER_KEYS[lane],
+                    STARTER_SHOW,
+                    starterSeed,
+                  ).map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className="min-h-11 rounded-full border border-line px-5 text-left text-fg"
+                      onClick={() => void ask(t(`starters.questions.${key}`))}
+                    >
+                      {t(`starters.questions.${key}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         )}
         {entries.map((entry) => {
           if (entry.kind === "user") {
             return (
               <p
                 key={entry.key}
-                className="max-w-full whitespace-pre-wrap break-words border border-line-strong bg-surface-2 px-4 py-3"
+                className="max-w-[85%] self-end whitespace-pre-wrap break-words rounded-3xl bg-surface-2 px-4 py-2.5"
               >
                 {entry.text}
               </p>
@@ -391,9 +481,9 @@ export function Chat({
           }
           if (entry.kind === "assistant") {
             return (
-              <div key={entry.key} className="flex min-w-0 flex-col gap-1">
-                <span className="t-label text-signal">{t("agent")}</span>
-                <p className="max-w-full whitespace-pre-wrap break-words">
+              <div key={entry.key} className="min-w-0">
+                <span className="sr-only">{t("agent")}</span>
+                <p className="max-w-full whitespace-pre-wrap break-words leading-7">
                   {entry.text}
                 </p>
               </div>
@@ -412,7 +502,7 @@ export function Chat({
                 {entry.jobs.map((job) => (
                   <li
                     key={job.id}
-                    className="border border-line bg-surface-2 px-4 py-3"
+                    className="rounded-2xl border border-line bg-surface-2 px-4 py-3"
                   >
                     <div className="flex items-baseline justify-between gap-3">
                       <Link
@@ -450,17 +540,19 @@ export function Chat({
             return (
               <div
                 key={entry.key}
-                className="flex max-w-md flex-col items-start gap-3 border border-line bg-surface-2 px-4 py-3"
+                className="flex max-w-md flex-col items-start gap-3 rounded-2xl border border-line bg-surface-2 px-4 py-3"
               >
                 <div>
-                  <p className="font-medium">{t(`offer.${entry.action}.title`)}</p>
+                  <p className="font-medium">
+                    {t(`offer.${entry.action}.title`)}
+                  </p>
                   <p className="t-body-s text-fg-muted">
                     {t(`offer.${entry.action}.text`)}
                   </p>
                 </div>
                 <a
                   href={localePath(locale, path)}
-                  className="inline-flex min-h-11 items-center bg-fg px-4 text-bg"
+                  className="inline-flex min-h-11 items-center rounded-full bg-fg px-5 text-bg"
                 >
                   {t(`offer.${entry.action}.action`)}
                 </a>
@@ -486,7 +578,9 @@ export function Chat({
                 title={
                   entry.tool === "apply_to_job"
                     ? t("confirm.applyTitle")
-                    : t("confirm.profileTitle")
+                    : entry.tool === "propose_team_job"
+                      ? t("confirm.jobTitle")
+                      : t("confirm.profileTitle")
                 }
                 confirmLabel={t("confirm.accept")}
                 cancelLabel={t("confirm.decline")}
@@ -515,7 +609,7 @@ export function Chat({
         <p className="flex flex-col items-start gap-2">
           <Link
             href={{ pathname: "/register", query: { next: "chat" } }}
-            className="inline-flex min-h-11 items-center bg-fg px-4 text-bg"
+            className="inline-flex min-h-11 items-center rounded-full bg-fg px-5 text-bg"
           >
             {t("createAccount")}
           </Link>
@@ -525,14 +619,14 @@ export function Chat({
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            className="inline-flex min-h-11 items-center border border-line px-4"
+            className="inline-flex min-h-11 items-center rounded-full border border-line px-5"
             onClick={() => void chooseFill("self")}
           >
             {t("fillSelf")}
           </button>
           <button
             type="button"
-            className="inline-flex min-h-11 items-center bg-fg px-4 text-bg"
+            className="inline-flex min-h-11 items-center rounded-full bg-fg px-5 text-bg"
             onClick={() => void chooseFill("spoki")}
           >
             {t("fillSpoki")}
@@ -546,9 +640,9 @@ export function Chat({
       )}
       <form
         onSubmit={send}
-        className="shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+        className={`flex shrink-0 flex-col gap-2 ${welcome ? "" : "pb-[max(0.75rem,env(safe-area-inset-bottom))]"}`}
       >
-        <div className="relative">
+        <div className="flex items-end gap-2 rounded-[1.75rem] bg-surface-2 py-1.5 pr-1.5 pl-5 ring-1 ring-line-strong focus-within:ring-2 focus-within:ring-fg-subtle">
           <label className="sr-only" htmlFor="chat-input">
             {t("placeholder")}
           </label>
@@ -569,20 +663,36 @@ export function Chat({
                 event.currentTarget.form?.requestSubmit();
               }
             }}
-            style={{ paddingRight: "3rem" }}
-            className={`${controlClass} max-h-[min(10rem,30dvh)] min-h-11 resize-none overflow-x-hidden py-2.5 leading-5`}
+            className="max-h-[min(10rem,30dvh)] min-h-11 flex-1 resize-none overflow-x-hidden bg-transparent py-3 leading-5 text-fg placeholder:text-fg-subtle focus-visible:outline-none"
           />
           <button
             type="submit"
             disabled={!text.trim() || sending}
             aria-busy={sending || undefined}
-            className="absolute right-0 bottom-0 flex size-11 items-center justify-center text-fg disabled:opacity-40"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-signal text-signal-fg transition-opacity disabled:opacity-40"
           >
-            <Icon icon={Send} size={16} />
+            <Icon icon={ArrowUp} size={20} />
             <span className="sr-only">{t("send")}</span>
           </button>
         </div>
+        <p className="t-body-s text-center text-fg-subtle">
+          {t("disclaimer")}{" "}
+          <a
+            href={TELEGRAM_BOT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-4"
+          >
+            {t("telegramBot")}
+          </a>
+        </p>
       </form>
+      {welcome && (
+        <div
+          aria-hidden="true"
+          className="min-h-0 flex-1 [@media(max-height:520px)]:hidden"
+        />
+      )}
     </div>
   );
 }

@@ -18,7 +18,8 @@ import type { RawImportedJob } from "./types";
  * Jobicy public API. Terms: keep Jobicy as the source with its job URL, do
  * not present the jobs as our own; poll a few times a day at most.
  */
-export const JOBICY_JOBS_URL = "https://jobicy.com/api/v2/remote-jobs?count=100";
+export const JOBICY_JOBS_URL =
+  "https://jobicy.com/api/v2/remote-jobs?count=100";
 
 const CATEGORIES: Record<string, string> = {
   programming: "engineering",

@@ -99,7 +99,10 @@ export const briefDeliveries = pgTable(
     slotId: text("slot_id")
       .notNull()
       .references(() => briefSlots.id),
-    itemIds: text("item_ids").array().notNull().default(sql`'{}'`),
+    itemIds: text("item_ids")
+      .array()
+      .notNull()
+      .default(sql`'{}'`),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

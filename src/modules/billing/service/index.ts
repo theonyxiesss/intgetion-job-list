@@ -18,8 +18,4 @@ export {
   refreshSanctionsList,
   verifyWalletSignature,
 } from "./billing-service";
-export type {
-  BillingMe,
-  OrderView,
-  SanctionsRefresh,
-} from "./billing-service";
+export type { BillingMe, OrderView, SanctionsRefresh } from "./billing-service";

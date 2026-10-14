@@ -5,7 +5,10 @@ import { writeBriefIntro } from "../service/brief-intro";
 import { telegramText } from "../service/render";
 
 const cards = [
-  { id: "11111111-1111-1111-1111-111111111111", lines: ["Rust engineer — Acme"] },
+  {
+    id: "11111111-1111-1111-1111-111111111111",
+    lines: ["Rust engineer — Acme"],
+  },
   { id: "22222222-2222-2222-2222-222222222222", lines: ["Go engineer — Beta"] },
 ];
 
@@ -59,7 +62,9 @@ describe("brief intro (D370)", () => {
     const intro = await writeBriefIntro(
       { locale: "en", audience: "candidate", cards },
       {
-        provider: answering("**Morning!** Two Go and Rust roles https://x.y today."),
+        provider: answering(
+          "**Morning!** Two Go and Rust roles https://x.y today.",
+        ),
         model: "m",
       },
     );
@@ -81,7 +86,11 @@ describe("brief intro (D370)", () => {
     const text = telegramText({
       locale: "en",
       type: "matches.digest",
-      payload: { matchCount: 1, sampleJobIds: [], intro: "Hello there, one job." },
+      payload: {
+        matchCount: 1,
+        sampleJobIds: [],
+        intro: "Hello there, one job.",
+      },
       siteUrl: "https://intgetion.com",
     })!;
     expect(text.split("\n")[1]).toBe("Hello there, one job.");

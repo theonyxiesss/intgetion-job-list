@@ -122,7 +122,10 @@ export function TeamSeats({ companyId, people, cap, text }: TeamSeatsProps) {
           )}
         </p>
       ) : (
-        <form className="flex flex-col gap-4 sm:flex-row sm:items-end" onSubmit={add}>
+        <form
+          className="flex flex-col gap-4 sm:flex-row sm:items-end"
+          onSubmit={add}
+        >
           <Field label={text.email} className="flex-1">
             <Input type="email" name="email" required maxLength={200} />
           </Field>

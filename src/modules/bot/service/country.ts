@@ -91,14 +91,21 @@ function caseStem(word: string): string {
   return word;
 }
 
-/** First country mentioned in a free-text reply. */
+/**
+ * First country mentioned in a free-text reply.
+ * A two-letter ISO code counts only when the whole reply is that code.
+ * Inside a sentence those codes collide with English words (`am` → Armenia,
+ * `me` → Montenegro, `in` → India) and must not become a saved country.
+ */
 export function countryFromText(text: string): string | null {
   const whole = countryToIso(text);
   if (whole) return whole;
   const words = text.split(/[^\p{L}]+/u).filter((word) => word.length > 0);
   for (let size = Math.min(3, words.length); size >= 1; size -= 1) {
     for (let start = 0; start + size <= words.length; start += 1) {
-      const iso = countryToIso(words.slice(start, start + size).join(" "));
+      const phrase = words.slice(start, start + size).join(" ");
+      if (/^[A-Za-z]{2}$/.test(phrase)) continue;
+      const iso = countryToIso(phrase);
       if (iso) return iso;
     }
   }

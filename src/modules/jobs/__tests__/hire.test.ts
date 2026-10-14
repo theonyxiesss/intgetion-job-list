@@ -48,18 +48,19 @@ describe("hire form (D391)", () => {
     const job = hireToJobFields(parsed, "11111111-1111-4111-8111-111111111111");
     expect(job.workFormat).toBe("onsite");
     expect(job.location).toBe("Berlin");
-    expect(job.description.endsWith("1. Why this role?\n2. A second question")).toBe(
-      true,
-    );
-    expect(descriptionWithQuestions("Hello there, this is long enough.", [])).toBe(
-      "Hello there, this is long enough.",
-    );
+    expect(
+      job.description.endsWith("1. Why this role?\n2. A second question"),
+    ).toBe(true);
+    expect(
+      descriptionWithQuestions("Hello there, this is long enough.", []),
+    ).toBe("Hello there, this is long enough.");
   });
 
   it("rejects a reversed salary and a missing apply target", () => {
-    expect(hireInput.safeParse({ ...base, salaryMin: "200", salaryMax: "10" }).success).toBe(
-      false,
-    );
+    expect(
+      hireInput.safeParse({ ...base, salaryMin: "200", salaryMax: "10" })
+        .success,
+    ).toBe(false);
     expect(
       hireInput.safeParse({
         ...base,
@@ -69,7 +70,9 @@ describe("hire form (D391)", () => {
     ).toBe(false);
     expect(hirePublishesNow("admin")).toBe(true);
     expect(hirePublishesNow("user")).toBe(false);
-    expect(socialProfileUrl("telegram", "@vitalik")).toBe("https://t.me/vitalik");
+    expect(socialProfileUrl("telegram", "@vitalik")).toBe(
+      "https://t.me/vitalik",
+    );
     expect(socialProfileUrl("x", "ab")).toBeNull();
   });
 });

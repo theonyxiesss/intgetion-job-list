@@ -15,10 +15,10 @@ export default async function AccountSettingsPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; provider?: string }>;
 }) {
   const { locale } = await params;
-  const { error } = await searchParams;
+  const { error, provider } = await searchParams;
   setRequestLocale(locale);
   const user = await requireSettingsUser(locale);
   const t = await getTranslations("settings");
@@ -28,7 +28,12 @@ export default async function AccountSettingsPage({
       <Container narrow className="flex flex-col gap-8">
         <PageHeader title={t("title")} />
         <SettingsTabs active="account" />
-        <AccountSignIn locale={locale} user={user} error={error} />
+        <AccountSignIn
+          locale={locale}
+          user={user}
+          error={error}
+          provider={provider}
+        />
         <AccountTypeSetting value={user.accountType} />
         <EmailLanguage locale={user.locale} />
         <SecurityStubs />

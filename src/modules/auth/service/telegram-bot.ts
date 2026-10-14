@@ -73,9 +73,7 @@ export async function sendTelegramLinks(
   await telegramApi(token, "sendMessage", {
     chat_id: chatId,
     text,
-    ...(rows.length
-      ? { reply_markup: { inline_keyboard: rows } }
-      : {}),
+    ...(rows.length ? { reply_markup: { inline_keyboard: rows } } : {}),
   });
 }
 

@@ -10,6 +10,7 @@ import { isAllowedOrigin, needsOriginCheck } from "./origin";
 import { privacyHash } from "./privacy-hash";
 import { retryAfterSeconds, windowStart } from "./rate-limit";
 import { clientIp } from "./request-ip";
+import { isCryptoPayPath } from "./crypto-pay-path";
 import { buildCsp, createNonce } from "./security-headers";
 
 const site = "http://127.0.0.1:3000";
@@ -74,23 +75,22 @@ describe("buildCsp", () => {
     expect(csp).not.toContain("vercel.app");
   });
 
-  it("frames only an allowlisted site, and only when asked (D388)", () => {
-    const framed = buildCsp({
-      nonce: "abc123",
-      supabaseUrl: "https://ref.supabase.co/",
-      isDev: false,
-      embedOrigin: "https://intgetion.vercel.app",
-    });
-    expect(framed).toContain("frame-src 'self' https://intgetion.vercel.app");
-    expect(framed).not.toContain("theonyxis.vercel.app");
-    const refused = buildCsp({
-      nonce: "abc123",
-      supabaseUrl: "https://ref.supabase.co/",
-      isDev: false,
-      embedOrigin: "https://evil.example",
-    });
-    expect(refused).not.toContain("frame-src");
-    expect(refused).not.toContain("evil.example");
+  it("does not frame a foreign origin (D400)", () => {
+    for (const origin of [
+      "https://intgetion.vercel.app",
+      "https://theonyxis.vercel.app",
+      "https://evil.example",
+    ]) {
+      const refused = buildCsp({
+        nonce: "abc123",
+        supabaseUrl: "https://ref.supabase.co/",
+        isDev: false,
+        embedOrigin: origin,
+      });
+      expect(refused, origin).not.toContain("frame-src");
+      expect(refused, origin).not.toContain("vercel.app");
+      expect(refused, origin).not.toContain("evil.example");
+    }
   });
 
   it("allows eval only in development", () => {
@@ -107,6 +107,51 @@ describe("buildCsp", () => {
 
   it("makes a fresh nonce each time", () => {
     expect(createNonce()).not.toBe(createNonce());
+  });
+
+  it("keeps WalletConnect off every page except crypto pay (D403)", () => {
+    expect(csp).not.toContain("walletconnect");
+    expect(csp).not.toContain("frame-src");
+    expect(isCryptoPayPath("/pricing")).toBe(false);
+    expect(isCryptoPayPath("/billing")).toBe(false);
+    expect(isCryptoPayPath("/ru/jobs")).toBe(false);
+    expect(isCryptoPayPath("/en/billing/crypto")).toBe(false);
+    expect(isCryptoPayPath("/billing/crypto/extra")).toBe(false);
+
+    const pay = buildCsp({
+      nonce: "abc123",
+      supabaseUrl: "https://ref.supabase.co/",
+      isDev: false,
+      allowWalletConnect: true,
+    });
+    expect(pay).toContain(
+      "connect-src 'self' https://ref.supabase.co wss://relay.walletconnect.org https://verify.walletconnect.org https://verify.walletconnect.com https://rpc.walletconnect.org https://api.web3modal.org https://secure.walletconnect.org",
+    );
+    expect(pay).toContain(
+      "frame-src https://verify.walletconnect.org https://verify.walletconnect.com",
+    );
+    expect(pay).toContain("font-src 'self' https://fonts.reown.com");
+    expect(pay).toContain(
+      "img-src 'self' data: https://ref.supabase.co https://api.web3modal.org https://walletconnect.org",
+    );
+    expect(pay).toContain("style-src 'self' 'nonce-abc123' 'unsafe-inline'");
+    expect(pay).not.toMatch(/script-src[^;]*unsafe-inline/);
+    expect(pay).not.toContain("pulse.walletconnect.org");
+    expect(csp).not.toContain("web3modal");
+    expect(csp).not.toContain("reown");
+    expect(csp).not.toContain("unsafe-inline");
+    for (const path of [
+      "/billing/crypto",
+      "/billing/crypto/",
+      "/ru/billing/crypto",
+      "/es/billing/crypto",
+      "/pt-BR/billing/crypto",
+      "/de/billing/crypto",
+      "/fr/billing/crypto",
+      "/it/billing/crypto",
+    ]) {
+      expect(isCryptoPayPath(path), path).toBe(true);
+    }
   });
 });
 

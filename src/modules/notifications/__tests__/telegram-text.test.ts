@@ -23,9 +23,7 @@ describe("Telegram notifications (D236, D237)", () => {
       payload: {
         matchCount: 1,
         sampleJobIds: [jobId],
-        sampleJobs: [
-          { jobId, title: "Rust engineer", companyName: "Acme" },
-        ],
+        sampleJobs: [{ jobId, title: "Rust engineer", companyName: "Acme" }],
       },
       siteUrl: "https://intgetion.com",
     });

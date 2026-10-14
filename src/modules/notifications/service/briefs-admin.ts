@@ -143,7 +143,9 @@ async function readRuns(now: Date): Promise<AdminRunRow[]> {
     slotDate: row.slot_date,
     dryRun: row.dry_run,
     startedAt: new Date(row.started_at).toISOString(),
-    finishedAt: row.finished_at ? new Date(row.finished_at).toISOString() : null,
+    finishedAt: row.finished_at
+      ? new Date(row.finished_at).toISOString()
+      : null,
     checkedCandidates: row.checked - row.checked_employers,
     checkedEmployers: row.checked_employers,
     sent: row.sent,
@@ -205,7 +207,9 @@ async function readSubscriptions(
   return counts;
 }
 
-export async function readBriefsAdmin(now = new Date()): Promise<BriefsAdminView> {
+export async function readBriefsAdmin(
+  now = new Date(),
+): Promise<BriefsAdminView> {
   const [settings] = await getDb().execute<{ paused: boolean }>(sql`
     select paused from public.brief_settings where id
   `);
@@ -271,7 +275,10 @@ export async function runBriefSlotNow(
   id: string,
   dryRun: boolean,
   now = new Date(),
-  seams: Pick<Parameters<typeof runSlot>[0], "loadJobs" | "loadCandidates" | "writeIntro"> = {},
+  seams: Pick<
+    Parameters<typeof runSlot>[0],
+    "loadJobs" | "loadCandidates" | "writeIntro"
+  > = {},
 ): Promise<BriefRunResult> {
   if (!isBriefSlotId(id)) throw notFound();
   const slot = await readSlot(id);
@@ -283,7 +290,8 @@ export async function runBriefSlotNow(
     dryRun,
     ...seams,
   });
-  if (!result) throw new HttpError(
+  if (!result)
+    throw new HttpError(
       409,
       "BRIEF_ALREADY_RAN",
       "A live run for this slot day already happened",

@@ -108,7 +108,11 @@ describe("one fitting vacancy", () => {
       NOW,
     );
     expect(hard).toEqual({ show: false, hard: "hours" });
-    const unknown = judgeFit({ workHoursStart: "22:00", workHoursEnd: "23:00" }, job, NOW);
+    const unknown = judgeFit(
+      { workHoursStart: "22:00", workHoursEnd: "23:00" },
+      job,
+      NOW,
+    );
     expect(unknown.show).toBe(true);
   });
 
@@ -145,7 +149,8 @@ describe("one fitting vacancy", () => {
   });
 
   it("strips a cover letter the person did not ask for and keeps one they did", () => {
-    const reply = "Вакансия на экране. Могу написать сопроводительное письмо и вопросы для работодателя.";
+    const reply =
+      "Вакансия на экране. Могу написать сопроводительное письмо и вопросы для работодателя.";
     expect(stripOffGoalEnding(reply, "посмотри")).toBe("Вакансия на экране.");
     expect(stripOffGoalEnding(reply, "напиши cover letter")).toBe(reply);
   });
@@ -156,7 +161,11 @@ describe("one fitting vacancy", () => {
     expect(isPoliteYes("да, откликнись")).toBe(false);
     const calls = shapeToolCalls(
       [
-        { id: "call_apply_to_job", name: "apply_to_job", input: { jobId: "j" } },
+        {
+          id: "call_apply_to_job",
+          name: "apply_to_job",
+          input: { jobId: "j" },
+        },
         { id: "call_offer", name: "offer_step", input: { action: "pay_plus" } },
       ],
       {

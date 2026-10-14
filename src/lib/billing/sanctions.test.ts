@@ -75,7 +75,8 @@ describe("OFAC SDN crypto addresses (D380)", () => {
     const list = parseSdnCryptoAddresses(SDN_FIXTURE);
     expect(
       list.filter(
-        (entry) => entry.address === "0xabcdef0000000000000000000000000000000001",
+        (entry) =>
+          entry.address === "0xabcdef0000000000000000000000000000000001",
       ),
     ).toHaveLength(1);
   });

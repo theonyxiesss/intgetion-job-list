@@ -15,10 +15,7 @@ import {
   signedInPath,
 } from "@/modules/auth/service/email-wait";
 import { localePrefix } from "@/i18n/paths";
-import {
-  isLoginNext,
-  loginReturnLocation,
-} from "@/components/auth/login-next";
+import { isLoginNext, loginReturnLocation } from "@/components/auth/login-next";
 
 export async function GET(
   request: NextRequest,
@@ -63,6 +60,14 @@ export async function GET(
       ? `${localePrefix(locale)}/settings/account`
       : `${localePrefix(locale)}/login`;
     target.searchParams.set("error", result.reason);
+    const provider = query.get("provider");
+    if (
+      result.reason === "identity_taken" &&
+      backToAccount &&
+      (provider === "google" || provider === "x")
+    ) {
+      target.searchParams.set("provider", provider);
+    }
   } else if (rawNext === "reset") {
     target.pathname = `${localePrefix(locale)}/reset-password`;
     target.searchParams.set("mode", "update");

@@ -3,10 +3,7 @@
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { Switch } from "@/components/ui/choice";
-import {
-  newJobChannelPreferences,
-  type NewJobChannel,
-} from "./new-job-types";
+import { newJobChannelPreferences, type NewJobChannel } from "./new-job-types";
 
 /**
  * One switch for every new-job type on one channel (D329, D349).

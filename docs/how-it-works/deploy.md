@@ -4,12 +4,12 @@
 
 ## Окружения
 
-| Где | Назначение |
-| --- | ---------- |
-| Vercel Production | https://intgetion.com |
-| Supabase cloud | Auth + Postgres (`app_rw`, миграции отдельно) |
-| Resend | Транзакционные письма каталога |
-| GitHub Actions | lint / typecheck / test / build / e2e + `supabase start` |
+| Где               | Назначение                                               |
+| ----------------- | -------------------------------------------------------- |
+| Vercel Production | https://intgetion.com                                    |
+| Supabase cloud    | Auth + Postgres (`app_rw`, миграции отдельно)            |
+| Resend            | Транзакционные письма каталога                           |
+| GitHub Actions    | lint / typecheck / test / build / e2e + `supabase start` |
 
 ## Практика
 

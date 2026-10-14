@@ -216,7 +216,7 @@ const keepCount = 15;
 const keepFromIdx =
   entryStarts.length > keepCount
     ? entryStarts[entryStarts.length - keepCount]
-    : entryStarts[0] ?? 0;
+    : (entryStarts[0] ?? 0);
 
 const headerEnd = entryStarts[0] ?? 0;
 const archiveBody = missionLines.slice(headerEnd, keepFromIdx).join("\n");

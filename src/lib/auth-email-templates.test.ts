@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { format, resolveConfig } from "prettier";
 import { describe, expect, it } from "vitest";
 import {
   AUTH_TEMPLATE_KINDS,
@@ -15,11 +16,13 @@ const config = lf(
 
 describe("Supabase auth email templates (D330)", () => {
   for (const kind of AUTH_TEMPLATE_KINDS) {
-    it(`${kind}: the committed file matches the layout`, () => {
+    it(`${kind}: the committed file matches the layout`, async () => {
       const html = authTemplateHtml(kind);
       const file = join(dir, `${kind}.html`);
-      if (process.env.UPDATE_EMAIL_TEMPLATES) writeFileSync(file, html);
-      expect(lf(readFileSync(file, "utf8"))).toBe(html);
+      const config = await resolveConfig(file);
+      const formatted = await format(html, { ...config, filepath: file });
+      if (process.env.UPDATE_EMAIL_TEMPLATES) writeFileSync(file, formatted);
+      expect(lf(readFileSync(file, "utf8"))).toBe(formatted);
     });
 
     it(`${kind}: keeps the Supabase link unescaped in button and fallback`, () => {

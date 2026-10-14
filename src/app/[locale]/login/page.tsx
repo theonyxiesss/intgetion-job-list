@@ -29,7 +29,9 @@ export default async function LoginPage({
   setRequestLocale(locale);
   const t = await getTranslations("auth");
   const { error, next: rawNext } = await searchParams;
-  const next: LoginNext | undefined = isLoginNext(rawNext) ? rawNext : undefined;
+  const next: LoginNext | undefined = isLoginNext(rawNext)
+    ? rawNext
+    : undefined;
   const failed = error && callbackErrors.has(error) ? error : undefined;
   if (!failed) {
     const supabase = await createSupabaseServerClient();
@@ -49,9 +51,7 @@ export default async function LoginPage({
             {t("noAccount")}{" "}
             <Link
               href={
-                next
-                  ? { pathname: "/register", query: { next } }
-                  : "/register"
+                next ? { pathname: "/register", query: { next } } : "/register"
               }
               className="underline underline-offset-4"
             >
@@ -61,10 +61,7 @@ export default async function LoginPage({
         </>
       }
     >
-      <LoginForm
-        initialError={failed}
-        next={next}
-      />
+      <LoginForm initialError={failed} next={next} />
       <SocialSignInStubs next={next} />
     </AuthPage>
   );

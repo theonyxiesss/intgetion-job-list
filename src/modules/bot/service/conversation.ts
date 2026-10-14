@@ -50,11 +50,7 @@ import {
   type JobCardFacts,
   type VacancyFacts,
 } from "./fit";
-import {
-  jobFocusBlock,
-  jobFocusOpener,
-  readJobFocus,
-} from "./job-focus";
+import { jobFocusBlock, jobFocusOpener, readJobFocus } from "./job-focus";
 import { stripLeakedToolMarkup } from "./leaked-tool";
 import {
   followUp,
@@ -367,7 +363,11 @@ export async function resumeConversation(input: {
       jobId: input.jobId,
     });
     if (!opened) return empty;
-    const offer = await takeDraftOffer(opened.conversation, input.userId, new Date());
+    const offer = await takeDraftOffer(
+      opened.conversation,
+      input.userId,
+      new Date(),
+    );
     return {
       conversation: opened.conversation,
       offer,
@@ -385,7 +385,11 @@ export async function resumeConversation(input: {
     const byCookie =
       claimed ??
       (await repo.findConversationByToken(hashSessionToken(input.token)));
-    if (byCookie && byCookie.userId === input.userId && byCookie.jobId === null) {
+    if (
+      byCookie &&
+      byCookie.userId === input.userId &&
+      byCookie.jobId === null
+    ) {
       found = byCookie;
     }
   }
@@ -723,7 +727,13 @@ export async function handleMessage(
       emit,
       now,
     );
-    if (declined.state) state = { ...state, ...declined.state, passedJobIds: passed, verdict: "declined" };
+    if (declined.state)
+      state = {
+        ...state,
+        ...declined.state,
+        passedJobIds: passed,
+        verdict: "declined",
+      };
     await repo.insertMessage({
       conversationId: current.id,
       role: "tool",
@@ -740,7 +750,8 @@ export async function handleMessage(
       choice.kind === "show"
         ? presentVacancy(lang, choice.job, choice.judgement)
         : askWhy(lang);
-    if (choice.kind === "show") state = { ...state, presentedJobId: choice.job.id };
+    if (choice.kind === "show")
+      state = { ...state, presentedJobId: choice.job.id };
     await repo.insertMessage({
       conversationId: current.id,
       role: "assistant",
@@ -850,7 +861,9 @@ export async function handleMessage(
       if (line && (!spoke || hadOffGoal(response.text))) {
         state = {
           ...state,
-          ...(line.presentedJobId ? { presentedJobId: line.presentedJobId } : {}),
+          ...(line.presentedJobId
+            ? { presentedJobId: line.presentedJobId }
+            : {}),
         };
         await repo.insertMessage({
           conversationId: conversation.id,
@@ -937,7 +950,8 @@ async function fitLineForTurn(input: {
       presentedJobId: vacancy.id,
     };
   }
-  if (!readyToSearch(input.state.draft) || input.cards.length === 0) return null;
+  if (!readyToSearch(input.state.draft) || input.cards.length === 0)
+    return null;
   const choice = await chooseVacancy({
     cards: input.cards,
     person,

@@ -31,6 +31,14 @@ function tokens(text: string): string[] {
 }
 
 describe("messages", () => {
+  it("keeps the company story in English only (D404)", () => {
+    expect(en.companyMarketing.metaTitle).toContain("INTGETION");
+    for (const [locale, catalog] of Object.entries(catalogs)) {
+      if (locale === "en") continue;
+      expect(catalog).not.toHaveProperty("companyMarketing");
+    }
+  });
+
   it("has a catalog for every routed locale (D336)", () => {
     expect(Object.keys(catalogs).sort()).toEqual([...routing.locales].sort());
   });
@@ -38,13 +46,18 @@ describe("messages", () => {
   for (const [locale, catalog] of Object.entries(catalogs)) {
     it(`${locale}: keeps the product name and the same keys as en`, () => {
       expect(catalog.product.name).toBe("INTGETION JOB LIST");
+      const skipCompany = (key: string) =>
+        locale !== "en" &&
+        (key === "companyMarketing" || key.startsWith("companyMarketing."));
       expect(
         entries(catalog)
           .map(([key]) => key)
+          .filter((key) => !skipCompany(key))
           .sort(),
       ).toEqual(
         entries(en)
           .map(([key]) => key)
+          .filter((key) => !skipCompany(key))
           .sort(),
       );
     });

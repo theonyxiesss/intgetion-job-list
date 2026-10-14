@@ -58,7 +58,8 @@ const copy = {
     help:
       "Пишите словами: «удалённая работа solidity», «дизайн на part-time в Европе». " +
       "Войдите на {site}, чтобы сохранять вакансии и откликаться. /reset — начать заново.",
-    signIn: "Чтобы сохранить вакансию или откликнуться, войдите и возвращайтесь сюда.",
+    signIn:
+      "Чтобы сохранить вакансию или откликнуться, войдите и возвращайтесь сюда.",
     signInButton: "Войти",
     confirmOnSite: "Подтвердите это на сайте и возвращайтесь сюда.",
     openChat: "Открыть чат",
@@ -79,8 +80,7 @@ const copy = {
     help:
       "Pergunte com suas palavras: «vagas remotas de solidity», «design em meio período na Europa». " +
       "Entre em {site} para salvar vagas e se candidatar. /reset começa uma nova conversa.",
-    signIn:
-      "Para salvar uma vaga ou se candidatar, entre e depois volte aqui.",
+    signIn: "Para salvar uma vaga ou se candidatar, entre e depois volte aqui.",
     signInButton: "Entrar",
     confirmOnSite: "Confirme isso no site e depois volte aqui.",
     openChat: "Abrir o chat",
@@ -120,8 +120,7 @@ const copy = {
       "Quelque chose a mal tourné de mon côté. Réessayez dans une minute.",
     rateLimited:
       "Cela fait beaucoup de questions d’un coup. Réessayez dans une minute.",
-    budget:
-      "L’agent a atteint son budget pour aujourd’hui. Réessayez demain.",
+    budget: "L’agent a atteint son budget pour aujourd’hui. Réessayez demain.",
     empty:
       "Dites-moi ce que vous cherchez — un poste, une compétence, un fuseau horaire.",
     reset: "Oublié. Que cherchez-vous ?",
@@ -143,14 +142,12 @@ const copy = {
     tryLater: "Qualcosa è andato storto da parte mia. Riprova tra un minuto.",
     rateLimited: "Sono tante domande tutte insieme. Riprova tra un minuto.",
     budget: "L’agente ha raggiunto il budget di oggi. Riprova domani.",
-    empty:
-      "Dimmi cosa cerchi — un ruolo, una competenza, un fuso orario.",
+    empty: "Dimmi cosa cerchi — un ruolo, una competenza, un fuso orario.",
     reset: "Dimenticato. Cosa cerchi?",
     help:
       "Chiedi con parole tue: «lavori Solidity da remoto», «design part-time in Europa». " +
       "Accedi su {site} per salvare offerte e candidarti. /reset avvia una nuova conversazione.",
-    signIn:
-      "Per salvare un’offerta o candidarti, accedi e poi torna qui.",
+    signIn: "Per salvare un’offerta o candidarti, accedi e poi torna qui.",
     signInButton: "Accedi",
     confirmOnSite: "Confermalo sul sito e poi torna qui.",
     openChat: "Apri la chat",

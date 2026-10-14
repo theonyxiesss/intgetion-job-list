@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  FakeLLMProvider,
-  fakeText,
-  fakeToolCall,
-} from "@/lib/llm";
+import { FakeLLMProvider, fakeText, fakeToolCall } from "@/lib/llm";
 import { setVacancyReaderForTests } from "../service/fit";
 import { searchFiltersFromDraft } from "../service/memory";
 import type { BotEvent } from "../service/conversation";
@@ -30,9 +26,10 @@ const messages = vi.hoisted(
 );
 
 vi.mock("@/lib/rate-limit", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/rate-limit")>(
-    "@/lib/rate-limit",
-  );
+  const actual =
+    await vi.importActual<typeof import("@/lib/rate-limit")>(
+      "@/lib/rate-limit",
+    );
   return {
     ...actual,
     enforceRateLimit: () => Promise.resolve(),
@@ -64,18 +61,18 @@ vi.mock("../repo/bot-repo", () => ({
 }));
 
 vi.mock("../service/tools", async () => {
-  const actual = await vi.importActual<typeof import("../service/tools")>(
-    "../service/tools",
-  );
+  const actual =
+    await vi.importActual<typeof import("../service/tools")>(
+      "../service/tools",
+    );
   return {
     ...actual,
     runTool: (...args: unknown[]) => runToolMock(...args),
   };
 });
 
-const { conversationHistory, handleMessage, setBotLLMForTests } = await import(
-  "../service/conversation"
-);
+const { conversationHistory, handleMessage, setBotLLMForTests } =
+  await import("../service/conversation");
 
 const prices = {
   "fake-model": {
@@ -107,9 +104,7 @@ function conversation(draft: Record<string, unknown>) {
 }
 
 function visibleText(events: BotEvent[]): string {
-  return events
-    .map((event) => ("text" in event ? event.text : ""))
-    .join("\n");
+  return events.map((event) => ("text" in event ? event.text : "")).join("\n");
 }
 
 describe("a tool call written as text (D381)", () => {

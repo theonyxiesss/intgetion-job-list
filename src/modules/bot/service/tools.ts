@@ -9,10 +9,12 @@ import {
   wrapUntrusted,
   type LLMToolDefinition,
 } from "@/lib/llm";
+import { botMessageBucket, rateRules, windowCount } from "@/lib/rate-limit";
 import {
   applyToJob,
   listOwnApplications,
 } from "@/modules/applications/service";
+import { billingMe } from "@/modules/billing/service";
 import {
   candidatePatchInput,
   getOwnCandidate,
@@ -24,15 +26,23 @@ import {
   hideJobForUser,
   saveJobForUser,
 } from "@/modules/feedback/service";
-import { getJobForPublic, searchJobs } from "@/modules/jobs/service";
+import { jobSearchQuery } from "@/modules/jobs/schemas/search";
+import {
+  demandSummary,
+  getJobForPublic,
+  publishedDemand,
+  queueTeamJobBrief,
+  searchJobs,
+} from "@/modules/jobs/service";
+import { SKILL_CATEGORIES } from "@/modules/taxonomy/service";
 import {
   SHOW_THRESHOLD,
   listMatchPage,
   topExplain,
 } from "@/modules/matching/service";
-import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import { searchFiltersFromDraft } from "./memory";
 import { OFFER_ACTIONS, offerPath } from "./offers";
+import { formatStanding, standingMissing } from "./standing";
 
 /**
  * Tool layer of 12.3 (D173): the only way from the model to data. Every
@@ -185,6 +195,17 @@ export const TOOLS: readonly BotTool[] = [
     },
   }),
   tool({
+    name: "published_demand",
+    description:
+      "Count published jobs by category, highest first. Use when they ask what work is in demand. Do not invent counts.",
+    input: z.object({}).strict(),
+    access: "guest",
+    confirm: never,
+    async run() {
+      return { llm: demandSummary(await publishedDemand()) };
+    },
+  }),
+  tool({
     name: "offer_step",
     description:
       "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, or post_job. Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet.",
@@ -226,6 +247,30 @@ export const TOOLS: readonly BotTool[] = [
             PROFILE_LLM_FIELDS,
           ),
         ),
+      };
+    },
+  }),
+  tool({
+    name: "get_my_standing",
+    description:
+      "Read this person's candidate plan, employer plan, messages left today, and profile gaps. No contacts. Use when they ask if a plan is on, how many messages remain, or what the profile still lacks.",
+    input: z.object({}).strict(),
+    access: "user",
+    confirm: never,
+    async run(ctx) {
+      const billing = await billingMe(ctx.userId!);
+      const bucket = botMessageBucket(billing.candidatePlan);
+      const used = await windowCount(bucket, ctx.userId!);
+      const profile = await getOwnCandidate(ctx.userId!);
+      return {
+        llm: formatStanding({
+          candidatePlan: billing.candidatePlan,
+          employerPlan: billing.plan,
+          limit: rateRules[bucket].limit,
+          used,
+          missing: standingMissing(profile?.missing ?? []),
+          hasProfile: profile !== null,
+        }),
       };
     },
   }),
@@ -302,7 +347,10 @@ export const TOOLS: readonly BotTool[] = [
       });
       return {
         llm: `Applied. Application status: ${application.status}.`,
-        client: { kind: "applied", data: { jobId: input.jobId } },
+        client: {
+          kind: "applied",
+          data: { jobId: input.jobId, status: application.status },
+        },
       };
     },
   }),
@@ -352,6 +400,44 @@ export const TOOLS: readonly BotTool[] = [
             score: item.score,
             explain: topExplain(item.explain),
           })),
+        },
+      };
+    },
+  }),
+  tool({
+    name: "propose_team_job",
+    description:
+      "Queue a job from a role and hiring criteria. Only when Employer plan is team. The user confirms on a card. The job waits for an admin and is not on the public list yet. Do not use this to search for candidates.",
+    input: z
+      .object({
+        title: z.string().trim().min(3).max(140),
+        criteria: z.string().trim().min(50).max(20000),
+        category: z.enum(SKILL_CATEGORIES),
+        employmentType: z.enum(EMPLOYMENT_TYPES),
+        skills: z.array(z.string().trim().min(1).max(80)).max(12).optional(),
+      })
+      .strict(),
+    access: "user",
+    confirm: () => true,
+    async run(ctx, input) {
+      const result = await queueTeamJobBrief(ctx.userId!, input);
+      if (!result.posted && result.reason === "plan") {
+        return {
+          llm: "Not posted. Employer plan is not team. Call offer_step with pay_team or post_job. Do not say the job was posted.",
+          client: { kind: "job_refused", data: { reason: "plan" } },
+        };
+      }
+      if (!result.posted) {
+        return {
+          llm: "Not posted. There is no company this person can post for. Call offer_step with post_job. Do not say the job was posted.",
+          client: { kind: "job_refused", data: { reason: "company" } },
+        };
+      }
+      return {
+        llm: `Queued for review. Title: ${result.title}. Status: ${result.status}. It is not on the public list until an admin approves it.`,
+        client: {
+          kind: "job_queued",
+          data: { title: result.title, status: result.status },
         },
       };
     },

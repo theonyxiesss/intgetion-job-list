@@ -11,5 +11,8 @@ export function publicJobText(text: string | null | undefined): string {
   if (!text) return "";
   let next = text;
   for (const pattern of BOILERPLATE) next = next.replace(pattern, "");
-  return next.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  return next
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }

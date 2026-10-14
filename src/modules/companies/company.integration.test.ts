@@ -72,7 +72,9 @@ describe("company membership in Postgres", () => {
       insert into public.users (id, auth_uid, terms_accepted_at, terms_version)
       values (${extraId}, ${randomUUID()}, now(), 'test')
     `);
-    await expect(addCompanyMember(internalCompanyId, extraId)).rejects.toMatchObject({
+    await expect(
+      addCompanyMember(internalCompanyId, extraId),
+    ).rejects.toMatchObject({
       status: 409,
       code: "SEAT_LIMIT",
     });

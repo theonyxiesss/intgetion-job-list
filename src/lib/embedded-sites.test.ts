@@ -1,26 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { routing } from "@/i18n/routing";
-import { embedOriginForPath, EMBEDDED_SITES, PREFIXED_LOCALES } from "./embedded-sites";
+import { embedOriginForPath, isEmbeddedOrigin } from "./embedded-sites";
 
-describe("embedOriginForPath (D388)", () => {
-  it("allows the company and portfolio pages in every locale", () => {
-    expect(embedOriginForPath("/company")).toBe(EMBEDDED_SITES.company);
-    expect(embedOriginForPath("/company/")).toBe(EMBEDDED_SITES.company);
-    expect(embedOriginForPath("/ru/company")).toBe(EMBEDDED_SITES.company);
-    expect(embedOriginForPath("/pt-BR/company")).toBe(EMBEDDED_SITES.company);
-    expect(embedOriginForPath("/portfolio")).toBe(EMBEDDED_SITES.portfolio);
-    expect(embedOriginForPath("/de/portfolio")).toBe(EMBEDDED_SITES.portfolio);
-    expect(embedOriginForPath("/it/portfolio/")).toBe(EMBEDDED_SITES.portfolio);
-  });
-
-  it("keeps the same prefixed locales as the site", () => {
-    expect([...PREFIXED_LOCALES]).toEqual(
-      routing.locales.filter((locale) => locale !== routing.defaultLocale),
-    );
-  });
-
-  it("does not open a frame on any other path", () => {
+describe("embedOriginForPath (D400)", () => {
+  it("does not frame company or portfolio in any locale", () => {
     for (const path of [
+      "/company",
+      "/company/",
+      "/ru/company",
+      "/pt-BR/company",
+      "/portfolio",
+      "/de/portfolio",
+      "/it/portfolio/",
       "/",
       "/jobs",
       "/company-extra",
@@ -31,5 +21,11 @@ describe("embedOriginForPath (D388)", () => {
     ]) {
       expect(embedOriginForPath(path), path).toBeUndefined();
     }
+  });
+
+  it("does not allow the retired site origins", () => {
+    expect(isEmbeddedOrigin("https://intgetion.vercel.app")).toBe(false);
+    expect(isEmbeddedOrigin("https://theonyxis.vercel.app")).toBe(false);
+    expect(isEmbeddedOrigin("https://evil.example")).toBe(false);
   });
 });

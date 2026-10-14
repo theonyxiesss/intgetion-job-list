@@ -137,7 +137,11 @@ export async function addCompanyMember(
     throw forbidden("Cannot join an imported or unavailable company");
   }
   if (added === "full") {
-    throw new HttpError(409, "SEAT_LIMIT", "This company is at its teammate limit");
+    throw new HttpError(
+      409,
+      "SEAT_LIMIT",
+      "This company is at its teammate limit",
+    );
   }
   return added;
 }

@@ -4,7 +4,9 @@ import { jobFields } from "../schemas";
 
 describe("http job and company links", () => {
   it("rejects an apply address that is not http or https", () => {
-    const parsed = jobFields.shape.applicationUrl.safeParse("javascript:alert(1)");
+    const parsed = jobFields.shape.applicationUrl.safeParse(
+      "javascript:alert(1)",
+    );
     expect(parsed.success).toBe(false);
     expect(
       jobFields.shape.applicationUrl.safeParse("https://example.com/apply")

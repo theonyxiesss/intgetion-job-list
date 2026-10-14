@@ -12,16 +12,17 @@
 
 ## Ключевые пути
 
-| Что | Где смотреть |
-| --- | ------------ |
-| Callback / session | `src/app` auth routes, `src/lib/supabase/**` |
-| Guards | `src/lib/auth-guards.ts` |
-| Mini App / TG open | `src/components/auth/**`, решения D318–D322 |
-| Письма каталога (не Auth) | `src/modules/notifications` + Resend |
-| Макет всех писем (D330) | `src/lib/email-html.ts`; auth-шаблоны `src/lib/auth-email-templates.ts` → `supabase/templates/*.html`; превью `/dev-emails/index.html` (только dev) |
+| Что                       | Где смотреть                                                                                                                                        |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Callback / session        | `src/app` auth routes, `src/lib/supabase/**`                                                                                                        |
+| Guards                    | `src/lib/auth-guards.ts`                                                                                                                            |
+| Mini App / TG open        | `src/components/auth/**`, решения D318–D322                                                                                                         |
+| Письма каталога (не Auth) | `src/modules/notifications` + Resend                                                                                                                |
+| Макет всех писем (D330)   | `src/lib/email-html.ts`; auth-шаблоны `src/lib/auth-email-templates.ts` → `supabase/templates/*.html`; превью `/dev-emails/index.html` (только dev) |
 
 ## Заметки
 
 - Site URL для ссылок в письмах: `NEXT_PUBLIC_SITE_URL` (прод: https://intgetion.com). Неверный Site URL в Supabase → localhost в письмах.
+- Google: `/api/auth/google` вызывает Supabase `signInWithOAuth`, «Привязать Google» — `linkIdentity` (D335, D339). `redirectTo` — страница сайта `/{locale}/auth/callback`. Хост в строке Google «Перейти в додаток …» — хост callback Supabase (`/auth/v1/callback`). Имя приложения на экране согласия — отдельная подпись в Google Cloud, её этот путь не задаёт.
 - Auth-письма Supabase и каталог уведомлений — разные домены типов (см. `catalog.ts`).
 - Cross-device handoff (D328) — **DEFERRED**, см. [../OPEN_TASKS.md](../OPEN_TASKS.md).

@@ -43,7 +43,9 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await getDb().delete(users).where(inArray(users.id, [userId]));
+  await getDb()
+    .delete(users)
+    .where(inArray(users.id, [userId]));
 });
 
 async function count(table: "brief_deliveries" | "notifications") {

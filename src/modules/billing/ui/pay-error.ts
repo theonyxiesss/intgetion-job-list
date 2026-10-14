@@ -1,9 +1,4 @@
-export type PayErrorKind =
-  | "wallet"
-  | "cancel"
-  | "network"
-  | "token"
-  | "failed";
+export type PayErrorKind = "wallet" | "cancel" | "network" | "token" | "failed";
 
 function rejected(error: unknown): boolean {
   if (!error || typeof error !== "object") return false;

@@ -37,6 +37,30 @@ export async function countPublicCatalog() {
   return { jobs: jobsRow?.n ?? 0, companies: companiesRow?.n ?? 0 };
 }
 
+/** Published jobs grouped by category, busiest first. */
+export async function publishedCategoryCounts(limit: number) {
+  const rows = await getDb()
+    .select({
+      category: jobs.category,
+      n: sql<number>`count(*)::int`,
+    })
+    .from(jobs)
+    .innerJoin(companies, eq(companies.id, jobs.companyId))
+    .where(
+      and(
+        eq(jobs.status, "published"),
+        sql`${companies.status} not in ('suspended','rejected')`,
+      ),
+    )
+    .groupBy(jobs.category)
+    .orderBy(desc(sql`count(*)`), jobs.category)
+    .limit(limit);
+  return rows.map((row) => ({
+    category: row.category,
+    count: Number(row.n),
+  }));
+}
+
 export async function getFxRates() {
   return getDb()
     .select({

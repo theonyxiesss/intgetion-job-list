@@ -13,22 +13,22 @@
 
 ## Карта
 
-| Файл / папка | Зачем |
-| ------------ | ----- |
-| [CURRENT.md](CURRENT.md) | Состояние «сейчас», worktree, следующий шаг |
-| [OPEN_TASKS.md](OPEN_TASKS.md) | Незакрытые задачи вне roadmap |
-| [tz/](tz/INDEX.md) | Живое ТЗ по доменам |
-| [how-it-works/](how-it-works/INDEX.md) | Как устроено в коде + пути к файлам |
-| [status/](status/INDEX.md) | OK / PARTIAL / BROKEN / DEFERRED |
-| [DECISIONS.md](DECISIONS.md) | Новые D + таблица D1–D30; старые → archive |
-| [ERD.md](ERD.md) | Схема БД |
-| [RUNBOOK.md](RUNBOOK.md) | Эксплуатация, env, cron |
-| [PARALLEL_WORK.md](PARALLEL_WORK.md) | Worktree / ветки агентов |
-| [DESIGN.md](DESIGN.md) | UI-фундамент |
-| [ADMIN.md](ADMIN.md) | Админка |
-| [archive/](archive/INDEX.md) | Замороженные монолиты и старые логи |
-| [TZ_INTGETION_v6.md](TZ_INTGETION_v6.md) | Stub-указатель (монолит в archive) |
-| [../MISSION_LOG.md](../MISSION_LOG.md) | Хвост сессий; старше → archive/mission-log |
+| Файл / папка                             | Зачем                                       |
+| ---------------------------------------- | ------------------------------------------- |
+| [CURRENT.md](CURRENT.md)                 | Состояние «сейчас», worktree, следующий шаг |
+| [OPEN_TASKS.md](OPEN_TASKS.md)           | Незакрытые задачи вне roadmap               |
+| [tz/](tz/INDEX.md)                       | Живое ТЗ по доменам                         |
+| [how-it-works/](how-it-works/INDEX.md)   | Как устроено в коде + пути к файлам         |
+| [status/](status/INDEX.md)               | OK / PARTIAL / BROKEN / DEFERRED            |
+| [DECISIONS.md](DECISIONS.md)             | Новые D + таблица D1–D30; старые → archive  |
+| [ERD.md](ERD.md)                         | Схема БД                                    |
+| [RUNBOOK.md](RUNBOOK.md)                 | Эксплуатация, env, cron                     |
+| [PARALLEL_WORK.md](PARALLEL_WORK.md)     | Worktree / ветки агентов                    |
+| [DESIGN.md](DESIGN.md)                   | UI-фундамент                                |
+| [ADMIN.md](ADMIN.md)                     | Админка                                     |
+| [archive/](archive/INDEX.md)             | Замороженные монолиты и старые логи         |
+| [TZ_INTGETION_v6.md](TZ_INTGETION_v6.md) | Stub-указатель (монолит в archive)          |
+| [../MISSION_LOG.md](../MISSION_LOG.md)   | Хвост сессий; старше → archive/mission-log  |
 
 ## Правило
 

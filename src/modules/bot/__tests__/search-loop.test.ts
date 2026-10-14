@@ -57,9 +57,10 @@ const messages = vi.hoisted(
 );
 
 vi.mock("@/lib/rate-limit", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/rate-limit")>(
-    "@/lib/rate-limit",
-  );
+  const actual =
+    await vi.importActual<typeof import("@/lib/rate-limit")>(
+      "@/lib/rate-limit",
+    );
   return { ...actual, enforceRateLimit: () => Promise.resolve() };
 });
 
@@ -74,9 +75,9 @@ vi.mock("@/modules/applications/service", async () => {
 });
 
 vi.mock("@/modules/feedback/service", async () => {
-  const actual = await vi.importActual<typeof import("@/modules/feedback/service")>(
-    "@/modules/feedback/service",
-  );
+  const actual = await vi.importActual<
+    typeof import("@/modules/feedback/service")
+  >("@/modules/feedback/service");
   return {
     ...actual,
     isJobSavedForUser: () => Promise.resolve(false),
@@ -108,7 +109,11 @@ vi.mock("../repo/bot-repo", () => ({
     return Promise.resolve();
   },
   userDailyCosts: () => Promise.resolve([]),
-  insertMessage: (input: { role: string; content: string; toolCall?: unknown }) => {
+  insertMessage: (input: {
+    role: string;
+    content: string;
+    toolCall?: unknown;
+  }) => {
     const row = {
       id: `m${messages.length + 1}`,
       role: input.role,
@@ -123,16 +128,18 @@ vi.mock("../repo/bot-repo", () => ({
 }));
 
 vi.mock("../service/tools", async () => {
-  const actual = await vi.importActual<typeof import("../service/tools")>(
-    "../service/tools",
-  );
+  const actual =
+    await vi.importActual<typeof import("../service/tools")>(
+      "../service/tools",
+    );
   return {
     ...actual,
     runTool: (...args: unknown[]) => runToolMock(...args),
   };
 });
 
-const { handleMessage, setBotLLMForTests } = await import("../service/conversation");
+const { handleMessage, setBotLLMForTests } =
+  await import("../service/conversation");
 
 const prices = {
   "fake-model": {
@@ -158,9 +165,7 @@ function conversation(state: BotState, jobId: string | null = null) {
 }
 
 function visibleText(events: BotEvent[]): string {
-  return events
-    .map((event) => ("text" in event ? event.text : ""))
-    .join("\n");
+  return events.map((event) => ("text" in event ? event.text : "")).join("\n");
 }
 
 function reply(text: string, toolName?: string, input?: unknown): LLMResponse {
@@ -264,8 +269,18 @@ describe("Spoki search loop", () => {
       client: {
         kind: "jobs",
         data: [
-          { id: JOB, title: "First", companyName: "Kept", workFormat: "remote" },
-          { id: OTHER, title: "Second", companyName: "Next agency", workFormat: "remote" },
+          {
+            id: JOB,
+            title: "First",
+            companyName: "Kept",
+            workFormat: "remote",
+          },
+          {
+            id: OTHER,
+            title: "Second",
+            companyName: "Next agency",
+            workFormat: "remote",
+          },
         ],
       },
     });

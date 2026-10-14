@@ -80,6 +80,7 @@ export function SignInMethods({
   google,
   x,
   notice,
+  enterHref,
 }: {
   /** Real login email, or null for a Telegram-only account. */
   email: string | null;
@@ -90,6 +91,8 @@ export function SignInMethods({
   x: { label: string | null } | null;
   /** Error brought back from an OAuth redirect. */
   notice?: string | null;
+  /** Sign-in path for the existing Google or X account. Absent unless linking was refused. */
+  enterHref?: string | null;
 }) {
   const t = useTranslations("settings.signIn");
   const social = useTranslations("auth.social");
@@ -266,9 +269,22 @@ export function SignInMethods({
         {status ?? ""}
       </p>
       {error ? (
-        <p role="alert" className="t-body-s text-danger">
-          {t(`errors.${error}`)}
-        </p>
+        <div role="alert" className="flex flex-col gap-3">
+          <p className="t-body-s text-danger">{t(`errors.${error}`)}</p>
+          {error === "identity_taken" && enterHref ? (
+            <div className="flex flex-wrap gap-3">
+              <a href={enterHref} className={buttonClass("primary")}>
+                {t("splitEnter")}
+              </a>
+              <Link
+                href="/settings/account"
+                className={buttonClass("secondary")}
+              >
+                {t("splitStay")}
+              </Link>
+            </div>
+          ) : null}
+        </div>
       ) : null}
     </section>
   );

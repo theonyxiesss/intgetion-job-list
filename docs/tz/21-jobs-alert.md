@@ -159,12 +159,12 @@ Chat id — переменная `JOBS_ALERT_CHAT_ID`. В git значения �
 
 ## 10. Куда ляжет код (когда скажут делать)
 
-| Что | Куда |
-| --- | ---- |
+| Что              | Куда                                                                                                             |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------- |
 | Колонка и индекс | миграция `src/db/migrations/0033_jobs_alert.sql` (или следующий свободный номер), поле в `src/db/schema/jobs.ts` |
-| Шаг канала | `src/modules/jobs/service/`, наружу только через `service/index.ts` |
-| Вызов | `src/app/api/cron/telegram/route.ts` — после `runTelegramDispatch`, тот же `telegramSender` |
-| Chat id | уже: `.env.example`, строка в `docs/RUNBOOK.md`; при коде — `ALL_KNOWN` |
+| Шаг канала       | `src/modules/jobs/service/`, наружу только через `service/index.ts`                                              |
+| Вызов            | `src/app/api/cron/telegram/route.ts` — после `runTelegramDispatch`, тот же `telegramSender`                      |
+| Chat id          | уже: `.env.example`, строка в `docs/RUNBOOK.md`; при коде — `ALL_KNOWN`                                          |
 
 Тесты, без ослабления существующих:
 

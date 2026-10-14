@@ -1415,6 +1415,8 @@
       "linkTelegram": "Привязать Telegram",
       "linkGoogle": "Привязать Google",
       "linkX": "Привязать X",
+      "splitEnter": "Войти этим аккаунтом",
+      "splitStay": "Остаться в текущем",
       "unlink": "Отвязать",
       "unlinked": "Telegram отвязан.",
       "unlinkedGoogle": "Google отвязан.",
@@ -1433,6 +1435,8 @@
   },
   "chat": {
     "title": "Spoki Assistant",
+    "welcome": "С чего начнём?",
+    "disclaimer": "Spoki может ошибаться. Важное проверьте. Ещё в Telegram:",
     "jobFocus": {
       "discussing": "Обсуждаем: {title} — {company}",
       "back": "Вернуться к вакансии"
@@ -1452,6 +1456,50 @@
       "two": "Дизайн на part-time в Европе",
       "three": "Кто берёт джуниоров?"
     },
+    "starters": {
+      "label": "С чего начать",
+      "lanes": {
+        "find": "Помоги найти работу",
+        "hire": "Хочу найти сотрудника для проекта",
+        "demand": "Какая работа сейчас востребована"
+      },
+      "questions": {
+        "find01": "Помоги найти удалённую работу",
+        "find02": "Какие вакансии подходят моему профилю?",
+        "find03": "Покажи работу на неполный день",
+        "find04": "Хочу удалённую работу. С чего начать?",
+        "find05": "Какие навыки назвать, чтобы поиск был точнее?",
+        "find06": "Найди работу, которую можно делать из другой страны",
+        "find07": "Я только начинаю. Какие есть роли для джуниоров?",
+        "find08": "Чего не хватает в профиле, чтобы подбор был точнее?",
+        "hire01": "Хочу нанять человека для своего проекта",
+        "hire02": "Как разместить вакансию?",
+        "hire03": "Сколько стоит опубликовать одну роль?",
+        "hire04": "Нужен человек на короткий проект",
+        "hire05": "Сколько человек может быть в компании?",
+        "hire06": "Хочу, чтобы одну роль заметили быстрее",
+        "demand01": "Какая работа сейчас с наибольшим числом открытых вакансий?",
+        "demand02": "В какой категории больше всего опубликованных вакансий?",
+        "demand03": "Сколько вакансий сейчас открыто?",
+        "demand04": "Куда смотреть в первую очередь?",
+        "demand05": "Покажи роли, которые компании публикуют чаще всего",
+        "demand06": "Хочу работу в самой занятой категории"
+      }
+    },
+    "applicationStatus": {
+      "line": "Заявка: {status}.",
+      "applied": "отправлена",
+      "viewed": "работодатель посмотрел",
+      "shortlisted": "в коротком списке",
+      "interview": "на этапе собеседования",
+      "offer": "на этапе оффера",
+      "hired": "человек нанят",
+      "rejected": "отказ",
+      "withdrawn": "отозвана"
+    },
+    "jobQueued": {
+      "line": "«{title}» ждёт проверки. В списке её пока нет."
+    },
     "placeholder": "Напишите сообщение",
     "send": "Отправить",
     "guestHint": "Сохранять вакансии, откликаться и вести профиль можно с аккаунтом.",
@@ -1461,11 +1509,14 @@
       "BOT_BUDGET_EXCEEDED": "Агент исчерпал лимит на сегодня. Воспользуйтесь поиском; агент вернётся завтра.",
       "BOT_TRY_LATER": "Агент не смог ответить. Попробуйте через минуту.",
       "RATE_LIMITED": "Сегодня отправлено слишком много сообщений. Попробуйте завтра.",
+      "JOB_NEEDS_TEAM": "Для этого нужен тариф «Команда». Через форму вакансию всё ещё можно отправить.",
+      "JOB_NEEDS_COMPANY": "Сначала добавьте компанию в форме вакансии.",
       "generic": "Что-то пошло не так. Попробуйте ещё раз."
     },
     "confirm": {
       "applyTitle": "Откликнуться на эту вакансию?",
       "profileTitle": "Сохранить изменения профиля?",
+      "jobTitle": "Отправить эту вакансию на проверку?",
       "text": "Ничего не произойдёт, пока вы не подтвердите.",
       "accept": "Подтвердить",
       "decline": "Отмена",
@@ -2263,6 +2314,572 @@
       "submitting": "Отправка…",
       "submittingLive": "Размещаем…",
       "error": "Не удалось отправить вакансию. Проверьте обязательные поля."
+    }
+  },
+  "portfolioPage": {
+    "metaTitle": "THE ONYXIS — Digital Systems, Operations & Growth",
+    "metaDescription": "THE ONYXIS builds digital systems, operations and growth engines — from AI automation and web products to lead generation and process design.",
+    "body": {
+      "nav": [
+        {
+          "href": "#services",
+          "label": "Услуги"
+        },
+        {
+          "href": "#capabilities",
+          "label": "Возможности"
+        },
+        {
+          "href": "#about",
+          "label": "Обо мне"
+        },
+        {
+          "href": "#profile",
+          "label": "Профиль"
+        },
+        {
+          "href": "#social",
+          "label": "Связь"
+        }
+      ],
+      "heroEyebrow": "Digital systems · Operations · Growth",
+      "heroTitle": "THE ONYXIS",
+      "heroSubtitle": "THE ONYXIS — личный бренд и операционный хаб: цифровые системы, управление командами и рост. От AI-автоматизации и web-продуктов до лидогенерации и процессного дизайна.",
+      "heroValue": "Помогаю выстроить то, что масштабируется: процессы, продукт и каналы привлечения.",
+      "cta": "Начать проект",
+      "ctaSecondary": "Смотреть профиль",
+      "services": {
+        "index": "01",
+        "title": "Услуги",
+        "lead": "Не список технологий — а задачи, которые решаются на практике.",
+        "items": [
+          {
+            "id": "01",
+            "title": "AI & Automation",
+            "text": "Автоматизация рутины, AI-агенты и пайплайны, которые снимают операционную нагрузку и ускоряют исполнение."
+          },
+          {
+            "id": "02",
+            "title": "Web & Digital Products",
+            "text": "Прототипы и digital-продукты на современном стеке — от MVP до рабочей инфраструктуры."
+          },
+          {
+            "id": "03",
+            "title": "Growth & Marketing",
+            "text": "Системная лидогенерация и воронки в ключевых каналах с фокусом на конверсию и монетизацию."
+          },
+          {
+            "id": "04",
+            "title": "Operations & Process Design",
+            "text": "Структура команд, KPI и процессов — чтобы сервис или продукт можно было масштабировать без хаоса."
+          }
+        ]
+      },
+      "capabilities": {
+        "index": "02",
+        "title": "Возможности",
+        "lead": "Selected work — systems shipped or piloted.",
+        "stackLabel": "Stack",
+        "outcomeLabel": "Outcome",
+        "roleLabel": "Role",
+        "items": [
+          {
+            "id": "01",
+            "status": "PUBLIC",
+            "title": "Приём лидов вместо группового чата",
+            "text": "Небольшая сервисная команда принимала входящие из Instagram, Telegram и ручных пересылок. Квалификация жила в голове одного менеджера — тёплые лиды остывали за ночь. Собран один путь intake (форма / Telegram → таблица → статусы new / qualified / call / dead), короткие правила квалификации и пинг владельца, если нет ответа за 12 рабочих часов. Еженедельный разбор причин смерти лида — не vanity-отчёт.",
+            "stack": "Telegram bot · spreadsheet / Notion · webhooks · first-reply templates",
+            "outcome": "First reply: от «когда вспомнили» до менее 2 часов в рабочие дни. Потерянные тёплые лиды за месяц: 8 → 2. Квалифицированные созвоны: +6 на том же трафике.",
+            "role": "Operations + дизайн воронки · 6 недель"
+          },
+          {
+            "id": "02",
+            "status": "PILOT",
+            "title": "Очередь ресёрча с человеком в контуре",
+            "text": "Карточки компаний собирали вручную: сайт, соцсети, оффер, «пишем ли?». 25–40 минут на карточку — продажи ждали ресёрч. Собран контур: список доменов → публичные страницы → короткая карточка (оффер, geo, сигналы do-not-contact) → человек accept / edit / reject. Отклонённые карточки в outreach не попадают.",
+            "stack": "Python · LLM via OpenRouter · light RAG / saved pages · Notion as the card queue",
+            "outcome": "Карточка: ~35 мин → ~8 мин с ревью. 120 компаний в пилоте, 18 отсеяны до первого сообщения. Без ревью в отправку не уходит.",
+            "role": "Проектирование системы + агентный воркфлоу · 3 недели"
+          },
+          {
+            "id": "03",
+            "status": "INTERNAL",
+            "title": "Пайплайн поставки для команды из 4 человек",
+            "text": "Трафик, дизайн, аккаунт, продажи. Задачи жили в Telegram; дедлайн «на вчера» был нормой — владелец не видел, где узкое место. Собран один пайплайн сделки: lead → proposal → delivery → done. На каждой стадии — один ответственный и один артефакт. Еженедельный разбор трёх чисел: новые квалифицированные, сделки в работе, просроченные. Бэклог отделён от «горит». Telegram — алерт, не база.",
+            "stack": "Notion (or Linear) · brief templates · Telegram alerts",
+            "outcome": "Просроченные задачи на конец недели: 11 → 3. От оплаты до старта работ: 5–6 дней → 2 дня. Аккаунт перестал быть единственной памятью проекта.",
+            "role": "Тимлид / проектирование процессов · 8 недель"
+          }
+        ],
+        "technologies": "Stack",
+        "stackLead": "Не список ради списка — направления, которыми реально собираю системы.",
+        "categories": [
+          {
+            "id": "01",
+            "title": "AI & Intelligence",
+            "status": "ACTIVE",
+            "items": [
+              "AI Agents",
+              "LLMs",
+              "Prompt Engineering",
+              "RAG",
+              "Knowledge Bases",
+              "AI Research",
+              "Multi-Agent Systems",
+              "OpenRouter"
+            ]
+          },
+          {
+            "id": "02",
+            "title": "Development",
+            "status": "ACTIVE",
+            "items": [
+              "Python",
+              "JavaScript",
+              "HTML / CSS",
+              "Git",
+              "GitHub",
+              "Cursor",
+              "VS Code"
+            ]
+          },
+          {
+            "id": "03",
+            "title": "Web & Infrastructure",
+            "status": "USED",
+            "items": [
+              "Vercel",
+              "Railway",
+              "APIs",
+              "Webhooks",
+              "ngrok",
+              "Telegram Bots"
+            ]
+          },
+          {
+            "id": "04",
+            "title": "Data & Research",
+            "status": "ACTIVE",
+            "items": [
+              "Qdrant",
+              "Data Processing",
+              "Web Research",
+              "Lead Research",
+              "Information Architecture",
+              "Structured Knowledge"
+            ]
+          },
+          {
+            "id": "05",
+            "title": "Systems & Automation",
+            "status": "ACTIVE",
+            "items": [
+              "Workflow Design",
+              "Process Automation",
+              "AI Automation",
+              "Agent Workflows",
+              "API Integration",
+              "Business Process Design"
+            ]
+          },
+          {
+            "id": "06",
+            "title": "Business & Growth",
+            "status": "ACTIVE",
+            "items": [
+              "Lead Generation",
+              "Prospecting",
+              "Content Strategy",
+              "SMM",
+              "Digital Marketing",
+              "Business Analysis",
+              "Product Thinking",
+              "Growth Experiments"
+            ]
+          }
+        ],
+        "exploring": "Exploring",
+        "exploringStatus": "EXPLORING",
+        "exploringLead": "Направления, которые исследую и хочу развивать. Не подтверждённая экспертиза.",
+        "exploringItems": [
+          "Robotics",
+          "Web3",
+          "AI Products",
+          "Content Systems",
+          "Lead Generation",
+          "Digital Businesses",
+          "Personal Knowledge Systems"
+        ],
+        "whatIBuild": "What I Build",
+        "whatIBuildLead": "Что умею создавать и какие системы умею собирать.",
+        "builds": [
+          {
+            "title": "AI Agents",
+            "text": "Research, lead generation, content and task automation."
+          },
+          {
+            "title": "Business Systems",
+            "text": "Turning manual processes into repeatable workflows."
+          },
+          {
+            "title": "Web Projects",
+            "text": "Websites, dashboards and digital products."
+          },
+          {
+            "title": "Lead Generation",
+            "text": "Prospect research, qualification and outreach systems."
+          },
+          {
+            "title": "Content Systems",
+            "text": "Research, production and distribution."
+          },
+          {
+            "title": "Research Systems",
+            "text": "Structured research, knowledge bases and iterative search."
+          }
+        ],
+        "casesTitle": "Cases, experiments & research",
+        "casesLead": "Часть проектов и экспериментов подробнее задокументирована на Medium и Substack. Короткие апдейты, статистику и результаты иногда публикую в X.",
+        "cases": [
+          {
+            "title": "Medium / Substack",
+            "text": "Long-form cases, research and experiments.",
+            "links": [
+              {
+                "name": "Medium",
+                "href": "https://medium.com/@ap1m3n"
+              },
+              {
+                "name": "Substack",
+                "href": "https://substack.com/@markevans499986"
+              }
+            ]
+          },
+          {
+            "title": "X",
+            "text": "Short updates, statistics and progress.",
+            "links": [
+              {
+                "name": "X",
+                "href": "https://x.com/TheOnyxis"
+              }
+            ]
+          }
+        ]
+      },
+      "about": {
+        "index": "03",
+        "title": "Обо мне",
+        "statement": "Управление проектами и командами, построение системной лидогенерации, подготовка процессов к масштабированию и запуску собственных продуктов.",
+        "basedInLabel": "Локация",
+        "basedIn": "Remote / EU",
+        "focusLabel": "Фокус",
+        "focus": "Team Lead / Operations / Project / BD",
+        "currentlyLabel": "Сейчас",
+        "currently": "Building systems & ventures"
+      },
+      "profile": {
+        "index": "04",
+        "title": "Профиль",
+        "coreFocus": "Core Focus",
+        "rolesLabel": "Фокусные роли",
+        "roles": [
+          "Team Lead",
+          "Operations Manager",
+          "Project Manager",
+          "Business Development Lead"
+        ],
+        "goalLabel": "Главная цель",
+        "goal": "Управление проектами и командами, построение системной лидогенерации, подготовка процессов к масштабированию и запуску собственных продуктов.",
+        "domains": [
+          {
+            "id": "01",
+            "title": "Management & Leadership",
+            "subtitle": "Управление и процессы",
+            "items": [
+              {
+                "name": "Team Leadership",
+                "text": "Опыт сборки, координации и синхронизации кросс-функциональных команд (разработчики, маркетологи, дизайнеры)."
+              },
+              {
+                "name": "Process Design",
+                "text": "Понимание архитектуры управления: от постановки задач и контроля KPI до управления сроками и финальным результатом."
+              },
+              {
+                "name": "Strategic Planning",
+                "text": "Умение декомпозировать глобальную цель (сервисный бизнес → продукт) на поэтапные задачи команды."
+              }
+            ]
+          },
+          {
+            "id": "02",
+            "title": "Marketing, Sales & Lead Generation",
+            "subtitle": "Маркетинг и продажи",
+            "items": [
+              {
+                "name": "Lead Generation & Sales Funnels",
+                "text": "Построение воронок привлечения лидов в ключевых каналах (Telegram, Instagram, TikTok, Facebook)."
+              },
+              {
+                "name": "B2B & Outreach",
+                "text": "Понимание механик привлечения клиентов, работы с холодным и тёплым трафиком, нетворкинга и переговоров."
+              },
+              {
+                "name": "Growth Focus",
+                "text": "Ориентация на монетизацию, генерацию капитала и быстрое тестирование гипотез."
+              }
+            ]
+          },
+          {
+            "id": "03",
+            "title": "Tech Stack & Crypto Competencies",
+            "subtitle": "Технологический стек",
+            "note": "Практическое знакомство (Hands-on / Pet-projects / MVP). Понимание архитектуры, системный подход, прототипирование с помощью AI и свободная коммуникация с разработчиками.",
+            "groups": [
+              {
+                "title": "Web3, Crypto & Economics",
+                "items": [
+                  {
+                    "name": "Crypto Foundations",
+                    "text": "Глубокое понимание токеномики, криптоэкономики, механик эмиссии, распределения токенов и монетизации Web3-проектов."
+                  },
+                  {
+                    "name": "Web3 Integration",
+                    "text": "Thirdweb SDK, WalletConnect Cloud APIs, настройка и работа с EVM-сетями в MetaMask."
+                  },
+                  {
+                    "name": "Blockchain Data & Tools",
+                    "text": "The Graph (индексация и работа с данными), Remix IDE (смарт-контракты)."
+                  },
+                  {
+                    "name": "Telegram Crypto Ecosystem",
+                    "text": "Разработка Telegram Mini Apps, интеграция механик оплаты и Telegram Stars (XTR)."
+                  }
+                ]
+              },
+              {
+                "title": "AI Tools & Autonomous Agents",
+                "items": [
+                  {
+                    "name": "AI Agents",
+                    "text": "Hermes Agent — исследование и практическая настройка автономных ИИ-агентов."
+                  },
+                  {
+                    "name": "AI CLI & Code Assistants",
+                    "text": "Cursor AI, Claude Code CLI, Gemini CLI, OpenAI Codex CLI, Google Antigravity."
+                  },
+                  {
+                    "name": "LLM Infrastructure",
+                    "text": "OpenRouter — агрегация и маршрутизация LLM API."
+                  }
+                ]
+              },
+              {
+                "title": "Backend, Data & Automation",
+                "items": [
+                  {
+                    "name": "Languages & Runtime",
+                    "text": "Python, Node.js (JavaScript)."
+                  },
+                  {
+                    "name": "Databases & BaaS",
+                    "text": "SQL (проектирование баз данных), Supabase (PostgreSQL, Auth, Realtime)."
+                  },
+                  {
+                    "name": "Automation & Integration",
+                    "text": "Дизайн workflows, API-интеграции и автоматизация бизнес-процессов."
+                  }
+                ]
+              },
+              {
+                "title": "Frontend & Mobile Development",
+                "items": [
+                  {
+                    "name": "Web Frontend",
+                    "text": "React, Next.js (14), Vue 3, Vite."
+                  },
+                  {
+                    "name": "Styling & UI",
+                    "text": "Tailwind CSS."
+                  },
+                  {
+                    "name": "Mobile & Cross-Platform",
+                    "text": "Flutter, Dart."
+                  }
+                ]
+              },
+              {
+                "title": "Infrastructure & Services",
+                "items": [
+                  {
+                    "name": "Deployment & Hosting",
+                    "text": "Vercel, Railway."
+                  },
+                  {
+                    "name": "Dev Utilities",
+                    "text": "Ngrok — туннелирование и тестирование API."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "04",
+            "title": "Trading, Finance & Operations",
+            "subtitle": "Трейдинг, финансы и операции",
+            "groups": [
+              {
+                "title": "Trading & Financial Advisory",
+                "items": [
+                  {
+                    "name": "Crypto & Markets",
+                    "text": "Спотовая и фьючерсная торговля криптовалютами, понимание механики рынка, фундаментального и технического анализа."
+                  },
+                  {
+                    "name": "Risk & Portfolio Management",
+                    "text": "Управление рисками (Risk/Reward, Position Sizing), контроль капитала и психология торговли."
+                  },
+                  {
+                    "name": "Financial Advisory",
+                    "text": "Опыт консультаций по личным финансам, инвестиционному планированию и структурированию активов."
+                  }
+                ]
+              },
+              {
+                "title": "Analytics & Conversion Management",
+                "items": [
+                  {
+                    "name": "Funnel Analytics",
+                    "text": "Анализ конверсий на всех этапах воронки — от первого контакта до подписки или покупки."
+                  },
+                  {
+                    "name": "Data Organization",
+                    "text": "Сбор, обработка и структурирование данных для решений по трафику и продажам."
+                  }
+                ]
+              },
+              {
+                "title": "Knowledge & Project Systems",
+                "items": [
+                  {
+                    "name": "Second Brain Systems",
+                    "text": "Построение личных и рабочих баз знаний в Notion и Obsidian (методологии PARA / CODE)."
+                  },
+                  {
+                    "name": "Task Management",
+                    "text": "Систематизация проектов, ведение заметок и структурирование задач для себя и команды."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "05",
+            "title": "Languages",
+            "subtitle": "Языки",
+            "items": [
+              {
+                "name": "Русский / Украинский",
+                "text": "Native"
+              },
+              {
+                "name": "Английский",
+                "text": "Intermediate (B1/B2) — переписка, рабочие коммуникации."
+              },
+              {
+                "name": "Итальянский / Немецкий",
+                "text": "Базовый / разговорный уровень."
+              }
+            ]
+          }
+        ]
+      },
+      "social": {
+        "index": "05",
+        "title": "Связь",
+        "channelsLabel": "Контакт",
+        "channels": [
+          {
+            "label": "Telegram",
+            "hint": "быстрее всего",
+            "href": "https://t.me/TheOnyxis"
+          },
+          {
+            "label": "Почта",
+            "hint": "ap1m3n@gmail.com",
+            "href": "mailto:ap1m3n@gmail.com"
+          },
+          {
+            "label": "Discord",
+            "hint": "не срочно",
+            "href": "https://discord.com/users/TheOnyxis"
+          },
+          {
+            "label": "X",
+            "hint": "публично",
+            "href": "https://x.com/TheOnyxis"
+          }
+        ],
+        "links": [
+          {
+            "name": "The Onyxis",
+            "handle": "Личный бренд / вебсайт",
+            "href": "#top"
+          },
+          {
+            "name": "LinkedIn",
+            "handle": "Personal",
+            "href": "https://www.linkedin.com/in/igor-kushnir-2a38272b5"
+          },
+          {
+            "name": "GitHub",
+            "handle": "Personal",
+            "href": "https://github.com/theonyxiesss"
+          },
+          {
+            "name": "Intgetion",
+            "handle": "Агентство цифрового маркетинга",
+            "href": "/company"
+          },
+          {
+            "name": "INTGETION LinkedIn",
+            "handle": "Company",
+            "href": "https://www.linkedin.com/company/intgetion/"
+          },
+          {
+            "name": "X",
+            "handle": "@TheOnyxis",
+            "href": "https://x.com/TheOnyxis"
+          },
+          {
+            "name": "Telegram",
+            "handle": "@TheOnyxis",
+            "href": "https://t.me/TheOnyxis"
+          },
+          {
+            "name": "Medium",
+            "handle": "@ap1m3n",
+            "href": "https://medium.com/@ap1m3n"
+          },
+          {
+            "name": "Substack",
+            "handle": "@markevans499986",
+            "href": "https://substack.com/@markevans499986"
+          },
+          {
+            "name": "Instagram",
+            "handle": "@TheOnyxis",
+            "href": "https://instagram.com/TheOnyxis"
+          },
+          {
+            "name": "Discord",
+            "handle": "@TheOnyxis",
+            "href": "https://discord.com/users/TheOnyxis"
+          }
+        ]
+      },
+      "footerBlurb": "Digital systems, operations and growth — в одном рабочем хабе.",
+      "copyright": "© 2026 THE ONYXIS"
     }
   }
 }

@@ -4,7 +4,6 @@ import {
   Briefcase,
   FileText,
   Bot,
-  Sparkles,
   UserRound,
   type LucideIcon,
 } from "lucide-react";
@@ -16,7 +15,6 @@ export type BottomNavItem = { href: string; label: string };
 
 const ICONS: Record<string, LucideIcon> = {
   "/jobs": Briefcase,
-  "/matches": Sparkles,
   "/applications": FileText,
   "/chat": Bot,
   "/profile": UserRound,
@@ -43,7 +41,7 @@ export function BottomNav({
       data-bottom-nav
       className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] md:hidden"
     >
-      <ul className="grid grid-cols-5">
+      <ul className="grid grid-cols-4">
         {items.map((item) => {
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);

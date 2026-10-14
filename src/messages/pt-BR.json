@@ -1415,6 +1415,8 @@
       "linkTelegram": "Vincular Telegram",
       "linkGoogle": "Vincular Google",
       "linkX": "Vincular X",
+      "splitEnter": "Entrar com esta conta",
+      "splitStay": "Ficar nesta conta",
       "unlink": "Desvincular",
       "unlinked": "O Telegram foi desvinculado.",
       "unlinkedGoogle": "O Google foi desvinculado.",
@@ -1433,6 +1435,8 @@
   },
   "chat": {
     "title": "Spoki Assistant",
+    "welcome": "Por onde começamos?",
+    "disclaimer": "O Spoki pode errar. Confira o que importa. Também no Telegram:",
     "jobFocus": {
       "discussing": "Falando de: {title} — {company}",
       "back": "Voltar à vaga"
@@ -1452,6 +1456,50 @@
       "two": "Design em meio período na Europa",
       "three": "Quem está contratando juniores?"
     },
+    "starters": {
+      "label": "Por onde começar",
+      "lanes": {
+        "find": "Me ajude a encontrar trabalho",
+        "hire": "Quero contratar para o meu projeto",
+        "demand": "Qual trabalho está mais em demanda agora"
+      },
+      "questions": {
+        "find01": "Me ajude a encontrar trabalho remoto",
+        "find02": "Quais vagas combinam com o meu perfil?",
+        "find03": "Mostre vagas de meio período",
+        "find04": "Quero trabalho remoto. Por onde começo?",
+        "find05": "Quais habilidades devo citar para afinar a busca?",
+        "find06": "Encontre trabalho que eu possa fazer de outro país",
+        "find07": "Estou começando. Quais vagas júnior estão abertas?",
+        "find08": "O que ainda falta no perfil para um encaixe melhor?",
+        "hire01": "Quero contratar alguém para o meu projeto",
+        "hire02": "Como publico uma vaga?",
+        "hire03": "Quanto custa publicar um cargo?",
+        "hire04": "Preciso de uma pessoa para um projeto curto",
+        "hire05": "Quantas pessoas podem entrar na empresa?",
+        "hire06": "Quero que um cargo seja visto mais rápido",
+        "demand01": "Que tipo de trabalho tem mais vagas abertas agora?",
+        "demand02": "Qual categoria tem mais vagas publicadas?",
+        "demand03": "Quantas vagas estão abertas?",
+        "demand04": "Onde devo olhar primeiro?",
+        "demand05": "Mostre os cargos que as empresas mais publicam",
+        "demand06": "Quero trabalho na categoria mais movimentada"
+      }
+    },
+    "applicationStatus": {
+      "line": "A candidatura está {status}.",
+      "applied": "enviada",
+      "viewed": "vista pela empresa",
+      "shortlisted": "na lista curta",
+      "interview": "na etapa de entrevista",
+      "offer": "na etapa de proposta",
+      "hired": "com contratação",
+      "rejected": "recusada",
+      "withdrawn": "retirada"
+    },
+    "jobQueued": {
+      "line": "{title} aguarda uma revisão. Ainda não está na lista."
+    },
     "placeholder": "Escreva uma mensagem",
     "send": "Enviar",
     "guestHint": "Salvar vagas, se candidatar e manter um perfil exigem uma conta.",
@@ -1461,11 +1509,14 @@
       "BOT_BUDGET_EXCEEDED": "O agente atingiu o limite de hoje. Use a busca de vagas; o agente volta amanhã.",
       "BOT_TRY_LATER": "O agente não conseguiu responder. Tente novamente em um minuto.",
       "RATE_LIMITED": "Você enviou mensagens demais hoje. Tente novamente amanhã.",
+      "JOB_NEEDS_TEAM": "Isso precisa do plano Team. O formulário ainda pode publicar.",
+      "JOB_NEEDS_COMPANY": "Primeiro adicione uma empresa no formulário.",
       "generic": "Algo deu errado. Tente novamente."
     },
     "confirm": {
       "applyTitle": "Candidatar-se a esta vaga?",
       "profileTitle": "Salvar estas alterações no perfil?",
+      "jobTitle": "Enviar esta vaga para revisão?",
       "text": "Nada acontece até você confirmar.",
       "accept": "Confirmar",
       "decline": "Cancelar",
@@ -2263,6 +2314,572 @@
       "submitting": "Enviando…",
       "submittingLive": "Publicando…",
       "error": "Não foi possível enviar a vaga. Confira os campos obrigatórios."
+    }
+  },
+  "portfolioPage": {
+    "metaTitle": "THE ONYXIS — Digital Systems, Operations & Growth",
+    "metaDescription": "THE ONYXIS builds digital systems, operations and growth engines — from AI automation and web products to lead generation and process design.",
+    "body": {
+      "nav": [
+        {
+          "href": "#services",
+          "label": "Services"
+        },
+        {
+          "href": "#capabilities",
+          "label": "Capabilities"
+        },
+        {
+          "href": "#about",
+          "label": "About"
+        },
+        {
+          "href": "#profile",
+          "label": "Profile"
+        },
+        {
+          "href": "#social",
+          "label": "Connect"
+        }
+      ],
+      "heroEyebrow": "Digital systems · Operations · Growth",
+      "heroTitle": "THE ONYXIS",
+      "heroSubtitle": "THE ONYXIS is a personal brand and operating hub for digital systems, team leadership and growth — from AI automation and web products to lead generation and process design.",
+      "heroValue": "I help build what scales: processes, product and acquisition channels.",
+      "cta": "Start a project",
+      "ctaSecondary": "View profile",
+      "services": {
+        "index": "01",
+        "title": "Services",
+        "lead": "Not a tech dump — practical business problems solved end to end.",
+        "items": [
+          {
+            "id": "01",
+            "title": "AI & Automation",
+            "text": "Automating routines, AI agents and pipelines that reduce operational load and accelerate execution."
+          },
+          {
+            "id": "02",
+            "title": "Web & Digital Products",
+            "text": "Prototypes and digital products on a modern stack — from MVP to working infrastructure."
+          },
+          {
+            "id": "03",
+            "title": "Growth & Marketing",
+            "text": "Systematic lead generation and funnels across key channels, focused on conversion and monetization."
+          },
+          {
+            "id": "04",
+            "title": "Operations & Process Design",
+            "text": "Team structure, KPI and process design — so a service or product can scale without chaos."
+          }
+        ]
+      },
+      "capabilities": {
+        "index": "02",
+        "title": "Capabilities",
+        "lead": "Selected work — systems shipped or piloted.",
+        "stackLabel": "Stack",
+        "outcomeLabel": "Outcome",
+        "roleLabel": "Role",
+        "items": [
+          {
+            "id": "01",
+            "status": "PUBLIC",
+            "title": "Lead intake instead of a group chat",
+            "text": "A small service team took inbound from Instagram, Telegram and manual forwards. Qualification lived in one manager’s head — warm leads died overnight. Built one intake path (form / Telegram → table → status: new / qualified / call / dead), short qualification rules, and an owner ping if no reply in 12 working hours. Weekly review of why a lead died — not a vanity report.",
+            "stack": "Telegram bot · spreadsheet / Notion · webhooks · first-reply templates",
+            "outcome": "First reply from “whenever someone remembered” to under 2 hours on working days. Lost warm leads in a month: 8 → 2. Qualified calls: +6 on the same traffic.",
+            "role": "Operations + funnel design · 6 weeks"
+          },
+          {
+            "id": "02",
+            "status": "PILOT",
+            "title": "Research queue with a human in the loop",
+            "text": "Company cards were assembled by hand: site, socials, offer, “do we write?”. 25–40 minutes per card — sales waited on research. Built: domain list → public pages → short card (offer, geo, do-not-contact signals) → human accept / edit / reject. Rejected cards never reach outreach.",
+            "stack": "Python · LLM via OpenRouter · light RAG / saved pages · Notion as the card queue",
+            "outcome": "Card time ~35 min → ~8 min with review. 120 companies in the pilot, 18 dropped before the first message. No send without review.",
+            "role": "System design + agent workflow · 3 weeks"
+          },
+          {
+            "id": "03",
+            "status": "INTERNAL",
+            "title": "Delivery pipeline for a 4-person team",
+            "text": "Traffic, design, account, sales. Tasks lived in Telegram; “yesterday” was the default deadline — the owner could not see whether the bottleneck was sales or delivery. Built one deal pipeline: lead → proposal → delivery → done. Each stage has one owner and one artifact. Weekly review of three numbers only: new qualified, deals in progress, overdue tasks. Backlog separated from on-fire work. Telegram is an alert, not the database.",
+            "stack": "Notion (or Linear) · brief templates · Telegram alerts",
+            "outcome": "Overdue tasks at week-end: 11 → 3. Time from payment to work start: 5–6 days → 2 days. Account stopped being the only project memory.",
+            "role": "Team lead / process design · 8 weeks"
+          }
+        ],
+        "technologies": "Stack",
+        "stackLead": "Not a list for the sake of it — directions I actually use to build systems.",
+        "categories": [
+          {
+            "id": "01",
+            "title": "AI & Intelligence",
+            "status": "ACTIVE",
+            "items": [
+              "AI Agents",
+              "LLMs",
+              "Prompt Engineering",
+              "RAG",
+              "Knowledge Bases",
+              "AI Research",
+              "Multi-Agent Systems",
+              "OpenRouter"
+            ]
+          },
+          {
+            "id": "02",
+            "title": "Development",
+            "status": "ACTIVE",
+            "items": [
+              "Python",
+              "JavaScript",
+              "HTML / CSS",
+              "Git",
+              "GitHub",
+              "Cursor",
+              "VS Code"
+            ]
+          },
+          {
+            "id": "03",
+            "title": "Web & Infrastructure",
+            "status": "USED",
+            "items": [
+              "Vercel",
+              "Railway",
+              "APIs",
+              "Webhooks",
+              "ngrok",
+              "Telegram Bots"
+            ]
+          },
+          {
+            "id": "04",
+            "title": "Data & Research",
+            "status": "ACTIVE",
+            "items": [
+              "Qdrant",
+              "Data Processing",
+              "Web Research",
+              "Lead Research",
+              "Information Architecture",
+              "Structured Knowledge"
+            ]
+          },
+          {
+            "id": "05",
+            "title": "Systems & Automation",
+            "status": "ACTIVE",
+            "items": [
+              "Workflow Design",
+              "Process Automation",
+              "AI Automation",
+              "Agent Workflows",
+              "API Integration",
+              "Business Process Design"
+            ]
+          },
+          {
+            "id": "06",
+            "title": "Business & Growth",
+            "status": "ACTIVE",
+            "items": [
+              "Lead Generation",
+              "Prospecting",
+              "Content Strategy",
+              "SMM",
+              "Digital Marketing",
+              "Business Analysis",
+              "Product Thinking",
+              "Growth Experiments"
+            ]
+          }
+        ],
+        "exploring": "Exploring",
+        "exploringStatus": "EXPLORING",
+        "exploringLead": "Directions I am researching or want to grow. Not claimed expertise.",
+        "exploringItems": [
+          "Robotics",
+          "Web3",
+          "AI Products",
+          "Content Systems",
+          "Lead Generation",
+          "Digital Businesses",
+          "Personal Knowledge Systems"
+        ],
+        "whatIBuild": "What I Build",
+        "whatIBuildLead": "What I can create and which systems I know how to assemble.",
+        "builds": [
+          {
+            "title": "AI Agents",
+            "text": "Research, lead generation, content and task automation."
+          },
+          {
+            "title": "Business Systems",
+            "text": "Turning manual processes into repeatable workflows."
+          },
+          {
+            "title": "Web Projects",
+            "text": "Websites, dashboards and digital products."
+          },
+          {
+            "title": "Lead Generation",
+            "text": "Prospect research, qualification and outreach systems."
+          },
+          {
+            "title": "Content Systems",
+            "text": "Research, production and distribution."
+          },
+          {
+            "title": "Research Systems",
+            "text": "Structured research, knowledge bases and iterative search."
+          }
+        ],
+        "casesTitle": "Cases, experiments & research",
+        "casesLead": "Some of my projects and experiments are documented in more detail on Medium and Substack. I also occasionally share statistics, results and short updates on X.",
+        "cases": [
+          {
+            "title": "Medium / Substack",
+            "text": "Long-form cases, research and experiments.",
+            "links": [
+              {
+                "name": "Medium",
+                "href": "https://medium.com/@ap1m3n"
+              },
+              {
+                "name": "Substack",
+                "href": "https://substack.com/@markevans499986"
+              }
+            ]
+          },
+          {
+            "title": "X",
+            "text": "Short updates, statistics and progress.",
+            "links": [
+              {
+                "name": "X",
+                "href": "https://x.com/TheOnyxis"
+              }
+            ]
+          }
+        ]
+      },
+      "about": {
+        "index": "03",
+        "title": "About",
+        "statement": "Managing projects and teams, building systematic lead generation, and preparing processes for scale and the launch of own products.",
+        "basedInLabel": "Based in",
+        "basedIn": "Remote / EU",
+        "focusLabel": "Focus",
+        "focus": "Team Lead / Operations / Project / BD",
+        "currentlyLabel": "Currently",
+        "currently": "Building systems & ventures"
+      },
+      "profile": {
+        "index": "04",
+        "title": "Profile",
+        "coreFocus": "Core Focus",
+        "rolesLabel": "Focus roles",
+        "roles": [
+          "Team Lead",
+          "Operations Manager",
+          "Project Manager",
+          "Business Development Lead"
+        ],
+        "goalLabel": "Primary goal",
+        "goal": "Managing projects and teams, building systematic lead generation, preparing processes for scaling and launching own products.",
+        "domains": [
+          {
+            "id": "01",
+            "title": "Management & Leadership",
+            "subtitle": "Management & processes",
+            "items": [
+              {
+                "name": "Team Leadership",
+                "text": "Experience assembling, coordinating and aligning cross-functional teams (developers, marketers, designers)."
+              },
+              {
+                "name": "Process Design",
+                "text": "Understanding of management architecture: from task setting and KPI control to deadlines and final outcomes."
+              },
+              {
+                "name": "Strategic Planning",
+                "text": "Ability to break a global goal (service business → product) into staged team tasks."
+              }
+            ]
+          },
+          {
+            "id": "02",
+            "title": "Marketing, Sales & Lead Generation",
+            "subtitle": "Marketing & sales",
+            "items": [
+              {
+                "name": "Lead Generation & Sales Funnels",
+                "text": "Building lead acquisition funnels across key channels (Telegram, Instagram, TikTok, Facebook)."
+              },
+              {
+                "name": "B2B & Outreach",
+                "text": "Understanding of client acquisition, cold and warm traffic, networking and negotiations."
+              },
+              {
+                "name": "Growth Focus",
+                "text": "Focus on monetization, capital generation and rapid hypothesis testing."
+              }
+            ]
+          },
+          {
+            "id": "03",
+            "title": "Tech Stack & Crypto Competencies",
+            "subtitle": "Technology stack",
+            "note": "Hands-on / pet-projects / MVP experience. Architecture understanding, systems thinking, AI-assisted prototyping and clear communication with developers.",
+            "groups": [
+              {
+                "title": "Web3, Crypto & Economics",
+                "items": [
+                  {
+                    "name": "Crypto Foundations",
+                    "text": "Deep understanding of tokenomics, crypto-economics, emission mechanics, token distribution and Web3 monetization."
+                  },
+                  {
+                    "name": "Web3 Integration",
+                    "text": "Thirdweb SDK, WalletConnect Cloud APIs, EVM networks setup and work in MetaMask."
+                  },
+                  {
+                    "name": "Blockchain Data & Tools",
+                    "text": "The Graph (indexing and data), Remix IDE (smart contracts)."
+                  },
+                  {
+                    "name": "Telegram Crypto Ecosystem",
+                    "text": "Telegram Mini Apps development, payment mechanics and Telegram Stars (XTR) integration."
+                  }
+                ]
+              },
+              {
+                "title": "AI Tools & Autonomous Agents",
+                "items": [
+                  {
+                    "name": "AI Agents",
+                    "text": "Hermes Agent — research and practical setup of autonomous AI agents."
+                  },
+                  {
+                    "name": "AI CLI & Code Assistants",
+                    "text": "Cursor AI, Claude Code CLI, Gemini CLI, OpenAI Codex CLI, Google Antigravity."
+                  },
+                  {
+                    "name": "LLM Infrastructure",
+                    "text": "OpenRouter — LLM API aggregation and routing."
+                  }
+                ]
+              },
+              {
+                "title": "Backend, Data & Automation",
+                "items": [
+                  {
+                    "name": "Languages & Runtime",
+                    "text": "Python, Node.js (JavaScript)."
+                  },
+                  {
+                    "name": "Databases & BaaS",
+                    "text": "SQL (database design), Supabase (PostgreSQL, Auth, Realtime)."
+                  },
+                  {
+                    "name": "Automation & Integration",
+                    "text": "Workflow design, API integrations and business process automation."
+                  }
+                ]
+              },
+              {
+                "title": "Frontend & Mobile Development",
+                "items": [
+                  {
+                    "name": "Web Frontend",
+                    "text": "React, Next.js (14), Vue 3, Vite."
+                  },
+                  {
+                    "name": "Styling & UI",
+                    "text": "Tailwind CSS."
+                  },
+                  {
+                    "name": "Mobile & Cross-Platform",
+                    "text": "Flutter, Dart."
+                  }
+                ]
+              },
+              {
+                "title": "Infrastructure & Services",
+                "items": [
+                  {
+                    "name": "Deployment & Hosting",
+                    "text": "Vercel, Railway."
+                  },
+                  {
+                    "name": "Dev Utilities",
+                    "text": "Ngrok — tunneling and API testing."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "04",
+            "title": "Trading, Finance & Operations",
+            "subtitle": "Trading, finance & operations",
+            "groups": [
+              {
+                "title": "Trading & Financial Advisory",
+                "items": [
+                  {
+                    "name": "Crypto & Markets",
+                    "text": "Spot and futures crypto trading, market mechanics, fundamental and technical analysis."
+                  },
+                  {
+                    "name": "Risk & Portfolio Management",
+                    "text": "Risk management (Risk/Reward, Position Sizing), capital control and trading psychology."
+                  },
+                  {
+                    "name": "Financial Advisory",
+                    "text": "Advisory experience in personal finance, investment planning and asset structuring."
+                  }
+                ]
+              },
+              {
+                "title": "Analytics & Conversion Management",
+                "items": [
+                  {
+                    "name": "Funnel Analytics",
+                    "text": "Conversion analysis across the full funnel — from first contact to subscription or purchase."
+                  },
+                  {
+                    "name": "Data Organization",
+                    "text": "Collecting, processing and structuring data for traffic and sales decisions."
+                  }
+                ]
+              },
+              {
+                "title": "Knowledge & Project Systems",
+                "items": [
+                  {
+                    "name": "Second Brain Systems",
+                    "text": "Building personal and work knowledge bases in Notion and Obsidian (PARA / CODE)."
+                  },
+                  {
+                    "name": "Task Management",
+                    "text": "Project systematization, note-taking and task structuring for self and team."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "05",
+            "title": "Languages",
+            "subtitle": "Languages",
+            "items": [
+              {
+                "name": "Russian / Ukrainian",
+                "text": "Native"
+              },
+              {
+                "name": "English",
+                "text": "Intermediate (B1/B2) — written and working communication."
+              },
+              {
+                "name": "Italian / German",
+                "text": "Basic / conversational level."
+              }
+            ]
+          }
+        ]
+      },
+      "social": {
+        "index": "05",
+        "title": "Connect",
+        "channelsLabel": "Contact",
+        "channels": [
+          {
+            "label": "Telegram",
+            "hint": "fastest",
+            "href": "https://t.me/TheOnyxis"
+          },
+          {
+            "label": "Email",
+            "hint": "ap1m3n@gmail.com",
+            "href": "mailto:ap1m3n@gmail.com"
+          },
+          {
+            "label": "Discord",
+            "hint": "async",
+            "href": "https://discord.com/users/TheOnyxis"
+          },
+          {
+            "label": "X",
+            "hint": "public",
+            "href": "https://x.com/TheOnyxis"
+          }
+        ],
+        "links": [
+          {
+            "name": "The Onyxis",
+            "handle": "Personal brand / website",
+            "href": "#top"
+          },
+          {
+            "name": "LinkedIn",
+            "handle": "Personal",
+            "href": "https://www.linkedin.com/in/igor-kushnir-2a38272b5"
+          },
+          {
+            "name": "GitHub",
+            "handle": "Personal",
+            "href": "https://github.com/theonyxiesss"
+          },
+          {
+            "name": "Intgetion",
+            "handle": "Digital marketing agency",
+            "href": "/company"
+          },
+          {
+            "name": "INTGETION LinkedIn",
+            "handle": "Company",
+            "href": "https://www.linkedin.com/company/intgetion/"
+          },
+          {
+            "name": "X",
+            "handle": "@TheOnyxis",
+            "href": "https://x.com/TheOnyxis"
+          },
+          {
+            "name": "Telegram",
+            "handle": "@TheOnyxis",
+            "href": "https://t.me/TheOnyxis"
+          },
+          {
+            "name": "Medium",
+            "handle": "@ap1m3n",
+            "href": "https://medium.com/@ap1m3n"
+          },
+          {
+            "name": "Substack",
+            "handle": "@markevans499986",
+            "href": "https://substack.com/@markevans499986"
+          },
+          {
+            "name": "Instagram",
+            "handle": "@TheOnyxis",
+            "href": "https://instagram.com/TheOnyxis"
+          },
+          {
+            "name": "Discord",
+            "handle": "@TheOnyxis",
+            "href": "https://discord.com/users/TheOnyxis"
+          }
+        ]
+      },
+      "footerBlurb": "Digital systems, operations and growth — in one working hub.",
+      "copyright": "© 2026 THE ONYXIS"
     }
   }
 }

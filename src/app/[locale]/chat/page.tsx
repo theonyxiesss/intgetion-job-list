@@ -29,9 +29,7 @@ export default async function ChatPage({
         signedIn={user !== null}
         jobId={row?.id}
         focus={
-          row
-            ? { title: row.title, company: row.company.name }
-            : undefined
+          row ? { title: row.title, company: row.company.name } : undefined
         }
       />
     </main>

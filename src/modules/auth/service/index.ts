@@ -20,6 +20,7 @@ export {
   linkedOAuthAccounts,
   startGoogleSignIn,
   startXSignIn,
+  signInInsteadOfLink,
   unlinkOAuthProvider,
   linkTelegram,
   linkTelegramProfile,
@@ -28,6 +29,7 @@ export {
   signInWithTelegramProfile,
   unlinkTelegram,
   updateMe,
+  requireActiveUserById,
   userIdForAuthUid,
   userIdForTelegramId,
 } from "./auth-service";

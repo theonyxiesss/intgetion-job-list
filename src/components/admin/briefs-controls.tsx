@@ -138,11 +138,7 @@ export function BriefSlotForm({
           checked={enabled}
           onChange={(event) => setEnabled(event.target.checked)}
         />
-        <Button
-          variant="secondary"
-          loading={pending === "save"}
-          onClick={save}
-        >
+        <Button variant="secondary" loading={pending === "save"} onClick={save}>
           {t("save")}
         </Button>
       </div>

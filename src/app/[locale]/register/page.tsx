@@ -23,7 +23,9 @@ export default async function RegisterPage({
   setRequestLocale(locale);
   const t = await getTranslations("auth");
   const { next: rawNext } = await searchParams;
-  const next: LoginNext | undefined = isLoginNext(rawNext) ? rawNext : undefined;
+  const next: LoginNext | undefined = isLoginNext(rawNext)
+    ? rawNext
+    : undefined;
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
   if (user) redirect(loginReturnHref(locale, next));
@@ -35,11 +37,7 @@ export default async function RegisterPage({
         <p>
           {t("haveAccount")}{" "}
           <Link
-            href={
-              next
-                ? { pathname: "/login", query: { next } }
-                : "/login"
-            }
+            href={next ? { pathname: "/login", query: { next } } : "/login"}
             className="underline underline-offset-4"
           >
             {t("toLogin")}

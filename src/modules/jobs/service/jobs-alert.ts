@@ -208,7 +208,10 @@ export function jobsAlertFreshnessLine(
 }
 
 /** Fixed English channel card. No description, no skills, no LLM (D341, D389). */
-export function jobsAlertText(row: JobsAlertRow, now: Date = new Date()): string {
+export function jobsAlertText(
+  row: JobsAlertRow,
+  now: Date = new Date(),
+): string {
   const lines = [
     `💼 ${jobsAlertSingleLine(row.title)}`,
     `🏛️ at ${jobsAlertSingleLine(row.companyName)}`,
