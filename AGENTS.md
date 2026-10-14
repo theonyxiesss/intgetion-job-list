@@ -80,22 +80,22 @@ Skills live outside the repo: Cursor plugins in `~/.cursor/plugins/cache/cursor-
 
 Pick the fewest skills the task needs (usually 1–3), name them in the plan, and read each before acting:
 
-| Task touches                                    | Read first                                                                                                             |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Any Next.js API, routing, `src/proxy.ts`, cache | `node_modules/next/dist/docs/` (this version beats training data and every skill)                                      |
-| Vercel env, deploy, CLI                         | `.claude/skills/intgetion-vercel/SKILL.md` (project, D407); vercel: `env-vars`, `deployments-cicd`, `vercel-cli`       |
-| Vercel functions, middleware, caching           | vercel: `vercel-functions`, `routing-middleware`, `cdn-caching`, `runtime-cache`                                       |
-| React components, render cost                   | vercel: `react-best-practices`                                                                                         |
-| Supabase schema, auth, RLS, migrations          | `.claude/skills/intgetion-supabase/SKILL.md` (project, D407); supabase: `supabase`, `supabase-postgres-best-practices` |
-| Email (Resend, auth send-email hook)            | resend: `resend`, `email-best-practices`                                                                               |
-| Bug, failing test, flaky behaviour              | superpowers: `systematic-debugging`                                                                                    |
-| New behaviour with tests                        | superpowers: `test-driven-development`                                                                                 |
-| Before saying "done"                            | superpowers: `verification-before-completion`                                                                          |
-| Review of a diff                                | Cursor `review`, `review-security`; superpowers `requesting-code-review` / `receiving-code-review`                     |
-| Other library docs (Drizzle, viem, next-intl)   | context7: `context7-mcp`                                                                                               |
-| Crypto checkout, WalletConnect, the pay QR      | `.cursor/skills/walletconnect/SKILL.md` (project skill, D406)                                                          |
-| Telegram bot, webhook, Spoki in the bot         | `.claude/skills/intgetion-telegram-bot/SKILL.md` (project, D410)                                                       |
-| Telegram login, Mini App, alerts, the channel   | `.claude/skills/intgetion-telegram/SKILL.md` (project, D410)                                                           |
+| Task touches                                    | Read first                                                                                                                                                                   |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Any Next.js API, routing, `src/proxy.ts`, cache | `node_modules/next/dist/docs/` (this version beats training data and every skill)                                                                                            |
+| Vercel env, deploy, CLI                         | `.claude/skills/intgetion-vercel/SKILL.md` (project, D407); vercel: `env-vars`, `deployments-cicd`, `vercel-cli`                                                             |
+| Vercel functions, middleware, caching           | vercel: `vercel-functions`, `routing-middleware`, `cdn-caching`, `runtime-cache`                                                                                             |
+| Pages, layout, React components                 | `.claude/skills/intgetion-design/SKILL.md` (project, D418, a11y D421) together with vercel `react-best-practices`. Design owns the look; the frontend skill owns render cost |
+| Supabase schema, auth, RLS, migrations          | `.claude/skills/intgetion-supabase/SKILL.md` (project, D407); supabase: `supabase`, `supabase-postgres-best-practices`                                                       |
+| Email (Resend, auth send-email hook)            | resend: `resend`, `email-best-practices`                                                                                                                                     |
+| Bug, failing test, flaky behaviour              | superpowers: `systematic-debugging`                                                                                                                                          |
+| New behaviour with tests                        | superpowers: `test-driven-development`                                                                                                                                       |
+| Before saying "done"                            | superpowers: `verification-before-completion`                                                                                                                                |
+| Review of a diff                                | Cursor `review`, `review-security`; superpowers `requesting-code-review` / `receiving-code-review`                                                                           |
+| Other library docs (Drizzle, viem, next-intl)   | context7: `context7-mcp`                                                                                                                                                     |
+| Crypto checkout, WalletConnect, the pay QR      | `.cursor/skills/walletconnect/SKILL.md` (project skill, D406)                                                                                                                |
+| Telegram bot, webhook, Spoki in the bot         | `.claude/skills/intgetion-telegram-bot/SKILL.md` (project, D410)                                                                                                             |
+| Telegram login, Mini App, alerts, the channel   | `.claude/skills/intgetion-telegram/SKILL.md` (project, D410)                                                                                                                 |
 
 No plugin skill covers matching (`docs/how-it-works/matching.md`). The site bot and Telegram are the project skills `intgetion-telegram-bot` and `intgetion-telegram` (`docs/how-it-works/bot.md`).
 
