@@ -1,4 +1,5 @@
 import {
+  LIVE_STALE_AFTER_MS,
   fetchJson,
   hours,
   idOf,
@@ -64,6 +65,7 @@ export const remoteOkSource: LiveSource = {
   url: REMOTEOK_JOBS_URL,
   minIntervalMs: hours(6),
   newPerRun: 15,
+  staleAfterMs: LIVE_STALE_AFTER_MS,
   async fetch(fetchImpl) {
     // The first element is the legal notice; it has no url and is dropped.
     return mapRows(

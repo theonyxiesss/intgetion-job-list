@@ -12,11 +12,20 @@ export interface LiveSource {
   readonly minIntervalMs: number;
   /** New jobs per run, so the catalog grows evenly; known ones still refresh. */
   readonly newPerRun: number;
+  /**
+   * The feed is only the newest N jobs, so a job missing from it is not
+   * closed. It expires when no run has seen it this long, or at the
+   * source's own expiry date (D412).
+   */
+  readonly staleAfterMs: number;
   fetch(fetchImpl?: typeof fetch): Promise<RawImportedJob[]>;
 }
 
 const FETCH_TIMEOUT_MS = 15_000;
 export const hours = (count: number) => count * 60 * 60 * 1000;
+export const days = (count: number) => hours(count * 24);
+/** D412: a live job not seen for 30 days is treated as closed. */
+export const LIVE_STALE_AFTER_MS = days(30);
 
 /** Fetch JSON with the 13.1 timeout and our name in the user agent. */
 export async function fetchJson(

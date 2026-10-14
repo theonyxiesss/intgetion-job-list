@@ -1,4 +1,8 @@
 import { sql } from "drizzle-orm";
+import {
+  canSyndicateImportedSource,
+  SYNDICATED_IMPORT_SOURCES,
+} from "@/config/import-sources";
 import { getDb } from "@/db/client";
 import type { SalaryBasis, SalaryPeriod } from "@/lib/money";
 import { currencyExponent, toMoneyDto } from "@/lib/money";
@@ -231,13 +235,21 @@ export function isJobsAlertCandidate(input: {
   sentAt: Date | null;
   firstPublishedAt: Date | null;
   watermark: Date | null;
-  remotive: boolean;
+  /** Primary source of an imported job; null for our own jobs. */
+  importedSource: string | null;
   host: string;
 }): boolean {
   if (input.status !== "published" || input.sentAt) return false;
   if (!input.firstPublishedAt || !input.watermark) return false;
   if (input.firstPublishedAt < input.watermark) return false;
-  if (isIntgetionHost(input.host) && input.remotive) return false;
+  // D412: only sources whose terms allow third-party sites reach the channel.
+  if (
+    isIntgetionHost(input.host) &&
+    input.importedSource !== null &&
+    !canSyndicateImportedSource(input.importedSource)
+  ) {
+    return false;
+  }
   return true;
 }
 
@@ -293,7 +305,11 @@ export async function deliverJobsAlert(input: {
   host: string;
   exclude: readonly string[];
 }): Promise<{ status: JobsAlertDelivery; id?: string }> {
-  const blockRemotive = isIntgetionHost(input.host);
+  const limitSources = isIntgetionHost(input.host);
+  const allowedSources = sql.join(
+    SYNDICATED_IMPORT_SOURCES.map((name) => sql`${name}`),
+    sql`, `,
+  );
   const excludeClause =
     input.exclude.length === 0
       ? sql`true`
@@ -331,12 +347,14 @@ export async function deliverJobsAlert(input: {
           where m.filename = ${JOBS_ALERT_MIGRATION}
         )
         and not (
-          ${blockRemotive}
-          and exists (
+          ${limitSources}
+          and j.source = 'imported'
+          and not exists (
             select 1
             from public.job_sources s
             join public.import_sources i on i.id = s.import_source_id
-            where s.job_id = j.id and i.name = 'Remotive'
+            where s.job_id = j.id and s.is_primary
+              and i.name in (${allowedSources})
           )
         )
       order by (

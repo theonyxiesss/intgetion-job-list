@@ -29,9 +29,33 @@ export type ImportedJobWrite = {
   reason: string;
 };
 
+type JobStatus = (typeof jobs.$inferSelect)["status"];
+
+/** A person's decision (an admin, the production cleanup) a feed never undoes. */
+const HELD_STATUSES: readonly JobStatus[] = ["removed", "closed", "paused"];
+
+/**
+ * The status a feed record leaves behind (D412). Removed, closed and paused
+ * jobs stay as they are. A sensitive sector waits for an admin, unless the
+ * job is already published (approved before) or already waiting.
+ */
+export function importedStatusAfterFeed(input: {
+  previous: JobStatus | null;
+  next: ImportedJobStatus;
+  sensitive: boolean;
+}): JobStatus | null {
+  const { previous, next } = input;
+  if (previous && HELD_STATUSES.includes(previous)) return null;
+  if (next !== "published") return next;
+  if (previous === "pending_moderation") return "pending_moderation";
+  if (input.sensitive && previous !== "published") return "pending_moderation";
+  return "published";
+}
+
 /**
  * Writes normalized ingestion output (8A). Only imported jobs: an internal
- * job is never overwritten, and employers cannot edit these (D9).
+ * job is never overwritten, and employers cannot edit these (D9). A job a
+ * person removed, closed or paused is left untouched (D412).
  */
 export async function saveImportedJob(input: ImportedJobWrite) {
   return getDb().transaction(async (tx) => {
@@ -41,13 +65,15 @@ export async function saveImportedJob(input: ImportedJobWrite) {
     if (previous && previous.source !== "imported") {
       throw new Error("Imported jobs cannot overwrite an internal job");
     }
+    const status = importedStatusAfterFeed({
+      previous: previous?.status ?? null,
+      next: input.status,
+      sensitive: isSensitiveSector(input.sectors ?? []),
+    });
+    if (previous && status === null) return previous;
+    if (status === null) throw new Error("A new imported job needs a status");
     const now = new Date();
-    const removed = input.status === "removed";
-    const sensitive =
-      input.status === "published" && isSensitiveSector(input.sectors ?? []);
-    const status: ImportedJobStatus | "pending_moderation" = sensitive
-      ? "pending_moderation"
-      : input.status;
+    const removed = status === "removed";
     const values = {
       companyId: input.companyId,
       title: input.title,
@@ -102,8 +128,11 @@ export async function saveImportedJob(input: ImportedJobWrite) {
   });
 }
 
-/** 13.4: published imported jobs missing from their sources become expired. */
-export async function expireImportedJobs(jobIds: string[]) {
+/** 13.4, D412: published imported jobs their sources no longer list become expired. */
+export async function expireImportedJobs(
+  jobIds: string[],
+  reason = "missing_from_source_runs",
+) {
   if (!jobIds.length) return 0;
   return getDb().transaction(async (tx) => {
     const expired = await tx
@@ -123,7 +152,7 @@ export async function expireImportedJobs(jobIds: string[]) {
         fromStatus: "published",
         toStatus: "expired",
         actorId: null,
-        reason: "missing_from_source_runs",
+        reason,
       });
     }
     return expired.length;

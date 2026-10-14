@@ -1,5 +1,6 @@
 import { formatMoneyDto } from "@/lib/money";
 import { siteUrl } from "@/lib/supabase/env";
+import { canSyndicateJob } from "@/config/import-sources";
 import { PRODUCT_NAME } from "@/config/product";
 import type { JobSearchQuery } from "../schemas/search";
 import { searchJobs } from "./public-search";
@@ -25,7 +26,8 @@ export async function renderJobFeed(
       locale,
       selfPath: channel.selfPath,
     },
-    result.items.map((job) => ({
+    // D412: imported jobs only from sources that allow third-party sites.
+    result.items.filter(canSyndicateJob).map((job) => ({
       id: job.id,
       title: job.title,
       companyName: job.company.name,

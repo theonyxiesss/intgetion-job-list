@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { hasLocale } from "next-intl";
+import { canSyndicateJob } from "@/config/import-sources";
 import { routing } from "@/i18n/routing";
 import { notFound, toErrorResponse } from "@/lib/http";
 import { formatMoneyDto } from "@/lib/money";
@@ -37,7 +38,8 @@ export async function GET(
         siteUrl,
         locale,
       },
-      items.map((job) => ({
+      // D412: imported jobs only from sources that allow third-party sites.
+      items.filter(canSyndicateJob).map((job) => ({
         id: job.id,
         title: job.title,
         companyName: job.company.name,

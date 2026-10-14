@@ -4,6 +4,8 @@ import { notFound, toErrorResponse } from "@/lib/http";
 import { runFixtureImports, runLiveImports } from "@/modules/ingestion/service";
 
 export const dynamic = "force-dynamic";
+/** D412: one live source per call stops taking records after 200 s. */
+export const maxDuration = 300;
 
 function authorized(request: Request): boolean {
   const secret = process.env.CRON_SECRET;
@@ -14,8 +16,9 @@ function authorized(request: Request): boolean {
 }
 
 /**
- * Hourly import. With IMPORT_LIVE_ENABLED the approved live sources run
- * (8B, D375). Otherwise the fixture sources run, and they never mix.
+ * Hourly import. With IMPORT_LIVE_ENABLED the most overdue approved live
+ * source runs (8B, D375, D412). Otherwise the fixture sources run, only
+ * against a local database, and the two never mix.
  */
 export async function GET(request: Request) {
   try {

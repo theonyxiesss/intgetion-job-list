@@ -1,5 +1,16 @@
 # MISSION_LOG
 
+## [2026-10-14] — импорт: стабилизация четырёх API (D412) — DONE в коде, NOT DONE на production
+
+- Сделано: этап 1 — разбор по облачной базе только чтением. Снимать 131 вакансию: 18 выдуманных из фикстур (19 строк источника, одна вакансия в двух лентах) и 113 из снимков 2026-10-04. У них 0 откликов, 0 сохранений, 0 покупок; 1 отзыв, 2 беседы бота, 23 события аналитики, 2 записи модерации — остаются при смене статуса. Этап 2 — код: один живой источник за вызов, бюджет 200 с, `maxDuration` 300, закрытие зависших прогонов, пакетные запросы `findLinkedJobIds` и `touchSourceRows`, окно 30 дней вместо «нет в ленте», дата окончания от источника, импорт не трогает `removed`/`closed`/`paused`, фикстуры только при локальной базе, в канал и RSS из импорта только Jobicy.
+- Команды проверки: `pnpm typecheck` → 0. `pnpm lint` → 0. `pnpm test` → 0 (1011 прошло, 1 пропущен). `pnpm build` → 0 (с `SWC_NATIVE_BINDING_CACHE`). Интеграционные тесты (`ingestion.integration.test.ts`) не запускались: нужна локальная база Supabase, её нет; идут в CI.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `src/modules/ingestion/service/ingest-fixtures.ts`, `src/modules/ingestion/service/fixture-guard.ts` (новый), `src/modules/ingestion/service/outcome.ts`, `src/modules/ingestion/repo/import-repo.ts`, `src/modules/ingestion/adapters/live.ts`, `remotive.ts`, `himalayas.ts`, `jobicy.ts`, `remoteok.ts`, `src/modules/jobs/service/imported-jobs.ts`, `src/modules/jobs/service/jobs-alert.ts`, `src/modules/jobs/service/job-feed.ts`, `src/app/[locale]/jobs/rss.xml/route.ts`, `src/app/api/cron/import/route.ts`, `src/config/import-sources.ts` (новый), тесты `live-run.test.ts`, `imported-status.test.ts`, `import-sources.test.ts`, `jobs-alert.test.ts`, `docs/tz/13-import.md`, `docs/DECISIONS.md`, `docs/OPEN_TASKS.md`, `docs/CURRENT.md`, эта запись
+- Отклонения от ТЗ: 13.4 «два прогона подряд» оставлено только фикстурам (D412)
+- OPEN QUESTION: оставлять ли Remote OK вне канала и RSS — его условия о сторонних сайтах молчат; выбрано консервативно «нет»
+- Следующая подфаза: production по шагам из `docs/OPEN_TASKS.md` — каждый после «да» основателя
+
 ## [2026-10-14] — вакансия из бота на тарифе «Команда» (D411) — DONE
 
 - Сделано: на тарифе «Команда» бот принимает роль и критерии, показывает карточку и ставит вакансию в очередь админа. Без тарифа или без компании открывает форму. Кандидатов не ищет. Промпт версии 13. На сайт не выкладывалось.

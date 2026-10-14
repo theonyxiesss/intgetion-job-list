@@ -5,7 +5,9 @@ import {
   gt,
   inArray,
   isNotNull,
+  isNull,
   lt,
+  lte,
   ne,
   sql,
 } from "drizzle-orm";
@@ -168,6 +170,63 @@ export async function findOrCreateImportedCompany(
   return created;
 }
 
+export const STALE_RUN_ERROR = "timed_out: the run never finished";
+
+/**
+ * Unfinished runs older than `before` died with their function (timeout).
+ * They get an error and a finish time so they never count as a success.
+ */
+export async function closeStaleRuns(sourceId: string, before: Date) {
+  const closed = await getDb()
+    .update(importRuns)
+    .set({ finishedAt: new Date(), error: STALE_RUN_ERROR })
+    .where(
+      and(
+        eq(importRuns.sourceId, sourceId),
+        isNull(importRuns.finishedAt),
+        lt(importRuns.startedAt, before),
+      ),
+    )
+    .returning({ id: importRuns.id });
+  return closed.length;
+}
+
+/** External id → job id for the ids of one feed, in one query. */
+export async function findLinkedJobIds(
+  sourceId: string,
+  externalIds: readonly string[],
+): Promise<Map<string, string>> {
+  if (!externalIds.length) return new Map();
+  const rows = await getDb()
+    .select({ externalId: jobSources.externalId, jobId: jobSources.jobId })
+    .from(jobSources)
+    .where(
+      and(
+        eq(jobSources.importSourceId, sourceId),
+        inArray(jobSources.externalId, [...externalIds]),
+      ),
+    );
+  return new Map(rows.map((row) => [row.externalId, row.jobId]));
+}
+
+/** The feed still lists these jobs: one update, before any slow work. */
+export async function touchSourceRows(
+  sourceId: string,
+  externalIds: readonly string[],
+  seenAt: Date,
+) {
+  if (!externalIds.length) return;
+  await getDb()
+    .update(jobSources)
+    .set({ lastSeenAt: seenAt })
+    .where(
+      and(
+        eq(jobSources.importSourceId, sourceId),
+        inArray(jobSources.externalId, [...externalIds]),
+      ),
+    );
+}
+
 export async function findLinkedJobId(
   sourceId: string,
   externalId: string,
@@ -276,7 +335,30 @@ export async function sourceRowsNotSeenSince(sourceId: string, since: Date) {
     );
 }
 
-/** Finished runs of a source that started after a moment. */
+/** Published imported jobs of this source whose source expiry date passed. */
+export async function sourceJobsPastExpiry(
+  sourceId: string,
+  now: Date,
+): Promise<string[]> {
+  const rows = await getDb()
+    .select({ jobId: jobSources.jobId })
+    .from(jobSources)
+    .innerJoin(jobs, eq(jobs.id, jobSources.jobId))
+    .where(
+      and(
+        eq(jobSources.importSourceId, sourceId),
+        eq(jobs.source, "imported"),
+        eq(jobs.status, "published"),
+        lte(jobs.expiresAt, now),
+      ),
+    );
+  return rows.map((row) => row.jobId);
+}
+
+/**
+ * Successful runs of a source that started after a moment. A run that
+ * timed out or stopped at its time budget did not read the whole feed (D412).
+ */
 export async function finishedRunsSince(sourceId: string, since: Date) {
   const [row] = await getDb()
     .select({ count: sql<number>`count(*)::int` })
@@ -285,6 +367,7 @@ export async function finishedRunsSince(sourceId: string, since: Date) {
       and(
         eq(importRuns.sourceId, sourceId),
         isNotNull(importRuns.finishedAt),
+        isNull(importRuns.error),
         gt(importRuns.startedAt, since),
       ),
     );

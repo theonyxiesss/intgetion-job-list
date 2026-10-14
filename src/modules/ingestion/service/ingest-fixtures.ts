@@ -11,8 +11,16 @@ import { rssFixtureAdapter } from "../adapters/rss-fixture";
 import type { ImportAdapter, RawImportedJob } from "../adapters/types";
 import * as repo from "../repo/import-repo";
 import { pickDuplicate } from "./dedup";
+import {
+  fixtureImportAllowed,
+  FIXTURES_NEED_LOCAL_DATABASE,
+} from "./fixture-guard";
 import { normalizeImportedJob, type SkillResolver } from "./normalize";
-import { decideOutcome, isMissingEverywhere } from "./outcome";
+import {
+  decideOutcome,
+  isMissingEverywhere,
+  isStaleEverywhere,
+} from "./outcome";
 
 export const FIXTURE_ADAPTERS: readonly ImportAdapter[] = [
   apiFixtureAdapter,
@@ -36,6 +44,14 @@ export const LIVE_SOURCES: readonly LiveSource[] = [
 export const MIN_RUN_INTERVAL_MS = 60 * 60 * 1000;
 /** 13.1: at most 500 records per run. */
 export const MAX_RECORDS_PER_RUN = 500;
+/**
+ * D412: the cron function may live 300 s. A live run stops taking records
+ * after 200 s, so it can still expire, finish and log what it did.
+ */
+export const LIVE_TIME_BUDGET_MS = 200_000;
+/** An unfinished run older than this died with its function (D412). */
+export const STALE_RUN_AFTER_MS = 15 * 60 * 1000;
+export const TIME_BUDGET_ERROR = "partial: the time budget ran out";
 
 export type ImportReport = repo.RunCounters & {
   source: string;
@@ -49,10 +65,16 @@ type Dependencies = {
   resolveSkill: SkillResolver;
   isScam: (text: string) => boolean;
   now: () => Date;
+  /** Wall clock for the time budget, apart from `now` so tests can move it. */
+  clock: () => number;
+  /** Fixtures run only when this is a database on this machine (D412). */
+  databaseUrl: () => string | undefined;
   /** Live sources run less often, by their own terms (D375). */
   minIntervalMs?: number;
   /** When set, only this many new jobs are written; known ones still refresh. */
   createLimit?: number;
+  /** When set, records after this long wait for the next run (D412). */
+  timeBudgetMs?: number;
   /** Live sources: the stored row decides whether the source may run. */
   live?: LiveSource;
 };
@@ -67,6 +89,8 @@ const defaults: Dependencies = {
   },
   isScam: matchesScamPattern,
   now: () => new Date(),
+  clock: () => Date.now(),
+  databaseUrl: () => process.env.DATABASE_URL,
 };
 
 function emptyCounters(): repo.RunCounters {
@@ -80,11 +104,22 @@ function emptyCounters(): repo.RunCounters {
   };
 }
 
-/** Runs every fixture source once (8A); no network access at all. */
+/**
+ * Runs every fixture source once (8A); no network access at all. Against a
+ * database that is not on this machine nothing runs (D412).
+ */
 export async function runFixtureImports(
   overrides: Partial<Dependencies> = {},
 ): Promise<ImportReport[]> {
   const deps: Dependencies = { ...defaults, ...overrides };
+  if (!fixtureImportAllowed(deps.databaseUrl())) {
+    return deps.adapters.map((adapter) => ({
+      ...emptyCounters(),
+      source: adapter.sourceName,
+      skipped: true,
+      error: FIXTURES_NEED_LOCAL_DATABASE,
+    }));
+  }
   const reports: ImportReport[] = [];
   for (const adapter of deps.adapters) {
     reports.push(await importSource(adapter, deps));
@@ -94,31 +129,41 @@ export async function runFixtureImports(
 }
 
 /**
- * Runs every approved live source once (8B, D375), each by its own interval
- * and with a budget of new jobs per run so the catalog grows evenly.
+ * Runs the most overdue approved live source (8B, D375) with a budget of new
+ * jobs and of time. One source per call (D412): the hourly cron reaches each
+ * of them in turn, and a slow one cannot starve the others.
  */
 export async function runLiveImports(
   overrides: Partial<Dependencies> & { sources?: readonly LiveSource[] } = {},
 ): Promise<ImportReport[]> {
   const { sources = LIVE_SOURCES, ...rest } = overrides;
   const now = rest.now ?? defaults.now;
-  const reports: ImportReport[] = [];
+  const registered: { live: LiveSource; lastRunAt: number }[] = [];
   for (const live of sources) {
+    const row = await repo.ensureLiveSource(live);
+    registered.push({ live, lastRunAt: row.lastRunAt?.getTime() ?? 0 });
+  }
+  // Never run first, then the oldest last run. The sort is stable.
+  registered.sort((a, b) => a.lastRunAt - b.lastRunAt);
+
+  const reports: ImportReport[] = [];
+  for (const { live } of registered) {
     const adapter: ImportAdapter = {
       sourceName: live.sourceName,
       kind: live.kind,
       loadFixture: () => live.fetch(),
     };
-    reports.push(
-      await importSource(adapter, {
-        ...defaults,
-        load: () => live.fetch(),
-        ...rest,
-        minIntervalMs: live.minIntervalMs,
-        createLimit: live.newPerRun,
-        live,
-      }),
-    );
+    const report = await importSource(adapter, {
+      ...defaults,
+      load: () => live.fetch(),
+      timeBudgetMs: LIVE_TIME_BUDGET_MS,
+      ...rest,
+      minIntervalMs: live.minIntervalMs,
+      createLimit: live.newPerRun,
+      live,
+    });
+    reports.push(report);
+    if (!report.skipped) break;
   }
   await repo.pruneImportRunHistory(now());
   return reports;
@@ -132,10 +177,15 @@ async function importSource(
   const source = deps.live
     ? await repo.ensureLiveSource(deps.live)
     : await repo.ensureFixtureSource(adapter);
+  await repo.closeStaleRuns(
+    source.id,
+    new Date(now.getTime() - STALE_RUN_AFTER_MS),
+  );
   const counters = emptyCounters();
   const switchedOff =
     deps.live !== undefined && !(source.enabled && source.republishAllowed);
   const interval = deps.minIntervalMs ?? MIN_RUN_INTERVAL_MS;
+  // Every started run counts, a failed one too: the source's request limit.
   if (
     switchedOff ||
     (await repo.sourceStartedSince(
@@ -152,11 +202,35 @@ async function importSource(
   }
 
   const run = await repo.beginImportRun(source.id, now);
+  const startedAt = deps.clock();
+  let partial = false;
   try {
     const loaded = (await deps.load(adapter)).slice(0, MAX_RECORDS_PER_RUN);
-    const records = await withinBudget(source.id, loaded, deps.createLimit);
+    const linked = await repo.findLinkedJobIds(source.id, [
+      ...new Set(loaded.map((record) => record.externalId.trim())),
+    ]);
+    const records =
+      deps.createLimit === undefined
+        ? loaded
+        : withinCreateBudget(loaded, new Set(linked.keys()), deps.createLimit);
     counters.fetched = records.length;
-    for (const raw of records) {
+    // Still listed, so still open, even if the budget stops before its turn.
+    await repo.touchSourceRows(source.id, [...linked.keys()], now);
+    // New jobs first: a known one was just marked as seen.
+    const isKnown = (record: RawImportedJob) =>
+      linked.has(record.externalId.trim());
+    const ordered = [
+      ...records.filter((record) => !isKnown(record)),
+      ...records.filter(isKnown),
+    ];
+    for (const raw of ordered) {
+      if (
+        deps.timeBudgetMs !== undefined &&
+        deps.clock() - startedAt > deps.timeBudgetMs
+      ) {
+        partial = true;
+        break;
+      }
       const job = await normalizeImportedJob(
         raw,
         deps.resolveSkill,
@@ -167,7 +241,7 @@ async function importSource(
         job.companyName,
         job.companyDomain,
       );
-      const linkedJobId = await repo.findLinkedJobId(source.id, job.externalId);
+      const linkedJobId = linked.get(job.externalId) ?? null;
       const duplicate = pickDuplicate(
         job,
         (
@@ -213,19 +287,30 @@ async function importSource(
         job.applyUrl,
         now,
       );
+      linked.set(job.externalId, saved.id);
       if (outcome.queueForReview) {
         await repo.queueRejectedImport(saved.id, outcome.reason);
       }
       counters[outcome.counter] += 1;
     }
-    counters.expired += await expireMissing(source.id, now);
-    await repo.finishImportRun(run.id, counters, null);
-    await repo.markSourceRun(source.id, "success");
+    if (deps.live) {
+      counters.expired += await expireStale(
+        source.id,
+        now,
+        deps.live.staleAfterMs,
+      );
+    } else if (!partial) {
+      // «Missing from the feed» needs the whole feed read.
+      counters.expired += await expireMissing(source.id, now);
+    }
+    const error = partial ? TIME_BUDGET_ERROR : null;
+    await repo.finishImportRun(run.id, counters, error);
+    await repo.markSourceRun(source.id, partial ? "partial" : "success");
     return {
       ...counters,
       source: adapter.sourceName,
       skipped: false,
-      error: null,
+      error,
     };
   } catch (error) {
     const message =
@@ -241,18 +326,37 @@ async function importSource(
   }
 }
 
-async function withinBudget(
+/**
+ * Live feeds (D412): published jobs no source has listed within the window,
+ * and jobs whose own expiry date from the source has passed.
+ */
+async function expireStale(
   sourceId: string,
-  records: RawImportedJob[],
-  limit: number | undefined,
-): Promise<RawImportedJob[]> {
-  if (limit === undefined) return records;
-  const linked = new Set<string>();
-  for (const record of records) {
-    const id = record.externalId.trim();
-    if (await repo.findLinkedJobId(sourceId, id)) linked.add(id);
+  now: Date,
+  staleAfterMs: number,
+): Promise<number> {
+  const cutoff = new Date(now.getTime() - staleAfterMs);
+  const unseen = await repo.sourceRowsNotSeenSince(sourceId, cutoff);
+  const seenByJob = new Map<string, { lastSeenAt: Date }[]>();
+  if (unseen.length) {
+    const rows = await repo.sourceRowsOfJobs([
+      ...new Set(unseen.map((row) => row.jobId)),
+    ]);
+    for (const row of rows) {
+      seenByJob.set(row.jobId, [
+        ...(seenByJob.get(row.jobId) ?? []),
+        { lastSeenAt: row.lastSeenAt },
+      ]);
+    }
   }
-  return withinCreateBudget(records, linked, limit);
+  const stale = [...seenByJob.entries()]
+    .filter(([, seen]) => isStaleEverywhere(seen, cutoff))
+    .map(([jobId]) => jobId);
+  const pastExpiry = await repo.sourceJobsPastExpiry(sourceId, now);
+  return expireImportedJobs(
+    [...new Set([...stale, ...pastExpiry])],
+    "not_seen_within_window",
+  );
 }
 
 /** Published jobs from this source that every one of their sources lost. */

@@ -1,4 +1,5 @@
 import {
+  LIVE_STALE_AFTER_MS,
   employment,
   fetchJson,
   hours,
@@ -73,6 +74,7 @@ export const remotiveSource: LiveSource = {
   url: REMOTIVE_JOBS_URL,
   minIntervalMs: hours(6),
   newPerRun: 15,
+  staleAfterMs: LIVE_STALE_AFTER_MS,
   async fetch(fetchImpl) {
     const body = (await fetchJson(REMOTIVE_JOBS_URL, fetchImpl)) as {
       jobs?: unknown;

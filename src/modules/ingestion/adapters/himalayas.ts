@@ -1,4 +1,5 @@
 import {
+  LIVE_STALE_AFTER_MS,
   employment,
   fetchJson,
   hours,
@@ -87,6 +88,7 @@ export const himalayasSource: LiveSource = {
   url: HIMALAYAS_JOBS_URL,
   minIntervalMs: hours(6),
   newPerRun: 15,
+  staleAfterMs: LIVE_STALE_AFTER_MS,
   async fetch(fetchImpl) {
     const jobs: RawImportedJob[] = [];
     for (let page = 0; page < PAGES; page += 1) {

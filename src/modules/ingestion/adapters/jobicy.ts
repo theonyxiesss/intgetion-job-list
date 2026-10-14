@@ -1,4 +1,5 @@
 import {
+  LIVE_STALE_AFTER_MS,
   employment,
   fetchJson,
   hours,
@@ -81,6 +82,7 @@ export const jobicySource: LiveSource = {
   url: JOBICY_JOBS_URL,
   minIntervalMs: hours(6),
   newPerRun: 15,
+  staleAfterMs: LIVE_STALE_AFTER_MS,
   async fetch(fetchImpl) {
     const body = (await fetchJson(JOBICY_JOBS_URL, fetchImpl)) as {
       jobs?: unknown;

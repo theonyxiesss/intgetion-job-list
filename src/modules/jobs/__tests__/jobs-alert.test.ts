@@ -229,7 +229,7 @@ describe("jobs alert eligibility", () => {
     sentAt: null,
     firstPublishedAt: new Date("2026-10-07T12:05:00.000Z"),
     watermark,
-    remotive: false,
+    importedSource: null as string | null,
     host: "intgetion.com",
   };
 
@@ -248,15 +248,34 @@ describe("jobs alert eligibility", () => {
     ).toBe(false);
   });
 
-  it("skips Remotive on intgetion.com and still allows another host", () => {
-    expect(isJobsAlertCandidate({ ...base, remotive: true })).toBe(false);
+  it("on intgetion.com posts only sources that allow third-party sites (D412)", () => {
+    for (const importedSource of [
+      "Remotive",
+      "Himalayas",
+      "Remote OK",
+      "Fictional API Feed",
+      "We Work Remotely (RSS 2026-10-04)",
+    ]) {
+      expect(isJobsAlertCandidate({ ...base, importedSource })).toBe(false);
+    }
+    expect(isJobsAlertCandidate({ ...base, importedSource: "Jobicy" })).toBe(
+      true,
+    );
+    expect(isJobsAlertCandidate({ ...base, importedSource: null })).toBe(true);
     expect(
       isJobsAlertCandidate({
         ...base,
-        remotive: true,
+        importedSource: "Remotive",
         host: "localhost:3000",
       }),
     ).toBe(true);
+    const source = readFileSync(
+      resolve(process.cwd(), "src/modules/jobs/service/jobs-alert.ts"),
+      "utf8",
+    );
+    expect(source).toContain("and j.source = 'imported'");
+    expect(source).toContain("where s.job_id = j.id and s.is_primary");
+    expect(source).not.toContain("i.name = 'Remotive'");
     expect(isIntgetionHost("www.intgetion.com")).toBe(true);
   });
 });

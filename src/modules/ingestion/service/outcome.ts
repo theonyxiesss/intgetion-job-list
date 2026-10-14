@@ -70,7 +70,23 @@ export function decideOutcome(input: {
 }
 
 /**
- * 13.4 «no record in the source two runs in a row». For the current source
+ * D412, live feeds: they carry only the newest jobs, so leaving the feed
+ * does not close a job. It is stale when no source has seen it since the
+ * cutoff.
+ */
+export function isStaleEverywhere(
+  rows: { lastSeenAt: Date }[],
+  cutoff: Date,
+): boolean {
+  return (
+    rows.length > 0 &&
+    rows.every((row) => row.lastSeenAt.getTime() < cutoff.getTime())
+  );
+}
+
+/**
+ * 13.4 «no record in the source two runs in a row». Fixture feeds only:
+ * they are the whole list (D412). For the current source
  * the run in progress is the second one, so one finished run after the
  * row was last seen is enough; another source of a merged job must have
  * missed two finished runs of its own.
