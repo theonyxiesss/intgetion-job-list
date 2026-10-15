@@ -40,6 +40,11 @@ describe("proxy matcher", () => {
     expect(matchers).toContain("/robots.txt");
   });
 
+  it("waits for the phone bridge before the Mini App bounce leaves", () => {
+    expect(source).toContain("TELEGRAM_MINI_APP_BOUNCE_SCRIPT");
+    expect(source).not.toContain("n++>=10");
+  });
+
   it("refreshes the session on API routes before the handler runs", () => {
     const api = source.slice(source.indexOf('pathname.startsWith("/api/")'));
     const refreshAt = api.indexOf("await refreshSession(request)");

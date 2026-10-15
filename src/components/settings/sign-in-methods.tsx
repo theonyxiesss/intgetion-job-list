@@ -214,6 +214,7 @@ export function SignInMethods({
               label={t("linkTelegram")}
               waiting={social("telegramWaiting")}
               failed={social("telegramFailed")}
+              openLabel={social("telegramOpen")}
               taken={authErrors("telegram_taken")}
               buttonClassName={buttonClass("secondary")}
             />

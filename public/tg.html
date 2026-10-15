@@ -13,9 +13,10 @@
             if (h.indexOf("tgWebAppData") !== -1) {
               sessionStorage.setItem("tg_web_app_hash", h);
             }
-            var d =
-              window.Telegram && Telegram.WebApp && Telegram.WebApp.initData;
-            if (d) sessionStorage.setItem("tg_web_app_init", d);
+            var w = window.Telegram && window.Telegram.WebApp;
+            if (w && typeof w.ready === "function") w.ready();
+            if (w && w.initData)
+              sessionStorage.setItem("tg_web_app_init", w.initData);
           } catch (e) {}
         }
         function go() {
@@ -39,10 +40,11 @@
         var n = 0;
         function tick() {
           stash();
+          var w = window.Telegram && window.Telegram.WebApp;
           var ready =
             (location.hash || "").indexOf("tgWebAppData") !== -1 ||
-            (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData);
-          if (ready || n++ >= 10) go();
+            !!(w && w.initData);
+          if (ready || n++ >= 50) go();
           else setTimeout(tick, 100);
         }
         tick();

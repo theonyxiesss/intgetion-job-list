@@ -78,6 +78,7 @@ export async function SocialSignInStubs({ next }: { next?: LoginNext }) {
           label={t("telegram")}
           waiting={t("telegramWaiting")}
           failed={t("telegramFailed")}
+          openLabel={t("telegramOpen")}
           icon={<SocialMark name="telegram" />}
         />
       )}

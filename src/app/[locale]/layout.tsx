@@ -16,6 +16,7 @@ import { ServiceWorker } from "@/components/shell/service-worker";
 import { CookieBanner } from "@/components/shell/cookie-banner";
 import { Header } from "@/components/shell/header";
 import { MiniAppBar } from "@/components/auth/mini-app-bar";
+import { TelegramLoginResume } from "@/components/auth/telegram-login-resume";
 import { TelegramMiniApp } from "@/components/auth/telegram-mini-app";
 import { flags } from "@/config/flags";
 import {
@@ -26,6 +27,7 @@ import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { ToastProvider } from "@/components/ui";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { TELEGRAM_WEB_APP_SCRIPT } from "@/lib/security-headers";
+import { TELEGRAM_WEB_APP_BOOT_SCRIPT } from "@/lib/telegram-web-app-boot";
 import { siteUrl, siteVerification } from "@/modules/seo/site";
 import "../globals.css";
 import { localePrefix } from "@/i18n/paths";
@@ -65,9 +67,6 @@ const CLIENT_NAMESPACES = [
 
 // Only an explicit "light" choice changes the default dark theme (D141).
 const themeScript = `(function(){try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light";}catch(e){}})();`;
-
-// Capture Telegram's fragment before anything else can wipe it (D322).
-const telegramHashScript = `(function(){try{var h=location.hash||"";if(h.indexOf("tgWebAppData")!==-1)sessionStorage.setItem("tg_web_app_hash",h);}catch(e){}})();`;
 
 export const viewport: Viewport = {
   themeColor: "#000000",
@@ -152,7 +151,7 @@ export default async function LocaleLayout({
             />
             <script
               nonce={nonce}
-              dangerouslySetInnerHTML={{ __html: telegramHashScript }}
+              dangerouslySetInnerHTML={{ __html: TELEGRAM_WEB_APP_BOOT_SCRIPT }}
             />
           </>
         )}
@@ -170,6 +169,7 @@ export default async function LocaleLayout({
             </div>
             <Footer />
             <AnalyticsTracker />
+            <TelegramLoginResume />
             {flags.telegramMiniAppEnabled && !signedIn && (
               <TelegramMiniApp locale={locale as AppLocale} />
             )}

@@ -77,13 +77,16 @@ describe("Telegram bot sign-in (D256)", () => {
   it("offers a sign-in button for a live code and nothing for a stranger", async () => {
     const code = await freshChallenge("ru");
     const { calls } = stubTelegram();
-    await handleTelegramWebhook(botToken, {
+    const start = {
       message: {
         text: `/start login_${code}`,
         chat: { id: chatId },
         from: { id: telegramId, first_name: "Test" },
       },
-    });
+    };
+    await handleTelegramWebhook(botToken, start);
+    // The phone client often delivers the same /start twice (D426).
+    await handleTelegramWebhook(botToken, start);
     const sent = calls.filter((call) => call.method === "sendMessage");
     expect(sent).toHaveLength(1);
     // Russian challenge → Russian wording, whatever the chat language is.

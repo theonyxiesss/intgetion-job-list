@@ -290,6 +290,7 @@
       "telegramProgress": "Verifica della conferma di Telegram…",
       "telegramLinked": "Telegram è collegato al tuo account.",
       "telegramWaiting": "In attesa della tua conferma in Telegram…",
+      "telegramOpen": "Apri Telegram",
       "telegramFailed": "L’accesso con Telegram non è andato a buon fine. Riprova.",
       "continueTerms": "Continuando, accetti i <terms>termini di utilizzo</terms> e l’<privacy>informativa sulla privacy</privacy>."
     },

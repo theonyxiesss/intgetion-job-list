@@ -1,19 +1,23 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { buttonClass } from "@/components/ui/button";
 import { useRouter } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
+import { handoffTelegramLogin } from "./telegram-login-open";
+import { reserveBrowserPopup, type ReservedPopup } from "./mini-app-open";
 
 /**
  * Opens the site bot in Telegram. The page stays here and signs in after
- * the person taps the button in the chat (D256). No phone field.
+ * the person taps the button in the chat (D256). On a phone the window is
+ * reserved before the request, so this tab is not replaced (D426).
  */
 export function TelegramLoginButton({
   locale,
   label,
   waiting,
   failed,
+  openLabel,
   taken,
   icon,
   children,
@@ -24,6 +28,8 @@ export function TelegramLoginButton({
   label: string;
   waiting: string;
   failed: string;
+  /** Shown when the browser would not open Telegram by itself. */
+  openLabel: string;
   /** Shown when this Telegram already belongs to another account. */
   taken?: string;
   /** Brand mark shown before the label. */
@@ -38,7 +44,9 @@ export function TelegramLoginButton({
   const [phase, setPhase] = useState<"idle" | "waiting" | "failed" | "taken">(
     "idle",
   );
+  const [openUrl, setOpenUrl] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
+  const lock = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -53,6 +61,7 @@ export function TelegramLoginButton({
       if (response.ok) {
         if (purpose === "link") {
           setPhase("idle");
+          setOpenUrl(null);
           router.refresh();
           return;
         }
@@ -67,51 +76,97 @@ export function TelegramLoginButton({
       }
       if (response.status === 409 && purpose === "link") {
         setPhase("taken");
+        lock.current = false;
         return;
       }
-      if (afterClick) setPhase("failed");
+      if (afterClick) {
+        setPhase("failed");
+        lock.current = false;
+      }
+    }
+    function wake() {
+      if (document.visibilityState === "hidden" || attempt === 0) return;
+      window.clearTimeout(timer);
+      void tick(true);
     }
     void tick(attempt > 0).catch(() => {
-      if (!cancelled && attempt > 0) setPhase("failed");
+      if (!cancelled && attempt > 0) {
+        setPhase("failed");
+        lock.current = false;
+      }
     });
+    document.addEventListener("visibilitychange", wake);
+    window.addEventListener("pageshow", wake);
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", wake);
+      window.removeEventListener("pageshow", wake);
     };
   }, [attempt, purpose, router]);
 
   async function onClick() {
+    if (lock.current) return;
+    lock.current = true;
     setPhase("waiting");
-    const response = await fetch("/api/auth/telegram/start", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ locale }),
+    setOpenUrl(null);
+    const popup = reserveBrowserPopup((url, target) => {
+      const opened = window.open(url, target);
+      return opened as ReservedPopup | null;
     });
-    if (!response.ok) {
+    try {
+      const response = await fetch("/api/auth/telegram/start", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ locale, purpose }),
+      });
+      if (!response.ok) {
+        popup?.close();
+        setPhase("failed");
+        lock.current = false;
+        return;
+      }
+      const body = (await response.json()) as { url?: string };
+      if (!body.url?.startsWith("https://t.me/")) {
+        popup?.close();
+        setPhase("failed");
+        lock.current = false;
+        return;
+      }
+      if (handoffTelegramLogin(popup, body.url) === "link") {
+        setOpenUrl(body.url);
+      }
+      setAttempt((value) => value + 1);
+    } catch {
+      popup?.close();
       setPhase("failed");
-      return;
+      lock.current = false;
     }
-    const body = (await response.json()) as { url?: string };
-    if (!body.url?.startsWith("https://t.me/")) {
-      setPhase("failed");
-      return;
-    }
-    const opened = window.open(body.url, "_blank");
-    if (opened) opened.opener = null;
-    else window.location.assign(body.url);
-    setAttempt((value) => value + 1);
   }
+
+  const classes = buttonClassName ?? buttonClass("secondary", "md", "w-full");
 
   return (
     <div className="flex flex-col gap-1">
       <button
         type="button"
-        className={buttonClassName ?? buttonClass("secondary", "md", "w-full")}
+        className={classes}
+        disabled={phase === "waiting"}
         onClick={() => void onClick()}
       >
         {icon}
         {label}
       </button>
+      {openUrl && (
+        <a
+          href={openUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={classes}
+        >
+          {openLabel}
+        </a>
+      )}
       {children}
       {phase === "waiting" && (
         <p className="t-caption text-fg-muted" role="status">

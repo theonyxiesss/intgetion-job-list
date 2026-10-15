@@ -4,7 +4,10 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/request-ip";
 import { beginTelegramBotLogin, localeSchema } from "@/modules/auth/service";
 
-const inputSchema = z.object({ locale: localeSchema });
+const inputSchema = z.object({
+  locale: localeSchema,
+  purpose: z.enum(["signin", "link"]).optional(),
+});
 
 /** Starts bot sign-in and returns a t.me link (D256). */
 export async function POST(request: Request) {
@@ -12,7 +15,10 @@ export async function POST(request: Request) {
     const input = await readJson(request, inputSchema);
     const ip = clientIp(request.headers);
     await enforceRateLimit("login", `${ip}|telegram`);
-    const started = await beginTelegramBotLogin(input.locale);
+    const started = await beginTelegramBotLogin(
+      input.locale,
+      input.purpose ?? "signin",
+    );
     return Response.json(started);
   } catch (error) {
     if (error instanceof HttpError) return toErrorResponse(error);

@@ -19,6 +19,7 @@ import {
 import { isCryptoPayPath } from "./lib/crypto-pay-path";
 import { siteUrl, supabaseUrl } from "./lib/supabase/env";
 import { flags } from "./config/flags";
+import { TELEGRAM_MINI_APP_BOUNCE_SCRIPT } from "./lib/telegram-web-app-boot";
 import { refreshSession } from "./lib/supabase/proxy";
 import { markSession } from "./lib/supabase/session-mark";
 
@@ -93,9 +94,9 @@ export async function proxy(request: NextRequest) {
       includeSupabase: false,
       allowTelegramFrame: true,
     });
-    // Wait briefly for telegram-web-app.js / the phone bridge before leaving /
-    // so initData can be stashed when the hash is already empty (D324).
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="${TELEGRAM_WEB_APP_SCRIPT}"></script><script nonce="${bounceNonce}">(function(){function stash(){try{var h=location.hash||"";if(h.indexOf("tgWebAppData")!==-1)sessionStorage.setItem("tg_web_app_hash",h);var d=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData;if(d)sessionStorage.setItem("tg_web_app_init",d);}catch(e){}}function go(){stash();var l="en";try{var g=navigator.language||"";if(/^ru\\b/i.test(g))l="ru";else if(/^es\\b/i.test(g))l="es";}catch(e){}var s=location.search;s+=(s?"&":"?")+"tgb=1";location.replace((l==="en"?"/":"/"+l)+s+location.hash);}var n=0;function tick(){stash();var ready=(location.hash||"").indexOf("tgWebAppData")!==-1||(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData);if(ready||n++>=10)go();else setTimeout(tick,100);}tick();})();</script></head><body></body></html>`;
+    // Phone clients send initData after ready(). Wait up to 5s, stash it,
+    // then leave with the hash still attached (D324, D426).
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="${TELEGRAM_WEB_APP_SCRIPT}"></script><script nonce="${bounceNonce}">${TELEGRAM_MINI_APP_BOUNCE_SCRIPT}</script></head><body></body></html>`;
     return stamp(
       new NextResponse(html, {
         headers: {
@@ -174,8 +175,7 @@ export async function proxy(request: NextRequest) {
       ? undefined
       : embedOriginForPath(request.nextUrl.pathname),
     // WalletConnect relay, verify, and the AppKit modal only while paying (D403, D406).
-    allowWalletConnect:
-      !adminHost && isCryptoPayPath(request.nextUrl.pathname),
+    allowWalletConnect: !adminHost && isCryptoPayPath(request.nextUrl.pathname),
   });
   // Next.js reads the nonce from the request CSP header while rendering.
   request.headers.set("x-nonce", nonce);

@@ -67,11 +67,6 @@ export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
     let cancelled = false;
     let tries = 0;
     rememberHash(window.location.hash);
-    try {
-      telegramWebApp(window)?.ready?.();
-    } catch {
-      // Older clients may not implement ready().
-    }
 
     async function signIn(initData: string) {
       const response = await fetch("/api/auth/telegram/miniapp", {
@@ -96,6 +91,12 @@ export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
     function tick() {
       if (cancelled) return;
       rememberHash(window.location.hash);
+      try {
+        // Phone clients often send initData only after ready() (D426).
+        telegramWebApp(window)?.ready?.();
+      } catch {
+        // Older clients may not implement ready().
+      }
       const injected = telegramWebApp(window)?.initData;
       if (injected) rememberInit(injected);
       const initData = readTelegramInitData({

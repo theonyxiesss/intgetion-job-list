@@ -290,6 +290,7 @@
       "telegramProgress": "Telegram-Bestätigung wird geprüft…",
       "telegramLinked": "Telegram ist mit Ihrem Konto verknüpft.",
       "telegramWaiting": "Warten auf Ihre Bestätigung in Telegram…",
+      "telegramOpen": "Telegram öffnen",
       "telegramFailed": "Die Anmeldung mit Telegram ist nicht durchgegangen. Versuchen Sie es erneut.",
       "continueTerms": "Indem Sie fortfahren, akzeptieren Sie die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzerklärung</privacy>."
     },

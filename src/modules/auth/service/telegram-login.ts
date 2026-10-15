@@ -26,6 +26,10 @@ import {
 } from "./telegram";
 import * as challenges from "../repo/telegram-login";
 import { toAppLocale } from "@/i18n/locale";
+import {
+  TG_WAIT_COOKIE,
+  type TelegramWaitPurpose,
+} from "@/lib/telegram-login-wait";
 
 const COOKIE = "tg_login";
 
@@ -33,7 +37,7 @@ const copy = {
   en: {
     ask: "Sign in to INTGETION JOB LIST. If you just asked for this on intgetion.com, tap Sign in. If you did not, tap nothing.",
     button: "Sign in",
-    done: "Done. Go back to the site — you are signed in.",
+    done: "Confirmed. Go back to the browser tab with the site — sign-in finishes there.",
     expired:
       "This sign-in link expired. Press Continue with Telegram on the site again.",
     hello:
@@ -42,7 +46,7 @@ const copy = {
   ru: {
     ask: "Вход в INTGETION JOB LIST. Если это вы запросили на intgetion.com, нажмите «Войти». Если нет — ничего не нажимайте.",
     button: "Войти",
-    done: "Готово. Вернитесь на сайт — вход уже открыт.",
+    done: "Подтверждено. Вернитесь во вкладку браузера с сайтом — вход завершится там.",
     expired:
       "Ссылка для входа устарела. Нажмите «Войти через Telegram» на сайте ещё раз.",
     hello:
@@ -51,7 +55,7 @@ const copy = {
   es: {
     ask: "Inicia sesión en INTGETION JOB LIST. Si acabas de pedirlo en intgetion.com, pulsa «Iniciar sesión». Si no, no pulses nada.",
     button: "Iniciar sesión",
-    done: "Listo. Vuelve al sitio: ya has iniciado sesión.",
+    done: "Confirmado. Vuelve a la pestaña del navegador con el sitio: el acceso se completará allí.",
     expired:
       "Este enlace de inicio de sesión ha caducado. Pulsa «Continuar con Telegram» en el sitio de nuevo.",
     hello:
@@ -60,7 +64,7 @@ const copy = {
   "pt-BR": {
     ask: "Entrar no INTGETION JOB LIST. Se você acabou de pedir isso em intgetion.com, toque em «Entrar». Se não, não toque em nada.",
     button: "Entrar",
-    done: "Pronto. Volte ao site — você já está conectado.",
+    done: "Confirmado. Volte à aba do navegador com o site — a entrada termina lá.",
     expired:
       "Este link de acesso expirou. Toque em «Continuar com Telegram» no site novamente.",
     hello:
@@ -69,7 +73,7 @@ const copy = {
   de: {
     ask: "Anmeldung bei INTGETION JOB LIST. Wenn Sie das gerade auf intgetion.com angefordert haben, tippen Sie auf «Anmelden». Wenn nicht, tippen Sie auf nichts.",
     button: "Anmelden",
-    done: "Fertig. Gehen Sie zurück zur Website — Sie sind angemeldet.",
+    done: "Bestätigt. Gehen Sie zurück zum Browser-Tab mit der Website — die Anmeldung wird dort abgeschlossen.",
     expired:
       "Dieser Anmeldelink ist abgelaufen. Tippen Sie auf der Website erneut auf «Weiter mit Telegram».",
     hello:
@@ -78,7 +82,7 @@ const copy = {
   fr: {
     ask: "Connexion à INTGETION JOB LIST. Si vous venez de la demander sur intgetion.com, touchez «Se connecter». Sinon, ne touchez à rien.",
     button: "Se connecter",
-    done: "C’est fait. Retournez sur le site — vous êtes connecté.",
+    done: "Confirmé. Retournez à l’onglet du navigateur avec le site — la connexion s’y termine.",
     expired:
       "Ce lien de connexion a expiré. Touchez à nouveau «Continuer avec Telegram» sur le site.",
     hello:
@@ -87,7 +91,7 @@ const copy = {
   it: {
     ask: "Accesso a INTGETION JOB LIST. Se l’hai appena richiesto su intgetion.com, tocca «Accedi». Altrimenti non toccare nulla.",
     button: "Accedi",
-    done: "Fatto. Torna al sito — hai effettuato l’accesso.",
+    done: "Confermato. Torna alla scheda del browser con il sito: l’accesso si completa lì.",
     expired:
       "Questo link di accesso è scaduto. Tocca di nuovo «Continua con Telegram» sul sito.",
     hello:
@@ -109,6 +113,17 @@ function cookieOptions(maxAge: number) {
   };
 }
 
+/** Visible to the page so any tab can resume. The code itself stays httpOnly. */
+function waitCookieOptions(maxAge: number) {
+  return {
+    httpOnly: false,
+    sameSite: "lax" as const,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge,
+  };
+}
+
 function localeOf(value: string): AppLocale {
   return toAppLocale(value);
 }
@@ -120,7 +135,7 @@ function profileFrom(from: {
 }): { telegramId: string; username: string | null; firstName: string | null } {
   return {
     telegramId: String(from.id),
-    username: from.username?.slice(0, 32) ?? null,
+    username: from.username?.slice(0, 32) || null,
     firstName: from.first_name?.slice(0, 64) ?? null,
   };
 }
@@ -132,24 +147,58 @@ function telegramIdNumber(value: string | null): number | null {
   return id;
 }
 
-/** Creates a one-time link that opens the bot. The code is stored only as a hash. */
+function clearLoginCookies(jar: Awaited<ReturnType<typeof cookies>>): void {
+  jar.set(COOKIE, "", cookieOptions(0));
+  jar.set(TG_WAIT_COOKIE, "", waitCookieOptions(0));
+}
+
+/**
+ * Creates a one-time link that opens the bot. The code is stored only as a hash.
+ * A second tap in the same browser reuses the live code, so the phone does not
+ * get two buttons for two different codes (D426).
+ */
 export async function beginTelegramBotLogin(
   locale: AppLocale,
+  purpose: TelegramWaitPurpose = "signin",
 ): Promise<{ url: string }> {
   const token = telegramBotToken();
   if (!token || !authAdminAvailable()) throw disabled();
   await ensureTelegramWebhook(token);
   const username = await telegramBotUsername(token);
-  const code = newTelegramLoginCode();
   const now = new Date();
   await challenges.deleteExpiredTelegramLogins(now);
+  const jar = await cookies();
+  const existingCode = jar.get(COOKIE)?.value ?? "";
+  if (parseTelegramLoginCode(`login_${existingCode}`)) {
+    const existing = await challenges.findTelegramLoginChallenge(
+      telegramLoginCodeHash(existingCode),
+    );
+    if (
+      existing &&
+      !existing.confirmedAt &&
+      existing.expiresAt.getTime() > now.getTime()
+    ) {
+      const remaining = Math.max(
+        1,
+        Math.floor((existing.expiresAt.getTime() - now.getTime()) / 1000),
+      );
+      jar.set(COOKIE, existingCode, cookieOptions(remaining));
+      jar.set(TG_WAIT_COOKIE, purpose, waitCookieOptions(remaining));
+      return { url: telegramBotStartUrl(username, existingCode) };
+    }
+  }
+  const code = newTelegramLoginCode();
   await challenges.insertTelegramLoginChallenge({
     codeHash: telegramLoginCodeHash(code),
     locale,
     expiresAt: new Date(now.getTime() + TELEGRAM_LOGIN_TTL_SECONDS * 1000),
   });
-  const jar = await cookies();
   jar.set(COOKIE, code, cookieOptions(TELEGRAM_LOGIN_TTL_SECONDS));
+  jar.set(
+    TG_WAIT_COOKIE,
+    purpose,
+    waitCookieOptions(TELEGRAM_LOGIN_TTL_SECONDS),
+  );
   return { url: telegramBotStartUrl(username, code) };
 }
 
@@ -161,27 +210,33 @@ export async function finishTelegramBotLogin(
 ): Promise<TelegramPoll> {
   const jar = await cookies();
   const code = jar.get(COOKIE)?.value ?? "";
-  if (!parseTelegramLoginCode(`login_${code}`)) return "absent";
+  if (!parseTelegramLoginCode(`login_${code}`)) {
+    if (jar.get(TG_WAIT_COOKIE)) clearLoginCookies(jar);
+    return "absent";
+  }
   const row = await challenges.findTelegramLoginChallenge(
     telegramLoginCodeHash(code),
   );
   const now = new Date();
   if (!row || row.expiresAt.getTime() <= now.getTime()) {
     if (row) await challenges.deleteTelegramLoginChallenge(row.codeHash);
-    jar.set(COOKIE, "", cookieOptions(0));
+    clearLoginCookies(jar);
     return "absent";
   }
   if (!row.confirmedAt) return "pending";
   const id = telegramIdNumber(row.telegramId);
-  if (!id) return "absent";
+  if (!id) {
+    clearLoginCookies(jar);
+    return "absent";
+  }
   await signInWithTelegramProfile(
     auth,
-    { id, username: row.username },
+    { id, username: row.username || null },
     localeOf(row.locale),
     now,
   );
   await challenges.deleteTelegramLoginChallenge(row.codeHash);
-  jar.set(COOKIE, "", cookieOptions(0));
+  clearLoginCookies(jar);
   return "signed-in";
 }
 
@@ -194,23 +249,29 @@ export async function finishTelegramBotLink(
 ): Promise<TelegramPoll> {
   const jar = await cookies();
   const code = jar.get(COOKIE)?.value ?? "";
-  if (!parseTelegramLoginCode(`login_${code}`)) return "absent";
+  if (!parseTelegramLoginCode(`login_${code}`)) {
+    if (jar.get(TG_WAIT_COOKIE)) clearLoginCookies(jar);
+    return "absent";
+  }
   const row = await challenges.findTelegramLoginChallenge(
     telegramLoginCodeHash(code),
   );
   if (!row || row.expiresAt.getTime() <= Date.now()) {
     if (row) await challenges.deleteTelegramLoginChallenge(row.codeHash);
-    jar.set(COOKIE, "", cookieOptions(0));
+    clearLoginCookies(jar);
     return "absent";
   }
   if (!row.confirmedAt) return "pending";
   const id = telegramIdNumber(row.telegramId);
-  if (!id) return "absent";
+  if (!id) {
+    clearLoginCookies(jar);
+    return "absent";
+  }
   try {
-    await linkTelegramProfile(user, { id, username: row.username });
+    await linkTelegramProfile(user, { id, username: row.username || null });
   } finally {
     await challenges.deleteTelegramLoginChallenge(row.codeHash);
-    jar.set(COOKIE, "", cookieOptions(0));
+    clearLoginCookies(jar);
   }
   return "signed-in";
 }
@@ -271,13 +332,16 @@ export async function handleTelegramWebhook(
     const chatId = callback.message?.chat?.id;
     if (!code) return true;
     const outcome = await confirmCode(code, callback.from);
+    // A second tap, or Telegram delivering the same tap again, must not send
+    // another copy of the same line (D426).
+    if (outcome === "already") return true;
     const locale = await challengeLocale(code);
     const text = copy[locale];
-    if (outcome === "confirmed" || outcome === "already") {
-      await reply(token, chatId, text.done);
-    } else {
-      await reply(token, chatId, text.expired);
-    }
+    await reply(
+      token,
+      chatId,
+      outcome === "confirmed" ? text.done : text.expired,
+    );
     return true;
   }
 
@@ -310,10 +374,20 @@ export async function handleTelegramWebhook(
     );
     return true;
   }
-  await reply(token, message.chat?.id, lines.ask, {
-    label: lines.button,
-    data: payload,
-  });
+  const claimed = await challenges.claimTelegramLoginPrompt(
+    telegramLoginCodeHash(code),
+    new Date(),
+  );
+  if (!claimed) return true;
+  try {
+    await reply(token, message.chat?.id, lines.ask, {
+      label: lines.button,
+      data: payload,
+    });
+  } catch (error) {
+    await challenges.releaseTelegramLoginPrompt(telegramLoginCodeHash(code));
+    throw error;
+  }
   return true;
 }
 
