@@ -3,8 +3,9 @@ import { expect, test } from "./fixtures";
 
 test("home renders the English shell", async ({ page }) => {
   await page.goto("/en");
+  // The hero heading since D428.
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Remote jobs",
+    "Remote jobs. Real matches.",
   );
   await expect(
     page.getByRole("link", { name: "INTGETION JOB LIST" }),
@@ -14,7 +15,7 @@ test("home renders the English shell", async ({ page }) => {
 test("home renders the Russian shell", async ({ page }) => {
   await page.goto("/ru");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Удалённые вакансии",
+    "Удалённые вакансии. Настоящие совпадения.",
   );
 });
 
