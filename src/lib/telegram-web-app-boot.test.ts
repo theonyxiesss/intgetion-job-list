@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  miniAppContinuePath,
   TELEGRAM_MINI_APP_BOUNCE_SCRIPT,
   TELEGRAM_WEB_APP_BOOT_SCRIPT,
 } from "./telegram-web-app-boot";
@@ -19,6 +20,16 @@ describe("telegram web app boot", () => {
     expect(TELEGRAM_MINI_APP_BOUNCE_SCRIPT).toContain("location.replace");
   });
 
+  it("signs in on the first Telegram document before navigating", () => {
+    expect(TELEGRAM_MINI_APP_BOUNCE_SCRIPT).toContain(
+      'f.action="/api/auth/telegram/miniapp"',
+    );
+    expect(TELEGRAM_MINI_APP_BOUNCE_SCRIPT).toContain('f.method="POST"');
+    expect(TELEGRAM_MINI_APP_BOUNCE_SCRIPT).toContain("tg_mini_post");
+    expect(miniAppContinuePath("en")).toBe("/?tgb=1");
+    expect(miniAppContinuePath("ru")).toBe("/ru?tgb=1");
+  });
+
   it("keeps the same wait on the static menu page", () => {
     const html = fs.readFileSync(
       path.join(process.cwd(), "public/tg.html"),
@@ -26,5 +37,6 @@ describe("telegram web app boot", () => {
     );
     expect(html).toContain("w.ready()");
     expect(html).toContain("n++ >= 50");
+    expect(html).toContain('f.action = "/api/auth/telegram/miniapp"');
   });
 });

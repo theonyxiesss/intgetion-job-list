@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
+import { MINI_APP_POST_KEY } from "@/lib/telegram-web-app-boot";
 import {
   needsPartitionedSession,
   readTelegramInitData,
+  submitTelegramMiniAppSignIn,
   telegramWebApp,
   TG_INIT_DATA_KEY,
   TG_INIT_HASH_KEY,
@@ -61,31 +62,24 @@ function forgetStored() {
  * bridge script may be the only way initData appears (D324).
  */
 export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
-  const router = useRouter();
-
   useEffect(() => {
     let cancelled = false;
     let tries = 0;
     rememberHash(window.location.hash);
 
-    async function signIn(initData: string) {
-      const response = await fetch("/api/auth/telegram/miniapp", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          initData,
-          locale,
-          framed: needsPartitionedSession(window),
-        }),
-      });
-      if (cancelled || !response.ok) return;
+    function signIn(initData: string) {
+      try {
+        if (sessionStorage.getItem(MINI_APP_POST_KEY) === "1") return;
+        sessionStorage.setItem(MINI_APP_POST_KEY, "1");
+      } catch {
+        // Private mode: still try once. The route rate-limits repeats.
+      }
       forgetStored();
-      window.history.replaceState(
-        null,
-        "",
-        window.location.pathname + window.location.search,
-      );
-      router.refresh();
+      submitTelegramMiniAppSignIn({
+        initData,
+        locale,
+        framed: needsPartitionedSession(window),
+      });
     }
 
     function tick() {
@@ -106,9 +100,7 @@ export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
         storedInit: storedInit(),
       });
       if (initData) {
-        void signIn(initData).catch(() => {
-          // Offline or refused: the person can still sign in by hand.
-        });
+        signIn(initData);
         return;
       }
       tries += 1;
@@ -120,7 +112,7 @@ export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
     return () => {
       cancelled = true;
     };
-  }, [locale, router]);
+  }, [locale]);
 
   return null;
 }

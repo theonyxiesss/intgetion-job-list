@@ -5,7 +5,16 @@ import { buttonClass } from "@/components/ui/button";
 import { useRouter } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { handoffTelegramLogin } from "./telegram-login-open";
-import { reserveBrowserPopup, type ReservedPopup } from "./mini-app-open";
+import {
+  needsPartitionedSession,
+  readTelegramInitData,
+  reserveBrowserPopup,
+  submitTelegramMiniAppSignIn,
+  telegramWebApp,
+  TG_INIT_DATA_KEY,
+  TG_INIT_HASH_KEY,
+  type ReservedPopup,
+} from "./mini-app-open";
 
 /**
  * Opens the site bot in Telegram. The page stays here and signs in after
@@ -105,15 +114,47 @@ export function TelegramLoginButton({
     };
   }, [attempt, purpose, router]);
 
+  function currentInitData(): string | null {
+    let storedHash: string | null = null;
+    let storedInit: string | null = null;
+    try {
+      storedHash = sessionStorage.getItem(TG_INIT_HASH_KEY);
+      storedInit = sessionStorage.getItem(TG_INIT_DATA_KEY);
+    } catch {
+      // Private mode still has the live hash.
+    }
+    return readTelegramInitData({
+      hash: window.location.hash,
+      injected: telegramWebApp(window)?.initData,
+      storedHash,
+      storedInit,
+    });
+  }
+
   async function onClick() {
     if (lock.current) return;
+    const initData = currentInitData();
+    if (initData && purpose === "signin") {
+      lock.current = true;
+      submitTelegramMiniAppSignIn({
+        initData,
+        locale,
+        framed: needsPartitionedSession(window),
+      });
+      return;
+    }
     lock.current = true;
     setPhase("waiting");
     setOpenUrl(null);
-    const popup = reserveBrowserPopup((url, target) => {
-      const opened = window.open(url, target);
-      return opened as ReservedPopup | null;
-    });
+    // Inside Telegram a reserved window replaces this webview, and the
+    // sign-in cookie dies with it (D427). Stay on this page instead.
+    const insideTelegram = Boolean(telegramWebApp(window));
+    const popup = insideTelegram
+      ? null
+      : reserveBrowserPopup((url, target) => {
+          const opened = window.open(url, target);
+          return opened as ReservedPopup | null;
+        });
     try {
       const response = await fetch("/api/auth/telegram/start", {
         method: "POST",
@@ -132,6 +173,17 @@ export function TelegramLoginButton({
         setPhase("failed");
         lock.current = false;
         return;
+      }
+      const openTelegramLink = telegramWebApp(window)?.openTelegramLink;
+      if (typeof openTelegramLink === "function") {
+        try {
+          popup?.close();
+          openTelegramLink(body.url);
+          setAttempt((value) => value + 1);
+          return;
+        } catch {
+          // The client refused its own opener. The reserved window is next.
+        }
       }
       if (handoffTelegramLogin(popup, body.url) === "link") {
         setOpenUrl(body.url);

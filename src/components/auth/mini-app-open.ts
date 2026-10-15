@@ -51,6 +51,8 @@ type TelegramWebApp = {
   initData?: string;
   ready?: () => void;
   openLink?: (url: string) => void;
+  /** Opens a t.me link without replacing this Telegram webview. */
+  openTelegramLink?: (url: string) => void;
 };
 
 /**
@@ -150,6 +152,34 @@ function tgWebAppDataFromHash(hash: string): string | null {
   } catch {
     return null;
   }
+}
+
+/**
+ * Signs in from inside Telegram by a real form navigation (D427).
+ * A fetch response's Set-Cookie does not stick in the iPhone webview.
+ */
+export function submitTelegramMiniAppSignIn(input: {
+  initData: string;
+  locale: string;
+  framed: boolean;
+}): void {
+  const form = document.createElement("form");
+  form.method = "POST";
+  form.action = "/api/auth/telegram/miniapp";
+  const fields: [string, string][] = [
+    ["initData", input.initData],
+    ["locale", input.locale],
+    ["framed", input.framed ? "1" : "0"],
+  ];
+  for (const [name, value] of fields) {
+    const field = document.createElement("input");
+    field.type = "hidden";
+    field.name = name;
+    field.value = value;
+    form.appendChild(field);
+  }
+  (document.body ?? document.documentElement).appendChild(form);
+  form.submit();
 }
 
 /** @deprecated use needsPartitionedSession — kept for a short transition. */
