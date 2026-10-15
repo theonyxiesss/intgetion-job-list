@@ -13,9 +13,11 @@ async function signUp(page: Page, email: string) {
   await page.goto("/en/register");
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.locator('input[type="password"]').fill(password);
+  // D331: the account type is required; it does not change rights.
+  await page.getByRole("radio", { name: /looking for work/ }).check();
   await page.getByLabel("I accept the terms").check();
   await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
+  await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
   const mail = await waitForMail(page.request, email, 0);
   await page.goto(authLink(mail));
   await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
@@ -50,7 +52,7 @@ test("10C: export my data, then delete the account", async ({ page }) => {
   await page.getByLabel("Type DELETE to continue").fill("DELETE");
   await remove.click();
   await page.getByRole("button", { name: "Delete for good" }).click();
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/:\d+\/?$/);
   expect((await page.request.get("/api/me")).status()).toBe(401);
 });
 

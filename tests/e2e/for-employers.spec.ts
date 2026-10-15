@@ -9,7 +9,7 @@ test("a guest reaches the employers page from the footer", async ({ page }) => {
     .getByRole("contentinfo")
     .getByRole("link", { name: "For employers" })
     .click();
-  await expect(page).toHaveURL(/\/en\/for-employers$/);
+  await expect(page).toHaveURL(/:\d+\/for-employers$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Hire remote people who fit your time zone",
   );
@@ -36,5 +36,6 @@ test("the jobs RSS feed is valid RSS for both locales", async ({ request }) => {
     expect(body).toContain('<rss version="2.0"');
     expect(body).toContain(`<language>${locale}</language>`);
   }
-  expect((await request.get("/de/jobs/rss.xml")).status()).toBe(404);
+  // German is a site language since D373; a code the site lacks is 404.
+  expect((await request.get("/xx/jobs/rss.xml")).status()).toBe(404);
 });

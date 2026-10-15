@@ -254,7 +254,7 @@ export default async function HomePage({
             <Button
               type="submit"
               variant="secondary"
-              className="min-h-10! px-4! text-[14px]!"
+              className="px-4! text-[14px]!"
             >
               {t("searchSubmit")}
             </Button>

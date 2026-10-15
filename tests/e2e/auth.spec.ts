@@ -21,9 +21,11 @@ async function registerWithPassword(page: Page, email: string, pw = password) {
   await page.goto("/en/register");
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.locator('input[type="password"]').fill(pw);
+  // D331: the account type is required; it does not change rights.
+  await page.getByRole("radio", { name: /looking for work/ }).check();
   await page.getByLabel("I accept the terms").check();
   await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
+  await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
 }
 
 async function openLatestLink(page: Page, email: string, seen: number) {
@@ -76,7 +78,7 @@ test("password: unconfirmed email cannot sign in or write; confirmed can", async
   expect((await write.json()).error.code).toBe("UNAUTHENTICATED");
 
   await openLatestLink(page, email, 0);
-  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
+  await expect(page).toHaveURL(/:\d+\/auth\/(confirmed|signed-in)/);
   const me = await expectSignedIn(page);
   expect(me).toMatchObject({
     locale: "en",
@@ -98,7 +100,7 @@ test("password: unconfirmed email cannot sign in or write; confirmed can", async
 
   await signOut(page);
   await signInWithPassword(page, email, password);
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/:\d+\/?$/);
   await expectSignedIn(page);
 });
 
@@ -109,12 +111,14 @@ test("magic link: register and sign in without a password", async ({
   await page.goto("/en/register");
   await page.getByRole("button", { name: "Email link" }).click();
   await page.getByLabel("Email", { exact: true }).fill(email);
+  // D331: the account type is required; it does not change rights.
+  await page.getByRole("radio", { name: /looking for work/ }).check();
   await page.getByLabel("I accept the terms").check();
   await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
+  await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
 
   await openLatestLink(page, email, 0);
-  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
+  await expect(page).toHaveURL(/:\d+\/auth\/(confirmed|signed-in)/);
   await expectSignedIn(page);
   await signOut(page);
 
@@ -123,10 +127,10 @@ test("magic link: register and sign in without a password", async ({
   await page.getByRole("button", { name: "Email link" }).click();
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.getByRole("button", { name: "Send link" }).click();
-  await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
+  await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
 
   await openLatestLink(page, email, seen);
-  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
+  await expect(page).toHaveURL(/:\d+\/auth\/(confirmed|signed-in)/);
   await expectSignedIn(page);
 });
 
@@ -143,21 +147,21 @@ test("password reset sets a new password through the emailed link", async ({
   await page.goto("/en/reset-password");
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.getByRole("button", { name: "Send reset link" }).click();
-  await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
+  await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
 
   await openLatestLink(page, email, seen);
-  await expect(page).toHaveURL(/\/en\/reset-password\?mode=update$/);
+  await expect(page).toHaveURL(/:\d+\/reset-password\?mode=update$/);
   const newPassword = "harbor-violet-73"; // gitleaks:allow (test fixture)
   await page.getByLabel("New password").fill(newPassword);
   await page.getByRole("button", { name: "Save password" }).click();
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/:\d+\/?$/);
   await expectSignedIn(page);
   await signOut(page);
 
   await signInWithPassword(page, email, password);
   await expectFormAlert(page, "Wrong email or password");
   await signInWithPassword(page, email, newPassword);
-  await expect(page).toHaveURL(/\/en$/);
+  await expect(page).toHaveURL(/:\d+\/?$/);
   await expectSignedIn(page);
 });
 
@@ -184,7 +188,7 @@ test("registration rejects short and common passwords and missing terms", async 
     page.getByText("The password must be at least 10 characters."),
   ).toBeVisible();
   await expect(page.getByText("Accept the terms to continue.")).toBeVisible();
-  await expect(page).toHaveURL(/\/en\/register$/);
+  await expect(page).toHaveURL(/:\d+\/register$/);
 
   const common = await request.post("/api/auth/register", {
     headers: sameOrigin,
@@ -193,6 +197,7 @@ test("registration rejects short and common passwords and missing terms", async 
       password: "basketball",
       locale: "en",
       acceptTerms: true,
+      accountType: "candidate",
     },
   });
   expect(common.status()).toBe(400);

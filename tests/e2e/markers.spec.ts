@@ -20,9 +20,11 @@ test("creating a job accepts sectors and a crypto-pay perk", async ({
   await page.goto("/en/register");
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.locator('input[type="password"]').fill("orbit-lantern-42");
+  // D331: the account type is required; it does not change rights.
+  await page.getByRole("radio", { name: /looking for work/ }).check();
   await page.getByLabel("I accept the terms").check();
   await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
+  await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
   const { authLink, waitForMail } = await import("./mail");
   const mail = await waitForMail(page.request, email);
   await page.goto(authLink(mail));
