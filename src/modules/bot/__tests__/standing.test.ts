@@ -1,14 +1,12 @@
 import { describe, expect, it } from "vitest";
-import {
-  formatStanding,
-  standingMissing,
-} from "../service/standing";
+import { formatStanding, standingMissing } from "../service/standing";
 
 describe("account standing for Spoki", () => {
   it("drops the contact email so the bot never asks for it", () => {
-    expect(
-      standingMissing(["headline", "contact_email", "skills"]),
-    ).toEqual(["headline", "skills"]);
+    expect(standingMissing(["headline", "contact_email", "skills"])).toEqual([
+      "headline",
+      "skills",
+    ]);
   });
 
   it("reports both plans, messages left, and profile gaps", () => {

@@ -2667,11 +2667,7 @@
           {
             "num": "01",
             "title": "Community Team",
-            "roles": [
-              "Community Manager",
-              "Moderators",
-              "Content Specialist"
-            ],
+            "roles": ["Community Manager", "Moderators", "Content Specialist"],
             "text": "Operators for Telegram, Discord, and community channels — moderation, engagement, and content in one group."
           },
           {
@@ -2707,11 +2703,7 @@
         "categories": [
           {
             "title": "Community",
-            "roles": [
-              "Community Manager",
-              "Moderators",
-              "Content Specialist"
-            ]
+            "roles": ["Community Manager", "Moderators", "Content Specialist"]
           },
           {
             "title": "Growth",

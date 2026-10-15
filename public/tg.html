@@ -46,7 +46,8 @@
         function claim(init) {
           try {
             var h = 0;
-            for (var i = 0; i < init.length; i++) h = (h * 31 + init.charCodeAt(i)) | 0;
+            for (var i = 0; i < init.length; i++)
+              h = (h * 31 + init.charCodeAt(i)) | 0;
             var k = "tg_mini_try_" + (h >>> 0).toString(16);
             var raw = Number(sessionStorage.getItem(k) || "0");
             var used = isFinite(raw) && raw > 0 ? raw : 0;

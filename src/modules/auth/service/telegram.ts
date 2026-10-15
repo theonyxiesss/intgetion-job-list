@@ -204,15 +204,24 @@ const miniAppUser = z
   })
   .loose();
 
-function dataCheckString(params: URLSearchParams, dropSignature: boolean): string {
+function dataCheckString(
+  params: URLSearchParams,
+  dropSignature: boolean,
+): string {
   return [...params.entries()]
-    .filter(([key]) => key !== "hash" && (!dropSignature || key !== "signature"))
+    .filter(
+      ([key]) => key !== "hash" && (!dropSignature || key !== "signature"),
+    )
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
     .map(([key, value]) => `${key}=${value}`)
     .join("\n");
 }
 
-function hmacHexMatches(check: string, hash: string, botToken: string): boolean {
+function hmacHexMatches(
+  check: string,
+  hash: string,
+  botToken: string,
+): boolean {
   const secret = createHmac("sha256", "WebAppData").update(botToken).digest();
   const expected = createHmac("sha256", secret).update(check).digest();
   const given = Buffer.from(hash, "hex");

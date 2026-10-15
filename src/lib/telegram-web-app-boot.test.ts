@@ -32,9 +32,7 @@ describe("telegram web app boot", () => {
     expect(() => new Function(TELEGRAM_MINI_APP_BOUNCE_SCRIPT)).not.toThrow();
     expect(miniAppContinuePath("en")).toBe("/?tgb=1");
     expect(miniAppContinuePath("ru")).toBe("/ru?tgb=1");
-    expect(miniAppSignedInHtml("/?tgb=1")).toContain(
-      'content="0;url=/?tgb=1"',
-    );
+    expect(miniAppSignedInHtml("/?tgb=1")).toContain('content="0;url=/?tgb=1"');
     expect(miniAppSignedInHtml("/ru?tgb=1")).toContain(
       'content="0;url=/ru?tgb=1"',
     );
