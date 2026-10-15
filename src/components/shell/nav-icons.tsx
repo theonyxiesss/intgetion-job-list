@@ -45,6 +45,15 @@ function JobsMark(props: NavMarkProps) {
   );
 }
 
+function EventsMark(props: NavMarkProps) {
+  return (
+    <Frame {...props}>
+      <rect x="3.5" y="5.5" width="17" height="15" />
+      <path d="M3.5 10 H20.5 M8 3 V7.5 M16 3 V7.5 M7.5 14.5 H10.5" />
+    </Frame>
+  );
+}
+
 function MatchesMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
@@ -184,6 +193,7 @@ function LoginMark(props: NavMarkProps) {
 
 export const NAV_ICONS: Record<string, NavMark> = {
   "/jobs": JobsMark,
+  "/events": EventsMark,
   "/matches": MatchesMark,
   "/pricing": PricingMark,
   "/employer/jobs": EmployerJobsMark,

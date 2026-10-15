@@ -105,9 +105,9 @@
     "wordmarkSub": "Job list"
   },
   "meta": {
-    "description": "Remote work. Real matches.",
-    "homeTitle": "Remote Web3 & Crypto Jobs",
-    "homeDescription": "Find remote jobs in Web3, crypto and blockchain: engineering, design, marketing and support. Salary ranges, time-zone overlap and matches to your profile.",
+    "description": "Remote jobs and tech events. Real matches.",
+    "homeTitle": "Remote Web3 Jobs & Tech Events",
+    "homeDescription": "An aggregator of remote jobs in Web3, crypto and tech, plus summits, meetups, hackathons and career events for networking. Salary ranges, time-zone overlap and matches to your profile.",
     "ogAlt": "INTGETION Job List — remote work in Web3"
   },
   "nav": {
@@ -124,6 +124,7 @@
     "skip": "Skip to content",
     "menu": "Menu",
     "jobs": "Jobs",
+    "events": "Events",
     "matches": "Matches",
     "employers": "For employers",
     "saved": "Saved jobs",
@@ -164,7 +165,7 @@
     "it": "Italian"
   },
   "home": {
-    "tagline": "Remote work. Real matches.",
+    "tagline": "Remote jobs and tech events. Real matches.",
     "searchLabel": "Search",
     "searchPlaceholder": "Role, skill, or company",
     "searchSubmit": "Search",
@@ -177,7 +178,7 @@
     "faq": {
       "what": {
         "q": "What is INTGETION JOB LIST?",
-        "a": "A feed of remote jobs. Search, apply, and let the Spoki assistant suggest roles that fit your profile."
+        "a": "An aggregator of remote jobs and of Web3 and tech events. Search jobs, find summits and meetups to network at, and let the Spoki assistant suggest what fits your profile."
       },
       "free": {
         "q": "Is it free?",
@@ -1559,6 +1560,11 @@
         "title": "Account",
         "text": "Saving jobs and applying need an account.",
         "action": "Create account"
+      },
+      "events": {
+        "title": "Events",
+        "text": "Summits, meetups and hackathons where you meet the people who hire.",
+        "action": "See events"
       },
       "post_job": {
         "title": "Post a job",
@@ -3394,6 +3400,66 @@
       },
       "footerBlurb": "Digital systems, operations and growth — in one working hub.",
       "copyright": "© 2026 THE ONYXIS"
+    }
+  },
+  "events": {
+    "title": "Web3 & tech events",
+    "subtitle": "Summits, conferences, meetups, hackathons, business and career meetups. Go where people hire: networking often leads to the next role.",
+    "filters": "Filters",
+    "closeFilters": "Close filters",
+    "search": "Search events",
+    "topic": "Topic",
+    "anyTopic": "Any topic",
+    "kind": "Type",
+    "anyKind": "Any type",
+    "format": "Format",
+    "anyFormat": "Any format",
+    "country": "Country",
+    "anyCountry": "Any country",
+    "from": "From",
+    "to": "To",
+    "applyFilters": "Show events",
+    "clearFilter": "Remove filter",
+    "empty": "No upcoming events match these filters.",
+    "next": "Next page",
+    "previous": "Previous page",
+    "pagination": "Pages",
+    "back": "All events",
+    "when": "When",
+    "where": "Where",
+    "online": "Online",
+    "topicsLabel": "Topics",
+    "visit": "Open the organizer’s page",
+    "organizerNote": "Tickets and registration are on the organizer’s site.",
+    "cfp": "Call for speakers until {date}",
+    "ended": "This event has ended.",
+    "networking": "Events are where people meet the teams that hire. Talk to speakers and to companies you would like to work for.",
+    "sourceLabel": "Listed from open data",
+    "metaDescription": "{kind} · {dates} · {place}",
+    "topics": {
+      "web3": "Web3",
+      "ai": "AI",
+      "dev": "Development",
+      "data": "Data",
+      "security": "Security",
+      "devops": "DevOps & infrastructure",
+      "product": "Product",
+      "design": "Design & UX",
+      "business": "Business & leadership",
+      "career": "Career"
+    },
+    "kinds": {
+      "summit": "Summit",
+      "conference": "Conference",
+      "meetup": "Meetup",
+      "hackathon": "Hackathon",
+      "business": "Business meetup",
+      "career": "Career meetup"
+    },
+    "formats": {
+      "online": "Online",
+      "offline": "In person",
+      "hybrid": "Hybrid"
     }
   }
 }

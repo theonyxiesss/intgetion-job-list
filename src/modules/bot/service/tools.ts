@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
+import { EVENT_KINDS, EVENT_TOPICS } from "@/config/events";
 import { EMPLOYMENT_TYPES } from "@/config/markers";
 import { HttpError } from "@/lib/http";
 import {
@@ -20,6 +21,7 @@ import {
   getOwnCandidate,
   patchCandidateProfile,
 } from "@/modules/candidates/service";
+import { findEventsForPerson } from "@/modules/events/service";
 import { hideJobInput } from "@/modules/feedback/schemas";
 import {
   getHiddenSetsForViewer,
@@ -40,7 +42,7 @@ import {
   listMatchPage,
   topExplain,
 } from "@/modules/matching/service";
-import { searchFiltersFromDraft } from "./memory";
+import { eventPlaceFromDraft, searchFiltersFromDraft } from "./memory";
 import { OFFER_ACTIONS, offerPath } from "./offers";
 import { formatStanding, standingMissing } from "./standing";
 
@@ -144,6 +146,21 @@ const searchInput = z
   })
   .strict();
 
+const MAX_EVENTS = 5;
+
+const eventsInput = z
+  .object({
+    topics: z.array(z.enum(EVENT_TOPICS)).max(5).optional(),
+    kind: z.enum(EVENT_KINDS).optional(),
+    country: z
+      .string()
+      .regex(/^[A-Z]{2}$/)
+      .optional(),
+    remote: z.boolean().optional(),
+    limit: z.number().int().min(1).max(MAX_EVENTS).optional(),
+  })
+  .strict();
+
 export const TOOLS: readonly BotTool[] = [
   tool({
     name: "search_jobs",
@@ -206,9 +223,48 @@ export const TOOLS: readonly BotTool[] = [
     },
   }),
   tool({
+    name: "find_events",
+    description:
+      "Find upcoming Web3 and tech events (summits, conferences, meetups, hackathons, business and career meetups) for networking. Read-only. Topics, kind, country (ISO 3166-1 alpha-2) and remote are optional; without them the person's known country and remote preference are used. Returns up to 5 events. Then call offer_step with events instead of writing a URL.",
+    input: eventsInput,
+    access: "guest",
+    confirm: never,
+    async run(ctx, input) {
+      const known = eventPlaceFromDraft(ctx.state.draft);
+      const events = await findEventsForPerson({
+        topics: input.topics,
+        kind: input.kind,
+        country: input.country ?? known.country,
+        remote: input.remote ?? known.remote,
+        limit: input.limit ?? MAX_EVENTS,
+      });
+      if (!events.length) return { llm: "No upcoming events found." };
+      return {
+        llm: events
+          .slice(0, MAX_EVENTS)
+          .map((event) =>
+            wrapUntrusted(
+              `event:${event.slug}`,
+              JSON.stringify({
+                title: event.title,
+                kind: event.kind,
+                format: event.format,
+                starts: event.startsAt.toISOString().slice(0, 10),
+                ends: event.endsAt.toISOString().slice(0, 10),
+                city: event.city,
+                country: event.country,
+                topics: event.topics,
+              }),
+            ),
+          )
+          .join("\n"),
+      };
+    },
+  }),
+  tool({
     name: "offer_step",
     description:
-      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, or post_job. Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet.",
+      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, or events. Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet.",
     input: z.object({ action: z.enum(OFFER_ACTIONS) }).strict(),
     access: "guest",
     confirm: never,

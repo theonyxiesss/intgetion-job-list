@@ -4,6 +4,7 @@ import { NAV_ICONS, iconForNav } from "./nav-icons";
 /** Every href Header can put in the phone menu. */
 const MENU_HREFS = [
   "/jobs",
+  "/events",
   "/matches",
   "/pricing",
   "/employer/jobs",

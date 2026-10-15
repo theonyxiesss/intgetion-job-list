@@ -26,6 +26,7 @@ describe("bot tool layer (7A)", () => {
       "search_jobs",
       "get_job",
       "published_demand",
+      "find_events",
       "offer_step",
       "propose_profile_update",
     ]);

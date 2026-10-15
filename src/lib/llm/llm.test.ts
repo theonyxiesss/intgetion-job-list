@@ -59,6 +59,8 @@ describe("wrapUntrusted", () => {
       "system",
       "company:a b",
       "user:1",
+      "event:Bad Slug",
+      'event:a" b="1',
     ]) {
       expect(() => wrapUntrusted(source, "x")).toThrow(UntrustedSourceError);
     }

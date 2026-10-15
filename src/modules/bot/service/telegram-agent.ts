@@ -167,6 +167,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "See plans",
     register: "Create account",
     post_job: "Post a job",
+    events: "See events",
   },
   ru: {
     pay_hire: "Оплатить «Найм»",
@@ -176,6 +177,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "Открыть тарифы",
     register: "Создать аккаунт",
     post_job: "Разместить вакансию",
+    events: "Смотреть события",
   },
   "pt-BR": {
     pay_hire: "Pagar Hire",
@@ -185,6 +187,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "Ver planos",
     register: "Criar conta",
     post_job: "Publicar uma vaga",
+    events: "Ver eventos",
   },
   de: {
     pay_hire: "Hire bezahlen",
@@ -194,6 +197,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "Tarife ansehen",
     register: "Konto erstellen",
     post_job: "Job ausschreiben",
+    events: "Events ansehen",
   },
   fr: {
     pay_hire: "Payer Hire",
@@ -203,6 +207,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "Voir les formules",
     register: "Créer un compte",
     post_job: "Publier une offre",
+    events: "Voir les événements",
   },
   it: {
     pay_hire: "Paga Hire",
@@ -212,6 +217,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "Vedi i piani",
     register: "Crea un account",
     post_job: "Pubblica un’offerta",
+    events: "Vedi eventi",
   },
 };
 

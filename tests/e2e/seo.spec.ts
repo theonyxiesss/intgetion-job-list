@@ -102,10 +102,11 @@ test("the home page carries search wording, x-default and a social image", async
   request,
 }) => {
   await page.goto("/en");
-  await expect(page).toHaveTitle(/Remote Web3 & Crypto Jobs — INTGETION/);
+  // D413: the home page reads as an aggregator of jobs and events.
+  await expect(page).toHaveTitle(/Remote Web3 Jobs & Tech Events — INTGETION/);
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
-    /Web3, crypto and blockchain/,
+    /remote jobs in Web3, crypto and tech, plus summits, meetups/,
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",

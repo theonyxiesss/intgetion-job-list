@@ -13,6 +13,7 @@ export const OFFER_ACTIONS = [
   "pricing",
   "register",
   "post_job",
+  "events",
 ] as const;
 
 export type OfferAction = (typeof OFFER_ACTIONS)[number];
@@ -42,6 +43,8 @@ export function offerPath(
   if (action === "register") {
     return signedIn ? null : "/register?next=chat";
   }
+  // The events catalog is public (D413).
+  if (action === "events") return "/events";
   if (action === "post_job") {
     return signedIn ? RETURN_PATHS["post-job"] : "/login?next=post-job";
   }
