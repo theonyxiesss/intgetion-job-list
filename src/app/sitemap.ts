@@ -4,6 +4,7 @@ import { CATALOG_TAGS, REGIONS } from "@/config/markers";
 import { getDb } from "@/db/client";
 import { logger } from "@/lib/logger";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
+import { listEventSitemapEntries } from "@/modules/events/service";
 import { listSitemapEntries, searchJobs } from "@/modules/jobs/service";
 import { listSalarySkillSlugs } from "@/modules/salaries/service";
 import { languageAlternates, localeUrl } from "@/modules/seo/site";
@@ -14,6 +15,7 @@ export const dynamic = "force-dynamic";
 const STATIC_PATHS = [
   "",
   "/jobs",
+  "/events",
   "/for-employers",
   "/pricing",
   "/services",
@@ -81,7 +83,7 @@ async function presentTagSlugs(): Promise<Set<string>> {
   return present;
 }
 
-/** Public pages, jobs, companies and tag pages with hreflang alternates (D210). */
+/** Public pages, jobs, companies, tag pages and events with hreflang alternates (D210, D435). */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pages = STATIC_PATHS.map((path) => entry(path));
   try {
@@ -90,6 +92,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const present = await presentTagSlugs();
     // Salary pages only once they show numbers (D260).
     const salarySkills = await listSalarySkillSlugs();
+    const events = await listEventSitemapEntries().catch((error: unknown) => {
+      logger.error({ err: error }, "sitemap events query failed");
+      return [];
+    });
     return [
       ...pages,
       ...jobs.map((job) => entry(`/jobs/${job.id}`, job.updatedAt)),
@@ -101,6 +107,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ).map((tag) => entry(`/jobs/t/${tag.slug}`)),
       ...(salarySkills.length ? [entry("/salaries")] : []),
       ...salarySkills.map((slug) => entry(`/salaries/${slug}`)),
+      ...events.map((event) => entry(`/events/${event.slug}`, event.updatedAt)),
     ];
   } catch (error) {
     // A database hiccup still yields the static pages, not a 500.

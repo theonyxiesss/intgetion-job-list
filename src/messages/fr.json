@@ -105,9 +105,9 @@
     "wordmarkSub": "Job list"
   },
   "meta": {
-    "description": "Travail à distance. De vraies correspondances.",
-    "homeTitle": "Emplois à distance Web3 et crypto",
-    "homeDescription": "Trouvez des emplois à distance dans le Web3, la crypto et la blockchain : ingénierie, design, marketing et support. Fourchettes de salaire, chevauchement des fuseaux horaires et correspondances avec votre profil.",
+    "description": "Travail à distance et événements tech. De vraies correspondances.",
+    "homeTitle": "Emplois à distance Web3 et événements tech",
+    "homeDescription": "Un agrégateur d’emplois à distance dans le Web3, la crypto et la tech, ainsi que de sommets, meetups, hackathons et événements carrière pour le networking. Fourchettes de salaire, chevauchement des fuseaux horaires et correspondances avec votre profil.",
     "ogAlt": "INTGETION Job List — travail à distance dans le Web3"
   },
   "nav": {
@@ -124,6 +124,7 @@
     "skip": "Aller au contenu",
     "menu": "Menu",
     "jobs": "Offres",
+    "events": "Événements",
     "matches": "Correspondances",
     "employers": "Pour les employeurs",
     "saved": "Offres enregistrées",
@@ -165,7 +166,7 @@
     "it": "Italien"
   },
   "home": {
-    "tagline": "Travail à distance. De vraies correspondances.",
+    "tagline": "Travail à distance et événements tech. De vraies correspondances.",
     "searchLabel": "Recherche",
     "searchPlaceholder": "Poste, compétence ou entreprise",
     "searchSubmit": "Rechercher",
@@ -178,7 +179,7 @@
     "faq": {
       "what": {
         "q": "Qu’est-ce que INTGETION JOB LIST ?",
-        "a": "Un fil d’offres d’emploi à distance. Recherchez, postulez et laissez l’assistant Spoki vous proposer des postes adaptés à votre profil."
+        "a": "Un agrégateur d’emplois à distance et d’événements Web3 et tech. Cherchez un emploi, trouvez des sommets et des meetups pour réseauter, et laissez l’assistant Spoki vous proposer ce qui correspond à votre profil."
       },
       "free": {
         "q": "Est-ce gratuit ?",
@@ -1645,6 +1646,11 @@
         "text": "Enregistrer des offres et postuler nécessitent un compte.",
         "action": "Créer un compte"
       },
+      "events": {
+        "title": "Événements",
+        "text": "Sommets, meetups et hackathons pour rencontrer ceux qui recrutent.",
+        "action": "Voir les événements"
+      },
       "post_job": {
         "title": "Publier une offre",
         "text": "La publication reste gratuite avec Start.",
@@ -3063,6 +3069,66 @@
       },
       "footerBlurb": "Digital systems, operations and growth — in one working hub.",
       "copyright": "© 2026 THE ONYXIS"
+    }
+  },
+  "events": {
+    "title": "Événements Web3 et tech",
+    "subtitle": "Sommets, conférences, meetups, hackathons, rencontres business et carrière. Allez là où l’on recrute : le networking mène souvent au prochain poste.",
+    "filters": "Filtres",
+    "closeFilters": "Fermer les filtres",
+    "search": "Rechercher des événements",
+    "topic": "Thème",
+    "anyTopic": "Tous les thèmes",
+    "kind": "Type",
+    "anyKind": "Tous les types",
+    "format": "Format",
+    "anyFormat": "Tous les formats",
+    "country": "Pays",
+    "anyCountry": "Tous les pays",
+    "from": "Du",
+    "to": "Au",
+    "applyFilters": "Voir les événements",
+    "clearFilter": "Retirer le filtre",
+    "empty": "Aucun événement à venir pour ces filtres.",
+    "next": "Page suivante",
+    "previous": "Page précédente",
+    "pagination": "Pages",
+    "back": "Tous les événements",
+    "when": "Quand",
+    "where": "Où",
+    "online": "En ligne",
+    "topicsLabel": "Thèmes",
+    "visit": "Ouvrir la page de l’organisateur",
+    "organizerNote": "Billets et inscription sur le site de l’organisateur.",
+    "cfp": "Appel à orateurs jusqu’au {date}",
+    "ended": "Cet événement est terminé.",
+    "networking": "C’est lors des événements qu’on rencontre les équipes qui recrutent. Parlez aux intervenants et aux entreprises pour lesquelles vous aimeriez travailler.",
+    "sourceLabel": "Issu de données ouvertes",
+    "metaDescription": "{kind} · {dates} · {place}",
+    "topics": {
+      "web3": "Web3",
+      "ai": "IA",
+      "dev": "Développement",
+      "data": "Données",
+      "security": "Sécurité",
+      "devops": "DevOps et infrastructure",
+      "product": "Produit",
+      "design": "Design et UX",
+      "business": "Business et leadership",
+      "career": "Carrière"
+    },
+    "kinds": {
+      "summit": "Sommet",
+      "conference": "Conférence",
+      "meetup": "Meetup",
+      "hackathon": "Hackathon",
+      "business": "Rencontre business",
+      "career": "Rencontre carrière"
+    },
+    "formats": {
+      "online": "En ligne",
+      "offline": "En présentiel",
+      "hybrid": "Hybride"
     }
   }
 }

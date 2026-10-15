@@ -26,6 +26,7 @@ describe("bot tool layer (7A)", () => {
       "search_jobs",
       "get_job",
       "published_demand",
+      "find_events",
       "offer_step",
       "propose_profile_update",
     ]);
@@ -191,6 +192,8 @@ describe("bot history (7A)", () => {
     expect(offerPath("register", true)).toBeNull();
     expect(offerPath("order_service", false)).toBe("/services");
     expect(offerPath("order_service", true)).toBe("/services");
+    expect(offerPath("events", false)).toBe("/events");
+    expect(offerPath("events", true)).toBe("/events");
     const signedIn = await runTool(user, "offer_step", { action: "pay_team" });
     expect(signedIn.client).toEqual({
       kind: "offer",

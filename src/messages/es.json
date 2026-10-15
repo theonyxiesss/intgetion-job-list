@@ -105,9 +105,9 @@
     "wordmarkSub": "Job list"
   },
   "meta": {
-    "description": "Trabajo remoto. Coincidencias reales.",
-    "homeTitle": "Empleos remotos en Web3 y cripto",
-    "homeDescription": "Encuentra empleos remotos en Web3, cripto y blockchain: ingeniería, diseño, marketing y soporte. Rangos salariales, coincidencia horaria y afinidad con tu perfil.",
+    "description": "Trabajo remoto y eventos tech. Coincidencias reales.",
+    "homeTitle": "Empleos remotos en Web3 y eventos tech",
+    "homeDescription": "Un agregador de empleos remotos en Web3, cripto y tecnología, y de cumbres, meetups, hackatones y eventos de carrera para hacer networking. Rangos salariales, coincidencia horaria y afinidad con tu perfil.",
     "ogAlt": "INTGETION Job List — trabajo remoto en Web3"
   },
   "nav": {
@@ -124,6 +124,7 @@
     "skip": "Saltar al contenido",
     "menu": "Menú",
     "jobs": "Empleos",
+    "events": "Eventos",
     "matches": "Para ti",
     "employers": "Para empleadores",
     "saved": "Empleos guardados",
@@ -165,7 +166,7 @@
     "it": "Italiano"
   },
   "home": {
-    "tagline": "Trabajo remoto. Coincidencias reales.",
+    "tagline": "Trabajo remoto y eventos tech. Coincidencias reales.",
     "searchLabel": "Buscar",
     "searchPlaceholder": "Puesto, habilidad o empresa",
     "searchSubmit": "Buscar",
@@ -178,7 +179,7 @@
     "faq": {
       "what": {
         "q": "¿Qué es INTGETION JOB LIST?",
-        "a": "Un listado de empleos remotos. Busca, postúlate y deja que el asistente Spoki te sugiera puestos que encajen con tu perfil."
+        "a": "Un agregador de empleos remotos y de eventos Web3 y tech. Busca empleo, encuentra cumbres y meetups para hacer networking y deja que el asistente Spoki te sugiera lo que encaja con tu perfil."
       },
       "free": {
         "q": "¿Es gratis?",
@@ -1645,6 +1646,11 @@
         "text": "Guardar empleos y postularse pide una cuenta.",
         "action": "Crear cuenta"
       },
+      "events": {
+        "title": "Eventos",
+        "text": "Cumbres, meetups y hackatones para conocer a quienes contratan.",
+        "action": "Ver eventos"
+      },
       "post_job": {
         "title": "Publicar",
         "text": "Publicar sigue gratis en Start.",
@@ -3063,6 +3069,66 @@
       },
       "footerBlurb": "Digital systems, operations and growth — in one working hub.",
       "copyright": "© 2026 THE ONYXIS"
+    }
+  },
+  "events": {
+    "title": "Eventos Web3 y tech",
+    "subtitle": "Cumbres, conferencias, meetups, hackatones, encuentros de negocios y de carrera. Ve donde se contrata: el networking suele llevar al siguiente empleo.",
+    "filters": "Filtros",
+    "closeFilters": "Cerrar filtros",
+    "search": "Buscar eventos",
+    "topic": "Tema",
+    "anyTopic": "Cualquier tema",
+    "kind": "Tipo",
+    "anyKind": "Cualquier tipo",
+    "format": "Formato",
+    "anyFormat": "Cualquier formato",
+    "country": "País",
+    "anyCountry": "Cualquier país",
+    "from": "Desde",
+    "to": "Hasta",
+    "applyFilters": "Ver eventos",
+    "clearFilter": "Quitar filtro",
+    "empty": "No hay próximos eventos con estos filtros.",
+    "next": "Página siguiente",
+    "previous": "Página anterior",
+    "pagination": "Páginas",
+    "back": "Todos los eventos",
+    "when": "Cuándo",
+    "where": "Dónde",
+    "online": "En línea",
+    "topicsLabel": "Temas",
+    "visit": "Abrir la página del organizador",
+    "organizerNote": "Las entradas y la inscripción están en el sitio del organizador.",
+    "cfp": "Convocatoria de ponentes hasta el {date}",
+    "ended": "Este evento ya terminó.",
+    "networking": "En los eventos se conoce a los equipos que contratan. Habla con ponentes y con empresas donde te gustaría trabajar.",
+    "sourceLabel": "De datos abiertos",
+    "metaDescription": "{kind} · {dates} · {place}",
+    "topics": {
+      "web3": "Web3",
+      "ai": "IA",
+      "dev": "Desarrollo",
+      "data": "Datos",
+      "security": "Seguridad",
+      "devops": "DevOps e infraestructura",
+      "product": "Producto",
+      "design": "Diseño y UX",
+      "business": "Negocios y liderazgo",
+      "career": "Carrera"
+    },
+    "kinds": {
+      "summit": "Cumbre",
+      "conference": "Conferencia",
+      "meetup": "Meetup",
+      "hackathon": "Hackatón",
+      "business": "Encuentro de negocios",
+      "career": "Encuentro de carrera"
+    },
+    "formats": {
+      "online": "En línea",
+      "offline": "Presencial",
+      "hybrid": "Híbrido"
     }
   }
 }

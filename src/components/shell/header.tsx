@@ -54,6 +54,7 @@ export async function Header() {
   const main: NavItem[] = employer
     ? [
         { href: "/jobs", label: t("nav.jobs") },
+        { href: "/events", label: t("nav.events") },
         { href: "/services", label: t("nav.services") },
         { href: "/employer/jobs", label: t("nav.myJobs") },
         { href: "/employer/company", label: t("nav.company") },
@@ -62,6 +63,7 @@ export async function Header() {
       ]
     : [
         { href: "/jobs", label: t("nav.jobs") },
+        { href: "/events", label: t("nav.events") },
         { href: "/services", label: t("nav.services") },
         { href: "/pricing", label: t("nav.pricing") },
       ];

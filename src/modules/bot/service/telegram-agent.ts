@@ -168,6 +168,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     register: "Create account",
     post_job: "Post a job",
     order_service: "Describe the task",
+    events: "See events",
   },
   ru: {
     pay_hire: "Оплатить «Найм»",
@@ -178,6 +179,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     register: "Создать аккаунт",
     post_job: "Разместить вакансию",
     order_service: "Описать задачу",
+    events: "Смотреть события",
   },
   "pt-BR": {
     pay_hire: "Pagar Hire",
@@ -188,6 +190,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     register: "Criar conta",
     post_job: "Publicar uma vaga",
     order_service: "Descrever a tarefa",
+    events: "Ver eventos",
   },
   de: {
     pay_hire: "Hire bezahlen",
@@ -198,6 +201,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     register: "Konto erstellen",
     post_job: "Job ausschreiben",
     order_service: "Aufgabe beschreiben",
+    events: "Events ansehen",
   },
   fr: {
     pay_hire: "Payer Hire",
@@ -208,6 +212,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     register: "Créer un compte",
     post_job: "Publier une offre",
     order_service: "Décrire la tâche",
+    events: "Voir les événements",
   },
   it: {
     pay_hire: "Paga Hire",
@@ -218,6 +223,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     register: "Crea un account",
     post_job: "Pubblica un’offerta",
     order_service: "Descrivi il compito",
+    events: "Vedi eventi",
   },
 };
 

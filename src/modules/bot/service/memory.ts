@@ -268,3 +268,24 @@ export function searchFiltersFromDraft(draft: Draft | undefined): {
     country,
   };
 }
+
+/**
+ * Where events suit this person (D435): their country, and whether they
+ * work remotely, so online events fit. The country stays even for remote
+ * work: a meetup in their own country is still within reach.
+ */
+export function eventPlaceFromDraft(draft: Draft | undefined): {
+  country?: string;
+  remote: boolean;
+} {
+  const data = draftOf(draft);
+  const formats = Array.isArray(data.workFormats) ? data.workFormats : [];
+  const country =
+    typeof data.country === "string" && /^[A-Z]{2}$/.test(data.country)
+      ? data.country
+      : undefined;
+  return {
+    country,
+    remote: formats.length === 0 || formats.includes("remote"),
+  };
+}

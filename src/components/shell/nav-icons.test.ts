@@ -4,6 +4,7 @@ import { NAV_ICONS, iconForNav, orderPhoneNav } from "./nav-icons";
 /** Every href Header can put in the phone menu. */
 const MENU_HREFS = [
   "/jobs",
+  "/events",
   "/services",
   "/matches",
   "/pricing",
@@ -48,6 +49,7 @@ describe("phone menu order", () => {
       "/pricing",
       "/login",
       "/jobs",
+      "/events",
       "/services",
       "/post-job",
       "/chat",
@@ -61,6 +63,7 @@ describe("phone menu order", () => {
     ]);
     expect(orderPhoneNav(items, "candidate").map((item) => item.href)).toEqual([
       "/jobs",
+      "/events",
       "/applications",
       "/chat",
       "/saved-jobs",
@@ -78,6 +81,7 @@ describe("phone menu order", () => {
   it("orders a guest and skips items they do not have", () => {
     const items = menu([
       "/jobs",
+      "/events",
       "/services",
       "/pricing",
       "/post-job",
@@ -88,6 +92,7 @@ describe("phone menu order", () => {
     ]);
     expect(orderPhoneNav(items, "guest").map((item) => item.href)).toEqual([
       "/jobs",
+      "/events",
       "/chat",
       "/pricing",
       "/services",
@@ -113,6 +118,7 @@ describe("phone menu order", () => {
   it("orders an employer with admin last", () => {
     const items = menu([
       "/jobs",
+      "/events",
       "/services",
       "/employer/jobs",
       "/employer/company",
@@ -133,6 +139,7 @@ describe("phone menu order", () => {
       "/employer/billing",
       "/chat",
       "/jobs",
+      "/events",
       "/services",
       "/pricing",
       "/notifications",

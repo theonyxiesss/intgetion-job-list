@@ -133,6 +133,23 @@ describe("env-rules validation", () => {
       expect(emb?.status).toBe("INVALID");
     });
 
+    it("accepts known event feeds and rejects unknown ones (D435)", () => {
+      const ok = envRules.validateAll(
+        { ...baseEnv, EVENTS_IMPORT_SOURCES: "confs.tech" },
+        "dev",
+      );
+      expect(
+        ok.results.find((r) => r.name === "EVENTS_IMPORT_SOURCES")?.status,
+      ).not.toBe("INVALID");
+      const bad = envRules.validateAll(
+        { ...baseEnv, EVENTS_IMPORT_SOURCES: "confs.tech,lu.ma" },
+        "dev",
+      );
+      expect(
+        bad.results.find((r) => r.name === "EVENTS_IMPORT_SOURCES")?.status,
+      ).toBe("INVALID");
+    });
+
     it("validates LLM_DAILY_BUDGET_USD as positive number", () => {
       const { results } = envRules.validateAll(
         { ...baseEnv, LLM_DAILY_BUDGET_USD: "20" },

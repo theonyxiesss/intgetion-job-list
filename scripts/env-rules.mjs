@@ -40,6 +40,9 @@ const PROD_REQUIRED = new Set([
   "SENTRY_DSN",
 ]);
 
+// Event feeds the code knows (src/config/events.ts, D435).
+const KNOWN_EVENT_SOURCES = new Set(["confs.tech"]);
+
 // All known variables (for unknown-variable warning)
 const ALL_KNOWN = new Set([
   "NEXT_PUBLIC_SITE_URL",
@@ -59,6 +62,7 @@ const ALL_KNOWN = new Set([
   "LLM_DAILY_BUDGET_USD",
   "EMBEDDINGS_ENABLED",
   "IMPORT_LIVE_ENABLED",
+  "EVENTS_IMPORT_SOURCES",
   "INDEXNOW_KEY",
   "GOOGLE_SITE_VERIFICATION",
   "YANDEX_VERIFICATION",
@@ -234,6 +238,22 @@ function validateVar(name, value, mode) {
         return { name, status: "INVALID", reason: "must be a number > 0" };
       }
       break;
+
+    case "EVENTS_IMPORT_SOURCES": {
+      // D435: comma list of event feeds the founder approved (D18).
+      const unknown = trimmed
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item && !KNOWN_EVENT_SOURCES.has(item));
+      if (unknown.length > 0) {
+        return {
+          name,
+          status: "INVALID",
+          reason: `unknown event source (known: ${[...KNOWN_EVENT_SOURCES].join(", ")})`,
+        };
+      }
+      break;
+    }
 
     case "EMBEDDINGS_ENABLED":
     case "IMPORT_LIVE_ENABLED":
