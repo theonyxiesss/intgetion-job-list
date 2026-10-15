@@ -64,15 +64,6 @@ function MatchesMark(props: NavMarkProps) {
   );
 }
 
-function PricingMark(props: NavMarkProps) {
-  return (
-    <Frame {...props}>
-      <path d="M3.5 6 H13 L20 12 L13 18 H3.5 Z" />
-      <circle cx="8" cy="12" r="1.75" />
-    </Frame>
-  );
-}
-
 function EmployerJobsMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
@@ -230,7 +221,6 @@ export const NAV_ICONS: Record<string, NavMark> = {
   "/events": EventsMark,
   "/freelance": FreelanceMark,
   "/matches": MatchesMark,
-  "/pricing": PricingMark,
   "/employer/jobs": EmployerJobsMark,
   "/employer/company": CompanyMark,
   "/employer/billing": BillingMark,
@@ -262,7 +252,6 @@ const PHONE_NAV_ORDER = {
     "/saved-jobs",
     "/notifications",
     "/profile",
-    "/pricing",
     "/freelance",
     "/services",
     "/post-job",
@@ -275,7 +264,6 @@ const PHONE_NAV_ORDER = {
     "/events",
     "/chat",
     "/freelance",
-    "/pricing",
     "/services",
     "/post-job",
     "/for-employers",
@@ -291,7 +279,6 @@ const PHONE_NAV_ORDER = {
     "/events",
     "/freelance",
     "/services",
-    "/pricing",
     "/notifications",
     "/settings/account",
     "/admin",

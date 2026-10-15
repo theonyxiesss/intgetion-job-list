@@ -453,8 +453,8 @@ export function Chat({
   }
 
   return (
-    <div className="chat-shell mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-3 px-4 max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:max-w-none max-md:bg-bg md:px-6">
-      <div data-chat-meta className="shrink-0 py-3">
+    <div className="chat-shell flex min-h-0 w-full flex-1 flex-col max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:bg-bg">
+      <div data-chat-meta className="mx-auto w-full max-w-3xl shrink-0 px-4 py-3 md:px-6">
         <h1 className="text-sm font-medium">{t("title")}</h1>
         {focus && jobId ? (
           <p className="t-body-s mt-2 text-fg">
@@ -483,8 +483,9 @@ export function Chat({
         role="log"
         aria-live="polite"
         aria-label={t("log")}
-        className="flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto"
+        className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto"
       >
+        <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col gap-6 px-4 md:px-6">
         {welcome && (
           <div className="mt-auto flex w-full flex-col items-center gap-4 pb-2 text-center">
             <h2 className="text-2xl font-medium md:text-3xl">
@@ -675,7 +676,9 @@ export function Chat({
           </p>
         )}
         <div ref={endRef} />
+        </div>
       </div>
+      <div className="mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-3 px-4 md:px-6">
       {actions.signup && !signedIn && (
         <p className="flex flex-col items-start gap-2">
           <Link
@@ -758,6 +761,7 @@ export function Chat({
           </a>
         </p>
       </form>
+      </div>
       {welcome && (
         <div
           aria-hidden="true"

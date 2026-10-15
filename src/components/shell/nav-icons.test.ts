@@ -8,7 +8,6 @@ const MENU_HREFS = [
   "/freelance",
   "/services",
   "/matches",
-  "/pricing",
   "/employer/jobs",
   "/employer/company",
   "/employer/billing",
@@ -47,7 +46,6 @@ function menu(hrefs: string[]) {
 describe("phone menu order", () => {
   it("orders a signed-in candidate", () => {
     const items = menu([
-      "/pricing",
       "/login",
       "/jobs",
       "/events",
@@ -71,7 +69,6 @@ describe("phone menu order", () => {
       "/saved-jobs",
       "/notifications",
       "/profile",
-      "/pricing",
       "/freelance",
       "/services",
       "/post-job",
@@ -87,7 +84,6 @@ describe("phone menu order", () => {
       "/events",
       "/freelance",
       "/services",
-      "/pricing",
       "/post-job",
       "/chat",
       "/for-employers",
@@ -99,7 +95,6 @@ describe("phone menu order", () => {
       "/events",
       "/chat",
       "/freelance",
-      "/pricing",
       "/services",
       "/post-job",
       "/for-employers",
@@ -110,7 +105,6 @@ describe("phone menu order", () => {
         menu([
           "/jobs",
           "/chat",
-          "/pricing",
           "/post-job",
           "/for-employers",
           "/login",
@@ -128,7 +122,6 @@ describe("phone menu order", () => {
       "/employer/jobs",
       "/employer/company",
       "/employer/billing",
-      "/pricing",
       "/chat",
       "/post-job",
       "/notifications",
@@ -146,7 +139,6 @@ describe("phone menu order", () => {
       "/jobs",
       "/events",
       "/services",
-      "/pricing",
       "/notifications",
       "/settings/account",
       "/admin",

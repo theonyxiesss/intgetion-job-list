@@ -69,14 +69,12 @@ export async function Header() {
         { href: "/employer/jobs", label: t("nav.myJobs") },
         { href: "/employer/company", label: t("nav.company") },
         { href: "/employer/billing", label: t("billing.nav") },
-        { href: "/pricing", label: t("nav.pricing") },
       ]
     : [
         { href: "/jobs", label: t("nav.jobs") },
         { href: "/events", label: t("nav.events") },
         { href: "/freelance", label: t("nav.freelance") },
         { href: "/services", label: t("nav.services") },
-        { href: "/pricing", label: t("nav.pricing") },
       ];
   const more: NavItem[] = employer
     ? [
@@ -176,17 +174,12 @@ export async function Header() {
               {...navFade}
               href="/chat"
               variant="secondary"
+              size="icon"
               icon={<Icon icon={Bot} size={16} />}
-              className={cn(
-                headerCta,
-                wide ? "size-9! px-0!" : "max-2xl:size-9! max-2xl:px-0!",
-              )}
+              className="size-11! p-0!"
               title={t("nav.chatWithAgent")}
-            >
-              <span className={wide ? "sr-only" : "max-2xl:sr-only"}>
-                {t("nav.chatWithAgent")}
-              </span>
-            </ButtonLink>
+              aria-label={t("nav.chatWithAgent")}
+            />
           </span>
           <span className="mr-1 inline-flex sm:hidden">
             <ButtonLink
