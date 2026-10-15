@@ -1945,3 +1945,14 @@
 - Отклонения от ТЗ: нет
 - OPEN QUESTION: нет
 - Следующая подфаза: только по команде основателя.
+
+## [2026-10-15] — freelance-A+B (D446, D447) — DONE локально, не закоммичено
+
+- Сделано: по «начинай писать по тз» основателя — ТЗ `docs/tz/28-freelance.md` (номер 27 занят креативными тестами), D446, D447 (узкий выбор по открытым вопросам), строка в `docs/tz/INDEX.md`. Подфаза B: миграция `0050_freelance.sql` (шесть таблиц, RLS deny-all, гранты `app_rw`), схема `src/db/schema/freelance.ts`, константы `src/config/freelance.ts`, модуль `src/modules/freelance` (zod-схемы, правила: контакты в тексте через `redactPii` и `@ник`, деньги в центах, таймеры, диапазон цен; таблица переходов заказа; repo; сервис: «Беру заказы», черновик → модерация → публикация, правка возвращает на модерацию, лимит 3 активных, каталог и поиск, запрос со снимком пакета, единственная функция смены статуса с историей, таймеры 72 ч и 7 дней, отзыв). Страниц, API, уведомлений, Spoki и админки нет — подфазы C–H.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1147 прошли, 1 пропущен; 23 новых в `src/modules/freelance/__tests__`); `pnpm build` → 0 (с `SWC_NATIVE_BINDING_CACHE=C:\Users\Admin\.swc-cache-cursor`; без него 1 из-за прав кэша SWC, не из-за кода); prettier по своим файлам → 0. `freelance.integration.test.ts` и миграция с нуля локально не запускались (нет Docker) — проверит CI job `database`.
+- P-тесты подфазы: `rules.test.ts` ✅, `transitions.test.ts` ✅, `freelance.integration.test.ts` — CI
+- Миграции: `src/db/migrations/0050_freelance.sql` (на облако не применялась)
+- Изменённые файлы: `docs/tz/28-freelance.md`, `docs/tz/INDEX.md` (одна строка), `docs/DECISIONS.md` (D446, D447), `src/db/migrations/0050_freelance.sql`, `src/db/schema/freelance.ts`, `src/db/schema/index.ts` (одна строка), `src/config/freelance.ts`, `src/modules/freelance/**`, `MISSION_LOG.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`
+- Отклонения от ТЗ: нет. Коды ошибок модуля вне каталога раздела 6 записаны в D446.
+- OPEN QUESTION: 28.13 — комиссия или платное поднятие, перки в Plus/Pro, модерация только первой услуги, продажа от компаний, Spoki и «Услуги» при пустом каталоге. До ответа — D447.
+- Следующая подфаза: C (каталог и страница услуги) — по команде основателя.

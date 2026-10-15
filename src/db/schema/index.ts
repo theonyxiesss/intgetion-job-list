@@ -21,3 +21,4 @@ export * from "./auth-email-wait";
 export * from "./briefs";
 export * from "./engagement";
 export * from "./events";
+export * from "./freelance";
