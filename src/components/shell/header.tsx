@@ -9,12 +9,16 @@ import {
   cn,
   navFade,
 } from "@/components/ui";
+import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
 import { AccountMenu, type AccountLink } from "./account-menu";
+import { HeaderAuth } from "./header-auth";
 import { Suspense } from "react";
 import { NavProgress } from "./nav-progress";
 import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth-guards";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
+import { sessionCard } from "@/modules/auth/service";
 import { hasCandidateProfile } from "@/modules/candidates/service";
 import { countUnread } from "@/modules/notifications/service";
 import { BottomNav } from "./bottom-nav";
@@ -37,6 +41,8 @@ export async function Header() {
   let isAdmin = false;
   let candidate = false;
   let employer = false;
+  let accountName = "";
+  let accountEmail: string | null = null;
   if (signedIn) {
     try {
       const user = await requireUser();
@@ -44,6 +50,9 @@ export async function Header() {
       employer = user.accountType === "employer";
       unread = await countUnread(user.id);
       candidate = await hasCandidateProfile(user.id);
+      const card = await sessionCard((await createSupabaseServerClient()).auth);
+      accountName = card?.name ?? "";
+      accountEmail = card?.email ?? null;
     } catch {
       unread = 0;
     }
@@ -111,8 +120,17 @@ export async function Header() {
     : [{ href: "/login", label: t("nav.login") }];
   const accountMenu: AccountLink[] = signedIn
     ? [
-        ...cabinet,
+        { href: "/profile", label: t("profile.nav") },
+        { href: "/applications", label: t("applications.nav") },
+        { href: "/saved-jobs", label: t("nav.saved") },
+        { href: "/notifications", label: t("notifications.nav") },
         { href: "/settings/account", label: t("settings.title") },
+        ...(employer
+          ? [
+              { href: "/employer/jobs", label: t("nav.myJobs") },
+              { href: "/employer/company", label: t("nav.company") },
+            ]
+          : []),
         ...(isAdmin
           ? [
               { href: "/admin", label: t("nav.admin") },
@@ -170,12 +188,7 @@ export async function Header() {
               </span>
             </ButtonLink>
           </span>
-          <span
-            className={cn(
-              "mr-1 hidden sm:inline-flex",
-              wide ? "min-[1700px]:hidden" : "2xl:hidden",
-            )}
-          >
+          <span className="mr-1 inline-flex sm:hidden">
             <ButtonLink
               {...navFade}
               href="/post-job"
@@ -186,14 +199,24 @@ export async function Header() {
               icon={<Icon icon={Plus} size={16} />}
             />
           </span>
-          <span
-            className={cn(
-              "mr-2 hidden",
-              wide ? "min-[1700px]:inline-flex" : "2xl:inline-flex",
-            )}
-          >
-            <ButtonLink {...navFade} href="/post-job" className={headerCta}>
+          <span className="mr-1 hidden sm:inline-flex">
+            <ButtonLink
+              {...navFade}
+              href="/post-job"
+              className={headerCta}
+              icon={<Icon icon={Plus} size={16} />}
+            >
               {t("nav.postJob")}
+            </ButtonLink>
+          </span>
+          <span className="mr-1 inline-flex">
+            <ButtonLink
+              {...navFade}
+              href="/pricing"
+              variant="plan"
+              className={headerCta}
+            >
+              {t("nav.pro")}
             </ButtonLink>
           </span>
           <nav
@@ -216,22 +239,18 @@ export async function Header() {
                     </span>
                   )}
                 </Link>
-                <span className="hidden xl:inline-flex">
-                  <AccountMenu label={t("nav.account")} links={accountMenu} />
+                <span className="hidden sm:inline-flex">
+                  <AccountMenu
+                    label={t("nav.account")}
+                    links={accountMenu}
+                    name={accountName}
+                    email={accountEmail}
+                  />
                 </span>
               </>
             ) : (
-              // A wrapper hides them: `hidden` on the link itself would lose
-              // to the button's own `inline-flex`.
               <span className="hidden sm:inline-flex">
-                <ButtonLink
-                  {...navFade}
-                  href="/login"
-                  variant="secondary"
-                  className={headerCta}
-                >
-                  {t("nav.login")}
-                </ButtonLink>
+                <HeaderAuth social={<SocialSignInStubs />} />
               </span>
             )}
           </nav>

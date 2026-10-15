@@ -63,13 +63,11 @@ describe("registerInput", () => {
     expect(registerInput.safeParse(base).success).toBe(false);
   });
 
-  it("requires choosing candidate or employer (D331)", () => {
+  it("allows signup without a side; an unknown side is still rejected (D453)", () => {
     const withoutType = { email: base.email, locale: base.locale };
     expect(
-      firstMessage(
-        registerInput.safeParse({ ...withoutType, acceptTerms: true }),
-      ),
-    ).toBe("account_type_required");
+      registerInput.safeParse({ ...withoutType, acceptTerms: true }).success,
+    ).toBe(true);
     expect(
       registerInput.safeParse({
         ...base,

@@ -96,9 +96,14 @@ export default async function FreelancePage({
           title={t("title")}
           intro={t("subtitle")}
           actions={
-            <Link href="/services" className={buttonClass("secondary")}>
-              {t("teamLink")}
-            </Link>
+            <div className="flex flex-wrap gap-2">
+              <Link href="/freelance/orders" className={buttonClass("secondary")}>
+                {t("myOrders")}
+              </Link>
+              <Link href="/profile/freelance" className={buttonClass("secondary")}>
+                {t("sellerCabinet")}
+              </Link>
+            </div>
           }
         />
         <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">

@@ -10,11 +10,15 @@ import { Link } from "@/i18n/navigation";
 import { intlLocale } from "@/i18n/locale";
 import { localePrefix } from "@/i18n/paths";
 import { publicHttpUrl } from "@/lib/company-mark";
+import { requireUser } from "@/lib/auth-guards";
 import {
+  companiesToOrderFrom,
   getServicePage,
   minorToUsd,
   type ServicePage,
 } from "@/modules/freelance/service";
+import { RequestForm } from "@/modules/freelance/ui/request-form";
+import { freelanceClientCopy } from "@/modules/freelance/ui/server-copy";
 import {
   formatUsd,
   languageNames,
@@ -83,6 +87,8 @@ export default async function FreelanceServicePage({
   const page = await getServicePage(slug, locale);
   if (!page) notFound();
   const t = await getTranslations("freelance");
+  // A guest still reads the page; only the request needs a session.
+  const viewer = await requireUser().catch(() => null);
   const seo = await getTranslations("seo");
   const nav = await getTranslations("nav");
   const pageUrl = `${siteUrl()}${localePrefix(locale)}/freelance/${page.slug}`;
@@ -262,8 +268,27 @@ export default async function FreelanceServicePage({
                 </li>
               ))}
             </ul>
-            <div className="flex flex-col gap-2 rounded-lg border border-dashed border-line-strong p-4">
-              <p className="t-body-s">{t("requestSoon")}</p>
+            <div className="flex flex-col gap-3 rounded-lg border border-line-strong p-4">
+              {!viewer ? (
+                <>
+                  <p className="t-body-s">{t("requestSignIn")}</p>
+                  <Link href="/login" className={buttonClass("primary")}>
+                    {t("signIn")}
+                  </Link>
+                </>
+              ) : viewer.id === page.seller.userId ? (
+                <p className="t-body-s">{t("ownService")}</p>
+              ) : (
+                <RequestForm
+                  serviceId={page.id}
+                  tiers={page.packages.map((pkg) => ({
+                    tier: pkg.tier,
+                    label: `${t(`tiers.${pkg.tier}`)} · ${formatUsd(pkg.priceMinor, locale)}`,
+                  }))}
+                  companies={await companiesToOrderFrom(viewer.id)}
+                  copy={await freelanceClientCopy(locale)}
+                />
+              )}
               <p className="t-body-s text-fg-muted">{t("contactsNote")}</p>
               <p className="t-body-s text-fg-muted">{t("payNote")}</p>
             </div>

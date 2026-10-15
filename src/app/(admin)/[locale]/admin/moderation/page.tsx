@@ -16,6 +16,7 @@ import {
   Th,
   Tr,
 } from "@/components/ui";
+import { Link } from "@/i18n/navigation";
 import { listQueue, listQueueQuery } from "@/modules/moderation/service";
 
 export default async function AdminModerationPage({
@@ -59,6 +60,14 @@ export default async function AdminModerationPage({
             },
             active: entityType === "company",
           },
+          {
+            label: t("tabServices"),
+            href: {
+              pathname: "/admin/moderation",
+              query: { entityType: "freelance_service" },
+            },
+            active: entityType === "freelance_service",
+          },
         ]}
       />
       {items.length === 0 ? (
@@ -90,9 +99,18 @@ export default async function AdminModerationPage({
                 </Td>
                 <Td>
                   <span className="flex flex-wrap items-center gap-2">
-                    <span className="font-medium">
-                      {item.subject?.title ?? t("entityMissing")}
-                    </span>
+                    {item.entityType === "freelance_service" && item.subject ? (
+                      <Link
+                        href={`/admin/freelance/${item.entityId}`}
+                        className="font-medium underline underline-offset-4"
+                      >
+                        {item.subject.title}
+                      </Link>
+                    ) : (
+                      <span className="font-medium">
+                        {item.subject?.title ?? t("entityMissing")}
+                      </span>
+                    )}
                     {item.subject?.source === "imported" && (
                       <Badge tone="imported">{t("imported")}</Badge>
                     )}

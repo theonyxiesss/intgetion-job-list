@@ -12,6 +12,11 @@ import {
   republishImportedJob,
   transitionOwnedJob,
 } from "@/modules/jobs/service";
+import {
+  decideServiceModeration,
+  FREELANCE_QUEUE_ENTITY,
+  getServicesForModeration,
+} from "@/modules/freelance/service";
 import { enqueueMatchJob } from "@/modules/matching/service";
 import { safeNotify } from "@/modules/notifications/service";
 import * as repo from "../repo/queue-repo";
@@ -32,6 +37,8 @@ export type QueueItemDto = {
     source?: string;
     riskScore?: number;
     companyName?: string;
+    /** Freelance service page path part (28.9). */
+    slug?: string;
   } | null;
 };
 
@@ -75,11 +82,21 @@ export async function listQueue(
       c,
     ]),
   );
+  const servicesById = new Map(
+    (
+      await getServicesForModeration(
+        items
+          .filter((i) => i.entityType === FREELANCE_QUEUE_ENTITY)
+          .map((i) => i.entityId),
+      )
+    ).map((s) => [s.id, s]),
+  );
   const last = items.at(-1);
   return {
     items: items.map((item): QueueItemDto => {
       const job = jobsById.get(item.entityId);
       const company = companiesById.get(item.entityId);
+      const service = servicesById.get(item.entityId);
       return {
         id: item.id,
         entityType: item.entityType,
@@ -99,7 +116,13 @@ export async function listQueue(
               }
             : item.entityType === "company" && company
               ? { title: company.name, status: company.status }
-              : null,
+              : item.entityType === FREELANCE_QUEUE_ENTITY && service
+                ? {
+                    title: service.title,
+                    status: service.status,
+                    slug: service.slug,
+                  }
+                : null,
       };
     }),
     nextCursor: rows.length > query.limit && last ? encodeCursor(last) : null,
@@ -117,6 +140,12 @@ async function targetOf(item: repo.QueueRow): Promise<QueueTarget> {
     const [company] = await repo.findCompanies([item.entityId]);
     return company
       ? { kind: "company", status: company.status, reason: item.reason }
+      : { kind: "missing" };
+  }
+  if (item.entityType === FREELANCE_QUEUE_ENTITY) {
+    const [service] = await getServicesForModeration([item.entityId]);
+    return service
+      ? { kind: "freelance_service", status: service.status }
       : { kind: "missing" };
   }
   return { kind: "missing" };
@@ -176,6 +205,12 @@ export async function decideQueueItem(
         break;
       case "reject_company":
         await changeCompanyStatus(item.entityId, admin.id, "rejected");
+        break;
+      case "publish_service":
+        await decideServiceModeration(item.entityId, "publish", note);
+        break;
+      case "reject_service":
+        await decideServiceModeration(item.entityId, "reject", note);
         break;
       case "none":
         break;

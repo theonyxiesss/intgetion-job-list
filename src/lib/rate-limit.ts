@@ -59,6 +59,8 @@ export const rateRules = {
   billingOrder: { limit: 10, windowSeconds: 60 * 60 },
   /** Submitting a transaction hash, keyed by user id. */
   billingConfirm: { limit: 30, windowSeconds: 60 * 60 },
+  /** Freelance requests to sellers, keyed by user id (D447: 5 an hour). */
+  freelanceRequest: { limit: 5, windowSeconds: 60 * 60 },
   /** "Tell me when I can pay", keyed by IP. */
   billingInterest: { limit: 5, windowSeconds: 60 * 60 },
 } as const satisfies Record<string, RateRule>;

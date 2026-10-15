@@ -7,8 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { useRouter } from "@/i18n/navigation";
 
-/** Sign out. `compact` shows only the icon (the name stays for AT). */
-export function LogoutButton({ compact = false }: { compact?: boolean }) {
+/**
+ * Sign out. `compact` shows only the icon (the name stays for AT).
+ * `row` is a full-width menu row; the default stays the pill used in the phone sheet.
+ */
+export function LogoutButton({
+  compact = false,
+  row = false,
+}: {
+  compact?: boolean;
+  row?: boolean;
+}) {
   const t = useTranslations("nav");
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -19,6 +28,20 @@ export function LogoutButton({ compact = false }: { compact?: boolean }) {
     router.replace("/");
     router.refresh();
     setPending(false);
+  }
+
+  if (row) {
+    return (
+      <Button
+        variant="ghost"
+        onClick={logout}
+        loading={pending}
+        icon={<Icon icon={LogOut} />}
+        className="min-h-11 w-full justify-start! rounded-md! px-3! text-danger!"
+      >
+        {t("logout")}
+      </Button>
+    );
   }
 
   return compact ? (

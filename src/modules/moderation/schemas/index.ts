@@ -7,7 +7,7 @@ const cursor = z.string().min(1).max(200).optional();
 export const listQueueQuery = z.object({
   cursor,
   limit,
-  entityType: z.enum(["job", "company"]).optional(),
+  entityType: z.enum(["job", "company", "freelance_service"]).optional(),
 });
 
 /** `POST /api/admin/queue/:id/decide` — a rejection needs a note (14.4). */

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  FREELANCE_ORDER_STATUSES,
   FREELANCE_CATEGORIES,
   FREELANCE_LIMITS as L,
   FREELANCE_TIERS,
@@ -95,3 +96,15 @@ export const reviewInput = z.object({
 export type ReviewInput = z.infer<typeof reviewInput>;
 
 export const deliveryUrl = httpsUrl;
+
+/** `POST /api/freelance/orders/:id/transition`; the side comes from the session. */
+export const transitionInput = z
+  .object({
+    to: z.enum(FREELANCE_ORDER_STATUSES),
+    deliveryUrl: z.string().trim().max(500).optional(),
+  })
+  .strict();
+export type TransitionInput = z.infer<typeof transitionInput>;
+
+export const sellerInput = z.object({ accepting: z.boolean() }).strict();
+export const pauseInput = z.object({ paused: z.boolean() }).strict();

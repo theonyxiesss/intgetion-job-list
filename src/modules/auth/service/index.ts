@@ -8,6 +8,7 @@ export {
   changePassword,
   completeCallback,
   getCurrentUser,
+  sessionCard,
   GOOGLE_TERMS_COOKIE,
   googleSignupMetadata,
   isEmailConfirmed,
@@ -78,6 +79,7 @@ export type {
   LinkedOAuth,
   OAuthProviderName,
   RegisterResult,
+  SessionCard,
 } from "./auth-service";
 export { toMeDto } from "../api/me-dto";
 export type { MeCompany, MeContext, MeDto } from "../api/me-dto";

@@ -6,7 +6,7 @@ import {
 } from "@/config/freelance";
 import { errorCodes, HttpError, notFound, validationError } from "@/lib/http";
 import { hasCandidateProfile } from "@/modules/candidates/service";
-import { listActiveSkills } from "@/modules/taxonomy/service";
+import { listActiveSkills, matchSkillSlug } from "@/modules/taxonomy/service";
 import * as repo from "../repo/freelance-repo";
 import { serviceInput, type ServiceInput } from "../schemas";
 import {
@@ -23,9 +23,44 @@ export type ServiceWithPackages = repo.ServiceRow & {
   packages: repo.PackageRow[];
 };
 
-function parseService(raw: unknown): ServiceInput {
-  const parsed = serviceInput.safeParse(raw);
-  if (!parsed.success) throw validationError(parsed.error.issues);
+/**
+ * The form sends skills by name ("React"); the stored value is the taxonomy
+ * slug. A name the catalog does not know is a field error, not a new skill.
+ */
+async function resolveSkillNames(raw: unknown): Promise<unknown> {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return raw;
+  const body = { ...(raw as Record<string, unknown>) };
+  if (!Array.isArray(body.skills)) return body;
+  const names = body.skills
+    .filter((name): name is string => typeof name === "string")
+    .map((name) => name.trim())
+    .filter(Boolean)
+    .slice(0, FREELANCE_LIMITS.skillsMax + 1);
+  delete body.skills;
+  const slugs: string[] = [];
+  const unknown: string[] = [];
+  for (const name of names) {
+    const slug = await matchSkillSlug(name);
+    if (slug) slugs.push(slug);
+    else unknown.push(name);
+  }
+  if (unknown.length > 0) {
+    throw validationError([{ path: "skills", problem: "unknown", unknown }]);
+  }
+  body.skillSlugs = [...new Set(slugs)];
+  return body;
+}
+
+async function parseService(raw: unknown): Promise<ServiceInput> {
+  const parsed = serviceInput.safeParse(await resolveSkillNames(raw));
+  if (!parsed.success) {
+    throw validationError(
+      parsed.error.issues.map((issue) => ({
+        path: issue.path,
+        message: issue.message,
+      })),
+    );
+  }
   assertServiceRules(parsed.data);
   return parsed.data;
 }
@@ -114,7 +149,7 @@ export async function createService(
   raw: unknown,
   now = new Date(),
 ): Promise<repo.ServiceRow> {
-  const input = parseService(raw);
+  const input = await parseService(raw);
   await requireSeller(userId);
   await assertKnownSkills(input.skillSlugs);
   const id = randomUUID();
@@ -149,17 +184,30 @@ export async function updateService(
   raw: unknown,
   now = new Date(),
 ): Promise<repo.ServiceRow> {
-  const input = parseService(raw);
+  const input = await parseService(raw);
   const row = await ownService(userId, serviceId);
   await assertKnownSkills(input.skillSlugs);
-  return repo.runInTransaction((tx) =>
-    repo.replaceService(
+  const status = statusAfterEdit(row.status);
+  const values = serviceValues(input);
+  const packages = packageValues(input);
+  return repo.runInTransaction(async (tx) => {
+    const updated = await repo.replaceService(
       tx,
       row.id,
-      { ...serviceValues(input), status: statusAfterEdit(row.status), now },
-      packageValues(input),
-    ),
-  );
+      { ...values, status, now },
+      packages,
+    );
+    // A live service that changed goes back to the queue (D447).
+    if (status === "pending" && row.status !== "pending") {
+      await repo.queueForModeration(
+        tx,
+        row.id,
+        "freelance_service_edit",
+        riskFlags(packages),
+      );
+    }
+    return updated;
+  });
 }
 
 async function assertBelowLimit(
@@ -186,12 +234,50 @@ export async function submitService(
   await requireSeller(userId);
   if (row.status !== "draft") throw invalidServiceStep();
   await assertBelowLimit(userId, row.id);
-  const updated = await repo.setServiceStatus(row.id, "pending", {
-    now,
-    moderationNote: null,
+  const packages = await repo.listPackages([row.id]);
+  const updated = await repo.runInTransaction(async (tx) => {
+    const pending = await repo.setPendingInTx(tx, row.id, now);
+    if (pending) {
+      await repo.queueForModeration(
+        tx,
+        row.id,
+        "freelance_service_review",
+        riskFlags(packages),
+      );
+    }
+    return pending;
   });
   if (!updated) throw notFound();
   return updated;
+}
+
+/** Flags the moderator sees next to a service (28.9): prices at the edges. */
+export function riskFlags(
+  packages: readonly { priceMinor: bigint }[],
+): string[] {
+  const flags: string[] = [];
+  if (packages.some((pkg) => pkg.priceMinor <= BigInt(2000))) {
+    flags.push("price_very_low");
+  }
+  if (packages.some((pkg) => pkg.priceMinor >= BigInt(1_000_000))) {
+    flags.push("price_very_high");
+  }
+  return flags;
+}
+
+export type ServiceForModeration = {
+  id: string;
+  title: string;
+  status: FreelanceServiceStatus;
+  sellerId: string;
+  slug: string;
+};
+
+/** Services behind queue items, for the admin queue (28.9). */
+export async function getServicesForModeration(
+  ids: readonly string[],
+): Promise<ServiceForModeration[]> {
+  return repo.findServicesForModeration(ids);
 }
 
 /** Pause a published service or show a paused one again. */
@@ -326,4 +412,14 @@ export async function freelancePriceRange(
   category: FreelanceCategory,
 ): Promise<PriceRange | null> {
   return priceRange(await repo.publishedBasicPrices(category));
+}
+
+/** Any service with its packages, for the moderator's preview (28.9). */
+export async function getServiceForReview(
+  serviceId: string,
+): Promise<ServiceWithPackages | null> {
+  const row = await repo.findServiceById(serviceId);
+  if (!row) return null;
+  const [full] = await withPackages([row]);
+  return full ?? null;
 }

@@ -163,6 +163,21 @@ export function reviewOpen(completedAt: Date | null, now: Date): boolean {
   );
 }
 
+/** The buyer may still leave a review. Clock stays out of the page render. */
+export function canLeaveReview(input: {
+  side: string;
+  status: string;
+  reviewed: boolean;
+  completedAt: Date | null;
+}): boolean {
+  return (
+    input.side === "buyer" &&
+    input.status === "completed" &&
+    !input.reviewed &&
+    reviewOpen(input.completedAt, new Date())
+  );
+}
+
 const CONTACT_STATUSES: ReadonlySet<FreelanceOrderStatus> = new Set(
   FREELANCE_CONTACT_STATUSES,
 );

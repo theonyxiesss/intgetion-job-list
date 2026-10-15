@@ -9,7 +9,7 @@ export const PASSWORD_MAX_LENGTH = 72;
 
 export const localeSchema = z.enum(routing.locales);
 
-/** D331: "I'm looking for work" / "I'm hiring". */
+/** D331 kept the column. D453: signup no longer asks; omission means candidate. */
 export const accountTypeSchema = z.enum(ACCOUNT_TYPES, {
   error: "account_type_required",
 });
@@ -43,7 +43,7 @@ export const registerInput = z.object({
   password: passwordSchema.optional(),
   locale: localeSchema,
   acceptTerms: z.literal(true, { error: "terms_required" }),
-  accountType: accountTypeSchema,
+  accountType: accountTypeSchema.optional(),
   next: authNext,
 });
 export type RegisterInput = z.infer<typeof registerInput>;

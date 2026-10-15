@@ -16,6 +16,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  moderationQueue,
   freelanceOrderHistory,
   freelanceOrders,
   freelancePackages,
@@ -574,4 +575,57 @@ export async function listSitemapRows(): Promise<
     )
     .orderBy(desc(freelanceServices.updatedAt))
     .limit(5000);
+}
+
+export const FREELANCE_QUEUE_ENTITY = "freelance_service";
+
+/**
+ * Puts a service into the shared moderation queue (28.9, D447). Called in
+ * the same transaction that moves the service to `pending`.
+ */
+export async function queueForModeration(
+  tx: FreelanceTx,
+  serviceId: string,
+  reason: "freelance_service_review" | "freelance_service_edit",
+  riskFlags: string[],
+): Promise<void> {
+  await tx.insert(moderationQueue).values({
+    entityType: FREELANCE_QUEUE_ENTITY,
+    entityId: serviceId,
+    reason,
+    riskFlags,
+  });
+}
+
+/** Moves one service to `pending` inside a transaction. */
+export async function setPendingInTx(
+  tx: FreelanceTx,
+  id: string,
+  now: Date,
+): Promise<ServiceRow | null> {
+  const [row] = await tx
+    .update(freelanceServices)
+    .set({ status: "pending", moderationNote: null, updatedAt: now })
+    .where(eq(freelanceServices.id, id))
+    .returning();
+  return row ?? null;
+}
+
+/** Short view of services for the admin queue. */
+export async function findServicesForModeration(
+  ids: readonly string[],
+): Promise<
+  { id: string; title: string; status: FreelanceServiceStatus; sellerId: string; slug: string }[]
+> {
+  if (ids.length === 0) return [];
+  return getDb()
+    .select({
+      id: freelanceServices.id,
+      title: freelanceServices.title,
+      status: freelanceServices.status,
+      sellerId: freelanceServices.sellerId,
+      slug: freelanceServices.slug,
+    })
+    .from(freelanceServices)
+    .where(inArray(freelanceServices.id, [...ids]));
 }

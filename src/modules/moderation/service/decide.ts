@@ -3,6 +3,7 @@
 export type QueueTarget =
   | { kind: "job"; source: "internal" | "imported"; status: string }
   | { kind: "company"; status: string; reason?: string }
+  | { kind: "freelance_service"; status: string }
   | { kind: "missing" };
 
 export type QueueEffect =
@@ -12,6 +13,8 @@ export type QueueEffect =
   | "republish_imported"
   | "reject_company"
   | "verify_company"
+  | "publish_service"
+  | "reject_service"
   | "none";
 
 export function planDecision(
@@ -19,6 +22,11 @@ export function planDecision(
   decision: "approved" | "rejected",
 ): QueueEffect {
   if (target.kind === "missing") return "none";
+  if (target.kind === "freelance_service") {
+    // Only a service still waiting is decided; an older item for it is closed (D447).
+    if (target.status !== "pending") return "none";
+    return decision === "approved" ? "publish_service" : "reject_service";
+  }
   if (target.kind === "company") {
     // 10B: a verification request is approved into `verified` (D132).
     if (

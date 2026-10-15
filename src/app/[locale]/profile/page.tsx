@@ -102,6 +102,15 @@ export default async function ProfilePage({
             <p className="t-body-s text-fg-muted">
               {t(`jobSearch.${profile.jobSearchStatus}`)}
             </p>
+            <p className="t-body-s">
+              <Link
+                href="/profile/freelance"
+                {...navForward}
+                className="underline underline-offset-4"
+              >
+                {(await getTranslations("freelance"))("profileLink")}
+              </Link>
+            </p>
             {profile.desiredTitles.length > 0 ? (
               <ul className="flex flex-wrap gap-2">
                 {profile.desiredTitles.map((title) => (

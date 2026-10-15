@@ -58,6 +58,7 @@ export {
 export {
   dispatchEmails,
   hasJobExpiringNotice,
+  lookupLoginEmail,
   runNotificationCron,
 } from "./dispatch";
 export { mergeApplicationBatch, utcHourStart } from "./batch-mail";

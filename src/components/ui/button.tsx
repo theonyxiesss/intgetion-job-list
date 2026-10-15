@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "./cn";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "plan";
 export type ButtonSize = "md" | "lg" | "icon";
 
 /** Pills in Geist, sentence case (D428). */
@@ -18,6 +18,7 @@ const variants: Record<ButtonVariant, string> = {
     "border-transparent bg-transparent text-fg-muted hover:text-fg hover:bg-surface-2 disabled:hover:bg-transparent",
   danger:
     "border-danger bg-transparent text-danger hover:bg-danger hover:text-bg disabled:hover:bg-transparent disabled:hover:text-danger",
+  plan: "border-warning bg-warning text-bg hover:brightness-110 disabled:hover:brightness-100",
 };
 
 const sizes: Record<ButtonSize, string> = {

@@ -284,7 +284,7 @@ export async function register(
     terms_version: TERMS_VERSION,
     terms_accepted_at: now.toISOString(),
     locale: input.locale,
-    account_type: input.accountType,
+    account_type: input.accountType ?? "candidate",
   };
   const emailRedirectTo = callbackUrl(input.locale, input.next, input.wait);
 
@@ -503,6 +503,21 @@ export async function completeCallback(
  * The signed-in user, or null. Unconfirmed emails, missing `users` rows and
  * non-active accounts all count as no session.
  */
+export type SessionCard = { name: string; email: string | null };
+
+/** Name and email for the account menu. A Telegram placeholder address is omitted. */
+export async function sessionCard(
+  auth: AuthClient,
+): Promise<SessionCard | null> {
+  const { data, error } = await auth.getUser();
+  if (error || !data.user || !isEmailConfirmed(data.user)) return null;
+  const raw = data.user.email ?? null;
+  const email = raw && !isPlaceholderEmail(raw) ? raw : null;
+  const meta = data.user.user_metadata as Record<string, unknown> | undefined;
+  const name = textOf(meta, "full_name") ?? textOf(meta, "name") ?? email ?? "";
+  return { name, email };
+}
+
 export async function getCurrentUser(
   auth: AuthClient,
 ): Promise<CurrentUser | null> {
