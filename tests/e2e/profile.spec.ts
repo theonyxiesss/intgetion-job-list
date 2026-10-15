@@ -43,11 +43,12 @@ test("profile completeness grows, and another candidate gets 404 without contact
   await registerWithPassword(page, email);
   await confirmEmail(page, email);
 
+  // D439: with no profile yet there is no completeness bar, only "Create".
   await page.goto("/en/profile");
-  await expect(page.getByRole("progressbar")).toHaveAttribute(
-    "aria-valuenow",
-    "0",
-  );
+  await expect(
+    page.getByRole("link", { name: "Create profile" }).first(),
+  ).toBeVisible();
+  await expect(page.getByRole("progressbar")).toHaveCount(0);
 
   await page.goto("/en/profile/edit");
   await page.getByLabel("Full name").fill("Ada Lovelace");
