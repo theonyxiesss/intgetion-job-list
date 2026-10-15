@@ -109,11 +109,11 @@ test("the home page carries search wording, x-default and a social image", async
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    /\/en$/,
+    /:\d+\/?$/,
   );
   await expect(
     page.locator('link[rel="alternate"][hreflang="x-default"]'),
-  ).toHaveAttribute("href", /\/en$/);
+  ).toHaveAttribute("href", /:\d+\/?$/);
   await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
     "content",
     "summary_large_image",
@@ -130,7 +130,7 @@ test("the home page carries search wording, x-default and a social image", async
   await page.goto("/en/jobs");
   await expect(
     page.locator('link[rel="alternate"][hreflang="x-default"]'),
-  ).toHaveAttribute("href", /\/en\/jobs$/);
+  ).toHaveAttribute("href", /:\d+\/jobs$/);
   await expect(page.locator('meta[property="og:image"]')).toHaveCount(1);
 });
 
@@ -178,11 +178,11 @@ test("a region collection lists jobs, answers questions and stays indexable", as
   await expect(page).toHaveTitle(/Europe jobs/);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    /\/en\/jobs\/t\/europe$/,
+    /:\d+\/jobs\/t\/europe$/,
   );
   await expect(
     page.locator('link[rel="alternate"][hreflang="x-default"]'),
-  ).toHaveAttribute("href", /\/en\/jobs\/t\/europe$/);
+  ).toHaveAttribute("href", /:\d+\/jobs\/t\/europe$/);
   await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
   await expect(
     page.getByRole("heading", { name: "Questions and answers" }),

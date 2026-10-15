@@ -20,11 +20,13 @@ async function signUp(page: Page, email: string) {
   await page.goto("/en/register");
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.locator('input[type="password"]').fill(password);
+  // D331: the account type is required; it does not change rights.
+  await page.getByRole("radio", { name: /looking for work/ }).check();
   await page.getByLabel("I accept the terms").check();
   await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
+  await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
   await page.goto(authLink(await waitForMail(page.request, email)));
-  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
+  await expect(page).toHaveURL(/:\d+\/auth\/(confirmed|signed-in)/);
 }
 
 const adminApis = [

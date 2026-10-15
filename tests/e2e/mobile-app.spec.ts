@@ -27,12 +27,14 @@ async function signUpCandidate(page: Page) {
   await page.goto("/en/register");
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.locator('input[type="password"]').fill("orbit-lantern-42");
+  // D331: the account type is required; it does not change rights.
+  await page.getByRole("radio", { name: /looking for work/ }).check();
   await page.getByLabel("I accept the terms").check();
   await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
+  await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
   const mail = await waitForMail(page.request, email, 0);
   await page.goto(authLink(mail));
-  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
+  await expect(page).toHaveURL(/:\d+\/auth\/(confirmed|signed-in)/);
   await page.goto("/en/profile/edit");
   await page.getByLabel("Full name").fill("Ada Lovelace");
   await page.getByLabel("Headline").fill("Engineer");
@@ -50,7 +52,7 @@ async function signUpCandidate(page: Page) {
   await page.getByLabel("Salary currency").fill("EUR");
   await page.getByLabel("Contact email").fill(email);
   await page.getByRole("button", { name: "Save profile" }).click();
-  await expect(page).toHaveURL(/\/en\/profile$/);
+  await expect(page).toHaveURL(/:\d+\/profile$/);
 }
 
 test("a candidate on a phone gets the tab bar; a guest does not", async ({

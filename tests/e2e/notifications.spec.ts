@@ -19,15 +19,17 @@ async function registerWithPassword(page: Page, email: string) {
   await page.goto("/en/register");
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.locator('input[type="password"]').fill(password);
+  // D331: the account type is required; it does not change rights.
+  await page.getByRole("radio", { name: /looking for work/ }).check();
   await page.getByLabel("I accept the terms").check();
   await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page).toHaveURL(/\/en\/auth\/check-email$/);
+  await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
 }
 
 async function confirmEmail(page: Page, email: string) {
   const mail = await waitForMail(page.request, email, 0);
   await page.goto(authLink(mail));
-  await expect(page).toHaveURL(/\/en\/auth\/(confirmed|signed-in)/);
+  await expect(page).toHaveURL(/:\d+\/auth\/(confirmed|signed-in)/);
   await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
 }
 
@@ -47,7 +49,7 @@ async function fillProfile(page: Page, contactEmail: string) {
   await page.getByLabel("Salary currency").fill("EUR");
   await page.getByLabel("Contact email").fill(contactEmail);
   await page.getByRole("button", { name: "Save profile" }).click();
-  await expect(page).toHaveURL(/\/en\/profile$/);
+  await expect(page).toHaveURL(/:\d+\/profile$/);
 }
 
 async function withPg<T>(run: (query: pg.Client["query"]) => Promise<T>) {

@@ -27,7 +27,7 @@ test("the pricing page shows three plans per audience and sells nothing yet", as
   expect(JSON.parse(ld ?? "{}")["@type"]).toBe("FAQPage");
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    /\/en\/pricing$/,
+    /:\d+\/pricing$/,
   );
 });
 
@@ -36,5 +36,5 @@ test("a guest finds pricing in the menu and on the employers page", async ({
 }) => {
   await page.goto("/en/for-employers");
   await page.getByRole("link", { name: "See pricing" }).click();
-  await expect(page).toHaveURL(/\/en\/pricing\?for=companies$/);
+  await expect(page).toHaveURL(/:\d+\/pricing\?for=companies$/);
 });
