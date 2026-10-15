@@ -80,7 +80,7 @@ export function JobCard({
       <span
         aria-hidden="true"
         className={cn(
-          "t-nav pointer-events-none self-start border border-line-strong px-3 py-2 text-fg transition-colors group-hover:border-accent",
+          "t-nav pointer-events-none self-start rounded-full border border-line-strong px-3 py-2 text-fg transition-colors group-hover:border-fg-subtle",
           className,
         )}
       >
@@ -90,7 +90,7 @@ export function JobCard({
   return (
     <article
       className={cn(
-        "@container group relative flex flex-col gap-3 border border-line bg-bg p-4 transition-colors duration-[120ms] hover:border-line-strong hover:bg-surface-2 focus-within:border-accent @min-[640px]:p-5",
+        "@container group relative flex flex-col gap-3 rounded-lg border border-line bg-bg p-4 transition-colors duration-[120ms] hover:border-line-strong hover:bg-surface-2 focus-within:border-accent @min-[640px]:p-5",
         compact && "p-4",
       )}
     >

@@ -96,7 +96,7 @@ export function CompanyMark({
     <span
       aria-hidden="true"
       className={cn(
-        "inline-flex shrink-0 items-center justify-center border border-line bg-bg text-fg",
+        "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-md border border-line bg-bg text-fg",
         boxClass[size],
         className,
       )}

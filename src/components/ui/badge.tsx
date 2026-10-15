@@ -49,7 +49,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "t-label inline-flex h-6 items-center gap-1.5 border px-2 whitespace-nowrap",
+        "t-label inline-flex h-6 items-center gap-1.5 rounded-full border px-2.5 whitespace-nowrap",
         tones[tone],
         className,
       )}
@@ -142,7 +142,7 @@ export function Tag({
   return (
     <span
       className={cn(
-        "t-body-s inline-flex min-h-8 items-center gap-1 border px-3",
+        "t-body-s inline-flex min-h-8 items-center gap-1 rounded-full border px-3",
         selected ? "border-accent text-fg" : "border-line text-fg-muted",
         className,
       )}

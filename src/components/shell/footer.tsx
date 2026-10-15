@@ -34,7 +34,7 @@ export function Footer() {
               aria-label={t(group.title)}
               className="flex min-w-0 flex-col gap-3"
             >
-              <p className="t-label text-fg-subtle">{t(group.title)}</p>
+              <p className="t-body-s font-medium text-fg">{t(group.title)}</p>
               <ul className="flex flex-col gap-1">
                 {group.items.map((item) => (
                   <li key={item.label}>

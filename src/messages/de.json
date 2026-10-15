@@ -195,6 +195,71 @@
         "q": "Wer sieht meine Kontaktdaten?",
         "a": "Ein Unternehmen sieht Ihre Kontaktdaten erst nach beidseitigem Interesse."
       }
+    },
+    "landing": {
+      "heroTitle": "Remote-Jobs. Echte Treffer.",
+      "heroLead": "Jobs passend zu deinen Skills, deinem Gehalt und deinen Arbeitszeiten. Spoki, der Karriere-Agent, findet passende Stellen und erklärt, warum sie passen.",
+      "findJobs": "Remote-Jobs finden",
+      "featuresTitle": "Alles, was du für die Suche nach Remote-Arbeit brauchst",
+      "tz": {
+        "title": "Abgleich nach Zeitzone",
+        "text": "Abgleich nach Skills und Arbeitszeiten, nicht nach Stichwörtern. Du siehst, wie viele Stunden du dich mit dem Team überschneidest.",
+        "you": "Du · UTC+3",
+        "team": "Team · UTC−1",
+        "overlap": "Überschneidung 5 h"
+      },
+      "salary": {
+        "title": "Vergleichbares Gehalt",
+        "text": "Jede Spanne wird in deiner Währung und mit Steuern angezeigt. Weniger Bewerbungen ins Leere.",
+        "range": "USD 4 200–5 600 / Monat",
+        "net": "Nach Steuern"
+      },
+      "agent": {
+        "title": "Spoki, der Karriere-Agent",
+        "text": "Ein Gespräch, das lernt, welche Arbeit du willst, und weitersucht. Auch in Telegram.",
+        "match": "Treffer 87%",
+        "why": "Solidity · UTC+2 · 6 h"
+      },
+      "more": {
+        "mutual": {
+          "title": "Gegenseitiges Interesse",
+          "text": "Ein Unternehmen sieht deine Kontakte erst nach gegenseitigem Interesse."
+        },
+        "verified": {
+          "title": "Geprüfte Unternehmen",
+          "text": "Firmen-E-Mail oder DNS-Eintrag. Das Abzeichen wird verdient, nie gekauft."
+        },
+        "alerts": {
+          "title": "Gespeicherte Suchen",
+          "text": "Bis zu 10 Suchen mit Benachrichtigungen per E-Mail und in Telegram."
+        },
+        "telegram": {
+          "title": "Telegram",
+          "text": "Anmelden, mit @intgetion_bot schreiben und dem Kanal Jobs Alert folgen."
+        },
+        "salaries": {
+          "title": "Gehälter",
+          "text": "Gehaltsseiten nach Rolle und Level, für alle offen."
+        },
+        "web3": {
+          "title": "Web3 und klassische Remote-Arbeit",
+          "text": "Beides an einem Ort, in sieben Sprachen."
+        }
+      },
+      "pricing": {
+        "label": "Preise",
+        "title": "Stellen kostenlos veröffentlichen.",
+        "link": "Preise ansehen",
+        "boards": "Große Remote-Jobbörsen",
+        "boardsPrice": "$250–300",
+        "start": "Start",
+        "startPrice": "$0",
+        "hire": "Hire · mit Erstattung",
+        "hirePrice": "$79",
+        "team": "Team · pro Monat",
+        "teamPrice": "$199"
+      },
+      "ctaTitle": "Bereit für Remote-Arbeit?"
     }
   },
   "categories": {

@@ -52,7 +52,7 @@ export function ToastProvider({
             key={toast.id}
             role={toast.tone === "danger" ? "alert" : "status"}
             className={cn(
-              "ui-fade-up pointer-events-auto flex items-start justify-between gap-3 border bg-surface px-4 py-3",
+              "ui-fade-up pointer-events-auto flex items-start justify-between gap-3 rounded-lg border bg-surface px-4 py-3",
               toast.tone === "danger" ? "border-danger" : "border-line-strong",
             )}
           >

@@ -24,16 +24,21 @@ export function LogoMark({ size = 26 }: { size?: number }) {
   );
 }
 
-/** Wordmark: INTGETION + JOB LIST (the second part from md up). */
+/**
+ * Wordmark: INTGETION + JOB LIST (the second part from md up). The name is
+ * white on the dark theme whatever else changes (D428).
+ */
 export function Logo({ name, sub }: { name: string; sub: string }) {
   return (
     <span className="inline-flex items-center gap-2 md:gap-3">
       <LogoMark />
-      <span className="font-display text-[13px] font-semibold tracking-[0.14em] uppercase sm:text-[15px] sm:tracking-[0.24em]">
-        {name}
-      </span>
-      <span className="hidden font-display text-[12px] tracking-[0.24em] uppercase opacity-70 md:inline">
-        {sub}
+      <span className="inline-flex items-baseline gap-1.5">
+        <span className="font-display text-[15px] leading-none font-semibold tracking-[0.06em] text-wordmark uppercase sm:text-[17px]">
+          {name}
+        </span>
+        <span className="hidden font-mono text-[10px] leading-none tracking-[0.08em] text-fg-muted uppercase md:inline">
+          {sub}
+        </span>
       </span>
     </span>
   );

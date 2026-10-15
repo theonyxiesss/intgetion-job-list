@@ -1600,3 +1600,14 @@
 - Отклонения от ТЗ: нет
 - OPEN QUESTION: адрес меню в BotFather по-прежнему не читался. Токен бота на Vercel чувствительный, в чат не выводился.
 - Следующая подфаза: только по команде основателя.
+
+## [2026-10-15] — nextjs-look (D428) — NOT DONE (закоммичено, на сайт не выложено, ждёт «да» на выкладку)
+
+- Сделано: по прототипу в стиле nextjs.org переделан вид всей платформы. Новые токены и шкала шрифтов в `globals.css`. Шрифты Geist и Geist Mono. Кнопки, поля, бейджи, карточки, диалоги, таблицы и тосты в `components/ui` скруглены. Обновлены шапка и подвал. Главная получила героя с белым контурным INTGETION, блок возможностей с точечными картинками, полосу тарифов и финальный призыв. Лента вакансий осталась (D332). Название белое в тёмной теме.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1059 прошли, 1 пропущен); `pnpm build` → 0; `prettier --check` по своим файлам → 0 после `--write` трёх файлов. Браузер `localhost:3000`: `/ru` на 375 и 1280, светлая и тёмная тема. По DOM: `/ru/login`, `/ru/pricing`, `/ru/for-employers`, `/ru/jobs` — ширина 375 без вылезания, Geist, кнопки-пилюли, поля 6 px. В консоли ошибки CSP про inline style и повтор имени `company-mark-*` у ViewTransition: компании с двумя вакансиями в ленте. Обе ошибки не связаны с этой правкой.
+- P-тесты подфазы: нет (только вид); тест каталогов сообщений проходит с новым `home.landing`.
+- Миграции: нет
+- Изменённые файлы: `src/app/fonts.ts` (новый), `src/app/globals.css`, `src/app/[locale]/layout.tsx`, `src/app/(admin)/[locale]/layout.tsx`, `src/app/[locale]/page.tsx`, `src/components/home/{hero-wordmark,dot-art,landing}.tsx` (новые), `src/components/ui/{button,field,choice,badge,job-card,company-mark,dialog,feedback,table,toast,logo}.tsx`, `src/components/shell/{header,footer}.tsx`, `src/modules/companies/ui/company-form.tsx`, `src/modules/jobs/ui/hire-form.tsx`, `src/messages/*.json` (`home.landing`), `docs/DECISIONS.md` (D428), `docs/DESIGN.md`, `.claude/skills/intgetion-design/SKILL.md`, `docs/CURRENT.md`, `MISSION_LOG.md`
+- Отклонения от ТЗ: вид D140–D149 и шрифт D144 заменены решением D428 по прямому слову основателя.
+- OPEN QUESTION: в светлой теме название тёмное, не белое — белое на белом не видно.
+- Следующая подфаза: только по команде основателя.

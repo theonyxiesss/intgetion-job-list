@@ -17,7 +17,12 @@ export function Table({
   className?: string;
 }) {
   return (
-    <div className={cn("w-full overflow-x-auto border border-line", className)}>
+    <div
+      className={cn(
+        "w-full overflow-x-auto rounded-lg border border-line",
+        className,
+      )}
+    >
       <table className="t-body-s w-full border-collapse text-left">
         {caption && <caption className="sr-only">{caption}</caption>}
         {children}
@@ -35,7 +40,7 @@ export function Th({
     <th
       scope="col"
       className={cn(
-        "t-label h-12 border-b border-line px-4 font-medium whitespace-nowrap text-fg-muted",
+        "t-label h-11 border-b border-line bg-surface px-4 font-medium whitespace-nowrap text-fg-muted",
         numeric && "text-right",
         className,
       )}

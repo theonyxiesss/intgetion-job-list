@@ -5,23 +5,24 @@ import { cn } from "./cn";
 export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type ButtonSize = "md" | "lg" | "icon";
 
+/** Pills in Geist, sentence case (D428). */
 const base =
-  "group relative inline-flex shrink-0 items-center justify-center gap-2 overflow-hidden border font-display text-[14px] leading-none font-medium tracking-[0.14em] uppercase transition-[color,background-color,border-color,transform] duration-[120ms] ease-[var(--ease-out-quint)] active:scale-[0.98] disabled:active:scale-100 disabled:cursor-not-allowed disabled:opacity-40 aria-disabled:cursor-not-allowed aria-disabled:opacity-40";
+  "group relative inline-flex shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full border font-display text-[15px] leading-none font-medium whitespace-nowrap transition-[color,background-color,border-color,transform] duration-[120ms] ease-[var(--ease-out-quint)] active:scale-[0.98] disabled:active:scale-100 disabled:cursor-not-allowed disabled:opacity-40 aria-disabled:cursor-not-allowed aria-disabled:opacity-40";
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "border-accent bg-accent text-accent-fg hover:bg-transparent hover:text-accent disabled:hover:bg-accent disabled:hover:text-accent-fg",
+    "border-accent bg-accent text-accent-fg hover:brightness-110 disabled:hover:brightness-100",
   secondary:
-    "border-line-strong bg-transparent text-fg hover:border-accent disabled:hover:border-line-strong",
+    "border-line-strong bg-surface text-fg hover:bg-surface-2 hover:border-fg-subtle disabled:hover:bg-surface disabled:hover:border-line-strong",
   ghost:
-    "border-transparent bg-transparent text-fg underline-offset-4 hover:underline disabled:hover:no-underline",
+    "border-transparent bg-transparent text-fg-muted hover:text-fg hover:bg-surface-2 disabled:hover:bg-transparent",
   danger:
     "border-danger bg-transparent text-danger hover:bg-danger hover:text-bg disabled:hover:bg-transparent disabled:hover:text-danger",
 };
 
 const sizes: Record<ButtonSize, string> = {
   md: "min-h-11 px-5",
-  lg: "min-h-13 px-7",
+  lg: "min-h-12 px-7 text-[16px]",
   icon: "size-11 p-0",
 };
 

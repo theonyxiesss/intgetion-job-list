@@ -22,17 +22,17 @@ Read this skill and the Vercel skill `react-best-practices` in the same turn, be
 
 `AGENTS.md` and `docs/tz/` win if a skill disagrees. On look, `docs/DESIGN.md` wins over `react-best-practices`. On render cost, `react-best-practices` wins unless the cheaper choice breaks a rule below. Do not copy either skill into the repo.
 
-Decisions for the look: D140–D149, D155–D159. Read only the numbers the change cites.
+Decisions for the look: D428 first, then D140–D149, D155–D159 where D428 does not change them. Read only the numbers the change cites.
 
 ## Look
 
-The interface is a flight-control desk for job search: dark by default, one accent, thin lines, square corners, type instead of decoration. Do not copy SpaceX marks, typefaces, photos or names.
+The look follows nextjs.org (D428): black page by default, hairline grey lines, Geist and Geist Mono, one blue (`--accent`) for the main action and focus, type instead of decoration. The product name stays white on the dark theme (`text-wordmark`). Do not copy Vercel or Next.js marks, names or artwork.
 
 - Tokens only, from `src/app/globals.css`: `bg-bg`, `bg-surface`, `text-fg`, `text-fg-muted`, `border-line`. No hex, no `text-gray-*`, no `bg-black`, no `text-white` in pages and components.
 - No inline `style`. CSP drops it. Widths and gaps are Tailwind classes.
-- No shadows. Radius stays 0 except avatars and round indicators. Status color is a thin line, a glyph or a 6 px dot, not a filled panel.
+- No shadows. Radius: pills for buttons, badges and tags; `rounded-md` for fields; `rounded-lg` for cards, tables and toasts; `rounded-xl` for dialogs. Status color is a thin line, a glyph or a 6 px dot, not a filled panel.
 - One primary button on a screen. Secondary actions are outline or text.
-- Numbers, dates, money and time zones use `font-mono`. Labels are nouns in the message files; CSS uppercases them. Buttons are verbs.
+- Numbers, dates, money and time zones use `font-mono`. Headings are sentence case. Only `t-label` is uppercase, in mono, from CSS. Buttons are verbs.
 - Motion is 150–250 ms and stops under `prefers-reduced-motion`.
 
 ## Reuse

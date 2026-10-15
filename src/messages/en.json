@@ -195,6 +195,71 @@
         "q": "Who sees my contacts?",
         "a": "A company sees your contacts only after mutual interest."
       }
+    },
+    "landing": {
+      "heroTitle": "Remote jobs. Real matches.",
+      "heroLead": "Jobs matched to your skills, salary and working hours. Spoki, the career agent, finds roles that fit and tells you why.",
+      "findJobs": "Find remote jobs",
+      "featuresTitle": "Everything you need to find remote work",
+      "tz": {
+        "title": "Time zone matching",
+        "text": "Matching by skills and working hours, not keywords. You see how many hours you overlap with the team.",
+        "you": "You · UTC+3",
+        "team": "Team · UTC−1",
+        "overlap": "Overlap 5 h"
+      },
+      "salary": {
+        "title": "Salary you can compare",
+        "text": "Every range is shown in your currency with taxes taken into account. Fewer off-target applications.",
+        "range": "USD 4 200–5 600 / mo",
+        "net": "After tax"
+      },
+      "agent": {
+        "title": "Spoki, the career agent",
+        "text": "A conversation that learns what work you want and keeps looking. Also in Telegram.",
+        "match": "Match 87%",
+        "why": "Solidity · UTC+2 · 6 h"
+      },
+      "more": {
+        "mutual": {
+          "title": "Mutual interest",
+          "text": "A company sees your contacts only after mutual interest."
+        },
+        "verified": {
+          "title": "Verified companies",
+          "text": "Corporate email or a DNS record. The badge is earned, never bought."
+        },
+        "alerts": {
+          "title": "Saved searches",
+          "text": "Up to 10 searches with alerts by email and in Telegram."
+        },
+        "telegram": {
+          "title": "Telegram",
+          "text": "Sign in, chat with @intgetion_bot and follow the Jobs Alert channel."
+        },
+        "salaries": {
+          "title": "Salaries",
+          "text": "Salary pages by role and level, open to everyone."
+        },
+        "web3": {
+          "title": "Web3 and regular remote",
+          "text": "Both in one place, in seven languages."
+        }
+      },
+      "pricing": {
+        "label": "Pricing",
+        "title": "Post a job for free.",
+        "link": "See pricing",
+        "boards": "Big remote boards",
+        "boardsPrice": "$250–300",
+        "start": "Start",
+        "startPrice": "$0",
+        "hire": "Hire · with refund",
+        "hirePrice": "$79",
+        "team": "Team · per month",
+        "teamPrice": "$199"
+      },
+      "ctaTitle": "Ready to find remote work?"
     }
   },
   "categories": {

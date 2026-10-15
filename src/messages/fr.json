@@ -195,6 +195,71 @@
         "q": "Qui voit mes coordonnées ?",
         "a": "Une entreprise ne voit vos coordonnées qu’après un intérêt mutuel."
       }
+    },
+    "landing": {
+      "heroTitle": "Emplois à distance. De vraies correspondances.",
+      "heroLead": "Des offres selon vos compétences, votre salaire et vos horaires. Spoki, l’agent de carrière, trouve les postes qui conviennent et explique pourquoi.",
+      "findJobs": "Trouver un emploi à distance",
+      "featuresTitle": "Tout ce qu’il faut pour trouver un travail à distance",
+      "tz": {
+        "title": "Correspondance par fuseau horaire",
+        "text": "Correspondance par compétences et horaires, pas par mots-clés. Vous voyez combien d’heures vous partagez avec l’équipe.",
+        "you": "Vous · UTC+3",
+        "team": "Équipe · UTC−1",
+        "overlap": "Chevauchement 5 h"
+      },
+      "salary": {
+        "title": "Un salaire comparable",
+        "text": "Chaque fourchette s’affiche dans votre devise, impôts compris. Moins de candidatures à côté.",
+        "range": "USD 4 200–5 600 / mois",
+        "net": "Après impôts"
+      },
+      "agent": {
+        "title": "Spoki, l’agent de carrière",
+        "text": "Une conversation qui apprend quel travail vous voulez et continue à chercher. Aussi dans Telegram.",
+        "match": "Correspondance 87%",
+        "why": "Solidity · UTC+2 · 6 h"
+      },
+      "more": {
+        "mutual": {
+          "title": "Intérêt mutuel",
+          "text": "Une entreprise voit vos coordonnées seulement après un intérêt mutuel."
+        },
+        "verified": {
+          "title": "Entreprises vérifiées",
+          "text": "E-mail professionnel ou enregistrement DNS. Le badge se mérite, il ne s’achète pas."
+        },
+        "alerts": {
+          "title": "Recherches enregistrées",
+          "text": "Jusqu’à 10 recherches avec alertes par e-mail et dans Telegram."
+        },
+        "telegram": {
+          "title": "Telegram",
+          "text": "Connectez-vous, écrivez à @intgetion_bot et suivez la chaîne Jobs Alert."
+        },
+        "salaries": {
+          "title": "Salaires",
+          "text": "Des pages de salaires par poste et niveau, ouvertes à tous."
+        },
+        "web3": {
+          "title": "Web3 et télétravail classique",
+          "text": "Les deux au même endroit, en sept langues."
+        }
+      },
+      "pricing": {
+        "label": "Tarifs",
+        "title": "Publiez vos offres gratuitement.",
+        "link": "Voir les tarifs",
+        "boards": "Grands sites d’emploi à distance",
+        "boardsPrice": "$250–300",
+        "start": "Start",
+        "startPrice": "$0",
+        "hire": "Hire · avec remboursement",
+        "hirePrice": "$79",
+        "team": "Team · par mois",
+        "teamPrice": "$199"
+      },
+      "ctaTitle": "Prêt à trouver un travail à distance ?"
     }
   },
   "categories": {

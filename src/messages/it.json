@@ -195,6 +195,71 @@
         "q": "Chi vede i miei contatti?",
         "a": "Un’azienda vede i tuoi contatti solo dopo un interesse reciproco."
       }
+    },
+    "landing": {
+      "heroTitle": "Lavori da remoto. Corrispondenze reali.",
+      "heroLead": "Offerte in base a competenze, stipendio e orari. Spoki, l’agente di carriera, trova i ruoli adatti e spiega perché.",
+      "findJobs": "Trova lavoro da remoto",
+      "featuresTitle": "Tutto ciò che serve per trovare lavoro da remoto",
+      "tz": {
+        "title": "Corrispondenza per fuso orario",
+        "text": "Corrispondenza per competenze e orari, non per parole chiave. Vedi quante ore ti sovrapponi con il team.",
+        "you": "Tu · UTC+3",
+        "team": "Team · UTC−1",
+        "overlap": "Sovrapposizione 5 h"
+      },
+      "salary": {
+        "title": "Stipendi confrontabili",
+        "text": "Ogni fascia è mostrata nella tua valuta, tasse incluse. Meno candidature fuori bersaglio.",
+        "range": "USD 4 200–5 600 / mese",
+        "net": "Al netto delle tasse"
+      },
+      "agent": {
+        "title": "Spoki, l’agente di carriera",
+        "text": "Una conversazione che impara che lavoro cerchi e continua a cercare. Anche su Telegram.",
+        "match": "Corrispondenza 87%",
+        "why": "Solidity · UTC+2 · 6 h"
+      },
+      "more": {
+        "mutual": {
+          "title": "Interesse reciproco",
+          "text": "Un’azienda vede i tuoi contatti solo dopo un interesse reciproco."
+        },
+        "verified": {
+          "title": "Aziende verificate",
+          "text": "Email aziendale o record DNS. Il badge si guadagna, non si compra."
+        },
+        "alerts": {
+          "title": "Ricerche salvate",
+          "text": "Fino a 10 ricerche con avvisi via email e su Telegram."
+        },
+        "telegram": {
+          "title": "Telegram",
+          "text": "Accedi, scrivi a @intgetion_bot e segui il canale Jobs Alert."
+        },
+        "salaries": {
+          "title": "Stipendi",
+          "text": "Pagine sugli stipendi per ruolo e livello, aperte a tutti."
+        },
+        "web3": {
+          "title": "Web3 e remoto classico",
+          "text": "Entrambi in un unico posto, in sette lingue."
+        }
+      },
+      "pricing": {
+        "label": "Prezzi",
+        "title": "Pubblica offerte gratis.",
+        "link": "Vedi i prezzi",
+        "boards": "Grandi bacheche remote",
+        "boardsPrice": "$250–300",
+        "start": "Start",
+        "startPrice": "$0",
+        "hire": "Hire · con rimborso",
+        "hirePrice": "$79",
+        "team": "Team · al mese",
+        "teamPrice": "$199"
+      },
+      "ctaTitle": "Pronto a trovare lavoro da remoto?"
     }
   },
   "categories": {

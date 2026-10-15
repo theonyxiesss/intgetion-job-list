@@ -5,7 +5,6 @@ import {
   getTranslations,
   setRequestLocale,
 } from "next-intl/server";
-import { Roboto_Condensed } from "next/font/google";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import Script from "next/script";
@@ -30,17 +29,9 @@ import { TELEGRAM_WEB_APP_SCRIPT } from "@/lib/security-headers";
 import { TELEGRAM_WEB_APP_BOOT_SCRIPT } from "@/lib/telegram-web-app-boot";
 import { siteUrl, siteVerification } from "@/modules/seo/site";
 import "../globals.css";
+import { fontVariables } from "../fonts";
 import { localePrefix } from "@/i18n/paths";
 
-// One web font, for display text only (DESIGN.md 4.1, D144): Roboto
-// Condensed 600, Latin preloaded, Cyrillic loaded by unicode-range on demand.
-// "optional" never repaints the LCP text. Body and figures use system fonts.
-const display = Roboto_Condensed({
-  subsets: ["latin"],
-  weight: "600",
-  display: "optional",
-  variable: "--font-roboto-condensed",
-});
 /** Namespaces used by "use client" components; add one when a client component needs it. */
 const CLIENT_NAMESPACES = [
   "nav",
@@ -134,7 +125,7 @@ export default async function LocaleLayout({
   return (
     <html
       lang={locale}
-      className={`h-full ${display.variable}`}
+      className={`h-full ${fontVariables}`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col has-[[data-bottom-nav]]:pb-16 md:has-[[data-bottom-nav]]:pb-0">

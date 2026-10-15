@@ -195,6 +195,71 @@
         "q": "Quem vê meus contatos?",
         "a": "Uma empresa só vê seus contatos depois de interesse mútuo."
       }
+    },
+    "landing": {
+      "heroTitle": "Vagas remotas. Combinações reais.",
+      "heroLead": "Vagas de acordo com suas habilidades, salário e horário. Spoki, o agente de carreira, encontra vagas que combinam e explica por quê.",
+      "findJobs": "Encontrar vagas remotas",
+      "featuresTitle": "Tudo o que você precisa para encontrar trabalho remoto",
+      "tz": {
+        "title": "Combinação por fuso horário",
+        "text": "Combinação por habilidades e horário, não por palavras-chave. Você vê quantas horas se sobrepõe com a equipe.",
+        "you": "Você · UTC+3",
+        "team": "Equipe · UTC−1",
+        "overlap": "Sobreposição 5 h"
+      },
+      "salary": {
+        "title": "Salário comparável",
+        "text": "Cada faixa aparece na sua moeda, com impostos considerados. Menos candidaturas fora do alvo.",
+        "range": "USD 4 200–5 600 / mês",
+        "net": "Após impostos"
+      },
+      "agent": {
+        "title": "Spoki, o agente de carreira",
+        "text": "Uma conversa que aprende que trabalho você quer e continua procurando. Também no Telegram.",
+        "match": "Combinação 87%",
+        "why": "Solidity · UTC+2 · 6 h"
+      },
+      "more": {
+        "mutual": {
+          "title": "Interesse mútuo",
+          "text": "Uma empresa vê seus contatos só depois do interesse mútuo."
+        },
+        "verified": {
+          "title": "Empresas verificadas",
+          "text": "E-mail corporativo ou registro DNS. O selo é conquistado, nunca comprado."
+        },
+        "alerts": {
+          "title": "Buscas salvas",
+          "text": "Até 10 buscas com alertas por e-mail e no Telegram."
+        },
+        "telegram": {
+          "title": "Telegram",
+          "text": "Entre, converse com @intgetion_bot e siga o canal Jobs Alert."
+        },
+        "salaries": {
+          "title": "Salários",
+          "text": "Páginas de salários por cargo e nível, abertas a todos."
+        },
+        "web3": {
+          "title": "Web3 e remoto tradicional",
+          "text": "Os dois em um só lugar, em sete idiomas."
+        }
+      },
+      "pricing": {
+        "label": "Preços",
+        "title": "Publique vagas de graça.",
+        "link": "Ver preços",
+        "boards": "Grandes sites de vagas remotas",
+        "boardsPrice": "$250–300",
+        "start": "Start",
+        "startPrice": "$0",
+        "hire": "Hire · com reembolso",
+        "hirePrice": "$79",
+        "team": "Team · por mês",
+        "teamPrice": "$199"
+      },
+      "ctaTitle": "Pronto para encontrar trabalho remoto?"
     }
   },
   "categories": {

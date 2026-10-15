@@ -25,7 +25,7 @@ const iconLink =
   "relative inline-flex size-11 items-center justify-center text-fg-muted transition-colors hover:text-fg";
 
 /** These two header actions only. Important utilities beat ButtonLink's default size. */
-const headerCta = "min-h-9! px-3! text-[12px]! tracking-[0.08em]!";
+const headerCta = "min-h-9! px-4! text-[14px]!";
 
 /** Site header (DESIGN.md 8.11). */
 export async function Header() {
@@ -103,7 +103,7 @@ export async function Header() {
     : [{ href: "/login", label: t("nav.login") }];
 
   return (
-    <ScrollFrame className="sticky top-0 z-40 border-b border-line bg-bg transition-colors duration-200 data-[scrolled]:bg-surface">
+    <ScrollFrame className="sticky top-0 z-40 border-b border-transparent bg-bg transition-colors duration-200 data-[scrolled]:border-line">
       <div className="mx-auto flex h-16 w-full max-w-[1376px] items-center gap-2 px-4 sm:gap-4 md:px-6 xl:px-12">
         <Link
           {...navFade}
@@ -191,7 +191,7 @@ export async function Header() {
                   <Icon icon={Bell} />
                   <span className="sr-only">{t("notifications.nav")}</span>
                   {unread > 0 && (
-                    <span className="t-data absolute top-1 right-0 min-w-4 bg-signal px-1 text-center text-[11px] leading-4 text-bg">
+                    <span className="t-data absolute top-1 right-0 min-w-4 rounded-full bg-signal px-1 text-center text-[11px] leading-4 text-bg">
                       {unread}
                     </span>
                   )}
@@ -243,7 +243,12 @@ export async function Header() {
               // A wrapper hides them: `hidden` on the link itself would lose
               // to the button's own `inline-flex`.
               <span className="hidden sm:inline-flex">
-                <ButtonLink {...navFade} href="/login" variant="secondary">
+                <ButtonLink
+                  {...navFade}
+                  href="/login"
+                  variant="secondary"
+                  className={headerCta}
+                >
                   {t("nav.login")}
                 </ButtonLink>
               </span>

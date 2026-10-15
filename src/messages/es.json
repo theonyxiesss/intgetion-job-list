@@ -195,6 +195,71 @@
         "q": "¿Quién ve mis datos de contacto?",
         "a": "Una empresa ve tus datos de contacto solo cuando hay interés mutuo."
       }
+    },
+    "landing": {
+      "heroTitle": "Empleos remotos. Coincidencias reales.",
+      "heroLead": "Empleos según tus habilidades, salario y horario. Spoki, el agente de carrera, encuentra puestos que encajan y te explica por qué.",
+      "findJobs": "Buscar empleos remotos",
+      "featuresTitle": "Todo lo que necesitas para encontrar trabajo remoto",
+      "tz": {
+        "title": "Coincidencia por zona horaria",
+        "text": "Coincidencia por habilidades y horario, no por palabras clave. Ves cuántas horas coincides con el equipo.",
+        "you": "Tú · UTC+3",
+        "team": "Equipo · UTC−1",
+        "overlap": "Coincidencia 5 h"
+      },
+      "salary": {
+        "title": "Salario comparable",
+        "text": "Cada rango se muestra en tu moneda y con impuestos. Menos postulaciones fuera de lugar.",
+        "range": "USD 4 200–5 600 / mes",
+        "net": "Después de impuestos"
+      },
+      "agent": {
+        "title": "Spoki, el agente de carrera",
+        "text": "Una conversación que aprende qué trabajo buscas y sigue buscando. También en Telegram.",
+        "match": "Coincidencia 87%",
+        "why": "Solidity · UTC+2 · 6 h"
+      },
+      "more": {
+        "mutual": {
+          "title": "Interés mutuo",
+          "text": "Una empresa ve tus contactos solo después del interés mutuo."
+        },
+        "verified": {
+          "title": "Empresas verificadas",
+          "text": "Correo corporativo o registro DNS. La insignia se gana, nunca se compra."
+        },
+        "alerts": {
+          "title": "Búsquedas guardadas",
+          "text": "Hasta 10 búsquedas con alertas por correo y en Telegram."
+        },
+        "telegram": {
+          "title": "Telegram",
+          "text": "Inicia sesión, chatea con @intgetion_bot y sigue el canal Jobs Alert."
+        },
+        "salaries": {
+          "title": "Salarios",
+          "text": "Páginas de salarios por puesto y nivel, abiertas para todos."
+        },
+        "web3": {
+          "title": "Web3 y remoto clásico",
+          "text": "Ambos en un solo lugar, en siete idiomas."
+        }
+      },
+      "pricing": {
+        "label": "Precios",
+        "title": "Publica empleos gratis.",
+        "link": "Ver precios",
+        "boards": "Grandes portales remotos",
+        "boardsPrice": "$250–300",
+        "start": "Start",
+        "startPrice": "$0",
+        "hire": "Hire · con reembolso",
+        "hirePrice": "$79",
+        "team": "Team · al mes",
+        "teamPrice": "$199"
+      },
+      "ctaTitle": "¿Listo para encontrar trabajo remoto?"
     }
   },
   "categories": {

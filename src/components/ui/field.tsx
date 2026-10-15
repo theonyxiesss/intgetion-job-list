@@ -9,7 +9,7 @@ import { cn } from "./cn";
 
 /** Shared control look (DESIGN.md 8.2). */
 export const controlClass =
-  "w-full min-h-11 border border-line-strong bg-surface-2 px-3 text-fg placeholder:text-fg-subtle transition-colors duration-[120ms] focus-visible:border-accent aria-[invalid=true]:border-danger disabled:opacity-40";
+  "w-full min-h-11 rounded-md border border-line-strong bg-surface px-3 text-fg placeholder:text-fg-subtle transition-colors duration-[120ms] focus-visible:border-accent aria-[invalid=true]:border-danger disabled:opacity-40";
 
 /**
  * Label above, help and error below, wired with aria-describedby. The

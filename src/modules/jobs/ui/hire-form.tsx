@@ -308,7 +308,7 @@ export function HireForm({
             name="logo"
             type="file"
             accept="image/png,image/jpeg,image/webp"
-            className="py-2 file:mr-4 file:border-0 file:bg-transparent file:font-display file:text-[14px] file:tracking-[0.14em] file:text-fg file:uppercase"
+            className="py-2 file:mr-4 file:border-0 file:bg-transparent file:rounded-full file:font-medium file:text-[14px] file:text-fg"
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               const file = event.target.files?.[0];
               if (!file) return;

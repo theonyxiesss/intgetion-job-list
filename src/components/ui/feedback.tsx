@@ -47,7 +47,7 @@ export function Alert({
     <div
       role={tone === "danger" ? "alert" : "status"}
       className={cn(
-        "flex gap-3 border border-line border-l-2 bg-surface px-4 py-3",
+        "flex gap-3 rounded-md border border-line border-l-2 bg-surface px-4 py-3",
         toneClass[tone],
         className,
       )}
@@ -74,7 +74,7 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center gap-4 border border-line px-6 py-16 text-center">
+    <div className="flex flex-col items-center gap-4 rounded-lg border border-line px-6 py-16 text-center">
       <span className="text-line-strong">
         <LogoMark size={96} />
       </span>
@@ -102,7 +102,7 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className="flex flex-col items-center gap-4 border border-line px-6 py-16 text-center"
+      className="flex flex-col items-center gap-4 rounded-lg border border-line px-6 py-16 text-center"
     >
       <span className="text-danger">
         <Icon icon={CircleAlert} size={24} />
@@ -125,7 +125,7 @@ export function Skeleton({ className }: { className?: string }) {
     <span
       aria-hidden="true"
       className={cn(
-        "block animate-[ui-pulse_1600ms_ease-in-out_infinite] bg-surface-2",
+        "block animate-[ui-pulse_1600ms_ease-in-out_infinite] rounded-md bg-surface-2",
         className,
       )}
     />

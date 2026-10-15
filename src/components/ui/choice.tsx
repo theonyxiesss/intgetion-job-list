@@ -2,7 +2,7 @@ import type { InputHTMLAttributes, ReactNode } from "react";
 import { cn } from "./cn";
 
 const box =
-  "peer size-[18px] shrink-0 cursor-pointer appearance-none border border-line-strong bg-transparent transition-colors checked:border-accent checked:bg-accent disabled:opacity-40";
+  "peer size-[18px] shrink-0 cursor-pointer appearance-none rounded-[4px] border border-line-strong bg-transparent transition-colors checked:border-accent checked:bg-accent disabled:opacity-40";
 
 /** Checkbox or radio with its text; the whole row is the hit area. */
 export function Choice({

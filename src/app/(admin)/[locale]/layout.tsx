@@ -5,19 +5,12 @@ import {
   getTranslations,
   setRequestLocale,
 } from "next-intl/server";
-import { Roboto_Condensed } from "next/font/google";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { ToastProvider } from "@/components/ui";
 import { routing } from "@/i18n/routing";
 import "../../globals.css";
-
-const display = Roboto_Condensed({
-  subsets: ["latin"],
-  weight: "600",
-  display: "optional",
-  variable: "--font-roboto-condensed",
-});
+import { fontVariables } from "../../fonts";
 
 const CLIENT_NAMESPACES = ["nav", "ui", "admin", "locale"] as const;
 
@@ -56,7 +49,7 @@ export default async function AdminRootLayout({
   return (
     <html
       lang={locale}
-      className={`h-full ${display.variable}`}
+      className={`h-full ${fontVariables}`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">

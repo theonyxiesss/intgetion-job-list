@@ -46,7 +46,7 @@ export function Dialog({
         onClose();
         if (opener.current instanceof HTMLElement) opener.current.focus();
       }}
-      className="m-auto w-[calc(100%-32px)] max-w-[560px] border border-line-strong bg-surface p-0 text-fg backdrop:bg-overlay"
+      className="m-auto w-[calc(100%-32px)] max-w-[560px] rounded-xl border border-line-strong bg-surface p-0 text-fg backdrop:bg-overlay"
     >
       <div className="flex items-start justify-between gap-4 border-b border-line px-6 py-4">
         <h2 id="dialog-title" className="t-h3">
@@ -96,7 +96,7 @@ export function ConfirmCard({
   return (
     <section
       aria-label={title}
-      className="flex flex-col gap-4 border border-line-strong bg-surface p-5"
+      className="flex flex-col gap-4 rounded-lg border border-line-strong bg-surface p-5"
     >
       <h3 className="t-h3">{title}</h3>
       {children && <div className="t-body-s text-fg-muted">{children}</div>}
