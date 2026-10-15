@@ -356,6 +356,11 @@ body:has(.chat-shell) footer {
   body:has([data-bottom-nav]) .chat-shell {
     bottom: 4rem;
   }
+
+  /* Same width as the phone tab bar (md:hidden). Spoki stays in that bar. */
+  body:has([data-bottom-nav]) [data-header-chat] {
+    display: none;
+  }
 }
 
 /* Staggered entry for list items and menu items: set --i on each. */

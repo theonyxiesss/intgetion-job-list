@@ -133,7 +133,7 @@ export async function Header() {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-1">
-          <span className="mr-1 inline-flex sm:mr-2">
+          <span data-header-chat className="mr-1 inline-flex sm:mr-2">
             <ButtonLink
               {...navFade}
               href="/chat"
