@@ -4,6 +4,10 @@
 
 ## OPEN
 
+### CI на `master` красный не по одной задаче (с 2026-10-15)
+
+`check`: `pnpm format:check` падает на 16 файлах прошлых сессий (фриланс-страницы и API, `src/components/bot/chat.tsx`, `src/components/ui/button.tsx`, `src/components/shell/nav-icons.test.ts`, `src/modules/freelance/{repo/freelance-repo.ts,ui/order-actions.tsx,ui/request-form.tsx}`), из-за этого typecheck, test, build и gitleaks в CI не запускаются. `database`: интеграционные зелёные, e2e — 31 падение одинаково в run 38805362078 и 38810516586 (auth, admin, feedback, privacy и др.). Нужен отдельный hotfix по команде.
+
 ### Фриланс-услуги (D446, D447, D450, D454, D456) — кабинет и уведомления на сайте
 
 ТЗ [tz/28-freelance.md](tz/28-freelance.md). Каталог, кабинет, форма, запросы и заказы на сайте (`699e7a9e`, `dpl_8L3bbyhrBefWQcrGJk5i6JonosC3`). `0050_freelance.sql` на облаке (D438). В каталог услуга попадает после проверки модератором. Подфаза E (D456): уведомления на сайт, в почту и Telegram, «Принять»/«Отказать» в боте, `/api/cron/freelance` каждые 15 минут. Дальше F–H по одной, по команде. Открытые вопросы — 28.13.

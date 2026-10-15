@@ -2131,3 +2131,14 @@
 - Миграции: нет. Файлы репозитория: `MISSION_LOG.md`.
 - OPEN QUESTION: восемь пунктов «план» — решения основателя для продукта, в DECISIONS не записаны; модерация только первой — уже 28.13 п. 3.
 - Следующая подфаза: только по команде основателя.
+
+## [2026-10-15] - фриланс, подфаза E: уведомления, кнопки в Telegram, cron таймеров (D456) - DONE
+
+- Задача: основатель — «давай», подфаза E из 28.11; коммит и выкладка после зелёных проверок.
+- Сделано: три типа уведомлений (`freelance.request_created`, `freelance.order_updated` со статусом, `freelance.service_decided`) на сайт, в почту и в Telegram, тексты в 7 языках, ICU `select` в шаблонах. Шаг одной стороны узнаёт другая, переходы системы — обе. В боте под новым запросом «Принять»/«Отказать», второе нажатие подтверждает; кнопки подписаны HMAC с ключом из токена бота и сроком (72 ч / 1 ч), лимит `freelanceTelegramAction` 30 в час. `/api/cron/freelance` каждые 15 минут вызывает `runOrderTimers` (72 ч → `expired`, 7 дней → `completed`). Коммит `6d491963`, на сайте `dpl_Hk9uuuGEhssY2cMFSkgN7tRC5gCp`.
+- Проверки: `pnpm typecheck`, `pnpm lint`, `pnpm test` (1190 прошли, 1 пропущен, как и раньше), `pnpm build` → 0; prettier по изменённым файлам → 0. На сайте: `/api/health` 200, `/api/cron/freelance` без секрета 404, webhook без секрета 401, `/ru/freelance` и `/freelance` 200, страница отдаёт новый `dpl_`. CI run 38810516586: интеграционные 36 файлов зелёные, включая `freelance.integration.test.ts` с проверкой уведомлений в базе. Красное, но не от этого коммита: `check` падает на `format:check` по 16 файлам прошлых сессий (`src/app/**/freelance/**`, `src/components/bot/chat.tsx`, `src/components/ui/button.tsx` и др.), поэтому typecheck/test/build в CI пропущены; e2e 31 падение — тот же набор, что в run 38805362078 до коммита (32, один нестабильный).
+- Миграции: нет (`notifications.type` — текст).
+- Изменённые файлы: `src/modules/notifications/{lib/catalog.ts,service/render.ts,service/telegram-dispatch.ts,service/index.ts,__tests__/catalog.test.ts,__tests__/freelance-notices.test.ts}`, `src/modules/freelance/{service/order-service.ts,service/listing-service.ts,service/notices.ts,service/telegram-actions.ts,service/index.ts,__tests__/notices.test.ts,freelance.integration.test.ts}`, `src/lib/{telegram-actions.ts,telegram-actions.test.ts,telegram-bot.ts,rate-limit.ts}`, `src/modules/auth/service/index.ts`, `src/app/api/{cron/freelance/route.ts,cron/telegram/route.ts,telegram/webhook/route.ts}`, `src/app/[locale]/notifications/page.tsx`, `src/messages/*.json`, `vercel.json`, `docs/{DECISIONS.md,RUNBOOK.md,tz/28-freelance.md,CURRENT.md,OPEN_TASKS.md}`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: окно отзыва 14 дней таймером не двигается — оно проверяется при чтении (уже так в коде D).
+- OPEN QUESTION: нет новых; 28.13 открыты.
+- Следующая подфаза: F (оплата на адрес исполнителя) — только по команде основателя.
