@@ -1860,7 +1860,7 @@
 
 ## [2026-10-15] — вкладка событий с ветки Claude (D435, D436)
 
-- Сделано: наработки `claude/epic-newton-g38sje` (`73936e4b`, `4aecf749`) влиты в `master`. Вкладка «События», страницы `/events` и `/events/[slug]`, cron `/api/cron/events`, Spoki `find_events` и карточка на `/events`. На ветке это было D413/D414 и миграция `0048_events.sql`. На `master` эти номера заняты услугами, поэтому здесь D435, D436 и `0049_events.sql`. Живой источник confs.tech не включён: нужно одобрение основателя и `EVENTS_IMPORT_SOURCES`. Пока таблицы нет на облаке, каталог пустой и страница не падает.
+- Сделано: наработки `claude/epic-newton-g38sje` (`73936e4b`, `4aecf749`) влиты в `master` коммитом `f07da4de` и выложены `dpl_2NpfUuNKcYyUpJwoQzUESGwJyWPL`. Вкладка «События», страницы `/events` и `/events/[slug]`, cron `/api/cron/events`, Spoki `find_events` и карточка на `/events`. `/ru/events` отвечает 200, cron без секрета — 404. На ветке это было D413/D414 и миграция `0048_events.sql`. На `master` эти номера заняты услугами, поэтому здесь D435, D436 и `0049_events.sql`. Живой источник confs.tech не включён: нужно одобрение основателя и `EVENTS_IMPORT_SOURCES`. Пока таблицы нет на облаке, каталог пустой и страница не падает.
 - Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1116 прошли, 1 пропущен); `pnpm eval` → 0; `pnpm build` → 0.
 - P-тесты подфазы: events query, confs.tech, import, bot memory, tools, nav-icons ✅. Интеграционный тест events — в CI, локально Docker нет.
 - Миграции: `0049_events.sql` в git. На облако не применялась: согласованного пути нет.
