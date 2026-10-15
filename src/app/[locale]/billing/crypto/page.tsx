@@ -53,7 +53,7 @@ export default async function CryptoBillingPage({
     process.env.BILLING_ENABLED === "true" &&
     process.env.BILLING_CRYPTO_PROVIDER === "walletconnect" &&
     Boolean(process.env.COMPANY_WALLET_ADDRESS?.trim());
-  // D384: a Tron or Solana button shows only when its own recipient is set.
+  // Solana and Tron stay in the code. Checkout does not offer them (EVM only).
   const networks = readyNonEvmNetworks().map((id) => ({
     id,
     tokens: Object.keys(nonEvmNetwork(id)?.tokens ?? {}) as ("USDC" | "USDT")[],

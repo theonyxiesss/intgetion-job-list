@@ -16,8 +16,10 @@ USDT or USDC goes to one company EVM address. The server checks the receipt. The
 
 `src/modules/billing/ui/connect-wallet.ts`
 
-- Empty `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`: `window.ethereum` only (D356). Do not open WalletConnect.
-- Non-empty id: `@walletconnect/ethereum-provider` with `showQrModal: true`, `chains: [1]`, `optionalChains: [137, 42161, 8453]`.
+- The browser wallet comes first on a wide screen (D422): EIP-6963 announcements, MetaMask (`io.metamask`) if several, then legacy `window.ethereum`. A found wallet opens without the QR.
+- Phone layout (`max-width: 767px`) opens the WalletConnect window even when an extension is installed (D425). The extension popup does not appear on that layout. A page already inside a wallet app (`MetaMaskMobile`, Trust, Coinbase Wallet, Phantom, TokenPocket) still uses that app's provider. The phone sheet covers the header and the tab bar, drops the library blur (it hides the wallet names on iPhone), and puts the search field on its own row so the placeholder is not cut off (D432).
+- Empty `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`: browser wallet only (D356). Do not open WalletConnect.
+- Non-empty id and no browser wallet, the phone layout, or the user pressed "phone wallet (QR)" (`route: "qr"`): `@walletconnect/ethereum-provider` with `showQrModal: true`, `qrModalOptions.enableMobileFullScreen: true`, `chains: [1]`, `optionalChains: [137, 42161, 8453]`. Full screen keeps the sheet above the phone tab bar. That modal lists WalletConnect wallets only, never the extension.
 - That call imports `@reown/appkit/core`. `@reown/appkit` stays a direct dependency at the version the provider already uses (1.8.19). Do not bump it alone.
 - Do not add wagmi, RainbowKit, or AppKit React.
 
@@ -42,8 +44,8 @@ On the pay page:
 - connect-src: `wss://relay.walletconnect.org`, both verify hosts, `https://rpc.walletconnect.org`, `https://api.web3modal.org`, `https://secure.walletconnect.org`
 - frame-src: the two verify hosts
 - font-src: `https://fonts.reown.com`
-- img-src: `https://api.web3modal.org` and `https://walletconnect.org`
-- style-src adds `'unsafe-inline'` because AppKit's Lit sheets have no nonce. script-src stays nonce-only
+- img-src: `blob:`, `https://api.web3modal.org` and `https://walletconnect.org`. AppKit fetches each wallet icon and shows it as a `blob:` URL; without `blob:` the icons are broken (D422)
+- style-src is `'self' 'unsafe-inline'` with **no nonce**: AppKit appends its theme `<style>` tags without one, and a browser ignores `'unsafe-inline'` when a nonce sits in the same list (D420). script-src stays nonce-only
 
 Do not add `pulse.walletconnect.org`.
 

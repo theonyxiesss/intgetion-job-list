@@ -1655,3 +1655,14 @@
 - Отклонения от ТЗ: нет. В 14:54 кто-то вернул мои 24 файла в рабочей папке к старому виду. Коммиты это не задело, файлы восстановлены из HEAD.
 - OPEN QUESTION: нет. LCP главной вынесен в отдельную задачу (решение основателя 2026-10-15), см. OPEN_TASKS.
 - Следующая подфаза: только по команде основателя.
+
+## [2026-10-15] — phone-menu-wallet — NOT DONE (на сайте после пуша, с телефона ещё не проверено)
+
+- Сделано: меню телефона выстроено по приоритету, знаки перерисованы одной семьёй. Окно WalletConnect на телефоне на весь экран, без размытия, поиск на своей строке. Solana и Tron с кассы скрыты, оплата только в сетях EVM.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1077 прошли, 1 пропущен); `pnpm build` → 0.
+- P-тесты подфазы: `src/components/shell/nav-icons.test.ts` ✅, `src/modules/billing/ui/connect-wallet.test.ts` ✅, `src/lib/billing/non-evm/non-evm.test.ts` ✅
+- Миграции: нет
+- Изменённые файлы: `src/components/shell/header.tsx`, `src/components/shell/nav-icons.tsx`, `src/components/shell/nav-icons.test.ts`, `src/modules/billing/ui/connect-wallet.ts`, `src/modules/billing/ui/connect-wallet.test.ts`, `src/app/globals.css`, `src/lib/billing/non-evm/networks.ts`, `src/lib/billing/non-evm/non-evm.test.ts`, `src/app/[locale]/billing/crypto/page.tsx`, `.cursor/skills/walletconnect/SKILL.md`, `docs/DECISIONS.md` (D432, D433), `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `MISSION_LOG.md`
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: нет
+- Следующая подфаза: только по команде основателя.

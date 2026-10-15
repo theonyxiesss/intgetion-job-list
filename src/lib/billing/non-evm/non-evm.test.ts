@@ -151,7 +151,17 @@ describe("D384 networks", () => {
     };
     expect(nonEvmRecipient("tron", env)).toBeNull();
     expect(nonEvmRecipient("solana", env)).toBe(SOL_RECIPIENT);
-    expect(readyNonEvmNetworks(env)).toEqual(["solana"]);
+    expect(readyNonEvmNetworks(env)).toEqual([]);
+  });
+
+  it("does not offer Solana or Tron while checkout is EVM only", () => {
+    expect(
+      readyNonEvmNetworks({
+        BILLING_ENABLED: "true",
+        COMPANY_WALLET_TRON: TRON_RECIPIENT,
+        COMPANY_WALLET_SOLANA: SOL_RECIPIENT,
+      }),
+    ).toEqual([]);
   });
 
   it("does not promise a network while its variable is empty", () => {

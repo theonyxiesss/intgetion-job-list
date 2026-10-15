@@ -78,10 +78,14 @@ export function nonEvmRecipient(
   return validNonEvmAddress(found.id, value) ? value : null;
 }
 
+/** Checkout offers EVM only until the founder turns Solana and Tron back on. */
+const NON_EVM_CHECKOUT = false;
+
 /** Networks whose button may promise payment: billing on and a recipient set. */
 export function readyNonEvmNetworks(
   env: Record<string, string | undefined> = process.env,
 ): NonEvmNetworkId[] {
+  if (!NON_EVM_CHECKOUT) return [];
   if (env.BILLING_ENABLED !== "true") return [];
   return NON_EVM_NETWORKS.filter((network) =>
     nonEvmRecipient(network.id, env),

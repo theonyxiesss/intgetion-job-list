@@ -507,6 +507,26 @@ dialog[open] .ui-menu-item {
   filter: invert(1);
 }
 
+/*
+ * WalletConnect's window is appended to the body. On a phone it covers the
+ * header and the tab bar. The library blurs its own host; on iPhone that
+ * blur covers the wallet list, so the names cannot be read (D432).
+ */
+w3m-modal.open {
+  z-index: 200 !important;
+  opacity: 1;
+  background: var(--bg);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+@media (max-width: 767px) {
+  w3m-modal.open {
+    height: 100dvh;
+    width: 100%;
+  }
+}
+
 /* ---------- Home (D428) ---------- */
 
 /* The product name above the hero: a white outline with a light running along it. */
