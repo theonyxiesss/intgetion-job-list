@@ -9,6 +9,11 @@ import {
   useState,
   type FormEvent,
 } from "react";
+import {
+  keyboardOverlaps,
+  nextKeyboardPhase,
+  type KeyboardPhase,
+} from "@/components/bot/keyboard-inset";
 import { ConfirmCard } from "@/components/ui/dialog";
 import { Alert } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
@@ -204,6 +209,50 @@ export function Chat({
     endRef.current?.scrollIntoView({ block: "end" });
   }, [entries, thinking]);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    const narrow = window.matchMedia("(max-width: 767px)");
+    let phase: KeyboardPhase = { open: false, sawKeyboard: false };
+
+    function sync() {
+      const viewport = window.visualViewport;
+      const covered =
+        viewport != null &&
+        keyboardOverlaps(
+          window.innerHeight,
+          viewport.height,
+          viewport.offsetTop,
+        );
+      const wasOpen = phase.open;
+      phase = nextKeyboardPhase(phase, {
+        narrow: narrow.matches,
+        covered,
+        writing: document.activeElement === fieldRef.current,
+      });
+      if (phase.open) root.dataset.keyboard = "";
+      else delete root.dataset.keyboard;
+      if (phase.open && !wasOpen) {
+        endRef.current?.scrollIntoView({ block: "end" });
+      }
+    }
+
+    sync();
+    const viewport = window.visualViewport;
+    viewport?.addEventListener("resize", sync);
+    viewport?.addEventListener("scroll", sync);
+    narrow.addEventListener("change", sync);
+    window.addEventListener("focusin", sync, true);
+    window.addEventListener("focusout", sync, true);
+    return () => {
+      delete root.dataset.keyboard;
+      viewport?.removeEventListener("resize", sync);
+      viewport?.removeEventListener("scroll", sync);
+      narrow.removeEventListener("change", sync);
+      window.removeEventListener("focusin", sync, true);
+      window.removeEventListener("focusout", sync, true);
+    };
+  }, []);
+
   const add = (entry: Entry) => setEntries((current) => [...current, entry]);
 
   /** Appends streamed text to the answer in progress, or starts one. */
@@ -395,7 +444,7 @@ export function Chat({
 
   return (
     <div className="chat-shell mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col gap-3 px-4 max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:max-w-none max-md:bg-bg md:px-6">
-      <div className="shrink-0 py-3">
+      <div data-chat-meta className="shrink-0 py-3">
         <h1 className="text-sm font-medium">{t("title")}</h1>
         {focus && jobId ? (
           <p className="t-body-s mt-2 text-fg">
@@ -675,7 +724,7 @@ export function Chat({
             <span className="sr-only">{t("send")}</span>
           </button>
         </div>
-        <p className="t-body-s text-center text-fg-subtle">
+        <p data-chat-note className="t-body-s text-center text-fg-subtle">
           {t("disclaimer")}{" "}
           <a
             href={TELEGRAM_BOT_URL}

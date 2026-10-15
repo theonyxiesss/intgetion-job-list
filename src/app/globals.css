@@ -361,6 +361,25 @@ body:has(.chat-shell) footer {
   body:has([data-bottom-nav]) [data-header-chat] {
     display: none;
   }
+
+  /* The leave-Telegram strip shares the tab-bar band and gets clipped. */
+  body:has(.chat-shell) [data-mini-app-bar] {
+    display: none;
+  }
+
+  /* The webview lifts the tab bar onto the keyboard. Drop it while writing
+     and let the field sit on the keys. No extra inset: the lift is enough.
+     The flag is set from the visual viewport, so closing the keyboard
+     brings the bar back even if the field stays focused. */
+  html[data-keyboard] [data-bottom-nav],
+  html[data-keyboard] [data-chat-meta],
+  html[data-keyboard] [data-chat-note] {
+    display: none;
+  }
+
+  html[data-keyboard] body:has(.chat-shell) .chat-shell {
+    bottom: 0;
+  }
 }
 
 /* Staggered entry for list items and menu items: set --i on each. */
