@@ -69,7 +69,8 @@ test("a candidate on a phone gets the tab bar; a guest does not", async ({
   await page.goto("/en/jobs");
   const tabs = page.getByRole("navigation", { name: "Main sections" });
   await expect(tabs).toBeVisible();
-  await expect(tabs.getByRole("link")).toHaveCount(5);
+  // Jobs, applications, agent, profile; matches left the bar in D399.
+  await expect(tabs.getByRole("link")).toHaveCount(4);
   for (const link of await tabs.getByRole("link").all()) {
     const box = await link.boundingBox();
     expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
