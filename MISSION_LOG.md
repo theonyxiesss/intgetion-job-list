@@ -1868,3 +1868,14 @@
 - Отклонения от ТЗ: код выложен раньше миграции, чтобы вкладка открывалась пустой, а не ответом 500.
 - OPEN QUESTION: второй источник для Web3 (в confs.tech его почти нет). Как применить `0049` на облако.
 - Следующая подфаза: только по команде основателя.
+
+## [2026-10-15] — events-live (D435, D436, D438) — DONE
+
+- Сделано: вкладка «События» наполнена. `founder approved: republish allowed — confs.tech` (основатель в чате 2026-10-15, D18). `0049_events.sql` применена к облаку через MCP `execute_sql` одной транзакцией: временный `SET` на `migrator`, файл как `migrator`, строка в `schema_migrations`, отзыв права (D438). `EVENTS_IMPORT_SOURCES=confs.tech` в Vercel production. Коммит `24c2a601` (D438 и строка в скилле `intgetion-supabase`) выложен `dpl_GfdR3Twu35KoYZDggGHHtQj4w3oe`. Один ручной запуск `/api/cron/events` на проде.
+- Команды проверки: SQL-проверка после миграции → владелец `migrator`, RLS on/forced, 3 политики deny-all как у `jobs`, `app_rw` CRUD, журнал 47 строк, членство `postgres` в `migrator` вернулось к `supabase_admin:set=false`; `get_advisors security` → только прежние предупреждения (4 `search_path`, утёкшие пароли). Cron → 200, `fetched 202, created 202, rejected 0, error null`. В базе 202 `published`: AI 34, онлайн 19, Web3 1, с 2026-10-12 по 2027-12-06. Сайт: `/events` 200 и список; `q=Rust` → 2, `topic=ai&format=online` → 7, `topic=web3` → 1. Spoki гостем на `/ru/chat`: на вопрос про онлайн-конференции по ИИ назвал две и показал карточку событий. Локальные pnpm-проверки не запускались: код не менялся, только документы.
+- P-тесты подфазы: нет
+- Миграции: `0049_events.sql` → облако. `0048_engagement_briefs.sql` на облако по-прежнему не применена (другая задача).
+- Изменённые файлы: `docs/DECISIONS.md` (D438), `.claude/skills/intgetion-supabase/SKILL.md`, `MISSION_LOG.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`
+- Отклонения от ТЗ: нет. Ролевое право `SET` выдавалось и отзывалось внутри транзакции по отдельному «да» основателя.
+- OPEN QUESTION: второй источник для Web3 (в confs.tech 1 событие из 202).
+- Следующая подфаза: только по команде основателя.
