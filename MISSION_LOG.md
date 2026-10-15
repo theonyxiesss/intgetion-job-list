@@ -1568,3 +1568,14 @@
 - Отклонения от ТЗ: ethereum.org не подключён (D413). `tests/e2e/seo.spec.ts` ждёт новый заголовок главной «Remote Web3 Jobs & Tech Events». Колонка `all_day` добавлена к полям из задачи: у confs.tech только даты.
 - OPEN QUESTION: одобрить confs.tech как источник событий (D18) — строкой основателя в MISSION_LOG и `EVENTS_IMPORT_SOURCES=confs.tech`. Источник событий Web3 вместо ethereum.org: спросить Geode Labs об условиях API или назвать другой открытый источник. Применить `0048` на облако и выложить — после «да» основателя.
 - Следующая подфаза: по команде основателя (регистрация на события, заявки организаторов, посты в канал — следующий этап).
+
+## [2026-10-15] — events-1b (прошедшие события удаляются, D414) — DONE
+
+- Сделано: по команде основателя прошедшие события удаляются, а не помечаются `expired`. `deleteEndedEvents` в `src/modules/events/repo/events-repo.ts` вызывается первым в каждом `/api/cron/events`, по всем источникам, даже если импорт пропущен; ответ cron содержит `deleted`. `expired` — только для будущих событий, которых источник не показывал 30 дней. Страница события открывается только для `published`. Комментарии в `0048_events.sql` и схеме обновлены.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1054 прошли, 1 пропущен); `pnpm build` (фиктивные `NEXT_PUBLIC_*`) → 0; `events.integration.test.ts` на временном локальном Postgres 16 → 5/5 (база удалена после прогона).
+- P-тесты подфазы: удаление прошедших и при пропущенном импорте (юнит), удаление и скрытие на настоящей базе (интеграция) ✅
+- Миграции: `0048_events.sql` (только комментарий; на облако не применена)
+- Изменённые файлы: `src/modules/events/{repo/events-repo,service/import,service/index}.ts`, `src/app/api/cron/events/route.ts`, `src/app/[locale]/events/[slug]/page.tsx`, `src/db/schema/events.ts`, `src/db/migrations/0048_events.sql`, тесты событий, `docs/DECISIONS.md` (D414), `docs/tz/26-events.md`, `docs/how-it-works/events.md`, `docs/ERD.md`, `docs/CURRENT.md`
+- Отклонения от ТЗ: правило D413 «не удалять» заменено D414 по слову основателя.
+- OPEN QUESTION: те же, что в events-1 (одобрение confs.tech, Web3-источник, миграция и выкладка).
+- Следующая подфаза: по команде основателя.

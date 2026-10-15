@@ -16,7 +16,7 @@ import type {
   EventTopic,
 } from "@/config/events";
 
-/** Web3 and tech events from open data (D413). Never hard-deleted. */
+/** Web3 and tech events from open data (D413). Ended ones are deleted (D414). */
 export const events = pgTable(
   "events",
   {

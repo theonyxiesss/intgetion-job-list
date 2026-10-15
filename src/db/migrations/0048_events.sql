@@ -1,7 +1,7 @@
 -- D413: events aggregator. Web3 and tech events (summits, conferences,
 -- meetups, hackathons, business and career meetups) from official open data.
 -- No registration on our side: the page links back to the organizer.
--- Past events expire; rows are never hard-deleted.
+-- Events whose date has passed are deleted by the cron (D414).
 
 CREATE TABLE IF NOT EXISTS public.events (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

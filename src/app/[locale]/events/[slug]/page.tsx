@@ -56,8 +56,6 @@ export async function generateMetadata({
       languages: languageAlternates(`/events/${event.slug}`),
     },
     openGraph: { type: "website", title: event.title, description },
-    // A past event stays reachable for old links but leaves the index.
-    ...(event.status === "expired" ? { robots: { index: false } } : {}),
   };
 }
 
@@ -74,7 +72,8 @@ export default async function EventPage({
   const seo = await getTranslations("seo");
   const nav = await getTranslations("nav");
   const pageUrl = `${siteUrl()}${localePrefix(locale)}/events/${event.slug}`;
-  const ended = event.status === "expired" || event.endsAt < new Date();
+  // Deleted on the next cron run (D414); until then it says it has ended.
+  const ended = event.endsAt < new Date();
   const organizerHref = publicHttpUrl(event.url);
   const cfpHref =
     !ended && event.cfpEndsAt && event.cfpEndsAt > new Date()

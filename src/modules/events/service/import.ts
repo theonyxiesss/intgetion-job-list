@@ -21,13 +21,19 @@ import * as repo from "../repo/events-repo";
 /** Feeds the code can read. Each runs live only when approved (D18, D413). */
 export const EVENT_SOURCES: readonly EventSource[] = [confsTechSource];
 
-/** An upcoming event the source has not listed for this long expires. */
+/** An upcoming event the source has not listed for this long is hidden. */
 export const EVENT_STALE_AFTER_MS = days(30);
 
 export type EventImportReport = RunCounters & {
   source: string;
   skipped: boolean;
   error: string | null;
+};
+
+export type EventImportResult = {
+  /** Ended events deleted before the feeds ran (D414). */
+  deleted: number;
+  sources: EventImportReport[];
 };
 
 type Dependencies = {
@@ -63,15 +69,24 @@ function skipped(source: string, error: string | null): EventImportReport {
 }
 
 /**
- * One event feed per call, the most overdue approved one (as D412 does for
- * jobs). With no approved feed, the made-up fixture runs, and only against a
- * database on this machine.
+ * Every call first deletes the events whose date has passed, from every
+ * source, even when no feed runs (D414). Then one event feed, the most
+ * overdue approved one (as D412 does for jobs). With no approved feed, the
+ * made-up fixture runs, and only against a database on this machine.
  */
 export async function runEventImports(
   overrides: Partial<Dependencies> = {},
-): Promise<EventImportReport[]> {
+): Promise<EventImportResult> {
   const deps: Dependencies = { ...defaults, ...overrides };
   const now = deps.now();
+  const deleted = await repo.deleteEndedEvents(now);
+  return { deleted, sources: await runFeeds(deps, now) };
+}
+
+async function runFeeds(
+  deps: Dependencies,
+  now: Date,
+): Promise<EventImportReport[]> {
   const approved = new Set(deps.approved());
   const live = deps.sources.filter((source) => approved.has(source.sourceName));
   if (live.length === 0) {
@@ -130,7 +145,7 @@ async function importSource(
     const saved = await repo.upsertEvents(source.sourceName, rows, now);
     counters.created = saved.created;
     counters.updated = saved.updated;
-    counters.expired = await repo.expireEvents(
+    counters.expired = await repo.expireUnseenEvents(
       source.sourceName,
       now,
       new Date(now.getTime() - EVENT_STALE_AFTER_MS),

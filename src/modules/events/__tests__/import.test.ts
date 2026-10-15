@@ -10,7 +10,11 @@ const ledger = {
   markSourceRun: vi.fn(),
   pruneImportRunHistory: vi.fn(),
 };
-const repo = { upsertEvents: vi.fn(), expireEvents: vi.fn() };
+const repo = {
+  upsertEvents: vi.fn(),
+  expireUnseenEvents: vi.fn(),
+  deleteEndedEvents: vi.fn(),
+};
 
 vi.mock("@/modules/ingestion/service", async () => {
   const guard = await import("@/modules/ingestion/service/fixture-guard");
@@ -56,20 +60,24 @@ beforeEach(() => {
   ledger.sourceStartedSince.mockResolvedValue(false);
   ledger.beginImportRun.mockResolvedValue({ id: "run-1" });
   repo.upsertEvents.mockResolvedValue({ created: 1, updated: 0 });
-  repo.expireEvents.mockResolvedValue(2);
+  repo.expireUnseenEvents.mockResolvedValue(2);
+  repo.deleteEndedEvents.mockResolvedValue(3);
 });
 
 describe("event import runner (D413)", () => {
   it("fetches nothing live until a source is approved, and no fixture on the cloud", async () => {
     const live = source("confs.tech");
     const fixture = source("Fictional Events Feed");
-    const reports = await runEventImports({
+    const { deleted, sources: reports } = await runEventImports({
       now: () => now,
       sources: [live],
       approved: () => [],
       databaseUrl: () => "postgresql://app@db.ref.supabase.co:6543/postgres",
       fixture,
     });
+    // D414: ended events are deleted even when no feed runs.
+    expect(deleted).toBe(3);
+    expect(repo.deleteEndedEvents).toHaveBeenCalledWith(now);
     expect(reports).toEqual([
       expect.objectContaining({
         source: "Fictional Events Feed",
@@ -84,7 +92,9 @@ describe("event import runner (D413)", () => {
 
   it("runs the fixture on a local database", async () => {
     const fixture = source("Fictional Events Feed");
-    const [report] = await runEventImports({
+    const {
+      sources: [report],
+    } = await runEventImports({
       now: () => now,
       sources: [source("confs.tech")],
       approved: () => [],
@@ -110,7 +120,7 @@ describe("event import runner (D413)", () => {
     const fresh = source("confs.tech");
     const unapproved = source("other");
     ledger.registerFeedSource.mockResolvedValue(row());
-    const reports = await runEventImports({
+    const { sources: reports } = await runEventImports({
       now: () => now,
       sources: [fresh, unapproved],
       approved: () => ["confs.tech"],
@@ -125,8 +135,8 @@ describe("event import runner (D413)", () => {
       null,
     );
     expect(ledger.markSourceRun).toHaveBeenCalledWith("src-1", "success");
-    // Unseen for 30 days expires (D412 window).
-    expect(repo.expireEvents).toHaveBeenCalledWith(
+    // Upcoming but unseen for 30 days is hidden (D412 window).
+    expect(repo.expireUnseenEvents).toHaveBeenCalledWith(
       "confs.tech",
       now,
       new Date(now.getTime() - 30 * 86_400_000),
@@ -136,7 +146,9 @@ describe("event import runner (D413)", () => {
   it("an admin switch or the source's interval keeps it from running", async () => {
     const live = source("confs.tech");
     ledger.registerFeedSource.mockResolvedValue(row({ enabled: false }));
-    const [off] = await runEventImports({
+    const {
+      sources: [off],
+    } = await runEventImports({
       now: () => now,
       sources: [live],
       approved: () => ["confs.tech"],
@@ -146,7 +158,9 @@ describe("event import runner (D413)", () => {
     expect(off).toMatchObject({ skipped: true, error: null });
     ledger.registerFeedSource.mockResolvedValue(row());
     ledger.sourceStartedSince.mockResolvedValue(true);
-    const [early] = await runEventImports({
+    const {
+      sources: [early],
+    } = await runEventImports({
       now: () => now,
       sources: [live],
       approved: () => ["confs.tech"],
@@ -161,7 +175,9 @@ describe("event import runner (D413)", () => {
   it("records a failed fetch on the run and does not touch events", async () => {
     const broken = source("confs.tech");
     vi.mocked(broken.fetch).mockRejectedValue(new Error("feed responded 500"));
-    const [report] = await runEventImports({
+    const {
+      sources: [report],
+    } = await runEventImports({
       now: () => now,
       sources: [broken],
       approved: () => ["confs.tech"],
@@ -179,6 +195,6 @@ describe("event import runner (D413)", () => {
     );
     expect(ledger.markSourceRun).toHaveBeenCalledWith("src-1", "error");
     expect(repo.upsertEvents).not.toHaveBeenCalled();
-    expect(repo.expireEvents).not.toHaveBeenCalled();
+    expect(repo.expireUnseenEvents).not.toHaveBeenCalled();
   });
 });

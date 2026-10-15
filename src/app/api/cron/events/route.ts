@@ -14,15 +14,16 @@ function authorized(request: Request): boolean {
 }
 
 /**
- * Event feeds (D413). One approved feed per call; a feed is approved by the
- * founder (D18) and listed in EVENTS_IMPORT_SOURCES. With none listed, the
- * made-up fixture runs, and only against a local database.
+ * Event feeds (D413). Ended events are deleted on every call (D414). Then
+ * one approved feed; a feed is approved by the founder (D18) and listed in
+ * EVENTS_IMPORT_SOURCES. With none listed, the made-up fixture runs, and
+ * only against a local database.
  */
 export async function GET(request: Request) {
   try {
     if (!authorized(request)) throw notFound();
-    const sources = await runEventImports();
-    return Response.json({ ok: true, sources });
+    const { deleted, sources } = await runEventImports();
+    return Response.json({ ok: true, deleted, sources });
   } catch (error) {
     return toErrorResponse(error);
   }

@@ -12,7 +12,7 @@ export {
 } from "./queries";
 export type { PublicEvent } from "./queries";
 export { EVENT_SOURCES, runEventImports } from "./import";
-export type { EventImportReport } from "./import";
+export type { EventImportReport, EventImportResult } from "./import";
 export {
   BOT_EVENTS_LIMIT,
   EVENTS_PAGE_SIZE,

@@ -150,7 +150,7 @@ describe("events repo (D413)", () => {
     ]);
   });
 
-  it("expires past and long-unseen events, keeps removed ones removed", async () => {
+  it("keeps removed ones removed and hides events the source dropped", async () => {
     await getDb()
       .update(events)
       .set({ status: "removed" })
@@ -160,17 +160,26 @@ describe("events repo (D413)", () => {
     expect(stillRemoved?.status).toBe("removed");
     expect(await repo.findEventBySlug(stillRemoved?.slug ?? "")).toBeNull();
 
-    const expired = await repo.expireEvents(
+    // Upcoming, but not listed for 30 days: hidden, not deleted.
+    const later = new Date(now.getTime() + 40 * 86_400_000);
+    await repo.upsertEvents(source, [lisbon], later);
+    const hidden = await repo.expireUnseenEvents(
       source,
-      now,
-      new Date(now.getTime() - 30 * 86_400_000),
+      later,
+      new Date(later.getTime() - 30 * 86_400_000),
     );
-    expect(expired).toBe(1);
-    const gone = await rowOf("past");
-    expect(gone?.status).toBe("expired");
-    // An old link still opens the page, marked as ended.
-    expect((await repo.findEventBySlug(gone?.slug ?? ""))?.status).toBe(
-      "expired",
-    );
+    const online = await rowOf("online");
+    expect(hidden).toBe(2); // "online" and the never-refreshed "past"
+    expect(online?.status).toBe("expired");
+    expect(await repo.findEventBySlug(online?.slug ?? "")).toBeNull();
+    expect((await rowOf("lisbon"))?.status).toBe("published");
+  });
+
+  it("deletes events whose date has passed (D414)", async () => {
+    expect(await rowOf("past")).toBeDefined();
+    const deleted = await repo.deleteEndedEvents(now, source);
+    expect(deleted).toBe(1);
+    expect(await rowOf("past")).toBeUndefined();
+    expect(await rowOf("lisbon")).toBeDefined();
   });
 });

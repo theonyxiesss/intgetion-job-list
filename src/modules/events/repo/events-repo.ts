@@ -102,10 +102,30 @@ export async function upsertEvents(
 }
 
 /**
- * Past events and events the source stopped listing long ago leave the
- * catalog as `expired`. Nothing is deleted (D413).
+ * Events whose date has passed are deleted, whatever their source or status
+ * (D414). Feeds drop ended events before the upsert, so they do not return.
  */
-export async function expireEvents(
+export async function deleteEndedEvents(
+  now: Date,
+  /** Tests limit it to their own rows; the cron deletes across sources. */
+  source?: string,
+): Promise<number> {
+  const deleted = await getDb()
+    .delete(events)
+    .where(
+      source
+        ? and(lt(events.endsAt, now), eq(events.source, source))
+        : lt(events.endsAt, now),
+    )
+    .returning({ id: events.id });
+  return deleted.length;
+}
+
+/**
+ * An upcoming event the source stopped listing long ago leaves the catalog
+ * as `expired`; it is deleted once its date passes (D414).
+ */
+export async function expireUnseenEvents(
   source: string,
   now: Date,
   unseenBefore: Date,
@@ -117,7 +137,7 @@ export async function expireEvents(
       and(
         eq(events.source, source),
         eq(events.status, "published"),
-        or(lt(events.endsAt, now), lt(events.lastSeenAt, unseenBefore)),
+        lt(events.lastSeenAt, unseenBefore),
       ),
     )
     .returning({ id: events.id });
@@ -168,17 +188,12 @@ export async function findEvents(
   };
 }
 
-/** A published or past event by slug. Removed ones are not shown. */
+/** A published event by slug. Removed and expired ones are not shown. */
 export async function findEventBySlug(slug: string): Promise<EventRow | null> {
   const [row] = await getDb()
     .select()
     .from(events)
-    .where(
-      and(
-        eq(events.slug, slug),
-        inArray(events.status, ["published", "expired"]),
-      ),
-    )
+    .where(and(eq(events.slug, slug), eq(events.status, "published")))
     .limit(1);
   return row ?? null;
 }
