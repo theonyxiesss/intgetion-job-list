@@ -1,4 +1,5 @@
 import type { EventKind, EventTopic } from "@/config/events";
+import { CCFDDL_SITE } from "../adapters/ccfddl";
 import { CONFS_TECH_SITE } from "../adapters/confs-tech";
 import { fixtureEventSource } from "../adapters/fixture";
 import * as repo from "../repo/events-repo";
@@ -32,6 +33,7 @@ export type PublicEvent = {
 /** Where each source is credited (MIT data needs the attribution). */
 const SOURCE_SITES: Record<string, string> = {
   "confs.tech": CONFS_TECH_SITE,
+  ccfddl: CCFDDL_SITE,
   [fixtureEventSource.sourceName]: fixtureEventSource.attributionUrl,
 };
 

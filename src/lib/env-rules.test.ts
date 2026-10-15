@@ -135,7 +135,7 @@ describe("env-rules validation", () => {
 
     it("accepts known event feeds and rejects unknown ones (D435)", () => {
       const ok = envRules.validateAll(
-        { ...baseEnv, EVENTS_IMPORT_SOURCES: "confs.tech" },
+        { ...baseEnv, EVENTS_IMPORT_SOURCES: "confs.tech,ccfddl" },
         "dev",
       );
       expect(

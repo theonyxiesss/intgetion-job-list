@@ -10,6 +10,7 @@
 | Схема и миграция                  | `src/db/schema/events.ts`, `src/db/migrations/0049_events.sql`                  |
 | Вход модуля                       | `src/modules/events/service/index.ts`                                           |
 | Адаптер confs.tech                | `src/modules/events/adapters/confs-tech.ts`, страна — `adapters/country.ts`     |
+| Адаптер ccfddl (D440)             | `src/modules/events/adapters/ccfddl.ts`                                         |
 | Фикстура                          | `fixtures/events/fictional-events.json`, `adapters/fixture.ts`                  |
 | Прогон импорта                    | `src/modules/events/service/import.ts`, cron `src/app/api/cron/events/route.ts` |
 | Запросы                           | `service/filter.ts` (правила), `repo/events-repo.ts` (SQL)                      |
@@ -39,4 +40,8 @@
 
 1. Миграция `0049_events.sql` на облако (сначала она, потом код).
 2. Выкладка кода.
-3. Одобрение основателя в MISSION_LOG, затем `EVENTS_IMPORT_SOURCES=confs.tech` в Vercel production и выкладка.
+3. Одобрение основателя в MISSION_LOG, затем `EVENTS_IMPORT_SOURCES=confs.tech,ccfddl` в Vercel production и выкладка.
+
+## ccfddl (D440)
+
+Один файл `allconf.json`: серия конференций с категорией CCF и годами. Событие — год (`AAAI 2027`), `externalId` — id года (`aaai27`). Даты из строки «June 21-25, 2027» и похожих; «TBD» не берётся. Место: страна — последний кусок через запятую, город — первый. Тема — из категории CCF, приём статей — ближайший будущий `deadline` в поясе серии.

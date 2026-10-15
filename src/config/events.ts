@@ -37,7 +37,7 @@ export type EventStatus = (typeof EVENT_STATUSES)[number];
  * approved it (D18) and its name is listed in EVENTS_IMPORT_SOURCES. The
  * default is empty: nothing is fetched.
  */
-export const KNOWN_EVENT_SOURCES = ["confs.tech"] as const;
+export const KNOWN_EVENT_SOURCES = ["confs.tech", "ccfddl"] as const;
 
 export function approvedEventSources(
   value: string | undefined = process.env.EVENTS_IMPORT_SOURCES,

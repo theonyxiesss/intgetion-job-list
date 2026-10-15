@@ -44,9 +44,9 @@ export const CONFS_TECH_TOPICS: Record<string, EventTopic[]> = {
   "tech-comm": ["business"],
 };
 
-const WEB3 =
+export const WEB3 =
   /\b(web3|web 3|blockchain|ethereum|eth[a-z]*\s?(conf|global|denver|cc)|crypto|defi|solana|bitcoin|dao|onchain|zk|zero[- ]knowledge|nft)\b/i;
-const AI =
+export const AI =
   /\b(ai|a\.i\.|artificial intelligence|machine learning|ml|llms?|genai|gen ai|agentic)\b/i;
 const CAREER = /\b(career|job fair|jobs fair|hiring|recruit\w*)\b/i;
 const BUSINESS =
@@ -82,7 +82,7 @@ function day(value: unknown): string | null {
     : raw;
 }
 
-function kindOf(title: string): EventKind {
+export function kindOf(title: string): EventKind {
   if (/\bsummit\b/i.test(title)) return "summit";
   if (/\bhackathon\b|\bhack\b/i.test(title)) return "hackathon";
   if (/\bmeet-?ups?\b/i.test(title)) return "meetup";

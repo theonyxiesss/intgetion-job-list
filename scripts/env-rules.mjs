@@ -41,7 +41,7 @@ const PROD_REQUIRED = new Set([
 ]);
 
 // Event feeds the code knows (src/config/events.ts, D435).
-const KNOWN_EVENT_SOURCES = new Set(["confs.tech"]);
+const KNOWN_EVENT_SOURCES = new Set(["confs.tech", "ccfddl"]);
 
 // All known variables (for unknown-variable warning)
 const ALL_KNOWN = new Set([

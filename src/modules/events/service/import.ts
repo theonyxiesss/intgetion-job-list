@@ -13,6 +13,7 @@ import {
   sourceStartedSince,
   type RunCounters,
 } from "@/modules/ingestion/service";
+import { ccfddlSource } from "../adapters/ccfddl";
 import { confsTechSource } from "../adapters/confs-tech";
 import { fixtureEventSource } from "../adapters/fixture";
 import type { EventSource } from "../adapters/types";
@@ -20,7 +21,10 @@ import * as repo from "../repo/events-repo";
 import { isMissingEventsTable } from "./queries";
 
 /** Feeds the code can read. Each runs live only when approved (D18, D435). */
-export const EVENT_SOURCES: readonly EventSource[] = [confsTechSource];
+export const EVENT_SOURCES: readonly EventSource[] = [
+  confsTechSource,
+  ccfddlSource,
+];
 
 /** An upcoming event the source has not listed for this long is hidden. */
 export const EVENT_STALE_AFTER_MS = days(30);
