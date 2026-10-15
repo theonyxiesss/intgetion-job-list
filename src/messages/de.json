@@ -2236,43 +2236,159 @@
     "groups": [
       {
         "name": "Betrieb",
-        "items": ["Support", "Kundenerfolg", "Technischer Support", "Helpdesk", "Chat", "Moderation", "Assistenz", "Dokumentation", "Einführung", "Planung", "Wissensbasis", "Backoffice"]
+        "items": [
+          "Support",
+          "Kundenerfolg",
+          "Technischer Support",
+          "Helpdesk",
+          "Chat",
+          "Moderation",
+          "Assistenz",
+          "Dokumentation",
+          "Einführung",
+          "Planung",
+          "Wissensbasis",
+          "Backoffice"
+        ]
       },
       {
         "name": "Community",
-        "items": ["Community", "Social", "Inhalte", "Texte", "Video", "Engagement", "Newsletter", "Podcast", "Events", "Übersetzung", "Lokalisierung", "Mehrsprachige Inhalte", "Lokale Community"]
+        "items": [
+          "Community",
+          "Social",
+          "Inhalte",
+          "Texte",
+          "Video",
+          "Engagement",
+          "Newsletter",
+          "Podcast",
+          "Events",
+          "Übersetzung",
+          "Lokalisierung",
+          "Mehrsprachige Inhalte",
+          "Lokale Community"
+        ]
       },
       {
         "name": "Wachstum",
-        "items": ["SEO", "Paid Media", "SMM", "Telegram-Wachstum", "E-Mail", "Influencer", "Launch", "Vertrieb", "Partnerschaften", "Affiliates", "Business Development", "Kundenbetreuung", "Revenue Operations", "CRM", "PR", "Medienarbeit", "Marke", "Analytik"]
+        "items": [
+          "SEO",
+          "Paid Media",
+          "SMM",
+          "Telegram-Wachstum",
+          "E-Mail",
+          "Influencer",
+          "Launch",
+          "Vertrieb",
+          "Partnerschaften",
+          "Affiliates",
+          "Business Development",
+          "Kundenbetreuung",
+          "Revenue Operations",
+          "CRM",
+          "PR",
+          "Medienarbeit",
+          "Marke",
+          "Analytik"
+        ]
       },
       {
         "name": "Produkt",
-        "items": ["Produktmanagement", "Strategie", "Roadmap", "UX/UI", "Prototypen", "Nutzertests", "Produktrecherche", "MVP", "QA"]
+        "items": [
+          "Produktmanagement",
+          "Strategie",
+          "Roadmap",
+          "UX/UI",
+          "Prototypen",
+          "Nutzertests",
+          "Produktrecherche",
+          "MVP",
+          "QA"
+        ]
       },
       {
         "name": "Entwicklung",
-        "items": ["Web", "Frontend", "Backend", "Full-Stack", "Mobil", "API", "Integrationen", "DevOps", "Interne Tools", "Web3-Entwicklung"]
+        "items": [
+          "Web",
+          "Frontend",
+          "Backend",
+          "Full-Stack",
+          "Mobil",
+          "API",
+          "Integrationen",
+          "DevOps",
+          "Interne Tools",
+          "Web3-Entwicklung"
+        ]
       },
       {
         "name": "Web3",
-        "items": ["Smart Contracts", "Protokoll", "Protokoll-Doku", "Token-Ökosystem", "DAO", "Governance", "Ökosystem-Wachstum", "Ambassadors", "KOL", "Airdrops", "Whitelist", "Grants", "NFT-Community", "Holder", "Discord und Telegram", "Krypto-Inhalte"]
+        "items": [
+          "Smart Contracts",
+          "Protokoll",
+          "Protokoll-Doku",
+          "Token-Ökosystem",
+          "DAO",
+          "Governance",
+          "Ökosystem-Wachstum",
+          "Ambassadors",
+          "KOL",
+          "Airdrops",
+          "Whitelist",
+          "Grants",
+          "NFT-Community",
+          "Holder",
+          "Discord und Telegram",
+          "Krypto-Inhalte"
+        ]
       },
       {
         "name": "Menschen",
-        "items": ["Talentsuche", "Recruiting", "Interviews", "Remote-Teams", "Teambuilding", "Auftragnehmer", "Arbeitgebermarke", "Teamabläufe", "Teamform"]
+        "items": [
+          "Talentsuche",
+          "Recruiting",
+          "Interviews",
+          "Remote-Teams",
+          "Teambuilding",
+          "Auftragnehmer",
+          "Arbeitgebermarke",
+          "Teamabläufe",
+          "Teamform"
+        ]
       },
       {
         "name": "Recherche",
-        "items": ["Markt", "Wettbewerber", "Kunden", "Nutzerinterviews", "Ökosystem", "Trends", "Preisrecherche", "Berichte", "Business Intelligence"]
+        "items": [
+          "Markt",
+          "Wettbewerber",
+          "Kunden",
+          "Nutzerinterviews",
+          "Ökosystem",
+          "Trends",
+          "Preisrecherche",
+          "Berichte",
+          "Business Intelligence"
+        ]
       },
       {
         "name": "Design",
-        "items": ["Oberfläche", "Markenbild", "Motion", "Illustration", "Designsystem"]
+        "items": [
+          "Oberfläche",
+          "Markenbild",
+          "Motion",
+          "Illustration",
+          "Designsystem"
+        ]
       },
       {
         "name": "Kommunikation",
-        "items": ["Presse", "Ankündigungen", "Interne Nachrichten", "Auftritte", "Krisennotizen"]
+        "items": [
+          "Presse",
+          "Ankündigungen",
+          "Interne Nachrichten",
+          "Auftritte",
+          "Krisennotizen"
+        ]
       }
     ],
     "else": "Steht Ihre Aufgabe nicht in der Liste, beschreiben Sie sie trotzdem.",

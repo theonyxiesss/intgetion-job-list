@@ -117,7 +117,10 @@ function watchWalletTree(modal: Element) {
         shadow,
         node === modal ? PHONE_WALLET_MODAL_CSS : PHONE_WALLET_INNER_CSS,
       );
-      if (!watchedShadows.has(shadow) && typeof MutationObserver === "function") {
+      if (
+        !watchedShadows.has(shadow) &&
+        typeof MutationObserver === "function"
+      ) {
         watchedShadows.add(shadow);
         const observer = new MutationObserver(scan);
         observer.observe(shadow, { childList: true, subtree: true });

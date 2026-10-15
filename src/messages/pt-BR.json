@@ -2236,43 +2236,159 @@
     "groups": [
       {
         "name": "Operações",
-        "items": ["Suporte", "Sucesso do cliente", "Suporte técnico", "Help desk", "Chat", "Moderação", "Assistência", "Documentação", "Integração", "Agenda", "Base de conhecimento", "Back office"]
+        "items": [
+          "Suporte",
+          "Sucesso do cliente",
+          "Suporte técnico",
+          "Help desk",
+          "Chat",
+          "Moderação",
+          "Assistência",
+          "Documentação",
+          "Integração",
+          "Agenda",
+          "Base de conhecimento",
+          "Back office"
+        ]
       },
       {
         "name": "Comunidade",
-        "items": ["Comunidade", "Redes", "Conteúdo", "Textos", "Vídeo", "Engajamento", "Newsletter", "Podcast", "Eventos", "Tradução", "Localização", "Conteúdo multilíngue", "Comunidade local"]
+        "items": [
+          "Comunidade",
+          "Redes",
+          "Conteúdo",
+          "Textos",
+          "Vídeo",
+          "Engajamento",
+          "Newsletter",
+          "Podcast",
+          "Eventos",
+          "Tradução",
+          "Localização",
+          "Conteúdo multilíngue",
+          "Comunidade local"
+        ]
       },
       {
         "name": "Crescimento",
-        "items": ["SEO", "Mídia paga", "SMM", "Crescimento no Telegram", "E-mail", "Influenciadores", "Lançamento", "Vendas", "Parcerias", "Afiliados", "Desenvolvimento de negócios", "Contas", "Operações de receita", "CRM", "Relações públicas", "Mídia", "Marca", "Análise"]
+        "items": [
+          "SEO",
+          "Mídia paga",
+          "SMM",
+          "Crescimento no Telegram",
+          "E-mail",
+          "Influenciadores",
+          "Lançamento",
+          "Vendas",
+          "Parcerias",
+          "Afiliados",
+          "Desenvolvimento de negócios",
+          "Contas",
+          "Operações de receita",
+          "CRM",
+          "Relações públicas",
+          "Mídia",
+          "Marca",
+          "Análise"
+        ]
       },
       {
         "name": "Produto",
-        "items": ["Gestão de produto", "Estratégia", "Roteiro", "UX/UI", "Protótipos", "Testes com pessoas", "Pesquisa de produto", "MVP", "QA"]
+        "items": [
+          "Gestão de produto",
+          "Estratégia",
+          "Roteiro",
+          "UX/UI",
+          "Protótipos",
+          "Testes com pessoas",
+          "Pesquisa de produto",
+          "MVP",
+          "QA"
+        ]
       },
       {
         "name": "Desenvolvimento",
-        "items": ["Web", "Frontend", "Backend", "Full-stack", "Mobile", "API", "Integrações", "DevOps", "Ferramentas internas", "Engenharia Web3"]
+        "items": [
+          "Web",
+          "Frontend",
+          "Backend",
+          "Full-stack",
+          "Mobile",
+          "API",
+          "Integrações",
+          "DevOps",
+          "Ferramentas internas",
+          "Engenharia Web3"
+        ]
       },
       {
         "name": "Web3",
-        "items": ["Contratos inteligentes", "Protocolo", "Docs do protocolo", "Ecossistema do token", "DAO", "Governança", "Crescimento do ecossistema", "Embaixadores", "KOL", "Airdrops", "Lista de espera", "Grants", "Comunidade NFT", "Holders", "Discord e Telegram", "Conteúdo cripto"]
+        "items": [
+          "Contratos inteligentes",
+          "Protocolo",
+          "Docs do protocolo",
+          "Ecossistema do token",
+          "DAO",
+          "Governança",
+          "Crescimento do ecossistema",
+          "Embaixadores",
+          "KOL",
+          "Airdrops",
+          "Lista de espera",
+          "Grants",
+          "Comunidade NFT",
+          "Holders",
+          "Discord e Telegram",
+          "Conteúdo cripto"
+        ]
       },
       {
         "name": "Pessoas",
-        "items": ["Busca de talentos", "Recrutamento", "Entrevistas", "Equipes remotas", "Formação de equipe", "Contratados", "Marca empregadora", "Operações da equipe", "Forma da equipe"]
+        "items": [
+          "Busca de talentos",
+          "Recrutamento",
+          "Entrevistas",
+          "Equipes remotas",
+          "Formação de equipe",
+          "Contratados",
+          "Marca empregadora",
+          "Operações da equipe",
+          "Forma da equipe"
+        ]
       },
       {
         "name": "Pesquisa",
-        "items": ["Mercado", "Concorrentes", "Clientes", "Entrevistas", "Ecossistema", "Tendências", "Pesquisa de preço", "Relatórios", "Inteligência de negócio"]
+        "items": [
+          "Mercado",
+          "Concorrentes",
+          "Clientes",
+          "Entrevistas",
+          "Ecossistema",
+          "Tendências",
+          "Pesquisa de preço",
+          "Relatórios",
+          "Inteligência de negócio"
+        ]
       },
       {
         "name": "Design",
-        "items": ["Interface", "Identidade", "Motion", "Ilustração", "Sistema de design"]
+        "items": [
+          "Interface",
+          "Identidade",
+          "Motion",
+          "Ilustração",
+          "Sistema de design"
+        ]
       },
       {
         "name": "Comunicação",
-        "items": ["Imprensa", "Anúncios", "Notícias internas", "Palestras", "Notas de crise"]
+        "items": [
+          "Imprensa",
+          "Anúncios",
+          "Notícias internas",
+          "Palestras",
+          "Notas de crise"
+        ]
       }
     ],
     "else": "Se a sua tarefa não está na lista, descreva mesmo assim.",

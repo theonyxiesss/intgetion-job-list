@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  normalizeReply,
-  parseEngagementBrief,
-} from "../engagement-brief";
+import { normalizeReply, parseEngagementBrief } from "../engagement-brief";
 
 const task =
   "We need SEO for a product and do not want a full-time hire or an in-house team.";

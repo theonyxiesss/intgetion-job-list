@@ -2236,43 +2236,159 @@
     "groups": [
       {
         "name": "Opérations",
-        "items": ["Support", "Succès client", "Support technique", "Help desk", "Chat", "Modération", "Assistance", "Documentation", "Intégration", "Planning", "Base de connaissances", "Back office"]
+        "items": [
+          "Support",
+          "Succès client",
+          "Support technique",
+          "Help desk",
+          "Chat",
+          "Modération",
+          "Assistance",
+          "Documentation",
+          "Intégration",
+          "Planning",
+          "Base de connaissances",
+          "Back office"
+        ]
       },
       {
         "name": "Communauté",
-        "items": ["Communauté", "Réseaux", "Contenu", "Textes", "Vidéo", "Engagement", "Infolettre", "Podcast", "Événements", "Traduction", "Localisation", "Contenu multilingue", "Communauté locale"]
+        "items": [
+          "Communauté",
+          "Réseaux",
+          "Contenu",
+          "Textes",
+          "Vidéo",
+          "Engagement",
+          "Infolettre",
+          "Podcast",
+          "Événements",
+          "Traduction",
+          "Localisation",
+          "Contenu multilingue",
+          "Communauté locale"
+        ]
       },
       {
         "name": "Croissance",
-        "items": ["SEO", "Médias payants", "SMM", "Croissance Telegram", "E-mail", "Influenceurs", "Lancement", "Ventes", "Partenariats", "Affiliés", "Développement commercial", "Suivi des comptes", "Opérations de revenu", "CRM", "Relations publiques", "Médias", "Marque", "Analytique"]
+        "items": [
+          "SEO",
+          "Médias payants",
+          "SMM",
+          "Croissance Telegram",
+          "E-mail",
+          "Influenceurs",
+          "Lancement",
+          "Ventes",
+          "Partenariats",
+          "Affiliés",
+          "Développement commercial",
+          "Suivi des comptes",
+          "Opérations de revenu",
+          "CRM",
+          "Relations publiques",
+          "Médias",
+          "Marque",
+          "Analytique"
+        ]
       },
       {
         "name": "Produit",
-        "items": ["Gestion de produit", "Stratégie", "Feuille de route", "UX/UI", "Prototypes", "Tests utilisateurs", "Recherche produit", "MVP", "QA"]
+        "items": [
+          "Gestion de produit",
+          "Stratégie",
+          "Feuille de route",
+          "UX/UI",
+          "Prototypes",
+          "Tests utilisateurs",
+          "Recherche produit",
+          "MVP",
+          "QA"
+        ]
       },
       {
         "name": "Développement",
-        "items": ["Web", "Frontend", "Backend", "Full-stack", "Mobile", "API", "Intégrations", "DevOps", "Outils internes", "Ingénierie Web3"]
+        "items": [
+          "Web",
+          "Frontend",
+          "Backend",
+          "Full-stack",
+          "Mobile",
+          "API",
+          "Intégrations",
+          "DevOps",
+          "Outils internes",
+          "Ingénierie Web3"
+        ]
       },
       {
         "name": "Web3",
-        "items": ["Contrats intelligents", "Protocole", "Docs du protocole", "Écosystème du jeton", "DAO", "Gouvernance", "Croissance de l’écosystème", "Ambassadeurs", "KOL", "Airdrops", "Liste blanche", "Subventions", "Communauté NFT", "Holders", "Discord et Telegram", "Contenu crypto"]
+        "items": [
+          "Contrats intelligents",
+          "Protocole",
+          "Docs du protocole",
+          "Écosystème du jeton",
+          "DAO",
+          "Gouvernance",
+          "Croissance de l’écosystème",
+          "Ambassadeurs",
+          "KOL",
+          "Airdrops",
+          "Liste blanche",
+          "Subventions",
+          "Communauté NFT",
+          "Holders",
+          "Discord et Telegram",
+          "Contenu crypto"
+        ]
       },
       {
         "name": "Personnes",
-        "items": ["Sourcing", "Recrutement", "Entretiens", "Équipes à distance", "Construction d’équipe", "Prestataires", "Marque employeur", "Opérations d’équipe", "Forme de l’équipe"]
+        "items": [
+          "Sourcing",
+          "Recrutement",
+          "Entretiens",
+          "Équipes à distance",
+          "Construction d’équipe",
+          "Prestataires",
+          "Marque employeur",
+          "Opérations d’équipe",
+          "Forme de l’équipe"
+        ]
       },
       {
         "name": "Recherche",
-        "items": ["Marché", "Concurrents", "Clients", "Entretiens", "Écosystème", "Tendances", "Recherche de prix", "Rapports", "Intelligence d’affaires"]
+        "items": [
+          "Marché",
+          "Concurrents",
+          "Clients",
+          "Entretiens",
+          "Écosystème",
+          "Tendances",
+          "Recherche de prix",
+          "Rapports",
+          "Intelligence d’affaires"
+        ]
       },
       {
         "name": "Design",
-        "items": ["Interface", "Identité", "Motion", "Illustration", "Système de design"]
+        "items": [
+          "Interface",
+          "Identité",
+          "Motion",
+          "Illustration",
+          "Système de design"
+        ]
       },
       {
         "name": "Communication",
-        "items": ["Presse", "Annonces", "Nouvelles internes", "Prises de parole", "Notes de crise"]
+        "items": [
+          "Presse",
+          "Annonces",
+          "Nouvelles internes",
+          "Prises de parole",
+          "Notes de crise"
+        ]
       }
     ],
     "else": "Si votre tâche n’est pas dans la liste, décrivez-la quand même.",
