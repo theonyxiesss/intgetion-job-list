@@ -205,6 +205,16 @@ function ServicesMark(props: NavMarkProps) {
   );
 }
 
+/** A ready piece of work: a tag with a price hole (D446). */
+function FreelanceMark(props: NavMarkProps) {
+  return (
+    <Frame {...props}>
+      <path d="M3.5 12 L12 3.5 H20.5 V12 L12 20.5 Z" />
+      <path d="M15.5 7.5 H16.5 V8.5 H15.5 Z" />
+    </Frame>
+  );
+}
+
 function LoginMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
@@ -218,6 +228,7 @@ function LoginMark(props: NavMarkProps) {
 export const NAV_ICONS: Record<string, NavMark> = {
   "/jobs": JobsMark,
   "/events": EventsMark,
+  "/freelance": FreelanceMark,
   "/matches": MatchesMark,
   "/pricing": PricingMark,
   "/employer/jobs": EmployerJobsMark,
@@ -252,6 +263,7 @@ const PHONE_NAV_ORDER = {
     "/notifications",
     "/profile",
     "/pricing",
+    "/freelance",
     "/services",
     "/post-job",
     "/settings/account",
@@ -262,6 +274,7 @@ const PHONE_NAV_ORDER = {
     "/jobs",
     "/events",
     "/chat",
+    "/freelance",
     "/pricing",
     "/services",
     "/post-job",
@@ -276,6 +289,7 @@ const PHONE_NAV_ORDER = {
     "/chat",
     "/jobs",
     "/events",
+    "/freelance",
     "/services",
     "/pricing",
     "/notifications",

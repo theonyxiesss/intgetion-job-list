@@ -1978,3 +1978,14 @@
 - Отклонения от ТЗ: нет. Пуш в `master` по «залей в продукт» основателя, до конца второго прогона CI; прогон затем прошёл.
 - OPEN QUESTION: нет. LCP главной — отдельная задача.
 - Следующая подфаза: только по команде основателя.
+
+## [2026-10-15] — freelance-C (D450) — DONE
+
+- Сделано: по «начинай подфазу C» основателя — каталог `/freelance` (поиск, направление, бюджет, срок, язык, порядок, пагинация, пустое состояние со ссылкой на «Услуги») и страница `/freelance/[slug]` (пакеты, что входит, что нужно от покупателя, работы, отзывы, JSON-LD `Service` и крошки). Витрина исполнителя `getSellerStorefronts` в модуле `candidates` (имя «Ada L.», заголовок, пояс). `formatMinor` в `src/lib/money.ts`. Пункт «Фриланс» в шапке и меню телефона, иконка, карта сайта. Тексты `nav.freelance` и `freelance.*` в 7 языках. Правка D449 (другая сессия: «услуга» вместо «заказ» в счётчике и отзывах) сохранена.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1173 прошли, 1 пропущен; новые `src/modules/freelance/__tests__/catalog.test.ts`, правка `nav-icons.test.ts`); `pnpm build` → 0 (с `SWC_NATIVE_BINDING_CACHE`); prettier по своим файлам → 0. Браузер, локально (dev, облачная база): `/ru/freelance` — пустой каталог, четыре фильтра дают четыре метки «снять фильтр» с верными адресами и «Под эти фильтры услуг нет»; несуществующая услуга → 404; ширина 375 — без горизонтальной прокрутки, «Фриланс» в меню. Ошибки CSP про inline-стили в консоли те же, что на `/ru/events` (dev). Перед запуском удалён битый кэш `.next/dev/prerender-manifest.json` (JSON дважды записан в один файл), без него падала и главная. Страницу услуги с данными в браузере не видел: в облаке услуг нет, создавать их там — облачная запись. CI на `8f1ba3a1`: `check` → success; `database` → `freelance.integration.test.ts` и миграция с нуля прошли, job красный из-за 12 e2e (как до задачи).
+- P-тесты подфазы: `catalog.test.ts` ✅, `nav-icons.test.ts` ✅, `messages.test.ts` ✅
+- Миграции: нет
+- Изменённые файлы: `src/app/[locale]/freelance/page.tsx`, `src/app/[locale]/freelance/[slug]/page.tsx`, `src/modules/freelance/{schemas/search.ts,service/catalog.ts,service/index.ts,repo/freelance-repo.ts,ui/format.ts,ui/service-card.tsx,__tests__/catalog.test.ts}`, `src/modules/candidates/{repo/storefront.ts,service/storefront.ts,service/index.ts}`, `src/lib/money.ts`, `src/components/shell/{header.tsx,nav-icons.tsx,nav-icons.test.ts}`, `src/app/sitemap.ts`, `src/messages/*.json`, `docs/DECISIONS.md` (D450), `MISSION_LOG.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`
+- Отклонения от ТЗ: формы запроса нет до D, на её месте текст. У гостя и кандидата пять ссылок в шапке: полоса меню с 1440 px (D371).
+- OPEN QUESTION: 28.13.
+- Следующая подфаза: D (кабинет, запрос, заказы) — по команде основателя.

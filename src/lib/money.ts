@@ -137,17 +137,37 @@ export function parseMoneyDto(value: unknown): ParsedMoney {
 /** Formats a money DTO for display without converting minor units through a JS number. */
 export function formatMoneyDto(value: unknown, locale: string): string {
   const money = parseMoneyDto(value);
+  return formatMinor(money.amountMinor, money.currency, locale);
+}
+
+/**
+ * Formats minor units without a JS number. `wholeWhenEven` drops ",00" when
+ * there are no cents, as prices are written ("$450", "$450.50").
+ */
+export function formatMinor(
+  amountMinor: bigint,
+  currency: string,
+  locale: string,
+  options: { wholeWhenEven?: boolean } = {},
+): string {
+  const exponent =
+    new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+    }).resolvedOptions().maximumFractionDigits ?? 2;
+  const scale = BigInt(10) ** BigInt(exponent);
+  const whole = amountMinor / scale;
+  const rest = amountMinor % scale;
+  const even = rest === BigInt(0);
   const formatter = new Intl.NumberFormat(locale, {
     style: "currency",
-    currency: money.currency,
+    currency,
+    ...(options.wholeWhenEven && even
+      ? { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+      : {}),
   });
-  const fractionDigits = formatter.resolvedOptions().maximumFractionDigits ?? 2;
-  const scale = BigInt(10) ** BigInt(fractionDigits);
-  const whole = money.amountMinor / scale;
-  const fraction = (money.amountMinor % scale)
-    .toString()
-    .padStart(fractionDigits, "0");
-  const decimal = fractionDigits ? `${whole}.${fraction}` : whole.toString();
+  const fraction = rest.toString().padStart(exponent, "0");
+  const decimal = exponent ? `${whole}.${fraction}` : whole.toString();
   // Intl's string input path preserves the exact decimal value; avoid Number's 2^53 limit.
   const formatExact = formatter.format as unknown as (value: string) => string;
   return formatExact(decimal);

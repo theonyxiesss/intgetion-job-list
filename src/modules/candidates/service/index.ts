@@ -31,6 +31,8 @@ export {
   storeCompleteness,
 } from "./candidate-service";
 export type { AppTx } from "../repo/profiles";
+export { getSellerStorefronts, shortName } from "./storefront";
+export type { SellerStorefront } from "./storefront";
 export {
   candidatePatchInput,
   patchCandidateProfile,

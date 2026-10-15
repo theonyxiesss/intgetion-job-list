@@ -5,6 +5,7 @@ import { getDb } from "@/db/client";
 import { logger } from "@/lib/logger";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import { listEventSitemapEntries } from "@/modules/events/service";
+import { listFreelanceSitemapEntries } from "@/modules/freelance/service";
 import { listSitemapEntries, searchJobs } from "@/modules/jobs/service";
 import { listSalarySkillSlugs } from "@/modules/salaries/service";
 import { languageAlternates, localeUrl } from "@/modules/seo/site";
@@ -16,6 +17,7 @@ const STATIC_PATHS = [
   "",
   "/jobs",
   "/events",
+  "/freelance",
   "/for-employers",
   "/pricing",
   "/services",
@@ -83,7 +85,7 @@ async function presentTagSlugs(): Promise<Set<string>> {
   return present;
 }
 
-/** Public pages, jobs, companies, tag pages and events with hreflang alternates (D210, D435). */
+/** Public pages, jobs, companies, tag pages, events and freelance services with hreflang alternates (D210, D435, D446). */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pages = STATIC_PATHS.map((path) => entry(path));
   try {
@@ -96,6 +98,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       logger.error({ err: error }, "sitemap events query failed");
       return [];
     });
+    const services = await listFreelanceSitemapEntries().catch(
+      (error: unknown) => {
+        logger.error({ err: error }, "sitemap freelance query failed");
+        return [];
+      },
+    );
     return [
       ...pages,
       ...jobs.map((job) => entry(`/jobs/${job.id}`, job.updatedAt)),
@@ -108,6 +116,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...(salarySkills.length ? [entry("/salaries")] : []),
       ...salarySkills.map((slug) => entry(`/salaries/${slug}`)),
       ...events.map((event) => entry(`/events/${event.slug}`, event.updatedAt)),
+      ...services.map((service) =>
+        entry(`/freelance/${service.slug}`, service.updatedAt),
+      ),
     ];
   } catch (error) {
     // A database hiccup still yields the static pages, not a 500.

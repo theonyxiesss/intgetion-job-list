@@ -51,3 +51,19 @@ export {
 export type { OrderActor } from "./transitions";
 export { requestInput, reviewInput, serviceInput } from "../schemas";
 export type { RequestInput, ReviewInput, ServiceInput } from "../schemas";
+export {
+  getServicePage,
+  isMissingFreelanceTable,
+  listCatalog,
+  listFreelanceSitemapEntries,
+} from "./catalog";
+export type { CatalogCard, ServicePackageView, ServicePage } from "./catalog";
+export {
+  FREELANCE_BUDGETS,
+  FREELANCE_FILTER_LANGUAGES,
+  FREELANCE_SORTS,
+  FREELANCE_TERMS,
+  freelanceSearchQuery,
+  parseFreelanceSearch,
+} from "../schemas/search";
+export type { FreelanceSearchQuery } from "../schemas/search";

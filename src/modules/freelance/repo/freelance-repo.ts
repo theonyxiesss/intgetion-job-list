@@ -552,3 +552,26 @@ export function runInTransaction<T>(
 ): Promise<T> {
   return getDb().transaction(work);
 }
+
+/** Published services of sellers who take orders, for the sitemap. */
+export async function listSitemapRows(): Promise<
+  { slug: string; updatedAt: Date }[]
+> {
+  return getDb()
+    .select({
+      slug: freelanceServices.slug,
+      updatedAt: freelanceServices.updatedAt,
+    })
+    .from(freelanceServices)
+    .where(
+      and(
+        eq(freelanceServices.status, "published"),
+        sql`exists (
+          select 1 from public.freelance_sellers s
+          where s.user_id = ${freelanceServices.sellerId} and s.accepting
+        )`,
+      ),
+    )
+    .orderBy(desc(freelanceServices.updatedAt))
+    .limit(5000);
+}

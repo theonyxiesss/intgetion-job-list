@@ -136,7 +136,8 @@
     "services": "Servizi",
     "postJob": "Pubblica un’offerta",
     "myJobs": "Le mie offerte",
-    "company": "Azienda"
+    "company": "Azienda",
+    "freelance": "Freelance"
   },
   "locale": {
     "en": "Inglese",
@@ -3245,6 +3246,86 @@
       "online": "Online",
       "offline": "In presenza",
       "hybrid": "Ibrido"
+    }
+  },
+  "freelance": {
+    "metaTitle": "Servizi freelance a prezzo fisso",
+    "title": "Freelance. Servizi pronti, con un prezzo.",
+    "subtitle": "Singoli specialisti: cosa faranno, a quanto ed entro quando. I contatti si aprono quando il freelance accetta la tua richiesta. Per un intero team, vedi Servizi.",
+    "teamLink": "Serve un team? Servizi",
+    "filters": "Filtri",
+    "closeFilters": "Chiudi filtri",
+    "applyFilters": "Mostra servizi",
+    "category": "Area",
+    "anyCategory": "Qualsiasi area",
+    "budget": "Budget",
+    "anyBudget": "Qualsiasi budget",
+    "upTo": "fino a {price}",
+    "term": "Tempi",
+    "anyTerm": "Qualsiasi tempo",
+    "upToDays": "fino a {count, plural, one {# giorno} other {# giorni}}",
+    "language": "Lingua di lavoro",
+    "anyLanguage": "Qualsiasi lingua",
+    "sort": "Ordine",
+    "sorts": {
+      "fit": "Più recenti",
+      "cheap": "Più economici",
+      "fast": "Più rapidi"
+    },
+    "search": "Cerca servizi: landing page, audit di contratto, SEO",
+    "clearFilter": "Rimuovi filtro",
+    "results": "{count, plural, one {# servizio} other {# servizi}}",
+    "empty": "Ancora nessun servizio",
+    "emptyText": "Il catalogo è appena aperto. I primi freelance arriveranno presto. Un compito più grande può già andare al team INTGETION.",
+    "emptyFiltered": "Nessun servizio per questi filtri",
+    "emptyFilteredText": "Rimuovi un filtro o descrivi il compito al team INTGETION.",
+    "pagination": "Pagine",
+    "previous": "Precedente",
+    "next": "Successiva",
+    "seller": "Freelance",
+    "newSeller": "Nuovo freelance",
+    "rating": "★ {rating}",
+    "completed": "{count, plural, one {# servizio completato} other {# servizi completati}}",
+    "skills": "Competenze",
+    "from": "da {price}",
+    "days": "{count, plural, one {# giorno} other {# giorni}}",
+    "back": "← Tutti i servizi",
+    "priceLabel": "Prezzo",
+    "termLabel": "Tempi",
+    "zoneLabel": "Fuso orario",
+    "languagesLabel": "Lingue",
+    "aboutTitle": "Cosa ottieni",
+    "needsTitle": "Cosa serve al freelance da te",
+    "worksTitle": "Esempi di lavoro",
+    "reviewsTitle": "Recensioni",
+    "reviewsNote": "Recensisce solo chi ha completato un servizio qui.",
+    "noReviews": "Ancora nessuna recensione: nessun servizio completato sulla piattaforma.",
+    "authorKinds": {
+      "person": "Persona",
+      "company": "Azienda"
+    },
+    "stars": "{rating}/5",
+    "packagesTitle": "Pacchetti",
+    "tiers": {
+      "basic": "Base",
+      "standard": "Standard",
+      "pro": "Pro"
+    },
+    "revisions": "{count, plural, =0 {nessuna revisione} one {# revisione} other {# revisioni}}",
+    "requestSoon": "Le richieste ai freelance si aprono con il prossimo aggiornamento.",
+    "contactsNote": "I contatti si aprono a entrambi quando il freelance accetta la richiesta.",
+    "payNote": "Paghi il freelance direttamente. INTGETION non trattiene il denaro.",
+    "categories": {
+      "operations": "Operazioni",
+      "community": "Community",
+      "growth": "Crescita",
+      "product": "Prodotto",
+      "development": "Sviluppo",
+      "web3": "Web3",
+      "people": "Persone",
+      "research": "Ricerca",
+      "design": "Design",
+      "communications": "Comunicazione"
     }
   }
 }
