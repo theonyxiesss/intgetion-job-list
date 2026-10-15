@@ -1,4 +1,9 @@
-import { test as base, type Browser } from "@playwright/test";
+import {
+  test as base,
+  expect,
+  type Browser,
+  type Page,
+} from "@playwright/test";
 import { randomInt } from "node:crypto";
 import { CONSENT_POLICY_VERSION } from "../../src/lib/consent";
 
@@ -40,6 +45,26 @@ export async function newContextWithIp(browser: Browser) {
   });
   await context.addCookies([consentCookie]);
   return context;
+}
+
+/** Opens the header account menu; "Sign out" lives there since D439. */
+export async function openAccountMenu(page: Page) {
+  await page.getByRole("button", { name: "Account", exact: true }).click();
+  const menu = page.getByRole("navigation", { name: "Account" });
+  await expect(menu.getByRole("button", { name: "Sign out" })).toBeVisible();
+  return menu;
+}
+
+/** The signed-in header: the account menu offers "Sign out" (D439). */
+export async function expectSignedInMenu(page: Page) {
+  await openAccountMenu(page);
+  await page.keyboard.press("Escape");
+}
+
+/** Signs out through the account menu (D439). */
+export async function signOutFromMenu(page: Page) {
+  const menu = await openAccountMenu(page);
+  await menu.getByRole("button", { name: "Sign out" }).click();
 }
 
 export { expect } from "@playwright/test";

@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { expect, newContextWithIp, test } from "./fixtures";
+import { expect, expectSignedInMenu, newContextWithIp, test } from "./fixtures";
 import { authLink, waitForMail } from "./mail";
 
 /**
@@ -30,7 +30,7 @@ async function confirmEmail(page: Page, email: string) {
   const mail = await waitForMail(page.request, email, 0);
   await page.goto(authLink(mail));
   await expect(page).toHaveURL(/:\d+\/auth\/(confirmed|signed-in)/);
-  await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
+  await expectSignedInMenu(page);
 }
 
 test("profile completeness grows, and another candidate gets 404 without contacts", async ({

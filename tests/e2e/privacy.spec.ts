@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { expect, test } from "./fixtures";
+import { expect, expectSignedInMenu, test } from "./fixtures";
 import { authLink, waitForMail } from "./mail";
 
 const password = "orbit-lantern-42";
@@ -20,7 +20,7 @@ async function signUp(page: Page, email: string) {
   await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
   const mail = await waitForMail(page.request, email, 0);
   await page.goto(authLink(mail));
-  await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
+  await expectSignedInMenu(page);
 }
 
 test("10C: export my data, then delete the account", async ({ page }) => {

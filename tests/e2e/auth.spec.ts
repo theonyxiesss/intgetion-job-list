@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import { expect, test } from "./fixtures";
+import { expect, expectSignedInMenu, signOutFromMenu, test } from "./fixtures";
 import { authLink, countMails, waitForMail } from "./mail";
 
 /**
@@ -34,14 +34,14 @@ async function openLatestLink(page: Page, email: string, seen: number) {
 }
 
 async function expectSignedIn(page: Page) {
-  await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
+  await expectSignedInMenu(page);
   const me = await page.request.get("/api/me");
   expect(me.status()).toBe(200);
   return (await me.json()) as Record<string, unknown>;
 }
 
 async function signOut(page: Page) {
-  await page.getByRole("button", { name: "Sign out" }).click();
+  await signOutFromMenu(page);
   await expect(
     page.getByRole("navigation", { name: "Account" }).getByRole("link", {
       name: "Sign in",

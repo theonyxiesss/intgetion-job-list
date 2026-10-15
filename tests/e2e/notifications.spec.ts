@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import pg from "pg";
 import type { Page } from "@playwright/test";
 import { signUnsubscribe } from "../../src/modules/notifications/lib/unsubscribe";
-import { expect, newContextWithIp, test } from "./fixtures";
+import { expect, expectSignedInMenu, newContextWithIp, test } from "./fixtures";
 import { authLink, waitForMail } from "./mail";
 
 const password = "orbit-lantern-42";
@@ -30,7 +30,7 @@ async function confirmEmail(page: Page, email: string) {
   const mail = await waitForMail(page.request, email, 0);
   await page.goto(authLink(mail));
   await expect(page).toHaveURL(/:\d+\/auth\/(confirmed|signed-in)/);
-  await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
+  await expectSignedInMenu(page);
 }
 
 async function fillProfile(page: Page, contactEmail: string) {
