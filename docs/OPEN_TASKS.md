@@ -6,7 +6,7 @@
 
 ### Вкладка «События» (D435, D436) — работает, Web3 почти нет
 
-Страницы `/events` и `/events/[slug]`, пункт меню, Spoki `find_events`, cron `/api/cron/events`. На сайте `dpl_2NpfUuNKcYyUpJwoQzUESGwJyWPL`, коммит `f07da4de`. Таблица `0049_events.sql` на облаке с 2026-10-15 (D438). confs.tech одобрен основателем и включён в Vercel production; первый прогон cron дал 202 события. Осталось: в confs.tech почти нет Web3 (1 из 202), второй источник для Web3 — открытый вопрос.
+Страницы `/events` и `/events/[slug]`, пункт меню, Spoki `find_events`, cron `/api/cron/events`. На сайте `dpl_2NpfUuNKcYyUpJwoQzUESGwJyWPL`, коммит `f07da4de`. Таблица `0049_events.sql` на облаке с 2026-10-15 (D438). confs.tech и ccfddl (D440) одобрены основателем и включены в Vercel production: 202 и 276 событий. Осталось: Web3 почти нет (по 1 в каждом источнике); единственный известный Web3-источник — Geode Labs / ETHStars (данные ethereum.org) по ключу, доступ просит основатель. В адресах ccfddl год повторяется (`aaai-2027-2027-…`): `eventSlug` добавляет год, а он уже в названии; адрес после выдачи не меняется.
 
 ### Меню телефона и окно кошелька (D433, D432) — на сайте, с телефона ещё не проверено
 

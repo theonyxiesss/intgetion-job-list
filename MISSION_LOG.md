@@ -1879,3 +1879,14 @@
 - Отклонения от ТЗ: нет. Ролевое право `SET` выдавалось и отзывалось внутри транзакции по отдельному «да» основателя.
 - OPEN QUESTION: второй источник для Web3 (в confs.tech 1 событие из 202).
 - Следующая подфаза: только по команде основателя.
+
+## [2026-10-15] — events-ccfddl (D440) — DONE (Web3 по-прежнему почти нет)
+
+- Сделано: проверены открытые источники событий (D440). Подошёл только ccfddl (`ccfddl/ccf-deadlines`, MIT). `founder approved: republish allowed — ccfddl` (основатель в чате 2026-10-15). Адаптер `src/modules/events/adapters/ccfddl.ts` с тестом, источник в `EVENT_SOURCES`, `KNOWN_EVENT_SOURCES`, `scripts/env-rules.mjs`, атрибуция `https://ccfddl.com`. `EVENTS_IMPORT_SOURCES=confs.tech,ccfddl` в Vercel production. Коммит `3f13a1f6` выложен `dpl_CYwYPUj5Dwh5g257nSBRn6qmLQeU`. Один ручной запуск `/api/cron/events`.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` (eslint по изменённым файлам) → 0; `pnpm test` → 0 (1124 прошли, 1 пропущен; 7 новых в `ccfddl.test.ts`); `pnpm env:check` → 0; `pnpm build` → 0 (на общем рабочем дереве); prettier по изменённым файлам → 0. Проба адаптера на настоящем `allconf.json`: 275 событий, 15 строк отклонены (TBD, две даты в разных городах). Деплой → success. Cron → 200, `ccfddl: fetched 276, created 276, rejected 0, error null`. В базе ccfddl 276 `published`, 110 с открытым приёмом статей, AI 48, security 37. Сайт: `events?q=AAAI` → 1, `topic=security` и `topic=ai` → по 24 на странице, атрибуция ccfddl.com на странице события.
+- P-тесты подфазы: `src/modules/events/__tests__/ccfddl.test.ts` ✅
+- Миграции: нет
+- Изменённые файлы: `src/modules/events/adapters/ccfddl.ts`, `src/modules/events/__tests__/ccfddl.test.ts`, `src/modules/events/adapters/confs-tech.ts` (экспорт `WEB3`, `AI`, `kindOf`), `src/modules/events/service/import.ts`, `src/modules/events/service/queries.ts`, `src/config/events.ts`, `scripts/env-rules.mjs`, `src/lib/env-rules.test.ts`, `.env.example`, `docs/tz/26-events.md`, `docs/how-it-works/events.md`, `docs/DECISIONS.md` (D440), `MISSION_LOG.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`
+- Отклонения от ТЗ: нет. NeurIPS 2026 не попал: у него две даты в разных городах в одной строке. В адресах ccfddl год повторяется (`aaai-2027-2027-…`), потому что `eventSlug` добавляет год, а он уже в названии; уже выданные адреса не меняются.
+- OPEN QUESTION: Web3-источник — только Geode Labs / ETHStars по ключу; нужен запрос основателя. Убирать ли повтор года в адресах (новым событиям — правка `eventSlug`; уже выданным — запись в облако).
+- Следующая подфаза: только по команде основателя.
