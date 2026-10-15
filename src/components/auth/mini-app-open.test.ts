@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  claimMiniAppAutoPost,
   deliverHandoffUrl,
   handoffNeedsCopy,
   isOwnHandoffUrl,
+  miniAppAutoPostKey,
   needsPartitionedSession,
   readTelegramInitData,
   type ReservedPopup,
@@ -156,5 +158,28 @@ describe("handoff out of the Mini App (D318)", () => {
     ).toBe("user=1&hash=from-bridge");
     expect(readTelegramInitData({ hash: "", injected: " kept " })).toBe("kept");
     expect(readTelegramInitData({ hash: "#tgWebAppVersion=7" })).toBeNull();
+  });
+});
+
+describe("automatic Mini App post (D428)", () => {
+  function memory() {
+    const jar = new Map<string, string>();
+    return {
+      getItem: (key: string) => jar.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        jar.set(key, value);
+      },
+    };
+  }
+
+  it("posts the same signed string twice, then stops", () => {
+    const storage = memory();
+    const signed = "user=1&hash=abc";
+    expect(claimMiniAppAutoPost(signed, storage)).toBe(true);
+    expect(claimMiniAppAutoPost(signed, storage)).toBe(true);
+    expect(claimMiniAppAutoPost(signed, storage)).toBe(false);
+    expect(claimMiniAppAutoPost("user=2&hash=def", storage)).toBe(true);
+    expect(miniAppAutoPostKey(signed)).not.toContain("user=1");
+    expect(miniAppAutoPostKey(signed)).toBe(miniAppAutoPostKey(signed));
   });
 });

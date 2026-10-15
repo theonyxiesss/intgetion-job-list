@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import type { AppLocale } from "@/i18n/routing";
-import { MINI_APP_POST_KEY } from "@/lib/telegram-web-app-boot";
 import {
+  claimMiniAppAutoPost,
   needsPartitionedSession,
   readTelegramInitData,
   submitTelegramMiniAppSignIn,
@@ -46,20 +46,13 @@ function rememberInit(initData: string) {
   }
 }
 
-function forgetStored() {
-  try {
-    sessionStorage.removeItem(TG_INIT_HASH_KEY);
-    sessionStorage.removeItem(TG_INIT_DATA_KEY);
-  } catch {
-    // Ignore.
-  }
-}
-
 /**
  * Inside Telegram the page is opened with signed data about the person in the
  * URL fragment. We check that signature on the server and open the session,
  * so a Mini App visitor is already signed in (D259). On phones the official
- * bridge script may be the only way initData appears (D324).
+ * bridge script may be the only way initData appears (D324). The signed
+ * string stays in this window until the session exists, and the same string
+ * is posted at most twice (D428).
  */
 export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
   useEffect(() => {
@@ -68,13 +61,7 @@ export function TelegramMiniApp({ locale }: { locale: AppLocale }) {
     rememberHash(window.location.hash);
 
     function signIn(initData: string) {
-      try {
-        if (sessionStorage.getItem(MINI_APP_POST_KEY) === "1") return;
-        sessionStorage.setItem(MINI_APP_POST_KEY, "1");
-      } catch {
-        // Private mode: still try once. The route rate-limits repeats.
-      }
-      forgetStored();
+      if (!claimMiniAppAutoPost(initData)) return;
       submitTelegramMiniAppSignIn({
         initData,
         locale,

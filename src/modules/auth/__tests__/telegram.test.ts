@@ -203,6 +203,45 @@ describe("Mini App data (D259)", () => {
     });
   });
 
+  it("accepts a signature field left out of the hash", () => {
+    const params = new URLSearchParams(initData());
+    params.set("signature", "not-part-of-the-hash");
+    expect(verifyTelegramInitData(params.toString(), token)?.id).toBe(42);
+  });
+
+  it("accepts a hash that includes the signature field", () => {
+    const authDate = Math.floor(Date.now() / 1000);
+    const user = JSON.stringify({
+      id: 42,
+      username: "person",
+      first_name: "Person",
+    });
+    const fields: Record<string, string> = {
+      auth_date: String(authDate),
+      query_id: "AAE",
+      user,
+      signature: "ed25519",
+    };
+    const pairs = Object.entries(fields)
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .map(([key, value]) => `${key}=${value}`)
+      .join("\n");
+    const secret = createHmac("sha256", "WebAppData").update(token).digest();
+    const hash = createHmac("sha256", secret).update(pairs).digest("hex");
+    const params = new URLSearchParams({ ...fields, hash });
+    expect(verifyTelegramInitData(params.toString(), token)?.id).toBe(42);
+  });
+
+  it("accepts a user id sent as digits", () => {
+    const person = verifyTelegramInitData(
+      initData({
+        user: { id: "42", username: "person", first_name: "Person" },
+      }),
+      token,
+    );
+    expect(person?.id).toBe(42);
+  });
+
   it("refuses another bot's signature and a tampered field", () => {
     expect(
       verifyTelegramInitData(initData({ token: "999:other" }), token),

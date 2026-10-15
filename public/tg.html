@@ -24,6 +24,12 @@
               sessionStorage.setItem("tg_web_app_init", w.initData);
               init = w.initData;
             }
+            if (!init) {
+              var search = location.search || "";
+              if (search.indexOf("tgWebAppData") !== -1) {
+                init = new URLSearchParams(search).get("tgWebAppData") || "";
+              }
+            }
             if (!init) init = sessionStorage.getItem("tg_web_app_init") || "";
           } catch (e) {}
           return init;
@@ -37,11 +43,22 @@
           } catch (e) {}
           return l;
         }
-        function post(init) {
+        function claim(init) {
           try {
-            if (sessionStorage.getItem("tg_mini_post") === "1") return false;
-            sessionStorage.setItem("tg_mini_post", "1");
-          } catch (e) {}
+            var h = 0;
+            for (var i = 0; i < init.length; i++) h = (h * 31 + init.charCodeAt(i)) | 0;
+            var k = "tg_mini_try_" + (h >>> 0).toString(16);
+            var raw = Number(sessionStorage.getItem(k) || "0");
+            var used = isFinite(raw) && raw > 0 ? raw : 0;
+            if (used >= 2) return false;
+            sessionStorage.setItem(k, String(used + 1));
+            return true;
+          } catch (e) {
+            return true;
+          }
+        }
+        function post(init) {
+          if (!claim(init)) return false;
           var f = document.createElement("form");
           f.method = "POST";
           f.action = "/api/auth/telegram/miniapp";

@@ -8,14 +8,17 @@ import {
   readJson,
   toErrorResponse,
 } from "@/lib/http";
-import { reportError } from "@/lib/logger";
+import { logger, reportError } from "@/lib/logger";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/request-ip";
 import { authAdminAvailable } from "@/lib/supabase/admin";
 import { FRAMED_COOKIE, MINI_APP_COOKIE } from "@/lib/supabase/cookie-options";
 import { siteUrl } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { miniAppContinuePath } from "@/lib/telegram-web-app-boot";
+import {
+  miniAppContinuePath,
+  miniAppSignedInHtml,
+} from "@/lib/telegram-web-app-boot";
 import {
   auditSignIn,
   localeSchema,
@@ -47,8 +50,10 @@ function siteRedirect(path: string): NextResponse {
 
 /**
  * Signs in whoever opened the Mini App inside Telegram (D259).
- * A form post answers with a redirect: the iPhone webview keeps cookies
- * from that navigation, and drops the ones a fetch response sets (D427).
+ * A form post from the phone answers with a document that sets the cookie,
+ * then opens the site. A redirect's Set-Cookie does not stick in that
+ * webview (D427, D428). Telegram Web is a frame, so it still gets the
+ * redirect: a document with the API page's frame policy would stay blank.
  */
 export async function POST(request: Request) {
   const form = isFormPost(request);
@@ -71,6 +76,10 @@ export async function POST(request: Request) {
     await enforceRateLimit("login", `${ip}|telegram-miniapp`);
     const profile = verifyTelegramInitData(body.initData, token);
     if (!profile) {
+      logger.info(
+        { context: "telegram_miniapp", result: "invalid" },
+        "telegram mini app",
+      );
       throw new HttpError(401, "TELEGRAM_FAILED", "Telegram sign-in failed");
     }
     // Only an explicit true means Telegram Web's frame (D315, D321).
@@ -103,7 +112,21 @@ export async function POST(request: Request) {
         maxAge: markerMaxAge,
       });
     }
-    if (form) return siteRedirect(miniAppContinuePath(body.locale));
+    logger.info(
+      { context: "telegram_miniapp", result: "ok" },
+      "telegram mini app",
+    );
+    if (form) {
+      const landing = miniAppContinuePath(body.locale);
+      if (framed) return siteRedirect(landing);
+      return new NextResponse(miniAppSignedInHtml(landing), {
+        status: 200,
+        headers: {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "no-store",
+        },
+      });
+    }
     return Response.json({ ok: true });
   } catch (error) {
     if (!form) return toErrorResponse(error);

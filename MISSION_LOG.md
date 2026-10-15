@@ -1589,3 +1589,14 @@
 - Отклонения от ТЗ: нет
 - OPEN QUESTION: адрес меню в BotFather по-прежнему не читался.
 - Следующая подфаза: только по команде основателя.
+
+## [2026-10-15] — telegram-iphone-account (D429) — NOT DONE (на сайте после пуша, с телефона ещё не проверено)
+
+- Сделано: после D427 на сайте встроенное окно Telegram учётную запись всё ещё не привязывает. Кука сессии с телефона ставится страницей 200, а не редиректом 303. Та же подписанная строка пробуется второй раз, если первая кука не села; кнопка «Войти через Telegram» в эти две попытки не входит. Подпись HMAC принимается и без поля `signature`, и вместе с ним. Идентификатор цифрами в кавычках принимается. В лог пишется только `ok` или `invalid`.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1063 прошли, 1 пропущен); `pnpm build` → 0.
+- P-тесты подфазы: `telegram.test.ts`, `telegram-web-app-boot.test.ts`, `mini-app-open.test.ts` ✅
+- Миграции: нет
+- Изменённые файлы: `src/app/api/auth/telegram/miniapp/route.ts`, `src/modules/auth/service/telegram.ts`, `src/lib/telegram-web-app-boot.ts`, `src/components/auth/telegram-mini-app.tsx`, `src/components/auth/mini-app-open.ts`, `public/tg.html`, тесты этих файлов, D429
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: адрес меню в BotFather по-прежнему не читался. Токен бота на Vercel чувствительный, в чат не выводился.
+- Следующая подфаза: только по команде основателя.

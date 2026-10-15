@@ -154,6 +154,42 @@ function tgWebAppDataFromHash(hash: string): string | null {
   }
 }
 
+/** Automatic posts of one signed string. A new string from Telegram starts again. */
+export const MINI_APP_AUTO_POST_LIMIT = 2;
+
+/** Short key for the counter. It does not contain the signed string. */
+export function miniAppAutoPostKey(initData: string): string {
+  let hash = 0;
+  for (let i = 0; i < initData.length; i++) {
+    hash = (hash * 31 + initData.charCodeAt(i)) | 0;
+  }
+  return `tg_mini_try_${(hash >>> 0).toString(16)}`;
+}
+
+function sessionStorageOrNull(): Pick<Storage, "getItem" | "setItem"> | null {
+  try {
+    return globalThis.sessionStorage ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Allows one signed string to start the automatic form twice (D428).
+ * The button the person taps is not counted here.
+ */
+export function claimMiniAppAutoPost(
+  initData: string,
+  storage: Pick<Storage, "getItem" | "setItem"> | null = sessionStorageOrNull(),
+): boolean {
+  if (!storage) return true;
+  const raw = Number(storage.getItem(miniAppAutoPostKey(initData)) ?? "0");
+  const used = Number.isFinite(raw) && raw > 0 ? raw : 0;
+  if (used >= MINI_APP_AUTO_POST_LIMIT) return false;
+  storage.setItem(miniAppAutoPostKey(initData), String(used + 1));
+  return true;
+}
+
 /**
  * Signs in from inside Telegram by a real form navigation (D427).
  * A fetch response's Set-Cookie does not stick in the iPhone webview.

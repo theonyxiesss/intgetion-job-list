@@ -185,14 +185,39 @@ export interface TelegramInitData {
   authDate: number;
 }
 
+const telegramUserId = z
+  .union([
+    z.number().int().positive(),
+    z
+      .string()
+      .regex(/^[1-9]\d{0,15}$/)
+      .transform((value) => Number(value)),
+  ])
+  .refine((id) => Number.isSafeInteger(id));
+
 const miniAppUser = z
   .object({
-    id: z.number().int().positive(),
+    id: telegramUserId,
     username: z.string().max(64).optional(),
     first_name: z.string().max(128).optional(),
     is_bot: z.boolean().optional(),
   })
   .loose();
+
+function dataCheckString(params: URLSearchParams, dropSignature: boolean): string {
+  return [...params.entries()]
+    .filter(([key]) => key !== "hash" && (!dropSignature || key !== "signature"))
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+    .map(([key, value]) => `${key}=${value}`)
+    .join("\n");
+}
+
+function hmacHexMatches(check: string, hash: string, botToken: string): boolean {
+  const secret = createHmac("sha256", "WebAppData").update(botToken).digest();
+  const expected = createHmac("sha256", secret).update(check).digest();
+  const given = Buffer.from(hash, "hex");
+  return given.length === expected.length && timingSafeEqual(given, expected);
+}
 
 /**
  * Checks the signature and the age of a `tgWebAppData` string. Returns the
@@ -213,15 +238,17 @@ export function verifyTelegramInitData(
   const hash = params.get("hash");
   if (!hash || !/^[0-9a-f]{64}$/.test(hash)) return null;
 
-  const checkString = [...params.entries()]
-    .filter(([key]) => key !== "hash" && key !== "signature")
-    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-    .map(([key, value]) => `${key}=${value}`)
-    .join("\n");
-  const secret = createHmac("sha256", "WebAppData").update(botToken).digest();
-  const expected = createHmac("sha256", secret).update(checkString).digest();
-  const given = Buffer.from(hash, "hex");
-  if (given.length !== expected.length || !timingSafeEqual(given, expected)) {
+  // Current clients sign every field except `hash` and `signature`.
+  // Older clients folded `signature` into that string. Either match is
+  // still the bot-token HMAC (D428).
+  const withoutSignature = dataCheckString(params, true);
+  if (
+    !hmacHexMatches(withoutSignature, hash, botToken) &&
+    !(
+      params.has("signature") &&
+      hmacHexMatches(dataCheckString(params, false), hash, botToken)
+    )
+  ) {
     return null;
   }
 
