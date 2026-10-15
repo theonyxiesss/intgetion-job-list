@@ -19,6 +19,7 @@ import { hasCandidateProfile } from "@/modules/candidates/service";
 import { countUnread } from "@/modules/notifications/service";
 import { BottomNav } from "./bottom-nav";
 import { MobileNav, type NavItem } from "./mobile-nav";
+import { orderPhoneNav } from "./nav-icons";
 import { ThemeToggle } from "./theme-toggle";
 
 const iconLink =
@@ -258,7 +259,10 @@ export async function Header() {
             <ThemeToggle />
           </span>
           <MobileNav
-            items={[...main, ...more, ...account]}
+            items={orderPhoneNav(
+              [...main, ...more, ...account],
+              employer ? "employer" : signedIn ? "candidate" : "guest",
+            )}
             label={t("nav.menu")}
             openLabel={t("nav.menu")}
             closeLabel={t("ui.close")}

@@ -39,8 +39,9 @@ function Frame({
 function JobsMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <rect x="3.5" y="3.5" width="17" height="17" />
-      <path d="M7.5 9 H16.5 M7.5 13.5 H13.5" />
+      <rect x="3" y="8.5" width="18" height="12" />
+      <path d="M9 8.5 V4.5 H15 V8.5" />
+      <path d="M4.5 13 H19.5" />
     </Frame>
   );
 }
@@ -48,8 +49,8 @@ function JobsMark(props: NavMarkProps) {
 function MatchesMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <rect x="3" y="3" width="11" height="11" />
-      <rect x="10" y="10" width="11" height="11" />
+      <rect x="3.5" y="3.5" width="10.5" height="10.5" />
+      <rect x="10" y="10" width="10.5" height="10.5" />
     </Frame>
   );
 }
@@ -57,7 +58,8 @@ function MatchesMark(props: NavMarkProps) {
 function PricingMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <path d="M4 6.5 H20 M4 12 H14 M4 17.5 H9" />
+      <path d="M3.5 6 H13 L20 12 L13 18 H3.5 Z" />
+      <circle cx="8" cy="12" r="1.75" />
     </Frame>
   );
 }
@@ -65,8 +67,10 @@ function PricingMark(props: NavMarkProps) {
 function EmployerJobsMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <rect x="3" y="9" width="18" height="11" />
-      <path d="M9 9 V5 H15 V9" />
+      <path d="M3.5 4.5 H16.5 V7.5" />
+      <path d="M3.5 4.5 V16.5 H7.5" />
+      <rect x="7.5" y="7.5" width="13" height="13" />
+      <path d="M10.5 12 H17.5 M10.5 15.5 H15" />
     </Frame>
   );
 }
@@ -74,9 +78,9 @@ function EmployerJobsMark(props: NavMarkProps) {
 function CompanyMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <rect x="3" y="13" width="5" height="7" />
-      <rect x="9.5" y="4" width="5" height="16" />
-      <rect x="16" y="9" width="5" height="11" />
+      <rect x="3.5" y="12" width="4.5" height="8.5" />
+      <rect x="9.75" y="3.5" width="4.5" height="17" />
+      <rect x="16" y="8" width="4.5" height="12.5" />
     </Frame>
   );
 }
@@ -84,7 +88,8 @@ function CompanyMark(props: NavMarkProps) {
 function BillingMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <path d="M12 3.5 L20.5 12 L12 20.5 L3.5 12 Z" />
+      <rect x="2.5" y="6.5" width="19" height="11" />
+      <path d="M2.5 10.5 H21.5" />
     </Frame>
   );
 }
@@ -92,7 +97,7 @@ function BillingMark(props: NavMarkProps) {
 function ChatMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <path d="M4 4 H20 V14 H11 L7 18 V14 H4 Z" />
+      <path d="M4 4 H20 V14.5 H13 L8 20 V14.5 H4 Z" />
     </Frame>
   );
 }
@@ -100,7 +105,8 @@ function ChatMark(props: NavMarkProps) {
 function PostJobMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <path d="M12 4 V20 M4 12 H20" />
+      <rect x="4" y="4" width="16" height="16" />
+      <path d="M12 8 V16 M8 12 H16" />
     </Frame>
   );
 }
@@ -108,8 +114,8 @@ function PostJobMark(props: NavMarkProps) {
 function EmployersMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <rect x="3" y="7" width="7" height="10" />
-      <rect x="14" y="7" width="7" height="10" />
+      <rect x="4.5" y="3.5" width="15" height="17" />
+      <path d="M4.5 9 H19.5 M4.5 14.5 H19.5 M12 3.5 V20.5" />
     </Frame>
   );
 }
@@ -117,8 +123,9 @@ function EmployersMark(props: NavMarkProps) {
 function NotificationsMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <rect x="3.5" y="6" width="14" height="14" />
-      <circle cx="17.5" cy="6" r="1.6" fill="currentColor" stroke="none" />
+      <path d="M12 3.5 V6" />
+      <path d="M8.5 7 H15.5 L18.5 16 H5.5 Z" />
+      <rect x="10.25" y="17.25" width="3.5" height="3" />
     </Frame>
   );
 }
@@ -126,7 +133,9 @@ function NotificationsMark(props: NavMarkProps) {
 function ApplicationsMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <path d="M4 12 H18 M13 7 L19 12 L13 17" />
+      <path d="M6 3.5 H13 L18.5 9 V20.5 H6 Z" />
+      <path d="M13 3.5 V9 H18.5" />
+      <path d="M9 13.5 L11.5 16 L15.5 11" />
     </Frame>
   );
 }
@@ -134,7 +143,7 @@ function ApplicationsMark(props: NavMarkProps) {
 function SavedMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <path d="M7 3.5 H17 V20.5 L12 16 L7 20.5 Z" />
+      <path d="M7 3.5 H17 V20.5 L12 16.5 L7 20.5 Z" />
     </Frame>
   );
 }
@@ -143,7 +152,7 @@ function ProfileMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
       <circle cx="12" cy="7.5" r="3.25" />
-      <path d="M4.5 19.5 V15 H8.5 V13 H15.5 V15 H19.5 V19.5" />
+      <path d="M4.5 20.5 V16 L9 13 H15 L19.5 16 V20.5" />
     </Frame>
   );
 }
@@ -161,7 +170,7 @@ function SettingsMark(props: NavMarkProps) {
 function AdminMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <path d="M12 3 L20 7.5 V13.5 L12 21 L4 13.5 V7.5 Z" />
+      <path d="M12 3.5 L20 7 V12.5 L12 20.5 L4 12.5 V7 Z" />
     </Frame>
   );
 }
@@ -169,7 +178,20 @@ function AdminMark(props: NavMarkProps) {
 function MetricsMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <path d="M4 19.5 H20 M7 19.5 V12 M12 19.5 V5.5 M17 19.5 V9" />
+      <rect x="4.5" y="12" width="3.5" height="8.5" />
+      <rect x="10.25" y="4.5" width="3.5" height="16" />
+      <rect x="16" y="8.5" width="3.5" height="12" />
+    </Frame>
+  );
+}
+
+function ServicesMark(props: NavMarkProps) {
+  return (
+    <Frame {...props}>
+      <rect x="3.5" y="3.5" width="7" height="7" />
+      <rect x="13.5" y="3.5" width="7" height="7" />
+      <rect x="3.5" y="13.5" width="7" height="7" />
+      <rect x="13.5" y="13.5" width="7" height="7" />
     </Frame>
   );
 }
@@ -177,7 +199,9 @@ function MetricsMark(props: NavMarkProps) {
 function LoginMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
-      <path d="M10 4 H4.5 V20 H10 M12 12 H19 M15 8 L19.5 12 L15 16" />
+      <path d="M15 4 H20.5 V20 H15" />
+      <path d="M3.5 12 H15" />
+      <path d="M11 8.5 L15 12 L11 15.5" />
     </Frame>
   );
 }
@@ -199,9 +223,66 @@ export const NAV_ICONS: Record<string, NavMark> = {
   "/settings/account": SettingsMark,
   "/admin": AdminMark,
   "/admin/metrics": MetricsMark,
+  "/services": ServicesMark,
   "/login": LoginMark,
 };
 
 export function iconForNav(href: string): NavMark | undefined {
   return NAV_ICONS[href];
+}
+
+/** Phone sheet only. The wide bar keeps its own list. Missing hrefs are skipped. */
+const PHONE_NAV_ORDER = {
+  candidate: [
+    "/jobs",
+    "/applications",
+    "/chat",
+    "/saved-jobs",
+    "/notifications",
+    "/profile",
+    "/pricing",
+    "/services",
+    "/post-job",
+    "/settings/account",
+    "/admin",
+    "/admin/metrics",
+  ],
+  guest: [
+    "/jobs",
+    "/chat",
+    "/pricing",
+    "/services",
+    "/post-job",
+    "/for-employers",
+    "/login",
+  ],
+  employer: [
+    "/employer/jobs",
+    "/post-job",
+    "/employer/company",
+    "/employer/billing",
+    "/chat",
+    "/jobs",
+    "/services",
+    "/pricing",
+    "/notifications",
+    "/settings/account",
+    "/admin",
+    "/admin/metrics",
+  ],
+} as const;
+
+export type PhoneNavRole = keyof typeof PHONE_NAV_ORDER;
+
+export function orderPhoneNav<T extends { href: string }>(
+  items: readonly T[],
+  role: PhoneNavRole,
+): T[] {
+  const byHref = new Map(items.map((item) => [item.href, item]));
+  const ordered: T[] = [];
+  for (const href of PHONE_NAV_ORDER[role]) {
+    const item = byHref.get(href);
+    if (item) ordered.push(item);
+  }
+  return ordered;
 }
