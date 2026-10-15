@@ -71,6 +71,17 @@ const draft = {
   ],
 };
 
+/** Notification types a user got, oldest first, with the status or decision. */
+async function noticesOf(userId: string): Promise<string[]> {
+  const rows = await getDb().execute<{ type: string; step: string | null }>(sql`
+    select type, coalesce(payload->>'status', payload->>'decision') as step
+    from public.notifications
+    where user_id = ${userId} and type like 'freelance.%'
+    order by created_at, id
+  `);
+  return rows.map((row) => (row.step ? `${row.type}:${row.step}` : row.type));
+}
+
 async function expectCode(
   promise: Promise<unknown>,
   status: number,
@@ -235,6 +246,11 @@ describe("freelance services end to end (28.3–28.5)", () => {
     expect(order.priceMinor).toBe(BigInt(80000));
     expect(order.revisionsLeft).toBe(3);
     expect(order.expiresAt.toISOString()).toBe("2026-10-18T12:00:00.000Z");
+    // The seller hears about the review and the request (D456).
+    expect(await noticesOf(sellerId)).toEqual([
+      "freelance.service_decided:published",
+      "freelance.request_created",
+    ]);
     await expectCode(
       sendRequest(
         buyerId,
@@ -369,6 +385,20 @@ describe("freelance services end to end (28.3–28.5)", () => {
       "completed",
     ]);
     expect(history.at(-1)?.actorId).toBeNull();
+
+    // Each side hears the other's steps and the timer, never its own (D456).
+    expect(await noticesOf(buyerId)).toEqual([
+      "freelance.order_updated:accepted",
+      "freelance.order_updated:started",
+      "freelance.order_updated:delivered",
+      "freelance.order_updated:delivered",
+      "freelance.order_updated:completed",
+    ]);
+    expect((await noticesOf(sellerId)).slice(2)).toEqual([
+      "freelance.service_decided:published",
+      "freelance.order_updated:revision",
+      "freelance.order_updated:completed",
+    ]);
 
     // Review: once, by the buyer, without contacts, as a company (28.5).
     await expectCode(

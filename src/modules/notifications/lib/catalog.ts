@@ -27,7 +27,24 @@ export type RecipientRole =
   /** A user following the company (D240). */
   | "companyFollower"
   /** Recruiter or higher of a company with the agent turned on (D368). */
-  | "companyRecruiterPlusAgent";
+  | "companyRecruiterPlusAgent"
+  /** The buyer or the seller of a freelance order, per transition (D456). */
+  | "freelanceParty"
+  /** The seller of a freelance service (D456). */
+  | "freelanceSeller";
+
+/** What happened to a freelance order, as the notice names it (D456). */
+export const FREELANCE_ORDER_NOTICES = [
+  "accepted",
+  "declined",
+  "cancelled",
+  "expired",
+  "started",
+  "revision",
+  "delivered",
+  "completed",
+] as const;
+export type FreelanceOrderNotice = (typeof FREELANCE_ORDER_NOTICES)[number];
 
 export const APPLICATION_STATUSES = [
   "applied",
@@ -155,6 +172,21 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
     entityType: z.enum(["job", "company", "user"]),
     decision: z.enum(["confirmed", "dismissed"]),
   }),
+  // D456: the service title only — no names, contacts or order text.
+  freelanceRequestCreated: strict({
+    orderId: idSchema,
+    serviceTitle: z.string().min(1).max(200),
+  }),
+  freelanceOrderUpdated: strict({
+    orderId: idSchema,
+    serviceTitle: z.string().min(1).max(200),
+    status: z.enum(FREELANCE_ORDER_NOTICES),
+  }),
+  freelanceServiceDecided: strict({
+    serviceId: idSchema,
+    serviceTitle: z.string().min(1).max(200),
+    decision: z.enum(["published", "rejected", "removed"]),
+  }),
 } as const;
 
 export const NOTIFICATION_TYPES = [
@@ -172,6 +204,9 @@ export const NOTIFICATION_TYPES = [
   "search.alert",
   "company.new_jobs",
   "company.candidates_digest",
+  "freelance.request_created",
+  "freelance.order_updated",
+  "freelance.service_decided",
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
@@ -311,6 +346,31 @@ export const NOTIFICATION_CATALOG: Readonly<
     policy: "daily_digest",
     emailDefault: true,
     payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.companyCandidatesDigest,
+  },
+  // Not in section 15: freelance orders and services (D456).
+  "freelance.request_created": {
+    type: "freelance.request_created",
+    i18nKey: "freelanceRequestCreated",
+    recipients: "freelanceSeller",
+    policy: "immediate",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.freelanceRequestCreated,
+  },
+  "freelance.order_updated": {
+    type: "freelance.order_updated",
+    i18nKey: "freelanceOrderUpdated",
+    recipients: "freelanceParty",
+    policy: "immediate",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.freelanceOrderUpdated,
+  },
+  "freelance.service_decided": {
+    type: "freelance.service_decided",
+    i18nKey: "freelanceServiceDecided",
+    recipients: "freelanceSeller",
+    policy: "immediate",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.freelanceServiceDecided,
   },
 };
 

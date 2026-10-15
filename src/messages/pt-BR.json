@@ -1155,7 +1155,43 @@
           "subject": "Candidatos para suas vagas",
           "body": "{count, plural, one {# novo candidato combina com suas vagas} other {# novos candidatos combinam com suas vagas}}: {jobs}."
         }
+      },
+      "freelanceRequestCreated": {
+        "inapp": {
+          "title": "Nova solicitação de serviço",
+          "body": "Um comprador enviou uma solicitação para “{serviceTitle}”. Responda em 72 horas, ou a solicitação expira."
+        },
+        "email": {
+          "subject": "Nova solicitação: {serviceTitle}",
+          "body": "Um comprador enviou uma solicitação para o seu serviço “{serviceTitle}”. Aceite ou recuse em 72 horas. Os contatos se abrem para os dois quando você aceita."
+        }
+      },
+      "freelanceOrderUpdated": {
+        "inapp": {
+          "title": "Pedido freelance atualizado",
+          "body": "{status, select, accepted {O freelancer aceitou sua solicitação. Os contatos estão abertos na página do pedido.} declined {O freelancer recusou sua solicitação.} cancelled {O pedido foi cancelado.} expired {A solicitação expirou: sem resposta em 72 horas.} started {O freelancer começou o trabalho.} revision {O comprador pediu uma revisão.} delivered {O trabalho foi entregue. Aceite ou peça uma revisão em 7 dias.} completed {O pedido foi concluído.} other {O status do pedido mudou.}} Serviço: “{serviceTitle}”."
+        },
+        "email": {
+          "subject": "Pedido atualizado: {serviceTitle}",
+          "body": "{status, select, accepted {O freelancer aceitou sua solicitação. Os contatos estão abertos na página do pedido.} declined {O freelancer recusou sua solicitação.} cancelled {O pedido foi cancelado.} expired {A solicitação expirou: sem resposta em 72 horas.} started {O freelancer começou o trabalho.} revision {O comprador pediu uma revisão.} delivered {O trabalho foi entregue. Aceite ou peça uma revisão em 7 dias.} completed {O pedido foi concluído.} other {O status do pedido mudou.}} Serviço: “{serviceTitle}”."
+        }
+      },
+      "freelanceServiceDecided": {
+        "inapp": {
+          "title": "Serviço freelance revisado",
+          "body": "{decision, select, published {Seu serviço passou na revisão e já está no catálogo.} rejected {Seu serviço não passou na revisão. Corrija e envie de novo.} removed {Um moderador removeu seu serviço do catálogo.} other {Seu serviço foi revisado.}} Serviço: “{serviceTitle}”."
+        },
+        "email": {
+          "subject": "Seu serviço foi revisado",
+          "body": "{decision, select, published {Seu serviço passou na revisão e já está no catálogo.} rejected {Seu serviço não passou na revisão. Corrija e envie de novo.} removed {Um moderador removeu seu serviço do catálogo.} other {Seu serviço foi revisado.}} Serviço: “{serviceTitle}”."
+        }
       }
+    },
+    "freelance": {
+      "openOrder": "Abrir o pedido",
+      "openService": "Abrir o serviço",
+      "accept": "Aceitar",
+      "decline": "Recusar"
     },
     "bot": {
       "title": "Novas vagas no bot do Telegram",
@@ -3263,6 +3299,17 @@
     }
   },
   "freelance": {
+    "telegram": {
+      "confirmAccept": "Aceitar a solicitação para “{serviceTitle}”? Os contatos se abrem para os dois.",
+      "confirmDecline": "Recusar a solicitação para “{serviceTitle}”?",
+      "yesAccept": "Sim, aceitar",
+      "yesDecline": "Sim, recusar",
+      "accepted": "Aceita. Os contatos estão abertos na página do pedido.",
+      "declined": "Recusada. O comprador receberá um aviso.",
+      "stale": "Esta solicitação já foi respondida ou está fechada.",
+      "notYours": "Este botão só funciona no Telegram vinculado ao perfil do freelancer.",
+      "openOrder": "Abrir o pedido"
+    },
     "metaTitle": "Serviços freelance com preço fixo",
     "title": "Freelance. Serviços prontos com preço.",
     "subtitle": "Especialistas individuais: o que vão fazer, por quanto e até quando. Os contatos abrem quando o freelancer aceita seu pedido. Para uma equipe inteira, veja Serviços.",

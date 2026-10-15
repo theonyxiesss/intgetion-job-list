@@ -29,11 +29,15 @@ const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
   ["company.new_jobs", true],
   // D368: the employer side of the morning brief.
   ["company.candidates_digest", true],
+  // D456: freelance orders and services.
+  ["freelance.request_created", true],
+  ["freelance.order_updated", true],
+  ["freelance.service_decided", true],
 ];
 
 describe("notification catalog (15, D100)", () => {
   it("contains the 11 types of section 15 in table order, then D234", () => {
-    expect(NOTIFICATION_TYPES).toHaveLength(14);
+    expect(NOTIFICATION_TYPES).toHaveLength(17);
     expect([...NOTIFICATION_TYPES]).toEqual(
       SECTION_15_EMAIL_DEFAULTS.map(([type]) => type),
     );
@@ -117,6 +121,30 @@ describe("notification catalog (15, D100)", () => {
         sampleJobIds: ["j1", "j2", "j3", "j4", "j5", "j6"],
       }).success,
     ).toBe(false);
+  });
+
+  it("keeps freelance payloads to ids, the service title and a known status (D456)", () => {
+    const schema = notificationPayloadSchema("freelance.order_updated");
+    const valid = { orderId: "o1", serviceTitle: "Logo", status: "accepted" };
+    expect(schema.safeParse(valid).success).toBe(true);
+    expect(schema.safeParse({ ...valid, status: "paid" }).success).toBe(false);
+    expect(schema.safeParse({ ...valid, contacts: "@seller" }).success).toBe(
+      false,
+    );
+    expect(
+      notificationPayloadSchema("freelance.request_created").safeParse({
+        orderId: "o1",
+        serviceTitle: "Logo",
+        brief: "my phone is +49170",
+      }).success,
+    ).toBe(false);
+    expect(
+      notificationPayloadSchema("freelance.service_decided").safeParse({
+        serviceId: "s1",
+        serviceTitle: "Logo",
+        decision: "removed",
+      }).success,
+    ).toBe(true);
   });
 
   it("keeps auth emails outside the catalog in a separate type domain", () => {

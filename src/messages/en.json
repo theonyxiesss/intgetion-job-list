@@ -1155,7 +1155,43 @@
           "subject": "Candidates for your jobs",
           "body": "{count, plural, one {# new candidate fits your jobs} other {# new candidates fit your jobs}}: {jobs}."
         }
+      },
+      "freelanceRequestCreated": {
+        "inapp": {
+          "title": "New request for your service",
+          "body": "A buyer sent a request for “{serviceTitle}”. Answer within 72 hours, or the request expires."
+        },
+        "email": {
+          "subject": "New request: {serviceTitle}",
+          "body": "A buyer sent a request for your service “{serviceTitle}”. Accept or decline it within 72 hours. Contacts open to both of you once you accept."
+        }
+      },
+      "freelanceOrderUpdated": {
+        "inapp": {
+          "title": "Freelance order update",
+          "body": "{status, select, accepted {The freelancer accepted your request. Contacts are open on the order page.} declined {The freelancer declined your request.} cancelled {The order was cancelled.} expired {The request expired: no answer within 72 hours.} started {The freelancer started the work.} revision {The buyer asked for a revision.} delivered {The work is delivered. Accept it or ask for a revision within 7 days.} completed {The order is complete.} other {The order status changed.}} Service: “{serviceTitle}”."
+        },
+        "email": {
+          "subject": "Order update: {serviceTitle}",
+          "body": "{status, select, accepted {The freelancer accepted your request. Contacts are open on the order page.} declined {The freelancer declined your request.} cancelled {The order was cancelled.} expired {The request expired: no answer within 72 hours.} started {The freelancer started the work.} revision {The buyer asked for a revision.} delivered {The work is delivered. Accept it or ask for a revision within 7 days.} completed {The order is complete.} other {The order status changed.}} Service: “{serviceTitle}”."
+        }
+      },
+      "freelanceServiceDecided": {
+        "inapp": {
+          "title": "Freelance service reviewed",
+          "body": "{decision, select, published {Your service passed review and is in the catalog now.} rejected {Your service did not pass review. Fix it and send it again.} removed {A moderator removed your service from the catalog.} other {Your service was reviewed.}} Service: “{serviceTitle}”."
+        },
+        "email": {
+          "subject": "Your service was reviewed",
+          "body": "{decision, select, published {Your service passed review and is in the catalog now.} rejected {Your service did not pass review. Fix it and send it again.} removed {A moderator removed your service from the catalog.} other {Your service was reviewed.}} Service: “{serviceTitle}”."
+        }
       }
+    },
+    "freelance": {
+      "openOrder": "Open the order",
+      "openService": "Open the service",
+      "accept": "Accept",
+      "decline": "Decline"
     },
     "bot": {
       "title": "New jobs in the Telegram bot",
@@ -3769,6 +3805,17 @@
     }
   },
   "freelance": {
+    "telegram": {
+      "confirmAccept": "Accept the request for “{serviceTitle}”? Contacts open to both of you.",
+      "confirmDecline": "Decline the request for “{serviceTitle}”?",
+      "yesAccept": "Yes, accept",
+      "yesDecline": "Yes, decline",
+      "accepted": "Accepted. Contacts are open on the order page.",
+      "declined": "Declined. The buyer will get a notice.",
+      "stale": "This request is already answered or closed.",
+      "notYours": "This button works only from the Telegram account linked to the freelancer's profile.",
+      "openOrder": "Open the order"
+    },
     "metaTitle": "Freelance services with a fixed price",
     "title": "Freelance. Ready services with a price.",
     "subtitle": "Individual specialists: what they will do, for how much and by when. Contacts open once the freelancer accepts your request. For a whole team, see Services.",

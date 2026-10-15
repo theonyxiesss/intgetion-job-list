@@ -38,6 +38,9 @@ export {
   transitionOrder,
 } from "./order-service";
 export type { OrderCommand, PartyOrder, PublicReview } from "./order-service";
+export { orderNotice } from "./notices";
+export type { OrderNotice } from "./notices";
+export { handleFreelanceTelegramCallback } from "./telegram-actions";
 export {
   canLeaveReview,
   contactsOpen,

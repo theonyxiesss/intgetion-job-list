@@ -165,6 +165,7 @@ export default async function NotificationsPage({
                           decision: payload.decision ?? "",
                           companyName: payload.companyName ?? "",
                           searchName: payload.searchName ?? "",
+                          serviceTitle: payload.serviceTitle ?? "",
                           date: payload.expiresAt?.slice(0, 10) ?? "",
                           count: Number(
                             payload.applicationCount ?? payload.matchCount ?? 0,

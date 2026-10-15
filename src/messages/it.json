@@ -1155,7 +1155,43 @@
           "subject": "Candidati per le tue offerte",
           "body": "{count, plural, one {# nuovo candidato corrisponde alle tue offerte} other {# nuovi candidati corrispondono alle tue offerte}}: {jobs}."
         }
+      },
+      "freelanceRequestCreated": {
+        "inapp": {
+          "title": "Nuova richiesta per il tuo servizio",
+          "body": "Un acquirente ha inviato una richiesta per «{serviceTitle}». Rispondi entro 72 ore, altrimenti la richiesta scade."
+        },
+        "email": {
+          "subject": "Nuova richiesta: {serviceTitle}",
+          "body": "Un acquirente ha inviato una richiesta per il tuo servizio «{serviceTitle}». Accettala o rifiutala entro 72 ore. I contatti si aprono a entrambi quando accetti."
+        }
+      },
+      "freelanceOrderUpdated": {
+        "inapp": {
+          "title": "Ordine freelance aggiornato",
+          "body": "{status, select, accepted {Il freelance ha accettato la tua richiesta. I contatti sono aperti nella pagina dell’ordine.} declined {Il freelance ha rifiutato la tua richiesta.} cancelled {L’ordine è stato annullato.} expired {La richiesta è scaduta: nessuna risposta in 72 ore.} started {Il freelance ha iniziato il lavoro.} revision {L’acquirente ha chiesto una revisione.} delivered {Il lavoro è consegnato. Accettalo o chiedi una revisione entro 7 giorni.} completed {L’ordine è completato.} other {Lo stato dell’ordine è cambiato.}} Servizio: «{serviceTitle}»."
+        },
+        "email": {
+          "subject": "Ordine aggiornato: {serviceTitle}",
+          "body": "{status, select, accepted {Il freelance ha accettato la tua richiesta. I contatti sono aperti nella pagina dell’ordine.} declined {Il freelance ha rifiutato la tua richiesta.} cancelled {L’ordine è stato annullato.} expired {La richiesta è scaduta: nessuna risposta in 72 ore.} started {Il freelance ha iniziato il lavoro.} revision {L’acquirente ha chiesto una revisione.} delivered {Il lavoro è consegnato. Accettalo o chiedi una revisione entro 7 giorni.} completed {L’ordine è completato.} other {Lo stato dell’ordine è cambiato.}} Servizio: «{serviceTitle}»."
+        }
+      },
+      "freelanceServiceDecided": {
+        "inapp": {
+          "title": "Servizio freelance verificato",
+          "body": "{decision, select, published {Il tuo servizio ha superato la verifica ed è ora nel catalogo.} rejected {Il tuo servizio non ha superato la verifica. Correggilo e invialo di nuovo.} removed {Un moderatore ha rimosso il tuo servizio dal catalogo.} other {Il tuo servizio è stato verificato.}} Servizio: «{serviceTitle}»."
+        },
+        "email": {
+          "subject": "Il tuo servizio è stato verificato",
+          "body": "{decision, select, published {Il tuo servizio ha superato la verifica ed è ora nel catalogo.} rejected {Il tuo servizio non ha superato la verifica. Correggilo e invialo di nuovo.} removed {Un moderatore ha rimosso il tuo servizio dal catalogo.} other {Il tuo servizio è stato verificato.}} Servizio: «{serviceTitle}»."
+        }
       }
+    },
+    "freelance": {
+      "openOrder": "Apri l’ordine",
+      "openService": "Apri il servizio",
+      "accept": "Accetta",
+      "decline": "Rifiuta"
     },
     "bot": {
       "title": "Nuove offerte nel bot Telegram",
@@ -3263,6 +3299,17 @@
     }
   },
   "freelance": {
+    "telegram": {
+      "confirmAccept": "Accettare la richiesta per «{serviceTitle}»? I contatti si apriranno a entrambi.",
+      "confirmDecline": "Rifiutare la richiesta per «{serviceTitle}»?",
+      "yesAccept": "Sì, accetta",
+      "yesDecline": "Sì, rifiuta",
+      "accepted": "Accettata. I contatti sono aperti nella pagina dell’ordine.",
+      "declined": "Rifiutata. L’acquirente riceverà un avviso.",
+      "stale": "Questa richiesta ha già una risposta o è chiusa.",
+      "notYours": "Questo pulsante funziona solo dal Telegram collegato al profilo del freelance.",
+      "openOrder": "Apri l’ordine"
+    },
     "metaTitle": "Servizi freelance a prezzo fisso",
     "title": "Freelance. Servizi pronti, con un prezzo.",
     "subtitle": "Singoli specialisti: cosa faranno, a quanto ed entro quando. I contatti si aprono quando il freelance accetta la tua richiesta. Per un intero team, vedi Servizi.",

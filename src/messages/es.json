@@ -1155,7 +1155,43 @@
           "subject": "Candidatos para tus vacantes",
           "body": "{count, plural, one {# nuevo candidato encaja con tus vacantes} other {# nuevos candidatos encajan con tus vacantes}}: {jobs}."
         }
+      },
+      "freelanceRequestCreated": {
+        "inapp": {
+          "title": "Nueva solicitud de servicio",
+          "body": "Un comprador envió una solicitud para «{serviceTitle}». Responde en 72 horas o la solicitud caducará."
+        },
+        "email": {
+          "subject": "Nueva solicitud: {serviceTitle}",
+          "body": "Un comprador envió una solicitud para tu servicio «{serviceTitle}». Acéptala o recházala en 72 horas. Los contactos se abren para ambos cuando la aceptas."
+        }
+      },
+      "freelanceOrderUpdated": {
+        "inapp": {
+          "title": "Pedido freelance actualizado",
+          "body": "{status, select, accepted {El freelancer aceptó tu solicitud. Los contactos están abiertos en la página del pedido.} declined {El freelancer rechazó tu solicitud.} cancelled {El pedido se canceló.} expired {La solicitud caducó: sin respuesta en 72 horas.} started {El freelancer empezó el trabajo.} revision {El comprador pidió una revisión.} delivered {El trabajo está entregado. Acéptalo o pide una revisión en 7 días.} completed {El pedido está completado.} other {El estado del pedido cambió.}} Servicio: «{serviceTitle}»."
+        },
+        "email": {
+          "subject": "Pedido actualizado: {serviceTitle}",
+          "body": "{status, select, accepted {El freelancer aceptó tu solicitud. Los contactos están abiertos en la página del pedido.} declined {El freelancer rechazó tu solicitud.} cancelled {El pedido se canceló.} expired {La solicitud caducó: sin respuesta en 72 horas.} started {El freelancer empezó el trabajo.} revision {El comprador pidió una revisión.} delivered {El trabajo está entregado. Acéptalo o pide una revisión en 7 días.} completed {El pedido está completado.} other {El estado del pedido cambió.}} Servicio: «{serviceTitle}»."
+        }
+      },
+      "freelanceServiceDecided": {
+        "inapp": {
+          "title": "Servicio freelance revisado",
+          "body": "{decision, select, published {Tu servicio pasó la revisión y ya está en el catálogo.} rejected {Tu servicio no pasó la revisión. Corrígelo y envíalo de nuevo.} removed {Un moderador retiró tu servicio del catálogo.} other {Tu servicio fue revisado.}} Servicio: «{serviceTitle}»."
+        },
+        "email": {
+          "subject": "Tu servicio fue revisado",
+          "body": "{decision, select, published {Tu servicio pasó la revisión y ya está en el catálogo.} rejected {Tu servicio no pasó la revisión. Corrígelo y envíalo de nuevo.} removed {Un moderador retiró tu servicio del catálogo.} other {Tu servicio fue revisado.}} Servicio: «{serviceTitle}»."
+        }
       }
+    },
+    "freelance": {
+      "openOrder": "Abrir el pedido",
+      "openService": "Abrir el servicio",
+      "accept": "Aceptar",
+      "decline": "Rechazar"
     },
     "bot": {
       "title": "Nuevos empleos en el bot de Telegram",
@@ -3263,6 +3299,17 @@
     }
   },
   "freelance": {
+    "telegram": {
+      "confirmAccept": "¿Aceptar la solicitud para «{serviceTitle}»? Los contactos se abren para ambos.",
+      "confirmDecline": "¿Rechazar la solicitud para «{serviceTitle}»?",
+      "yesAccept": "Sí, aceptar",
+      "yesDecline": "Sí, rechazar",
+      "accepted": "Aceptada. Los contactos están abiertos en la página del pedido.",
+      "declined": "Rechazada. El comprador recibirá un aviso.",
+      "stale": "Esta solicitud ya tiene respuesta o está cerrada.",
+      "notYours": "Este botón solo funciona desde el Telegram vinculado al perfil del freelancer.",
+      "openOrder": "Abrir el pedido"
+    },
     "metaTitle": "Servicios freelance con precio fijo",
     "title": "Freelance. Servicios listos con precio.",
     "subtitle": "Especialistas individuales: qué harán, por cuánto y para cuándo. Los contactos se abren cuando el freelancer acepta tu solicitud. Para un equipo completo, mira Servicios.",

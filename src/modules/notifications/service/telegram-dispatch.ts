@@ -7,7 +7,7 @@ import {
   resolveDelivery,
   type NotificationPreferenceRow,
 } from "../lib/catalog";
-import { telegramText } from "./render";
+import { telegramButtons, telegramText } from "./render";
 import { toAppLocale } from "@/i18n/locale";
 
 /** Notifications this old are not pushed any more (D237). */
@@ -32,6 +32,8 @@ type Claimed = {
 export async function runTelegramDispatch(input: {
   sender: TelegramSender;
   siteUrl: string;
+  /** Signs «Accept»/«Decline» on a freelance request (D456); none, no buttons. */
+  actionSecret?: string;
   now?: Date;
 }): Promise<{
   claimed: number;
@@ -96,7 +98,16 @@ export async function runTelegramDispatch(input: {
       skipped += 1;
       continue;
     }
-    const result = await input.sender(Number(row.telegram_id), text);
+    const result = await input.sender(
+      Number(row.telegram_id),
+      text,
+      telegramButtons({
+        locale: toAppLocale(row.locale),
+        type: row.type,
+        payload: row.payload ?? {},
+        actionSecret: input.actionSecret,
+      }),
+    );
     if (result === "sent") sent += 1;
     else {
       failed += 1;

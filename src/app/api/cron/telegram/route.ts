@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { notFound, toErrorResponse } from "@/lib/http";
 import { siteUrl } from "@/lib/supabase/env";
+import { telegramActionSecret } from "@/lib/telegram-actions";
 import { telegramSender } from "@/lib/telegram-bot";
 import { telegramBotToken } from "@/modules/auth/service";
 import { runJobsAlert } from "@/modules/jobs/service";
@@ -27,6 +28,7 @@ export async function GET(request: Request) {
     const dispatch = await runTelegramDispatch({
       sender,
       siteUrl: siteUrl(),
+      actionSecret: telegramActionSecret(token),
     });
     const jobsAlert = await runJobsAlert({
       sender,

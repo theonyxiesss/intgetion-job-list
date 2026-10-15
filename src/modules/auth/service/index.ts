@@ -51,6 +51,7 @@ export { createSessionHandoff } from "./handoff";
 export { beginEmailWait, claimEmailWait, readyEmailWait } from "./email-wait";
 export { canReceiveMail, mailChannelAvailable } from "./mail-ready";
 export {
+  answerTelegramCallback,
   sendTelegramChatAction,
   sendTelegramLinks,
   sendTelegramMessage,

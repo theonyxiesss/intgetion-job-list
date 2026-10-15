@@ -1155,7 +1155,43 @@
           "subject": "Kandidaten für Ihre Jobs",
           "body": "{count, plural, one {# neuer Kandidat passt zu Ihren Jobs} other {# neue Kandidaten passen zu Ihren Jobs}}: {jobs}."
         }
+      },
+      "freelanceRequestCreated": {
+        "inapp": {
+          "title": "Neue Anfrage für Ihre Leistung",
+          "body": "Ein Käufer hat eine Anfrage für „{serviceTitle}“ gesendet. Antworten Sie innerhalb von 72 Stunden, sonst läuft die Anfrage ab."
+        },
+        "email": {
+          "subject": "Neue Anfrage: {serviceTitle}",
+          "body": "Ein Käufer hat eine Anfrage für Ihre Leistung „{serviceTitle}“ gesendet. Nehmen Sie sie innerhalb von 72 Stunden an oder lehnen Sie sie ab. Sobald Sie annehmen, sehen beide Seiten die Kontakte."
+        }
+      },
+      "freelanceOrderUpdated": {
+        "inapp": {
+          "title": "Freelance-Auftrag aktualisiert",
+          "body": "{status, select, accepted {Der Freelancer hat Ihre Anfrage angenommen. Die Kontakte stehen auf der Auftragsseite.} declined {Der Freelancer hat Ihre Anfrage abgelehnt.} cancelled {Der Auftrag wurde storniert.} expired {Die Anfrage ist abgelaufen: 72 Stunden ohne Antwort.} started {Der Freelancer hat mit der Arbeit begonnen.} revision {Der Käufer bittet um eine Überarbeitung.} delivered {Die Arbeit ist geliefert. Nehmen Sie sie innerhalb von 7 Tagen ab oder bitten Sie um eine Überarbeitung.} completed {Der Auftrag ist abgeschlossen.} other {Der Status des Auftrags hat sich geändert.}} Leistung: „{serviceTitle}“."
+        },
+        "email": {
+          "subject": "Auftrag aktualisiert: {serviceTitle}",
+          "body": "{status, select, accepted {Der Freelancer hat Ihre Anfrage angenommen. Die Kontakte stehen auf der Auftragsseite.} declined {Der Freelancer hat Ihre Anfrage abgelehnt.} cancelled {Der Auftrag wurde storniert.} expired {Die Anfrage ist abgelaufen: 72 Stunden ohne Antwort.} started {Der Freelancer hat mit der Arbeit begonnen.} revision {Der Käufer bittet um eine Überarbeitung.} delivered {Die Arbeit ist geliefert. Nehmen Sie sie innerhalb von 7 Tagen ab oder bitten Sie um eine Überarbeitung.} completed {Der Auftrag ist abgeschlossen.} other {Der Status des Auftrags hat sich geändert.}} Leistung: „{serviceTitle}“."
+        }
+      },
+      "freelanceServiceDecided": {
+        "inapp": {
+          "title": "Freelance-Leistung geprüft",
+          "body": "{decision, select, published {Ihre Leistung hat die Prüfung bestanden und ist jetzt im Katalog.} rejected {Ihre Leistung hat die Prüfung nicht bestanden. Korrigieren Sie sie und senden Sie sie erneut.} removed {Ein Moderator hat Ihre Leistung aus dem Katalog entfernt.} other {Ihre Leistung wurde geprüft.}} Leistung: „{serviceTitle}“."
+        },
+        "email": {
+          "subject": "Ihre Leistung wurde geprüft",
+          "body": "{decision, select, published {Ihre Leistung hat die Prüfung bestanden und ist jetzt im Katalog.} rejected {Ihre Leistung hat die Prüfung nicht bestanden. Korrigieren Sie sie und senden Sie sie erneut.} removed {Ein Moderator hat Ihre Leistung aus dem Katalog entfernt.} other {Ihre Leistung wurde geprüft.}} Leistung: „{serviceTitle}“."
+        }
       }
+    },
+    "freelance": {
+      "openOrder": "Auftrag öffnen",
+      "openService": "Leistung öffnen",
+      "accept": "Annehmen",
+      "decline": "Ablehnen"
     },
     "bot": {
       "title": "Neue Jobs im Telegram-Bot",
@@ -3263,6 +3299,17 @@
     }
   },
   "freelance": {
+    "telegram": {
+      "confirmAccept": "Anfrage für „{serviceTitle}“ annehmen? Beide Seiten sehen dann die Kontakte.",
+      "confirmDecline": "Anfrage für „{serviceTitle}“ ablehnen?",
+      "yesAccept": "Ja, annehmen",
+      "yesDecline": "Ja, ablehnen",
+      "accepted": "Angenommen. Die Kontakte stehen auf der Auftragsseite.",
+      "declined": "Abgelehnt. Der Käufer erhält eine Nachricht.",
+      "stale": "Diese Anfrage ist bereits beantwortet oder geschlossen.",
+      "notYours": "Diese Schaltfläche funktioniert nur aus dem Telegram, das mit dem Profil des Freelancers verknüpft ist.",
+      "openOrder": "Auftrag öffnen"
+    },
     "metaTitle": "Freelance-Leistungen mit Festpreis",
     "title": "Freelance. Fertige Leistungen mit Preis.",
     "subtitle": "Einzelne Fachleute: was sie machen, zu welchem Preis und bis wann. Kontakte öffnen sich, sobald die Person deine Anfrage annimmt. Für ein ganzes Team siehe Services.",

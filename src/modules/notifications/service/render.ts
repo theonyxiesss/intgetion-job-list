@@ -2,6 +2,8 @@ import { renderEmailLayout, type EmailJobCard } from "@/lib/email-html";
 import { messagesFor, type Messages } from "@/i18n/messages";
 import { localePrefix } from "@/i18n/paths";
 import type { AppLocale } from "@/i18n/routing";
+import type { TelegramCallbackButton } from "@/lib/telegram-bot";
+import { signTelegramAction } from "@/lib/telegram-actions";
 import { NOTIFICATION_CATALOG, type NotificationType } from "../lib/catalog";
 import type { EmailJobPayload } from "../lib/email-jobs";
 
@@ -23,7 +25,11 @@ export function unsubscribeLabel(locale: AppLocale): string {
   return messagesFor(locale).notifications.unsubscribe.link;
 }
 
-/** `{name}` plus the `{count, plural, one {…} other {…}}` form used in the catalog. */
+/**
+ * `{name}` plus the `{count, plural, one {…} other {…}}` and
+ * `{status, select, accepted {…} other {…}}` forms used in the catalog.
+ * Branches hold plain text, no nested placeholders.
+ */
 export function fillTemplate(
   template: string,
   values: Record<string, string | number>,
@@ -31,14 +37,21 @@ export function fillTemplate(
 ): string {
   const rules = new Intl.PluralRules(locale);
   const withPlural = template.replace(
-    /\{(\w+), plural, ((?:[a-z]+ \{[^}]*\} ?)+)\}/g,
-    (_match, name: string, forms: string) => {
-      const count = Number(values[name] ?? 0);
+    /\{(\w+), (plural|select), ((?:[a-z_]+ \{[^}]*\} ?)+)\}/g,
+    (_match, name: string, kind: string, forms: string) => {
       const branches = new Map(
-        [...forms.matchAll(/([a-z]+) \{([^}]*)\}/g)].map(
+        [...forms.matchAll(/([a-z_]+) \{([^}]*)\}/g)].map(
           ([, key, value]) => [key, value] as const,
         ),
       );
+      if (kind === "select") {
+        return (
+          branches.get(String(values[name] ?? "")) ??
+          branches.get("other") ??
+          ""
+        );
+      }
+      const count = Number(values[name] ?? 0);
       const branch =
         branches.get(rules.select(count)) ?? branches.get("other") ?? "";
       return branch.replaceAll("#", String(count));
@@ -163,7 +176,11 @@ export function renderEmail(input: {
           ? messagesFor(input.locale).follows.openCompany
           : input.type === "company.candidates_digest"
             ? messagesFor(input.locale).notifications.brief.openCandidates
-            : null;
+            : input.type === "freelance.service_decided"
+              ? messagesFor(input.locale).notifications.freelance.openService
+              : input.type.startsWith("freelance.")
+                ? messagesFor(input.locale).notifications.freelance.openOrder
+                : null;
   const action =
     actionLabel && input.actionPath
       ? {
@@ -210,6 +227,7 @@ export function templateValues(
     decision: String(payload.decision ?? ""),
     companyName: String(payload.companyName ?? ""),
     searchName: String(payload.searchName ?? ""),
+    serviceTitle: String(payload.serviceTitle ?? ""),
     intro: typeof payload.intro === "string" ? payload.intro : "",
     date: expires,
     count,
@@ -257,9 +275,44 @@ export function notificationPath(
       return typeof payload.companySlug === "string"
         ? `/companies/${encodeURIComponent(payload.companySlug)}?tab=jobs`
         : "/saved-searches";
+    case "freelance.request_created":
+    case "freelance.order_updated":
+      return typeof payload.orderId === "string"
+        ? `/freelance/orders/${encodeURIComponent(payload.orderId)}`
+        : "/freelance/orders";
+    case "freelance.service_decided":
+      return "/profile/freelance";
     default:
       return "/notifications";
   }
+}
+
+/**
+ * «Accept» and «Decline» under a new freelance request (D456). Each opens a
+ * second, confirming tap in the bot; nothing moves on the first one.
+ */
+export function telegramButtons(input: {
+  locale: AppLocale;
+  type: NotificationType;
+  payload: Record<string, unknown>;
+  actionSecret?: string;
+}): TelegramCallbackButton[] | undefined {
+  if (input.type !== "freelance.request_created" || !input.actionSecret) {
+    return undefined;
+  }
+  const orderId = input.payload.orderId;
+  if (typeof orderId !== "string") return undefined;
+  const copy = messagesFor(input.locale).notifications.freelance;
+  return [
+    {
+      label: copy.accept,
+      data: signTelegramAction(input.actionSecret, 1, "accept", orderId),
+    },
+    {
+      label: copy.decline,
+      data: signTelegramAction(input.actionSecret, 1, "decline", orderId),
+    },
+  ];
 }
 
 /**

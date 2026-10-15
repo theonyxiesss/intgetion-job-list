@@ -1,7 +1,9 @@
 import type { FreelanceOrderStatus } from "@/config/freelance";
 import { HttpError, notFound, validationError } from "@/lib/http";
 import { findMemberRole } from "@/modules/companies/service";
+import { safeNotify } from "@/modules/notifications/service";
 import * as repo from "../repo/freelance-repo";
+import { orderNotice } from "./notices";
 import { deliveryUrl, requestInput, reviewInput } from "../schemas";
 import {
   autoCompleteAt,
@@ -73,9 +75,10 @@ export async function sendRequest(
   }
   if (await repo.findOpenOrder(service.id, buyerId)) throw openRequestExists();
 
+  let order: repo.OrderRow;
   try {
-    return await repo.runInTransaction(async (tx) => {
-      const order = await repo.insertOrder(tx, {
+    order = await repo.runInTransaction(async (tx) => {
+      const created = await repo.insertOrder(tx, {
         serviceId: service.id,
         sellerId: service.sellerId,
         buyerId,
@@ -93,18 +96,25 @@ export async function sendRequest(
         updatedAt: now,
       });
       await repo.insertHistory(tx, {
-        orderId: order.id,
+        orderId: created.id,
         fromStatus: null,
         toStatus: "sent",
         actorId: buyerId,
         createdAt: now,
       });
-      return order;
+      return created;
     });
   } catch (error) {
     if (isUniqueViolation(error)) throw openRequestExists();
     throw error;
   }
+  if (order.sellerId) {
+    await safeNotify("freelance.request_created", [order.sellerId], {
+      orderId: order.id,
+      serviceTitle: order.serviceTitle,
+    });
+  }
+  return order;
 }
 
 export type OrderCommand = {
@@ -131,12 +141,36 @@ function sideOf(
 
 /**
  * The only writer of `freelance_orders.status` (28.4). Not a party → 404.
- * Callers must not write that column themselves.
+ * Callers must not write that column themselves. The other side hears of
+ * the move after commit (D456).
  */
 export async function transitionOrder(
   command: OrderCommand,
   now = new Date(),
 ): Promise<repo.OrderRow> {
+  const { from, updated } = await writeTransition(command, now);
+  const notice = orderNotice({
+    from,
+    to: updated.status,
+    actor: command.actor,
+    actorId: command.actorId,
+    buyerId: updated.buyerId,
+    sellerId: updated.sellerId,
+  });
+  if (notice) {
+    await safeNotify("freelance.order_updated", notice.recipients, {
+      orderId: updated.id,
+      serviceTitle: updated.serviceTitle,
+      status: notice.status,
+    });
+  }
+  return updated;
+}
+
+async function writeTransition(
+  command: OrderCommand,
+  now: Date,
+): Promise<{ from: FreelanceOrderStatus; updated: repo.OrderRow }> {
   return repo.runInTransaction(async (tx) => {
     const row = await repo.lockOrder(tx, command.orderId);
     if (!row || !sideOf(row, command.actor, command.actorId)) throw notFound();
@@ -184,7 +218,7 @@ export async function transitionOrder(
       actorId: command.actorId,
       createdAt: now,
     });
-    return updated;
+    return { from: row.status, updated };
   });
 }
 
@@ -235,8 +269,8 @@ export async function orderHistory(userId: string, orderId: string) {
 }
 
 /**
- * Timers (phase E runs this from cron): unanswered requests expire after
- * 72 hours, delivered work is accepted after 7 days (D447).
+ * Timers, run by `/api/cron/freelance` (D456): unanswered requests expire
+ * after 72 hours, delivered work is accepted after 7 days (D447).
  */
 export async function runOrderTimers(
   now = new Date(),

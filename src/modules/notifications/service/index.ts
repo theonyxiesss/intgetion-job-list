@@ -24,6 +24,7 @@ export {
   type AuthEmailType,
   type NotificationPreferenceRow,
   type ResolveDeliveryResult,
+  type FreelanceOrderNotice,
 } from "../lib/catalog";
 export {
   groupHourlyBatch,

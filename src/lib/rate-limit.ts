@@ -61,6 +61,8 @@ export const rateRules = {
   billingConfirm: { limit: 30, windowSeconds: 60 * 60 },
   /** Freelance requests to sellers, keyed by user id (D447: 5 an hour). */
   freelanceRequest: { limit: 5, windowSeconds: 60 * 60 },
+  /** «Accept»/«Decline» taps in Telegram, keyed by Telegram id (D456). */
+  freelanceTelegramAction: { limit: 30, windowSeconds: 60 * 60 },
   /** "Tell me when I can pay", keyed by IP. */
   billingInterest: { limit: 5, windowSeconds: 60 * 60 },
 } as const satisfies Record<string, RateRule>;

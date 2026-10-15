@@ -6,6 +6,7 @@ import {
 } from "@/config/freelance";
 import { errorCodes, HttpError, notFound, validationError } from "@/lib/http";
 import { hasCandidateProfile } from "@/modules/candidates/service";
+import { safeNotify } from "@/modules/notifications/service";
 import { listActiveSkills, matchSkillSlug } from "@/modules/taxonomy/service";
 import * as repo from "../repo/freelance-repo";
 import { serviceInput, type ServiceInput } from "../schemas";
@@ -327,6 +328,13 @@ export async function decideServiceModeration(
     ...(decision === "publish" && !row.publishedAt ? { publishedAt: now } : {}),
   });
   if (!updated) throw notFound();
+  if (row.status !== status) {
+    await safeNotify("freelance.service_decided", [updated.sellerId], {
+      serviceId: updated.id,
+      serviceTitle: updated.title,
+      decision: status,
+    });
+  }
   return updated;
 }
 
