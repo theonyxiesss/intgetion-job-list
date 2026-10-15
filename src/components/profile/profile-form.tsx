@@ -240,6 +240,21 @@ export function ProfileForm({
           className={controlClass}
         />
       </label>
+      <label className="flex flex-col gap-1 font-medium" htmlFor="job-search">
+        {t("fields.jobSearchStatus")}
+        <select
+          id="job-search"
+          name="jobSearchStatus"
+          defaultValue={initial.jobSearchStatus}
+          className={controlClass}
+        >
+          {JOB_SEARCH.map((status) => (
+            <option key={status} value={status}>
+              {t(`jobSearch.${status}`)}
+            </option>
+          ))}
+        </select>
+      </label>
       <label
         className="flex flex-col gap-1 font-medium"
         htmlFor="desired-titles"
@@ -529,24 +544,11 @@ export function ProfileForm({
           ))}
         </select>
       </label>
-      <label className="flex flex-col gap-1 font-medium" htmlFor="job-search">
-        {t("fields.jobSearchStatus")}
-        <select
-          id="job-search"
-          name="jobSearchStatus"
-          defaultValue={initial.jobSearchStatus}
-          className={controlClass}
-        >
-          {JOB_SEARCH.map((status) => (
-            <option key={status} value={status}>
-              {t(`jobSearch.${status}`)}
-            </option>
-          ))}
-        </select>
-      </label>
 
-      <h2 className="text-xl font-semibold">{t("contactsTitle")}</h2>
-      <p className="text-sm opacity-80">{t("contactsHint")}</p>
+      <h2 id="contacts" className="t-h3">
+        {t("contactsTitle")}
+      </h2>
+      <p className="t-body-s text-fg-muted">{t("contactsHint")}</p>
       <label
         className="flex flex-col gap-1 font-medium"
         htmlFor="contact-email"

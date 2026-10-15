@@ -78,6 +78,8 @@ export default async function EmployerJobPage({
             <p className="text-fg-muted">
               {hire ? billing("hire") : billing("start")}
             </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
             {hire ? null : (
               <ButtonLink
                 href={`/billing/crypto?job=${id}`}
@@ -86,8 +88,6 @@ export default async function EmployerJobPage({
                 {billing("pay")}
               </ButtonLink>
             )}
-          </div>
-          <div className="flex flex-wrap gap-3">
             {editable.includes(job.status) && (
               <ButtonLink
                 href={`/employer/jobs/${id}/edit`}

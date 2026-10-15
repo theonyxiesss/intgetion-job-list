@@ -1,4 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { SENIORITY_LEVELS, type Seniority } from "@/config/markers";
 import { HttpError } from "@/lib/http";
 import { requireUser } from "@/lib/auth-guards";
 import { formatMoneyDto } from "@/lib/money";
@@ -27,8 +28,14 @@ const hintAnchor: Record<CompletenessPart, string> = {
   languages: "languages",
   salary: "salary",
   work_preferences: "preferences",
-  contact_email: "salary",
+  contact_email: "contacts",
 };
+
+function isSeniority(value: string | null): value is Seniority {
+  return (
+    value !== null && (SENIORITY_LEVELS as readonly string[]).includes(value)
+  );
+}
 
 export default async function ProfilePage({
   params,
@@ -48,10 +55,16 @@ export default async function ProfilePage({
   }
 
   const t = await getTranslations("profile");
+  const markers = await getTranslations("markers");
   const profile = await getOwnCandidate(user.id);
   const contacts = profile ? await getOwnContacts(user.id) : null;
   const score = profile?.completeness ?? 0;
   const filled = Math.round(score / 5);
+  const place = profile
+    ? [profile.city, profile.country].filter(Boolean).join(", ")
+    : "";
+  const seniorityValue = profile?.preferences.seniority ?? null;
+  const seniority = isSeniority(seniorityValue) ? seniorityValue : null;
   const money = intlLocale(locale);
   const salary = profile?.salaryMin
     ? `${formatMoneyDto(profile.salaryMin, money)}${
@@ -68,47 +81,15 @@ export default async function ProfilePage({
           title={profile?.fullName || t("title")}
           intro={profile?.headline ?? undefined}
           actions={
-            <span className="flex flex-wrap gap-2">
-              <Link
-                href="/post-job"
-                {...navForward}
-                className={buttonClass("primary")}
-              >
-                {t("postJob")}
-              </Link>
-              {profile ? (
-                <Link
-                  href="/profile/edit"
-                  {...navForward}
-                  className={buttonClass("secondary")}
-                >
-                  {t("edit")}
-                </Link>
-              ) : null}
-            </span>
+            <Link
+              href="/profile/edit"
+              {...navForward}
+              className={buttonClass("primary")}
+            >
+              {profile ? t("edit") : t("create")}
+            </Link>
           }
         />
-        <AccountSignIn locale={locale} user={user} />
-        <section id="completeness" className="flex flex-col gap-3">
-          <h2 className="t-h3">{t("completenessLabel")}</h2>
-          <div
-            role="progressbar"
-            aria-label={t("completenessLabel")}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={score}
-            className="grid grid-cols-[repeat(20,minmax(0,1fr))] gap-1"
-          >
-            {segments.map((index) => (
-              <span
-                key={index}
-                className={index < filled ? "h-0.5 bg-accent" : "h-0.5 bg-line"}
-              />
-            ))}
-          </div>
-          <p className="t-data">{t("completenessValue", { score })}</p>
-        </section>
-
         {!profile ? (
           <p>
             {t("empty")}{" "}
@@ -118,6 +99,39 @@ export default async function ProfilePage({
           </p>
         ) : (
           <>
+            <p className="t-body-s text-fg-muted">
+              {t(`jobSearch.${profile.jobSearchStatus}`)}
+            </p>
+            {profile.desiredTitles.length > 0 ? (
+              <ul className="flex flex-wrap gap-2">
+                {profile.desiredTitles.map((title) => (
+                  <li key={title}>
+                    <Tag>{title}</Tag>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <section id="completeness" className="flex flex-col gap-3">
+              <h2 className="t-h3">{t("completenessLabel")}</h2>
+              <div
+                role="progressbar"
+                aria-label={t("completenessLabel")}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={score}
+                className="grid grid-cols-[repeat(20,minmax(0,1fr))] gap-1"
+              >
+                {segments.map((index) => (
+                  <span
+                    key={index}
+                    className={
+                      index < filled ? "h-0.5 bg-accent" : "h-0.5 bg-line"
+                    }
+                  />
+                ))}
+              </div>
+              <p className="t-data">{t("completenessValue", { score })}</p>
+            </section>
             {profile.missing.length > 0 ? (
               <section className="flex flex-col gap-2">
                 <h2 className="t-h3">{t("missingTitle")}</h2>
@@ -137,6 +151,26 @@ export default async function ProfilePage({
               </section>
             ) : null}
             <StatRow>
+              {place ? (
+                <Stat
+                  label={profile.city ? t("fields.city") : t("fields.country")}
+                  value={place}
+                />
+              ) : null}
+              {seniority ? (
+                <Stat
+                  label={t("fields.seniority")}
+                  value={markers(`seniority.${seniority}`)}
+                />
+              ) : null}
+              {profile.employmentTypes.length > 0 ? (
+                <Stat
+                  label={t("fields.employmentTypes")}
+                  value={profile.employmentTypes
+                    .map((kind) => t(`employment.${kind}`))
+                    .join(" · ")}
+                />
+              ) : null}
               {profile.experienceYears !== null ? (
                 <Stat
                   label={t("fields.experienceYears")}
@@ -158,6 +192,25 @@ export default async function ProfilePage({
               ) : null}
               {salary ? <Stat label={t("toc.salary")} value={salary} /> : null}
             </StatRow>
+            {profile.experience.length > 0 ? (
+              <section className="flex flex-col gap-3">
+                <h2 className="t-h3">{t("toc.experience")}</h2>
+                <ul className="flex flex-col gap-3">
+                  {profile.experience.map((item) => (
+                    <li key={item.id} className="flex flex-col gap-1">
+                      <p>
+                        {item.title} · {item.companyName}
+                      </p>
+                      <p className="t-data text-fg-muted">
+                        {item.endMonth
+                          ? `${item.startMonth} – ${item.endMonth}`
+                          : item.startMonth}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
             {profile.skills.length > 0 ? (
               <section className="flex flex-col gap-3">
                 <h2 className="t-h3">{t("fields.skills")}</h2>
@@ -198,6 +251,7 @@ export default async function ProfilePage({
             </section>
           </>
         )}
+        <AccountSignIn locale={locale} user={user} />
       </Container>
     </main>
   );

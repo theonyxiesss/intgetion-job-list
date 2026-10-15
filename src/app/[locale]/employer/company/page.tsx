@@ -110,18 +110,6 @@ export default async function EmployerCompanyPage({
               </Link>
             </Alert>
           )}
-        {company ? (
-          canEdit ? (
-            <CompanyForm
-              action="edit"
-              companyId={company.id}
-              initial={company}
-              text={formText}
-            />
-          ) : null
-        ) : (
-          <CompanyForm action="create" text={formText} />
-        )}
         {ownCompany ? (
           <TeamSeats
             companyId={ownCompany.id}
@@ -144,6 +132,18 @@ export default async function EmployerCompanyPage({
             }}
           />
         ) : null}
+        {company ? (
+          canEdit ? (
+            <CompanyForm
+              action="edit"
+              companyId={company.id}
+              initial={company}
+              text={formText}
+            />
+          ) : null
+        ) : (
+          <CompanyForm action="create" text={formText} />
+        )}
       </Container>
     </main>
   );

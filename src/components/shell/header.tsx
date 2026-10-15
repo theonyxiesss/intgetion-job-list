@@ -1,7 +1,6 @@
-import { Bell, Bot, Plus, Send, Shield, User } from "lucide-react";
+import { Bell, Bot, Plus } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
-import { LogoutButton } from "@/components/auth/logout-button";
 import {
   ButtonLink,
   Icon,
@@ -10,6 +9,7 @@ import {
   cn,
   navFade,
 } from "@/components/ui";
+import { AccountMenu, type AccountLink } from "./account-menu";
 import { Suspense } from "react";
 import { NavProgress } from "./nav-progress";
 import { Link } from "@/i18n/navigation";
@@ -87,16 +87,17 @@ export async function Header() {
   const wide = main.length >= 5;
   const bar = wide ? "min-[1440px]:flex" : "xl:flex";
   const untilBar = wide ? "min-[1440px]:hidden" : "xl:hidden";
+  const cabinet: AccountLink[] = employer
+    ? []
+    : [
+        { href: "/profile", label: t("profile.nav") },
+        { href: "/applications", label: t("applications.nav") },
+        { href: "/saved-jobs", label: t("nav.saved") },
+      ];
   const account: NavItem[] = signedIn
     ? [
         { href: "/notifications", label: t("notifications.nav") },
-        ...(employer
-          ? []
-          : [
-              { href: "/applications", label: t("applications.nav") },
-              { href: "/saved-jobs", label: t("nav.saved") },
-              { href: "/profile", label: t("profile.nav") },
-            ]),
+        ...cabinet,
         { href: "/settings/account", label: t("settings.title") },
         ...(isAdmin
           ? [
@@ -106,6 +107,18 @@ export async function Header() {
           : []),
       ]
     : [{ href: "/login", label: t("nav.login") }];
+  const accountMenu: AccountLink[] = signedIn
+    ? [
+        ...cabinet,
+        { href: "/settings/account", label: t("settings.title") },
+        ...(isAdmin
+          ? [
+              { href: "/admin", label: t("nav.admin") },
+              { href: "/admin/metrics", label: t("metrics.title") },
+            ]
+          : []),
+      ]
+    : [];
 
   return (
     <ScrollFrame className="sticky top-0 z-40 border-b border-transparent bg-bg transition-colors duration-200 data-[scrolled]:border-line">
@@ -201,47 +214,8 @@ export async function Header() {
                     </span>
                   )}
                 </Link>
-                {!employer && (
-                  <>
-                    <span className="hidden xl:inline-flex">
-                      <Link
-                        {...navFade}
-                        href="/applications"
-                        className={iconLink}
-                        title={t("applications.nav")}
-                      >
-                        <Icon icon={Send} />
-                        <span className="sr-only">{t("applications.nav")}</span>
-                      </Link>
-                    </span>
-                    <span className="hidden xl:inline-flex">
-                      <Link
-                        {...navFade}
-                        href="/profile"
-                        className={iconLink}
-                        title={t("profile.nav")}
-                      >
-                        <Icon icon={User} />
-                        <span className="sr-only">{t("profile.nav")}</span>
-                      </Link>
-                    </span>
-                  </>
-                )}
-                {isAdmin && (
-                  <span className="hidden xl:inline-flex">
-                    <Link
-                      {...navFade}
-                      href="/admin"
-                      className={iconLink}
-                      title={t("nav.admin")}
-                    >
-                      <Icon icon={Shield} />
-                      <span className="sr-only">{t("nav.admin")}</span>
-                    </Link>
-                  </span>
-                )}
                 <span className="hidden xl:inline-flex">
-                  <LogoutButton compact />
+                  <AccountMenu label={t("nav.account")} links={accountMenu} />
                 </span>
               </>
             ) : (

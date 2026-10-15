@@ -214,10 +214,10 @@ export default async function UiShowcase({
               companyName="Northstar Widgets"
               companyHref="/jobs"
               stats={[
-                { label: "Salary", value: "€70k–85k" },
+                { label: "Salary", value: "€70k–85k", lead: true },
                 { label: "Format", value: "Remote" },
-                { label: "Time zone", value: "UTC+01:00" },
                 { label: "Type", value: "Full time" },
+                { label: "Time zone", value: "UTC+01:00" },
               ]}
               skills={[
                 "TypeScript",
@@ -238,7 +238,12 @@ export default async function UiShowcase({
               badges={<Badge tone="imported">Imported</Badge>}
               companyName="Amber Lantern Studio"
               stats={[
-                { label: "Salary", value: "Not specified", muted: true },
+                {
+                  label: "Salary",
+                  value: "Not specified",
+                  muted: true,
+                  lead: true,
+                },
                 { label: "Format", value: "Remote" },
               ]}
               skills={["Figma"]}

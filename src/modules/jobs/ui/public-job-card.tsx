@@ -38,11 +38,7 @@ export async function PublicJobCard({
         new Date(job.publishedAt),
       )
     : null;
-  const meta = [
-    job.location?.trim() || job.locationCountry || t("worldwide"),
-    t(job.workFormat),
-    ...(published ? [published] : []),
-  ];
+  const place = job.location?.trim() || job.locationCountry || t("worldwide");
   const salary = job.salaryMin
     ? `${formatMoneyDto(job.salaryMin, money)}${job.salaryMax ? ` – ${formatMoneyDto(job.salaryMax, money)}` : ""} / ${t(job.salaryMin.period)}`
     : t("salaryMissing");
@@ -78,20 +74,28 @@ export async function PublicJobCard({
           muted: !job.salaryMin,
           lead: true,
         },
-        {
-          label: markers("seniorityLabel"),
-          value: job.seniority
-            ? markers(`seniority.${job.seniority}`)
-            : t("any"),
-          muted: !job.seniority,
-        },
-        {
-          label: t("timezone"),
-          value: job.timezoneRequired
-            ? `${job.timezoneRequired} · ${job.minOverlapHours}h`
-            : t("worldwide"),
-          muted: !job.timezoneRequired,
-        },
+        { label: t("format"), value: t(job.workFormat) },
+        { label: t("employment"), value: t(job.employmentType) },
+        ...(job.seniority
+          ? [
+              {
+                label: markers("seniorityLabel"),
+                value: markers(`seniority.${job.seniority}`),
+              },
+            ]
+          : []),
+        { label: t("country"), value: place },
+        ...(job.timezoneRequired
+          ? [
+              {
+                label: t("timezone"),
+                value: `${job.timezoneRequired} · ${job.minOverlapHours}h`,
+              },
+            ]
+          : []),
+        ...(published
+          ? [{ label: t("postedWithinLabel"), value: published }]
+          : []),
       ]}
       tagLimit={3}
       skills={[
@@ -101,7 +105,6 @@ export async function PublicJobCard({
           .map((perk) => markers(`perks.${perk}`)),
       ]}
       moreSkillsLabel={(hidden) => `+${hidden + job.skillsMore}`}
-      meta={meta}
       summary={summaryOf(job.description)}
       viewLabel={t("viewJob")}
     />

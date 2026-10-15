@@ -8,14 +8,14 @@ export type JobCardStat = {
   label: string;
   value: ReactNode;
   muted?: boolean;
-  /** Salary and the like: beside the title on a wide card, first on a narrow one. */
+  /** The one fact that leads: salary. Large when known; last in the line when not. */
   lead?: boolean;
 };
 
 /**
- * Job card for lists (DESIGN.md 8.5). Purely presentational: the page maps
- * its data to these props. The title link covers the whole card; `actions`
- * sit above it and stay clickable.
+ * Job card for lists (DESIGN.md 8.5, D441). Presentational: the page maps
+ * its data here. The title link covers the card; company and actions sit
+ * above it.
  */
 export function JobCard({
   href,
@@ -55,7 +55,7 @@ export function JobCard({
   compact?: boolean;
   /** Same name as the job page H1, e.g. `job-title-<id>`: the title morphs. */
   transitionName?: string;
-  /** One quiet line under the company: place · format · date. */
+  /** Quiet tail of the fact line: place and date. */
   meta?: string[];
   /** Two lines of the description at most. */
   summary?: string | null;
@@ -74,19 +74,26 @@ export function JobCard({
   const shown = skills.slice(0, tagLimit);
   const hidden = skills.length - shown.length;
   const lead = stats.find((stat) => stat.lead) ?? null;
-  const rest = stats.filter((stat) => stat !== lead);
+  const facts = [
+    ...stats
+      .filter((stat) => stat !== lead && !stat.muted)
+      .map((stat) => stat.value),
+    ...(meta ?? []),
+    ...(lead?.muted ? [lead.value] : []),
+  ];
   const viewControl = (className?: string) =>
     viewLabel ? (
       <span
         aria-hidden="true"
         className={cn(
-          "t-nav pointer-events-none self-start rounded-full border border-line-strong px-3 py-2 text-fg transition-colors group-hover:border-fg-subtle",
+          "t-nav pointer-events-none shrink-0 self-start rounded-full border border-line-strong px-3 py-2 text-fg transition-colors group-hover:border-fg-subtle",
           className,
         )}
       >
         {viewLabel}
       </span>
     ) : null;
+
   return (
     <article
       className={cn(
@@ -94,115 +101,87 @@ export function JobCard({
         compact && "p-4",
       )}
     >
-      {(category || badges) && (
-        <div
-          className={cn(
-            "flex flex-wrap items-center gap-2",
-            actions ? "@min-[640px]:pr-28" : undefined,
-          )}
-        >
-          {category && (
-            <span className="t-label mr-2 text-fg-muted">{category}</span>
-          )}
-          {badges}
-        </div>
-      )}
-      <div className="grid grid-cols-1 items-start gap-3 @min-[640px]:grid-cols-[minmax(0,1fr)_minmax(180px,min(320px,max-content))] @min-[640px]:gap-x-8">
-        <div
-          className={cn("flex min-w-0", mark ? "items-start gap-3" : undefined)}
-        >
-          {mark}
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <h3 className="t-h3 line-clamp-3 break-words @min-[640px]:line-clamp-2">
+      <div
+        className={cn(
+          "flex items-start gap-3",
+          actions ? "@min-[640px]:pr-28" : undefined,
+        )}
+      >
+        {mark}
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <div className="flex items-start justify-between gap-4">
+            <h3 className="t-h3 line-clamp-2 min-w-0 break-words">
               {transitionName ? (
                 <Morph name={transitionName}>{titleLink}</Morph>
               ) : (
                 titleLink
               )}
             </h3>
-            {companyHref ? (
-              <Link
-                href={companyHref}
-                className="t-body-s relative z-10 self-start text-fg-muted underline-offset-4 hover:underline"
-              >
-                {companyName}
-              </Link>
-            ) : (
-              <p className="t-body-s text-fg-muted">{companyName}</p>
-            )}
-            {meta && meta.length > 0 && (
-              <p className="t-body-s text-fg-muted break-words">
-                {meta.join(" · ")}
-              </p>
-            )}
+            {viewControl("hidden @min-[640px]:inline-flex")}
           </div>
-        </div>
-        {lead && (
-          <div className="flex flex-col gap-1 @min-[640px]:items-end @min-[640px]:text-right">
-            <span className="t-label text-fg-muted">{lead.label}</span>
-            <span
-              className={cn(
-                "t-data break-words",
-                lead.muted ? "text-fg-muted" : "",
-              )}
+          {companyHref ? (
+            <Link
+              href={companyHref}
+              className="t-body-s relative z-10 self-start text-fg-muted underline-offset-4 hover:underline"
             >
+              {companyName}
+            </Link>
+          ) : (
+            <p className="t-body-s text-fg-muted">{companyName}</p>
+          )}
+          {lead && !lead.muted ? (
+            <p className="t-data text-[18px] leading-snug text-fg">
+              <span className="sr-only">{lead.label}. </span>
               {lead.value}
-            </span>
-            {viewControl(
-              "mt-2 hidden @min-[640px]:inline-flex @min-[640px]:self-end",
-            )}
-          </div>
-        )}
-        {summary && !compact && (
-          <p className="t-body-s line-clamp-2 hidden max-w-[65ch] break-words text-fg-muted @min-[640px]:block">
-            {summary}
-          </p>
-        )}
-        {rest.length > 0 && (
-          <dl className="flex flex-col gap-3 @min-[640px]:col-span-2 @min-[640px]:flex-row @min-[640px]:flex-wrap @min-[640px]:items-start @min-[640px]:gap-0">
-            {rest.map((stat, index) => (
-              <div
-                key={stat.label}
-                className={cn(
-                  "flex min-w-0 flex-col gap-1",
-                  index > 0 &&
-                    "@min-[640px]:ml-4 @min-[640px]:border-l @min-[640px]:border-line @min-[640px]:pl-4",
-                )}
-              >
-                <dt className="t-label text-fg-muted">{stat.label}</dt>
-                <dd
-                  className={cn(
-                    "t-data break-words",
-                    stat.muted ? "text-fg-muted" : "",
-                  )}
-                >
-                  {stat.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        )}
-        {shown.length > 0 && !compact && (
-          <ul className="flex flex-wrap gap-2 @min-[640px]:col-span-2">
-            {shown.map((skill) => (
-              <li key={skill}>
-                <Tag>{skill}</Tag>
-              </li>
-            ))}
-            {hidden > 0 && moreSkillsLabel && (
-              <li>
-                <Tag>{moreSkillsLabel(hidden)}</Tag>
-              </li>
-            )}
-          </ul>
-        )}
+            </p>
+          ) : null}
+          {facts.length > 0 ? (
+            <p className="t-body-s break-words text-fg">
+              {facts.map((fact, index) => (
+                <span key={index}>
+                  {index > 0 ? (
+                    <span className="text-fg-muted"> · </span>
+                  ) : null}
+                  {fact}
+                </span>
+              ))}
+            </p>
+          ) : null}
+        </div>
       </div>
-      {viewControl(lead ? "@min-[640px]:hidden" : undefined)}
-      {actions && (
+      {(category || badges) && (
+        <div className="flex flex-wrap items-center gap-2">
+          {category ? (
+            <span className="t-label text-fg-muted">{category}</span>
+          ) : null}
+          {badges}
+        </div>
+      )}
+      {summary && !compact ? (
+        <p className="t-body-s line-clamp-2 max-w-[68ch] break-words text-fg-muted">
+          {summary}
+        </p>
+      ) : null}
+      {shown.length > 0 && !compact ? (
+        <ul className="flex flex-wrap gap-2">
+          {shown.map((skill) => (
+            <li key={skill}>
+              <Tag>{skill}</Tag>
+            </li>
+          ))}
+          {hidden > 0 && moreSkillsLabel ? (
+            <li>
+              <Tag>{moreSkillsLabel(hidden)}</Tag>
+            </li>
+          ) : null}
+        </ul>
+      ) : null}
+      {viewControl("@min-[640px]:hidden")}
+      {actions ? (
         <div className="relative z-10 flex gap-1 @min-[640px]:absolute @min-[640px]:top-4 @min-[640px]:right-4">
           {actions}
         </div>
-      )}
+      ) : null}
     </article>
   );
 }

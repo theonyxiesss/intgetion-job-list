@@ -46,7 +46,6 @@ export async function MatchCardView({
         badges={
           <>
             <span className="t-data text-signal">{`${Math.round(card.score * 100)}%`}</span>
-            <Badge>{t(job.workFormat)}</Badge>
             {isNew ? <Badge tone="new">{matchesNew}</Badge> : null}
             {job.company.isTrusted ? (
               <Badge tone="trusted">{t("trusted")}</Badge>
@@ -60,6 +59,7 @@ export async function MatchCardView({
             muted: !job.salaryMin,
             lead: true,
           },
+          { label: t("format"), value: t(job.workFormat) },
           {
             label: t("timezone"),
             value: job.timezoneRequired
