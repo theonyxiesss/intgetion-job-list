@@ -13,12 +13,20 @@ const WALLETCONNECT_CONNECT = [
   "https://secure.walletconnect.org",
 ] as const;
 
-/** AppKit (Lit) adopts its stylesheet without our nonce. Pay page only (D406). */
+/**
+ * AppKit appends its theme <style> tags without our nonce. A browser ignores
+ * 'unsafe-inline' when a nonce is in the same list, so the pay page drops the
+ * style nonce (D406, D420). script-src keeps its nonce.
+ */
 const WALLETCONNECT_STYLE = "'unsafe-inline'";
 
-/** Modal font and wallet icons. Pay page only (D406). */
+/**
+ * Modal font and wallet icons. Pay page only (D406). AppKit fetches each
+ * wallet icon and shows it as a blob: URL, so blob: is needed too (D422).
+ */
 const WALLETCONNECT_FONT = "https://fonts.reown.com";
 const WALLETCONNECT_IMG = [
+  "blob:",
   "https://api.web3modal.org",
   "https://walletconnect.org",
 ] as const;
@@ -61,7 +69,7 @@ export function buildCsp({
     ? `script-src 'self' 'nonce-${nonce}' https://telegram.org${isDev ? " 'unsafe-eval'" : ""}`
     : `script-src 'self' 'nonce-${nonce}'${isDev ? " 'unsafe-eval'" : ""}`;
   const styleSrc = allowWalletConnect
-    ? `style-src 'self' 'nonce-${nonce}' ${WALLETCONNECT_STYLE}`
+    ? `style-src 'self' ${WALLETCONNECT_STYLE}`
     : `style-src 'self' 'nonce-${nonce}'`;
   const imgSrc = [
     "img-src 'self' data:",

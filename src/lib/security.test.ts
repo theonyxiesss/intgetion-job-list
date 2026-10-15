@@ -132,9 +132,14 @@ describe("buildCsp", () => {
     );
     expect(pay).toContain("font-src 'self' https://fonts.reown.com");
     expect(pay).toContain(
-      "img-src 'self' data: https://ref.supabase.co https://api.web3modal.org https://walletconnect.org",
+      "img-src 'self' data: https://ref.supabase.co blob: https://api.web3modal.org https://walletconnect.org",
     );
-    expect(pay).toContain("style-src 'self' 'nonce-abc123' 'unsafe-inline'");
+    // AppKit shows wallet icons as blob: URLs of images it fetched (D422).
+    expect(csp).not.toContain("blob:");
+    // A nonce in the same list makes the browser ignore 'unsafe-inline' (D420).
+    expect(pay).toContain("style-src 'self' 'unsafe-inline';");
+    expect(pay).not.toMatch(/style-src[^;]*nonce-/);
+    expect(pay).toContain("script-src 'self' 'nonce-abc123'");
     expect(pay).not.toMatch(/script-src[^;]*unsafe-inline/);
     expect(pay).not.toContain("pulse.walletconnect.org");
     expect(csp).not.toContain("web3modal");
