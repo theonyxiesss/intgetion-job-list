@@ -55,7 +55,7 @@ description: >-
 - Ledger: `public.schema_migrations(filename)`. `pnpm db:migrate` applies the files missing from the ledger, in name order.
 - Before any apply, compare the ledger with the folder. Known difference: the ledger has `0020_telegram_login.sql` with no file in the folder; that is fine. Any other unexpected difference: stop and report.
 - `pnpm db:migrate`, `pnpm db:verify` and `pnpm admin:grant` refuse every non-loopback host, including `*.supabase.co` and `*.supabase.com` (guard in `scripts/db-url.mjs`, test `src/db/migration-guard.test.ts`, commit `41f735d`). Do not weaken the guard, add hosts to it, or pass flags to get around it.
-- Applying to the cloud is a cloud write and needs the founder's yes. Since the guard, the repo has no agreed path for it: ask the founder how, and record the answer as a D entry. Do not use MCP `apply_migration`: it records into `supabase_migrations.schema_migrations`, not our ledger, so the two would disagree.
+- Applying to the cloud is a cloud write and needs the founder's yes. Since the guard, the agreed path is D438: MCP `execute_sql` in one transaction that grants `postgres` SET on `migrator`, runs the file as `migrator`, writes our ledger row and revokes the grant. Follow D438 step by step and check owner, RLS, grants, ledger and membership afterwards. Do not use MCP `apply_migration`: it records into `supabase_migrations.schema_migrations`, not our ledger, so the two would disagree.
 - Order with deploy: migration on the cloud first, then the code deploy.
 
 ## Reading the cloud (allowed without asking)
