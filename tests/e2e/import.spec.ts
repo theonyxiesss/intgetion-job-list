@@ -24,7 +24,11 @@ test("8A: fixture import publishes jobs that apply on the source site", async ({
   await page.goto("/en/jobs?q=Illustration%20Designer");
   await page.getByRole("link", { name: "Illustration Designer" }).click();
   await expect(page).toHaveURL(/:\d+\/jobs\/[0-9a-f-]{36}$/);
-  await expect(page.getByText("Imported from")).toBeVisible();
+  // D376: no "Imported from" on the public site; the job is retold in our words.
+  await expect(
+    page.getByRole("heading", { name: "In our words" }),
+  ).toBeVisible();
+  await expect(page.getByText("Imported from")).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Apply" })).toHaveAttribute(
     "href",
     "https://amber.invalid/jobs/illustrator",

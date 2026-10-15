@@ -95,7 +95,10 @@ test("owner signs in with TOTP and sees every section", async ({ page }) => {
   await signInAdmin(page, email);
   const nav = page.getByRole("navigation", { name: "Администрирование" });
   for (const name of ownerSections) {
-    await expect(nav.getByRole("link", { name, exact: true })).toBeVisible();
+    // A section with open items shows the count after its name.
+    await expect(
+      nav.getByRole("link", { name: new RegExp(`^${name}(\\s*\\d+)?$`) }),
+    ).toBeVisible();
   }
 
   await page.setViewportSize({ width: 360, height: 800 });

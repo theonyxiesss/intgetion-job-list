@@ -20,6 +20,8 @@ function grant(email: string, role = "owner") {
 }
 
 async function signUp(page: Page, email: string) {
+  // /register sends a signed-in user away; drop the previous account's session.
+  await page.context().clearCookies({ name: /^sb-/ });
   await page.goto("/en/register");
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.locator('input[type="password"]').fill(password);
