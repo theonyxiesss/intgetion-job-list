@@ -132,6 +132,7 @@
     "chatWithAgent": "Chat with the agent",
     "bottom": "Main sections",
     "pricing": "Pricing",
+    "services": "Services",
     "postJob": "Post a job",
     "myJobs": "My jobs",
     "company": "Company"
@@ -796,7 +797,21 @@
         "cis": "CIS"
       }
     },
-    "navBriefs": "Briefs"
+    "navBriefs": "Briefs",
+    "navEngagements": "Tasks",
+    "engagements": {
+      "title": "Task briefs",
+      "intro": "Problems people described on the services page. These are not job posts.",
+      "empty": "No tasks yet.",
+      "pending": "The list is not on the database yet.",
+      "when": "Received",
+      "who": "Reply to",
+      "org": "Organisation",
+      "budget": "Budget",
+      "duration": "For how long",
+      "start": "Start",
+      "task": "Task"
+    }
   },
   "employerJobs": {
     "title": "Your jobs",
@@ -1507,6 +1522,10 @@
       "discussing": "Discussing: {title} — {company}",
       "back": "Back to the job"
     },
+    "serviceFocus": {
+      "line": "You came from Services. Spoki speaks for the company.",
+      "back": "Back to services"
+    },
     "intro": "A conversation that learns what work you want and keeps looking.",
     "log": "Conversation",
     "you": "You",
@@ -1630,6 +1649,11 @@
         "title": "Post a job",
         "text": "Posting stays free on Start.",
         "action": "Post a job"
+      },
+      "order_service": {
+        "title": "Order a team",
+        "text": "Describe the problem. We quote after the scope is clear.",
+        "action": "Describe the task"
       }
     }
   },
@@ -2196,6 +2220,214 @@
       }
     }
   },
+  "services": {
+    "metaTitle": "Services — a team for almost any task",
+    "metaDescription": "Describe the task. INTGETION assembles a managed team and quotes after the scope is clear.",
+    "title": "Almost any task. One managed team.",
+    "lead": "Tell us what you need done. We assemble specialists for the result, without a full-time hire. The price depends on the team, the scope and how long you need them. We quote after the brief.",
+    "workspace": "Workspace",
+    "listTitle": "What we can take",
+    "groups": [
+      {
+        "name": "Operations",
+        "items": [
+          "Support",
+          "Customer success",
+          "Technical support",
+          "Help desk",
+          "Chat",
+          "Moderation",
+          "Assistance",
+          "Documentation",
+          "Onboarding",
+          "Scheduling",
+          "Knowledge base",
+          "Back office"
+        ]
+      },
+      {
+        "name": "Community",
+        "items": [
+          "Community",
+          "Social",
+          "Content",
+          "Copy",
+          "Video",
+          "Engagement",
+          "Newsletter",
+          "Podcast",
+          "Events",
+          "Translation",
+          "Localization",
+          "Multilingual content",
+          "Local community"
+        ]
+      },
+      {
+        "name": "Growth",
+        "items": [
+          "SEO",
+          "Paid media",
+          "SMM",
+          "Telegram growth",
+          "Email",
+          "Influencers",
+          "Launch",
+          "Sales",
+          "Partnerships",
+          "Affiliates",
+          "Business development",
+          "Account management",
+          "Revenue operations",
+          "CRM",
+          "Public relations",
+          "Media outreach",
+          "Brand",
+          "Analytics"
+        ]
+      },
+      {
+        "name": "Product",
+        "items": [
+          "Product management",
+          "Strategy",
+          "Roadmap",
+          "UX/UI",
+          "Prototypes",
+          "User testing",
+          "Product research",
+          "MVP",
+          "QA"
+        ]
+      },
+      {
+        "name": "Development",
+        "items": [
+          "Web",
+          "Frontend",
+          "Backend",
+          "Full-stack",
+          "Mobile",
+          "API",
+          "Integrations",
+          "DevOps",
+          "Internal tools",
+          "Web3 engineering"
+        ]
+      },
+      {
+        "name": "Web3",
+        "items": [
+          "Smart contracts",
+          "Protocol",
+          "Protocol docs",
+          "Token ecosystem",
+          "DAO",
+          "Governance",
+          "Ecosystem growth",
+          "Ambassadors",
+          "KOL",
+          "Airdrops",
+          "Whitelist",
+          "Grants",
+          "NFT community",
+          "Holder engagement",
+          "Discord and Telegram",
+          "Crypto content"
+        ]
+      },
+      {
+        "name": "People",
+        "items": [
+          "Talent sourcing",
+          "Recruitment",
+          "Interviews",
+          "Remote staffing",
+          "Team building",
+          "Contractors",
+          "Employer brand",
+          "Workforce operations",
+          "Team shape"
+        ]
+      },
+      {
+        "name": "Research",
+        "items": [
+          "Market research",
+          "Competitors",
+          "Customers",
+          "User interviews",
+          "Ecosystem research",
+          "Trends",
+          "Pricing research",
+          "Reports",
+          "Business intelligence"
+        ]
+      },
+      {
+        "name": "Design",
+        "items": [
+          "Interface",
+          "Brand design",
+          "Motion",
+          "Illustration",
+          "Design system"
+        ]
+      },
+      {
+        "name": "Communications",
+        "items": [
+          "Press",
+          "Announcements",
+          "Internal updates",
+          "Speaking",
+          "Crisis notes"
+        ]
+      }
+    ],
+    "else": "If your task is not on this list, describe it anyway.",
+    "chat": "Discuss the details with the assistant",
+    "about": "How the team works",
+    "form": {
+      "title": "Describe the task",
+      "lead": "You do not need to hire someone onto your staff. Tell us the problem — for example, SEO for a product — and a specialist team works on the result.",
+      "task": "The problem",
+      "taskHint": "What you need done, and what “done” looks like.",
+      "reply": "How we should reach you",
+      "replyHint": "Email or Telegram",
+      "org": "Company (optional)",
+      "budget": "Approximate budget (optional)",
+      "budgetHint": "A range is enough. We quote after we understand the scope.",
+      "budgetLong": "Keep the budget to a short range.",
+      "duration": "How long do you plan to work together",
+      "durationHint": "A few weeks, a few months, or ongoing.",
+      "durationLong": "Keep the length to a short note.",
+      "start": "When should we start",
+      "startHint": "As soon as possible, a date, or not sure yet.",
+      "startLong": "Keep the start to a short note.",
+      "send": "Send the task",
+      "sending": "Sending",
+      "done": "Received. We will reply on the contact you gave.",
+      "error": "This could not be saved yet. Use Telegram, Discord, or LinkedIn below.",
+      "taskShort": "Describe the problem in a few sentences.",
+      "replyBad": "Enter an email or a Telegram name.",
+      "trap": "Website"
+    },
+    "links": [
+      {
+        "label": "Telegram",
+        "href": "https://t.me/theonyxis"
+      },
+      {
+        "label": "Discord",
+        "href": "https://discord.com/users/theonyxis"
+      },
+      {
+        "label": "LinkedIn",
+        "href": "https://www.linkedin.com/company/intgetion"
+      }
+    ]
+  },
   "email": {
     "fallback": "If the button does not work, copy this link into your browser:",
     "footerAccount": "You received this email because this address is used for an account on INTGETION JOB LIST.",
@@ -2275,6 +2507,7 @@
     "usdCoin": "USD Coin",
     "tether": "Tether",
     "payNow": "Pay ${amount} {token}",
+    "payQr": "Pay with a phone wallet (QR)",
     "baseNote": "On Base, only USDC is accepted.",
     "checkWallet": "Check this address in your wallet before you approve.",
     "connect": "Connect wallet",

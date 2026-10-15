@@ -15,11 +15,14 @@ export async function GET(request: Request) {
     const userId = user && user.status === "active" ? user.id : null;
     const url = new URL(request.url);
     const job = url.searchParams.get("job");
+    const from = url.searchParams.get("from");
     const locale = url.searchParams.get("locale");
+    const jobId = job && JOB_ID.test(job) ? job : undefined;
     const { conversation, offer, token, actions } = await resumeConversation({
       userId,
       token: sessionToken(request),
-      jobId: job && JOB_ID.test(job) ? job : undefined,
+      jobId,
+      from: jobId ? undefined : from === "services" ? "services" : undefined,
       locale:
         locale && (routing.locales as readonly string[]).includes(locale)
           ? locale

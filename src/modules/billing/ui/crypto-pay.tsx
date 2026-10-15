@@ -6,7 +6,13 @@ import { useTranslations } from "next-intl";
 import { planLoginNext } from "@/components/auth/login-next";
 import { Button, TokenMark, cn } from "@/components/ui";
 import { useRouter } from "@/i18n/navigation";
-import { connectWallet } from "./connect-wallet";
+import {
+  connectWallet,
+  findBrowserWallet,
+  inWalletApp,
+  phoneLayout,
+  type WalletRoute,
+} from "./connect-wallet";
 import { NonEvmPay, type NonEvmOption } from "./non-evm-pay";
 import { classifyPayError, type PayErrorKind } from "./pay-error";
 
@@ -64,7 +70,30 @@ export function CryptoPay({
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<PayErrorKind | null>(null);
   const [busy, setBusy] = useState(false);
+  // With an extension the pay button opens it; the QR is a second choice (D422).
+  // On the phone layout the pay button itself opens WalletConnect (D425).
+  const [hasBrowserWallet, setHasBrowserWallet] = useState(false);
+  const [walletConnectFirst, setWalletConnectFirst] = useState(false);
   const poll = useRef<number | null>(null);
+
+  useEffect(() => {
+    let live = true;
+    void findBrowserWallet().then((wallet) => {
+      if (live) setHasBrowserWallet(wallet !== null);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") return;
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setWalletConnectFirst(phoneLayout() && !inWalletApp());
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   useEffect(
     () => () => {
@@ -73,7 +102,7 @@ export function CryptoPay({
     [],
   );
 
-  async function pay() {
+  async function pay(route: WalletRoute) {
     setBusy(true);
     setError(null);
     const returnTo = planLoginNext(plan) ?? "billing";
@@ -83,7 +112,7 @@ export function CryptoPay({
       throw new Error("auth");
     };
     try {
-      const provider = await connectWallet(projectId);
+      const provider = await connectWallet(projectId, route);
       const accounts = (await provider.request({
         method: "eth_accounts",
       })) as string[];
@@ -227,12 +256,23 @@ export function CryptoPay({
             type="button"
             size="lg"
             className="w-full"
-            onClick={pay}
+            onClick={() => pay("browser")}
             loading={busy}
             disabled={hold}
           >
             {t("payNow", { amount, token: shownToken })}
           </Button>
+          {projectId && hasBrowserWallet && !walletConnectFirst ? (
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              onClick={() => pay("qr")}
+              disabled={hold}
+            >
+              {t("payQr")}
+            </Button>
+          ) : null}
           {order ? (
             <div className="flex flex-col gap-3 border border-line bg-bg p-4">
               <p

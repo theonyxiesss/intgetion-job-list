@@ -13,6 +13,8 @@ export const botMessageInput = z
     conversationId: z.uuid().optional(),
     text: z.string().trim().min(1).max(2000),
     locale: locale.optional(),
+    /** Set when the chat was opened from /services. Any other value is rejected. */
+    from: z.literal("services").optional(),
   })
   .strict();
 

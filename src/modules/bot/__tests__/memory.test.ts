@@ -109,7 +109,7 @@ describe("Spoki memory", () => {
 
   it("follows the last message language and does not lock the reply to the locale (D385)", () => {
     const prompt = systemPrompt({ locale: "en", signedIn: false });
-    expect(SYSTEM_PROMPT_VERSION).toBe(13);
+    expect(SYSTEM_PROMPT_VERSION).toBe(16);
     expect(prompt).toContain(
       "Answer in the language of the person's last message",
     );
@@ -124,7 +124,7 @@ describe("Spoki memory", () => {
 
   it("greets without a country question and answers an account complaint in words", () => {
     const prompt = systemPrompt({ locale: "ru", signedIn: false });
-    expect(SYSTEM_PROMPT_VERSION).toBe(13);
+    expect(SYSTEM_PROMPT_VERSION).toBe(16);
     expect(prompt).toContain(
       "On a greeting (привет, здравствуйте, hello, hi, or the same words in other languages), greet them and ask how you can help. Do not ask for country, role, or work format on a greeting.",
     );
@@ -152,6 +152,11 @@ describe("Spoki memory", () => {
     expect(prompt).toContain("call get_my_applications");
     expect(prompt).toContain("call published_demand");
     expect(prompt).toContain("call propose_team_job");
+    expect(prompt).toContain("not a fixed menu");
+    expect(prompt).toContain("Only when they ask");
+    expect(prompt).toContain("No card on a question");
+    expect(prompt).toContain("order_service");
+    expect(prompt).toContain("Do not invent a dollar amount");
     expect(prompt).toContain("Employer plan is not team");
     expect(prompt).not.toContain("you cannot see the payment");
   });

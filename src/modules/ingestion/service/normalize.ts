@@ -16,7 +16,13 @@ export type { EmploymentType, JobCategory };
 
 export type NormalizedImportedJob = Omit<
   RawImportedJob,
-  "skills" | "category" | "employmentType" | "timeZone"
+  | "skills"
+  | "category"
+  | "employmentType"
+  | "timeZone"
+  | "workFormat"
+  | "location"
+  | "countries"
 > & {
   category: JobCategory;
   employmentType: EmploymentType;
@@ -25,7 +31,8 @@ export type NormalizedImportedJob = Omit<
   sectors: Sector[];
   seniority: Seniority | null;
   location: string | null;
-  workFormat: "remote";
+  workFormat: "remote" | "hybrid" | "onsite";
+  countries: string[];
   expired: boolean;
   scam: boolean;
 };
@@ -34,6 +41,27 @@ export type NormalizedImportedJob = Omit<
 export type SkillResolver = (value: string) => Promise<string | null>;
 
 const squash = (value: string) => value.trim().replace(/\s+/g, " ");
+
+/**
+ * D416: place only as the source states it. An office or hybrid job
+ * without a place is published as remote: the database needs a location
+ * for those, and we do not invent one.
+ */
+function place(raw: RawImportedJob) {
+  const countries = [
+    ...new Set(
+      (raw.countries ?? [])
+        .map((code) => code.trim().toUpperCase())
+        .filter((code) => /^[A-Z]{2}$/.test(code)),
+    ),
+  ].slice(0, 10);
+  const location = raw.location ? squash(raw.location).slice(0, 200) : "";
+  const workFormat: "remote" | "hybrid" | "onsite" =
+    raw.workFormat && raw.workFormat !== "remote" && location
+      ? raw.workFormat
+      : "remote";
+  return { workFormat, location: location || null, countries };
+}
 
 /**
  * 13.2: skills to the catalog (unknown ones are not stored on the job),
@@ -81,8 +109,7 @@ export async function normalizeImportedJob(
     seniority: markers.seniority,
     applyUrl,
     expiresAt: raw.expiresAt,
-    location: null,
-    workFormat: "remote",
+    ...place(raw),
     expired: Boolean(
       raw.expiresAt && Date.parse(raw.expiresAt) < now.getTime(),
     ),

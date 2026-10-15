@@ -23,6 +23,10 @@ export type ImportedJobWrite = {
   sectors?: Sector[];
   seniority?: Seniority | null;
   perks?: Perk[];
+  /** D416: as the source states it; remote with no country otherwise. */
+  workFormat?: "remote" | "hybrid" | "onsite";
+  location?: string | null;
+  countries?: string[];
   applyUrl: string;
   expiresAt: Date | null;
   status: ImportedJobStatus;
@@ -50,6 +54,39 @@ export function importedStatusAfterFeed(input: {
   if (previous === "pending_moderation") return "pending_moderation";
   if (input.sensitive && previous !== "published") return "pending_moderation";
   return "published";
+}
+
+/**
+ * D416: an office or hybrid job is in its first country; a remote job is
+ * open to the listed countries. A non-remote job keeps its location text
+ * (the jobs table requires one).
+ */
+export function importedPlace(input: {
+  workFormat?: "remote" | "hybrid" | "onsite";
+  location?: string | null;
+  countries?: string[];
+}) {
+  const countries = (input.countries ?? []).filter((code) =>
+    /^[A-Z]{2}$/.test(code),
+  );
+  const location = input.location?.trim() || null;
+  const workFormat =
+    input.workFormat && input.workFormat !== "remote" && location
+      ? input.workFormat
+      : ("remote" as const);
+  return workFormat === "remote"
+    ? {
+        workFormat,
+        location,
+        locationCountry: null,
+        countryRestrictions: countries.length ? countries : null,
+      }
+    : {
+        workFormat,
+        location,
+        locationCountry: countries[0] ?? null,
+        countryRestrictions: countries.length > 1 ? countries : null,
+      };
 }
 
 /**
@@ -83,7 +120,7 @@ export async function saveImportedJob(input: ImportedJobWrite) {
       sectors: input.sectors ?? [],
       seniority: input.seniority ?? null,
       perks: input.perks ?? [],
-      workFormat: "remote" as const,
+      ...importedPlace(input),
       timezoneRequired: input.timeZone,
       applicationMethod: "external_url" as const,
       applicationUrl: input.applyUrl,

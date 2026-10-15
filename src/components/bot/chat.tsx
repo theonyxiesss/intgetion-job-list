@@ -115,10 +115,13 @@ async function* readEvents(body: ReadableStream<Uint8Array>) {
 export function Chat({
   signedIn,
   jobId,
+  fromServices = false,
   focus,
 }: {
   signedIn: boolean;
   jobId?: string;
+  /** Opened from the Services page. The server owns the prompt text (D423). */
+  fromServices?: boolean;
   focus?: { title: string; company: string };
 }) {
   const t = useTranslations("chat");
@@ -158,6 +161,9 @@ export function Chat({
     const params = new URLSearchParams();
     if (jobId) {
       params.set("job", jobId);
+      params.set("locale", locale);
+    } else if (fromServices) {
+      params.set("from", "services");
       params.set("locale", locale);
     }
     const query = params.size > 0 ? `?${params.toString()}` : "";
@@ -203,7 +209,7 @@ export function Chat({
         setStarterSeed(Math.floor(Math.random() * 0x7fffffff) || 1);
         setHistoryReady(true);
       });
-  }, [jobId, locale]);
+  }, [jobId, fromServices, locale]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
@@ -278,7 +284,11 @@ export function Chat({
       const response = await fetch("/api/bot/message", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ text: message, locale }),
+        body: JSON.stringify({
+          text: message,
+          locale,
+          ...(fromServices ? { from: "services" as const } : {}),
+        }),
       });
       if (!response.ok || !response.body) {
         add({
@@ -460,6 +470,14 @@ export function Chat({
             </Link>
           </p>
         ) : null}
+        {fromServices ? (
+          <p className="t-body-s mt-2 text-fg">
+            {t("serviceFocus.line")}{" "}
+            <Link href="/services" className="underline underline-offset-4">
+              {t("serviceFocus.back")}
+            </Link>
+          </p>
+        ) : null}
       </div>
       <div
         role="log"
@@ -469,11 +487,15 @@ export function Chat({
       >
         {welcome && (
           <div className="mt-auto flex w-full flex-col items-center gap-4 pb-2 text-center">
-            <h2 className="text-2xl font-medium md:text-3xl">{t("welcome")}</h2>
-            <p className="t-body-s max-w-md text-fg-muted">
-              {signedIn ? t("emptySignedIn") : t("emptyGuest")}
-            </p>
-            {historyReady && !jobId && (
+            <h2 className="text-2xl font-medium md:text-3xl">
+              {fromServices ? t("serviceFocus.line") : t("welcome")}
+            </h2>
+            {fromServices ? null : (
+              <p className="t-body-s max-w-md text-fg-muted">
+                {signedIn ? t("emptySignedIn") : t("emptyGuest")}
+              </p>
+            )}
+            {historyReady && !jobId && !fromServices && (
               <div className="flex w-full max-w-md flex-col gap-3">
                 <div
                   role="tablist"

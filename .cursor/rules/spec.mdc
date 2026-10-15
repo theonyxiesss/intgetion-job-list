@@ -13,6 +13,7 @@ Hot path every session: `docs/CURRENT.md` → `docs/OPEN_TASKS.md` → one `docs
 - Safe zone: no commit, push, branch/worktree change, secret edit, cloud DB write, deploy, or plugin/skill/MCP install without the founder's yes in chat (`AGENTS.md` → Safe zone).
 - Finish that outcome. A required signup, project id, Vercel env, and the deploy that makes this feature work are part of the task: ask for them once, together, in the plan, then do them all.
 - Skills: pick 1–3 from the table in `AGENTS.md` → Skills; project rules beat skill text. Do not copy skills into the repo.
+- A diff touching auth, billing, API routes, headers/CSP, RLS, secrets or rate limits: walk the checklist in `.claude/skills/intgetion-security/SKILL.md` before calling it done.
 - After every change run the checks from `AGENTS.md` → Checks; report per `AGENTS.md` → Final report.
 - Session end: `MISSION_LOG.md` + update `docs/CURRENT.md` (and OPEN_TASKS/status if needed).
 - `PRODUCT_NAME` = `INTGETION JOB LIST` — never rename.

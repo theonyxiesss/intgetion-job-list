@@ -51,6 +51,12 @@ import {
   type VacancyFacts,
 } from "./fit";
 import { jobFocusBlock, jobFocusOpener, readJobFocus } from "./job-focus";
+import {
+  isServiceFrom,
+  serviceFocusBlock,
+  serviceFocusOpener,
+  serviceTopicState,
+} from "./service-focus";
 import { stripLeakedToolMarkup } from "./leaked-tool";
 import {
   followUp,
@@ -272,13 +278,19 @@ export async function resolveConversation(input: {
   userId: string | null;
   token: string | undefined;
   locale: string;
+  /** Skip a vacancy thread on the cookie and use the general chat (D423). */
+  generalOnly?: boolean;
 }): Promise<{ conversation: repo.ConversationRow; token: string }> {
   if (input.token) {
     const claimed = await claimGuestConversation(input);
     const found =
       claimed ??
       (await repo.findConversationByToken(hashSessionToken(input.token)));
-    if (found && found.userId === input.userId) {
+    if (
+      found &&
+      found.userId === input.userId &&
+      (!input.generalOnly || found.jobId === null)
+    ) {
       return { conversation: found, token: input.token };
     }
   }
@@ -300,6 +312,38 @@ export async function resolveConversation(input: {
     locale: input.locale,
   });
   return { conversation, token };
+}
+
+/**
+ * The general thread, marked as a visit from /services. Inserts the company
+ * opener only when that thread has no messages yet (D423).
+ */
+export async function openServiceConversation(input: {
+  userId: string | null;
+  token: string | undefined;
+  locale: string;
+}): Promise<{ conversation: repo.ConversationRow; token: string }> {
+  const opened = await resolveConversation({ ...input, generalOnly: true });
+  const previous = (opened.conversation.state ?? {}) as BotState;
+  const state = serviceTopicState(previous);
+  let conversation = opened.conversation;
+  if (state !== previous) {
+    await repo.updateConversation(
+      conversation.id,
+      { state, locale: input.locale },
+      new Date(),
+    );
+    conversation = { ...conversation, state, locale: input.locale };
+  }
+  const existing = await repo.listMessages(conversation.id, 1);
+  if (existing.length === 0) {
+    await repo.insertMessage({
+      conversationId: conversation.id,
+      role: "assistant",
+      content: serviceFocusOpener(input.locale),
+    });
+  }
+  return { conversation, token: opened.token };
 }
 
 /**
@@ -344,6 +388,8 @@ export async function resumeConversation(input: {
   token: string | undefined;
   locale?: string;
   jobId?: string;
+  /** `services` when the chat was opened from the Services page (D423). */
+  from?: string;
 }): Promise<{
   conversation: repo.ConversationRow | null;
   offer: Extract<BotEvent, { type: "confirm_request" }> | null;
@@ -363,6 +409,27 @@ export async function resumeConversation(input: {
       jobId: input.jobId,
     });
     if (!opened) return empty;
+    const offer = await takeDraftOffer(
+      opened.conversation,
+      input.userId,
+      new Date(),
+    );
+    return {
+      conversation: opened.conversation,
+      offer,
+      token: opened.token,
+      actions: chatActions(
+        input.userId,
+        (opened.conversation.state ?? {}) as BotState,
+      ),
+    };
+  }
+  if (isServiceFrom(input.from)) {
+    const opened = await openServiceConversation({
+      userId: input.userId,
+      token: input.token,
+      locale: input.locale ?? "en",
+    });
     const offer = await takeDraftOffer(
       opened.conversation,
       input.userId,
@@ -692,6 +759,10 @@ export async function handleMessage(
     notes: state.notes,
     profileFill: state.fillMode === "spoki",
     jobFocus: focus ? jobFocusBlock(focus) : undefined,
+    serviceFocus:
+      !current.jobId && state.topic === "services"
+        ? serviceFocusBlock()
+        : undefined,
   });
   const tools = toolsFor(userId);
   const lang = replyLanguage(input.text, input.locale);

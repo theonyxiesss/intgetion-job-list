@@ -13,6 +13,7 @@ export {
   findOwnConversation,
   handleMessage,
   hashSessionToken,
+  openServiceConversation,
   resolveConversation,
   resumeConversation,
   setBotLLMForTests,

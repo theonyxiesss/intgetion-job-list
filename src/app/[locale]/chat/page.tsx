@@ -8,16 +8,16 @@ export const dynamic = "force-dynamic";
 
 const JOB_ID = /^[0-9a-f-]{36}$/i;
 
-/** `/chat` (section 9): the bot for guests and users (7A). `?job=` opens that vacancy (D382). */
+/** `/chat` (section 9): the bot for guests and users (7A). `?job=` opens that vacancy (D382). `?from=services` is a visit from Services (D423). */
 export default async function ChatPage({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ job?: string }>;
+  searchParams: Promise<{ job?: string; from?: string }>;
 }) {
   const { locale } = await params;
-  const { job } = await searchParams;
+  const { job, from } = await searchParams;
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
@@ -28,6 +28,7 @@ export default async function ChatPage({
       <Chat
         signedIn={user !== null}
         jobId={row?.id}
+        fromServices={from === "services" && !row}
         focus={
           row ? { title: row.title, company: row.company.name } : undefined
         }

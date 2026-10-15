@@ -95,7 +95,8 @@ EOF
 # Catalog and one job, mobile form factor, five-run median (D288).
 # Run 37372773588: catalog median 2749 (worst 2757), job median 1868
 # (worst 2469). 4000 ms leaves room for a slow runner. Homepage stays 2500.
-job_path="$(curl -sf "http://127.0.0.1:3000/en/jobs" | grep -oE '/en/jobs/[0-9a-f-]{36}' | head -n 1 || true)"
+# English has no prefix since D335; /en/jobs is only a redirect.
+job_path="$(curl -sf "http://127.0.0.1:3000/jobs" | grep -oE '/jobs/[0-9a-f-]{36}' | head -n 1 || true)"
 if [[ -z "$job_path" ]]; then
   echo "no public job to measure" >&2
   exit 1
@@ -124,5 +125,5 @@ if (!(median < 4000)) process.exit(1);
 EOF
 }
 
-measure_mobile catalog "http://127.0.0.1:3000/en/jobs"
+measure_mobile catalog "http://127.0.0.1:3000/jobs"
 measure_mobile job "http://127.0.0.1:3000${job_path}"

@@ -41,6 +41,18 @@ export type {
   VerificationStateDto,
 } from "./verification-service";
 export {
+  isMissingEngagementTable,
+  limitEngagementBrief,
+  listEngagementBriefs,
+  saveEngagementBrief,
+} from "./engagement-brief";
+export type { EngagementBriefRow } from "./engagement-brief";
+export { parseEngagementBrief, normalizeReply } from "../engagement-brief";
+export type {
+  EngagementBrief,
+  EngagementBriefInput,
+} from "../engagement-brief";
+export {
   belongsToDomain,
   deservesTrusted,
   requisitesComplete,

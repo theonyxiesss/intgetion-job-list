@@ -85,6 +85,25 @@ export function isStaleEverywhere(
 }
 
 /**
+ * D416, a whole company board: the job is gone when this board did not
+ * list it in the run that started at `runAt`, and no other source has seen
+ * it within the window.
+ */
+export function isGoneFromFullFeed(
+  rows: { lastSeenAt: Date; currentSource: boolean }[],
+  runAt: Date,
+  cutoff: Date,
+): boolean {
+  const current = rows.filter((row) => row.currentSource);
+  const others = rows.filter((row) => !row.currentSource);
+  return (
+    current.length > 0 &&
+    current.every((row) => row.lastSeenAt.getTime() < runAt.getTime()) &&
+    others.every((row) => row.lastSeenAt.getTime() < cutoff.getTime())
+  );
+}
+
+/**
  * 13.4 «no record in the source two runs in a row». Fixture feeds only:
  * they are the whole list (D412). For the current source
  * the run in progress is the second one, so one finished run after the

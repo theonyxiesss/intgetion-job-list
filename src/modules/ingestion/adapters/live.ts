@@ -18,10 +18,17 @@ export interface LiveSource {
    * source's own expiry date (D412).
    */
   readonly staleAfterMs: number;
+  /**
+   * "window": the newest N jobs of a board, so absence means nothing.
+   * "full": a company's whole board, so a job gone from it is closed (D416).
+   */
+  readonly feed: "window" | "full";
   fetch(fetchImpl?: typeof fetch): Promise<RawImportedJob[]>;
 }
 
 const FETCH_TIMEOUT_MS = 15_000;
+/** Company boards answer with every job and full text, up to ~15 MB (D416). */
+export const BOARD_FETCH_TIMEOUT_MS = 30_000;
 export const hours = (count: number) => count * 60 * 60 * 1000;
 export const days = (count: number) => hours(count * 24);
 /** D412: a live job not seen for 30 days is treated as closed. */
@@ -31,9 +38,10 @@ export const LIVE_STALE_AFTER_MS = days(30);
 export async function fetchJson(
   url: string,
   fetchImpl: typeof fetch = fetch,
+  timeoutMs: number = FETCH_TIMEOUT_MS,
 ): Promise<unknown> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const response = await fetchImpl(url, {
       signal: controller.signal,
@@ -95,11 +103,22 @@ export function onHost(url: string, hosts: readonly string[]): boolean {
   }
 }
 
+/** An employer's own https posting on any host (company boards, D416). */
+export function publicHttps(url: string): string | null {
+  try {
+    return new URL(url).protocol === "https:" ? url : null;
+  } catch {
+    return null;
+  }
+}
+
 const EMPLOYMENT: Record<string, string> = {
   full_time: "full_time",
+  fulltime: "full_time",
   "full-time": "full_time",
   "full time": "full_time",
   part_time: "part_time",
+  parttime: "part_time",
   "part-time": "part_time",
   "part time": "part_time",
   contract: "contract",

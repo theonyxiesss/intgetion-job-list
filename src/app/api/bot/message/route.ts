@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/modules/auth/service";
 import { botMessageInput } from "@/modules/bot/schemas";
 import {
   handleMessage,
+  openServiceConversation,
   resolveConversation,
   type BotEvent,
 } from "@/modules/bot/service";
@@ -22,11 +23,12 @@ export async function POST(request: Request) {
     const user = await getCurrentUser(supabase.auth);
     const userId = user && user.status === "active" ? user.id : null;
     const locale = input.locale ?? "en";
-    const { conversation, token } = await resolveConversation({
-      userId,
-      token: sessionToken(request),
-      locale,
-    });
+    const session = sessionToken(request);
+    const opened =
+      input.from === "services"
+        ? await openServiceConversation({ userId, token: session, locale })
+        : await resolveConversation({ userId, token: session, locale });
+    const { conversation, token } = opened;
     const ip = clientIp(request.headers);
     const encoder = new TextEncoder();
     const stream = new ReadableStream<Uint8Array>({

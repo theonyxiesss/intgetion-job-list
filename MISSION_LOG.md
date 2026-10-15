@@ -1,5 +1,105 @@
 # MISSION_LOG
 
+## [2026-10-14] — окно WalletConnect на телефоне (D425) — DONE локально
+
+- Сделано: на ширине до 767px кнопка оплаты открывает окно WalletConnect на весь экран, даже если в браузере стоит MetaMask. Внутри приложения кошелька остаётся его провайдер. На широком экране по-прежнему сначала расширение. На сайт не выкладывалось.
+- Команды проверки: `pnpm typecheck` → 0. `pnpm lint` → 0. `pnpm test` → 0 (1046 прошло, 1 пропущен). `pnpm build` → 0. В браузере на ширине 390 px при подставленном `window.ethereum` окно WalletConnect открылось на весь экран (`data-mobile-fullscreen`, слой 200). На сайт не выкладывалось.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `src/modules/billing/ui/connect-wallet.ts`, `src/modules/billing/ui/connect-wallet.test.ts`, `src/modules/billing/ui/crypto-pay.tsx`, `src/app/globals.css`, `.cursor/skills/walletconnect/SKILL.md`, `docs/DECISIONS.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, эта запись
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: нет
+- Следующая подфаза: по команде основателя
+
+## [2026-10-14] — кнопка услуг открывает ассистента (D423) — DONE локально
+
+- Сделано: на `/services` кнопка «Обговорить все детали с ассистентом» ведёт на `/chat?from=services`. Сервер принимает только это значение и ставит его в состояние общей беседы. Если сообщений ещё не было, первая реплика — от компании. Дальше ассистент представляет INTGETION и отвечает, как выполняется работа. Сумму не выдумывает. Промпт версии 16. На сайт не выкладывалось.
+- Команды проверки: `pnpm typecheck` → 0. `pnpm lint` → 0. `pnpm test` → 0 (1044 прошло, 1 пропущен). `pnpm eval` → 0. `pnpm build` → 0. В браузере http://localhost:3000/ru/services кнопка ведёт на `/ru/chat?from=services`, в чате строка «Вы перешли из раздела «Услуги»» и возврат к услугам. Вкладок поиска работы нет. Ответ модели локально не проверен: агент ответил, что сейчас недоступен.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `src/app/[locale]/services/page.tsx`, `src/app/[locale]/chat/page.tsx`, `src/components/bot/chat.tsx`, `src/app/api/bot/conversation/route.ts`, `src/app/api/bot/message/route.ts`, `src/modules/bot/prompts/system.ts`, `src/modules/bot/service/service-focus.ts`, `src/modules/bot/service/conversation.ts`, `src/modules/bot/service/tools.ts`, `src/modules/bot/service/index.ts`, `src/modules/bot/schemas/index.ts`, `src/modules/bot/__tests__/service-focus.test.ts`, `src/modules/bot/__tests__/memory.test.ts`, `src/messages/{en,ru,es,pt-BR,de,fr,it}.json`, `docs/tz/12-bot.md`, `docs/DECISIONS.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, эта запись
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: нет
+- Следующая подфаза: по команде основателя
+
+## [2026-10-14] — выкладка рабочей папки на сайт — DONE на сайте, коммита нет
+
+- Сделано: `npx vercel deploy --prod --yes` из рабочей папки. Алиас https://intgetion.com, `dpl_73u2WYWFCgtdGQosu9JwNsQE44HC`, READY. На сайте страница услуг (десять групп, 106 пунктов, форма), карьерные страницы компаний и cron импорта каждые 10 минут (D416), стиль кассы без nonce в `style-src` (D420). В git по-прежнему `057a340`: следующий push в `master` соберёт коммит и снимет эти файлы.
+- Команды проверки: перед выкладкой `pnpm typecheck` → 0, `pnpm lint` → 0, `pnpm test` → 0 (1034 прошло, 1 пропущен), `pnpm build` → 0. После: `https://intgetion.com/api/health` → 200. `/ru` содержит `dpl_73u2WYWFCgtdGQosu9JwNsQE44HC`. `/ru/services` → 200, в браузере десять групп и пункты «Дизайн» и «Коммуникации». `/company` и `/services` → 200. На `/ru/services` `style-src` с nonce. На `/ru/billing/crypto` ответ 307 и `style-src 'self' 'unsafe-inline'` без nonce.
+- P-тесты подфазы: нет
+- Миграции: `0048` не применялась. Согласованного пути на облако нет, `pnpm db:migrate` туда не ходит.
+- Изменённые файлы: выкладка всей рабочей папки. Документы: `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, эта запись
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: как применить `0048` на облако, не ломая журнал `public.schema_migrations`
+- Следующая подфаза: по команде основателя
+
+## [2026-10-14] — ещё услуги на странице (D417) — DONE локально
+
+- Сделано: в рабочем пространстве десять групп и 106 коротких пунктов на семи языках. Добавлены дизайн и коммуникации, плюс новые пункты в прежних группах. Форма на месте. На сайт не выкладывалось.
+- Команды проверки: `pnpm typecheck` → 0. `pnpm lint` → 0. `pnpm test` → 0 (1034 прошло, 1 пропущен). `pnpm build` → 0. В браузере http://127.0.0.1:3000/ru/services десять групп и 106 пунктов. На ширине 390 px страница не разъезжается.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `src/messages/{en,ru,es,pt-BR,de,fr,it}.json`, `docs/DECISIONS.md`, `docs/CURRENT.md`, эта запись
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: нет
+- Следующая подфаза: по команде основателя
+
+## [2026-10-14] — шире пул на странице услуг (D417) — DONE локально
+
+- Сделано: в рабочем пространстве восемь групп и 68 коротких пунктов из каталога компании: операции, сообщество, рост, продукт, разработка, Web3, люди, исследования. Форма на месте. На сайт не выкладывалось.
+- Команды проверки: `pnpm typecheck` → 0. `pnpm lint` → 0. `pnpm test` → 0 (1034 прошло, 1 пропущен). `pnpm build` → 0. В браузере http://127.0.0.1:3000/ru/services восемь групп и 68 пунктов. На ширине 390 px страница не разъезжается.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `src/app/[locale]/services/page.tsx`, `src/messages/{en,ru,es,pt-BR,de,fr,it}.json`, `docs/DECISIONS.md`, `docs/CURRENT.md`, эта запись
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: нет
+- Следующая подфаза: по команде основателя
+
+## [2026-10-14] — рабочее пространство на странице услуг (D417) — DONE локально
+
+- Сделано: `/services` — узкая колонка по центру. Середина — поле «Рабочее пространство»: шесть групп и короткий спектр (операции, сообщество, рост, продукт, Web3, советы), форма заявки в том же поле. На сайт не выкладывалось.
+- Команды проверки: `pnpm typecheck` → 0. `pnpm lint` → 0. `pnpm test` → 0 (1034 прошло, 1 пропущен). `pnpm build` → 0. В браузере http://127.0.0.1:3000/ru/services: поле по центру, шесть групп, форма внутри. На ширине 390 px страница не разъезжается.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `src/app/[locale]/services/page.tsx`, `src/components/company/brief-form.tsx`, `src/messages/{en,ru,es,pt-BR,de,fr,it}.json`, `docs/DECISIONS.md`, `docs/CURRENT.md`, эта запись
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: нет
+- Следующая подфаза: по команде основателя
+
+## [2026-10-14] — скилл дизайна в паре с фронтенд-скиллом (D418) — DONE
+
+- Сделано: проектный скилл `.claude/skills/intgetion-design/SKILL.md`. Его читают в том же ходе, что Vercel `react-best-practices`. Вид — из `docs/DESIGN.md`, стоимость рендера — у фронтенд-скилла. Строка таблицы в `AGENTS.md`. Копию фронтенд-скилла в репозиторий не клали. Код страниц не менялся.
+- Команды проверки: `pnpm exec prettier --write` по скиллу и документам → 0
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `.claude/skills/intgetion-design/SKILL.md`, `AGENTS.md`, `docs/DECISIONS.md`, `docs/CURRENT.md`, эта запись
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: нет
+- Следующая подфаза: по команде основателя
+
+## [2026-10-14] — отдельная страница услуг (D417) — DONE локально
+
+- Сделано: пункт «Услуги» открывает `/services`. На странице короткий список направлений и строка, что задачу вне списка тоже можно описать. Форма переехала с `/company` и получила срок сотрудничества и когда начать. Карточка Spoki ведёт туда же. Промпт не менялся. На сайт не выкладывалось. Заявка по-прежнему не сохраняется, пока `0048` не на облаке. Колонки срока добавлены в эту ещё не применённую миграцию.
+- Команды проверки: `pnpm typecheck` → 0. `pnpm lint` → 0. `pnpm test` → 0 (1034 прошло, 1 пропущен). `pnpm build` → 0, маршрут `/[locale]/services`. В браузере http://127.0.0.1:3000/ru/services: список, поля срока и старта, короткая задача получает «Опишите задачу в нескольких предложениях». Пункт меню «Услуги» открывает эту страницу. На `/ru/company` формы нет, в HTML есть ссылка `/ru/services`.
+- P-тесты подфазы: нет
+- Миграции: `0048_engagement_briefs.sql` дополнена `duration` и `start_when`. На облако не применялась
+- Изменённые файлы: `src/app/[locale]/services/page.tsx`, `src/app/[locale]/company/page.tsx`, `src/components/company/brief-form.tsx`, `src/components/shell/header.tsx`, `src/components/shell/nav-icons.tsx`, `src/components/shell/nav-icons.test.ts`, `src/app/api/company/briefs/route.ts`, `src/app/(admin)/[locale]/admin/engagements/page.tsx`, `src/app/sitemap.ts`, `src/modules/companies/engagement-brief.ts`, `src/modules/companies/service/engagement-brief.ts`, `src/modules/companies/__tests__/engagement-brief.test.ts`, `src/modules/bot/service/offers.ts`, `src/modules/bot/__tests__/tools.test.ts`, `src/db/schema/engagement.ts`, `src/db/migrations/0048_engagement_briefs.sql`, `src/messages/{en,ru,es,pt-BR,de,fr,it}.json`, `docs/DECISIONS.md`, `docs/tz/12-bot.md`, `docs/PLANS.md`, `docs/OPEN_TASKS.md`, `docs/CURRENT.md`, эта запись
+- Отклонения от ТЗ: номер D416 уже занят карьерными страницами, эта страница — D417
+- OPEN QUESTION: нет
+- Следующая подфаза: по команде основателя. Коммит и выкладка снимут старую форму на сайте только после «да»
+
+## [2026-10-14] — агрегатор: карьерные страницы компаний и место вакансии (D416) — DONE в коде
+
+- founder approved: republish allowed — Greenhouse, Lever, Ashby (карьерные страницы компаний), Adzuna, Reed, USAJobs, hh.ru. Подключены первые три; остальные ждут регистрации основателя.
+- Сделано: 39 карьерных страниц (список проверен живыми запросами), место вакансии (формат, текст, страны) в конвейере и в `jobs`, снятие пропавших со страницы вакансий, cron импорта каждые 10 минут, скилл `intgetion-import` и строка в `AGENTS.md`. На реальных ответах Stripe, Palantir и OpenAI страна определена у всех 1843 вакансий.
+- Команды проверки: см. отчёт сессии.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `src/modules/ingestion/adapters/{company-boards,live,types,himalayas,jobicy,remoteok,remotive}.ts`, `service/{ingest-fixtures,normalize,outcome}.ts`, `src/modules/jobs/service/imported-jobs.ts`, тесты, `vercel.json`, `.claude/skills/intgetion-import/SKILL.md`, `AGENTS.md`, `docs/tz/13-import.md`, `docs/DECISIONS.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, эта запись
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: нет
+- Следующая подфаза: источники с ключами после регистрации основателя
+
 ## [2026-10-14] — импорт D412 на сайте, чистка каталога — DONE
 
 - Сделано: коммит `41a88d4` (только 24 файла D412, без D413) запушен в `master`, GitHub-интеграция выложила `dpl_3CrVTzNqTqSQJbkFTtLBCAFxPD1W` на intgetion.com. Проверено: `/api/health`, `/`, `/jobs`, `/en/jobs/rss.xml` → 200, `/api/cron/import` без секрета → 404, CSP `/billing/crypto` с реле WalletConnect. В RSS 23 вакансии: 22 Jobicy и 1 своя. В облачной базе снята 131 вакансия (18 выдуманных, 113 из снимков 2026-10-04) и возвращена 171, снятая старым правилом. Ничего не удалялось. Прогон 19:30 UTC на новом коде закрыл 20 зависших прогонов; источники ещё в своём 6-часовом интервале.
@@ -10,6 +110,50 @@
 - Отклонения от ТЗ: нет
 - OPEN QUESTION: Remote OK вне канала и RSS; `/jobs/rss.xml` → 404 (было и раньше)
 - Следующая подфаза: наблюдение `import_runs` до 2026-10-16
+
+## [2026-10-14] — выкладка услуг на сайт — DONE на сайте, коммита нет
+
+- Сделано: рабочая папка выложена командой `npx vercel deploy --prod`. Выкладка `dpl_6i3hDaSccDS7uYnNdysZg46noagx` READY, алиас https://intgetion.com. На `/ru` есть «Услуги». На `/ru/company#contact` есть форма и поле бюджета. `GET /api/health` → 200. Коммита нет: в `master` по-прежнему `057a340`. Следующий push в `master` соберёт сайт из git и снимет эти файлы.
+- Команды проверки: `pnpm build` → 0 перед выкладкой. `GET https://intgetion.com/ru` → 200, `data-dpl-id` совпал. `GET https://intgetion.com/api/health` → 200. `GET https://intgetion.com/ru/company` → 200, форма на месте. В браузере та же страница: «Услуги», «Describe the task», «Approximate budget».
+- P-тесты подфазы: нет
+- Миграции: `0048` на облако не применялась. Отправка заявки на сайте не сохраняется
+- Изменённые файлы: `docs/CURRENT.md`, эта запись. Код выложен из рабочей папки, в git не входил
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: нет
+- Следующая подфаза: коммит этих файлов, иначе следующая сборка из `master` их сотрёт
+
+## [2026-10-14] — услуга почти любая, только если спросили (D415) — DONE локально
+
+- Сделано: Spoki больше не держит меню из трёх пакетов. Почти любую названную работу специалистов можно обсудить. На вопрос отвечает без карточки. Карточку заказа ставит только когда просят заказать. Сам тему не открывает: ни на приветствии, ни в поиске вакансий, ни при публикации. Цену числом не выдумывает. Промпт версии 15. На сайт не выкладывалось.
+- Команды проверки: `pnpm typecheck` → 0. `pnpm lint` → 0. `pnpm test` → 0 (1015 прошло, 1 пропущен). `pnpm eval` → 0 (файл `eval-ci.test.ts`). Живой диалог с моделью не гонял.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `src/modules/bot/prompts/system.ts`, `src/modules/bot/service/tools.ts`, `src/modules/bot/__tests__/memory.test.ts`, `docs/tz/12-bot.md`, `docs/DECISIONS.md`, `docs/PLANS.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, эта запись
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: нет
+- Следующая подфаза: по команде основателя
+
+## [2026-10-14] — услуги в меню и разговор ассистента (D414) — DONE локально
+
+- Сделано: в верхнем меню пункт «Услуги» открывает форму на `/company#contact`. В форме есть поле примерного бюджета. Spoki, промпт версии 14, для задачи вроде SMM называет пакет и четыре шага, говорит что цена зависит от объёма, сумму не выдумывает и ставит карточку на ту же форму. Почту в чате не спрашивает. Это не вакансия и не тарифы доски. На сайт не выкладывалось. Заявка по-прежнему не сохраняется, пока `0048` не на облаке.
+- Команды проверки: `pnpm typecheck` → 0. `pnpm lint` → 0. `pnpm test` → 0 (1015 прошло, 1 пропущен). `pnpm eval` → 0. `pnpm build` → 0. В браузере на http://localhost:3000/ru пункт «Услуги» открывает http://localhost:3000/ru/company#contact, на форме есть поле бюджета. Живой диалог с моделью не гонял: он пишет в общую базу.
+- P-тесты подфазы: нет
+- Миграции: `0048` дополнена колонкой `budget`, на облако не применялась
+- Изменённые файлы: меню, иконка, промпт, `offer_step` `order_service`, форма, схема и миграция, сообщения семи языков, `docs/tz/12-bot.md`, `docs/DECISIONS.md`, `docs/PLANS.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, эта запись
+- Отклонения от ТЗ: цена услуги не названа числом, потому что на странице компании её нет (D414)
+- OPEN QUESTION: как применить `0048` на облако
+- Следующая подфаза: по команде основателя
+
+## [2026-10-14] — заявка на задачу с /company (D413) — BLOCKED на миграцию
+
+- Сделано: на `/company` форма «опишите задачу» (почта или Telegram, компания по желанию). Это не вакансия. Текст страницы по-прежнему один английский. Ссылки Telegram, Discord и LinkedIn остались. Список для тех, кто читает персональные данные: `/admin/engagements`. В планы добавлены P-OPEN-LINE (одна строка, сколько вакансий открыто; без «люди ищут прямо сейчас») и P-ENGAGE-BOT (ассистент принимает ту же задачу позже, код не писался).
+- Команды проверки: `pnpm typecheck` → 0. `pnpm lint` → 0. `pnpm test` → 0 (1015 прошло, 1 пропущен). `pnpm build` → 0. В браузере `http://127.0.0.1:3000/ru/company#contact`: форма, пример про SEO, кнопка «Send the task». Короткий текст «Need SEO» не уходит на сервер и показывает «Describe the problem in a few sentences.» Живую заявку не отправлял: запись пошла бы в общую облачную базу, а таблицы там ещё нет.
+- P-тесты подфазы: нет
+- Миграции: `src/db/migrations/0048_engagement_briefs.sql` в репозитории, на облако не применялась
+- Изменённые файлы: форма, `POST /api/company/briefs`, схема и миграция, админка, `en.json` (текст компании) и ключи админки в семи каталогах, `docs/PLANS.md`, `docs/DECISIONS.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, эта запись
+- Отклонения от ТЗ: приём заявки, который D400 оставил открытым, сделан по команде основателя (D413). Лимит не добавлялся в `src/lib/rate-limit.ts` (файл чужой по PARALLEL_WORK): пять отправок в час считаются тем же счётчиком, отдельным ключом
+- OPEN QUESTION: как применить `0048` на облако после защиты `scripts/db-url.mjs`
+- Следующая подфаза: по команде основателя. Ассистент — P-ENGAGE-BOT
 
 ## [2026-10-14] — импорт: стабилизация четырёх API (D412) — DONE в коде, NOT DONE на production
 
@@ -1557,6 +1701,28 @@
 - OPEN QUESTION: в `~/.cursor/mcp.json` GitHub PAT открытым текстом в аргументах `github-mcp-server`; в этой сессии он попал в вывод инструмента. Перевыпуск токена — за основателем. Отключение нерелевантных плагинов Cursor (1inch, Clerk, Firebase и др.) — за основателем.
 - Следующая подфаза: только по команде основателя.
 
+## [2026-10-14] — security-skill (скилл безопасности проекта, D419) — NOT DONE (ждёт «да» на установку плагина)
+
+- Сделано: инвентаризация (плагины Claude Code из `claude-plugins-official`, `~/.claude/skills`, Cursor `~/.cursor/plugins/cache/cursor-public` и `~/.cursor/skills-cursor`, проектные `.claude/skills`). Написан проектный скилл `.claude/skills/intgetion-security/SKILL.md`. Строка в таблице Skills в `AGENTS.md`, строка в `.cursor/rules/spec.mdc`. Предложен к установке плагин `claude-security@claude-plugins-official`; не установлен — нужно «да» основателя.
+- Команды проверки: `pnpm exec prettier --check` по изменённым файлам — см. отчёт сессии.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `.claude/skills/intgetion-security/SKILL.md` (новый), `AGENTS.md` (одна строка таблицы), `.cursor/rules/spec.mdc`, `docs/DECISIONS.md` (D419), `MISSION_LOG.md`
+- Отклонения от ТЗ: в `docs/tz/16-security.md` написано «`dangerouslySetInnerHTML` запрещён (lint)», а в коде он есть для скрипта темы, Telegram-хеша и JSON-LD; скилл разрешает только эти постоянные случаи.
+- OPEN QUESTION: ставить ли `claude-security` (и на уровне пользователя или проекта); `security-guidance` — нет по умолчанию (D419).
+- Следующая подфаза: только по команде основателя.
+
+## [2026-10-14] — walletconnect-style (стили QR-модалки на кассе, D420) — NOT DONE (на сайт не выложено по слову основателя)
+
+- Сделано: найдена причина, почему QR WalletConnect не работает. На `/billing/crypto` живая политика — `style-src 'self' 'nonce-…' 'unsafe-inline'`; при nonce браузер игнорирует `'unsafe-inline'`, а AppKit (`@reown/appkit-ui`, `ThemeUtil.initializeTheming`) добавляет в `<head>` четыре `<style>` без nonce — они блокировались, модалка без темы. На кассе `style-src 'self' 'unsafe-inline'` без nonce; `script-src` с nonce (Next.js берёт nonce только из `script-src`). Остальные страницы без изменений. Основатель сказал не выкладывать: исправление только в рабочей папке, без коммита.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1034 прошли, 1 пропущен); `pnpm build` (с `SWC_NATIVE_BINDING_CACHE`) → 0; `vitest run src/lib/security.test.ts` → 24/24. В браузере касса не открывалась: нужен вход, пароль агент не вводит.
+- P-тесты подфазы: `security.test.ts` — в `style-src` кассы нет nonce, `script-src` с nonce и без `unsafe-inline` ✅
+- Миграции: нет
+- Изменённые файлы: `src/lib/security-headers.ts`, `src/lib/security.test.ts`, `.cursor/skills/walletconnect/SKILL.md`, `docs/DECISIONS.md` (D420), `docs/CURRENT.md`, `MISSION_LOG.md`
+- Отклонения от ТЗ: D406 описывал `'unsafe-inline'` рядом с nonce как рабочий вариант — исправлено в D420.
+- OPEN QUESTION: выкладка. Push в `master` соберёт сайт из git и снимет живую форму `/company#contact` выкладки `dpl_6i3h…` из рабочей папки.
+- Следующая подфаза: только по команде основателя.
+
 ## [2026-10-14] — design-a11y (планка доступности в скилле дизайна, D421) — DONE
 
 - Сделано: разобран `plugin87/ux-ui-agent-skills` (v2.9.8). Плагин не ставится: хуки и разрешения спорят с безопасной зоной, чужие стили — с нашим видом, остальное уже установлено (`design:*`). Навык `a11y-audit` отдельно не работает без всего набора. Планка WCAG 2.2 AA своими словами добавлена в `.claude/skills/intgetion-design/SKILL.md` (раздел Accessibility, строка в Check, триггеры в description).
@@ -1568,40 +1734,51 @@
 - OPEN QUESTION: контраст `--fg-muted` и `--line-strong` в обеих темах не замерялся; аудит страниц по `design:accessibility-review` — отдельной задачей по команде основателя.
 - Следующая подфаза: только по команде основателя.
 
-## [2026-10-15] — telegram-phone-login (D426) — NOT DONE (на сайте после пуша, с телефона ещё не проверено)
+## [2026-10-14] — walletconnect-metamask (MetaMask раньше QR, иконки кошельков, D422) — NOT DONE (ждёт «да» на коммит и выкладку)
 
-- Сделано: одно сообщение бота на код входа, повторное нажатие на сайте не подменяет код, вкладка сайта не уходит в Telegram и дожимает сессию при возврате. Текст бота не говорит, что вход уже открыт. Mini App вызывает `ready()` и ждёт данные до 5 с.
-- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1058 прошли, 1 пропущен); `pnpm build` → 0. Браузер: `/ru/login` остаётся на месте и показывает «Ждём подтверждения в Telegram…».
+- Сделано: найдены две причины. 1) `connectWallet` при непустом Project ID всегда открывал QR-модалку `@walletconnect/ethereum-provider`, которая знает только WalletConnect; установленный MetaMask не предлагался. 2) AppKit показывает иконки кошельков как `blob:` (`URL.createObjectURL` в `ApiController._fetchWalletImage`), а в `img-src` кассы `blob:` не было — на сайте его нет и сейчас. Исправлено: поиск кошелька браузера через EIP-6963 (MetaMask первым, потом `window.ethereum`), QR только без расширения или по второй кнопке `billing.payQr`; `blob:` в `img-src` только на кассе. Project ID проверен без вывода значения: `getWallets` и `getWalletImage` → 200 для `intgetion.com` и `localhost:3000`.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1039 прошли, 1 пропущен); `pnpm build` → 0 (с `SWC_NATIVE_BINDING_CACHE`; без него 1 из-за прав кеша SWC, не из-за кода); `curl` заголовков `/billing/crypto`: localhost с `blob:`, intgetion.com без.
+- P-тесты подфазы: `connect-wallet.test.ts` — MetaMask из EIP-6963 открывается без QR, QR без расширения и по выбору «телефон»; `security.test.ts` — `blob:` в `img-src` кассы и нигде больше ✅
+- Миграции: нет
+- Изменённые файлы: `src/modules/billing/ui/connect-wallet.ts`, `connect-wallet.test.ts`, `crypto-pay.tsx`, `src/lib/security-headers.ts`, `src/lib/security.test.ts`, `src/messages/{en,ru,de,es,fr,it,pt-BR}.json` (`billing.payQr`), `.cursor/skills/walletconnect/SKILL.md`, `docs/DECISIONS.md` (D422), `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `MISSION_LOG.md`
+- Отклонения от ТЗ: нет. Браузерная проверка кассы не сделана: страница требует входа, агент пароли не вводит, в браузере агента нет MetaMask.
+- OPEN QUESTION: при нескольких расширениях берётся MetaMask или первое ответившее — выбора нет (D422).
+- Следующая подфаза: только по команде основателя.
+
+## [2026-10-14] — security-audit (журнал проверок безопасности, D424) — DONE
+
+- Сделано: полный аудит по чек-листу `intgetion-security` на `c122d70` + рабочая папка (D413/D416/D417/D420/D422/D423). Заведён `docs/security/AUDIT_LOG.md` (13 областей, 13 находок: Medium 3, Low 5, Info 5). Ссылки — `docs/README.md`, скилл `intgetion-security` (читать журнал первым; описание `enable_rls_deny_all` исправлено). Открытые находки — `docs/OPEN_TASKS.md`. Код не менялся: всё значимое касается auth, billing с миграцией или лимитов (решение основателя).
+- Команды проверки: `pnpm exec prettier --check` по изменённым документам — см. отчёт сессии; `pnpm audit --prod` → нет уязвимостей; `pnpm audit` → 1 high в dev-зависимости `braces`; Supabase security advisors (чтение) — нет таблиц без RLS, 2 предупреждения; `curl -sI` на `/`, `/billing/crypto`, `/api/health`; встроенный `/security-review` — диф `c122d70` только документы, находок нет. typecheck/lint/test не запускались: код не менялся.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `docs/security/AUDIT_LOG.md` (новый), `docs/README.md`, `.claude/skills/intgetion-security/SKILL.md`, `docs/OPEN_TASKS.md`, `docs/DECISIONS.md` (D424), `docs/CURRENT.md`, `MISSION_LOG.md`
+- Отклонения от ТЗ: найдены SEC-20261014-1 (админка без MFA до `ADMIN_HOST_ONLY`), -2 (захват хэша транзакции), -3 (гостевой лимит Spoki через cookie)
+- OPEN QUESTION: включён ли `ADMIN_HOST_ONLY` на проде — значения Vercel env не читались.
+- Следующая подфаза: только по команде основателя.
+
+## [2026-10-15] — telegram-phone-login (D426) — NOT DONE (ждёт «да» на коммит и выкладку, затем проверку с телефона)
+
+- Сделано: разобраны три симптома с телефона. Два одинаковых сообщения — один `/start login_<код>` обрабатывается дважды, второе нажатие на сайте подменяет куку другим кодом. «Вход уже открыт» писалось, когда подтверждён только код в базе: на телефоне страница уходила на `t.me` и опрос замирал. Mini App не вызывал `WebApp.ready()` и ждал около секунды. Исправлено локально: одно сообщение на код, та же ссылка при повторном нажатии, вкладка сайта остаётся и дожимает вход при возврате, текст бота не обещает готовую сессию, `ready()` и ожидание до 5 с на первой странице Mini App и на `tg.html`.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1058 прошли, 1 пропущен); `pnpm build` → 0. Браузер: `http://localhost:3000/ru/login`, кнопка «Войти через Telegram» оставляет ту же страницу, кнопка блокируется, статус «Ждём подтверждения в Telegram…». Живой бот и телефон не трогались.
 - P-тесты подфазы: `telegram-login-webhook.test.ts`, `telegram-login-open.test.ts`, `telegram-web-app-boot.test.ts`, `telegram-login-wait.test.ts` ✅
 - Миграции: нет
-- Изменённые файлы: вход через бота и Mini App, `public/tg.html`, ключ `telegramOpen` в сообщениях, D426
-- Отклонения от ТЗ: нет. Пустой `username` до подтверждения значит «кнопка уже отправлена», отдельной колонки нет.
-- OPEN QUESTION: адрес меню в BotFather не читался.
+- Изменённые файлы: `src/modules/auth/service/telegram-login.ts`, `src/modules/auth/repo/telegram-login.ts`, `src/modules/auth/__tests__/telegram-login-webhook.test.ts`, `telegram-login.integration.test.ts`, `src/app/api/auth/telegram/start/route.ts`, `src/components/auth/telegram-login-button.tsx`, `telegram-login-open.ts`, `telegram-login-resume.tsx`, `telegram-mini-app.tsx`, `social-sign-in-stubs.tsx`, `src/components/settings/sign-in-methods.tsx`, `src/app/[locale]/layout.tsx`, `src/proxy.ts`, `src/proxy.test.ts`, `src/lib/telegram-login-wait.ts`, `src/lib/telegram-web-app-boot.ts`, `public/tg.html`, `src/messages/{en,ru,es,pt-BR,de,fr,it}.json`, `docs/DECISIONS.md` (D426), `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `MISSION_LOG.md`
+- Отклонения от ТЗ: нет. Пустой `username` до подтверждения означает «кнопка уже отправлена», отдельной колонки и миграции нет (D426).
+- OPEN QUESTION: адрес меню в BotFather (корень или `/tg.html`) не читался.
 - Следующая подфаза: только по команде основателя.
 
-## [2026-10-15] — telegram-iphone-webview (D427) — NOT DONE (на сайте после пуша, с телефона ещё не проверено)
+## [2026-10-15] — telegram-iphone-webview (D427) — NOT DONE (на сайт не выложено, с телефона ещё не проверено)
 
-- Сделано: обычный браузер после D426 входит. Встроенное окно Telegram на iPhone учётную запись само не брало: подписанная строка есть только на первом документе Mini App, а сессию ставил `fetch`, чью куку этот webview не хранит. Теперь первая страница отправляет строку формой и получает редирект с сессией. Кнопка входа внутри окна Telegram не подменяет страницу. Обычная ссылка в браузере Telegram учётную запись не передаёт: это не Mini App.
-- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1059 прошли, 1 пропущен); `pnpm build` → 0.
+- Сделано: обычный браузер после D426 входит. Встроенное окно Telegram на iPhone учётную запись само не брало: подписанная строка есть только на первом документе Mini App, а сессию ставил `fetch`, чью куку этот webview не хранит. Теперь первая страница отправляет строку формой и получает редирект с сессией. Кнопка входа внутри окна Telegram не подменяет страницу. Обычная ссылка в браузере Telegram учётную запись не передаёт — это не Mini App.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1059 прошли, 1 пропущен); `pnpm build` → 0. Телефон после этой правки ещё не смотрел: на сайте её нет.
 - P-тесты подфазы: `telegram-web-app-boot.test.ts` ✅
 - Миграции: нет
-- Изменённые файлы: `src/lib/telegram-web-app-boot.ts`, `src/components/auth/telegram-mini-app.tsx`, `telegram-login-button.tsx`, `mini-app-open.ts`, `src/app/api/auth/telegram/miniapp/route.ts`, `public/tg.html`, D427
+- Изменённые файлы: `src/lib/telegram-web-app-boot.ts`, `src/components/auth/telegram-mini-app.tsx`, `telegram-login-button.tsx`, `mini-app-open.ts`, `src/app/api/auth/telegram/miniapp/route.ts`, `public/tg.html`, `docs/DECISIONS.md` (D427), `docs/OPEN_TASKS.md`, `MISSION_LOG.md`
 - Отклонения от ТЗ: нет
-- OPEN QUESTION: адрес меню в BotFather по-прежнему не читался.
+- OPEN QUESTION: адрес меню в BotFather по-прежнему не читался. Токена бота в локальном `.env.local` нет.
 - Следующая подфаза: только по команде основателя.
 
-## [2026-10-15] — telegram-iphone-account (D429) — NOT DONE (на сайте после пуша, с телефона ещё не проверено)
-
-- Сделано: после D427 на сайте встроенное окно Telegram учётную запись всё ещё не привязывает. Кука сессии с телефона ставится страницей 200, а не редиректом 303. Та же подписанная строка пробуется второй раз, если первая кука не села; кнопка «Войти через Telegram» в эти две попытки не входит. Подпись HMAC принимается и без поля `signature`, и вместе с ним. Идентификатор цифрами в кавычках принимается. В лог пишется только `ok` или `invalid`.
-- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1063 прошли, 1 пропущен); `pnpm build` → 0.
-- P-тесты подфазы: `telegram.test.ts`, `telegram-web-app-boot.test.ts`, `mini-app-open.test.ts` ✅
-- Миграции: нет
-- Изменённые файлы: `src/app/api/auth/telegram/miniapp/route.ts`, `src/modules/auth/service/telegram.ts`, `src/lib/telegram-web-app-boot.ts`, `src/components/auth/telegram-mini-app.tsx`, `src/components/auth/mini-app-open.ts`, `public/tg.html`, тесты этих файлов, D429
-- Отклонения от ТЗ: нет
-- OPEN QUESTION: адрес меню в BotFather по-прежнему не читался. Токен бота на Vercel чувствительный, в чат не выводился.
-- Следующая подфаза: только по команде основателя.
-
-## [2026-10-15] — nextjs-look (D428) — NOT DONE (закоммичено, на сайт не выложено, ждёт «да» на выкладку)
+## [2026-10-15] — nextjs-look (D428) — DONE (коммит 9cefb01, на сайте dpl_3rwETid1U879ttwQZ4zaEcd4qvfd)
 
 - Сделано: по прототипу в стиле nextjs.org переделан вид всей платформы. Новые токены и шкала шрифтов в `globals.css`. Шрифты Geist и Geist Mono. Кнопки, поля, бейджи, карточки, диалоги, таблицы и тосты в `components/ui` скруглены. Обновлены шапка и подвал. Главная получила героя с белым контурным INTGETION, блок возможностей с точечными картинками, полосу тарифов и финальный призыв. Лента вакансий осталась (D332). Название белое в тёмной теме.
 - Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1059 прошли, 1 пропущен); `pnpm build` → 0; `prettier --check` по своим файлам → 0 после `--write` трёх файлов. Браузер `localhost:3000`: `/ru` на 375 и 1280, светлая и тёмная тема. По DOM: `/ru/login`, `/ru/pricing`, `/ru/for-employers`, `/ru/jobs` — ширина 375 без вылезания, Geist, кнопки-пилюли, поля 6 px. В консоли ошибки CSP про inline style и повтор имени `company-mark-*` у ViewTransition: компании с двумя вакансиями в ленте. Обе ошибки не связаны с этой правкой.
@@ -1610,34 +1787,36 @@
 - Изменённые файлы: `src/app/fonts.ts` (новый), `src/app/globals.css`, `src/app/[locale]/layout.tsx`, `src/app/(admin)/[locale]/layout.tsx`, `src/app/[locale]/page.tsx`, `src/components/home/{hero-wordmark,dot-art,landing}.tsx` (новые), `src/components/ui/{button,field,choice,badge,job-card,company-mark,dialog,feedback,table,toast,logo}.tsx`, `src/components/shell/{header,footer}.tsx`, `src/modules/companies/ui/company-form.tsx`, `src/modules/jobs/ui/hire-form.tsx`, `src/messages/*.json` (`home.landing`), `docs/DECISIONS.md` (D428), `docs/DESIGN.md`, `.claude/skills/intgetion-design/SKILL.md`, `docs/CURRENT.md`, `MISSION_LOG.md`
 - Отклонения от ТЗ: вид D140–D149 и шрифт D144 заменены решением D428 по прямому слову основателя.
 - OPEN QUESTION: в светлой теме название тёмное, не белое — белое на белом не видно.
+- Выкладка: пуш `5cd4ad72..9cefb013`. Перед пушем точный коммит выгружен в чистую папку: typecheck 0, lint 0, test 0 (1028 прошли). Vercel `success`. На https://intgetion.com/ru новый H1, Geist, белое название, синяя кнопка. GitHub CI `check` падает на `pnpm format:check` (11 файлов, в том числе `en.json` и `DESIGN.md`). Так же он падал на трёх прошлых коммитах `445a98f`, `90a2b36` и `5cd4ad7`: D428 новых ошибок формата не добавил.
+- После: коммит `32898517` отформатировал 11 файлов, CI `check` зелёный, Vercel `dpl_4wnHXNEtszX21ie3B1htmYfXYEku`. Job `database` (e2e) красный и до D428: было 41 падение на `5cd4ad7`, стало 42. Новое — `home.spec.ts` «Russian shell» ждал старый H1. Ожидания H1 в `tests/e2e/home.spec.ts` обновлены под D428 в коммите `d40a384f`. CI на нём: `check` зелёный, Vercel `success`, `database` 41 падение — столько же, сколько до D428 на `5cd4ad7`. «Russian shell» проходит. Ещё два теста главной падали и раньше: в английском две ссылки «INTGETION JOB LIST» (strict mode), в CI-базе нет блока «All jobs».
 - Следующая подфаза: только по команде основателя.
 
-## [2026-10-15] — wallet-icons (D420, D422) — NOT DONE (на сайте после пуша, с телефона ещё не проверено)
+## [2026-10-15] — telegram-iphone-account (D429) — NOT DONE (на сайт не выложено, с телефона ещё не проверено)
 
-- Сделано: на телефоне список кошельков WalletConnect показывал имена без картинок. AppKit рисует иконку из `blob:`, а политика кассы этот адрес не пускала. В `img-src` только `/billing/crypto` добавлен `blob:`. Стили модалки на кассе без nonce, чтобы `'unsafe-inline'` не глотался.
-- Команды проверки: `pnpm typecheck` → 0; `pnpm exec vitest run src/lib/security.test.ts` → 0 (24 прошли).
-- P-тесты подфазы: `security.test.ts` ✅
+- Сделано: после D427 на сайте встроенное окно Telegram учётную запись всё ещё не привязывает. Локально кука сессии с телефона ставится страницей 200, а не редиректом 303. Та же подписанная строка пробуется второй раз, если первая кука не села; кнопка «Войти через Telegram» в эти две попытки не входит. Подпись HMAC принимается и без поля `signature`, и вместе с ним. Идентификатор цифрами в кавычках принимается. В лог пишется только `ok` или `invalid`.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1063 прошли, 1 пропущен); `pnpm build` → 0. Живой телефон и бот не трогались.
+- P-тесты подфазы: `telegram.test.ts`, `telegram-web-app-boot.test.ts`, `mini-app-open.test.ts` ✅
 - Миграции: нет
-- Изменённые файлы: `src/lib/security-headers.ts`, `src/lib/security.test.ts`, `docs/DECISIONS.md` (D420, D422), `docs/CURRENT.md`, `MISSION_LOG.md`
+- Изменённые файлы: `src/app/api/auth/telegram/miniapp/route.ts`, `src/modules/auth/service/telegram.ts`, `src/lib/telegram-web-app-boot.ts`, `src/components/auth/telegram-mini-app.tsx`, `src/components/auth/mini-app-open.ts`, `public/tg.html`, тесты этих файлов, `docs/DECISIONS.md` (D429), `docs/OPEN_TASKS.md`, `docs/CURRENT.md`, `docs/security/AUDIT_LOG.md`, `MISSION_LOG.md`
 - Отклонения от ТЗ: нет
-- OPEN QUESTION: нет
+- OPEN QUESTION: адрес меню в BotFather по-прежнему не читался. Токен бота на Vercel чувствительный, в чат не выводился.
 - Следующая подфаза: только по команде основателя.
 
-## [2026-10-15] — spoki-mobile-nav (D430) — NOT DONE (на сайте после пуша, с телефона ещё не проверено)
+## [2026-10-15] — telegram-iphone-account (D429) — DONE
 
-- Сделано: на телефоне Spoki был и в нижней полосе, и в шапке. Пока нижняя полоса на странице и ширина до 767px, кнопка в шапке скрыта. С 768px шапка снова открывает чат.
-- Команды проверки: правку собрал отдельный проход, `pnpm typecheck`, `pnpm lint` и `pnpm test` → 0 (1063 прошли, 1 пропущен). Браузер: гость на 390px, маркер нижней полосы прячет кнопку шапки; с 768px она видна.
-- P-тесты подфазы: нет
+- Сделано: основатель подтвердил с телефона, что встроенное окно Telegram привязывает учётную запись. Выкладка `dpl_BrekfwaV7XgD8U3YonQWKUtsFJXn`, коммит `5cd4ad7`.
+- Команды проверки: живой телефон основателя. Локальные `typecheck`, `lint`, `test`, `build` прошли до пуша, см. запись выше.
+- P-тесты подфазы: те же, что у выкладки
 - Миграции: нет
-- Изменённые файлы: `src/components/shell/header.tsx`, `src/app/globals.css`, `docs/DECISIONS.md` (D430), `docs/CURRENT.md`, `MISSION_LOG.md`
+- Изменённые файлы: статус в `docs/OPEN_TASKS.md`, `docs/CURRENT.md`, `docs/DECISIONS.md` (D429), `MISSION_LOG.md`
 - Отклонения от ТЗ: нет
-- OPEN QUESTION: нет
+- OPEN QUESTION: адрес меню в BotFather по-прежнему не читался.
 - Следующая подфаза: только по команде основателя.
 
-## [2026-10-15] — chat-keyboard (D431) — NOT DONE (на сайте после пуша, с телефона ещё не проверено)
+## [2026-10-15] — chat-keyboard (D431) — NOT DONE (на сайт не выложено)
 
 - Сделано: на телефоне, пока человек пишет Spoki, нижнее меню уходит и поле садится на клавиатуру. Заголовок чата и строка про ошибки на это время скрываются. Полоса «привязать почту» на странице чата этой ширины больше не торчит из-под меню. После закрытия клавиатуры меню возвращается.
-- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1071 прошли, 1 пропущен) на дереве с этой правкой. Выкладка — этот пуш.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1071 прошли, 1 пропущен). В браузере на 390×844 флаг `data-keyboard` прячет меню и заголовок, низ колонки `0`, под полем 18 px. Живую клавиатуру iPhone этот браузер не поднимает.
 - P-тесты подфазы: `src/components/bot/keyboard-inset.test.ts` ✅
 - Миграции: нет
 - Изменённые файлы: `src/app/globals.css`, `src/components/bot/chat.tsx`, `src/components/bot/keyboard-inset.ts`, `src/components/bot/keyboard-inset.test.ts`, `docs/DECISIONS.md` (D431), `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `MISSION_LOG.md`
@@ -1656,13 +1835,25 @@
 - OPEN QUESTION: нет. LCP главной вынесен в отдельную задачу (решение основателя 2026-10-15), см. OPEN_TASKS.
 - Следующая подфаза: только по команде основателя.
 
-## [2026-10-15] — phone-menu-wallet — NOT DONE (на сайте после пуша, с телефона ещё не проверено)
+## [2026-10-15] — phone-menu-wallet — NOT DONE (на сайте `dpl_DdZN6AnU6wgHLce6BJpjUz3t9pwE`, с телефона ещё не проверено)
 
-- Сделано: меню телефона выстроено по приоритету, знаки перерисованы одной семьёй. Окно WalletConnect на телефоне на весь экран, без размытия, поиск на своей строке. Solana и Tron с кассы скрыты, оплата только в сетях EVM.
+- Сделано: меню телефона по приоритету и новые знаки (`28d098de`). Окно кошелька на весь экран без размытия, Solana и Tron скрыты (`be995b8e`).
 - Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1077 прошли, 1 пропущен); `pnpm build` → 0.
-- P-тесты подфазы: `src/components/shell/nav-icons.test.ts` ✅, `src/modules/billing/ui/connect-wallet.test.ts` ✅, `src/lib/billing/non-evm/non-evm.test.ts` ✅
+- P-тесты подфазы: nav-icons, connect-wallet, non-evm ✅
 - Миграции: нет
-- Изменённые файлы: `src/components/shell/header.tsx`, `src/components/shell/nav-icons.tsx`, `src/components/shell/nav-icons.test.ts`, `src/modules/billing/ui/connect-wallet.ts`, `src/modules/billing/ui/connect-wallet.test.ts`, `src/app/globals.css`, `src/lib/billing/non-evm/networks.ts`, `src/lib/billing/non-evm/non-evm.test.ts`, `src/app/[locale]/billing/crypto/page.tsx`, `.cursor/skills/walletconnect/SKILL.md`, `docs/DECISIONS.md` (D432, D433), `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `MISSION_LOG.md`
+- Изменённые файлы: меню, connect-wallet, globals.css, networks.ts, касса, скилл WalletConnect, D432 и D433
 - Отклонения от ТЗ: нет
 - OPEN QUESTION: нет
+- Следующая подфаза: только по команде основателя.
+
+## [2026-10-15] — home-lcp — NOT DONE (правка лежит локально; бюджет 2500 ею не достигается, нужен выбор основателя и «да» на ветку)
+
+- Сделано: разбор LCP главной (D434). Надпись героя не опаздывает: она в первом кадре с текстом. Lighthouse (lantern) считает в LCP весь HTML, шрифты и весь JS Next, выполненный до этого кадра. D428 добавил 66 КБ шрифтов в предзагрузке и ~37 КБ разметки точек дважды. Правка без смены вида: предзагрузка только Geist Latin (`src/app/fonts.ts`), точечные картинки узором (`src/components/home/dot-art.tsx`), адреса каталога и вакансии без `/en` в `scripts/ci-ui.sh` (шаг иначе падал на «no public job to measure»).
+- Команды проверки: `pnpm typecheck` → 0; eslint на изменённых файлах → 0; prettier на изменённых → 0; `bash -n scripts/ci-ui.sh` → 0; `pnpm test` → 0 (1077 прошли, 1 пропущен); production-сборка HEAD + правка в отдельной копии → 0. `pnpm lint` и `pnpm build` в общей папке не запускались: там чужие незакоммиченные правки, сборка проверена на копии HEAD. CI не запускался: пуш ветки требует «да» основателя.
+- Замеры (Lighthouse 12.8.2, флаги CI, системный Chrome, лента 5 вакансий — документ как в CI): главная HEAD 3426 → правка 3201 мс (медиана из 5). Локально всё на ~480 мс выше CI → в CI ожидается ~2740. Каталог 3859 и вакансия 3605 мс на HEAD (бюджет 4000).
+- Попутно: на проде `https://intgetion.com/` и `/en` любой браузер получает страницу Mini App (D322, D426) и ждёт до 5 с данных Telegram, прежде чем уйти на `/?tgb=1`. Это отдельная задача.
+- Миграции: нет
+- Изменённые файлы: `src/app/fonts.ts`, `src/components/home/dot-art.tsx`, `scripts/ci-ui.sh`, D434, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`
+- Отклонения от ТЗ: нет
+- OPEN QUESTION: как довести главную до 2500 — сменить вид (шрифт над первым экраном), пересмотреть бюджет D41 или отдельная работа над клиентским JS. Решение основателя.
 - Следующая подфаза: только по команде основателя.

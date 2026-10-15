@@ -1,16 +1,19 @@
 import { Geist, Geist_Mono } from "next/font/google";
 
-// Geist for all text and Geist Mono for figures (D428). Cyrillic is loaded by
-// unicode-range only when a page needs it; "swap" keeps text visible.
+// Geist for all text and Geist Mono for figures (D428). Only Geist Latin is
+// preloaded: every preloaded file counts against the home LCP budget (D144,
+// D434). Cyrillic and Mono still load by unicode-range when a page uses them;
+// "swap" keeps text visible meanwhile.
 export const geist = Geist({
-  subsets: ["latin", "cyrillic"],
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-geist",
 });
 
 export const geistMono = Geist_Mono({
-  subsets: ["latin", "cyrillic"],
+  subsets: ["latin"],
   display: "swap",
+  preload: false,
   variable: "--font-geist-mono",
 });
 

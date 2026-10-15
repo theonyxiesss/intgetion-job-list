@@ -96,6 +96,8 @@ Pick the fewest skills the task needs (usually 1–3), name them in the plan, an
 | Crypto checkout, WalletConnect, the pay QR      | `.cursor/skills/walletconnect/SKILL.md` (project skill, D406)                                                                                                                |
 | Telegram bot, webhook, Spoki in the bot         | `.claude/skills/intgetion-telegram-bot/SKILL.md` (project, D410)                                                                                                             |
 | Telegram login, Mini App, alerts, the channel   | `.claude/skills/intgetion-telegram/SKILL.md` (project, D410)                                                                                                                 |
+| Job import, aggregator sources, import cron     | `.claude/skills/intgetion-import/SKILL.md` (project, D416)                                                                                                                   |
+| Security: headers, CSP, auth, RLS, secrets      | `.claude/skills/intgetion-security/SKILL.md` (project, D419); review: Claude Code `/security-review`, Cursor `review-security`                                               |
 
 No plugin skill covers matching (`docs/how-it-works/matching.md`). The site bot and Telegram are the project skills `intgetion-telegram-bot` and `intgetion-telegram` (`docs/how-it-works/bot.md`).
 

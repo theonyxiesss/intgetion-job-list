@@ -10,7 +10,7 @@
     },
     {
       "path": "/api/cron/import",
-      "schedule": "30 * * * *"
+      "schedule": "*/10 * * * *"
     },
     {
       "path": "/api/cron/trusted",

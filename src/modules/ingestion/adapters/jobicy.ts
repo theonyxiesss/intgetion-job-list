@@ -83,6 +83,7 @@ export const jobicySource: LiveSource = {
   minIntervalMs: hours(6),
   newPerRun: 15,
   staleAfterMs: LIVE_STALE_AFTER_MS,
+  feed: "window",
   async fetch(fetchImpl) {
     const body = (await fetchJson(JOBICY_JOBS_URL, fetchImpl)) as {
       jobs?: unknown;

@@ -14,6 +14,15 @@ export type RawImportedJob = {
   skills: string[];
   applyUrl: string;
   expiresAt: string | null;
+  /**
+   * Place, only when the source states it (D416). Without it the job is
+   * remote with no country, as for the remote-only boards.
+   */
+  workFormat?: "remote" | "hybrid" | "onsite";
+  /** City or region text as the source writes it. */
+  location?: string | null;
+  /** ISO 3166-1 alpha-2 codes of the countries the job is in or open to. */
+  countries?: string[];
 };
 
 export interface ImportAdapter {

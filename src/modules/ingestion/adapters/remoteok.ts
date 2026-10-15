@@ -66,6 +66,7 @@ export const remoteOkSource: LiveSource = {
   minIntervalMs: hours(6),
   newPerRun: 15,
   staleAfterMs: LIVE_STALE_AFTER_MS,
+  feed: "window",
   async fetch(fetchImpl) {
     // The first element is the legal notice; it has no url and is dropped.
     return mapRows(

@@ -89,6 +89,7 @@ export const himalayasSource: LiveSource = {
   minIntervalMs: hours(6),
   newPerRun: 15,
   staleAfterMs: LIVE_STALE_AFTER_MS,
+  feed: "window",
   async fetch(fetchImpl) {
     const jobs: RawImportedJob[] = [];
     for (let page = 0; page < PAGES; page += 1) {

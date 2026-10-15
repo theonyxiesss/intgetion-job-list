@@ -41,7 +41,8 @@ const {
 } = await import("../service/ingest-fixtures");
 const { fixtureImportAllowed, FIXTURES_NEED_LOCAL_DATABASE } =
   await import("../service/fixture-guard");
-const { isStaleEverywhere } = await import("../service/outcome");
+const { isGoneFromFullFeed, isStaleEverywhere } =
+  await import("../service/outcome");
 
 const now = new Date("2026-10-14T12:00:00Z");
 const CLOUD_DB = "postgresql://app:secret@pooler.supabase.invalid:6543/db";
@@ -63,7 +64,11 @@ function record(externalId: string): RawImportedJob {
   };
 }
 
-function live(name: string, records: RawImportedJob[] = []): LiveSource {
+function live(
+  name: string,
+  records: RawImportedJob[] = [],
+  feed: LiveSource["feed"] = "window",
+): LiveSource {
   return {
     sourceName: name,
     kind: "api",
@@ -71,6 +76,7 @@ function live(name: string, records: RawImportedJob[] = []): LiveSource {
     minIntervalMs: hours(6),
     newPerRun: 15,
     staleAfterMs: days(30),
+    feed,
     fetch: vi.fn(async () => records),
   };
 }
@@ -280,6 +286,108 @@ describe("live import runs (D412)", () => {
       ([input]) => input.jobId,
     );
     expect(targets).toEqual([undefined, "job-Engineer same"]);
+  });
+});
+
+describe("company boards are whole lists (D416)", () => {
+  const runAt = now;
+  const earlier = new Date("2026-10-13T12:00:00Z");
+
+  it("expires a job the board no longer lists, but not one another source still shows", async () => {
+    repo.sourceRowsNotSeenSince.mockResolvedValue([
+      { jobId: "gone", lastSeenAt: earlier },
+      { jobId: "elsewhere", lastSeenAt: earlier },
+    ]);
+    repo.sourceRowsOfJobs.mockResolvedValue([
+      { jobId: "gone", sourceId: "src-Board", lastSeenAt: earlier },
+      { jobId: "elsewhere", sourceId: "src-Board", lastSeenAt: earlier },
+      {
+        jobId: "elsewhere",
+        sourceId: "src-Feed",
+        lastSeenAt: new Date("2026-10-12T00:00:00Z"),
+      },
+    ]);
+
+    await runLiveImports({
+      sources: [live("Board", [record("still-open")], "full")],
+      now: () => runAt,
+      resolveSkill: async () => null,
+    });
+
+    // Asked for rows unseen since this run, not since the 30-day cutoff.
+    expect(repo.sourceRowsNotSeenSince).toHaveBeenCalledWith(
+      "src-Board",
+      runAt,
+    );
+    expect(jobsService.expireImportedJobs).toHaveBeenCalledWith(
+      ["gone"],
+      "not_seen_within_window",
+    );
+  });
+
+  it("treats an empty board as a fault and only applies the window", async () => {
+    await runLiveImports({
+      sources: [live("Empty", [], "full")],
+      now: () => runAt,
+      resolveSkill: async () => null,
+    });
+    expect(repo.sourceRowsNotSeenSince).toHaveBeenCalledWith(
+      "src-Empty",
+      new Date(runAt.getTime() - days(30)),
+    );
+  });
+
+  it("keeps every listed known job seen, beyond the 500 written in one run", async () => {
+    const many = Array.from({ length: 520 }, (_, index) =>
+      record(`job-${index}`),
+    );
+    repo.findLinkedJobIds.mockResolvedValue(
+      new Map(many.map((job) => [job.externalId, `id-${job.externalId}`])),
+    );
+    await runLiveImports({
+      sources: [live("Big", many, "full")],
+      now: () => runAt,
+      resolveSkill: async () => null,
+      timeBudgetMs: 0,
+    });
+    const touched = repo.touchSourceRows.mock.calls[0]?.[1] as string[];
+    expect(touched).toHaveLength(520);
+    expect(touched).toContain("job-519");
+  });
+
+  it("isGoneFromFullFeed needs this board to have missed it and no fresh other source", () => {
+    const cutoff = new Date(runAt.getTime() - days(30));
+    expect(
+      isGoneFromFullFeed(
+        [{ lastSeenAt: earlier, currentSource: true }],
+        runAt,
+        cutoff,
+      ),
+    ).toBe(true);
+    expect(
+      isGoneFromFullFeed(
+        [{ lastSeenAt: runAt, currentSource: true }],
+        runAt,
+        cutoff,
+      ),
+    ).toBe(false);
+    expect(
+      isGoneFromFullFeed(
+        [
+          { lastSeenAt: earlier, currentSource: true },
+          { lastSeenAt: earlier, currentSource: false },
+        ],
+        runAt,
+        cutoff,
+      ),
+    ).toBe(false);
+    expect(
+      isGoneFromFullFeed(
+        [{ lastSeenAt: earlier, currentSource: false }],
+        runAt,
+        cutoff,
+      ),
+    ).toBe(false);
   });
 });
 

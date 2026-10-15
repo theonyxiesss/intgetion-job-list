@@ -13,6 +13,7 @@ export const OFFER_ACTIONS = [
   "pricing",
   "register",
   "post_job",
+  "order_service",
 ] as const;
 
 export type OfferAction = (typeof OFFER_ACTIONS)[number];
@@ -45,5 +46,6 @@ export function offerPath(
   if (action === "post_job") {
     return signedIn ? RETURN_PATHS["post-job"] : "/login?next=post-job";
   }
+  if (action === "order_service") return "/services";
   return null;
 }

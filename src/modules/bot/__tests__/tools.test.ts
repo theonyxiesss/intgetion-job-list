@@ -189,6 +189,8 @@ describe("bot history (7A)", () => {
     expect(offerPath("pay_plus", false)).toBe("/login?next=billing-plus");
     expect(offerPath("pay_team", true)).toBe("/billing/crypto?plan=team");
     expect(offerPath("register", true)).toBeNull();
+    expect(offerPath("order_service", false)).toBe("/services");
+    expect(offerPath("order_service", true)).toBe("/services");
     const signedIn = await runTool(user, "offer_step", { action: "pay_team" });
     expect(signedIn.client).toEqual({
       kind: "offer",

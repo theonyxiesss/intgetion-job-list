@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { importedStatusAfterFeed } from "../service/imported-jobs";
+import {
+  importedPlace,
+  importedStatusAfterFeed,
+} from "../service/imported-jobs";
 
 describe("status an import leaves behind (D412)", () => {
   it("never brings back a job a person removed, closed or paused", () => {
@@ -68,5 +71,48 @@ describe("status an import leaves behind (D412)", () => {
         sensitive: false,
       }),
     ).toBe("expired");
+  });
+});
+
+describe("place an import writes (D416)", () => {
+  it("puts an office job in its country and keeps a remote one open to its countries", () => {
+    expect(
+      importedPlace({
+        workFormat: "onsite",
+        location: "Dublin",
+        countries: ["IE"],
+      }),
+    ).toEqual({
+      workFormat: "onsite",
+      location: "Dublin",
+      locationCountry: "IE",
+      countryRestrictions: null,
+    });
+    expect(
+      importedPlace({
+        workFormat: "remote",
+        location: "Remote - US",
+        countries: ["US", "CA"],
+      }),
+    ).toEqual({
+      workFormat: "remote",
+      location: "Remote - US",
+      locationCountry: null,
+      countryRestrictions: ["US", "CA"],
+    });
+  });
+
+  it("publishes an office job without a place as remote, and drops bad codes", () => {
+    expect(importedPlace({ workFormat: "hybrid", location: " " })).toEqual({
+      workFormat: "remote",
+      location: null,
+      locationCountry: null,
+      countryRestrictions: null,
+    });
+    expect(importedPlace({}).workFormat).toBe("remote");
+    expect(
+      importedPlace({ workFormat: "remote", countries: ["usa", "U1"] })
+        .countryRestrictions,
+    ).toBeNull();
   });
 });

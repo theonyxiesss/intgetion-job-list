@@ -132,6 +132,7 @@
     "chatWithAgent": "Conversar com o agente",
     "bottom": "Seções principais",
     "pricing": "Preços",
+    "services": "Serviços",
     "postJob": "Publicar vaga",
     "myJobs": "Minhas vagas",
     "company": "Empresa"
@@ -796,7 +797,21 @@
         "cis": "CEI"
       }
     },
-    "navBriefs": "Resumos"
+    "navBriefs": "Resumos",
+    "navEngagements": "Tarefas",
+    "engagements": {
+      "title": "Tarefas recebidas",
+      "intro": "Problemas descritos na página de serviços. Não são vagas.",
+      "empty": "Ainda não há tarefas.",
+      "pending": "A lista ainda não está no banco.",
+      "when": "Recebida",
+      "who": "Responder para",
+      "org": "Organização",
+      "budget": "Orçamento",
+      "duration": "Duração",
+      "start": "Início",
+      "task": "Tarefa"
+    }
   },
   "employerJobs": {
     "title": "Suas vagas",
@@ -1507,6 +1522,10 @@
       "discussing": "Falando de: {title} — {company}",
       "back": "Voltar à vaga"
     },
+    "serviceFocus": {
+      "line": "Você veio de Serviços. O Spoki fala pela empresa.",
+      "back": "Voltar aos serviços"
+    },
     "intro": "Uma conversa que aprende que trabalho você quer e continua procurando.",
     "log": "Conversa",
     "you": "Você",
@@ -1630,6 +1649,11 @@
         "title": "Publicar",
         "text": "Publicar continua grátis no Start.",
         "action": "Publicar uma vaga"
+      },
+      "order_service": {
+        "title": "Pedir uma equipe",
+        "text": "Descreva o problema. O preço vem depois do escopo.",
+        "action": "Descrever a tarefa"
       }
     }
   },
@@ -2196,6 +2220,98 @@
       }
     }
   },
+  "services": {
+    "metaTitle": "Serviços — uma equipe para quase qualquer tarefa",
+    "metaDescription": "Descreva a tarefa. A INTGETION monta uma equipe e informa o preço quando o escopo está claro.",
+    "title": "Quase qualquer tarefa. Uma equipe.",
+    "lead": "Diga o que precisa ser feito. Montamos especialistas para o resultado, sem uma contratação fixa. O preço depende da equipe, do escopo e do prazo. Informamos depois do pedido.",
+    "workspace": "Espaço de trabalho",
+    "listTitle": "O que podemos assumir",
+    "groups": [
+      {
+        "name": "Operações",
+        "items": ["Suporte", "Sucesso do cliente", "Suporte técnico", "Help desk", "Chat", "Moderação", "Assistência", "Documentação", "Integração", "Agenda", "Base de conhecimento", "Back office"]
+      },
+      {
+        "name": "Comunidade",
+        "items": ["Comunidade", "Redes", "Conteúdo", "Textos", "Vídeo", "Engajamento", "Newsletter", "Podcast", "Eventos", "Tradução", "Localização", "Conteúdo multilíngue", "Comunidade local"]
+      },
+      {
+        "name": "Crescimento",
+        "items": ["SEO", "Mídia paga", "SMM", "Crescimento no Telegram", "E-mail", "Influenciadores", "Lançamento", "Vendas", "Parcerias", "Afiliados", "Desenvolvimento de negócios", "Contas", "Operações de receita", "CRM", "Relações públicas", "Mídia", "Marca", "Análise"]
+      },
+      {
+        "name": "Produto",
+        "items": ["Gestão de produto", "Estratégia", "Roteiro", "UX/UI", "Protótipos", "Testes com pessoas", "Pesquisa de produto", "MVP", "QA"]
+      },
+      {
+        "name": "Desenvolvimento",
+        "items": ["Web", "Frontend", "Backend", "Full-stack", "Mobile", "API", "Integrações", "DevOps", "Ferramentas internas", "Engenharia Web3"]
+      },
+      {
+        "name": "Web3",
+        "items": ["Contratos inteligentes", "Protocolo", "Docs do protocolo", "Ecossistema do token", "DAO", "Governança", "Crescimento do ecossistema", "Embaixadores", "KOL", "Airdrops", "Lista de espera", "Grants", "Comunidade NFT", "Holders", "Discord e Telegram", "Conteúdo cripto"]
+      },
+      {
+        "name": "Pessoas",
+        "items": ["Busca de talentos", "Recrutamento", "Entrevistas", "Equipes remotas", "Formação de equipe", "Contratados", "Marca empregadora", "Operações da equipe", "Forma da equipe"]
+      },
+      {
+        "name": "Pesquisa",
+        "items": ["Mercado", "Concorrentes", "Clientes", "Entrevistas", "Ecossistema", "Tendências", "Pesquisa de preço", "Relatórios", "Inteligência de negócio"]
+      },
+      {
+        "name": "Design",
+        "items": ["Interface", "Identidade", "Motion", "Ilustração", "Sistema de design"]
+      },
+      {
+        "name": "Comunicação",
+        "items": ["Imprensa", "Anúncios", "Notícias internas", "Palestras", "Notas de crise"]
+      }
+    ],
+    "else": "Se a sua tarefa não está na lista, descreva mesmo assim.",
+    "chat": "Falar de todos os detalhes com o assistente",
+    "about": "Como a equipe trabalha",
+    "form": {
+      "title": "Descreva a tarefa",
+      "lead": "Não é preciso contratar alguém para o quadro. Conte o problema, por exemplo o SEO de um produto, e uma equipe de especialistas trabalha pelo resultado.",
+      "task": "A tarefa",
+      "taskHint": "O que precisa ser feito e como fica o resultado.",
+      "reply": "Como falar com você",
+      "replyHint": "E-mail ou Telegram",
+      "org": "Empresa (opcional)",
+      "budget": "Orçamento aproximado (opcional)",
+      "budgetHint": "Uma faixa basta. O preço vem depois de entendermos o escopo.",
+      "budgetLong": "Deixe o orçamento em uma nota curta.",
+      "duration": "Por quanto tempo pretende colaborar",
+      "durationHint": "Algumas semanas, alguns meses ou de forma contínua.",
+      "durationLong": "Deixe o prazo em uma nota curta.",
+      "start": "Quando começar",
+      "startHint": "O quanto antes, uma data ou ainda sem certeza.",
+      "startLong": "Deixe o início em uma nota curta.",
+      "send": "Enviar a tarefa",
+      "sending": "Enviando",
+      "done": "Recebido. Responderemos no contato que você deixou.",
+      "error": "Ainda não foi possível salvar. Escreva no Telegram, Discord ou LinkedIn abaixo.",
+      "taskShort": "Descreva a tarefa em algumas frases.",
+      "replyBad": "Informe um e-mail ou um nome no Telegram.",
+      "trap": "Site"
+    },
+    "links": [
+      {
+        "label": "Telegram",
+        "href": "https://t.me/theonyxis"
+      },
+      {
+        "label": "Discord",
+        "href": "https://discord.com/users/theonyxis"
+      },
+      {
+        "label": "LinkedIn",
+        "href": "https://www.linkedin.com/company/intgetion"
+      }
+    ]
+  },
   "email": {
     "fallback": "Se o botão não funcionar, copie este link no seu navegador:",
     "footerAccount": "Você recebeu este e-mail porque este endereço é usado em uma conta do INTGETION JOB LIST.",
@@ -2275,6 +2391,7 @@
     "usdCoin": "USD Coin",
     "tether": "Tether",
     "payNow": "Pagar ${amount} {token}",
+    "payQr": "Pagar com uma carteira no celular (QR)",
     "baseNote": "Na Base só é aceito USDC.",
     "checkWallet": "Confira este endereço na carteira antes de aprovar.",
     "connect": "Conectar carteira",

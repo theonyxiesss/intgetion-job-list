@@ -73,6 +73,8 @@ export type BotState = {
   passedJobIds?: string[];
   /** Whether the shown vacancy suits them. A yes is not an application. */
   verdict?: "suits" | "declined";
+  /** This general thread was opened from the Services page (D423). */
+  topic?: "services";
 };
 
 export type ToolContext = {
@@ -208,7 +210,7 @@ export const TOOLS: readonly BotTool[] = [
   tool({
     name: "offer_step",
     description:
-      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, or post_job. Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet.",
+      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, or order_service. Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet. Use order_service only after they ask to order a managed team or leave the task. Do not use it to answer a question about a service.",
     input: z.object({ action: z.enum(OFFER_ACTIONS) }).strict(),
     access: "guest",
     confirm: never,

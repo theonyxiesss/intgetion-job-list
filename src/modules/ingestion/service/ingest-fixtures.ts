@@ -2,6 +2,7 @@ import { matchesScamPattern } from "@/config/scam-patterns";
 import { expireImportedJobs, saveImportedJob } from "@/modules/jobs/service";
 import { normalizeSkill } from "@/modules/taxonomy/service";
 import { apiFixtureAdapter } from "../adapters/api-fixture";
+import { COMPANY_BOARD_SOURCES } from "../adapters/company-boards";
 import { himalayasSource } from "../adapters/himalayas";
 import { jobicySource } from "../adapters/jobicy";
 import { withinCreateBudget, type LiveSource } from "../adapters/live";
@@ -18,6 +19,7 @@ import {
 import { normalizeImportedJob, type SkillResolver } from "./normalize";
 import {
   decideOutcome,
+  isGoneFromFullFeed,
   isMissingEverywhere,
   isStaleEverywhere,
 } from "./outcome";
@@ -38,6 +40,8 @@ export const LIVE_SOURCES: readonly LiveSource[] = [
   himalayasSource,
   jobicySource,
   remoteOkSource,
+  // D416: one source per company career board.
+  ...COMPANY_BOARD_SOURCES,
 ];
 
 /** A source is imported at most once an hour (section 7, cron ≥ 1 h). */
@@ -205,17 +209,18 @@ async function importSource(
   const startedAt = deps.clock();
   let partial = false;
   try {
-    const loaded = (await deps.load(adapter)).slice(0, MAX_RECORDS_PER_RUN);
+    const listed = await deps.load(adapter);
+    // Every listed known job is still open, beyond the 500 written too.
     const linked = await repo.findLinkedJobIds(source.id, [
-      ...new Set(loaded.map((record) => record.externalId.trim())),
+      ...new Set(listed.map((record) => record.externalId.trim())),
     ]);
+    await repo.touchSourceRows(source.id, [...linked.keys()], now);
+    const loaded = listed.slice(0, MAX_RECORDS_PER_RUN);
     const records =
       deps.createLimit === undefined
         ? loaded
         : withinCreateBudget(loaded, new Set(linked.keys()), deps.createLimit);
     counters.fetched = records.length;
-    // Still listed, so still open, even if the budget stops before its turn.
-    await repo.touchSourceRows(source.id, [...linked.keys()], now);
     // New jobs first: a known one was just marked as seen.
     const isKnown = (record: RawImportedJob) =>
       linked.has(record.externalId.trim());
@@ -275,6 +280,9 @@ async function importSource(
         skillIds: job.skillIds,
         sectors: job.sectors,
         seniority: job.seniority,
+        workFormat: job.workFormat,
+        location: job.location,
+        countries: job.countries,
         applyUrl: job.applyUrl,
         expiresAt: job.expiresAt ? new Date(job.expiresAt) : null,
         status: outcome.status,
@@ -298,6 +306,8 @@ async function importSource(
         source.id,
         now,
         deps.live.staleAfterMs,
+        // D416: a whole board that lists nothing is a fault, not news.
+        deps.live.feed === "full" && listed.length > 0,
       );
     } else if (!partial) {
       // «Missing from the feed» needs the whole feed read.
@@ -334,10 +344,18 @@ async function expireStale(
   sourceId: string,
   now: Date,
   staleAfterMs: number,
+  fullFeed = false,
 ): Promise<number> {
   const cutoff = new Date(now.getTime() - staleAfterMs);
-  const unseen = await repo.sourceRowsNotSeenSince(sourceId, cutoff);
-  const seenByJob = new Map<string, { lastSeenAt: Date }[]>();
+  // A full board lists every open job, so anything it did not list now is gone.
+  const unseen = await repo.sourceRowsNotSeenSince(
+    sourceId,
+    fullFeed ? now : cutoff,
+  );
+  const seenByJob = new Map<
+    string,
+    { lastSeenAt: Date; currentSource: boolean }[]
+  >();
   if (unseen.length) {
     const rows = await repo.sourceRowsOfJobs([
       ...new Set(unseen.map((row) => row.jobId)),
@@ -345,12 +363,19 @@ async function expireStale(
     for (const row of rows) {
       seenByJob.set(row.jobId, [
         ...(seenByJob.get(row.jobId) ?? []),
-        { lastSeenAt: row.lastSeenAt },
+        {
+          lastSeenAt: row.lastSeenAt,
+          currentSource: row.sourceId === sourceId,
+        },
       ]);
     }
   }
   const stale = [...seenByJob.entries()]
-    .filter(([, seen]) => isStaleEverywhere(seen, cutoff))
+    .filter(([, seen]) =>
+      fullFeed
+        ? isGoneFromFullFeed(seen, now, cutoff)
+        : isStaleEverywhere(seen, cutoff),
+    )
     .map(([jobId]) => jobId);
   const pastExpiry = await repo.sourceJobsPastExpiry(sourceId, now);
   return expireImportedJobs(
