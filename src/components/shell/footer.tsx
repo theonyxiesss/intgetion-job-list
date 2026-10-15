@@ -1,18 +1,26 @@
 import { useTranslations } from "next-intl";
 import { Suspense } from "react";
-import { Logo, navFade } from "@/components/ui";
+import { Logo, cn, navFade } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { SCRAPER_TRAP_PATH } from "@/modules/seo/site";
 import { footerGroups } from "./footer-groups";
 import { LocaleSwitch } from "./locale-switch";
 
-/** Site footer (DESIGN.md 8.11). */
-export function Footer() {
+/**
+ * Site footer (DESIGN.md 8.11). On a phone it stays on the home page only:
+ * other pages keep the bottom bar and drop this block (max-width 767px).
+ */
+export function Footer({ showOnPhone = false }: { showOnPhone?: boolean }) {
   const t = useTranslations();
   const year = new Date().getUTCFullYear();
 
   return (
-    <footer className="mt-auto border-t border-line">
+    <footer
+      className={cn(
+        "mt-auto border-t border-line",
+        showOnPhone ? "" : "max-[767px]:hidden",
+      )}
+    >
       <div className="mx-auto grid w-full max-w-[1376px] gap-10 px-4 pt-12 pb-10 md:px-6 md:pt-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-16 xl:px-12">
         <div className="flex flex-col gap-3">
           <Link

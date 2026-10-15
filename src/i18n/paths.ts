@@ -13,3 +13,10 @@ export function localePrefix(locale: string): string {
 export function localePath(locale: AppLocale | string, path = ""): string {
   return `${localePrefix(locale)}${path}` || "/";
 }
+
+/** The public home page, in any locale. English is `/` (D335). */
+export function isSiteHome(pathname: string): boolean {
+  const path = pathname.split("?")[0]?.replace(/\/+$/, "") || "/";
+  if (path === "/") return true;
+  return routing.locales.some((locale) => path === `/${locale}`);
+}
