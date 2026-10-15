@@ -1967,3 +1967,14 @@
 - Отклонения от ТЗ: нет. На сайте ничего не видно: страниц у модуля нет до подфазы C.
 - OPEN QUESTION: 28.13.
 - Следующая подфаза: C (каталог `/freelance` и страница услуги) — по команде основателя.
+
+## [2026-10-15] — e2e под меню аккаунта (D439) — DONE (e2e зелёные; `database` красная только на LCP главной)
+
+- Сделано: после `cd272981` (D439) кнопка «Sign out» на широком экране живёт в меню «Account», и 12 e2e искали её в шапке. В `tests/e2e/fixtures.ts` помощники `openAccountMenu`, `expectSignedInMenu`, `signOutFromMenu`; восемь файлов тестов вызывают их. `profile.spec.ts`: пока профиля нет, шкалы полноты нет (D439), видна «Create profile»; после сохранения шкала больше нуля. Коммиты `43aa9a14`, `1f158a5f` (ветка `claude/fix-e2e-account-menu`, затем `master`), выкладка `dpl_dH6CMBiTqathXJHeiLYZ5W1czzgr`; сайт не меняется, только тесты.
+- Команды проверки: prettier, eslint, `pnpm typecheck` → 0. CI на ветке: run 38794129821 → 11 из 12 исправлены, остался `profile.spec.ts`; run 38795463674 → `check` ✅, e2e 82 прошли, 1 нестабильный (auth: агент помнит гостя). Lighthouse главной: медиана LCP 2651 мс при бюджете 2500 — единственная причина красной `database`.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: `tests/e2e/fixtures.ts`, `tests/e2e/{applications,auth,employer-applications,express-interest,matches,notifications,privacy,profile}.spec.ts`, `MISSION_LOG.md`
+- Отклонения от ТЗ: нет. Пуш в `master` по «залей в продукт» основателя, до конца второго прогона CI; прогон затем прошёл.
+- OPEN QUESTION: нет. LCP главной — отдельная задача.
+- Следующая подфаза: только по команде основателя.
