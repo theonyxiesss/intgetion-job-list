@@ -21,6 +21,7 @@ import {
   FreelanceCardFields,
   FreelanceCardSummary,
   FreelanceLinkCard,
+  type FreelanceLinkKind,
   FreelanceServiceList,
   isFreelanceCardTool,
   type FreelanceServiceCard,
@@ -76,7 +77,7 @@ type Entry =
       key: string;
       kind: "freelance_link";
       href: string;
-      link: "order" | "cabinet" | "ugcCampaign";
+      link: FreelanceLinkKind;
     }
   | { key: string; kind: "notice"; code: string }
   | {
@@ -305,6 +306,8 @@ export function Chat({
             } | null;
             pending?: PendingCard[];
             actions?: ChatActions;
+            /** The page of the next UGC step (D467). */
+            next?: { href: string; link: string } | null;
           } | null,
         ) => {
           if (!body) return;
@@ -332,6 +335,21 @@ export function Chat({
             if (card.confirmationId === body.draftOffer?.confirmationId)
               continue;
             history.push(confirmEntry(card));
+          }
+          const next = body.next;
+          if (
+            next &&
+            next.href.startsWith("/") &&
+            (next.link === "ugcDeposit" ||
+              next.link === "ugcCampaign" ||
+              next.link === "ugcPayout")
+          ) {
+            history.push({
+              key: `next-${next.link}`,
+              kind: "freelance_link",
+              href: next.href,
+              link: next.link,
+            });
           }
           if (history.length) setEntries(history);
         },

@@ -5,12 +5,17 @@ import {
   chatActions,
   conversationHistory,
   findConfirmationConversation,
+  offerUgcNextStep,
   pendingConfirmations,
   readFreelanceFocus,
   resumeConversation,
   type BotState,
 } from "@/modules/bot/service";
-import { listMyInvites, readCampaign } from "@/modules/ugc/service";
+import {
+  listMyInvites,
+  readCampaign,
+  ugcNextStep,
+} from "@/modules/ugc/service";
 import { routing } from "@/i18n/routing";
 import { sessionCookie, sessionToken } from "../session-cookie";
 
@@ -79,6 +84,16 @@ export async function GET(request: Request) {
           ? locale
           : "en",
     });
+    // Spoki offers the one next step of this brief or invite (D467).
+    const next =
+      conversation && userId && (campaignId || inviteId)
+        ? await offerUgcNextStep({
+            conversation,
+            userId,
+            locale: conversation.locale ?? "en",
+            step: await ugcNextStep(userId, { campaignId, inviteId }),
+          })
+        : null;
     const headers = new Headers({ "cache-control": "no-store" });
     if (token) headers.set("set-cookie", sessionCookie(token));
     return Response.json(
@@ -92,6 +107,7 @@ export async function GET(request: Request) {
           ? await pendingConfirmations(conversation.id, userId)
           : [],
         actions,
+        next,
       },
       { headers },
     );

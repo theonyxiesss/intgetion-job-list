@@ -2314,3 +2314,14 @@
 - Облако: `0057` применена путём D438 после зелёного CI и до выкладки; проверки владельца, RLS, политик, грантов, журнала (55) и членства — в D466. Советники: новых предупреждений безопасности нет.
 - Выкладка: fast-forward `master` → `4ccbf55` → `dpl_HbJozKvMQ2rp5s99Mv2T2LWNDTeS`. `/api/health`, `/campaigns`, `/ru/campaigns` → 200; `/ru/creator`, `/ru/billing/crypto?ugc=` гостю → 307 на вход; новые маршруты гостю → 401, без Origin → 403. Касса на проде включена (ссылки оплаты на `/pricing`), значит взнос перед наймом обязателен. Значения переменных Vercel не читались (MCP проекта не видит).
 - Не проверено: живой взнос и живая выплата — нужен реальный перевод с «да» основателя.
+
+## [2026-10-16] — UGC-видео: Spoki сам предлагает следующий шаг (D467)
+
+- Задача: основатель — «более глубокая интеграция с ассистентом»; выбран вариант «Spoki сам предлагает шаг»; «Да, до сайта».
+- План (до кода): 1) `ugc/service/next-step.ts` — шаг компании и автора, только чтение; 2) `bot/service/ugc-next.ts` — строка-шаблон на 7 языках раз на шаг, карточка записи (`offer_ugc_hire`, `remind_ugc_invites`, `accept_ugc_invite`) или кнопка; 3) `GET /api/bot/conversation` — шаг при открытии нити, поле `next`; 4) чат — карточка-ссылка; 5) промпт 26; 6) unit `next-step.test.ts`, `ugc-next.test.ts`, интеграционный `bot/ugc-next.integration.test.ts`. Миграций нет.
+- Сделано: по плану.
+- Проверки (локально): `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1270 прошли, 1 пропущен); `pnpm eval` → 0; `pnpm build` → 0; `pnpm format:check` → 0; `pnpm db:migrate` на чистой базе + `pnpm test:integration` → 0 (150 прошли, 7 пропущены); мутация (строка без ключа шага) ловится интеграционным тестом.
+- Миграции: нет.
+- Изменённые файлы: `src/modules/ugc/service/{next-step.ts,index.ts}`, `src/modules/bot/service/{ugc-next.ts,tools.ts,index.ts}`, `src/modules/bot/repo/bot-repo.ts`, `src/modules/bot/prompts/system.ts`, `src/app/api/bot/conversation/route.ts`, `src/components/bot/{chat.tsx,freelance-card.tsx}`, `src/messages/*.json` (7, `chatFreelance`), тесты `src/modules/ugc/__tests__/next-step.test.ts`, `src/modules/bot/__tests__/{ugc-next,memory}.test.ts`, `src/modules/bot/ugc-next.integration.test.ts`, docs.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет новых.

@@ -3878,7 +3878,11 @@
       "text": "Um moderador lê. O outro lado não vê quem enviou."
     },
     "ugcCampaignTitle": "Seu brief UGC",
-    "ugcCampaignAction": "Abrir o brief"
+    "ugcCampaignAction": "Abrir o brief",
+    "ugcDepositTitle": "Orçamento do brief",
+    "ugcDepositAction": "Depositar o orçamento",
+    "ugcPayoutTitle": "Endereço de pagamento",
+    "ugcPayoutAction": "Confirmar o endereço"
   },
   "ugcHub": {
     "doorCompanyTitle": "Preciso de vídeos",

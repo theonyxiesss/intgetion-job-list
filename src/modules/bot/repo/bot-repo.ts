@@ -333,6 +333,27 @@ export async function listOpenConfirmations(input: {
     .limit(5);
 }
 
+/** The newest card with these exact arguments in a thread, any state (D467). */
+export async function latestConfirmationByHash(input: {
+  conversationId: string;
+  userId: string;
+  argsHash: string;
+}): Promise<ConfirmationRow | undefined> {
+  const [row] = await getDb()
+    .select()
+    .from(botConfirmations)
+    .where(
+      and(
+        eq(botConfirmations.conversationId, input.conversationId),
+        eq(botConfirmations.userId, input.userId),
+        eq(botConfirmations.argsHash, input.argsHash),
+      ),
+    )
+    .orderBy(desc(botConfirmations.createdAt))
+    .limit(1);
+  return row;
+}
+
 /** The conversation a card was shown in, when the card is this user's. */
 export async function findConversationOfConfirmation(
   confirmationId: string,

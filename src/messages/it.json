@@ -3878,7 +3878,11 @@
       "text": "La legge un moderatore. L’altra parte non vede chi l’ha inviata."
     },
     "ugcCampaignTitle": "Il tuo brief UGC",
-    "ugcCampaignAction": "Apri il brief"
+    "ugcCampaignAction": "Apri il brief",
+    "ugcDepositTitle": "Budget del brief",
+    "ugcDepositAction": "Versa il budget",
+    "ugcPayoutTitle": "Indirizzo di pagamento",
+    "ugcPayoutAction": "Conferma l’indirizzo"
   },
   "ugcHub": {
     "doorCompanyTitle": "Mi servono video",

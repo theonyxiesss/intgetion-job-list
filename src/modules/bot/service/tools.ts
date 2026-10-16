@@ -89,6 +89,8 @@ export type BotState = {
   ugcCampaignId?: string;
   /** Product name for the prompt. Untrusted text. */
   ugcProduct?: string;
+  /** The UGC next step last offered in this thread (D467). */
+  ugcNextKey?: string;
 };
 
 export type ToolContext = {

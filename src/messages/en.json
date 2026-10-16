@@ -4384,7 +4384,11 @@
       "text": "A moderator reads it. The other side does not see who sent it."
     },
     "ugcCampaignTitle": "Your UGC brief",
-    "ugcCampaignAction": "Open the brief"
+    "ugcCampaignAction": "Open the brief",
+    "ugcDepositTitle": "Brief budget",
+    "ugcDepositAction": "Pay in the budget",
+    "ugcPayoutTitle": "Payout address",
+    "ugcPayoutAction": "Confirm the address"
   },
   "ugcHub": {
     "doorCompanyTitle": "I need videos",

@@ -3878,7 +3878,11 @@
       "text": "Её читает модератор. Другая сторона не видит, кто пожаловался."
     },
     "ugcCampaignTitle": "Ваш UGC-бриф",
-    "ugcCampaignAction": "Открыть бриф"
+    "ugcCampaignAction": "Открыть бриф",
+    "ugcDepositTitle": "Бюджет брифа",
+    "ugcDepositAction": "Внести бюджет",
+    "ugcPayoutTitle": "Адрес для выплат",
+    "ugcPayoutAction": "Подтвердить адрес"
   },
   "ugcHub": {
     "doorCompanyTitle": "Мне нужны видео",

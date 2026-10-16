@@ -42,3 +42,5 @@ export {
 } from "./tools";
 export { postSystemEvent } from "./system-event";
 export { handleTelegramAgentUpdate } from "./telegram-agent";
+export { offerUgcNextStep, ugcNextLine } from "./ugc-next";
+export type { UgcNextLink } from "./ugc-next";

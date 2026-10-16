@@ -134,3 +134,5 @@ export {
   refundableMinor,
   refundBlocked,
 } from "./escrow-rules";
+export { companyNextStep, creatorNextStep, ugcNextStep } from "./next-step";
+export type { UgcNextStep } from "./next-step";

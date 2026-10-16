@@ -3878,7 +3878,11 @@
       "text": "Ein Moderator liest sie. Die andere Seite sieht nicht, wer sie gesendet hat."
     },
     "ugcCampaignTitle": "Ihr UGC-Briefing",
-    "ugcCampaignAction": "Briefing öffnen"
+    "ugcCampaignAction": "Briefing öffnen",
+    "ugcDepositTitle": "Budget des Briefings",
+    "ugcDepositAction": "Budget einzahlen",
+    "ugcPayoutTitle": "Auszahlungsadresse",
+    "ugcPayoutAction": "Adresse bestätigen"
   },
   "ugcHub": {
     "doorCompanyTitle": "Ich brauche Videos",

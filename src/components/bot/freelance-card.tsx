@@ -191,12 +191,15 @@ export function FreelanceServiceList({
 }
 
 /** A link card to a page of the freelance cabinet. */
+export type FreelanceLinkKind =
+  "order" | "cabinet" | "ugcCampaign" | "ugcDeposit" | "ugcPayout";
+
 export function FreelanceLinkCard({
   href,
   kind,
 }: {
   href: string;
-  kind: "order" | "cabinet" | "ugcCampaign";
+  kind: FreelanceLinkKind;
 }) {
   const t = useCardText();
   return (
