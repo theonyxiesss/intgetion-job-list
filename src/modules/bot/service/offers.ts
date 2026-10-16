@@ -15,6 +15,7 @@ export const OFFER_ACTIONS = [
   "post_job",
   "order_service",
   "events",
+  "campaigns",
 ] as const;
 
 export type OfferAction = (typeof OFFER_ACTIONS)[number];
@@ -49,5 +50,6 @@ export function offerPath(
   }
   if (action === "order_service") return "/services";
   if (action === "events") return "/events";
+  if (action === "campaigns") return "/chat?from=campaigns";
   return null;
 }

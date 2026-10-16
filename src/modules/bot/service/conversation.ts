@@ -57,6 +57,12 @@ import {
   serviceFocusOpener,
   serviceTopicState,
 } from "./service-focus";
+import {
+  ugcFocusBlock,
+  ugcHomeOpener,
+  ugcThreadOpener,
+  ugcTopicState,
+} from "./ugc-focus";
 import { stripLeakedToolMarkup } from "./leaked-tool";
 import {
   followUp,
@@ -289,7 +295,10 @@ export async function resolveConversation(input: {
     if (
       found &&
       found.userId === input.userId &&
-      (!input.generalOnly || found.jobId === null)
+      (!input.generalOnly ||
+        (found.jobId === null &&
+          found.campaignId === null &&
+          found.inviteId === null))
     ) {
       return { conversation: found, token: input.token };
     }
@@ -347,6 +356,92 @@ export async function openServiceConversation(input: {
 }
 
 /**
+ * The general thread for writing a creative-test brief (D457).
+ * Inserts the opener only when that thread has no messages yet.
+ */
+export async function openUgcHomeConversation(input: {
+  userId: string | null;
+  token: string | undefined;
+  locale: string;
+}): Promise<{ conversation: repo.ConversationRow; token: string }> {
+  const opened = await resolveConversation({ ...input, generalOnly: true });
+  const previous = (opened.conversation.state ?? {}) as BotState;
+  const state = ugcTopicState(previous);
+  let conversation = opened.conversation;
+  if (state !== previous) {
+    await repo.updateConversation(
+      conversation.id,
+      { state, locale: input.locale },
+      new Date(),
+    );
+    conversation = { ...conversation, state, locale: input.locale };
+  }
+  const existing = await repo.listMessages(conversation.id, 1);
+  if (existing.length === 0) {
+    await repo.insertMessage({
+      conversationId: conversation.id,
+      role: "assistant",
+      content: ugcHomeOpener(input.locale),
+    });
+  }
+  return { conversation, token: opened.token };
+}
+
+/**
+ * One thread per brief or per invite. The first line names the product.
+ */
+export async function openUgcThread(input: {
+  userId: string;
+  token: string | undefined;
+  locale: string;
+  campaignId?: string;
+  inviteId?: string;
+  productName: string;
+}): Promise<{ conversation: repo.ConversationRow; token: string }> {
+  const product = input.productName.replace(/[\r\n]+/g, " ").slice(0, 120);
+  let conversation = input.campaignId
+    ? await repo.findConversationForUserCampaign(input.userId, input.campaignId)
+    : input.inviteId
+      ? await repo.findConversationForUserInvite(input.userId, input.inviteId)
+      : undefined;
+  let token = input.token;
+  if (!conversation) {
+    token = newSessionToken();
+    conversation = await repo.createConversation({
+      userId: input.userId,
+      tokenHash: hashSessionToken(token),
+      locale: input.locale,
+      campaignId: input.campaignId ?? null,
+      inviteId: input.inviteId ?? null,
+    });
+  }
+  const state = {
+    ...ugcTopicState((conversation.state ?? {}) as BotState),
+    ugcCampaignId: input.campaignId,
+    ugcProduct: product,
+  };
+  await repo.updateConversation(
+    conversation.id,
+    { state, locale: input.locale },
+    new Date(),
+  );
+  conversation = { ...conversation, state, locale: input.locale };
+  const existing = await repo.listMessages(conversation.id, 1);
+  if (existing.length === 0) {
+    await repo.insertMessage({
+      conversationId: conversation.id,
+      role: "assistant",
+      content: ugcThreadOpener(input.locale, product),
+    });
+  }
+  if (!token || hashSessionToken(token) !== conversation.sessionTokenHash) {
+    token = newSessionToken();
+    await repo.replaceSessionToken(conversation.id, hashSessionToken(token));
+  }
+  return { conversation, token };
+}
+
+/**
  * One confirmation card for a claimed guest draft. The flag is cleared in
  * the same update that wins, so a second request does not create another card.
  */
@@ -388,8 +483,11 @@ export async function resumeConversation(input: {
   token: string | undefined;
   locale?: string;
   jobId?: string;
-  /** `services` when the chat was opened from the Services page (D423). */
+  /** `services` from Services, `campaigns` from creative tests (D423, D457). */
   from?: string;
+  campaignId?: string;
+  inviteId?: string;
+  productName?: string;
 }): Promise<{
   conversation: repo.ConversationRow | null;
   offer: Extract<BotEvent, { type: "confirm_request" }> | null;
@@ -409,6 +507,55 @@ export async function resumeConversation(input: {
       jobId: input.jobId,
     });
     if (!opened) return empty;
+    const offer = await takeDraftOffer(
+      opened.conversation,
+      input.userId,
+      new Date(),
+    );
+    return {
+      conversation: opened.conversation,
+      offer,
+      token: opened.token,
+      actions: chatActions(
+        input.userId,
+        (opened.conversation.state ?? {}) as BotState,
+      ),
+    };
+  }
+  if (
+    input.userId &&
+    input.productName &&
+    (input.campaignId || input.inviteId)
+  ) {
+    const opened = await openUgcThread({
+      userId: input.userId,
+      token: input.token,
+      locale: input.locale ?? "en",
+      campaignId: input.campaignId,
+      inviteId: input.inviteId,
+      productName: input.productName,
+    });
+    const offer = await takeDraftOffer(
+      opened.conversation,
+      input.userId,
+      new Date(),
+    );
+    return {
+      conversation: opened.conversation,
+      offer,
+      token: opened.token,
+      actions: chatActions(
+        input.userId,
+        (opened.conversation.state ?? {}) as BotState,
+      ),
+    };
+  }
+  if (input.from === "campaigns") {
+    const opened = await openUgcHomeConversation({
+      userId: input.userId,
+      token: input.token,
+      locale: input.locale ?? "en",
+    });
     const offer = await takeDraftOffer(
       opened.conversation,
       input.userId,
@@ -455,7 +602,9 @@ export async function resumeConversation(input: {
     if (
       byCookie &&
       byCookie.userId === input.userId &&
-      byCookie.jobId === null
+      byCookie.jobId === null &&
+      byCookie.campaignId === null &&
+      byCookie.inviteId === null
     ) {
       found = byCookie;
     }
@@ -762,6 +911,10 @@ export async function handleMessage(
     serviceFocus:
       !current.jobId && state.topic === "services"
         ? serviceFocusBlock()
+        : undefined,
+    ugcFocus:
+      !current.jobId && state.topic === "ugc"
+        ? ugcFocusBlock(state.ugcProduct ?? "")
         : undefined,
   });
   const tools = toolsFor(userId);

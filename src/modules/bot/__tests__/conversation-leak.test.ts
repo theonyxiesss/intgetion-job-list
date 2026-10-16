@@ -94,6 +94,8 @@ function conversation(draft: Record<string, unknown>) {
     channel: "web",
     sessionTokenHash: "hash",
     jobId: null,
+    campaignId: null,
+    inviteId: null,
     locale: "ru",
     state: { draft },
     summary: null,

@@ -138,7 +138,8 @@
     "postJob": "Job ausschreiben",
     "myJobs": "Meine Jobs",
     "company": "Unternehmen",
-    "freelance": "Freelance"
+    "freelance": "Freelance",
+    "campaigns": "Kreative Tests"
   },
   "locale": {
     "en": "Englisch",
@@ -1185,6 +1186,58 @@
           "subject": "Ihre Leistung wurde geprüft",
           "body": "{decision, select, published {Ihre Leistung hat die Prüfung bestanden und ist jetzt im Katalog.} rejected {Ihre Leistung hat die Prüfung nicht bestanden. Korrigieren Sie sie und senden Sie sie erneut.} removed {Ein Moderator hat Ihre Leistung aus dem Katalog entfernt.} other {Ihre Leistung wurde geprüft.}} Leistung: „{serviceTitle}“."
         }
+      },
+      "ugcCampaignDecided": {
+        "inapp": {
+          "title": "Kreativer Test geprüft",
+          "body": "{decision, select, open {Das Brief ist offen.} rejected {Das Brief wurde abgelehnt und bleibt geschlossen.} other {Das Brief wurde geprüft.}} Produkt: „{productName}“."
+        },
+        "email": {
+          "subject": "Kreativer Test geprüft",
+          "body": "{decision, select, open {Das Brief ist offen.} rejected {Das Brief wurde abgelehnt und bleibt geschlossen.} other {Das Brief wurde geprüft.}} Produkt: „{productName}“."
+        }
+      },
+      "ugcApplication": {
+        "inapp": {
+          "title": "Neue Bewerbung",
+          "body": "Ein Creator hat sich auf „{productName}“ beworben."
+        }
+      },
+      "ugcInvite": {
+        "inapp": {
+          "title": "Einladung zum kreativen Test",
+          "body": "Sie sind zu „{productName}“ eingeladen. Gespeicherter Betrag: {bountyMinor} Cent. Es wird nichts berechnet."
+        },
+        "email": {
+          "subject": "Einladung: {productName}",
+          "body": "Sie sind zu „{productName}“ eingeladen. Gespeicherter Betrag: {bountyMinor} Cent. Es wird nichts berechnet."
+        }
+      },
+      "ugcSubmission": {
+        "inapp": {
+          "title": "Video eingereicht",
+          "body": "Für „{productName}“ wurde ein Video eingereicht."
+        }
+      },
+      "ugcSubmissionDecided": {
+        "inapp": {
+          "title": "Video geprüft",
+          "body": "{decision, select, changes_requested {Eine Überarbeitung wurde erbeten.} accepted {Das Video wurde angenommen.} rejected {Das Video wurde abgelehnt.} winner {Das Video wurde als Gewinner markiert.} other {Das Video wurde geprüft.}} Produkt: „{productName}“."
+        },
+        "email": {
+          "subject": "Video geprüft: {productName}",
+          "body": "{decision, select, changes_requested {Eine Überarbeitung wurde erbeten.} accepted {Das Video wurde angenommen.} rejected {Das Video wurde abgelehnt.} winner {Das Video wurde als Gewinner markiert.} other {Das Video wurde geprüft.}} Produkt: „{productName}“."
+        }
+      },
+      "ugcDeadline": {
+        "inapp": {
+          "title": "Frist des kreativen Tests",
+          "body": "Die Frist für „{productName}“ ist morgen, oder ein unbeantwortetes Angebot ist still geworden."
+        },
+        "email": {
+          "subject": "Frist: {productName}",
+          "body": "Die Frist für „{productName}“ ist morgen, oder ein unbeantwortetes Angebot ist still geworden."
+        }
       }
     },
     "freelance": {
@@ -1575,6 +1628,15 @@
       "line": "Sie kommen von Dienstleistungen. Spoki spricht für das Unternehmen.",
       "back": "Zurück zu den Dienstleistungen"
     },
+    "ugcFocus": {
+      "line": "Brief: {product}",
+      "back": "Zurück zu kreativen Tests",
+      "home": "Sie schreiben ein Brief für einen kreativen Test. Nichts wird veröffentlicht, bis Sie bestätigen."
+    },
+    "ugcJoin": {
+      "title": "Link für den Blogger",
+      "action": "In Telegram öffnen"
+    },
     "intro": "Ein Gespräch, das lernt, welche Arbeit Sie wollen, und weitersucht.",
     "log": "Gespräch",
     "you": "Sie",
@@ -1651,6 +1713,7 @@
       "applyTitle": "Auf diesen Job bewerben?",
       "profileTitle": "Diese Profiländerungen speichern?",
       "jobTitle": "Diese Stelle zur Prüfung senden?",
+      "ugcTitle": "Diesen Schritt des kreativen Tests speichern?",
       "text": "Nichts passiert, bis Sie bestätigen.",
       "accept": "Bestätigen",
       "decline": "Abbrechen",
@@ -1708,6 +1771,11 @@
         "title": "Team beauftragen",
         "text": "Beschreiben Sie die Aufgabe. Den Preis nennen wir nach dem Umfang.",
         "action": "Aufgabe beschreiben"
+      },
+      "campaigns": {
+        "title": "Kreative Tests",
+        "text": "Ein Brief. Creator bewerben sich. Sie stellen die genannten Personen ein.",
+        "action": "Kreative Tests öffnen"
       }
     }
   },
@@ -3559,6 +3627,108 @@
       "error_VALIDATION": "Prüfe die Felder und versuch es noch einmal.",
       "error_NETWORK": "Keine Verbindung. Versuch es noch einmal.",
       "error_INTERNAL": "Nicht gespeichert. Versuch es noch einmal."
+    }
+  },
+  "ugc": {
+    "title": "Kreative Tests",
+    "intro": "Ein Brief. Creator bewerben sich. Sie stellen die genannten Personen ein.",
+    "moneyNote": "Der Betrag wird in Cent gespeichert. In diesem Schritt wird nichts berechnet oder ausgezahlt.",
+    "openChat": "Brief mit Spoki schreiben",
+    "newBrief": "Neues Brief",
+    "signIn": "Anmelden",
+    "empty": "Hier ist noch nichts.",
+    "needCompany": "Legen Sie zuerst ein Unternehmen an.",
+    "profileTitle": "Creator-Profil",
+    "profileSave": "Profil speichern",
+    "openTitle": "Offene Briefs",
+    "emptyOpen": "Gerade passt kein offenes Brief zu Ihnen.",
+    "apply": "Bewerben",
+    "invitesTitle": "Ihre Einladungen",
+    "emptyInvites": "Noch keine Einladungen.",
+    "thread": "Unterhaltung öffnen",
+    "creator": "Creator",
+    "join": "Link für den Blogger",
+    "close": "Brief schließen",
+    "offer": "Einstellen",
+    "acceptVideo": "Video annehmen",
+    "rejectVideo": "Video ablehnen",
+    "winner": "Gewinner markieren",
+    "remind": "Erinnern",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "error": "Das wurde nicht gespeichert. Prüfen Sie die Felder und versuchen Sie es erneut.",
+    "joinReady": "Öffnen Sie diesen Link in Telegram. Der Token bleibt im Link.",
+    "adminTitle": "Kreative Tests in Prüfung",
+    "adminEmpty": "Nichts wartet auf Prüfung.",
+    "approve": "Brief öffnen",
+    "reject": "Ablehnen",
+    "submitVideo": "Video senden",
+    "requestChanges": "Die eine Überarbeitung bitten",
+    "status": {
+      "draft": "Entwurf",
+      "pending_review": "In Prüfung",
+      "open": "Offen",
+      "closed": "Geschlossen",
+      "rejected": "Abgelehnt",
+      "applied": "Beworben",
+      "offered": "Angeboten",
+      "hired": "Eingestellt",
+      "declined": "Abgelehnt",
+      "expired": "Abgelaufen",
+      "withdrawn": "Zurückgezogen",
+      "submitted": "Eingereicht",
+      "changes_requested": "Überarbeitung erbeten",
+      "accepted": "Angenommen",
+      "winner": "Gewinner"
+    },
+    "fields": {
+      "company": "Unternehmen",
+      "productName": "Produkt",
+      "productSummary": "Worum es geht",
+      "goal": "Ziel",
+      "niches": "Nischen",
+      "audience": "Zielgruppe",
+      "country": "Land",
+      "languages": "Sprachen",
+      "mustSay": "Muss gesagt werden",
+      "mustNot": "Darf nicht gesagt werden",
+      "platforms": "Plattformen",
+      "videos": "Gewünschte Videos",
+      "bounty": "Betrag in ganzen Dollar",
+      "deadline": "Frist",
+      "rights": "Rechte",
+      "pitch": "Pitch",
+      "examples": "Beispiel-Links",
+      "displayName": "Anzeigename",
+      "inviteOptIn": "E-Mail, wenn ein Unternehmen mich einlädt",
+      "paused": "Profil pausieren",
+      "videoUrl": "Video-Link",
+      "hook": "Hook",
+      "changeNote": "Was sich ändern soll"
+    },
+    "goals": {
+      "awareness": "Bekanntheit",
+      "installs": "Installationen",
+      "purchases": "Käufe",
+      "waitlist": "Warteliste"
+    },
+    "niches": {
+      "app": "App",
+      "game": "Spiel",
+      "finance": "Finanzen",
+      "ecommerce": "Shop",
+      "education": "Bildung",
+      "other": "Andere"
+    },
+    "platforms": {
+      "tiktok": "TikTok",
+      "reels": "Reels",
+      "shorts": "Shorts"
+    },
+    "rights": {
+      "organic": "Organisch",
+      "ads": "Anzeigen",
+      "whitelist": "Whitelist"
     }
   }
 }

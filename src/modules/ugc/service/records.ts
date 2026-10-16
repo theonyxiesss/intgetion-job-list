@@ -1,0 +1,116 @@
+import type {
+  UgcCampaignStatus,
+  UgcCreatorStatus,
+  UgcGoal,
+  UgcNiche,
+  UgcParticipationStatus,
+  UgcPlatform,
+  UgcRights,
+  UgcSubmissionStatus,
+} from "@/config/ugc";
+
+/** Stored rows. Money is integer cents. A raw join token is never a field. */
+export type CreatorProfile = {
+  userId: string;
+  displayName: string;
+  languages: string[];
+  platforms: UgcPlatform[];
+  niches: UgcNiche[];
+  country: string | null;
+  exampleUrls: string[];
+  inviteOptIn: boolean;
+  status: UgcCreatorStatus;
+};
+
+export type Campaign = {
+  id: string;
+  companyId: string;
+  createdBy: string;
+  status: UgcCampaignStatus;
+  productName: string;
+  productSummary: string;
+  goal: UgcGoal;
+  niches: UgcNiche[];
+  audience: string;
+  country: string | null;
+  languages: string[];
+  platforms: UgcPlatform[];
+  mustSay: string;
+  mustNot: string;
+  videosWanted: number;
+  bountyMinor: bigint;
+  deadline: string;
+  rights: UgcRights;
+  pitch: string;
+  exampleUrls: string[];
+  createdAt: Date;
+};
+
+export type Invite = {
+  id: string;
+  campaignId: string;
+  creatorUserId: string;
+  status: UgcParticipationStatus;
+  bountyMinor: bigint | null;
+  rights: UgcRights | null;
+  pitch: string;
+  reminders: number;
+  revisionUsed: boolean;
+  deadlineNoted: boolean;
+  offeredAt: Date | null;
+  createdAt: Date;
+};
+
+export type Submission = {
+  id: string;
+  inviteId: string;
+  url: string;
+  hook: string;
+  status: UgcSubmissionStatus;
+  changeNote: string;
+};
+
+export type JoinToken = {
+  campaignId: string;
+  tokenHash: string;
+  expiresAt: Date;
+  revokedAt: Date | null;
+};
+
+export type UgcNotice = {
+  type: string;
+  userIds: string[];
+  payload: Record<string, string>;
+  email: boolean;
+};
+
+export type BriefInput = {
+  companyId: string;
+  productName: string;
+  productSummary: string;
+  goal: UgcGoal;
+  niches: UgcNiche[];
+  audience: string;
+  country: string | null;
+  languages: string[];
+  mustSay: string;
+  mustNot: string;
+  platforms: UgcPlatform[];
+  videosWanted: number;
+  bountyMinor: bigint;
+  deadline: string;
+  rights: UgcRights;
+  pitch: string;
+  exampleUrls: string[];
+};
+
+export type ProfileInput = {
+  displayName: string;
+  languages: string[];
+  platforms: UgcPlatform[];
+  niches: UgcNiche[];
+  country: string | null;
+  exampleUrls: string[];
+  inviteOptIn: boolean;
+  status: UgcCreatorStatus;
+};

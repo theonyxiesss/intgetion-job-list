@@ -22,6 +22,8 @@ export async function createConversation(input: {
   tokenHash: string;
   locale: string;
   jobId?: string | null;
+  campaignId?: string | null;
+  inviteId?: string | null;
 }): Promise<ConversationRow> {
   const [row] = await getDb()
     .insert(botConversations)
@@ -30,6 +32,8 @@ export async function createConversation(input: {
       sessionTokenHash: input.tokenHash,
       locale: input.locale,
       jobId: input.jobId ?? null,
+      campaignId: input.campaignId ?? null,
+      inviteId: input.inviteId ?? null,
     })
     .returning();
   return row!;
@@ -53,6 +57,42 @@ export async function findConversationForUserJob(
   return row;
 }
 
+/** The signed-in thread for one creative test (D457). */
+export async function findConversationForUserCampaign(
+  userId: string,
+  campaignId: string,
+): Promise<ConversationRow | undefined> {
+  const [row] = await getDb()
+    .select()
+    .from(botConversations)
+    .where(
+      and(
+        eq(botConversations.userId, userId),
+        eq(botConversations.campaignId, campaignId),
+      ),
+    )
+    .limit(1);
+  return row;
+}
+
+/** The signed-in thread for one creator invite (D457). */
+export async function findConversationForUserInvite(
+  userId: string,
+  inviteId: string,
+): Promise<ConversationRow | undefined> {
+  const [row] = await getDb()
+    .select()
+    .from(botConversations)
+    .where(
+      and(
+        eq(botConversations.userId, userId),
+        eq(botConversations.inviteId, inviteId),
+      ),
+    )
+    .limit(1);
+  return row;
+}
+
 /** Newest web conversation that is not tied to one vacancy. */
 export async function latestGeneralConversationForUser(
   userId: string,
@@ -61,7 +101,12 @@ export async function latestGeneralConversationForUser(
     .select()
     .from(botConversations)
     .where(
-      and(eq(botConversations.userId, userId), isNull(botConversations.jobId)),
+      and(
+        eq(botConversations.userId, userId),
+        isNull(botConversations.jobId),
+        isNull(botConversations.campaignId),
+        isNull(botConversations.inviteId),
+      ),
     )
     .orderBy(desc(botConversations.lastMessageAt))
     .limit(1);

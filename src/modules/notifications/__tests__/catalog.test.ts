@@ -33,11 +33,18 @@ const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
   ["freelance.request_created", true],
   ["freelance.order_updated", true],
   ["freelance.service_decided", true],
+  // D457: creative tests. Invite email is skipped per call when opt-in is off.
+  ["ugc.campaign_decided", true],
+  ["ugc.application", false],
+  ["ugc.invite", true],
+  ["ugc.submission", false],
+  ["ugc.submission_decided", true],
+  ["ugc.deadline", true],
 ];
 
 describe("notification catalog (15, D100)", () => {
   it("contains the 11 types of section 15 in table order, then D234", () => {
-    expect(NOTIFICATION_TYPES).toHaveLength(17);
+    expect(NOTIFICATION_TYPES).toHaveLength(23);
     expect([...NOTIFICATION_TYPES]).toEqual(
       SECTION_15_EMAIL_DEFAULTS.map(([type]) => type),
     );

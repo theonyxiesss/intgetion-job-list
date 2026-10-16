@@ -36,6 +36,7 @@ export function serviceFocusBlock(): string {
     "The price depends on team size, scope, and specialists. We quote after the brief. Do not invent a dollar amount. Do not ask for an email or a phone.",
     "A question about carrying out the work is still this subject. Answer it from those steps. Do not start a job search or post a vacancy unless they ask for a job.",
     "When they want to leave the task, call offer_step with order_service. No card on a question.",
+    "If they ask for creator videos, UGC, or a creative test, call offer_step with campaigns once. Do not call propose_ugc_campaign. This subject stays services until they open that card.",
   ].join("\n");
 }
 

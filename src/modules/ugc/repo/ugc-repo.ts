@@ -1,0 +1,341 @@
+import { and, eq, gte, inArray, isNull } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import {
+  creatorProfiles,
+  ugcCampaigns,
+  ugcInvites,
+  ugcJoinTokens,
+  ugcSubmissions,
+  users,
+} from "@/db/schema";
+import { recordAudit } from "@/lib/audit";
+import {
+  findMemberRole,
+  getCompaniesForUser,
+  listMemberUserIds,
+} from "@/modules/companies/service";
+import {
+  isNotificationType,
+  safeNotify,
+} from "@/modules/notifications/service";
+import type {
+  Campaign,
+  CreatorProfile,
+  Invite,
+  JoinToken,
+  Submission,
+} from "../service/records";
+import type { UgcStore } from "../service/store";
+
+type CampaignRow = typeof ugcCampaigns.$inferSelect;
+type ProfileRow = typeof creatorProfiles.$inferSelect;
+type InviteRow = typeof ugcInvites.$inferSelect;
+type SubmissionRow = typeof ugcSubmissions.$inferSelect;
+
+function campaignOf(row: CampaignRow): Campaign {
+  return {
+    id: row.id,
+    companyId: row.companyId,
+    createdBy: row.createdBy,
+    status: row.status,
+    productName: row.productName,
+    productSummary: row.productSummary,
+    goal: row.goal,
+    niches: row.niches,
+    audience: row.audience,
+    country: row.country,
+    languages: row.languages,
+    platforms: row.platforms,
+    mustSay: row.mustSay,
+    mustNot: row.mustNot,
+    videosWanted: row.videosWanted,
+    bountyMinor: row.bountyMinor,
+    deadline: row.deadline,
+    rights: row.rights,
+    pitch: row.pitch,
+    exampleUrls: row.exampleUrls,
+    createdAt: row.createdAt,
+  };
+}
+
+function profileOf(row: ProfileRow): CreatorProfile {
+  return {
+    userId: row.userId,
+    displayName: row.displayName,
+    languages: row.languages,
+    platforms: row.platforms,
+    niches: row.niches,
+    country: row.country,
+    exampleUrls: row.exampleUrls,
+    inviteOptIn: row.inviteOptIn,
+    status: row.status,
+  };
+}
+
+function inviteOf(row: InviteRow): Invite {
+  return {
+    id: row.id,
+    campaignId: row.campaignId,
+    creatorUserId: row.creatorUserId,
+    status: row.status,
+    bountyMinor: row.bountyMinor,
+    rights: row.rights,
+    pitch: row.pitch,
+    reminders: row.reminders,
+    revisionUsed: row.revisionUsed,
+    deadlineNoted: row.deadlineNoted,
+    offeredAt: row.offeredAt,
+    createdAt: row.createdAt,
+  };
+}
+
+function submissionOf(row: SubmissionRow): Submission {
+  return {
+    id: row.id,
+    inviteId: row.inviteId,
+    url: row.url,
+    hook: row.hook,
+    status: row.status,
+    changeNote: row.changeNote,
+  };
+}
+
+function dayOf(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+/** Database store. The browser never reads these tables. */
+export function productionUgcStore(): UgcStore {
+  const db = getDb();
+  return {
+    now: () => new Date(),
+    async isBlocked(userId) {
+      const [row] = await db
+        .select({ status: users.status })
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+      return !row || row.status !== "active";
+    },
+    async memberRole(companyId, userId) {
+      return findMemberRole(companyId, userId);
+    },
+    async memberIds(companyId) {
+      return listMemberUserIds(companyId);
+    },
+    async companiesFor(userId) {
+      const rows = await getCompaniesForUser(userId);
+      return rows.map((row) => ({ id: row.id, name: row.name }));
+    },
+    async getProfile(userId) {
+      const [row] = await db
+        .select()
+        .from(creatorProfiles)
+        .where(eq(creatorProfiles.userId, userId))
+        .limit(1);
+      return row ? profileOf(row) : null;
+    },
+    async saveProfile(profile) {
+      await db
+        .insert(creatorProfiles)
+        .values(profile)
+        .onConflictDoUpdate({
+          target: creatorProfiles.userId,
+          set: { ...profile, updatedAt: new Date() },
+        });
+    },
+    async listOptInProfiles() {
+      const rows = await db
+        .select()
+        .from(creatorProfiles)
+        .where(eq(creatorProfiles.inviteOptIn, true));
+      return rows.map(profileOf);
+    },
+    async insertCampaign(row) {
+      await db.insert(ugcCampaigns).values(row);
+    },
+    async saveCampaign(row) {
+      await db
+        .update(ugcCampaigns)
+        .set({ status: row.status, updatedAt: new Date() })
+        .where(eq(ugcCampaigns.id, row.id));
+    },
+    async getCampaign(id) {
+      const [row] = await db
+        .select()
+        .from(ugcCampaigns)
+        .where(eq(ugcCampaigns.id, id))
+        .limit(1);
+      return row ? campaignOf(row) : null;
+    },
+    async listByCompanies(companyIds) {
+      if (companyIds.length === 0) return [];
+      const rows = await db
+        .select()
+        .from(ugcCampaigns)
+        .where(inArray(ugcCampaigns.companyId, [...companyIds]));
+      return rows.map(campaignOf);
+    },
+    async listOpen() {
+      const rows = await db
+        .select()
+        .from(ugcCampaigns)
+        .where(eq(ugcCampaigns.status, "open"));
+      return rows.map(campaignOf);
+    },
+    async countCreatedSince(companyId, since) {
+      const rows = await db
+        .select({ id: ugcCampaigns.id })
+        .from(ugcCampaigns)
+        .where(
+          and(
+            eq(ugcCampaigns.companyId, companyId),
+            gte(ugcCampaigns.createdAt, since),
+          ),
+        );
+      return rows.length;
+    },
+    async getInvite(id) {
+      const [row] = await db
+        .select()
+        .from(ugcInvites)
+        .where(eq(ugcInvites.id, id))
+        .limit(1);
+      return row ? inviteOf(row) : null;
+    },
+    async findInvite(campaignId, userId) {
+      const [row] = await db
+        .select()
+        .from(ugcInvites)
+        .where(
+          and(
+            eq(ugcInvites.campaignId, campaignId),
+            eq(ugcInvites.creatorUserId, userId),
+          ),
+        )
+        .limit(1);
+      return row ? inviteOf(row) : null;
+    },
+    async listInvites(campaignId) {
+      const rows = await db
+        .select()
+        .from(ugcInvites)
+        .where(eq(ugcInvites.campaignId, campaignId));
+      return rows.map(inviteOf);
+    },
+    async listInvitesForCreator(userId) {
+      const rows = await db
+        .select()
+        .from(ugcInvites)
+        .where(eq(ugcInvites.creatorUserId, userId));
+      return rows.map(inviteOf);
+    },
+    async insertInvite(row) {
+      await db.insert(ugcInvites).values(row);
+    },
+    async saveInvite(row) {
+      await db
+        .update(ugcInvites)
+        .set({
+          status: row.status,
+          bountyMinor: row.bountyMinor,
+          rights: row.rights,
+          pitch: row.pitch,
+          reminders: row.reminders,
+          revisionUsed: row.revisionUsed,
+          deadlineNoted: row.deadlineNoted,
+          offeredAt: row.offeredAt,
+          updatedAt: new Date(),
+        })
+        .where(eq(ugcInvites.id, row.id));
+    },
+    async offersToCreatorOnDay(userId, day) {
+      const rows = await db
+        .select({ offeredAt: ugcInvites.offeredAt })
+        .from(ugcInvites)
+        .where(eq(ugcInvites.creatorUserId, userId));
+      return rows.filter(
+        (row) => row.offeredAt !== null && dayOf(row.offeredAt) === day,
+      ).length;
+    },
+    async getSubmission(inviteId) {
+      const [row] = await db
+        .select()
+        .from(ugcSubmissions)
+        .where(eq(ugcSubmissions.inviteId, inviteId))
+        .limit(1);
+      return row ? submissionOf(row) : null;
+    },
+    async listSubmissions(inviteIds) {
+      if (inviteIds.length === 0) return [];
+      const rows = await db
+        .select()
+        .from(ugcSubmissions)
+        .where(inArray(ugcSubmissions.inviteId, [...inviteIds]));
+      return rows.map(submissionOf);
+    },
+    async insertSubmission(row) {
+      await db.insert(ugcSubmissions).values(row);
+    },
+    async saveSubmission(row) {
+      await db
+        .update(ugcSubmissions)
+        .set({
+          url: row.url,
+          hook: row.hook,
+          status: row.status,
+          changeNote: row.changeNote,
+          updatedAt: new Date(),
+        })
+        .where(eq(ugcSubmissions.id, row.id));
+    },
+    async revokeJoinTokens(campaignId, at) {
+      await db
+        .update(ugcJoinTokens)
+        .set({ revokedAt: at })
+        .where(
+          and(
+            eq(ugcJoinTokens.campaignId, campaignId),
+            isNull(ugcJoinTokens.revokedAt),
+          ),
+        );
+    },
+    async insertJoinToken(row: JoinToken) {
+      await db.insert(ugcJoinTokens).values(row);
+    },
+    async findJoinToken(tokenHash) {
+      const [row] = await db
+        .select()
+        .from(ugcJoinTokens)
+        .where(eq(ugcJoinTokens.tokenHash, tokenHash))
+        .limit(1);
+      return row ?? null;
+    },
+    async listPendingReview() {
+      const rows = await db
+        .select()
+        .from(ugcCampaigns)
+        .where(eq(ugcCampaigns.status, "pending_review"));
+      return rows.map(campaignOf);
+    },
+    async notify(notice) {
+      if (!isNotificationType(notice.type) || notice.userIds.length === 0) {
+        return;
+      }
+      await safeNotify(
+        notice.type,
+        notice.userIds,
+        notice.payload,
+        notice.email ? undefined : { email: false },
+      );
+    },
+    async audit(actorId, action, entityId) {
+      await recordAudit({
+        actorId,
+        action,
+        entityType: "ugc_campaign",
+        entityId,
+      });
+    },
+  };
+}

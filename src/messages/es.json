@@ -138,7 +138,8 @@
     "postJob": "Publicar empleo",
     "myJobs": "Mis empleos",
     "company": "Empresa",
-    "freelance": "Freelance"
+    "freelance": "Freelance",
+    "campaigns": "Pruebas creativas"
   },
   "locale": {
     "en": "Inglés",
@@ -1185,6 +1186,58 @@
           "subject": "Tu servicio fue revisado",
           "body": "{decision, select, published {Tu servicio pasó la revisión y ya está en el catálogo.} rejected {Tu servicio no pasó la revisión. Corrígelo y envíalo de nuevo.} removed {Un moderador retiró tu servicio del catálogo.} other {Tu servicio fue revisado.}} Servicio: «{serviceTitle}»."
         }
+      },
+      "ugcCampaignDecided": {
+        "inapp": {
+          "title": "Prueba creativa revisada",
+          "body": "{decision, select, open {El brief está abierto.} rejected {El brief fue rechazado y sigue cerrado.} other {El brief fue revisado.}} Producto: “{productName}”."
+        },
+        "email": {
+          "subject": "Prueba creativa revisada",
+          "body": "{decision, select, open {El brief está abierto.} rejected {El brief fue rechazado y sigue cerrado.} other {El brief fue revisado.}} Producto: “{productName}”."
+        }
+      },
+      "ugcApplication": {
+        "inapp": {
+          "title": "Nueva postulación",
+          "body": "Un creador se postuló a “{productName}”."
+        }
+      },
+      "ugcInvite": {
+        "inapp": {
+          "title": "Invitación a una prueba creativa",
+          "body": "Te invitan a “{productName}”. Importe registrado: {bountyMinor} centavos. No se cobra nada."
+        },
+        "email": {
+          "subject": "Invitación: {productName}",
+          "body": "Te invitan a “{productName}”. Importe registrado: {bountyMinor} centavos. No se cobra nada."
+        }
+      },
+      "ugcSubmission": {
+        "inapp": {
+          "title": "Vídeo enviado",
+          "body": "Se envió un vídeo para “{productName}”."
+        }
+      },
+      "ugcSubmissionDecided": {
+        "inapp": {
+          "title": "Vídeo revisado",
+          "body": "{decision, select, changes_requested {Se pidió una revisión.} accepted {El vídeo fue aceptado.} rejected {El vídeo fue rechazado.} winner {El vídeo quedó como ganador.} other {El vídeo fue revisado.}} Producto: “{productName}”."
+        },
+        "email": {
+          "subject": "Vídeo revisado: {productName}",
+          "body": "{decision, select, changes_requested {Se pidió una revisión.} accepted {El vídeo fue aceptado.} rejected {El vídeo fue rechazado.} winner {El vídeo quedó como ganador.} other {El vídeo fue revisado.}} Producto: “{productName}”."
+        }
+      },
+      "ugcDeadline": {
+        "inapp": {
+          "title": "Fecha de la prueba creativa",
+          "body": "La fecha de “{productName}” es mañana, o una oferta sin respuesta se quedó en silencio."
+        },
+        "email": {
+          "subject": "Fecha: {productName}",
+          "body": "La fecha de “{productName}” es mañana, o una oferta sin respuesta se quedó en silencio."
+        }
       }
     },
     "freelance": {
@@ -1575,6 +1628,15 @@
       "line": "Llegaste desde Servicios. Spoki habla en nombre de la empresa.",
       "back": "Volver a servicios"
     },
+    "ugcFocus": {
+      "line": "Brief: {product}",
+      "back": "Volver a las pruebas creativas",
+      "home": "Estás escribiendo un brief de prueba creativa. No se publica hasta que confirmes."
+    },
+    "ugcJoin": {
+      "title": "Enlace para el blogger",
+      "action": "Abrir en Telegram"
+    },
     "intro": "Dile al agente qué trabajo buscas. Encuentra empleos, mantiene tu perfil al día y te pregunta antes de cambiar algo.",
     "log": "Conversación",
     "you": "Tú",
@@ -1651,6 +1713,7 @@
       "applyTitle": "¿Postularte a este empleo?",
       "profileTitle": "¿Guardar estos cambios del perfil?",
       "jobTitle": "¿Enviar esta oferta a revisión?",
+      "ugcTitle": "¿Guardar este paso de la prueba creativa?",
       "text": "No pasa nada hasta que confirmes.",
       "accept": "Confirmar",
       "decline": "Cancelar",
@@ -1708,6 +1771,11 @@
         "title": "Pedir un equipo",
         "text": "Describe el problema. El precio se acuerda tras el alcance.",
         "action": "Describir la tarea"
+      },
+      "campaigns": {
+        "title": "Pruebas creativas",
+        "text": "Un brief. Los creadores se postulan. Contratas a las personas que nombras.",
+        "action": "Abrir pruebas creativas"
       }
     }
   },
@@ -3559,6 +3627,108 @@
       "error_VALIDATION": "Revisa los campos e inténtalo de nuevo.",
       "error_NETWORK": "Sin conexión. Inténtalo de nuevo.",
       "error_INTERNAL": "No se guardó. Inténtalo de nuevo."
+    }
+  },
+  "ugc": {
+    "title": "Pruebas creativas",
+    "intro": "Un brief. Los creadores se postulan. Contratas a las personas que nombras.",
+    "moneyNote": "El importe se guarda en centavos. En este paso no se cobra ni se paga nada.",
+    "openChat": "Escribir el brief con Spoki",
+    "newBrief": "Nuevo brief",
+    "signIn": "Entrar",
+    "empty": "Todavía no hay nada.",
+    "needCompany": "Crea una empresa antes de escribir un brief.",
+    "profileTitle": "Perfil de creador",
+    "profileSave": "Guardar perfil",
+    "openTitle": "Briefs abiertos",
+    "emptyOpen": "Ahora no hay briefs abiertos que te encajen.",
+    "apply": "Postularme",
+    "invitesTitle": "Tus invitaciones",
+    "emptyInvites": "Todavía no hay invitaciones.",
+    "thread": "Abrir el hilo",
+    "creator": "Creador",
+    "join": "Enlace para el blogger",
+    "close": "Cerrar brief",
+    "offer": "Contratar",
+    "acceptVideo": "Aceptar vídeo",
+    "rejectVideo": "Rechazar vídeo",
+    "winner": "Marcar ganador",
+    "remind": "Recordar",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "error": "No se guardó. Revisa los campos e inténtalo de nuevo.",
+    "joinReady": "Abre este enlace en Telegram. El token se queda en el enlace.",
+    "adminTitle": "Pruebas creativas en revisión",
+    "adminEmpty": "Nada espera revisión.",
+    "approve": "Abrir el brief",
+    "reject": "Rechazar",
+    "submitVideo": "Enviar vídeo",
+    "requestChanges": "Pedir la única revisión",
+    "status": {
+      "draft": "Borrador",
+      "pending_review": "En revisión",
+      "open": "Abierto",
+      "closed": "Cerrado",
+      "rejected": "Rechazado",
+      "applied": "Postulación",
+      "offered": "Oferta",
+      "hired": "Contratado",
+      "declined": "Rechazado",
+      "expired": "Caducado",
+      "withdrawn": "Retirado",
+      "submitted": "Enviado",
+      "changes_requested": "Revisión pedida",
+      "accepted": "Aceptado",
+      "winner": "Ganador"
+    },
+    "fields": {
+      "company": "Empresa",
+      "productName": "Producto",
+      "productSummary": "Qué es",
+      "goal": "Objetivo",
+      "niches": "Nichos",
+      "audience": "Audiencia",
+      "country": "País",
+      "languages": "Idiomas",
+      "mustSay": "Hay que decir",
+      "mustNot": "No hay que decir",
+      "platforms": "Plataformas",
+      "videos": "Vídeos pedidos",
+      "bounty": "Importe en dólares enteros",
+      "deadline": "Fecha límite",
+      "rights": "Derechos",
+      "pitch": "Pitch",
+      "examples": "Enlaces de ejemplo",
+      "displayName": "Nombre visible",
+      "inviteOptIn": "Avísame por correo cuando una empresa me invite",
+      "paused": "Pausar mi perfil",
+      "videoUrl": "Enlace del vídeo",
+      "hook": "Gancho",
+      "changeNote": "Qué cambiar"
+    },
+    "goals": {
+      "awareness": "Notoriedad",
+      "installs": "Instalaciones",
+      "purchases": "Compras",
+      "waitlist": "Lista de espera"
+    },
+    "niches": {
+      "app": "App",
+      "game": "Juego",
+      "finance": "Finanzas",
+      "ecommerce": "Tienda",
+      "education": "Educación",
+      "other": "Otro"
+    },
+    "platforms": {
+      "tiktok": "TikTok",
+      "reels": "Reels",
+      "shorts": "Shorts"
+    },
+    "rights": {
+      "organic": "Orgánico",
+      "ads": "Anuncios",
+      "whitelist": "Lista blanca"
     }
   }
 }

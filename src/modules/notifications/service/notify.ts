@@ -108,6 +108,7 @@ export async function notify(
   recipientIds: readonly string[],
   payload: unknown,
   now = new Date(),
+  options?: { email?: boolean },
 ): Promise<void> {
   if (injectedFailure) {
     const error = injectedFailure;
@@ -128,7 +129,7 @@ export async function notify(
       });
     }
     const email = resolveDelivery(type, "email", preferences);
-    if (email.allowed) {
+    if (email.allowed && options?.email !== false) {
       await queueEmail(userId, type, parsed, notificationId, now);
     }
   }
@@ -139,9 +140,10 @@ export async function safeNotify(
   type: NotificationType,
   recipientIds: readonly string[],
   payload: unknown,
+  options?: { email?: boolean },
 ): Promise<void> {
   try {
-    await notify(type, recipientIds, payload);
+    await notify(type, recipientIds, payload, new Date(), options);
   } catch (error) {
     logger.error({ type, err: error }, "notify failed");
   }

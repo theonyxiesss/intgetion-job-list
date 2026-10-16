@@ -54,6 +54,7 @@ type Entry =
   | { key: string; kind: "user" | "assistant" | "event"; text: string }
   | { key: string; kind: "jobs" | "matches"; jobs: JobCard[] }
   | { key: string; kind: "offer"; action: OfferAction }
+  | { key: string; kind: "ugc_join"; payload: string }
   | { key: string; kind: "notice"; code: string }
   | {
       key: string;
@@ -116,13 +117,22 @@ export function Chat({
   signedIn,
   jobId,
   fromServices = false,
+  fromCampaigns = false,
+  campaignId,
+  inviteId,
   focus,
+  ugcProduct,
 }: {
   signedIn: boolean;
   jobId?: string;
   /** Opened from the Services page. The server owns the prompt text (D423). */
   fromServices?: boolean;
+  /** Opened to write a creative-test brief (D457). */
+  fromCampaigns?: boolean;
+  campaignId?: string;
+  inviteId?: string;
   focus?: { title: string; company: string };
+  ugcProduct?: string;
 }) {
   const t = useTranslations("chat");
   const explain = useTranslations("explain");
@@ -161,6 +171,15 @@ export function Chat({
     const params = new URLSearchParams();
     if (jobId) {
       params.set("job", jobId);
+      params.set("locale", locale);
+    } else if (campaignId) {
+      params.set("campaign", campaignId);
+      params.set("locale", locale);
+    } else if (inviteId) {
+      params.set("invite", inviteId);
+      params.set("locale", locale);
+    } else if (fromCampaigns) {
+      params.set("from", "campaigns");
       params.set("locale", locale);
     } else if (fromServices) {
       params.set("from", "services");
@@ -209,7 +228,7 @@ export function Chat({
         setStarterSeed(Math.floor(Math.random() * 0x7fffffff) || 1);
         setHistoryReady(true);
       });
-  }, [jobId, fromServices, locale]);
+  }, [jobId, fromServices, fromCampaigns, campaignId, inviteId, locale]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
@@ -288,6 +307,9 @@ export function Chat({
           text: message,
           locale,
           ...(fromServices ? { from: "services" as const } : {}),
+          ...(fromCampaigns ? { from: "campaigns" as const } : {}),
+          ...(campaignId ? { campaignId } : {}),
+          ...(inviteId ? { inviteId } : {}),
         }),
       });
       if (!response.ok || !response.body) {
@@ -312,6 +334,12 @@ export function Chat({
             kind: data.kind,
             jobs: data.data as JobCard[],
           });
+        } else if (data.type === "tool_result" && data.kind === "ugc_join") {
+          const payload = (data.data as { payload?: unknown } | null)?.payload;
+          if (typeof payload === "string" && /^ugc_[A-Za-z0-9_-]+$/.test(payload)) {
+            setThinking(false);
+            add({ key: nextKey(), kind: "ugc_join", payload });
+          }
         } else if (data.type === "tool_result" && data.kind === "offer") {
           const action = (data.data as { action?: unknown } | null)?.action;
           if (isOfferAction(action) && offerPath(action, signedIn)) {
@@ -473,6 +501,25 @@ export function Chat({
             </Link>
           </p>
         ) : null}
+        {ugcProduct ? (
+          <p className="t-body-s mt-2 text-fg">
+            {t("ugcFocus.line", { product: ugcProduct })}{" "}
+            <Link
+              href={campaignId ? `/campaigns/${campaignId}` : "/campaigns"}
+              className="underline underline-offset-4"
+            >
+              {t("ugcFocus.back")}
+            </Link>
+          </p>
+        ) : null}
+        {fromCampaigns ? (
+          <p className="t-body-s mt-2 text-fg">
+            {t("ugcFocus.home")}{" "}
+            <Link href="/campaigns" className="underline underline-offset-4">
+              {t("ugcFocus.back")}
+            </Link>
+          </p>
+        ) : null}
         {fromServices ? (
           <p className="t-body-s mt-2 text-fg">
             {t("serviceFocus.line")}{" "}
@@ -492,14 +539,18 @@ export function Chat({
           {welcome && (
             <div className="mt-auto flex w-full flex-col items-center gap-4 pb-2 text-center">
               <h2 className="text-2xl font-medium md:text-3xl">
-                {fromServices ? t("serviceFocus.line") : t("welcome")}
+                {fromServices
+                  ? t("serviceFocus.line")
+                  : fromCampaigns
+                    ? t("ugcFocus.home")
+                    : t("welcome")}
               </h2>
-              {fromServices ? null : (
+              {fromServices || fromCampaigns ? null : (
                 <p className="t-body-s max-w-md text-fg-muted">
                   {signedIn ? t("emptySignedIn") : t("emptyGuest")}
                 </p>
               )}
-              {historyReady && !jobId && !fromServices && (
+              {historyReady && !jobId && !fromServices && !fromCampaigns && (
                 <div className="flex w-full max-w-md flex-col gap-3">
                   <div
                     role="tablist"
@@ -611,6 +662,22 @@ export function Chat({
                 </ul>
               );
             }
+            if (entry.kind === "ugc_join") {
+              return (
+                <div
+                  key={entry.key}
+                  className="flex max-w-md flex-col items-start gap-3 rounded-2xl border border-line bg-surface-2 px-4 py-3"
+                >
+                  <p className="font-medium">{t("ugcJoin.title")}</p>
+                  <a
+                    href={`${TELEGRAM_BOT_URL}?start=${entry.payload}`}
+                    className="inline-flex min-h-11 items-center rounded-full bg-fg px-5 text-bg"
+                  >
+                    {t("ugcJoin.action")}
+                  </a>
+                </div>
+              );
+            }
             if (entry.kind === "offer") {
               const path = offerPath(entry.action, signedIn);
               if (!path) return null;
@@ -657,7 +724,10 @@ export function Chat({
                       ? t("confirm.applyTitle")
                       : entry.tool === "propose_team_job"
                         ? t("confirm.jobTitle")
-                        : t("confirm.profileTitle")
+                        : entry.tool.includes("ugc") ||
+                            entry.tool === "propose_creator_profile"
+                          ? t("confirm.ugcTitle")
+                          : t("confirm.profileTitle")
                   }
                   confirmLabel={t("confirm.accept")}
                   cancelLabel={t("confirm.decline")}

@@ -6,6 +6,7 @@ import {
 } from "@/modules/auth/service";
 import { handleTelegramAgentUpdate } from "@/modules/bot/service";
 import { handleFreelanceTelegramCallback } from "@/modules/freelance/service";
+import { handleUgcTelegramStart } from "@/modules/ugc/service";
 
 /** Telegram Bot API webhook (D256). Authenticated by the secret header, not Origin. */
 export async function POST(request: Request) {
@@ -30,6 +31,7 @@ export async function POST(request: Request) {
     // button; anything else is ordinary chat for the agent (D311).
     const handled =
       (await handleFreelanceTelegramCallback(token, update)) ||
+      (await handleUgcTelegramStart(token, update)) ||
       (await handleTelegramWebhook(token, update));
     if (!handled) await handleTelegramAgentUpdate(token, update);
   } catch (error) {

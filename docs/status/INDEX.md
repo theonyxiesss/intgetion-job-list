@@ -23,6 +23,7 @@
 | Cross-device email handoff (D328) | DEFERRED       | не итерировать                          |
 | Live import (8B)                  | OUT            | нужен founder approval                  |
 | OAuth Google/X                    | OUT            | V2                                      |
+| Creative tests (D457)             | PARTIAL        | фаза A; `0051`+`0052` на облаке 2026-10-16 |
 | Messenger                         | OUT            | V2                                      |
 
 Детали кода: [../how-it-works/INDEX.md](../how-it-works/INDEX.md).

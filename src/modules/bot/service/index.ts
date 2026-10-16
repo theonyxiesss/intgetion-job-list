@@ -14,6 +14,8 @@ export {
   handleMessage,
   hashSessionToken,
   openServiceConversation,
+  openUgcHomeConversation,
+  openUgcThread,
   resolveConversation,
   resumeConversation,
   setBotLLMForTests,

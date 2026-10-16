@@ -65,6 +65,7 @@ export async function Header() {
         { href: "/jobs", label: t("nav.jobs") },
         { href: "/events", label: t("nav.events") },
         { href: "/freelance", label: t("nav.freelance") },
+        { href: "/campaigns", label: t("nav.campaigns") },
         { href: "/services", label: t("nav.services") },
         { href: "/employer/jobs", label: t("nav.myJobs") },
         { href: "/employer/company", label: t("nav.company") },
@@ -74,6 +75,7 @@ export async function Header() {
         { href: "/jobs", label: t("nav.jobs") },
         { href: "/events", label: t("nav.events") },
         { href: "/freelance", label: t("nav.freelance") },
+        { href: "/campaigns", label: t("nav.campaigns") },
         { href: "/services", label: t("nav.services") },
       ];
   const more: NavItem[] = employer

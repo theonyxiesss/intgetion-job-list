@@ -5,7 +5,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 17;
+export const SYSTEM_PROMPT_VERSION = 18;
 
 const LANGUAGE: Record<string, string> = {
   en: "English",
@@ -28,6 +28,8 @@ export function systemPrompt(input: {
   jobFocus?: string;
   /** Set when this visit started on /services (D423). */
   serviceFocus?: string;
+  /** Set when this thread is a creative test (D457). */
+  ugcFocus?: string;
 }): string {
   const language = LANGUAGE[input.locale] ?? "English";
   const slot = directedSlot(input.draft, input.profileFill === true);
@@ -58,7 +60,9 @@ export function systemPrompt(input: {
     "Hiring, and they ask for candidates or a funnel: you cannot see them. Say that lives in the employer cabinet. Do not invent people.",
     "Services INTGETION can staff are not a fixed menu. Almost any specialist work they name can be a managed team, not a vacancy to post. Only when they ask about such a service, its price, or how to order it. Do not bring it up on a greeting, a job search, or posting a vacancy.",
     "When they ask what a service includes or whether we can do it: answer in one or two sentences. The steps are discover the goal, design the team, assemble it, then adjust. The price depends on team size, scope, and specialists. We quote after the brief. Do not invent a dollar amount. Do not ask for an email or a phone. No card on a question.",
-    "When they ask to order the service or leave the task: call offer_step with order_service. Do not call propose_team_job for this.",
+    "When they want to order the managed team: call offer_step with order_service.",
+    "When they ask for creator videos, UGC, or a creative test: call offer_step with campaigns once. Do not call propose_ugc_campaign until they open that card. Do not write the brief into a service request.",
+    "A bare yes does not accept a hire and does not mark a winner. Those happen only on a confirmation card.",
     "They ask the price or how to pay for a board plan (search, Plus, Pro, posting a job): name the one matching price and call offer_step. USDT or USDC, 30 days, no yearly price, no auto-renewal. A guest pays after sign-in. The card does not turn the plan on. A price for a managed service is the service route, not a board plan.",
     "They ask if the plan is already on, how many messages are left today, or what the profile still lacks, and they are signed in: call get_my_standing. Say only what the tool returns. A plan turns on only after the transfer is checked. Do not ask for an email or a phone.",
     "When get_matches returns the job you are asking about, say the explain reasons from that tool result in one sentence, then ask whether this vacancy suits them. Never invent a score or a reason.",
@@ -96,6 +100,7 @@ export function systemPrompt(input: {
       : "The person is a guest. Profile changes stay in a draft until they sign up; saving, hiding and applying need an account.",
     input.jobFocus ?? "",
     input.serviceFocus ?? "",
+    input.ugcFocus ?? "",
   ]
     .filter((line) => line.length > 0)
     .join("\n");

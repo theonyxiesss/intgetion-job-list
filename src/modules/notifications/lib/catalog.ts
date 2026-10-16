@@ -31,7 +31,9 @@ export type RecipientRole =
   /** The buyer or the seller of a freelance order, per transition (D456). */
   | "freelanceParty"
   /** The seller of a freelance service (D456). */
-  | "freelanceSeller";
+  | "freelanceSeller"
+  /** A company member or a creator on a creative test (D457). */
+  | "ugcParty";
 
 /** What happened to a freelance order, as the notice names it (D456). */
 export const FREELANCE_ORDER_NOTICES = [
@@ -187,6 +189,36 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
     serviceTitle: z.string().min(1).max(200),
     decision: z.enum(["published", "rejected", "removed"]),
   }),
+  ugcCampaignDecided: strict({
+    campaignId: idSchema,
+    productName: z.string().min(1).max(120),
+    decision: z.enum(["open", "rejected"]),
+  }),
+  ugcApplication: strict({
+    campaignId: idSchema,
+    productName: z.string().min(1).max(120),
+    inviteId: idSchema,
+  }),
+  ugcInvite: strict({
+    campaignId: idSchema,
+    inviteId: idSchema,
+    productName: z.string().min(1).max(120),
+    bountyMinor: z.string().regex(/^\d+$/),
+  }),
+  ugcSubmission: strict({
+    campaignId: idSchema,
+    productName: z.string().min(1).max(120),
+    inviteId: idSchema,
+  }),
+  ugcSubmissionDecided: strict({
+    campaignId: idSchema,
+    productName: z.string().min(1).max(120),
+    decision: z.enum(["changes_requested", "accepted", "rejected", "winner"]),
+  }),
+  ugcDeadline: strict({
+    campaignId: idSchema,
+    productName: z.string().min(1).max(120),
+  }),
 } as const;
 
 export const NOTIFICATION_TYPES = [
@@ -207,6 +239,12 @@ export const NOTIFICATION_TYPES = [
   "freelance.request_created",
   "freelance.order_updated",
   "freelance.service_decided",
+  "ugc.campaign_decided",
+  "ugc.application",
+  "ugc.invite",
+  "ugc.submission",
+  "ugc.submission_decided",
+  "ugc.deadline",
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
@@ -371,6 +409,54 @@ export const NOTIFICATION_CATALOG: Readonly<
     policy: "immediate",
     emailDefault: true,
     payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.freelanceServiceDecided,
+  },
+  "ugc.campaign_decided": {
+    type: "ugc.campaign_decided",
+    i18nKey: "ugcCampaignDecided",
+    recipients: "ugcParty",
+    policy: "immediate",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.ugcCampaignDecided,
+  },
+  "ugc.application": {
+    type: "ugc.application",
+    i18nKey: "ugcApplication",
+    recipients: "ugcParty",
+    policy: "immediate",
+    emailDefault: false,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.ugcApplication,
+  },
+  "ugc.invite": {
+    type: "ugc.invite",
+    i18nKey: "ugcInvite",
+    recipients: "ugcParty",
+    policy: "immediate",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.ugcInvite,
+  },
+  "ugc.submission": {
+    type: "ugc.submission",
+    i18nKey: "ugcSubmission",
+    recipients: "ugcParty",
+    policy: "immediate",
+    emailDefault: false,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.ugcSubmission,
+  },
+  "ugc.submission_decided": {
+    type: "ugc.submission_decided",
+    i18nKey: "ugcSubmissionDecided",
+    recipients: "ugcParty",
+    policy: "immediate",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.ugcSubmissionDecided,
+  },
+  "ugc.deadline": {
+    type: "ugc.deadline",
+    i18nKey: "ugcDeadline",
+    recipients: "ugcParty",
+    policy: "immediate",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.ugcDeadline,
   },
 };
 

@@ -206,6 +206,15 @@ function FreelanceMark(props: NavMarkProps) {
   );
 }
 
+function CampaignsMark(props: NavMarkProps) {
+  return (
+    <Frame {...props}>
+      <path d="M4 5 H20 V19 H4 Z" />
+      <path d="M10 9 L15 12 L10 15 Z" />
+    </Frame>
+  );
+}
+
 function LoginMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
@@ -220,6 +229,7 @@ export const NAV_ICONS: Record<string, NavMark> = {
   "/jobs": JobsMark,
   "/events": EventsMark,
   "/freelance": FreelanceMark,
+  "/campaigns": CampaignsMark,
   "/matches": MatchesMark,
   "/employer/jobs": EmployerJobsMark,
   "/employer/company": CompanyMark,
@@ -253,6 +263,7 @@ const PHONE_NAV_ORDER = {
     "/notifications",
     "/profile",
     "/freelance",
+    "/campaigns",
     "/services",
     "/post-job",
     "/settings/account",
@@ -264,6 +275,7 @@ const PHONE_NAV_ORDER = {
     "/events",
     "/chat",
     "/freelance",
+    "/campaigns",
     "/services",
     "/post-job",
     "/for-employers",
@@ -278,6 +290,7 @@ const PHONE_NAV_ORDER = {
     "/jobs",
     "/events",
     "/freelance",
+    "/campaigns",
     "/services",
     "/notifications",
     "/settings/account",

@@ -155,6 +155,8 @@ function conversation(state: BotState, jobId: string | null = null) {
     channel: "web",
     sessionTokenHash: "hash",
     jobId,
+    campaignId: null,
+    inviteId: null,
     locale: "en",
     state,
     summary: null,

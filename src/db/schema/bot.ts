@@ -13,6 +13,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { jobs } from "./jobs";
+import { ugcCampaigns, ugcInvites } from "./ugc";
 import { users } from "./users";
 
 export const botConversations = pgTable(
@@ -26,6 +27,12 @@ export const botConversations = pgTable(
     sessionTokenHash: text("session_token_hash").notNull().unique(),
     locale: text("locale"),
     jobId: uuid("job_id").references(() => jobs.id, { onDelete: "cascade" }),
+    campaignId: uuid("campaign_id").references(() => ugcCampaigns.id, {
+      onDelete: "cascade",
+    }),
+    inviteId: uuid("invite_id").references(() => ugcInvites.id, {
+      onDelete: "cascade",
+    }),
     state: jsonb("state").notNull().default({}),
     summary: text("summary"),
     linkedAt: timestamp("linked_at", { withTimezone: true }),
@@ -41,6 +48,14 @@ export const botConversations = pgTable(
     uniqueIndex("bot_conversations_user_job_idx")
       .on(table.userId, table.jobId)
       .where(sql`${table.userId} is not null and ${table.jobId} is not null`),
+    uniqueIndex("bot_conversations_user_campaign_idx")
+      .on(table.userId, table.campaignId)
+      .where(
+        sql`${table.userId} is not null and ${table.campaignId} is not null`,
+      ),
+    uniqueIndex("bot_conversations_user_invite_idx")
+      .on(table.userId, table.inviteId)
+      .where(sql`${table.userId} is not null and ${table.inviteId} is not null`),
     check("bot_conversations_channel_check", sql`${table.channel} in ('web')`),
   ],
 );

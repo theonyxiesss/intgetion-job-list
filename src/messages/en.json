@@ -138,7 +138,8 @@
     "postJob": "Post a job",
     "myJobs": "My jobs",
     "company": "Company",
-    "freelance": "Freelance"
+    "freelance": "Freelance",
+    "campaigns": "Creative tests"
   },
   "locale": {
     "en": "English",
@@ -1185,6 +1186,58 @@
           "subject": "Your service was reviewed",
           "body": "{decision, select, published {Your service passed review and is in the catalog now.} rejected {Your service did not pass review. Fix it and send it again.} removed {A moderator removed your service from the catalog.} other {Your service was reviewed.}} Service: “{serviceTitle}”."
         }
+      },
+      "ugcCampaignDecided": {
+        "inapp": {
+          "title": "Creative test reviewed",
+          "body": "{decision, select, open {The brief is open.} rejected {The brief was rejected and stays closed.} other {The brief was reviewed.}} Product: “{productName}”."
+        },
+        "email": {
+          "subject": "Creative test reviewed",
+          "body": "{decision, select, open {The brief is open.} rejected {The brief was rejected and stays closed.} other {The brief was reviewed.}} Product: “{productName}”."
+        }
+      },
+      "ugcApplication": {
+        "inapp": {
+          "title": "New application",
+          "body": "A creator applied to “{productName}”."
+        }
+      },
+      "ugcInvite": {
+        "inapp": {
+          "title": "Creative test invitation",
+          "body": "You are invited to “{productName}”. Recorded amount: {bountyMinor} cents. Nothing is charged."
+        },
+        "email": {
+          "subject": "Invitation: {productName}",
+          "body": "You are invited to “{productName}”. Recorded amount: {bountyMinor} cents. Nothing is charged."
+        }
+      },
+      "ugcSubmission": {
+        "inapp": {
+          "title": "Video submitted",
+          "body": "A video was submitted for “{productName}”."
+        }
+      },
+      "ugcSubmissionDecided": {
+        "inapp": {
+          "title": "Video reviewed",
+          "body": "{decision, select, changes_requested {One revision was requested.} accepted {The video was accepted.} rejected {The video was rejected.} winner {The video was marked as the winner.} other {The video was reviewed.}} Product: “{productName}”."
+        },
+        "email": {
+          "subject": "Video reviewed: {productName}",
+          "body": "{decision, select, changes_requested {One revision was requested.} accepted {The video was accepted.} rejected {The video was rejected.} winner {The video was marked as the winner.} other {The video was reviewed.}} Product: “{productName}”."
+        }
+      },
+      "ugcDeadline": {
+        "inapp": {
+          "title": "Creative test deadline",
+          "body": "The deadline for “{productName}” is tomorrow, or an unanswered offer has gone quiet."
+        },
+        "email": {
+          "subject": "Deadline: {productName}",
+          "body": "The deadline for “{productName}” is tomorrow, or an unanswered offer has gone quiet."
+        }
       }
     },
     "freelance": {
@@ -1575,6 +1628,15 @@
       "line": "You came from Services. Spoki speaks for the company.",
       "back": "Back to services"
     },
+    "ugcFocus": {
+      "line": "Brief: {product}",
+      "back": "Back to creative tests",
+      "home": "You are writing a creative-test brief. Nothing is posted until you confirm."
+    },
+    "ugcJoin": {
+      "title": "Blogger join link",
+      "action": "Open in Telegram"
+    },
     "intro": "A conversation that learns what work you want and keeps looking.",
     "log": "Conversation",
     "you": "You",
@@ -1651,6 +1713,7 @@
       "applyTitle": "Apply to this job?",
       "profileTitle": "Save these profile changes?",
       "jobTitle": "Post this job for review?",
+      "ugcTitle": "Save this creative-test step?",
       "text": "Nothing happens until you confirm.",
       "accept": "Confirm",
       "decline": "Cancel",
@@ -1708,6 +1771,11 @@
         "title": "Order a team",
         "text": "Describe the problem. We quote after the scope is clear.",
         "action": "Describe the task"
+      },
+      "campaigns": {
+        "title": "Creative tests",
+        "text": "One brief. Creators apply. You hire the people you name.",
+        "action": "Open creative tests"
       }
     }
   },
@@ -4065,6 +4133,108 @@
       "error_VALIDATION": "Check the fields and try again.",
       "error_NETWORK": "No connection. Try again.",
       "error_INTERNAL": "Could not save. Try again."
+    }
+  },
+  "ugc": {
+    "title": "Creative tests",
+    "intro": "One brief. Creators apply. You hire the people you name.",
+    "moneyNote": "The amount is recorded in cents. Nothing is charged or paid in this step.",
+    "openChat": "Write the brief with Spoki",
+    "newBrief": "New brief",
+    "signIn": "Sign in",
+    "empty": "Nothing here yet.",
+    "needCompany": "Create a company before you write a brief.",
+    "profileTitle": "Creator profile",
+    "profileSave": "Save profile",
+    "openTitle": "Open briefs",
+    "emptyOpen": "No open briefs match you right now.",
+    "apply": "Apply",
+    "invitesTitle": "Your invitations",
+    "emptyInvites": "No invitations yet.",
+    "thread": "Open the thread",
+    "creator": "Creator",
+    "join": "Blogger join link",
+    "close": "Close brief",
+    "offer": "Hire",
+    "acceptVideo": "Accept video",
+    "rejectVideo": "Reject video",
+    "winner": "Mark winner",
+    "remind": "Remind",
+    "accept": "Accept",
+    "decline": "Decline",
+    "error": "That did not save. Check the fields and try again.",
+    "joinReady": "Open this link in Telegram. The token stays in the link.",
+    "adminTitle": "Creative tests in review",
+    "adminEmpty": "Nothing is waiting for review.",
+    "approve": "Open the brief",
+    "reject": "Reject",
+    "submitVideo": "Submit video",
+    "requestChanges": "Ask for the one revision",
+    "status": {
+      "draft": "Draft",
+      "pending_review": "In review",
+      "open": "Open",
+      "closed": "Closed",
+      "rejected": "Rejected",
+      "applied": "Applied",
+      "offered": "Offered",
+      "hired": "Hired",
+      "declined": "Declined",
+      "expired": "Expired",
+      "withdrawn": "Withdrawn",
+      "submitted": "Submitted",
+      "changes_requested": "Revision requested",
+      "accepted": "Accepted",
+      "winner": "Winner"
+    },
+    "fields": {
+      "company": "Company",
+      "productName": "Product",
+      "productSummary": "What it is",
+      "goal": "Goal",
+      "niches": "Niches",
+      "audience": "Audience",
+      "country": "Country",
+      "languages": "Languages",
+      "mustSay": "Must say",
+      "mustNot": "Must not say",
+      "platforms": "Platforms",
+      "videos": "Videos wanted",
+      "bounty": "Amount in whole dollars",
+      "deadline": "Deadline",
+      "rights": "Rights",
+      "pitch": "Pitch",
+      "examples": "Example links",
+      "displayName": "Display name",
+      "inviteOptIn": "Email me when a company invites me",
+      "paused": "Pause my profile",
+      "videoUrl": "Video link",
+      "hook": "Hook",
+      "changeNote": "What to change"
+    },
+    "goals": {
+      "awareness": "Awareness",
+      "installs": "Installs",
+      "purchases": "Purchases",
+      "waitlist": "Waitlist"
+    },
+    "niches": {
+      "app": "App",
+      "game": "Game",
+      "finance": "Finance",
+      "ecommerce": "Shop",
+      "education": "Education",
+      "other": "Other"
+    },
+    "platforms": {
+      "tiktok": "TikTok",
+      "reels": "Reels",
+      "shorts": "Shorts"
+    },
+    "rights": {
+      "organic": "Organic",
+      "ads": "Ads",
+      "whitelist": "Whitelist"
     }
   }
 }

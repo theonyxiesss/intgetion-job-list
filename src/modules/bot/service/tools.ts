@@ -42,8 +42,9 @@ import {
   listMatchPage,
   topExplain,
 } from "@/modules/matching/service";
-import { eventPlaceFromDraft, searchFiltersFromDraft } from "./memory";
+import { ugcTools } from "@/modules/ugc/service";
 import { OFFER_ACTIONS, offerPath } from "./offers";
+import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
 import { formatStanding, standingMissing } from "./standing";
 
 /**
@@ -75,8 +76,12 @@ export type BotState = {
   passedJobIds?: string[];
   /** Whether the shown vacancy suits them. A yes is not an application. */
   verdict?: "suits" | "declined";
-  /** This general thread was opened from the Services page (D423). */
-  topic?: "services";
+  /** This general thread was opened from Services (D423) or creative tests (D457). */
+  topic?: "services" | "ugc";
+  /** Creative test this Telegram chat is focused on. Not a write. */
+  ugcCampaignId?: string;
+  /** Product name for the prompt. Untrusted text. */
+  ugcProduct?: string;
 };
 
 export type ToolContext = {
@@ -522,6 +527,7 @@ export const TOOLS: readonly BotTool[] = [
       };
     },
   }),
+  ...(ugcTools as unknown as BotTool[]),
 ];
 
 /** Tools offered to the model: guests never even see user tools (P11). */

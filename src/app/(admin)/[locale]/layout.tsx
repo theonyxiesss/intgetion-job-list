@@ -12,7 +12,7 @@ import { routing } from "@/i18n/routing";
 import "../../globals.css";
 import { fontVariables } from "../../fonts";
 
-const CLIENT_NAMESPACES = ["nav", "ui", "admin", "locale"] as const;
+const CLIENT_NAMESPACES = ["nav", "ui", "admin", "locale", "ugc"] as const;
 
 const themeScript = `(function(){try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light";}catch(e){}})();`;
 
