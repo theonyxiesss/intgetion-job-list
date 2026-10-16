@@ -378,7 +378,19 @@ export type PublicService = ServiceWithPackages & repo.ServiceStats;
 export async function getPublishedService(
   slug: string,
 ): Promise<PublicService | null> {
-  const row = await repo.findServiceBySlug(slug);
+  return publicOf(await repo.findServiceBySlug(slug));
+}
+
+/** The same check by id, for Spoki and `/chat?service=` (28.8). */
+export async function getPublishedServiceById(
+  id: string,
+): Promise<PublicService | null> {
+  return publicOf(await repo.findServiceById(id));
+}
+
+async function publicOf(
+  row: repo.ServiceRow | null,
+): Promise<PublicService | null> {
   if (!row || row.status !== "published") return null;
   const seller = await repo.findSeller(row.sellerId);
   if (!seller?.accepting) return null;

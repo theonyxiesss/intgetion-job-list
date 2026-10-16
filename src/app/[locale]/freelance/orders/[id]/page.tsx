@@ -236,6 +236,12 @@ export default async function FreelanceOrderPage({
             ))}
           </ol>
         </section>
+        <Link
+          href={`/chat?order=${order.id}`}
+          className="t-body-s underline underline-offset-4"
+        >
+          {t("askSpoki")}
+        </Link>
         <p className="t-body-s text-fg-muted">{t("payNote")}</p>
       </Container>
     </main>

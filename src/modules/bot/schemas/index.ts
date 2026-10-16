@@ -33,5 +33,12 @@ export const botConfirmInput = z
     conversationId: z.uuid().optional(),
     confirmationId: z.uuid(),
     accept: z.boolean(),
+    /** Typed into the card by the person: links, a result URL (D460). */
+    fields: z
+      .record(
+        z.string().max(40),
+        z.union([z.string().max(2600), z.array(z.string().max(500)).max(5)]),
+      )
+      .optional(),
   })
   .strict();

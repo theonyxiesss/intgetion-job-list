@@ -292,6 +292,12 @@ export default async function FreelanceServicePage({
               <p className="t-body-s text-fg-muted">{t("contactsNote")}</p>
               <p className="t-body-s text-fg-muted">{t("payNote")}</p>
             </div>
+            <Link
+              href={`/chat?service=${page.id}`}
+              className={buttonClass("secondary")}
+            >
+              {t("askSpoki")}
+            </Link>
             <Link href="/services" className={buttonClass("secondary")}>
               {t("teamLink")}
             </Link>

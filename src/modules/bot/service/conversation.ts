@@ -26,6 +26,10 @@ import {
 } from "@/modules/candidates/service";
 import { matchSkillSlug } from "@/modules/taxonomy/service";
 import { getJobForPublic } from "@/modules/jobs/service";
+import {
+  getOrderForParty,
+  getPublishedServiceById,
+} from "@/modules/freelance/service";
 import { systemPrompt, SYSTEM_PROMPT_VERSION } from "../prompts/system";
 import {
   askWhy,
@@ -50,6 +54,12 @@ import {
   type JobCardFacts,
   type VacancyFacts,
 } from "./fit";
+import {
+  freelanceFocusBlock,
+  freelanceOpener,
+  freelanceTopicState,
+  type FreelanceFocus,
+} from "./freelance-focus";
 import { jobFocusBlock, jobFocusOpener, readJobFocus } from "./job-focus";
 import {
   isServiceFrom,
@@ -81,6 +91,7 @@ import { draftFromExtraction, extractDraft } from "./extract";
 import {
   hashArgs,
   runTool,
+  toolCardFields,
   toolNeedsConfirmation,
   toolsFor,
   type BotState,
@@ -107,6 +118,8 @@ export type BotEvent =
       tool: string;
       args: unknown;
       expiresAt: string;
+      /** Fields the person types into the card (D460). */
+      fields?: readonly string[];
     }
   | { type: "error"; code: string }
   | { type: "signup_hint"; text: string }
@@ -442,6 +455,91 @@ export async function openUgcThread(input: {
 }
 
 /**
+ * The service or order a `/chat?service=` or `/chat?order=` link names, if
+ * this person may read it. A stranger's order is null, as a 404 would be.
+ */
+export async function readFreelanceFocus(
+  userId: string | null,
+  ids: { serviceId?: string; orderId?: string },
+): Promise<FreelanceFocus | null> {
+  try {
+    if (ids.orderId && userId) {
+      const order = await getOrderForParty(userId, ids.orderId);
+      return { kind: "order", id: order.id, title: order.serviceTitle };
+    }
+    if (ids.serviceId) {
+      const service = await getPublishedServiceById(ids.serviceId);
+      if (service) {
+        return { kind: "service", id: service.id, title: service.title };
+      }
+    }
+  } catch (error) {
+    if (!(error instanceof HttpError)) throw error;
+  }
+  return null;
+}
+
+/**
+ * The general thread, turned to one freelance service or order (28.8).
+ * The opener is written when the thread turns to it, not on every load.
+ */
+export async function openFreelanceConversation(input: {
+  userId: string | null;
+  token: string | undefined;
+  locale: string;
+  focus: FreelanceFocus;
+}): Promise<{ conversation: repo.ConversationRow; token: string }> {
+  const opened = await resolveConversation({ ...input, generalOnly: true });
+  const previous = (opened.conversation.state ?? {}) as BotState;
+  const state = freelanceTopicState(previous, input.focus);
+  let conversation = opened.conversation;
+  if (state) {
+    await repo.updateConversation(
+      conversation.id,
+      { state, locale: input.locale },
+      new Date(),
+    );
+    conversation = { ...conversation, state, locale: input.locale };
+    await repo.insertMessage({
+      conversationId: conversation.id,
+      role: "assistant",
+      content: freelanceOpener(input.locale, input.focus),
+    });
+  }
+  return { conversation, token: opened.token };
+}
+
+/** Cards still open in this thread, so a reload or a Telegram link shows them. */
+export async function pendingConfirmations(
+  conversationId: string,
+  userId: string | null,
+  now = new Date(),
+): Promise<Extract<BotEvent, { type: "confirm_request" }>[]> {
+  if (!userId) return [];
+  const rows = await repo.listOpenConfirmations({
+    conversationId,
+    userId,
+    now,
+  });
+  return rows.map((row) => ({
+    type: "confirm_request" as const,
+    confirmationId: row.id,
+    tool: row.tool,
+    args: row.args,
+    expiresAt: row.expiresAt.toISOString(),
+    fields: toolCardFields(row.tool),
+  }));
+}
+
+/** The thread a card belongs to, when the card is this user's (D460). */
+export async function findConfirmationConversation(
+  userId: string,
+  confirmationId: string,
+) {
+  return repo.findConversationOfConfirmation(confirmationId, userId);
+}
+
+/**
  * One confirmation card for a claimed guest draft. The flag is cleared in
  * the same update that wins, so a second request does not create another card.
  */
@@ -488,6 +586,8 @@ export async function resumeConversation(input: {
   campaignId?: string;
   inviteId?: string;
   productName?: string;
+  /** Resolved by `readFreelanceFocus` (D460). */
+  freelance?: FreelanceFocus | null;
 }): Promise<{
   conversation: repo.ConversationRow | null;
   offer: Extract<BotEvent, { type: "confirm_request" }> | null;
@@ -534,6 +634,28 @@ export async function resumeConversation(input: {
       campaignId: input.campaignId,
       inviteId: input.inviteId,
       productName: input.productName,
+    });
+    const offer = await takeDraftOffer(
+      opened.conversation,
+      input.userId,
+      new Date(),
+    );
+    return {
+      conversation: opened.conversation,
+      offer,
+      token: opened.token,
+      actions: chatActions(
+        input.userId,
+        (opened.conversation.state ?? {}) as BotState,
+      ),
+    };
+  }
+  if (input.freelance) {
+    const opened = await openFreelanceConversation({
+      userId: input.userId,
+      token: input.token,
+      locale: input.locale ?? "en",
+      focus: input.freelance,
     });
     const offer = await takeDraftOffer(
       opened.conversation,
@@ -916,6 +1038,7 @@ export async function handleMessage(
       !current.jobId && state.topic === "ugc"
         ? ugcFocusBlock(state.ugcProduct ?? "")
         : undefined,
+    freelanceFocus: current.jobId ? undefined : freelanceFocusBlock(state),
   });
   const tools = toolsFor(userId);
   const lang = replyLanguage(input.text, input.locale);
@@ -1218,6 +1341,7 @@ async function callTool(
       tool: call.name,
       args: call.input,
       expiresAt: confirmation.expiresAt.toISOString(),
+      fields: toolCardFields(call.name),
     });
     return {
       llm: "A confirmation card was shown. Nothing is done until the user accepts it.",
@@ -1352,6 +1476,8 @@ export async function confirmAction(
     conversation: repo.ConversationRow;
     confirmationId: string;
     accept: boolean;
+    /** What the person typed into the card. Never sent to the model. */
+    fields?: Record<string, unknown>;
   },
   now = new Date(),
 ) {
@@ -1384,11 +1510,17 @@ export async function confirmAction(
     state: input.conversation.state as BotState,
   };
   try {
-    const outcome = await runTool(ctx, row.tool, row.args, {
-      tool: row.tool,
-      argsHash: row.argsHash,
-      userId: row.userId,
-    });
+    const outcome = await runTool(
+      ctx,
+      row.tool,
+      row.args,
+      {
+        tool: row.tool,
+        argsHash: row.argsHash,
+        userId: row.userId,
+      },
+      input.fields,
+    );
     await repo.insertMessage({
       conversationId: input.conversation.id,
       role: "system_event",

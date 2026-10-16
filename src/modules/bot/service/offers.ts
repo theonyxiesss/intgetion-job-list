@@ -16,6 +16,8 @@ export const OFFER_ACTIONS = [
   "order_service",
   "events",
   "campaigns",
+  "freelance",
+  "freelance_sell",
 ] as const;
 
 export type OfferAction = (typeof OFFER_ACTIONS)[number];
@@ -51,5 +53,9 @@ export function offerPath(
   if (action === "order_service") return "/services";
   if (action === "events") return "/events";
   if (action === "campaigns") return "/chat?from=campaigns";
+  if (action === "freelance") return "/freelance";
+  if (action === "freelance_sell") {
+    return signedIn ? "/profile/freelance" : "/register?next=chat";
+  }
   return null;
 }

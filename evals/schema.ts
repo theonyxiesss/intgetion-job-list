@@ -106,3 +106,65 @@ export const adversarialCase = z
 
 export type GoldenDialog = z.infer<typeof goldenDialog>;
 export type AdversarialCase = z.infer<typeof adversarialCase>;
+
+const freelancePackage = z
+  .object({
+    tier: z.enum(["basic", "standard", "pro"]),
+    priceMinor: z.number().int().min(1000).max(2_000_000),
+    days: z.number().int().min(1).max(90),
+    revisions: z.number().int().min(0).max(10),
+  })
+  .strict();
+
+const recordedCall = z
+  .object({ name: z.string(), input: z.record(z.string(), z.unknown()) })
+  .strict();
+
+/**
+ * Freelance services in Spoki (28.8, D460): the catalog the tools return,
+ * the recorded answer, and what that answer may not contain.
+ */
+export const freelanceCase = z
+  .object({
+    id: z.string().regex(/^freelance-\d{2}$/),
+    locale: z.enum(["en", "ru"]),
+    turns: z.array(z.object({ user: z.string().min(1) }).strict()).min(1),
+    /** Published services the read tools would return. Empty means none. */
+    catalog: z
+      .array(
+        z
+          .object({
+            id: z.uuid(),
+            title: z.string().min(10).max(80),
+            category: z.string(),
+            languages: z.array(z.string()).min(1),
+            description: z.string().default(""),
+            packages: z.array(freelancePackage).min(1).max(3),
+          })
+          .strict(),
+      )
+      .default([]),
+    /** Basic prices behind freelance_price_range, in cents. */
+    rangePrices: z.array(z.number().int().positive()).optional(),
+    /** An order the person can read, task text included. */
+    order: z
+      .object({ task: z.string().min(20), priceMinor: z.number().int() })
+      .strict()
+      .optional(),
+    reply: z
+      .object({
+        text: z.string(),
+        toolCalls: z.array(recordedCall).default([]),
+      })
+      .strict(),
+    expected: z
+      .object({
+        /** The answer must say the catalog has nothing. */
+        saysEmpty: z.boolean().default(false),
+        forbiddenTools: z.array(z.string()).default([]),
+      })
+      .strict(),
+  })
+  .strict();
+
+export type FreelanceCase = z.infer<typeof freelanceCase>;

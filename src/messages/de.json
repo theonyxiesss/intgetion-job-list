@@ -1776,6 +1776,81 @@
         "title": "Kreative Tests",
         "text": "Ein Brief. Creator bewerben sich. Sie stellen die genannten Personen ein.",
         "action": "Kreative Tests öffnen"
+      },
+      "freelance": {
+        "title": "Freelance-Dienste",
+        "text": "Fertige Arbeit einer Person mit festem Preis und Termin.",
+        "action": "Katalog öffnen"
+      },
+      "freelance_sell": {
+        "title": "Dienst anbieten",
+        "text": "Aufträge annehmen einschalten und einen Dienst anlegen. Er erscheint nach der Prüfung.",
+        "action": "Bereich öffnen"
+      }
+    },
+    "freelanceCard": {
+      "focus": "Wir besprechen „{title}“.",
+      "back": "Zurück zu Freelance",
+      "from": "ab {price} · {days} T.",
+      "package": "{tier}: {price}, {days} T.",
+      "tier": "Paket: {tier}",
+      "modeOn": "Aufträge annehmen einschalten.",
+      "modeOff": "Aufträge annehmen ausschalten.",
+      "answerAccept": "Annehmen: Kontakte öffnen sich für beide Seiten.",
+      "answerDecline": "Anfrage ablehnen.",
+      "decisionAccept": "Arbeit abnehmen.",
+      "decisionRevision": "Eine Korrektur anfordern.",
+      "rating": "Bewertung: {rating} von 5",
+      "linksLabel": "Links zu Arbeiten",
+      "linksHint": "Bis zu 5 https-Links, einer pro Zeile. Sie gehen direkt an die Website, nicht an Spoki.",
+      "deliveryLabel": "Link zum Ergebnis (https)",
+      "orderTitle": "Die Auftragsseite",
+      "orderAction": "Auftrag öffnen",
+      "cabinetTitle": "Ihre Dienste",
+      "cabinetAction": "Bereich öffnen",
+      "propose_freelancer_mode": {
+        "title": "Aufträge annehmen",
+        "text": "Ändern, ob Sie Freelance-Aufträge annehmen."
+      },
+      "propose_service": {
+        "title": "Neuer Dienst",
+        "text": "Den Dienst anlegen und zur Prüfung senden. Er erscheint nach der Freigabe im Katalog."
+      },
+      "propose_service_update": {
+        "title": "Dienst ändern",
+        "text": "Änderungen speichern. Ein veröffentlichter Dienst geht wieder in die Prüfung. Leere Links behalten die bisherigen."
+      },
+      "send_service_request": {
+        "title": "Anfrage senden",
+        "text": "Die Person hat 72 Stunden für die Antwort. Kontakte öffnen sich nach der Annahme."
+      },
+      "cancel_request": {
+        "title": "Auftrag stornieren",
+        "text": "Stornieren, bevor die Arbeit beginnt."
+      },
+      "respond_to_request": {
+        "title": "Anfrage beantworten",
+        "text": "Ihre Antwort geht an den Käufer."
+      },
+      "start_order": {
+        "title": "Arbeit beginnen",
+        "text": "Der Auftrag geht in Arbeit."
+      },
+      "mark_delivered": {
+        "title": "Ergebnis abgeben",
+        "text": "Der Käufer hat 7 Tage, um abzunehmen oder eine Korrektur anzufordern."
+      },
+      "review_delivery": {
+        "title": "Das Ergebnis",
+        "text": "Ihre Entscheidung geht an die Person."
+      },
+      "propose_review": {
+        "title": "Bewertung abgeben",
+        "text": "Öffentlich, ohne Ihren Namen."
+      },
+      "report_freelance": {
+        "title": "Beschwerde senden",
+        "text": "Ein Moderator liest sie. Die andere Seite sieht nicht, wer sie gesendet hat."
       }
     }
   },
@@ -3627,7 +3702,8 @@
       "error_VALIDATION": "Prüfe die Felder und versuch es noch einmal.",
       "error_NETWORK": "Keine Verbindung. Versuch es noch einmal.",
       "error_INTERNAL": "Nicht gespeichert. Versuch es noch einmal."
-    }
+    },
+    "askSpoki": "Mit dem Assistenten besprechen"
   },
   "ugc": {
     "title": "Kreative Tests",

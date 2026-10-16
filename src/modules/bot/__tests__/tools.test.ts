@@ -29,6 +29,9 @@ describe("bot tool layer (7A)", () => {
       "find_events",
       "offer_step",
       "propose_profile_update",
+      "find_services",
+      "get_service",
+      "freelance_price_range",
     ]);
     expect(toolsFor("user-1").map((tool) => tool.name)).toEqual(
       expect.arrayContaining([

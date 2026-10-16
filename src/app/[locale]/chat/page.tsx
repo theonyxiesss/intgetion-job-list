@@ -2,6 +2,7 @@ import { setRequestLocale } from "next-intl/server";
 import { Chat } from "@/components/bot/chat";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
+import { readFreelanceFocus } from "@/modules/bot/service";
 import { getJobForPublic } from "@/modules/jobs/service";
 import { listMyInvites, readCampaign } from "@/modules/ugc/service";
 import { HttpError } from "@/lib/http";
@@ -10,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 const JOB_ID = /^[0-9a-f-]{36}$/i;
 
-/** `/chat` (section 9). `?job=` one vacancy. `?from=services` services. `?from=campaigns`, `?campaign=` and `?invite=` are creative tests (D457). */
+/** `/chat` (section 9). `?job=` one vacancy. `?from=services` services. `?from=campaigns`, `?campaign=` and `?invite=` are creative tests (D457). `?service=`, `?order=` and `?confirm=` are freelance (D460). */
 export default async function ChatPage({
   params,
   searchParams,
@@ -21,10 +22,14 @@ export default async function ChatPage({
     from?: string;
     campaign?: string;
     invite?: string;
+    service?: string;
+    order?: string;
+    confirm?: string;
   }>;
 }) {
   const { locale } = await params;
-  const { job, from, campaign, invite } = await searchParams;
+  const { job, from, campaign, invite, service, order, confirm } =
+    await searchParams;
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
@@ -47,6 +52,15 @@ export default async function ChatPage({
       if (!(error instanceof HttpError)) throw error;
     }
   }
+  const userId = user && user.status === "active" ? user.id : null;
+  const serviceId = service && JOB_ID.test(service) ? service : undefined;
+  const orderId = order && JOB_ID.test(order) ? order : undefined;
+  const freelance =
+    !row && !campaignId && !inviteId && (serviceId || orderId)
+      ? await readFreelanceFocus(userId, { serviceId, orderId })
+      : null;
+  const confirmId =
+    userId && confirm && JOB_ID.test(confirm) ? confirm : undefined;
   return (
     <main className="flex min-h-0 flex-1 flex-col">
       <Chat
@@ -57,6 +71,10 @@ export default async function ChatPage({
         campaignId={campaignId}
         inviteId={inviteId}
         ugcProduct={ugcProduct}
+        serviceId={freelance?.kind === "service" ? freelance.id : undefined}
+        orderId={freelance?.kind === "order" ? freelance.id : undefined}
+        freelanceTitle={freelance?.title}
+        confirmId={freelance ? undefined : confirmId}
         focus={
           row ? { title: row.title, company: row.company.name } : undefined
         }
