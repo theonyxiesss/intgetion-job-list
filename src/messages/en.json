@@ -1776,6 +1776,81 @@
         "title": "Creative tests",
         "text": "One brief. Creators apply. You hire the people you name.",
         "action": "Open creative tests"
+      },
+      "freelance": {
+        "title": "Freelance services",
+        "text": "Ready work by one person, with a fixed price and term.",
+        "action": "Open the catalog"
+      },
+      "freelance_sell": {
+        "title": "Sell a service",
+        "text": "Turn on taking orders and list a service. It shows after moderation.",
+        "action": "Open the cabinet"
+      }
+    },
+    "freelanceCard": {
+      "focus": "We are discussing “{title}”.",
+      "back": "Back to freelance",
+      "from": "from {price} · {days} d",
+      "package": "{tier}: {price}, {days} d",
+      "tier": "Package: {tier}",
+      "modeOn": "Turn taking orders on.",
+      "modeOff": "Turn taking orders off.",
+      "answerAccept": "Accept: contacts open to both sides.",
+      "answerDecline": "Decline the request.",
+      "decisionAccept": "Accept the work.",
+      "decisionRevision": "Ask for a revision.",
+      "rating": "Rating: {rating} of 5",
+      "linksLabel": "Links to past work",
+      "linksHint": "Up to 5 https links, one per line. They go straight to the site, not to Spoki.",
+      "deliveryLabel": "Link to the result (https)",
+      "orderTitle": "The order page",
+      "orderAction": "Open the order",
+      "cabinetTitle": "Your services",
+      "cabinetAction": "Open the cabinet",
+      "propose_freelancer_mode": {
+        "title": "Taking orders",
+        "text": "Change whether you take freelance orders."
+      },
+      "propose_service": {
+        "title": "New service",
+        "text": "Create the service and send it to moderation. It shows in the catalog after approval."
+      },
+      "propose_service_update": {
+        "title": "Change the service",
+        "text": "Save the changes. A published service goes back to moderation. Leave links empty to keep the current ones."
+      },
+      "send_service_request": {
+        "title": "Send the request",
+        "text": "The freelancer has 72 hours to answer. Contacts open after they accept."
+      },
+      "cancel_request": {
+        "title": "Cancel the order",
+        "text": "Cancel before the work starts."
+      },
+      "respond_to_request": {
+        "title": "Answer the request",
+        "text": "Your answer goes to the buyer."
+      },
+      "start_order": {
+        "title": "Start the work",
+        "text": "The order moves to work."
+      },
+      "mark_delivered": {
+        "title": "Hand in the result",
+        "text": "The buyer has 7 days to accept or ask for a revision."
+      },
+      "review_delivery": {
+        "title": "The result",
+        "text": "Your decision goes to the freelancer."
+      },
+      "propose_review": {
+        "title": "Leave a review",
+        "text": "Public, without your name."
+      },
+      "report_freelance": {
+        "title": "Send a complaint",
+        "text": "A moderator reads it. The other side does not see who sent it."
       }
     }
   },
@@ -4133,7 +4208,8 @@
       "error_VALIDATION": "Check the fields and try again.",
       "error_NETWORK": "No connection. Try again.",
       "error_INTERNAL": "Could not save. Try again."
-    }
+    },
+    "askSpoki": "Discuss with the assistant"
   },
   "ugc": {
     "title": "Creative tests",

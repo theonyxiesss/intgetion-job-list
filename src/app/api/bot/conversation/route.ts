@@ -1,7 +1,15 @@
 import { notFound, toErrorResponse } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
-import { conversationHistory, resumeConversation } from "@/modules/bot/service";
+import {
+  chatActions,
+  conversationHistory,
+  findConfirmationConversation,
+  pendingConfirmations,
+  readFreelanceFocus,
+  resumeConversation,
+  type BotState,
+} from "@/modules/bot/service";
 import { listMyInvites, readCampaign } from "@/modules/ugc/service";
 import { routing } from "@/i18n/routing";
 import { sessionCookie, sessionToken } from "../session-cookie";
@@ -20,9 +28,34 @@ export async function GET(request: Request) {
     const campaign = url.searchParams.get("campaign");
     const invite = url.searchParams.get("invite");
     const locale = url.searchParams.get("locale");
+    const service = url.searchParams.get("service");
+    const order = url.searchParams.get("order");
     const jobId = job && JOB_ID.test(job) ? job : undefined;
     const campaignId = campaign && JOB_ID.test(campaign) ? campaign : undefined;
     const inviteId = invite && JOB_ID.test(invite) ? invite : undefined;
+    const confirm = url.searchParams.get("confirm");
+    if (userId && confirm && JOB_ID.test(confirm)) {
+      // A card shown in Telegram: show its own thread, cookie unchanged (D460).
+      const thread = await findConfirmationConversation(userId, confirm);
+      if (thread) {
+        return Response.json(
+          {
+            conversationId: thread.id,
+            messages: await conversationHistory(thread.id),
+            draftOffer: null,
+            pending: await pendingConfirmations(thread.id, userId),
+            actions: chatActions(userId, (thread.state ?? {}) as BotState),
+          },
+          { headers: { "cache-control": "no-store" } },
+        );
+      }
+    }
+    const serviceId = service && JOB_ID.test(service) ? service : undefined;
+    const orderId = order && JOB_ID.test(order) ? order : undefined;
+    const freelance =
+      !jobId && !campaignId && !inviteId && (serviceId || orderId)
+        ? await readFreelanceFocus(userId, { serviceId, orderId })
+        : null;
     let productName: string | undefined;
     if (userId && (campaignId || inviteId)) {
       const resolved = await briefIdForThread(userId, campaignId, inviteId);
@@ -40,6 +73,7 @@ export async function GET(request: Request) {
       campaignId,
       inviteId,
       productName,
+      freelance,
       locale:
         locale && (routing.locales as readonly string[]).includes(locale)
           ? locale
@@ -54,6 +88,9 @@ export async function GET(request: Request) {
           ? await conversationHistory(conversation.id)
           : [],
         draftOffer: offer,
+        pending: conversation
+          ? await pendingConfirmations(conversation.id, userId)
+          : [],
         actions,
       },
       { headers },

@@ -14,6 +14,14 @@ import {
   nextKeyboardPhase,
   type KeyboardPhase,
 } from "@/components/bot/keyboard-inset";
+import {
+  FreelanceCardFields,
+  FreelanceCardSummary,
+  FreelanceLinkCard,
+  FreelanceServiceList,
+  isFreelanceCardTool,
+  type FreelanceServiceCard,
+} from "@/components/bot/freelance-card";
 import { ConfirmCard } from "@/components/ui/dialog";
 import { Alert } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
@@ -55,14 +63,80 @@ type Entry =
   | { key: string; kind: "jobs" | "matches"; jobs: JobCard[] }
   | { key: string; kind: "offer"; action: OfferAction }
   | { key: string; kind: "ugc_join"; payload: string }
+  | {
+      key: string;
+      kind: "freelance_services";
+      services: FreelanceServiceCard[];
+    }
+  | {
+      key: string;
+      kind: "freelance_link";
+      href: string;
+      link: "order" | "cabinet";
+    }
   | { key: string; kind: "notice"; code: string }
   | {
       key: string;
       kind: "confirm";
       confirmationId: string;
       tool: string;
+      args?: unknown;
+      /** Typed into the card by the person (D460). */
+      fields?: string[];
+      values?: Record<string, string>;
       state: "open" | "busy" | "accepted" | "declined" | "failed";
     };
+
+type PendingCard = {
+  confirmationId: string;
+  tool: string;
+  args?: unknown;
+  fields?: string[];
+};
+
+const UUID = /^[0-9a-f-]{36}$/i;
+
+function confirmEntry(card: PendingCard): Entry {
+  return {
+    key: card.confirmationId,
+    kind: "confirm",
+    confirmationId: card.confirmationId,
+    tool: card.tool,
+    args: card.args,
+    fields: Array.isArray(card.fields) ? card.fields.map(String) : [],
+    values: {},
+    state: "open",
+  };
+}
+
+/** A freelance tool result as a chat entry, or null for other kinds. */
+function freelanceEntry(kind: unknown, data: unknown): Entry | null {
+  if (kind === "freelance_services" && Array.isArray(data)) {
+    return {
+      key: nextKey(),
+      kind: "freelance_services",
+      services: data as FreelanceServiceCard[],
+    };
+  }
+  const id = (data as { id?: unknown } | null)?.id;
+  if (kind === "freelance_order" && typeof id === "string" && UUID.test(id)) {
+    return {
+      key: nextKey(),
+      kind: "freelance_link",
+      href: `/freelance/orders/${id}`,
+      link: "order",
+    };
+  }
+  if (kind === "freelance_service_saved") {
+    return {
+      key: nextKey(),
+      kind: "freelance_link",
+      href: "/profile/freelance",
+      link: "cabinet",
+    };
+  }
+  return null;
+}
 
 type HistoryMessage = { id: string; role: string; content: string };
 
@@ -122,9 +196,18 @@ export function Chat({
   inviteId,
   focus,
   ugcProduct,
+  serviceId,
+  orderId,
+  confirmId,
+  freelanceTitle,
 }: {
   signedIn: boolean;
   jobId?: string;
+  /** `/chat?service=`, `/chat?order=` and `/chat?confirm=` (D460). */
+  serviceId?: string;
+  orderId?: string;
+  confirmId?: string;
+  freelanceTitle?: string;
   /** Opened from the Services page. The server owns the prompt text (D423). */
   fromServices?: boolean;
   /** Opened to write a creative-test brief (D457). */
@@ -184,6 +267,14 @@ export function Chat({
     } else if (fromServices) {
       params.set("from", "services");
       params.set("locale", locale);
+    } else if (orderId) {
+      params.set("order", orderId);
+      params.set("locale", locale);
+    } else if (serviceId) {
+      params.set("service", serviceId);
+      params.set("locale", locale);
+    } else if (confirmId) {
+      params.set("confirm", confirmId);
     }
     const query = params.size > 0 ? `?${params.toString()}` : "";
     fetch(`/api/bot/conversation${query}`)
@@ -196,6 +287,7 @@ export function Chat({
               confirmationId: string;
               tool: string;
             } | null;
+            pending?: PendingCard[];
             actions?: ChatActions;
           } | null,
         ) => {
@@ -220,6 +312,11 @@ export function Chat({
               state: "open",
             });
           }
+          for (const card of body.pending ?? []) {
+            if (card.confirmationId === body.draftOffer?.confirmationId)
+              continue;
+            history.push(confirmEntry(card));
+          }
           if (history.length) setEntries(history);
         },
       )
@@ -228,7 +325,17 @@ export function Chat({
         setStarterSeed(Math.floor(Math.random() * 0x7fffffff) || 1);
         setHistoryReady(true);
       });
-  }, [jobId, fromServices, fromCampaigns, campaignId, inviteId, locale]);
+  }, [
+    jobId,
+    fromServices,
+    fromCampaigns,
+    campaignId,
+    inviteId,
+    serviceId,
+    orderId,
+    confirmId,
+    locale,
+  ]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
@@ -336,7 +443,10 @@ export function Chat({
           });
         } else if (data.type === "tool_result" && data.kind === "ugc_join") {
           const payload = (data.data as { payload?: unknown } | null)?.payload;
-          if (typeof payload === "string" && /^ugc_[A-Za-z0-9_-]+$/.test(payload)) {
+          if (
+            typeof payload === "string" &&
+            /^ugc_[A-Za-z0-9_-]+$/.test(payload)
+          ) {
             setThinking(false);
             add({ key: nextKey(), kind: "ugc_join", payload });
           }
@@ -346,14 +456,22 @@ export function Chat({
             setThinking(false);
             add({ key: nextKey(), kind: "offer", action });
           }
+        } else if (
+          data.type === "tool_result" &&
+          freelanceEntry(data.kind, data.data)
+        ) {
+          setThinking(false);
+          add(freelanceEntry(data.kind, data.data)!);
         } else if (data.type === "confirm_request") {
           setThinking(false);
           add({
+            ...confirmEntry({
+              confirmationId: String(data.confirmationId),
+              tool: String(data.tool),
+              args: data.args,
+              fields: data.fields as string[] | undefined,
+            }),
             key: nextKey(),
-            kind: "confirm",
-            confirmationId: String(data.confirmationId),
-            tool: String(data.tool),
-            state: "open",
           });
         } else if (data.type === "error") {
           setThinking(false);
@@ -395,7 +513,22 @@ export function Chat({
     void ask(text.trim());
   }
 
-  async function decide(key: string, confirmationId: string, accept: boolean) {
+  function setCardValue(key: string, name: string, value: string) {
+    setEntries((current) =>
+      current.map((entry) =>
+        entry.key === key && entry.kind === "confirm"
+          ? { ...entry, values: { ...entry.values, [name]: value } }
+          : entry,
+      ),
+    );
+  }
+
+  async function decide(
+    key: string,
+    confirmationId: string,
+    accept: boolean,
+    values?: Record<string, string>,
+  ) {
     const setState = (state: Extract<Entry, { kind: "confirm" }>["state"]) =>
       setEntries((current) =>
         current.map((entry) =>
@@ -408,7 +541,13 @@ export function Chat({
     const response = await fetch("/api/bot/confirm", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ confirmationId, accept }),
+      body: JSON.stringify({
+        confirmationId,
+        accept,
+        ...(accept && values && Object.keys(values).length
+          ? { fields: values }
+          : {}),
+      }),
     }).catch(() => null);
     if (!response?.ok) {
       const body = response
@@ -428,6 +567,13 @@ export function Chat({
     }
     const body = await response.json().catch(() => null);
     setState(accept ? "accepted" : "declined");
+    const linked = accept
+      ? freelanceEntry(
+          (body as { result?: { kind?: unknown } } | null)?.result?.kind,
+          (body as { result?: { data?: unknown } } | null)?.result?.data,
+        )
+      : null;
+    if (linked) add(linked);
     const status = accept ? appliedStatusFromConfirm(body) : null;
     if (status) {
       add({
@@ -517,6 +663,17 @@ export function Chat({
             {t("ugcFocus.home")}{" "}
             <Link href="/campaigns" className="underline underline-offset-4">
               {t("ugcFocus.back")}
+            </Link>
+          </p>
+        ) : null}
+        {freelanceTitle ? (
+          <p className="t-body-s mt-2 text-fg">
+            {t("freelanceCard.focus", { title: freelanceTitle })}{" "}
+            <Link
+              href={orderId ? `/freelance/orders/${orderId}` : "/freelance"}
+              className="underline underline-offset-4"
+            >
+              {t("freelanceCard.back")}
             </Link>
           </p>
         ) : null}
@@ -678,6 +835,23 @@ export function Chat({
                 </div>
               );
             }
+            if (entry.kind === "freelance_services") {
+              return (
+                <FreelanceServiceList
+                  key={entry.key}
+                  services={entry.services}
+                />
+              );
+            }
+            if (entry.kind === "freelance_link") {
+              return (
+                <FreelanceLinkCard
+                  key={entry.key}
+                  href={entry.href}
+                  kind={entry.link}
+                />
+              );
+            }
             if (entry.kind === "offer") {
               const path = offerPath(entry.action, signedIn);
               if (!path) return null;
@@ -720,26 +894,47 @@ export function Chat({
                 <ConfirmCard
                   key={entry.key}
                   title={
-                    entry.tool === "apply_to_job"
-                      ? t("confirm.applyTitle")
-                      : entry.tool === "propose_team_job"
-                        ? t("confirm.jobTitle")
-                        : entry.tool.includes("ugc") ||
-                            entry.tool === "propose_creator_profile"
-                          ? t("confirm.ugcTitle")
-                          : t("confirm.profileTitle")
+                    isFreelanceCardTool(entry.tool)
+                      ? t(`freelanceCard.${entry.tool}.title`)
+                      : entry.tool === "apply_to_job"
+                        ? t("confirm.applyTitle")
+                        : entry.tool === "propose_team_job"
+                          ? t("confirm.jobTitle")
+                          : entry.tool.includes("ugc") ||
+                              entry.tool === "propose_creator_profile"
+                            ? t("confirm.ugcTitle")
+                            : t("confirm.profileTitle")
                   }
                   confirmLabel={t("confirm.accept")}
                   cancelLabel={t("confirm.decline")}
                   loading={entry.state === "busy"}
                   onConfirm={() =>
-                    decide(entry.key, entry.confirmationId, true)
+                    decide(entry.key, entry.confirmationId, true, entry.values)
                   }
                   onCancel={() =>
                     decide(entry.key, entry.confirmationId, false)
                   }
                 >
-                  {t("confirm.text")}
+                  {isFreelanceCardTool(entry.tool) ? (
+                    <div className="flex flex-col gap-3">
+                      <FreelanceCardSummary
+                        tool={entry.tool}
+                        args={entry.args}
+                      />
+                      {entry.fields?.length ? (
+                        <FreelanceCardFields
+                          id={entry.key}
+                          fields={entry.fields}
+                          values={entry.values ?? {}}
+                          onChange={(name, value) =>
+                            setCardValue(entry.key, name, value)
+                          }
+                        />
+                      ) : null}
+                    </div>
+                  ) : (
+                    t("confirm.text")
+                  )}
                 </ConfirmCard>
               );
             }

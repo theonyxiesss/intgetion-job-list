@@ -170,6 +170,8 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     order_service: "Describe the task",
     events: "See events",
     campaigns: "Creative tests",
+    freelance: "Freelance services",
+    freelance_sell: "Sell a service",
   },
   ru: {
     pay_hire: "Оплатить «Найм»",
@@ -182,6 +184,8 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     order_service: "Описать задачу",
     events: "Смотреть события",
     campaigns: "Креативные тесты",
+    freelance: "Фриланс-услуги",
+    freelance_sell: "Выставить услугу",
   },
   "pt-BR": {
     pay_hire: "Pagar Hire",
@@ -194,6 +198,8 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     order_service: "Descrever a tarefa",
     events: "Ver eventos",
     campaigns: "Testes criativos",
+    freelance: "Serviços freelance",
+    freelance_sell: "Oferecer um serviço",
   },
   de: {
     pay_hire: "Hire bezahlen",
@@ -206,6 +212,8 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     order_service: "Aufgabe beschreiben",
     events: "Events ansehen",
     campaigns: "Kreative Tests",
+    freelance: "Freelance-Dienste",
+    freelance_sell: "Dienst anbieten",
   },
   fr: {
     pay_hire: "Payer Hire",
@@ -218,6 +226,8 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     order_service: "Décrire la tâche",
     events: "Voir les événements",
     campaigns: "Tests créatifs",
+    freelance: "Services freelance",
+    freelance_sell: "Proposer un service",
   },
   it: {
     pay_hire: "Paga Hire",
@@ -230,7 +240,18 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     order_service: "Descrivi il compito",
     events: "Vedi eventi",
     campaigns: "Test creativi",
+    freelance: "Servizi freelance",
+    freelance_sell: "Offri un servizio",
   },
+};
+
+const ORDER_BUTTON: Record<string, string> = {
+  en: "Open the order",
+  ru: "Открыть заказ",
+  "pt-BR": "Abrir o pedido",
+  de: "Auftrag öffnen",
+  fr: "Ouvrir la commande",
+  it: "Apri l’ordine",
 };
 
 type LinkButton = { label: string; url: string };
@@ -327,6 +348,35 @@ function render(
     if (list.length) out.push({ text: list.join("\n"), links });
   }
 
+  for (const event of events) {
+    if (event.type !== "tool_result") continue;
+    if (event.kind === "freelance_services") {
+      const services =
+        (event.data as Array<{ slug: string; title: string }>) ?? [];
+      const shown = services.slice(0, MAX_JOBS_IN_REPLY);
+      const links = shown.map((service) => ({
+        label:
+          service.title.trim().slice(0, 64) || buttonsFor(locale).freelance,
+        url: pageUrl(locale, `/freelance/${encodeURIComponent(service.slug)}`),
+      }));
+      if (links.length) {
+        out.push({ text: shown.map((s) => `• ${s.title}`).join("\n"), links });
+      }
+    }
+    if (event.kind === "freelance_order") {
+      const orderId = (event.data as { id?: unknown } | null)?.id;
+      if (typeof orderId === "string" && /^[0-9a-f-]{36}$/i.test(orderId)) {
+        const label = ORDER_BUTTON[locale] ?? ORDER_BUTTON.en!;
+        out.push({
+          text: label,
+          links: [
+            { label, url: pageUrl(locale, `/freelance/orders/${orderId}`) },
+          ],
+        });
+      }
+    }
+  }
+
   const labels = buttonsFor(locale);
   for (const event of events) {
     if (event.type !== "tool_result" || event.kind !== "offer") continue;
@@ -351,7 +401,13 @@ function render(
         links: [
           {
             label: signedIn ? lines.openChat : lines.signInButton,
-            url: pageUrl(locale, signedIn ? "/chat" : "/login?next=chat"),
+            // The card itself opens on the site chat (D460).
+            url: pageUrl(
+              locale,
+              signedIn
+                ? `/chat?confirm=${encodeURIComponent(event.confirmationId)}`
+                : "/login?next=chat",
+            ),
           },
         ],
       });

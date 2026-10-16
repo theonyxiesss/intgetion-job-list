@@ -1,4 +1,4 @@
-import { and, desc, eq, gt, isNull, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { botConfirmations, botConversations, botMessages } from "@/db/schema";
 
@@ -310,4 +310,48 @@ export async function latestConversationForUser(
     .orderBy(desc(botConversations.lastMessageAt))
     .limit(1);
   return row;
+}
+
+/** Undecided, unexpired cards of one user in one conversation, oldest first. */
+export async function listOpenConfirmations(input: {
+  conversationId: string;
+  userId: string;
+  now: Date;
+}): Promise<ConfirmationRow[]> {
+  return getDb()
+    .select()
+    .from(botConfirmations)
+    .where(
+      and(
+        eq(botConfirmations.conversationId, input.conversationId),
+        eq(botConfirmations.userId, input.userId),
+        isNull(botConfirmations.decidedAt),
+        gt(botConfirmations.expiresAt, input.now),
+      ),
+    )
+    .orderBy(asc(botConfirmations.createdAt))
+    .limit(5);
+}
+
+/** The conversation a card was shown in, when the card is this user's. */
+export async function findConversationOfConfirmation(
+  confirmationId: string,
+  userId: string,
+): Promise<ConversationRow | undefined> {
+  const [row] = await getDb()
+    .select({ conversation: botConversations })
+    .from(botConfirmations)
+    .innerJoin(
+      botConversations,
+      eq(botConversations.id, botConfirmations.conversationId),
+    )
+    .where(
+      and(
+        eq(botConfirmations.id, confirmationId),
+        eq(botConfirmations.userId, userId),
+        eq(botConversations.userId, userId),
+      ),
+    )
+    .limit(1);
+  return row?.conversation;
 }

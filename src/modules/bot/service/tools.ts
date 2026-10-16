@@ -42,6 +42,7 @@ import {
   listMatchPage,
   topExplain,
 } from "@/modules/matching/service";
+import { freelanceTools } from "@/modules/freelance/service";
 import { ugcTools } from "@/modules/ugc/service";
 import { OFFER_ACTIONS, offerPath } from "./offers";
 import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
@@ -76,8 +77,14 @@ export type BotState = {
   passedJobIds?: string[];
   /** Whether the shown vacancy suits them. A yes is not an application. */
   verdict?: "suits" | "declined";
-  /** This general thread was opened from Services (D423) or creative tests (D457). */
-  topic?: "services" | "ugc";
+  /** Opened from Services (D423), creative tests (D457) or a freelance service or order (D460). */
+  topic?: "services" | "ugc" | "freelance";
+  /** Freelance service this thread was opened for (`/chat?service=`). Not a write. */
+  freelanceServiceId?: string;
+  /** Own freelance order this thread was opened for (`/chat?order=`). */
+  freelanceOrderId?: string;
+  /** Service title for the prompt. Untrusted text. */
+  freelanceTitle?: string;
   /** Creative test this Telegram chat is focused on. Not a write. */
   ugcCampaignId?: string;
   /** Product name for the prompt. Untrusted text. */
@@ -108,7 +115,16 @@ type BotTool<T extends z.ZodType = z.ZodType> = {
   access: Access;
   /** True when the call writes for a signed-in user (needs a confirmation). */
   confirm: (ctx: ToolContext) => boolean;
-  run: (ctx: ToolContext, input: z.infer<T>) => Promise<ToolOutcome>;
+  /**
+   * Fields the person types into the confirmation card (links, a result
+   * URL). They reach `run` after the card, never the model or the hash.
+   */
+  cardFields?: readonly string[];
+  run: (
+    ctx: ToolContext,
+    input: z.infer<T>,
+    card?: Record<string, unknown>,
+  ) => Promise<ToolOutcome>;
 };
 
 const id = z.uuid();
@@ -271,7 +287,7 @@ export const TOOLS: readonly BotTool[] = [
   tool({
     name: "offer_step",
     description:
-      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, order_service, or events. Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet. Use order_service only after they ask to order a managed team or leave the task. Do not use it to answer a question about a service.",
+      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, order_service, events, freelance (the freelance catalog), or freelance_sell (the seller cabinet). Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet. Use order_service only after they ask to order a managed team or leave the task. Do not use it to answer a question about a service.",
     input: z.object({ action: z.enum(OFFER_ACTIONS) }).strict(),
     access: "guest",
     confirm: never,
@@ -528,6 +544,7 @@ export const TOOLS: readonly BotTool[] = [
     },
   }),
   ...(ugcTools as unknown as BotTool[]),
+  ...(freelanceTools as unknown as BotTool[]),
 ];
 
 /** Tools offered to the model: guests never even see user tools (P11). */
@@ -568,6 +585,11 @@ export function toolNeedsConfirmation(ctx: ToolContext, name: string) {
   return findTool(name)?.confirm(ctx) ?? false;
 }
 
+/** Names of the fields the card collects for this tool; empty for most. */
+export function toolCardFields(name: string): readonly string[] {
+  return findTool(name)?.cardFields ?? [];
+}
+
 /**
  * Runs one tool call. Unknown tool or bad args: 400. A guest on a user
  * tool: 403 BOT_TOOL_FORBIDDEN (P11). A write without a matching
@@ -578,6 +600,7 @@ export async function runTool(
   name: string,
   rawInput: unknown,
   confirmed?: Confirmed,
+  card?: Record<string, unknown>,
 ): Promise<ToolOutcome> {
   const definition = findTool(name);
   if (!definition) {
@@ -604,5 +627,13 @@ export async function runTool(
       );
     }
   }
-  return definition.run(ctx, parsed.data);
+  // Card fields only after a valid confirmation, and only the tool's own.
+  const allowed = definition.cardFields ?? [];
+  const fields =
+    confirmed && card && allowed.length
+      ? Object.fromEntries(
+          Object.entries(card).filter(([key]) => allowed.includes(key)),
+        )
+      : undefined;
+  return definition.run(ctx, parsed.data, fields);
 }

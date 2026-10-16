@@ -260,7 +260,7 @@ describe("the agent inside the Telegram bot (D311)", () => {
     expect(sent[0].text).toContain("Подтвердите это на сайте");
     expect(sent[0].links?.[0]).toEqual({
       label: "Открыть чат",
-      url: "https://example.test/ru/chat",
+      url: "https://example.test/ru/chat?confirm=x",
     });
   });
 
