@@ -55,7 +55,9 @@ export const botConversations = pgTable(
       ),
     uniqueIndex("bot_conversations_user_invite_idx")
       .on(table.userId, table.inviteId)
-      .where(sql`${table.userId} is not null and ${table.inviteId} is not null`),
+      .where(
+        sql`${table.userId} is not null and ${table.inviteId} is not null`,
+      ),
     check("bot_conversations_channel_check", sql`${table.channel} in ('web')`),
   ],
 );

@@ -132,4 +132,3 @@ async function campaignIdForInvite(userId: string, inviteId: string) {
   }
   return row.campaignId;
 }
-

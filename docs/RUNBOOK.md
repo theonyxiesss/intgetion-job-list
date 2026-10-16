@@ -93,7 +93,7 @@ pnpm db:verify       # node scripts/verify-db.mjs — проверяет RLS den
 | `/api/cron/retention`     | `20 3 * * *` (ежедневно 03:20)  | Удаляет старые данные по retention (17): feedback 365д, audit 365д, matching 30д, прочитанные уведомления 90д, удаляет auth-пользователей с `deleted` за последние 7 дней | `src/app/api/cron/retention/route.ts`     |
 | `/api/cron/rate-limit-gc` | `14 11 * * *` (ежедневно 11:14) | Удаляет `rate_limit_counters` старше 48 часов                                                                                                                             | `src/app/api/cron/rate-limit-gc/route.ts` |
 | `/api/cron/freelance`     | `*/15 * * * *` (каждые 15 мин)  | Таймеры заказов фриланса (D456): запрос без ответа 72 ч → `expired`, сданная работа через 7 дней → `completed`, обеим сторонам уведомление                                | `src/app/api/cron/freelance/route.ts`     |
-| `/api/cron/ugc`           | `20 8 * * *` (ежедневно 08:20)  | Креативные тесты (D457): завтрашний срок и молчание оффера 7 дней. Без `CRON_SECRET` ответ 404                                                                              | `src/app/api/cron/ugc/route.ts`           |
+| `/api/cron/ugc`           | `20 8 * * *` (ежедневно 08:20)  | Креативные тесты (D457): завтрашний срок и молчание оффера 7 дней. Без `CRON_SECRET` ответ 404                                                                            | `src/app/api/cron/ugc/route.ts`           |
 
 ### Вызов вручную (curl)
 

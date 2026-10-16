@@ -9,7 +9,11 @@ import { Input, Select } from "@/components/ui/input";
 import { localePath } from "@/i18n/paths";
 
 /** The same fields the bot collects. Sending calls createCampaign. */
-export function BriefForm({ companies }: { companies: { id: string; name: string }[] }) {
+export function BriefForm({
+  companies,
+}: {
+  companies: { id: string; name: string }[];
+}) {
   const t = useTranslations("ugc");
   const locale = useLocale();
   const [error, setError] = useState("");
@@ -105,7 +109,9 @@ export function BriefForm({ companies }: { companies: { id: string; name: string
         ))}
       </fieldset>
       <fieldset className="flex flex-col gap-2">
-        <legend className="t-label text-fg-muted">{t("fields.platforms")}</legend>
+        <legend className="t-label text-fg-muted">
+          {t("fields.platforms")}
+        </legend>
         {UGC_PLATFORMS.map((platform) => (
           <label key={platform} className="flex min-h-11 items-center gap-2">
             <input type="checkbox" name="platforms" value={platform} />
@@ -129,10 +135,24 @@ export function BriefForm({ companies }: { companies: { id: string; name: string
         <Input name="mustNot" required maxLength={1000} />
       </Field>
       <Field label={t("fields.videos")}>
-        <Input name="videosWanted" type="number" required min={1} max={30} defaultValue={1} />
+        <Input
+          name="videosWanted"
+          type="number"
+          required
+          min={1}
+          max={30}
+          defaultValue={1}
+        />
       </Field>
       <Field label={t("fields.bounty")}>
-        <Input name="bounty" type="number" required min={5} max={500} inputMode="numeric" />
+        <Input
+          name="bounty"
+          type="number"
+          required
+          min={5}
+          max={500}
+          inputMode="numeric"
+        />
       </Field>
       <Field label={t("fields.deadline")}>
         <Input name="deadline" type="date" required />

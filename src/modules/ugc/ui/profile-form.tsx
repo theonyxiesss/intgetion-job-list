@@ -55,7 +55,9 @@ export function ProfileForm() {
         <Input name="languages" required />
       </Field>
       <fieldset className="flex flex-col gap-2">
-        <legend className="t-label text-fg-muted">{t("fields.platforms")}</legend>
+        <legend className="t-label text-fg-muted">
+          {t("fields.platforms")}
+        </legend>
         {UGC_PLATFORMS.map((platform) => (
           <label key={platform} className="flex min-h-11 items-center gap-2">
             <input type="checkbox" name="platforms" value={platform} />

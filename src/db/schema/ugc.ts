@@ -191,6 +191,9 @@ export const ugcSubmissions = pgTable(
     hook: text("hook").notNull().default(""),
     status: text("status").$type<UgcSubmissionStatus>().notNull(),
     changeNote: text("change_note").notNull().default(""),
+    liveUrl: text("live_url"),
+    reportedViews: integer("reported_views"),
+    reportedAt: timestamp("reported_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -207,6 +210,56 @@ export const ugcSubmissions = pgTable(
     check(
       "ugc_submissions_note_len",
       sql`char_length(${table.changeNote}) <= 500`,
+    ),
+    check(
+      "ugc_submissions_live_url_len",
+      sql`${table.liveUrl} is null or char_length(${table.liveUrl}) <= 500`,
+    ),
+    check(
+      "ugc_submissions_reported_views_check",
+      sql`${table.reportedViews} is null or ${table.reportedViews} between 0 and 2000000000`,
+    ),
+    check(
+      "ugc_submissions_report_pair",
+      sql`(${table.liveUrl} is null and ${table.reportedViews} is null and ${table.reportedAt} is null) or (${table.liveUrl} is not null and ${table.reportedViews} is not null and ${table.reportedAt} is not null)`,
+    ),
+  ],
+);
+
+/** A recorded reward. The platform does not transfer it (phase C, D459). */
+export const ugcPayouts = pgTable(
+  "ugc_payouts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    submissionId: uuid("submission_id")
+      .notNull()
+      .references(() => ugcSubmissions.id, { onDelete: "cascade" }),
+    inviteId: uuid("invite_id")
+      .notNull()
+      .references(() => ugcInvites.id, { onDelete: "cascade" }),
+    amountMinor: bigint("amount_minor", { mode: "bigint" }).notNull(),
+    status: text("status").$type<"owed" | "paid">().notNull(),
+    paidAt: timestamp("paid_at", { withTimezone: true }),
+    paidBy: uuid("paid_by").references(() => users.id, {
+      onDelete: "restrict",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("ugc_payouts_submission_key").on(table.submissionId),
+    check("ugc_payouts_status_check", sql`${table.status} in ('owed', 'paid')`),
+    check(
+      "ugc_payouts_amount_check",
+      sql`${table.amountMinor} between 500 and 50000`,
+    ),
+    check(
+      "ugc_payouts_paid_pair",
+      sql`(${table.status} = 'owed' and ${table.paidAt} is null and ${table.paidBy} is null) or (${table.status} = 'paid' and ${table.paidAt} is not null and ${table.paidBy} is not null)`,
     ),
   ],
 );

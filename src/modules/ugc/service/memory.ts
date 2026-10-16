@@ -3,6 +3,7 @@ import type {
   CreatorProfile,
   Invite,
   JoinToken,
+  Payout,
   Submission,
   UgcNotice,
 } from "./records";
@@ -23,9 +24,15 @@ export class MemoryUgcStore implements UgcStore {
   campaigns = new Map<string, Campaign>();
   invites = new Map<string, Invite>();
   submissions = new Map<string, Submission>();
+  payouts = new Map<string, Payout>();
   tokens: JoinToken[] = [];
   notices: UgcNotice[] = [];
-  audits: { actorId: string; action: string; entityId: string }[] = [];
+  audits: {
+    actorId: string;
+    action: string;
+    entityId: string;
+    entityType: string;
+  }[] = [];
 
   async isBlocked(userId: string) {
     return this.blocked.has(userId);
@@ -129,6 +136,25 @@ export class MemoryUgcStore implements UgcStore {
   async saveSubmission(row: Submission) {
     this.submissions.set(row.id, row);
   }
+  async getPayout(id: string) {
+    return this.payouts.get(id) ?? null;
+  }
+  async getPayoutBySubmission(submissionId: string) {
+    return (
+      [...this.payouts.values()].find(
+        (row) => row.submissionId === submissionId,
+      ) ?? null
+    );
+  }
+  async listOwedPayouts() {
+    return [...this.payouts.values()].filter((row) => row.status === "owed");
+  }
+  async insertPayout(row: Payout) {
+    this.payouts.set(row.id, row);
+  }
+  async savePayout(row: Payout) {
+    this.payouts.set(row.id, row);
+  }
   async revokeJoinTokens(campaignId: string, at: Date) {
     for (const token of this.tokens) {
       if (token.campaignId === campaignId && token.revokedAt === null) {
@@ -150,7 +176,12 @@ export class MemoryUgcStore implements UgcStore {
   async notify(notice: UgcNotice) {
     this.notices.push(notice);
   }
-  async audit(actorId: string, action: string, entityId: string) {
-    this.audits.push({ actorId, action, entityId });
+  async audit(
+    actorId: string,
+    action: string,
+    entityId: string,
+    entityType = "ugc_campaign",
+  ) {
+    this.audits.push({ actorId, action, entityId, entityType });
   }
 }

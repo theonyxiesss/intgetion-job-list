@@ -5,6 +5,7 @@ import {
   ugcCampaigns,
   ugcInvites,
   ugcJoinTokens,
+  ugcPayouts,
   ugcSubmissions,
   users,
 } from "@/db/schema";
@@ -23,6 +24,7 @@ import type {
   CreatorProfile,
   Invite,
   JoinToken,
+  Payout,
   Submission,
 } from "../service/records";
 import type { UgcStore } from "../service/store";
@@ -31,6 +33,7 @@ type CampaignRow = typeof ugcCampaigns.$inferSelect;
 type ProfileRow = typeof creatorProfiles.$inferSelect;
 type InviteRow = typeof ugcInvites.$inferSelect;
 type SubmissionRow = typeof ugcSubmissions.$inferSelect;
+type PayoutRow = typeof ugcPayouts.$inferSelect;
 
 function campaignOf(row: CampaignRow): Campaign {
   return {
@@ -97,6 +100,21 @@ function submissionOf(row: SubmissionRow): Submission {
     hook: row.hook,
     status: row.status,
     changeNote: row.changeNote,
+    liveUrl: row.liveUrl,
+    reportedViews: row.reportedViews,
+    reportedAt: row.reportedAt,
+  };
+}
+
+function payoutOf(row: PayoutRow): Payout {
+  return {
+    id: row.id,
+    submissionId: row.submissionId,
+    inviteId: row.inviteId,
+    amountMinor: row.amountMinor,
+    status: row.status,
+    paidAt: row.paidAt,
+    paidBy: row.paidBy,
   };
 }
 
@@ -285,9 +303,49 @@ export function productionUgcStore(): UgcStore {
           hook: row.hook,
           status: row.status,
           changeNote: row.changeNote,
+          liveUrl: row.liveUrl,
+          reportedViews: row.reportedViews,
+          reportedAt: row.reportedAt,
           updatedAt: new Date(),
         })
         .where(eq(ugcSubmissions.id, row.id));
+    },
+    async getPayout(id) {
+      const [row] = await db
+        .select()
+        .from(ugcPayouts)
+        .where(eq(ugcPayouts.id, id))
+        .limit(1);
+      return row ? payoutOf(row) : null;
+    },
+    async getPayoutBySubmission(submissionId) {
+      const [row] = await db
+        .select()
+        .from(ugcPayouts)
+        .where(eq(ugcPayouts.submissionId, submissionId))
+        .limit(1);
+      return row ? payoutOf(row) : null;
+    },
+    async listOwedPayouts() {
+      const rows = await db
+        .select()
+        .from(ugcPayouts)
+        .where(eq(ugcPayouts.status, "owed"));
+      return rows.map(payoutOf);
+    },
+    async insertPayout(row) {
+      await db.insert(ugcPayouts).values(row);
+    },
+    async savePayout(row) {
+      await db
+        .update(ugcPayouts)
+        .set({
+          status: row.status,
+          paidAt: row.paidAt,
+          paidBy: row.paidBy,
+          updatedAt: new Date(),
+        })
+        .where(eq(ugcPayouts.id, row.id));
     },
     async revokeJoinTokens(campaignId, at) {
       await db
@@ -329,11 +387,11 @@ export function productionUgcStore(): UgcStore {
         notice.email ? undefined : { email: false },
       );
     },
-    async audit(actorId, action, entityId) {
+    async audit(actorId, action, entityId, entityType = "ugc_campaign") {
       await recordAudit({
         actorId,
         action,
-        entityType: "ugc_campaign",
+        entityType,
         entityId,
       });
     },

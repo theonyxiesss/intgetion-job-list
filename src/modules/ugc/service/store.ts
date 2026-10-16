@@ -3,6 +3,7 @@ import type {
   CreatorProfile,
   Invite,
   JoinToken,
+  Payout,
   Submission,
   UgcNotice,
 } from "./records";
@@ -34,10 +35,20 @@ export interface UgcStore {
   listSubmissions(inviteIds: readonly string[]): Promise<Submission[]>;
   insertSubmission(row: Submission): Promise<void>;
   saveSubmission(row: Submission): Promise<void>;
+  getPayout(id: string): Promise<Payout | null>;
+  getPayoutBySubmission(submissionId: string): Promise<Payout | null>;
+  listOwedPayouts(): Promise<Payout[]>;
+  insertPayout(row: Payout): Promise<void>;
+  savePayout(row: Payout): Promise<void>;
   revokeJoinTokens(campaignId: string, at: Date): Promise<void>;
   insertJoinToken(row: JoinToken): Promise<void>;
   findJoinToken(tokenHash: string): Promise<JoinToken | null>;
   listPendingReview(): Promise<Campaign[]>;
   notify(notice: UgcNotice): Promise<void>;
-  audit(actorId: string, action: string, entityId: string): Promise<void>;
+  audit(
+    actorId: string,
+    action: string,
+    entityId: string,
+    entityType?: string,
+  ): Promise<void>;
 }
