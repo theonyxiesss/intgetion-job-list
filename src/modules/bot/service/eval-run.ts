@@ -4,9 +4,11 @@ import {
   adversarialCase,
   freelanceCase,
   goldenDialog,
+  ugcPriceCase,
   type AdversarialCase,
   type FreelanceCase,
   type GoldenDialog,
+  type UgcPriceCase,
 } from "../../../../evals/schema";
 import {
   FREELANCE_EMPTY_CATALOG,
@@ -16,6 +18,7 @@ import {
   priceRangeForModel,
   serviceCardForModel,
 } from "@/modules/freelance/service";
+import { priceGuide, ugcTools } from "@/modules/ugc/service";
 import {
   fakeText,
   fakeToolCall,
@@ -369,4 +372,59 @@ export async function runFreelanceEvals(): Promise<FreelanceEvalReport> {
     }
   }
   return { cases: cases.length, prices: checkedPrices };
+}
+
+export function loadUgcPrices(): UgcPriceCase[] {
+  return loadJson("ugc").map((data) => ugcPriceCase.parse(data));
+}
+
+/**
+ * UGC rewards (D464): the answer names only amounts of the guide (or the
+ * presets), a budget made of them, or a board price; the tools it calls
+ * parse. Numbers are compared in cents.
+ */
+export async function runUgcPriceEvals(): Promise<{ cases: number }> {
+  const cases = loadUgcPrices();
+  for (const item of cases) {
+    const guide = priceGuide(
+      item.rewards.map((reward) => ({
+        bountyMinor: BigInt(reward),
+        niches: ["app", "game"],
+        platforms: ["tiktok", "reels", "shorts"],
+      })),
+    );
+    const base = new Set<number>([
+      ...guide.presets,
+      guide.minMinor,
+      guide.medianMinor,
+      guide.maxMinor,
+    ]);
+    // A budget is videos × one of these; the $500 cap and board prices stand alone.
+    const allowed = new Set<bigint>([BigInt(50000), ...BOARD_PRICES]);
+    for (const price of base) {
+      for (let videos = 1; videos <= 30; videos += 1) {
+        allowed.add(BigInt(price * videos));
+      }
+    }
+    for (const price of pricesInText(item.reply.text)) {
+      if (!allowed.has(price)) {
+        throw new Error(`${item.id}: the answer invented a reward ${price}`);
+      }
+    }
+    if (hasContacts(item.reply.text)) {
+      throw new Error(`${item.id}: the answer has contacts`);
+    }
+    for (const call of item.reply.toolCalls) {
+      const tool = (
+        ugcTools as unknown as {
+          name: string;
+          input: { safeParse(v: unknown): { success: boolean } };
+        }[]
+      ).find((entry) => entry.name === call.name);
+      if (!tool || !tool.input.safeParse(call.input).success) {
+        throw new Error(`${item.id}: bad tool call ${call.name}`);
+      }
+    }
+  }
+  return { cases: cases.length };
 }

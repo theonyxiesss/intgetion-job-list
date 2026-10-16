@@ -4,6 +4,7 @@ import {
   TIMEZONE_ERRORS_MAX,
   pricesInText,
   runFreelanceEvals,
+  runUgcPriceEvals,
   runRecordedEvals,
 } from "../service/eval-run";
 
@@ -30,5 +31,11 @@ describe("freelance evals (28.8, D460)", () => {
       BigInt(120050),
       BigInt(30000),
     ]);
+  });
+});
+
+describe("UGC reward evals (D464)", () => {
+  it("names only guide amounts and budgets made of them", async () => {
+    expect((await runUgcPriceEvals()).cases).toBeGreaterThanOrEqual(5);
   });
 });

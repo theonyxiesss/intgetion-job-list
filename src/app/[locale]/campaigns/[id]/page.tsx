@@ -7,7 +7,15 @@ import { HttpError } from "@/lib/http";
 import { formatMinor } from "@/lib/money";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
-import { readCampaign } from "@/modules/ugc/service";
+import {
+  campaignProgress,
+  countParticipants,
+  readCampaign,
+  UGC_STEPS,
+  ugcBudgetMinor,
+  usdLabel,
+} from "@/modules/ugc/service";
+import { StepTrack } from "@/modules/ugc/ui/step-track";
 import { UgcAction } from "@/modules/ugc/ui/action";
 import { UgcChanges, UgcReport, UgcSubmit } from "@/modules/ugc/ui/fields";
 
@@ -44,6 +52,22 @@ export default async function CampaignPage({
   const money = formatMinor(BigInt(view.brief.bountyMinor), "USD", locale, {
     wholeWhenEven: true,
   });
+  const h = await getTranslations("ugcHub");
+  const steps = Object.fromEntries(
+    UGC_STEPS.map((step) => [step, h(`steps.${step}`)]),
+  ) as Record<(typeof UGC_STEPS)[number], string>;
+  const progress =
+    view.role === "company"
+      ? campaignProgress(
+          view.brief.status,
+          countParticipants(
+            view.participants,
+            view.participants.flatMap((row) =>
+              row.submission ? [row.submission] : [],
+            ),
+          ),
+        )
+      : null;
   return (
     <main className="py-10 md:py-16">
       <Container className="flex max-w-3xl flex-col gap-6">
@@ -54,6 +78,31 @@ export default async function CampaignPage({
         <p className="font-mono text-fg">
           {money} · {t(`status.${view.brief.status}`)} · {view.brief.deadline}
         </p>
+        {progress ? (
+          <div className="flex flex-col gap-2">
+            <StepTrack
+              progress={progress}
+              labels={steps}
+              label={view.brief.productName}
+            />
+            <p className="t-body-s font-mono text-fg-muted">
+              {h("budget", {
+                total: usdLabel(
+                  ugcBudgetMinor(
+                    view.brief.videosWanted,
+                    Number(view.brief.bountyMinor),
+                  ),
+                ),
+              })}
+              {" · "}
+              {h("counts", {
+                applied: progress.counts.applied,
+                hired: progress.counts.hired,
+                waiting: progress.counts.waiting,
+              })}
+            </p>
+          </div>
+        ) : null}
         <p className="t-body-s text-fg-muted">{t("moneyNote")}</p>
         <div className="flex flex-wrap gap-3">
           <ButtonLink

@@ -139,7 +139,7 @@
     "myJobs": "My jobs",
     "company": "Company",
     "freelance": "Freelance",
-    "campaigns": "Creative tests"
+    "campaigns": "UGC videos"
   },
   "locale": {
     "en": "English",
@@ -1189,11 +1189,11 @@
       },
       "ugcCampaignDecided": {
         "inapp": {
-          "title": "Creative test reviewed",
+          "title": "UGC brief reviewed",
           "body": "{decision, select, open {The brief is open.} rejected {The brief was rejected and stays closed.} other {The brief was reviewed.}} Product: “{productName}”."
         },
         "email": {
-          "subject": "Creative test reviewed",
+          "subject": "UGC brief reviewed",
           "body": "{decision, select, open {The brief is open.} rejected {The brief was rejected and stays closed.} other {The brief was reviewed.}} Product: “{productName}”."
         }
       },
@@ -1205,7 +1205,7 @@
       },
       "ugcInvite": {
         "inapp": {
-          "title": "Creative test invitation",
+          "title": "Invitation to a UGC brief",
           "body": "You are invited to “{productName}”. Recorded amount: {bountyMinor} cents. Nothing is charged."
         },
         "email": {
@@ -1231,7 +1231,7 @@
       },
       "ugcDeadline": {
         "inapp": {
-          "title": "Creative test deadline",
+          "title": "UGC brief deadline",
           "body": "The deadline for “{productName}” is tomorrow, or an unanswered offer has gone quiet."
         },
         "email": {
@@ -1630,8 +1630,8 @@
     },
     "ugcFocus": {
       "line": "Brief: {product}",
-      "back": "Back to creative tests",
-      "home": "You are writing a creative-test brief. Nothing is posted until you confirm."
+      "back": "Back to UGC videos",
+      "home": "You are writing a UGC video brief. Nothing is posted until you confirm."
     },
     "ugcJoin": {
       "title": "Blogger join link",
@@ -1713,7 +1713,7 @@
       "applyTitle": "Apply to this job?",
       "profileTitle": "Save these profile changes?",
       "jobTitle": "Post this job for review?",
-      "ugcTitle": "Save this creative-test step?",
+      "ugcTitle": "Save this UGC video step?",
       "text": "Nothing happens until you confirm.",
       "accept": "Confirm",
       "decline": "Cancel",
@@ -1773,9 +1773,9 @@
         "action": "Describe the task"
       },
       "campaigns": {
-        "title": "Creative tests",
+        "title": "UGC videos",
         "text": "One brief. Creators apply. You hire the people you name.",
-        "action": "Open creative tests"
+        "action": "Open UGC videos"
       },
       "freelance": {
         "title": "Freelance services",
@@ -4201,8 +4201,8 @@
     }
   },
   "ugc": {
-    "title": "Creative tests",
-    "intro": "One brief. Creators apply. You hire the people you name.",
+    "title": "UGC videos",
+    "intro": "Short videos from real people for ads and social posts. One brief, creators apply, you hire the ones you pick.",
     "moneyNote": "The amount is recorded in cents. Nothing is charged or paid in this step.",
     "openChat": "Write the brief with Spoki",
     "newBrief": "New brief",
@@ -4229,7 +4229,7 @@
     "decline": "Decline",
     "error": "That did not save. Check the fields and try again.",
     "joinReady": "Open this link in Telegram. The token stays in the link.",
-    "adminTitle": "Creative tests in review",
+    "adminTitle": "UGC briefs in review",
     "adminEmpty": "Nothing is waiting for review.",
     "approve": "Open the brief",
     "reject": "Reject",
@@ -4313,7 +4313,11 @@
     "paidNote": "An admin marked this paid. The platform did not send the money.",
     "markPaid": "Mark paid",
     "payoutsTitle": "Recorded rewards",
-    "payoutsEmpty": "No recorded reward is waiting."
+    "payoutsEmpty": "No recorded reward is waiting.",
+    "priceUsual": "Usually {min}–{max} per video",
+    "pricePresets": "Ready amounts",
+    "budget": "Budget: {videos} × {price} = {total}. Nothing is charged.",
+    "rightsHint": "For ads and whitelist rights the price is usually higher than for organic."
   },
   "chatFreelance": {
     "focus": "We are discussing “{title}”.",
@@ -4378,6 +4382,46 @@
     "report_freelance": {
       "title": "Send a complaint",
       "text": "A moderator reads it. The other side does not see who sent it."
+    },
+    "ugcCampaignTitle": "Your UGC brief",
+    "ugcCampaignAction": "Open the brief"
+  },
+  "ugcHub": {
+    "doorCompanyTitle": "I need videos",
+    "doorCompanyText": "Write one brief. Creators who fit apply; you hire the ones you pick and pay only for accepted videos.",
+    "doorCompanyAction": "Collect a brief with Spoki",
+    "doorCreatorTitle": "I make videos",
+    "doorCreatorText": "Fill the creator profile once, see open briefs that fit your niches and apply.",
+    "doorCreatorAction": "Open briefs",
+    "mineTitle": "Your briefs",
+    "emptyTitle": "No briefs yet",
+    "emptyText": "A brief takes two minutes with Spoki: product, who it is for, what to say, how many videos and the reward.",
+    "exampleTitle": "For example",
+    "exampleProduct": "A budgeting app for students",
+    "exampleVideos": "5 videos for TikTok and Reels",
+    "exampleReward": "$50 per accepted video, $250 in all",
+    "exampleRights": "Organic posts only",
+    "budget": "Budget {total}",
+    "counts": "{applied} applied · {hired} hired · {waiting} waiting",
+    "nextHire": "Hire from the applicants",
+    "nextDecide": "Decide on the videos",
+    "nextRemind": "Remind the hired creators",
+    "nextWait": "Waiting for creators",
+    "stepDone": "Closed",
+    "stepRejected": "Not let through",
+    "priceTitle": "What companies pay",
+    "priceRange": "Usually {min}–{max} per accepted video, median {median}.",
+    "pricePresets": "Ready amounts: {list}. {usual} is the usual pick.",
+    "creatorProfile": "Creator profile",
+    "creatorOpen": "Open briefs",
+    "creatorInvites": "Your applications and offers",
+    "steps": {
+      "brief": "Brief",
+      "review": "Review",
+      "responses": "Applications",
+      "hire": "Hire",
+      "videos": "Videos",
+      "decision": "Decision"
     }
   }
 }

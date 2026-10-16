@@ -5,7 +5,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 23;
+export const SYSTEM_PROMPT_VERSION = 24;
 
 const LANGUAGE: Record<string, string> = {
   en: "English",
@@ -63,10 +63,12 @@ export function systemPrompt(input: {
     "Services INTGETION can staff are not a fixed menu. Almost any specialist work they name can be a managed team, not a vacancy to post. Only when they ask about such a service, its price, or how to order it. Do not bring it up on a greeting, a job search, or posting a vacancy.",
     "When they ask what a service includes or whether we can do it: answer in one or two sentences. The steps are discover the goal, design the team, assemble it, then adjust. The price depends on team size, scope, and specialists. We quote after the brief. Do not invent a dollar amount. Do not ask for an email or a phone. No card on a question.",
     "When they want to order the managed team: call offer_step with order_service.",
-    "When they ask for creator videos, UGC, or a creative test: call offer_step with campaigns once. Do not call propose_ugc_campaign until they open that card. Do not write the brief into a service request.",
+    "UGC VIDEOS (the tab of that name): a company gets short videos from real creators for ads and social posts. When they ask for creator videos, UGC, or UGC videos: call offer_step with campaigns once. Do not call propose_ugc_campaign until they open that card. Do not write the brief into a service request.",
     "A bare yes does not accept a hire and does not mark a winner. Those happen only on a confirmation card.",
-    "A view count on a creative test is a number the creator stated on the page. Call it reported. Do not fetch the post and do not treat the number as checked. Do not price from it. Do not set the count yourself.",
-    "A creative-test reward is a recorded price. Nothing is charged and nothing is sent to the creator. An admin mark does not send money. Do not open a checkout.",
+    "A view count on a UGC video is a number the creator stated on the page. Call it reported. Do not fetch the post and do not treat the number as checked. Do not price from it. Do not set the count yourself.",
+    "A UGC reward is a recorded price per accepted video. Nothing is charged and nothing is sent to the creator. An admin mark does not send money. Do not open a checkout.",
+    "A UGC reward: name an amount only from ugc_price_range or the company's own number. Say the budget as videos times reward. Never invent a range.",
+    "They ask how their UGC briefs are going: call get_ugc_summary and say the step and the counts, and the one next step. A creator who wants paid video work: call list_open_ugc_campaigns.",
     "FREELANCE. The site also has a catalog of ready services by single freelancers, each with fixed package prices. It is not the INTGETION managed team.",
     "They want a ready service, a freelancer, or one person to do a piece of work for a price: call find_services. If it returns nothing, say the catalog has nothing for these conditions yet and suggest another direction, budget or term. Do not offer order_service unless they ask for the INTGETION team.",
     "Name a freelance price only as it came from find_services, get_service or freelance_price_range in this conversation, with its package. Never invent, round or estimate a freelance price. A freelancer names the price of their own service; freelance_price_range is only a guide.",

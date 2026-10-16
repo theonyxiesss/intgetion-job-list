@@ -168,3 +168,22 @@ export const freelanceCase = z
   .strict();
 
 export type FreelanceCase = z.infer<typeof freelanceCase>;
+
+/** UGC video rewards in Spoki (D464): only guide amounts and budgets. */
+export const ugcPriceCase = z
+  .object({
+    id: z.string().regex(/^ugc-price-\d{2}$/),
+    locale: z.enum(["en", "ru"]),
+    turns: z.array(z.object({ user: z.string().min(1) }).strict()).min(1),
+    /** Rewards of reviewed briefs behind ugc_price_range, in cents. */
+    rewards: z.array(z.number().int().min(500).max(50000)).default([]),
+    reply: z
+      .object({
+        text: z.string(),
+        toolCalls: z.array(recordedCall).default([]),
+      })
+      .strict(),
+  })
+  .strict();
+
+export type UgcPriceCase = z.infer<typeof ugcPriceCase>;

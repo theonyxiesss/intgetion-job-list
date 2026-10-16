@@ -79,6 +79,11 @@ export class MemoryUgcStore implements UgcStore {
   async listOpen() {
     return [...this.campaigns.values()].filter((row) => row.status === "open");
   }
+  async listReviewed() {
+    return [...this.campaigns.values()].filter(
+      (row) => row.status === "open" || row.status === "closed",
+    );
+  }
   async countCreatedSince(companyId: string, since: Date) {
     return [...this.campaigns.values()].filter(
       (row) => row.companyId === companyId && row.createdAt >= since,

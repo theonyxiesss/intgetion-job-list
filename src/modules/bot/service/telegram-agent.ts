@@ -169,7 +169,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     post_job: "Post a job",
     order_service: "Describe the task",
     events: "See events",
-    campaigns: "Creative tests",
+    campaigns: "UGC videos",
     freelance: "Freelance services",
     freelance_sell: "Sell a service",
     freelance_payout: "Confirm payout address",
@@ -184,7 +184,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     post_job: "Разместить вакансию",
     order_service: "Описать задачу",
     events: "Смотреть события",
-    campaigns: "Креативные тесты",
+    campaigns: "UGC-видео",
     freelance: "Фриланс-услуги",
     freelance_sell: "Выставить услугу",
     freelance_payout: "Подтвердить адрес выплаты",
@@ -199,7 +199,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     post_job: "Publicar uma vaga",
     order_service: "Descrever a tarefa",
     events: "Ver eventos",
-    campaigns: "Testes criativos",
+    campaigns: "Vídeos UGC",
     freelance: "Serviços freelance",
     freelance_sell: "Oferecer um serviço",
     freelance_payout: "Confirmar endereço de recebimento",
@@ -214,7 +214,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     post_job: "Job ausschreiben",
     order_service: "Aufgabe beschreiben",
     events: "Events ansehen",
-    campaigns: "Kreative Tests",
+    campaigns: "UGC-Videos",
     freelance: "Freelance-Dienste",
     freelance_sell: "Dienst anbieten",
     freelance_payout: "Auszahlungsadresse bestätigen",
@@ -229,7 +229,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     post_job: "Publier une offre",
     order_service: "Décrire la tâche",
     events: "Voir les événements",
-    campaigns: "Tests créatifs",
+    campaigns: "Vidéos UGC",
     freelance: "Services freelance",
     freelance_sell: "Proposer un service",
     freelance_payout: "Confirmer l’adresse de versement",
@@ -244,7 +244,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     post_job: "Pubblica un’offerta",
     order_service: "Descrivi il compito",
     events: "Vedi eventi",
-    campaigns: "Test creativi",
+    campaigns: "Video UGC",
     freelance: "Servizi freelance",
     freelance_sell: "Offri un servizio",
     freelance_payout: "Conferma l’indirizzo di pagamento",
@@ -367,6 +367,19 @@ function render(
       }));
       if (links.length) {
         out.push({ text: shown.map((s) => `• ${s.title}`).join("\n"), links });
+      }
+    }
+    if (event.kind === "ugc_campaign") {
+      const campaignId = (event.data as { id?: unknown } | null)?.id;
+      if (
+        typeof campaignId === "string" &&
+        /^[0-9a-f-]{36}$/i.test(campaignId)
+      ) {
+        const label = buttonsFor(locale).campaigns;
+        out.push({
+          text: label,
+          links: [{ label, url: pageUrl(locale, `/campaigns/${campaignId}`) }],
+        });
       }
     }
     if (event.kind === "freelance_order") {

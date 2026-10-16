@@ -3,7 +3,7 @@ import { sendTelegramLinks } from "@/modules/auth/service";
 import { startPayloadRoute, ugcTokenFromStart } from "./start-payload";
 
 const TEXT =
-  "This link opens a creative test on the site. Sign in there. The price is recorded. Nothing is charged.";
+  "This link opens a UGC video brief on the site. Sign in there. The price is recorded. Nothing is charged.";
 
 function startPayload(text: string): string | null {
   const match = /^\/start(?:@\w+)?(?:\s+(\S+))?\s*$/.exec(text.trim());

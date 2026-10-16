@@ -13,6 +13,8 @@ import {
   getMyCreatorProfile,
   issueJoinLink,
   listMyCampaigns,
+  listMyCampaignSummaries,
+  ugcPriceGuide,
   listMyInvites,
   listOpenCampaigns,
   offerHire,
@@ -24,6 +26,7 @@ import {
   saveCreatorProfile,
   submitVideo,
 } from "./commands";
+import { usdLabel, type UgcPriceGuide } from "./pricing";
 
 type Ctx = {
   userId: string | null;
@@ -39,7 +42,7 @@ function assertUgcTopic(ctx: Ctx) {
     throw new HttpError(
       409,
       "UGC_TOPIC_REQUIRED",
-      "Open the creative-test card before writing a brief",
+      "Open the UGC videos card before writing a brief",
     );
   }
 }
@@ -52,11 +55,20 @@ function model(value: unknown) {
  * Spoki tools for creative tests (27.8). Writes need the existing
  * confirmation card. The services topic cannot call the create tool.
  */
+/** What Spoki may say about a reward: only these numbers (D464). */
+export function priceGuideForModel(guide: UgcPriceGuide): string {
+  const hint =
+    "Rights for paid ads or the brand's own account usually cost more than an organic post; that is a hint, the company decides. The reward is recorded per accepted video; nothing is charged.";
+  if (guide.source === "presets") {
+    return `Too few reviewed UGC briefs to show a range. Ready amounts per video: ${guide.presets.map(usdLabel).join(", ")}; ${usdLabel(guide.medianMinor)} is the usual pick. ${hint} Name only these amounts.`;
+  }
+  return `Reward per accepted video in ${guide.count} reviewed UGC briefs: minimum ${usdLabel(guide.minMinor)}, median ${usdLabel(guide.medianMinor)}, maximum ${usdLabel(guide.maxMinor)}. ${hint} Name only these amounts.`;
+}
+
 export const ugcTools = [
   {
     name: "get_my_ugc_campaigns",
-    description:
-      "List this member's creative-test briefs: id, product, status.",
+    description: "List this member's UGC briefs: id, product, status.",
     input: z.object({}).strict(),
     access: "user" as const,
     confirm: read,
@@ -65,9 +77,65 @@ export const ugcTools = [
     },
   },
   {
-    name: "get_ugc_campaign",
+    name: "ugc_price_range",
     description:
-      "Read one creative test the caller can already see. No contacts.",
+      "What companies set as the reward per accepted UGC video: min, median and max of reviewed briefs for a niche and platform, or the ready amounts when there are too few. Read-only. Use before naming any reward.",
+    input: z
+      .object({
+        niche: z.enum(UGC_NICHES).optional(),
+        platform: z.enum(UGC_PLATFORMS).optional(),
+      })
+      .strict(),
+    access: "guest" as const,
+    confirm: read,
+    async run(
+      _ctx: Ctx,
+      input: {
+        niche?: (typeof UGC_NICHES)[number];
+        platform?: (typeof UGC_PLATFORMS)[number];
+      },
+    ) {
+      return { llm: priceGuideForModel(await ugcPriceGuide(input)) };
+    },
+  },
+  {
+    name: "get_ugc_summary",
+    description:
+      "How this member's UGC briefs are going: per brief the step, counts of applications, offers, hires, videos waiting for a decision, accepted and winners, the budget, and what to do next. No contacts.",
+    input: z.object({}).strict(),
+    access: "user" as const,
+    confirm: read,
+    async run(ctx: Ctx) {
+      const rows = await listMyCampaignSummaries(ctx.userId);
+      if (rows.length === 0) {
+        return { llm: "No UGC briefs yet. Offer to collect one on a card." };
+      }
+      const focus =
+        rows.find((row) => row.progress.next === "decide") ??
+        rows.find((row) => row.progress.next === "hire") ??
+        rows[0]!;
+      return {
+        llm: model(
+          rows.map((row) => ({
+            campaignId: row.id,
+            product: row.productName,
+            status: row.status,
+            step: row.progress.step,
+            next: row.progress.next,
+            counts: row.progress.counts,
+            videosWanted: row.videosWanted,
+            rewardPerVideo: usdLabel(Number(row.bountyMinor)),
+            budget: usdLabel(row.budgetMinor),
+            deadline: row.deadline,
+          })),
+        ),
+        client: { kind: "ugc_campaign", data: { id: focus.id } },
+      };
+    },
+  },
+  {
+    name: "get_ugc_campaign",
+    description: "Read one UGC brief the caller can already see. No contacts.",
     input: z.object({ campaignId: id }).strict(),
     access: "user" as const,
     confirm: read,
@@ -134,8 +202,7 @@ export const ugcTools = [
   },
   {
     name: "focus_ugc",
-    description:
-      "Focus this chat on one creative test. Does not write anything.",
+    description: "Focus this chat on one UGC brief. Does not write anything.",
     input: z.object({ campaignId: id }).strict(),
     access: "user" as const,
     confirm: read,
@@ -177,7 +244,7 @@ export const ugcTools = [
   {
     name: "propose_ugc_campaign",
     description:
-      "Create a creative-test brief from the confirmation card. Reward is 500 to 50000 cents. Do not invent a price.",
+      "Create a UGC video brief from the confirmation card. Reward is 500 to 50000 cents per accepted video. Take it from the company or from ugc_price_range; do not invent a price.",
     input: z
       .object({
         companyId: id,

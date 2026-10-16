@@ -139,7 +139,7 @@
     "myJobs": "Le mie offerte",
     "company": "Azienda",
     "freelance": "Freelance",
-    "campaigns": "Test creativi"
+    "campaigns": "Video UGC"
   },
   "locale": {
     "en": "Inglese",
@@ -1189,11 +1189,11 @@
       },
       "ugcCampaignDecided": {
         "inapp": {
-          "title": "Test creativo revisionato",
+          "title": "Brief UGC revisionato",
           "body": "{decision, select, open {Il brief è aperto.} rejected {Il brief è stato rifiutato e resta chiuso.} other {Il brief è stato revisionato.}} Prodotto: «{productName}»."
         },
         "email": {
-          "subject": "Test creativo revisionato",
+          "subject": "Brief UGC revisionato",
           "body": "{decision, select, open {Il brief è aperto.} rejected {Il brief è stato rifiutato e resta chiuso.} other {Il brief è stato revisionato.}} Prodotto: «{productName}»."
         }
       },
@@ -1205,7 +1205,7 @@
       },
       "ugcInvite": {
         "inapp": {
-          "title": "Invito a un test creativo",
+          "title": "Invito a un brief UGC",
           "body": "Sei invitato a «{productName}». Importo registrato: {bountyMinor} centesimi. Non viene addebitato nulla."
         },
         "email": {
@@ -1231,7 +1231,7 @@
       },
       "ugcDeadline": {
         "inapp": {
-          "title": "Scadenza del test creativo",
+          "title": "Scadenza del brief UGC",
           "body": "La scadenza di «{productName}» è domani, oppure un’offerta senza risposta è rimasta in silenzio."
         },
         "email": {
@@ -1630,8 +1630,8 @@
     },
     "ugcFocus": {
       "line": "Brief: {product}",
-      "back": "Torna ai test creativi",
-      "home": "Stai scrivendo un brief per un test creativo. Nulla viene pubblicato finché non confermi."
+      "back": "Torna ai video UGC",
+      "home": "Stai scrivendo un brief per video UGC. Nulla viene pubblicato finché non confermi."
     },
     "ugcJoin": {
       "title": "Link per il blogger",
@@ -1713,7 +1713,7 @@
       "applyTitle": "Candidarti a questa offerta?",
       "profileTitle": "Salvare queste modifiche al profilo?",
       "jobTitle": "Inviare questa offerta in revisione?",
-      "ugcTitle": "Salvare questo passo del test creativo?",
+      "ugcTitle": "Salvare questo passo dei video UGC?",
       "text": "Non succede nulla finché non confermi.",
       "accept": "Conferma",
       "decline": "Annulla",
@@ -1773,9 +1773,9 @@
         "action": "Descrivi il compito"
       },
       "campaigns": {
-        "title": "Test creativi",
+        "title": "Video UGC",
         "text": "Un brief. I creator si candidano. Assumi le persone che nomini.",
-        "action": "Apri i test creativi"
+        "action": "Apri i video UGC"
       },
       "freelance": {
         "title": "Servizi freelance",
@@ -3695,8 +3695,8 @@
     }
   },
   "ugc": {
-    "title": "Test creativi",
-    "intro": "Un brief. I creator si candidano. Assumi le persone che nomini.",
+    "title": "Video UGC",
+    "intro": "Video brevi di persone reali per pubblicità e social. Un brief, i creator si candidano, assumi chi scegli.",
     "moneyNote": "L’importo è registrato in centesimi. In questo passo non si addebita e non si paga nulla.",
     "openChat": "Scrivi il brief con Spoki",
     "newBrief": "Nuovo brief",
@@ -3723,7 +3723,7 @@
     "decline": "Rifiuta",
     "error": "Non è stato salvato. Controlla i campi e riprova.",
     "joinReady": "Apri questo link in Telegram. Il token resta nel link.",
-    "adminTitle": "Test creativi in revisione",
+    "adminTitle": "Brief UGC in revisione",
     "adminEmpty": "Niente è in attesa di revisione.",
     "approve": "Apri il brief",
     "reject": "Rifiuta",
@@ -3807,7 +3807,11 @@
     "paidNote": "Un amministratore ha segnato questo come pagato. La piattaforma non ha inviato il denaro.",
     "markPaid": "Segna come pagato",
     "payoutsTitle": "Premi registrati",
-    "payoutsEmpty": "Nessun premio è in attesa di segno."
+    "payoutsEmpty": "Nessun premio è in attesa di segno.",
+    "priceUsual": "Di solito {min}–{max} per video",
+    "pricePresets": "Importi pronti",
+    "budget": "Budget: {videos} × {price} = {total}. Non si addebita nulla.",
+    "rightsHint": "Per i diritti pubblicitari e whitelist il prezzo di solito è più alto che per l’organico."
   },
   "chatFreelance": {
     "focus": "Parliamo di «{title}».",
@@ -3872,6 +3876,46 @@
     "report_freelance": {
       "title": "Invia una segnalazione",
       "text": "La legge un moderatore. L’altra parte non vede chi l’ha inviata."
+    },
+    "ugcCampaignTitle": "Il tuo brief UGC",
+    "ugcCampaignAction": "Apri il brief"
+  },
+  "ugcHub": {
+    "doorCompanyTitle": "Mi servono video",
+    "doorCompanyText": "Un brief. I creator adatti si candidano; assumi chi scegli e paghi solo i video accettati.",
+    "doorCompanyAction": "Prepara un brief con Spoki",
+    "doorCreatorTitle": "Faccio video",
+    "doorCreatorText": "Compila il profilo creator una volta, guarda i brief aperti delle tue nicchie e candidati.",
+    "doorCreatorAction": "Brief aperti",
+    "mineTitle": "I tuoi brief",
+    "emptyTitle": "Ancora nessun brief",
+    "emptyText": "Un brief con Spoki richiede due minuti: prodotto, pubblico, messaggio, quanti video e compenso.",
+    "exampleTitle": "Per esempio",
+    "exampleProduct": "Un’app di budget per studenti",
+    "exampleVideos": "5 video per TikTok e Reels",
+    "exampleReward": "$50 per video accettato, $250 in totale",
+    "exampleRights": "Solo post organici",
+    "budget": "Budget {total}",
+    "counts": "{applied} candidature · {hired} assunti · {waiting} in attesa",
+    "nextHire": "Assumi tra i candidati",
+    "nextDecide": "Decidi sui video",
+    "nextRemind": "Ricorda agli assunti",
+    "nextWait": "In attesa di creator",
+    "stepDone": "Chiuso",
+    "stepRejected": "Non approvato",
+    "priceTitle": "Quanto pagano le aziende",
+    "priceRange": "Di solito {min}–{max} per video accettato, mediana {median}.",
+    "pricePresets": "Importi pronti: {list}. Il più comune è {usual}.",
+    "creatorProfile": "Profilo creator",
+    "creatorOpen": "Brief aperti",
+    "creatorInvites": "Le tue candidature e offerte",
+    "steps": {
+      "brief": "Brief",
+      "review": "Revisione",
+      "responses": "Candidature",
+      "hire": "Assunzione",
+      "videos": "Video",
+      "decision": "Decisione"
     }
   }
 }

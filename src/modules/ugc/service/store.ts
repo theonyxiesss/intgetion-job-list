@@ -23,6 +23,8 @@ export interface UgcStore {
   getCampaign(id: string): Promise<Campaign | null>;
   listByCompanies(companyIds: readonly string[]): Promise<Campaign[]>;
   listOpen(): Promise<Campaign[]>;
+  /** Briefs an admin let through (open or closed), for the price guide (D464). */
+  listReviewed(): Promise<Campaign[]>;
   countCreatedSince(companyId: string, since: Date): Promise<number>;
   getInvite(id: string): Promise<Invite | null>;
   findInvite(campaignId: string, userId: string): Promise<Invite | null>;

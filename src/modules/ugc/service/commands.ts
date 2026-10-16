@@ -52,6 +52,8 @@ import type {
   Submission,
 } from "./records";
 import type { UgcStore } from "./store";
+import { priceGuide, ugcBudgetMinor } from "./pricing";
+import { campaignProgress, countParticipants } from "./progress";
 
 /**
  * Rules live in `rules.ts`. This file is the only write path (27.8, 27.17):
@@ -1284,3 +1286,49 @@ async function expireSilentOffers(store: UgcStore) {
 }
 
 export type { UgcNiche, UgcPlatform, UgcRights };
+
+/**
+ * Price guide for a reward (D464): what reviewed briefs of this niche and
+ * platform set, or the presets. Anyone may read it; no brief is exposed.
+ */
+export async function ugcPriceGuide(
+  filter: {
+    niche?: string;
+    platform?: string;
+  } = {},
+) {
+  const store = await db();
+  return priceGuide(await store.listReviewed(), filter);
+}
+
+/**
+ * The member's briefs with counts and the step they are on (D464): the
+ * page's step track and Spoki's "how is it going" answer read the same.
+ */
+export async function listMyCampaignSummaries(userId: string | null) {
+  const id = requireUser(userId);
+  const store = await db();
+  const companies = await store.companiesFor(id);
+  const rows = await store.listByCompanies(companies.map((row) => row.id));
+  const out = [];
+  for (const row of rows) {
+    const invites = await store.listInvites(row.id);
+    const submissions = await store.listSubmissions(
+      invites.map((invite) => invite.id),
+    );
+    out.push({
+      id: row.id,
+      productName: row.productName,
+      status: row.status,
+      deadline: row.deadline,
+      videosWanted: row.videosWanted,
+      bountyMinor: row.bountyMinor.toString(),
+      budgetMinor: ugcBudgetMinor(row.videosWanted, Number(row.bountyMinor)),
+      progress: campaignProgress(
+        row.status,
+        countParticipants(invites, submissions),
+      ),
+    });
+  }
+  return out;
+}

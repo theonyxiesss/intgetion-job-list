@@ -5,6 +5,7 @@ import { Container, PageHeader } from "@/components/ui/container";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
+import { ugcPriceGuide } from "@/modules/ugc/service";
 import { BriefForm } from "@/modules/ugc/ui/brief-form";
 
 export const dynamic = "force-dynamic";
@@ -43,6 +44,7 @@ export default async function NewCampaignPage({
         ) : (
           <BriefForm
             companies={companies.map((row) => ({ id: row.id, name: row.name }))}
+            guide={await ugcPriceGuide()}
           />
         )}
       </Container>

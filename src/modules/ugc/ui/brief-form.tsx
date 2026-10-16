@@ -7,24 +7,42 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input, Select } from "@/components/ui/input";
 import { localePath } from "@/i18n/paths";
+import {
+  rewardInLimits,
+  ugcBudgetMinor,
+  usdLabel,
+  type UgcPriceGuide,
+} from "../service/pricing";
 
-/** The same fields the bot collects. Sending calls createCampaign. */
+/**
+ * The same fields the bot collects. Sending calls createCampaign. The price
+ * guide only suggests; the company sets the reward (D464).
+ */
 export function BriefForm({
   companies,
+  guide,
 }: {
   companies: { id: string; name: string }[];
+  guide: UgcPriceGuide;
 }) {
   const t = useTranslations("ugc");
   const locale = useLocale();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [dollars, setDollars] = useState(
+    String(Math.round(guide.medianMinor / 100)),
+  );
+  const [videos, setVideos] = useState("1");
+  const [rights, setRights] = useState("organic");
+  const rewardMinor = /^\d+$/.test(dollars) ? Number(dollars) * 100 : 0;
+  const videoCount = Number.parseInt(videos, 10) || 0;
+  const budget = ugcBudgetMinor(videoCount, rewardMinor);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setError("");
     const form = new FormData(event.currentTarget);
-    const dollars = String(form.get("bounty") ?? "");
     if (!/^\d+$/.test(dollars)) {
       setBusy(false);
       setError(t("error"));
@@ -141,7 +159,8 @@ export function BriefForm({
           required
           min={1}
           max={30}
-          defaultValue={1}
+          value={videos}
+          onChange={(event) => setVideos(event.target.value)}
         />
       </Field>
       <Field label={t("fields.bounty")}>
@@ -152,13 +171,55 @@ export function BriefForm({
           min={5}
           max={500}
           inputMode="numeric"
+          value={dollars}
+          onChange={(event) => setDollars(event.target.value)}
         />
       </Field>
+      <div className="flex flex-col gap-2">
+        <p className="t-label text-fg-muted">{t("pricePresets")}</p>
+        <div className="flex flex-wrap gap-2">
+          {guide.presets.map((minor) => (
+            <button
+              key={minor}
+              type="button"
+              aria-pressed={rewardMinor === minor}
+              onClick={() => setDollars(String(minor / 100))}
+              className={`min-h-11 rounded-full border px-4 ${
+                rewardMinor === minor
+                  ? "border-fg bg-surface-2"
+                  : "border-line hover:border-line-strong"
+              }`}
+            >
+              {usdLabel(minor)}
+            </button>
+          ))}
+        </div>
+        <p className="t-body-s text-fg-muted">
+          {t("priceUsual", {
+            min: usdLabel(guide.minMinor),
+            max: usdLabel(guide.maxMinor),
+          })}
+        </p>
+        {budget > 0 && rewardInLimits(rewardMinor) ? (
+          <p className="t-body-s font-mono text-fg" aria-live="polite">
+            {t("budget", {
+              videos: videoCount,
+              price: usdLabel(rewardMinor),
+              total: usdLabel(budget),
+            })}
+          </p>
+        ) : null}
+      </div>
       <Field label={t("fields.deadline")}>
         <Input name="deadline" type="date" required />
       </Field>
       <Field label={t("fields.rights")}>
-        <Select name="rights" required defaultValue="organic">
+        <Select
+          name="rights"
+          required
+          value={rights}
+          onChange={(event) => setRights(event.target.value)}
+        >
           {UGC_RIGHTS.map((rights) => (
             <option key={rights} value={rights}>
               {t(`rights.${rights}`)}
@@ -166,6 +227,9 @@ export function BriefForm({
           ))}
         </Select>
       </Field>
+      {rights !== "organic" ? (
+        <p className="t-body-s text-fg-muted">{t("rightsHint")}</p>
+      ) : null}
       <Field label={t("fields.pitch")}>
         <Input name="pitch" maxLength={300} />
       </Field>

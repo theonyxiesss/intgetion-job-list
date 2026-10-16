@@ -201,6 +201,14 @@ export function productionUgcStore(): UgcStore {
         .where(eq(ugcCampaigns.status, "open"));
       return rows.map(campaignOf);
     },
+    async listReviewed() {
+      const rows = await db
+        .select()
+        .from(ugcCampaigns)
+        .where(inArray(ugcCampaigns.status, ["open", "closed"]))
+        .limit(2000);
+      return rows.map(campaignOf);
+    },
     async countCreatedSince(companyId, since) {
       const rows = await db
         .select({ id: ugcCampaigns.id })

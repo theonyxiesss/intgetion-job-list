@@ -67,6 +67,8 @@ export {
   issueJoinLink,
   markPayoutPaid,
   listMyCampaigns,
+  listMyCampaignSummaries,
+  ugcPriceGuide,
   listMyInvites,
   listOpenCampaigns,
   listOwedPayouts,
@@ -85,5 +87,23 @@ export {
   useUgcStore,
 } from "./commands";
 export { ugcTools } from "./bot-tools";
+export {
+  priceGuide,
+  rewardInLimits,
+  ugcBudgetMinor,
+  UGC_PRICE_DEFAULT,
+  UGC_PRICE_PRESETS,
+  UGC_RANGE_MIN_COUNT,
+  UGC_RIGHTS_HINT,
+  usdLabel,
+} from "./pricing";
+export type { UgcPriceGuide } from "./pricing";
+export {
+  campaignProgress,
+  countParticipants,
+  stepIndex,
+  UGC_STEPS,
+} from "./progress";
+export type { UgcCounts, UgcProgress, UgcStep } from "./progress";
 export { startPayloadRoute, ugcTokenFromStart } from "./start-payload";
 export { handleUgcTelegramStart } from "./telegram-start";

@@ -139,7 +139,7 @@
     "myJobs": "Meine Jobs",
     "company": "Unternehmen",
     "freelance": "Freelance",
-    "campaigns": "Kreative Tests"
+    "campaigns": "UGC-Videos"
   },
   "locale": {
     "en": "Englisch",
@@ -1189,11 +1189,11 @@
       },
       "ugcCampaignDecided": {
         "inapp": {
-          "title": "Kreativer Test geprüft",
+          "title": "UGC-Briefing geprüft",
           "body": "{decision, select, open {Das Brief ist offen.} rejected {Das Brief wurde abgelehnt und bleibt geschlossen.} other {Das Brief wurde geprüft.}} Produkt: „{productName}“."
         },
         "email": {
-          "subject": "Kreativer Test geprüft",
+          "subject": "UGC-Briefing geprüft",
           "body": "{decision, select, open {Das Brief ist offen.} rejected {Das Brief wurde abgelehnt und bleibt geschlossen.} other {Das Brief wurde geprüft.}} Produkt: „{productName}“."
         }
       },
@@ -1205,7 +1205,7 @@
       },
       "ugcInvite": {
         "inapp": {
-          "title": "Einladung zum kreativen Test",
+          "title": "Einladung zu einem UGC-Briefing",
           "body": "Sie sind zu „{productName}“ eingeladen. Gespeicherter Betrag: {bountyMinor} Cent. Es wird nichts berechnet."
         },
         "email": {
@@ -1231,7 +1231,7 @@
       },
       "ugcDeadline": {
         "inapp": {
-          "title": "Frist des kreativen Tests",
+          "title": "Frist des UGC-Briefings",
           "body": "Die Frist für „{productName}“ ist morgen, oder ein unbeantwortetes Angebot ist still geworden."
         },
         "email": {
@@ -1630,8 +1630,8 @@
     },
     "ugcFocus": {
       "line": "Brief: {product}",
-      "back": "Zurück zu kreativen Tests",
-      "home": "Sie schreiben ein Brief für einen kreativen Test. Nichts wird veröffentlicht, bis Sie bestätigen."
+      "back": "Zurück zu UGC-Videos",
+      "home": "Sie schreiben ein Briefing für UGC-Videos. Nichts wird veröffentlicht, bis Sie bestätigen."
     },
     "ugcJoin": {
       "title": "Link für den Blogger",
@@ -1713,7 +1713,7 @@
       "applyTitle": "Auf diesen Job bewerben?",
       "profileTitle": "Diese Profiländerungen speichern?",
       "jobTitle": "Diese Stelle zur Prüfung senden?",
-      "ugcTitle": "Diesen Schritt des kreativen Tests speichern?",
+      "ugcTitle": "Diesen Schritt der UGC-Videos speichern?",
       "text": "Nichts passiert, bis Sie bestätigen.",
       "accept": "Bestätigen",
       "decline": "Abbrechen",
@@ -1773,9 +1773,9 @@
         "action": "Aufgabe beschreiben"
       },
       "campaigns": {
-        "title": "Kreative Tests",
+        "title": "UGC-Videos",
         "text": "Ein Brief. Creator bewerben sich. Sie stellen die genannten Personen ein.",
-        "action": "Kreative Tests öffnen"
+        "action": "UGC-Videos öffnen"
       },
       "freelance": {
         "title": "Freelance-Dienste",
@@ -3695,8 +3695,8 @@
     }
   },
   "ugc": {
-    "title": "Kreative Tests",
-    "intro": "Ein Brief. Creator bewerben sich. Sie stellen die genannten Personen ein.",
+    "title": "UGC-Videos",
+    "intro": "Kurze Videos von echten Menschen für Anzeigen und soziale Netzwerke. Ein Briefing, Creator bewerben sich, Sie stellen die Gewählten ein.",
     "moneyNote": "Der Betrag wird in Cent gespeichert. In diesem Schritt wird nichts berechnet oder ausgezahlt.",
     "openChat": "Brief mit Spoki schreiben",
     "newBrief": "Neues Brief",
@@ -3723,7 +3723,7 @@
     "decline": "Ablehnen",
     "error": "Das wurde nicht gespeichert. Prüfen Sie die Felder und versuchen Sie es erneut.",
     "joinReady": "Öffnen Sie diesen Link in Telegram. Der Token bleibt im Link.",
-    "adminTitle": "Kreative Tests in Prüfung",
+    "adminTitle": "UGC-Briefings in Prüfung",
     "adminEmpty": "Nichts wartet auf Prüfung.",
     "approve": "Brief öffnen",
     "reject": "Ablehnen",
@@ -3807,7 +3807,11 @@
     "paidNote": "Ein Admin hat dies als ausgezahlt markiert. Die Plattform hat das Geld nicht gesendet.",
     "markPaid": "Als ausgezahlt markieren",
     "payoutsTitle": "Erfasste Belohnungen",
-    "payoutsEmpty": "Keine erfasste Belohnung wartet auf eine Markierung."
+    "payoutsEmpty": "Keine erfasste Belohnung wartet auf eine Markierung.",
+    "priceUsual": "Meist {min}–{max} pro Video",
+    "pricePresets": "Fertige Beträge",
+    "budget": "Budget: {videos} × {price} = {total}. Nichts wird abgebucht.",
+    "rightsHint": "Für Werbe- und Whitelist-Rechte liegt der Preis meist höher als für organische Posts."
   },
   "chatFreelance": {
     "focus": "Wir besprechen „{title}“.",
@@ -3872,6 +3876,46 @@
     "report_freelance": {
       "title": "Beschwerde senden",
       "text": "Ein Moderator liest sie. Die andere Seite sieht nicht, wer sie gesendet hat."
+    },
+    "ugcCampaignTitle": "Ihr UGC-Briefing",
+    "ugcCampaignAction": "Briefing öffnen"
+  },
+  "ugcHub": {
+    "doorCompanyTitle": "Ich brauche Videos",
+    "doorCompanyText": "Ein Briefing. Passende Creator bewerben sich; Sie stellen die Gewählten ein und zahlen nur angenommene Videos.",
+    "doorCompanyAction": "Briefing mit Spoki erstellen",
+    "doorCreatorTitle": "Ich drehe Videos",
+    "doorCreatorText": "Füllen Sie das Creator-Profil einmal aus, sehen Sie offene Briefings Ihrer Nischen und bewerben Sie sich.",
+    "doorCreatorAction": "Offene Briefings",
+    "mineTitle": "Ihre Briefings",
+    "emptyTitle": "Noch keine Briefings",
+    "emptyText": "Ein Briefing mit Spoki dauert zwei Minuten: Produkt, Zielgruppe, Botschaft, Anzahl Videos und Vergütung.",
+    "exampleTitle": "Zum Beispiel",
+    "exampleProduct": "Eine Budget-App für Studierende",
+    "exampleVideos": "5 Videos für TikTok und Reels",
+    "exampleReward": "$50 pro angenommenem Video, insgesamt $250",
+    "exampleRights": "Nur organische Posts",
+    "budget": "Budget {total}",
+    "counts": "{applied} Bewerbungen · {hired} eingestellt · {waiting} warten",
+    "nextHire": "Aus den Bewerbungen einstellen",
+    "nextDecide": "Über die Videos entscheiden",
+    "nextRemind": "Eingestellte erinnern",
+    "nextWait": "Warten auf Creator",
+    "stepDone": "Geschlossen",
+    "stepRejected": "Nicht freigegeben",
+    "priceTitle": "Was Unternehmen zahlen",
+    "priceRange": "Meist {min}–{max} pro angenommenem Video, Median {median}.",
+    "pricePresets": "Fertige Beträge: {list}. Am häufigsten {usual}.",
+    "creatorProfile": "Creator-Profil",
+    "creatorOpen": "Offene Briefings",
+    "creatorInvites": "Ihre Bewerbungen und Angebote",
+    "steps": {
+      "brief": "Briefing",
+      "review": "Prüfung",
+      "responses": "Bewerbungen",
+      "hire": "Einstellung",
+      "videos": "Videos",
+      "decision": "Entscheidung"
     }
   }
 }

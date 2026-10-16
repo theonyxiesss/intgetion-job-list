@@ -26,6 +26,7 @@ import {
   type FreelanceServiceCard,
 } from "@/components/bot/freelance-card";
 import { ConfirmCard } from "@/components/ui/dialog";
+import { ugcBudgetMinor, usdLabel } from "@/modules/ugc/service/pricing";
 import { Alert } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
 import { TELEGRAM_BOT_URL } from "@/config/telegram";
@@ -75,7 +76,7 @@ type Entry =
       key: string;
       kind: "freelance_link";
       href: string;
-      link: "order" | "cabinet";
+      link: "order" | "cabinet" | "ugcCampaign";
     }
   | { key: string; kind: "notice"; code: string }
   | {
@@ -128,6 +129,14 @@ function freelanceEntry(kind: unknown, data: unknown): Entry | null {
       kind: "freelance_link",
       href: `/freelance/orders/${id}`,
       link: "order",
+    };
+  }
+  if (kind === "ugc_campaign" && typeof id === "string" && UUID.test(id)) {
+    return {
+      key: nextKey(),
+      kind: "freelance_link",
+      href: `/campaigns/${id}`,
+      link: "ugcCampaign",
     };
   }
   if (kind === "freelance_service_saved") {
@@ -224,6 +233,7 @@ export function Chat({
   ugcProduct?: string;
 }) {
   const t = useTranslations("chat");
+  const ugcText = useTranslations("ugc");
   const explain = useTranslations("explain");
   const locale = useLocale();
   const router = useRouter();
@@ -948,6 +958,8 @@ export function Chat({
                           />
                         ) : null}
                       </div>
+                    ) : entry.tool === "propose_ugc_campaign" ? (
+                      <UgcBudgetLine args={entry.args} text={ugcText} />
                     ) : (
                       t("confirm.text")
                     )}
@@ -1063,5 +1075,32 @@ export function Chat({
         )}
       </div>
     </FreelanceCopyContext.Provider>
+  );
+}
+
+/** The brief card says the whole budget before it is saved (D464). */
+function UgcBudgetLine({
+  args,
+  text,
+}: {
+  args: unknown;
+  text: (key: string, values?: Record<string, string | number>) => string;
+}) {
+  const a = (args ?? {}) as { videosWanted?: unknown; bountyMinor?: unknown };
+  const videos = Number(a.videosWanted);
+  const reward =
+    typeof a.bountyMinor === "string" && /^\d+$/.test(a.bountyMinor)
+      ? Number(a.bountyMinor)
+      : 0;
+  const total = ugcBudgetMinor(videos, reward);
+  if (total === 0) return null;
+  return (
+    <p className="font-mono">
+      {text("budget", {
+        videos,
+        price: usdLabel(reward),
+        total: usdLabel(total),
+      })}
+    </p>
   );
 }

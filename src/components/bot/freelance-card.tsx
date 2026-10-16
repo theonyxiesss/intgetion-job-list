@@ -196,7 +196,7 @@ export function FreelanceLinkCard({
   kind,
 }: {
   href: string;
-  kind: "order" | "cabinet";
+  kind: "order" | "cabinet" | "ugcCampaign";
 }) {
   const t = useCardText();
   return (
