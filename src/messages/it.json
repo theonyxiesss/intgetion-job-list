@@ -1786,6 +1786,11 @@
         "title": "Offri un servizio",
         "text": "Attiva «Accetto ordini» e pubblica un servizio. Appare dopo la moderazione.",
         "action": "Apri l’area"
+      },
+      "freelance_payout": {
+        "title": "Indirizzo di pagamento",
+        "text": "Conferma l’indirizzo a cui ti pagano.",
+        "action": "Conferma l’indirizzo"
       }
     }
   },
@@ -3652,7 +3657,42 @@
       "error_ALREADY_REPORTED": "L’hai già segnalato.",
       "error_RATE_LIMITED": "Troppe segnalazioni. Riprova più tardi."
     },
-    "askSpoki": "Parlane con l’assistente"
+    "askSpoki": "Parlane con l’assistente",
+    "pay": {
+      "payFor": "Ordine freelance",
+      "direct": "Direttamente all’indirizzo del freelance. La piattaforma non tiene denaro e non prende commissioni.",
+      "token": "Token",
+      "payNow": "Paga con il wallet",
+      "payQr": "Wallet sul telefono",
+      "checkWallet": "Controlla l’indirizzo nel wallet: è quello del freelance.",
+      "status_awaiting_payment": "In attesa del trasferimento",
+      "status_checking": "Verifica del trasferimento in rete",
+      "status_paid": "Pagato. L’ordine è in lavorazione.",
+      "status_underpaid": "È arrivato meno dell’ordine",
+      "status_expired": "Il tempo per questo pagamento è scaduto",
+      "status_failed": "Il trasferimento non è stato contato",
+      "status_frozen": "Il pagamento è in verifica",
+      "error_wallet": "Apri un wallet in questo browser",
+      "error_cancel": "Hai chiuso il wallet. Non è stato inviato nulla.",
+      "error_network": "Questa rete non è supportata",
+      "error_token": "Questo token non è su questa rete",
+      "error_failed": "Il pagamento non è andato a buon fine",
+      "error_unavailable": "Ora non si può pagare questo ordine qui",
+      "payoutTitle": "Indirizzo di pagamento",
+      "payoutText": "Gli acquirenti pagano direttamente a questo indirizzo. Firma un messaggio nel wallet per dimostrare che è tuo.",
+      "payoutCurrent": "Indirizzo attuale",
+      "payoutConfirm": "Conferma l’indirizzo",
+      "payoutChange": "Cambia l’indirizzo",
+      "payoutSaved": "Indirizzo confermato",
+      "payoutReview": "Questo indirizzo è in verifica e non è stato salvato",
+      "payoutNone": "Ancora nessun indirizzo di pagamento. Fino ad allora ti pagano fuori dalla piattaforma.",
+      "notPayable": "Questo ordine non si può pagare qui ora.",
+      "backToOrder": "Torna all’ordine",
+      "payButton": "Paga {price} al freelance",
+      "orderText": "Paga in USDC o USDT direttamente all’indirizzo confermato del freelance. L’ordine passa in lavorazione quando la rete conferma.",
+      "payoutMissing": "Il freelance non ha ancora confermato un indirizzo di pagamento. Accordatevi sul pagamento direttamente; il freelance inizia il lavoro.",
+      "paidLine": "Pagato all’indirizzo del freelance. L’ordine è in lavorazione."
+    }
   },
   "ugc": {
     "title": "Test creativi",

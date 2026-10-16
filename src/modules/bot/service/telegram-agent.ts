@@ -172,6 +172,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     campaigns: "Creative tests",
     freelance: "Freelance services",
     freelance_sell: "Sell a service",
+    freelance_payout: "Confirm payout address",
   },
   ru: {
     pay_hire: "Оплатить «Найм»",
@@ -186,6 +187,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     campaigns: "Креативные тесты",
     freelance: "Фриланс-услуги",
     freelance_sell: "Выставить услугу",
+    freelance_payout: "Подтвердить адрес выплаты",
   },
   "pt-BR": {
     pay_hire: "Pagar Hire",
@@ -200,6 +202,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     campaigns: "Testes criativos",
     freelance: "Serviços freelance",
     freelance_sell: "Oferecer um serviço",
+    freelance_payout: "Confirmar endereço de recebimento",
   },
   de: {
     pay_hire: "Hire bezahlen",
@@ -214,6 +217,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     campaigns: "Kreative Tests",
     freelance: "Freelance-Dienste",
     freelance_sell: "Dienst anbieten",
+    freelance_payout: "Auszahlungsadresse bestätigen",
   },
   fr: {
     pay_hire: "Payer Hire",
@@ -228,6 +232,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     campaigns: "Tests créatifs",
     freelance: "Services freelance",
     freelance_sell: "Proposer un service",
+    freelance_payout: "Confirmer l’adresse de versement",
   },
   it: {
     pay_hire: "Paga Hire",
@@ -242,6 +247,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     campaigns: "Test creativi",
     freelance: "Servizi freelance",
     freelance_sell: "Offri un servizio",
+    freelance_payout: "Conferma l’indirizzo di pagamento",
   },
 };
 

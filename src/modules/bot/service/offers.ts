@@ -18,6 +18,7 @@ export const OFFER_ACTIONS = [
   "campaigns",
   "freelance",
   "freelance_sell",
+  "freelance_payout",
 ] as const;
 
 export type OfferAction = (typeof OFFER_ACTIONS)[number];
@@ -54,6 +55,9 @@ export function offerPath(
   if (action === "events") return "/events";
   if (action === "campaigns") return "/chat?from=campaigns";
   if (action === "freelance") return "/freelance";
+  if (action === "freelance_payout") {
+    return signedIn ? "/billing/crypto?payout=1" : "/register?next=chat";
+  }
   if (action === "freelance_sell") {
     return signedIn ? "/profile/freelance" : "/register?next=chat";
   }

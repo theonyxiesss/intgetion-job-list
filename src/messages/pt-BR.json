@@ -1786,6 +1786,11 @@
         "title": "Oferecer um serviço",
         "text": "Ative «Aceito pedidos» e publique um serviço. Ele aparece após a moderação.",
         "action": "Abrir o painel"
+      },
+      "freelance_payout": {
+        "title": "Endereço de recebimento",
+        "text": "Confirme o endereço em que pagam você.",
+        "action": "Confirmar o endereço"
       }
     }
   },
@@ -3652,7 +3657,42 @@
       "error_ALREADY_REPORTED": "Você já denunciou isto.",
       "error_RATE_LIMITED": "Denúncias demais. Tente mais tarde."
     },
-    "askSpoki": "Conversar com o assistente"
+    "askSpoki": "Conversar com o assistente",
+    "pay": {
+      "payFor": "Pedido freelance",
+      "direct": "Direto para o endereço do freelancer. A plataforma não guarda dinheiro nem cobra taxa.",
+      "token": "Token",
+      "payNow": "Pagar com a carteira",
+      "payQr": "Carteira no celular",
+      "checkWallet": "Confira o endereço na carteira: é o do freelancer.",
+      "status_awaiting_payment": "Aguardando a transferência",
+      "status_checking": "Verificando a transferência na rede",
+      "status_paid": "Pago. O pedido está em andamento.",
+      "status_underpaid": "Chegou menos que o pedido",
+      "status_expired": "O tempo deste pagamento acabou",
+      "status_failed": "A transferência não foi contada",
+      "status_frozen": "O pagamento está em análise",
+      "error_wallet": "Abra uma carteira neste navegador",
+      "error_cancel": "Você fechou a carteira. Nada foi enviado.",
+      "error_network": "Esta rede não é suportada",
+      "error_token": "Este token não está nesta rede",
+      "error_failed": "O pagamento não foi concluído",
+      "error_unavailable": "Agora não é possível pagar este pedido aqui",
+      "payoutTitle": "Endereço de recebimento",
+      "payoutText": "Os compradores pagam neste endereço diretamente. Assine uma mensagem na carteira para provar que é seu.",
+      "payoutCurrent": "Endereço atual",
+      "payoutConfirm": "Confirmar o endereço",
+      "payoutChange": "Trocar o endereço",
+      "payoutSaved": "Endereço confirmado",
+      "payoutReview": "Este endereço está em análise e não foi salvo",
+      "payoutNone": "Ainda não há endereço de recebimento. Até confirmar, pagam você fora da plataforma.",
+      "notPayable": "Este pedido não pode ser pago aqui agora.",
+      "backToOrder": "Voltar ao pedido",
+      "payButton": "Pagar {price} ao freelancer",
+      "orderText": "Pague em USDC ou USDT direto no endereço confirmado do freelancer. O pedido entra em andamento quando a rede confirma.",
+      "payoutMissing": "O freelancer ainda não confirmou um endereço de recebimento. Combinem o pagamento diretamente; o freelancer começa o trabalho.",
+      "paidLine": "Pago no endereço do freelancer. O pedido está em andamento."
+    }
   },
   "ugc": {
     "title": "Testes criativos",

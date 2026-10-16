@@ -1,6 +1,9 @@
 import { timingSafeEqual } from "node:crypto";
 import { notFound, toErrorResponse } from "@/lib/http";
-import { runOrderTimers } from "@/modules/freelance/service";
+import {
+  recheckOrderPayments,
+  runOrderTimers,
+} from "@/modules/freelance/service";
 
 export const dynamic = "force-dynamic";
 
@@ -14,13 +17,16 @@ function authorized(request: Request): boolean {
 
 /**
  * Freelance timers, every 15 minutes (D456): unanswered requests expire
- * after 72 hours, delivered work is accepted after 7 days (D447).
+ * after 72 hours, delivered work is accepted after 7 days (D447). Order
+ * payments still waiting on the network are read again (D463).
  */
 export async function GET(request: Request) {
   try {
     if (!authorized(request)) throw notFound();
     const result = await runOrderTimers();
-    return Response.json({ ok: true, ...result });
+    // Payments still waiting on confirmations (D463).
+    const payments = await recheckOrderPayments();
+    return Response.json({ ok: true, ...result, payments });
   } catch (error) {
     return toErrorResponse(error);
   }

@@ -17,5 +17,7 @@ export {
   refreshHireOrder,
   refreshSanctionsList,
   verifyWalletSignature,
+  verifiedPayerWallet,
+  cryptoCheckoutOn,
 } from "./billing-service";
 export type { BillingMe, OrderView, SanctionsRefresh } from "./billing-service";

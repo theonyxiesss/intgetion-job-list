@@ -1786,6 +1786,11 @@
         "title": "Dienst anbieten",
         "text": "Aufträge annehmen einschalten und einen Dienst anlegen. Er erscheint nach der Prüfung.",
         "action": "Bereich öffnen"
+      },
+      "freelance_payout": {
+        "title": "Auszahlungsadresse",
+        "text": "Bestätigen Sie die Adresse, an die Käufer zahlen.",
+        "action": "Adresse bestätigen"
       }
     }
   },
@@ -3652,7 +3657,42 @@
       "error_ALREADY_REPORTED": "Sie haben das bereits gemeldet.",
       "error_RATE_LIMITED": "Zu viele Meldungen. Später erneut versuchen."
     },
-    "askSpoki": "Mit dem Assistenten besprechen"
+    "askSpoki": "Mit dem Assistenten besprechen",
+    "pay": {
+      "payFor": "Freelance-Auftrag",
+      "direct": "Direkt an die Adresse der Person. Die Plattform hält kein Geld und nimmt keine Gebühr.",
+      "token": "Token",
+      "payNow": "Mit der Wallet bezahlen",
+      "payQr": "Wallet auf dem Telefon",
+      "checkWallet": "Prüfen Sie die Adresse in der Wallet: Es ist die der Person.",
+      "status_awaiting_payment": "Warten auf die Überweisung",
+      "status_checking": "Überweisung wird im Netz geprüft",
+      "status_paid": "Bezahlt. Der Auftrag ist in Arbeit.",
+      "status_underpaid": "Weniger als der Auftrag kam an",
+      "status_expired": "Die Zeit für diese Zahlung ist abgelaufen",
+      "status_failed": "Die Überweisung wurde nicht gezählt",
+      "status_frozen": "Die Zahlung wird geprüft",
+      "error_wallet": "Öffnen Sie eine Wallet in diesem Browser",
+      "error_cancel": "Sie haben die Wallet geschlossen. Nichts wurde gesendet.",
+      "error_network": "Dieses Netz wird nicht unterstützt",
+      "error_token": "Dieser Token ist nicht in diesem Netz",
+      "error_failed": "Die Zahlung ging nicht durch",
+      "error_unavailable": "Dieser Auftrag kann hier gerade nicht bezahlt werden",
+      "payoutTitle": "Auszahlungsadresse",
+      "payoutText": "Käufer zahlen direkt an diese Adresse. Signieren Sie eine Nachricht in der Wallet, um zu zeigen, dass sie Ihnen gehört.",
+      "payoutCurrent": "Aktuelle Adresse",
+      "payoutConfirm": "Adresse bestätigen",
+      "payoutChange": "Adresse ändern",
+      "payoutSaved": "Adresse bestätigt",
+      "payoutReview": "Diese Adresse wird geprüft und wurde nicht gespeichert",
+      "payoutNone": "Noch keine Auszahlungsadresse. Bis dahin zahlen Käufer außerhalb der Plattform.",
+      "notPayable": "Dieser Auftrag kann hier jetzt nicht bezahlt werden.",
+      "backToOrder": "Zurück zum Auftrag",
+      "payButton": "{price} an die Person zahlen",
+      "orderText": "Zahlen Sie in USDC oder USDT direkt an die bestätigte Adresse der Person. Der Auftrag geht in Arbeit, sobald das Netz bestätigt.",
+      "payoutMissing": "Die Person hat noch keine Auszahlungsadresse bestätigt. Vereinbaren Sie die Zahlung direkt; die Person beginnt die Arbeit.",
+      "paidLine": "An die Adresse der Person bezahlt. Der Auftrag ist in Arbeit."
+    }
   },
   "ugc": {
     "title": "Kreative Tests",

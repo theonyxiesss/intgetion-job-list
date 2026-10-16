@@ -12,6 +12,15 @@ import { SALE_PLANS } from "@/lib/billing/status";
 import { payableCompanies, payableJobs } from "@/modules/billing/service";
 import { CryptoPay } from "@/modules/billing/ui/crypto-pay";
 import { InterestForm } from "@/modules/billing/ui/interest-form";
+import { FreelancePay } from "@/modules/billing/ui/freelance-pay";
+import { PayoutWallet } from "@/modules/billing/ui/payout-wallet";
+import { HttpError } from "@/lib/http";
+import {
+  getOrderForParty,
+  getPayoutStatus,
+  orderPayState,
+} from "@/modules/freelance/service";
+import { formatUsd } from "@/modules/freelance/ui/format";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -32,7 +41,15 @@ export default async function CryptoBillingPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ job?: string; plan?: string; company?: string }>;
+  searchParams: Promise<{
+    job?: string;
+    plan?: string;
+    company?: string;
+    /** A freelance order to pay to its freelancer (D463). */
+    freelance?: string;
+    /** The freelancer proves the payout address (D463). */
+    payout?: string;
+  }>;
 }) {
   const { locale } = await params;
   const query = await searchParams;
@@ -47,6 +64,68 @@ export default async function CryptoBillingPage({
     redirect(`${localePrefix(locale)}/login?next=${loginNext(plan)}`);
   }
   const t = await getTranslations("billing");
+  const projectIdEarly =
+    process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID?.trim() ?? "";
+  const freelanceOrder =
+    query.freelance && UUID.test(query.freelance) ? query.freelance : "";
+  if (freelanceOrder || query.payout === "1") {
+    const f = await getTranslations("freelance");
+    const copy = f.raw("pay") as Record<string, string>;
+    const panel =
+      "mx-auto flex w-full max-w-md flex-col gap-4 border border-line bg-surface p-6";
+    let body: React.ReactNode;
+    if (query.payout === "1") {
+      const status = await getPayoutStatus(user.id);
+      body = (
+        <PayoutWallet
+          address={status.address}
+          projectId={projectIdEarly}
+          copy={copy}
+        />
+      );
+    } else {
+      let order: Awaited<ReturnType<typeof getOrderForParty>> | null = null;
+      let state: Awaited<ReturnType<typeof orderPayState>> | null = null;
+      try {
+        order = await getOrderForParty(user.id, freelanceOrder);
+        state = await orderPayState(user.id, freelanceOrder);
+      } catch (error) {
+        if (!(error instanceof HttpError)) throw error;
+      }
+      body =
+        order &&
+        state &&
+        (state.payable || state.payment?.status === "paid") ? (
+          <FreelancePay
+            orderId={order.id}
+            title={order.serviceTitle}
+            amount={formatUsd(order.priceMinor, locale)}
+            projectId={projectIdEarly}
+            copy={copy}
+          />
+        ) : (
+          <div className={panel}>
+            <p className="text-fg-muted">{copy.notPayable}</p>
+            <ButtonLink
+              href={
+                order ? `/freelance/orders/${order.id}` : "/freelance/orders"
+              }
+              variant="secondary"
+            >
+              {copy.backToOrder}
+            </ButtonLink>
+          </div>
+        );
+    }
+    return (
+      <main className="flex-1 py-10">
+        <Container className="flex flex-col gap-6">
+          <h1 className="t-h2">{t("title")}</h1>
+          {body}
+        </Container>
+      </main>
+    );
+  }
   const projectId =
     process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID?.trim() ?? "";
   const evm =

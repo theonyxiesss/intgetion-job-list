@@ -1786,6 +1786,11 @@
         "title": "Sell a service",
         "text": "Turn on taking orders and list a service. It shows after moderation.",
         "action": "Open the cabinet"
+      },
+      "freelance_payout": {
+        "title": "Payout address",
+        "text": "Confirm the address buyers pay you to.",
+        "action": "Confirm the address"
       }
     }
   },
@@ -4158,7 +4163,42 @@
       "error_ALREADY_REPORTED": "You have already reported this.",
       "error_RATE_LIMITED": "Too many reports. Try again later."
     },
-    "askSpoki": "Discuss with the assistant"
+    "askSpoki": "Discuss with the assistant",
+    "pay": {
+      "payFor": "Freelance order",
+      "direct": "Straight to the freelancer’s address. The platform holds no money and takes no fee.",
+      "token": "Token",
+      "payNow": "Pay with the wallet",
+      "payQr": "Wallet on the phone",
+      "checkWallet": "Check the address in the wallet: it is the freelancer’s.",
+      "status_awaiting_payment": "Waiting for the transfer",
+      "status_checking": "Checking the transfer in the network",
+      "status_paid": "Paid. The order is in work.",
+      "status_underpaid": "Less than the order arrived",
+      "status_expired": "The time for this payment ran out",
+      "status_failed": "The transfer was not counted",
+      "status_frozen": "The payment is under review",
+      "error_wallet": "Open a wallet in this browser",
+      "error_cancel": "You closed the wallet. Nothing was sent.",
+      "error_network": "This network is not supported",
+      "error_token": "This token is not on this network",
+      "error_failed": "The payment did not go through",
+      "error_unavailable": "Paying here is not possible for this order right now",
+      "payoutTitle": "Payout address",
+      "payoutText": "Buyers pay to this address directly. Sign a message in your wallet to prove it is yours.",
+      "payoutCurrent": "Current address",
+      "payoutConfirm": "Confirm the address",
+      "payoutChange": "Change the address",
+      "payoutSaved": "Address confirmed",
+      "payoutReview": "This address is under review and was not saved",
+      "payoutNone": "No payout address yet. Buyers pay you outside the platform until you confirm one.",
+      "notPayable": "This order cannot be paid here now.",
+      "backToOrder": "Back to the order",
+      "payButton": "Pay {price} to the freelancer",
+      "orderText": "Pay in USDC or USDT straight to the freelancer’s confirmed address. The order moves to work once the network confirms it.",
+      "payoutMissing": "The freelancer has not confirmed a payout address yet. Agree on payment directly; the freelancer starts the work.",
+      "paidLine": "Paid to the freelancer’s address. The order is in work."
+    }
   },
   "ugc": {
     "title": "Creative tests",

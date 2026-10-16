@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
+import { buttonClass } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { navBack } from "@/components/ui/page-transition";
 import { Stat, StatRow } from "@/components/ui/stat";
@@ -11,7 +12,11 @@ import { intlLocale } from "@/i18n/locale";
 import { publicHttpUrl } from "@/lib/company-mark";
 import { HttpError } from "@/lib/http";
 import { clientIp } from "@/lib/request-ip";
-import { canLeaveReview, getOrderView } from "@/modules/freelance/service";
+import {
+  canLeaveReview,
+  getOrderView,
+  orderPayState,
+} from "@/modules/freelance/service";
 import { formatUsd } from "@/modules/freelance/ui/format";
 import { ReportForm } from "@/modules/freelance/ui/report-form";
 import { OrderActions, ReviewForm } from "@/modules/freelance/ui/order-actions";
@@ -57,6 +62,7 @@ export default async function FreelanceOrderPage({
   const canReview = canLeaveReview(order);
   const deliveryHref = publicHttpUrl(order.deliveryUrl);
   const contact = order.counterpart;
+  const payState = await orderPayState(user.id, order.id);
 
   return (
     <main className="py-10 md:py-16">
@@ -207,6 +213,25 @@ export default async function FreelanceOrderPage({
             <p className="text-fg-muted">{t("orders.contactsClosed")}</p>
           )}
         </section>
+        {payState.payment?.status === "paid" ? (
+          <p className="t-body-s text-success">{t("pay.paidLine")}</p>
+        ) : payState.payable ? (
+          <section className="flex flex-col gap-2 rounded-lg border border-line p-4">
+            <p className="t-body-s text-fg-muted">{t("pay.orderText")}</p>
+            <Link
+              href={`/billing/crypto?freelance=${order.id}`}
+              className={buttonClass("primary")}
+            >
+              {t("pay.payButton", {
+                price: formatUsd(order.priceMinor, locale),
+              })}
+            </Link>
+          </section>
+        ) : order.side === "buyer" &&
+          order.status === "accepted" &&
+          !payState.payoutReady ? (
+          <p className="t-body-s text-fg-muted">{t("pay.payoutMissing")}</p>
+        ) : null}
         {order.next.length > 0 ? (
           <section className="flex flex-col gap-3">
             <OrderActions

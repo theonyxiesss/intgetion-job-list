@@ -108,3 +108,20 @@ export {
   serviceFlags,
 } from "./flags";
 export { getOrdersForModeration } from "./listing-service";
+export {
+  confirmOrderPayment,
+  createOrderPayment,
+  getPayoutStatus,
+  issuePayoutNonce,
+  orderPayState,
+  PAYOUT_STATEMENT,
+  recheckOrderPayments,
+  refreshOrderPayment,
+  setChainReaderForTests,
+  verifyPayoutSignature,
+} from "./payment-service";
+export type {
+  OrderPaymentView,
+  OrderPayState,
+  PayoutStatus,
+} from "./payment-service";

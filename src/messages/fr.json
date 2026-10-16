@@ -1786,6 +1786,11 @@
         "title": "Proposer un service",
         "text": "Activez « J’accepte des commandes » et publiez un service. Il paraît après modération.",
         "action": "Ouvrir l’espace"
+      },
+      "freelance_payout": {
+        "title": "Adresse de versement",
+        "text": "Confirmez l’adresse où l’on vous paie.",
+        "action": "Confirmer l’adresse"
       }
     }
   },
@@ -3652,7 +3657,42 @@
       "error_ALREADY_REPORTED": "Vous l’avez déjà signalé.",
       "error_RATE_LIMITED": "Trop de signalements. Réessayez plus tard."
     },
-    "askSpoki": "En parler avec l’assistant"
+    "askSpoki": "En parler avec l’assistant",
+    "pay": {
+      "payFor": "Commande freelance",
+      "direct": "Directement à l’adresse du freelance. La plateforme ne garde pas l’argent et ne prend pas de commission.",
+      "token": "Jeton",
+      "payNow": "Payer avec le portefeuille",
+      "payQr": "Portefeuille sur le téléphone",
+      "checkWallet": "Vérifiez l’adresse dans le portefeuille : c’est celle du freelance.",
+      "status_awaiting_payment": "En attente du virement",
+      "status_checking": "Vérification du virement sur le réseau",
+      "status_paid": "Payé. La commande est en cours.",
+      "status_underpaid": "Moins que la commande est arrivé",
+      "status_expired": "Le délai de ce paiement est passé",
+      "status_failed": "Le virement n’a pas été compté",
+      "status_frozen": "Le paiement est en vérification",
+      "error_wallet": "Ouvrez un portefeuille dans ce navigateur",
+      "error_cancel": "Vous avez fermé le portefeuille. Rien n’a été envoyé.",
+      "error_network": "Ce réseau n’est pas pris en charge",
+      "error_token": "Ce jeton n’est pas sur ce réseau",
+      "error_failed": "Le paiement n’a pas abouti",
+      "error_unavailable": "Cette commande ne peut pas être payée ici pour l’instant",
+      "payoutTitle": "Adresse de versement",
+      "payoutText": "Les acheteurs paient directement à cette adresse. Signez un message dans votre portefeuille pour prouver qu’elle est à vous.",
+      "payoutCurrent": "Adresse actuelle",
+      "payoutConfirm": "Confirmer l’adresse",
+      "payoutChange": "Changer l’adresse",
+      "payoutSaved": "Adresse confirmée",
+      "payoutReview": "Cette adresse est en vérification et n’a pas été enregistrée",
+      "payoutNone": "Pas encore d’adresse de versement. D’ici là, on vous paie hors de la plateforme.",
+      "notPayable": "Cette commande ne peut pas être payée ici maintenant.",
+      "backToOrder": "Retour à la commande",
+      "payButton": "Payer {price} au freelance",
+      "orderText": "Payez en USDC ou USDT directement à l’adresse confirmée du freelance. La commande passe en cours quand le réseau confirme.",
+      "payoutMissing": "Le freelance n’a pas encore confirmé d’adresse de versement. Convenez du paiement directement ; le freelance commence le travail.",
+      "paidLine": "Payé à l’adresse du freelance. La commande est en cours."
+    }
   },
   "ugc": {
     "title": "Tests créatifs",

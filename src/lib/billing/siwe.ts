@@ -7,6 +7,8 @@ export function siweMessage(input: {
   nonce: string;
   issuedAt: string;
   expirationTime: string;
+  /** What the signature is for; the checkout keeps its own line. */
+  statement?: string;
 }): string {
   const uri = siteUrl();
   const domain = new URL(uri).host;
@@ -14,7 +16,7 @@ export function siweMessage(input: {
     `${domain} wants you to sign in with your Ethereum account:`,
     input.address,
     "",
-    "Pay for INTGETION JOB LIST.",
+    input.statement ?? "Pay for INTGETION JOB LIST.",
     "",
     `URI: ${uri}`,
     "Version: 1",

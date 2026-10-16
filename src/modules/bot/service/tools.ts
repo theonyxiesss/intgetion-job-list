@@ -287,7 +287,7 @@ export const TOOLS: readonly BotTool[] = [
   tool({
     name: "offer_step",
     description:
-      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, order_service, events, freelance (the freelance catalog), or freelance_sell (the seller cabinet). Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet. Use order_service only after they ask to order a managed team or leave the task. Do not use it to answer a question about a service.",
+      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, order_service, events, freelance (the freelance catalog), freelance_sell (the seller cabinet), or freelance_payout (a freelancer confirms the payout address). Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet. Use order_service only after they ask to order a managed team or leave the task. Do not use it to answer a question about a service.",
     input: z.object({ action: z.enum(OFFER_ACTIONS) }).strict(),
     access: "guest",
     confirm: never,

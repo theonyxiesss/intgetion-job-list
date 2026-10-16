@@ -61,6 +61,9 @@ describe("freelance threads in Spoki (D460)", () => {
     expect(offerPath("freelance", false)).toBe("/freelance");
     expect(offerPath("freelance_sell", true)).toBe("/profile/freelance");
     expect(offerPath("freelance_sell", false)).toBe("/register?next=chat");
+    expect(offerPath("freelance_payout", true)).toBe(
+      "/billing/crypto?payout=1",
+    );
   });
 
   it("card fields exist only on the tools that collect them", () => {

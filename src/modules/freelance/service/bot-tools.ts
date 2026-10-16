@@ -30,6 +30,7 @@ import {
   type PartyOrder,
 } from "./order-service";
 import { moveOrder } from "./party-service";
+import { orderPayState } from "./payment-service";
 import { FREELANCE_REPORT_REASONS, reportFreelance } from "./report-service";
 import { minorToUsd, sortPackages, type PriceRange } from "./rules";
 
@@ -409,6 +410,7 @@ export const freelanceTools = [
     async run(ctx: Ctx, input: { orderId: string }) {
       const order = await getOrderForParty(ctx.userId!, input.orderId);
       const history = await orderHistory(ctx.userId!, order.id);
+      const payState = await orderPayState(ctx.userId!, order.id);
       return {
         llm: [
           orderForModel(order, true),
@@ -416,6 +418,13 @@ export const freelanceTools = [
           order.contactsOpen
             ? "Contacts are on the order page card."
             : "Contacts are closed in this status.",
+          payState.payment?.status === "paid"
+            ? "Payment: confirmed on the network to the freelancer's address."
+            : payState.payable
+              ? "Payment: the buyer can pay on the order page now; the order starts when the network confirms it."
+              : order.status === "accepted" && !payState.payoutReady
+                ? "Payment: the freelancer has no confirmed payout address; they agree on payment directly."
+                : "Payment: not open in this status.",
         ].join("\n"),
         client: orderClient(order.id),
       };

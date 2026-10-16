@@ -194,7 +194,7 @@ export async function updateService(
   const packages = packageValues(input);
   const flags =
     status === "pending" && row.status !== "pending"
-      ? await serviceFlags({ ...values, packages })
+      ? await serviceFlags({ ...values, packages, sellerId: row.sellerId })
       : [];
   return repo.runInTransaction(async (tx) => {
     const updated = await repo.replaceService(

@@ -421,6 +421,40 @@ export async function verifyWalletSignature(
   `);
 }
 
+/**
+ * The EVM wallet this user proved with SIWE in the last 30 minutes, for a
+ * payment that is not a plan (freelance orders, D463). Null otherwise.
+ */
+export async function verifiedPayerWallet(
+  userId: string,
+  now = new Date(),
+): Promise<{ address: string; chainId: number } | null> {
+  const rows = await getDb().execute<{
+    address: string;
+    chain_id: number;
+    nonce: string;
+    expires_at: string;
+  }>(sql`
+    select address, chain_id, nonce, expires_at::text
+    from billing_wallet_sessions
+    where user_id = ${userId}
+  `);
+  const row = rows[0];
+  if (!row || row.nonce !== "verified" || new Date(row.expires_at) <= now) {
+    return null;
+  }
+  if (nonEvmByChainId(row.chain_id)) return null;
+  return { address: row.address.toLowerCase(), chainId: row.chain_id };
+}
+
+/** Crypto checkout is on (the flags of D356); the recipient is not checked here. */
+export function cryptoCheckoutOn(): boolean {
+  return (
+    process.env.BILLING_ENABLED === "true" &&
+    process.env.BILLING_CRYPTO_PROVIDER === "walletconnect"
+  );
+}
+
 const ORDER_COLUMNS = sql`
   o.id, o.purchase_id, o.user_id, p.job_id, p.company_id, p.plan_code, o.chain, o.token,
   o.token_contract, o.recipient, o.payer_address, o.amount_minor::text,

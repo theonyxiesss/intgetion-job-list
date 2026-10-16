@@ -9,6 +9,7 @@ import { navForward } from "@/components/ui/page-transition";
 import { Link } from "@/i18n/navigation";
 import { hasCandidateProfile } from "@/modules/candidates/service";
 import {
+  getPayoutStatus,
   getSeller,
   listOrders,
   listOwnServices,
@@ -61,6 +62,7 @@ export default async function FreelanceCabinetPage({
       )
     : [];
   const copy = await freelanceClientCopy(locale);
+  const payout = seller ? await getPayoutStatus(user.id) : null;
   const active = services.filter((service) =>
     ["pending", "published", "paused"].includes(service.status),
   ).length;
@@ -100,6 +102,26 @@ export default async function FreelanceCabinetPage({
             </section>
             {seller ? (
               <>
+                <section className="flex flex-col gap-2 rounded-lg border border-line p-4 md:p-6">
+                  <h2 className="t-h3">{t("pay.payoutTitle")}</h2>
+                  {payout?.address ? (
+                    <p className="font-mono text-sm break-all">
+                      {payout.address}
+                    </p>
+                  ) : (
+                    <p className="t-body-s text-fg-muted">
+                      {t("pay.payoutNone")}
+                    </p>
+                  )}
+                  <Link
+                    href="/billing/crypto?payout=1"
+                    className={`${buttonClass("secondary")} self-start`}
+                  >
+                    {payout?.address
+                      ? t("pay.payoutChange")
+                      : t("pay.payoutConfirm")}
+                  </Link>
+                </section>
                 <section className="flex flex-col gap-4">
                   <h2 className="t-h3">{t("cabinet.incoming")}</h2>
                   {incoming.length === 0 ? (

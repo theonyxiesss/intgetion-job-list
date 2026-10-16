@@ -1786,6 +1786,11 @@
         "title": "Ofrecer un servicio",
         "text": "Activa «Acepto pedidos» y publica un servicio. Aparece tras la moderación.",
         "action": "Abrir el panel"
+      },
+      "freelance_payout": {
+        "title": "Dirección de cobro",
+        "text": "Confirma la dirección a la que te pagan.",
+        "action": "Confirmar la dirección"
       }
     }
   },
@@ -3652,7 +3657,42 @@
       "error_ALREADY_REPORTED": "Ya lo denunciaste.",
       "error_RATE_LIMITED": "Demasiadas denuncias. Inténtalo más tarde."
     },
-    "askSpoki": "Hablar con el asistente"
+    "askSpoki": "Hablar con el asistente",
+    "pay": {
+      "payFor": "Pedido freelance",
+      "direct": "Directo a la dirección del freelancer. La plataforma no guarda el dinero ni cobra comisión.",
+      "token": "Token",
+      "payNow": "Pagar con la billetera",
+      "payQr": "Billetera en el teléfono",
+      "checkWallet": "Revisa la dirección en la billetera: es la del freelancer.",
+      "status_awaiting_payment": "Esperando la transferencia",
+      "status_checking": "Comprobando la transferencia en la red",
+      "status_paid": "Pagado. El pedido está en curso.",
+      "status_underpaid": "Llegó menos que el pedido",
+      "status_expired": "Se acabó el tiempo de este pago",
+      "status_failed": "La transferencia no se contó",
+      "status_frozen": "El pago está en revisión",
+      "error_wallet": "Abre una billetera en este navegador",
+      "error_cancel": "Cerraste la billetera. No se envió nada.",
+      "error_network": "Esta red no está soportada",
+      "error_token": "Este token no está en esta red",
+      "error_failed": "El pago no se completó",
+      "error_unavailable": "Ahora no se puede pagar este pedido aquí",
+      "payoutTitle": "Dirección de cobro",
+      "payoutText": "Los compradores pagan a esta dirección directamente. Firma un mensaje en tu billetera para demostrar que es tuya.",
+      "payoutCurrent": "Dirección actual",
+      "payoutConfirm": "Confirmar la dirección",
+      "payoutChange": "Cambiar la dirección",
+      "payoutSaved": "Dirección confirmada",
+      "payoutReview": "Esta dirección está en revisión y no se guardó",
+      "payoutNone": "Aún no hay dirección de cobro. Hasta confirmarla, te pagan fuera de la plataforma.",
+      "notPayable": "Este pedido no se puede pagar aquí ahora.",
+      "backToOrder": "Volver al pedido",
+      "payButton": "Pagar {price} al freelancer",
+      "orderText": "Paga en USDC o USDT directo a la dirección confirmada del freelancer. El pedido pasa a curso cuando la red lo confirma.",
+      "payoutMissing": "El freelancer aún no confirmó una dirección de cobro. Acordad el pago directamente; el freelancer empieza el trabajo.",
+      "paidLine": "Pagado a la dirección del freelancer. El pedido está en curso."
+    }
   },
   "ugc": {
     "title": "Pruebas creativas",
