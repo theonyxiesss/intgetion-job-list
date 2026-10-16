@@ -1,4 +1,4 @@
-import { setRequestLocale } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { Chat } from "@/components/bot/chat";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
@@ -61,6 +61,11 @@ export default async function ChatPage({
       : null;
   const confirmId =
     userId && confirm && JOB_ID.test(confirm) ? confirm : undefined;
+  const messages = (await getMessages({ locale })) as Record<string, unknown>;
+  const freelanceCopy = (messages.chatFreelance ?? {}) as Record<
+    string,
+    unknown
+  >;
   return (
     <main className="flex min-h-0 flex-1 flex-col">
       <Chat
@@ -74,6 +79,7 @@ export default async function ChatPage({
         serviceId={freelance?.kind === "service" ? freelance.id : undefined}
         orderId={freelance?.kind === "order" ? freelance.id : undefined}
         freelanceTitle={freelance?.title}
+        freelanceCopy={freelanceCopy}
         confirmId={freelance ? undefined : confirmId}
         focus={
           row ? { title: row.title, company: row.company.name } : undefined

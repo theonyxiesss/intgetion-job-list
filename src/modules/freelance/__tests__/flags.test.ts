@@ -9,7 +9,7 @@ import { freelanceTools } from "../service/bot-tools";
 
 const cents = (usd: number) => BigInt(usd * 100);
 
-describe("moderation flags of a service (28.9, D461)", () => {
+describe("moderation flags of a service (28.9, D462)", () => {
   it("marks prices at the edges of the $10–$20 000 window", () => {
     expect(absolutePriceFlags([{ priceMinor: cents(15) }])).toEqual([
       "price_very_low",

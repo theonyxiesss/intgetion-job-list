@@ -26,6 +26,7 @@ import {
   assertNoContacts,
   assertOfferRoom,
   assertRevisionAvailable,
+  assertReportedViews,
   assertSubmissionUrl,
   assertWinnerRights,
   creatorMatches,
@@ -46,6 +47,7 @@ import type {
   Campaign,
   CreatorProfile,
   Invite,
+  Payout,
   ProfileInput,
   Submission,
 } from "./records";
@@ -85,7 +87,10 @@ function asList<T extends string>(
   allowed: readonly T[],
   field: string,
 ): T[] {
-  if (values.length === 0 || values.some((item) => !allowed.includes(item as T))) {
+  if (
+    values.length === 0 ||
+    values.some((item) => !allowed.includes(item as T))
+  ) {
     throw validationError([{ path: field, problem: "invalid" }]);
   }
   return [...new Set(values)] as T[];
@@ -135,6 +140,31 @@ export function publicCreatorCard(profile: CreatorProfile) {
     niches: profile.niches,
     country: profile.country,
     exampleUrls: profile.exampleUrls,
+  };
+}
+
+/** A recorded price. `sent` stays false: the platform does not transfer it. */
+function moneyRecord(row: Payout | null) {
+  if (!row) return null;
+  return {
+    amountMinor: row.amountMinor.toString(),
+    status: row.status,
+    charged: false as const,
+    sent: false as const,
+  };
+}
+
+/** View counts stay labeled reported. The page is never fetched (phase B). */
+function forReader(row: Submission | null) {
+  if (!row) return null;
+  return {
+    status: row.status,
+    url: row.url,
+    hook: row.hook,
+    changeNote: row.changeNote,
+    liveUrl: row.liveUrl,
+    reportedViews: row.reportedViews,
+    viewsSource: "reported" as const,
   };
 }
 
@@ -306,7 +336,10 @@ export async function createCampaign(userId: string | null, input: BriefInput) {
   const brief = validateBrief(input, day(now));
   await requireMember(store, brief.companyId, id);
   const since = new Date(now.getTime() - 60 * 60 * 1000);
-  if ((await store.countCreatedSince(brief.companyId, since)) >= L.draftsPerCompanyPerHour) {
+  if (
+    (await store.countCreatedSince(brief.companyId, since)) >=
+    L.draftsPerCompanyPerHour
+  ) {
     throw rateLimited(60 * 60);
   }
   const campaign: Campaign = {
@@ -373,18 +406,30 @@ export async function readCampaign(userId: string | null, campaignId: string) {
     return {
       role: "company" as const,
       brief: { ...briefForReaders(campaign), pitch: campaign.pitch },
-      participants: invites.map((invite, index) => ({
-        inviteId: invite.id,
-        status: invite.status,
-        bountyMinor: invite.bountyMinor?.toString() ?? null,
-        rights: invite.rights,
-        pitch: invite.pitch,
-        reminders: invite.reminders,
-        revisionUsed: invite.revisionUsed,
-        creator: profiles[index] ? publicCreatorCard(profiles[index]) : null,
-        submission:
-          submissions.find((row) => row.inviteId === invite.id) ?? null,
-      })),
+      participants: await Promise.all(
+        invites.map(async (invite, index) => {
+          const submission =
+            submissions.find((row) => row.inviteId === invite.id) ?? null;
+          return {
+            inviteId: invite.id,
+            status: invite.status,
+            bountyMinor: invite.bountyMinor?.toString() ?? null,
+            rights: invite.rights,
+            pitch: invite.pitch,
+            reminders: invite.reminders,
+            revisionUsed: invite.revisionUsed,
+            creator: profiles[index]
+              ? publicCreatorCard(profiles[index])
+              : null,
+            submission: forReader(submission),
+            payout: moneyRecord(
+              submission
+                ? await store.getPayoutBySubmission(submission.id)
+                : null,
+            ),
+          };
+        }),
+      ),
     };
   }
   const invite = await store.findInvite(campaign.id, id);
@@ -400,7 +445,10 @@ export async function readCampaign(userId: string | null, campaignId: string) {
       rights: invite.rights,
       pitch: invite.pitch,
     },
-    submission,
+    submission: forReader(submission),
+    payout: moneyRecord(
+      submission ? await store.getPayoutBySubmission(submission.id) : null,
+    ),
   };
 }
 
@@ -492,7 +540,11 @@ async function requireReadyCreator(store: UgcStore, userId: string) {
     );
   }
   if (profile.status !== "active") {
-    throw new HttpError(409, "CREATOR_PAUSED", "This creator profile is paused");
+    throw new HttpError(
+      409,
+      "CREATOR_PAUSED",
+      "This creator profile is paused",
+    );
   }
   return profile;
 }
@@ -545,7 +597,10 @@ export async function applyToCampaign(
   };
 }
 
-export async function previewMatches(userId: string | null, campaignId: string) {
+export async function previewMatches(
+  userId: string | null,
+  campaignId: string,
+) {
   const id = requireUser(userId);
   const store = await db();
   const campaign = await campaignForMember(store, campaignId, id);
@@ -679,7 +734,11 @@ export async function offerHire(
   };
 }
 
-async function inviteForCreator(store: UgcStore, inviteId: string, userId: string) {
+async function inviteForCreator(
+  store: UgcStore,
+  inviteId: string,
+  userId: string,
+) {
   const invite = await store.getInvite(inviteId);
   if (!invite || invite.creatorUserId !== userId) throw notFound();
   const campaign = await store.getCampaign(invite.campaignId);
@@ -790,6 +849,9 @@ export async function submitVideo(
       hook: note,
       status: "submitted",
       changeNote: "",
+      liveUrl: null,
+      reportedViews: null,
+      reportedAt: null,
     };
     await store.insertSubmission(submission);
   }
@@ -884,8 +946,27 @@ export async function decideSubmission(
     to,
     actor: "company",
   });
+  const owes = to === "accepted" || to === "winner";
+  if (owes && invite.bountyMinor == null) {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "This hire has no recorded price",
+    );
+  }
   submission.status = to;
   await store.saveSubmission(submission);
+  if (owes && invite.bountyMinor != null) {
+    await store.insertPayout({
+      id: randomUUID(),
+      submissionId: submission.id,
+      inviteId: invite.id,
+      amountMinor: invite.bountyMinor,
+      status: "owed",
+      paidAt: null,
+      paidBy: null,
+    });
+  }
   await store.notify({
     type: "ugc.submission_decided",
     userIds: [invite.creatorUserId],
@@ -897,6 +978,69 @@ export async function decideSubmission(
     email: true,
   });
   return { status: to, charged: false as const };
+}
+
+/** The hired creator states a live post and the views they saw. Nothing is fetched. */
+export async function reportLivePost(
+  userId: string | null,
+  inviteId: string,
+  liveUrl: string,
+  views: number,
+) {
+  const id = requireUser(userId);
+  const store = await db();
+  const { invite } = await inviteForCreator(store, inviteId, id);
+  const submission = await store.getSubmission(invite.id);
+  if (
+    !submission ||
+    (submission.status !== "accepted" && submission.status !== "winner")
+  ) {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "Views are reported after the video is accepted",
+    );
+  }
+  assertSubmissionUrl(liveUrl);
+  assertReportedViews(views);
+  submission.liveUrl = liveUrl;
+  submission.reportedViews = views;
+  submission.reportedAt = store.now();
+  await store.saveSubmission(submission);
+  return {
+    reportedViews: views,
+    viewsSource: "reported" as const,
+    charged: false as const,
+  };
+}
+
+/** Winners of one brief, for a member of that company. Counts stay reported. */
+export async function listWinners(userId: string | null, campaignId: string) {
+  const id = requireUser(userId);
+  const store = await db();
+  const campaign = await store.getCampaign(campaignId);
+  if (!campaign) throw notFound();
+  const member = await store.memberRole(campaign.companyId, id);
+  if (!member) throw notFound();
+  const invites = await store.listInvites(campaign.id);
+  const submissions = await store.listSubmissions(invites.map((row) => row.id));
+  const winners = [];
+  for (const submission of submissions) {
+    if (submission.status !== "winner") continue;
+    const invite = invites.find((row) => row.id === submission.inviteId);
+    if (!invite) continue;
+    const profile = await store.getProfile(invite.creatorUserId);
+    winners.push({
+      inviteId: invite.id,
+      displayName: profile?.displayName ?? "",
+      rights: invite.rights,
+      liveUrl: submission.liveUrl,
+      reportedViews: submission.reportedViews,
+      viewsSource: "reported" as const,
+      payout: moneyRecord(await store.getPayoutBySubmission(submission.id)),
+    });
+  }
+  return { productName: campaign.productName, winners };
 }
 
 export async function remindInvite(userId: string | null, inviteId: string) {
@@ -935,7 +1079,11 @@ export async function closeCampaign(userId: string | null, campaignId: string) {
   const id = requireUser(userId);
   const store = await db();
   const campaign = await campaignForMember(store, campaignId, id);
-  checkCampaignTransition({ from: campaign.status, to: "closed", actor: "company" });
+  checkCampaignTransition({
+    from: campaign.status,
+    to: "closed",
+    actor: "company",
+  });
   campaign.status = "closed";
   await store.saveCampaign(campaign);
   return { status: campaign.status };
@@ -1004,6 +1152,60 @@ export async function redeemJoinToken(userId: string | null, payload: string) {
     email: false,
   });
   return { inviteId: invite.id, status: invite.status };
+}
+
+/** Rewards an admin has not marked. No transfer is created. */
+export async function listOwedPayouts(isAdmin: boolean) {
+  if (!isAdmin) throw notFound();
+  const store = await db();
+  const rows = await store.listOwedPayouts();
+  const listed = [];
+  for (const payout of rows) {
+    const invite = await store.getInvite(payout.inviteId);
+    if (!invite) continue;
+    const campaign = await store.getCampaign(invite.campaignId);
+    const profile = await store.getProfile(invite.creatorUserId);
+    listed.push({
+      id: payout.id,
+      productName: campaign?.productName ?? "",
+      displayName: profile?.displayName ?? "",
+      amountMinor: payout.amountMinor.toString(),
+      status: payout.status,
+      charged: false as const,
+      sent: false as const,
+    });
+  }
+  return listed;
+}
+
+/** An admin records that the reward was settled. The platform sends nothing. */
+export async function markPayoutPaid(input: {
+  adminId: string | null;
+  isAdmin: boolean;
+  payoutId: string;
+}) {
+  if (!input.isAdmin) throw notFound();
+  const adminId = requireUser(input.adminId);
+  const store = await db();
+  const payout = await store.getPayout(input.payoutId);
+  if (!payout) throw notFound();
+  if (payout.status !== "owed") {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "This reward is already marked",
+    );
+  }
+  payout.status = "paid";
+  payout.paidAt = store.now();
+  payout.paidBy = adminId;
+  await store.savePayout(payout);
+  await store.audit(adminId, "ugc.payout_paid", payout.id, "ugc_payout");
+  return {
+    status: "paid" as const,
+    charged: false as const,
+    sent: false as const,
+  };
 }
 
 export async function listReviewQueue(isAdmin: boolean) {

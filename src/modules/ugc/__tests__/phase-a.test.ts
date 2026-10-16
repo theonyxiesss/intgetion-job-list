@@ -49,7 +49,7 @@ function brief(over: Partial<BriefInput> = {}): BriefInput {
     mustNot: "Do not promise income",
     platforms,
     videosWanted: 2,
-      bountyMinor: BigInt(1500),
+    bountyMinor: BigInt(1500),
     deadline: "2026-10-20",
     rights: "ads",
     pitch: "We would like a short video",
@@ -86,7 +86,9 @@ describe("creative tests phase A", () => {
     await expect(createCampaign(null, brief())).rejects.toMatchObject({
       status: 401,
     });
-    await expect(acceptInvite(null, "x")).rejects.toMatchObject({ status: 401 });
+    await expect(acceptInvite(null, "x")).rejects.toMatchObject({
+      status: 401,
+    });
     await expect(createCampaign(OUTSIDER, brief())).rejects.toMatchObject({
       status: 404,
     });
@@ -262,9 +264,9 @@ describe("creative tests phase A", () => {
     expect(store.tokens[0]?.tokenHash).toBe(
       hashJoinToken(link.payload.slice(4)),
     );
-    expect(store.tokens.some((row) => JSON.stringify(row).includes(link.payload))).toBe(
-      false,
-    );
+    expect(
+      store.tokens.some((row) => JSON.stringify(row).includes(link.payload)),
+    ).toBe(false);
   });
 
   it("routes ugc_ away from the login greeting and leaves other payloads there", () => {

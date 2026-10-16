@@ -1787,71 +1787,6 @@
         "text": "Turn on taking orders and list a service. It shows after moderation.",
         "action": "Open the cabinet"
       }
-    },
-    "freelanceCard": {
-      "focus": "We are discussing “{title}”.",
-      "back": "Back to freelance",
-      "from": "from {price} · {days} d",
-      "package": "{tier}: {price}, {days} d",
-      "tier": "Package: {tier}",
-      "modeOn": "Turn taking orders on.",
-      "modeOff": "Turn taking orders off.",
-      "answerAccept": "Accept: contacts open to both sides.",
-      "answerDecline": "Decline the request.",
-      "decisionAccept": "Accept the work.",
-      "decisionRevision": "Ask for a revision.",
-      "rating": "Rating: {rating} of 5",
-      "linksLabel": "Links to past work",
-      "linksHint": "Up to 5 https links, one per line. They go straight to the site, not to Spoki.",
-      "deliveryLabel": "Link to the result (https)",
-      "orderTitle": "The order page",
-      "orderAction": "Open the order",
-      "cabinetTitle": "Your services",
-      "cabinetAction": "Open the cabinet",
-      "propose_freelancer_mode": {
-        "title": "Taking orders",
-        "text": "Change whether you take freelance orders."
-      },
-      "propose_service": {
-        "title": "New service",
-        "text": "Create the service and send it to moderation. It shows in the catalog after approval."
-      },
-      "propose_service_update": {
-        "title": "Change the service",
-        "text": "Save the changes. A published service goes back to moderation. Leave links empty to keep the current ones."
-      },
-      "send_service_request": {
-        "title": "Send the request",
-        "text": "The freelancer has 72 hours to answer. Contacts open after they accept."
-      },
-      "cancel_request": {
-        "title": "Cancel the order",
-        "text": "Cancel before the work starts."
-      },
-      "respond_to_request": {
-        "title": "Answer the request",
-        "text": "Your answer goes to the buyer."
-      },
-      "start_order": {
-        "title": "Start the work",
-        "text": "The order moves to work."
-      },
-      "mark_delivered": {
-        "title": "Hand in the result",
-        "text": "The buyer has 7 days to accept or ask for a revision."
-      },
-      "review_delivery": {
-        "title": "The result",
-        "text": "Your decision goes to the freelancer."
-      },
-      "propose_review": {
-        "title": "Leave a review",
-        "text": "Public, without your name."
-      },
-      "report_freelance": {
-        "title": "Send a complaint",
-        "text": "A moderator reads it. The other side does not see who sent it."
-      }
     }
   },
   "cookies": {
@@ -4300,7 +4235,9 @@
       "paused": "Pause my profile",
       "videoUrl": "Video link",
       "hook": "Hook",
-      "changeNote": "What to change"
+      "changeNote": "What to change",
+      "liveUrl": "Live post link",
+      "views": "Views you saw"
     },
     "goals": {
       "awareness": "Awareness",
@@ -4325,6 +4262,82 @@
       "organic": "Organic",
       "ads": "Ads",
       "whitelist": "Whitelist"
+    },
+    "winners": "Winners",
+    "winnersEmpty": "No winner yet.",
+    "winnersIntro": "Links the company marked for ads. View counts are what the creator reported. We did not check them.",
+    "winnersNoCount": "The creator has not reported a live post or a view count.",
+    "reportedViews": "Reported views: {count}",
+    "reportLive": "Save the live post",
+    "owedNote": "Recorded {amount}. Nothing was charged and nothing was sent.",
+    "paidNote": "An admin marked this paid. The platform did not send the money.",
+    "markPaid": "Mark paid",
+    "payoutsTitle": "Recorded rewards",
+    "payoutsEmpty": "No recorded reward is waiting."
+  },
+  "chatFreelance": {
+    "focus": "We are discussing “{title}”.",
+    "back": "Back to freelance",
+    "from": "from {price} · {days} d",
+    "package": "{tier}: {price}, {days} d",
+    "tier": "Package: {tier}",
+    "modeOn": "Turn taking orders on.",
+    "modeOff": "Turn taking orders off.",
+    "answerAccept": "Accept: contacts open to both sides.",
+    "answerDecline": "Decline the request.",
+    "decisionAccept": "Accept the work.",
+    "decisionRevision": "Ask for a revision.",
+    "rating": "Rating: {rating} of 5",
+    "linksLabel": "Links to past work",
+    "linksHint": "Up to 5 https links, one per line. They go straight to the site, not to Spoki.",
+    "deliveryLabel": "Link to the result (https)",
+    "orderTitle": "The order page",
+    "orderAction": "Open the order",
+    "cabinetTitle": "Your services",
+    "cabinetAction": "Open the cabinet",
+    "propose_freelancer_mode": {
+      "title": "Taking orders",
+      "text": "Change whether you take freelance orders."
+    },
+    "propose_service": {
+      "title": "New service",
+      "text": "Create the service and send it to moderation. It shows in the catalog after approval."
+    },
+    "propose_service_update": {
+      "title": "Change the service",
+      "text": "Save the changes. A published service goes back to moderation. Leave links empty to keep the current ones."
+    },
+    "send_service_request": {
+      "title": "Send the request",
+      "text": "The freelancer has 72 hours to answer. Contacts open after they accept."
+    },
+    "cancel_request": {
+      "title": "Cancel the order",
+      "text": "Cancel before the work starts."
+    },
+    "respond_to_request": {
+      "title": "Answer the request",
+      "text": "Your answer goes to the buyer."
+    },
+    "start_order": {
+      "title": "Start the work",
+      "text": "The order moves to work."
+    },
+    "mark_delivered": {
+      "title": "Hand in the result",
+      "text": "The buyer has 7 days to accept or ask for a revision."
+    },
+    "review_delivery": {
+      "title": "The result",
+      "text": "Your decision goes to the freelancer."
+    },
+    "propose_review": {
+      "title": "Leave a review",
+      "text": "Public, without your name."
+    },
+    "report_freelance": {
+      "title": "Send a complaint",
+      "text": "A moderator reads it. The other side does not see who sent it."
     }
   }
 }

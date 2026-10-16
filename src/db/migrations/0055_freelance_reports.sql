@@ -1,4 +1,4 @@
--- Migration 0055: complaints about a freelance service or order (28.9, D461).
+-- Migration 0055: complaints about a freelance service or order (28.9, D462).
 -- The shared reports table keeps one row per reporter and object; only the
 -- allowed entity types grow. No data changes.
 

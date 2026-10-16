@@ -37,7 +37,12 @@ export default async function JoinPage({
       <Container className="flex flex-col gap-6">
         <PageHeader title={t("title")} intro={t("moneyNote")} />
         {token ? (
-          <UgcAction action="redeem" label={t("apply")} body={{ payload: token }} primary />
+          <UgcAction
+            action="redeem"
+            label={t("apply")}
+            body={{ payload: token }}
+            primary
+          />
         ) : (
           <p>{t("error")}</p>
         )}

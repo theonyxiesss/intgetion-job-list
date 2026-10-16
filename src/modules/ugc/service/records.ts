@@ -68,6 +68,21 @@ export type Submission = {
   hook: string;
   status: UgcSubmissionStatus;
   changeNote: string;
+  /** Published post. Separate from the review link. Null until the creator reports it. */
+  liveUrl: string | null;
+  /** What the creator said they saw. Null until they report it. */
+  reportedViews: number | null;
+  reportedAt: Date | null;
+};
+
+export type Payout = {
+  id: string;
+  submissionId: string;
+  inviteId: string;
+  amountMinor: bigint;
+  status: "owed" | "paid";
+  paidAt: Date | null;
+  paidBy: string | null;
 };
 
 export type JoinToken = {

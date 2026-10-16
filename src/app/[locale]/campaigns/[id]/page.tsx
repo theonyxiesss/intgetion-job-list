@@ -9,7 +9,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { readCampaign } from "@/modules/ugc/service";
 import { UgcAction } from "@/modules/ugc/ui/action";
-import { UgcChanges, UgcSubmit } from "@/modules/ugc/ui/fields";
+import { UgcChanges, UgcReport, UgcSubmit } from "@/modules/ugc/ui/fields";
 
 export const dynamic = "force-dynamic";
 
@@ -47,26 +47,52 @@ export default async function CampaignPage({
   return (
     <main className="py-10 md:py-16">
       <Container className="flex max-w-3xl flex-col gap-6">
-        <PageHeader title={view.brief.productName} intro={view.brief.productSummary} />
+        <PageHeader
+          title={view.brief.productName}
+          intro={view.brief.productSummary}
+        />
         <p className="font-mono text-fg">
           {money} · {t(`status.${view.brief.status}`)} · {view.brief.deadline}
         </p>
         <p className="t-body-s text-fg-muted">{t("moneyNote")}</p>
-        <ButtonLink href={`/chat?campaign=${view.brief.id}`} variant="secondary">
-          {t("thread")}
-        </ButtonLink>
+        <div className="flex flex-wrap gap-3">
+          <ButtonLink
+            href={`/chat?campaign=${view.brief.id}`}
+            variant="secondary"
+          >
+            {t("thread")}
+          </ButtonLink>
+          {view.role === "company" ? (
+            <ButtonLink href={`/campaigns/${id}/winners`} variant="secondary">
+              {t("winners")}
+            </ButtonLink>
+          ) : null}
+        </div>
         {view.role === "company" ? (
           <div className="flex flex-col gap-4">
             {view.brief.status === "open" ? (
               <div className="flex flex-wrap gap-3">
-                <UgcAction action="join" label={t("join")} body={{ campaignId: id }} />
-                <UgcAction action="close" label={t("close")} body={{ campaignId: id }} />
+                <UgcAction
+                  action="join"
+                  label={t("join")}
+                  body={{ campaignId: id }}
+                />
+                <UgcAction
+                  action="close"
+                  label={t("close")}
+                  body={{ campaignId: id }}
+                />
               </div>
             ) : null}
             <ul className="flex flex-col gap-4">
               {view.participants.map((row) => (
-                <li key={row.inviteId} className="rounded-lg border border-line p-4">
-                  <p className="font-medium">{row.creator?.displayName ?? t("creator")}</p>
+                <li
+                  key={row.inviteId}
+                  className="rounded-lg border border-line p-4"
+                >
+                  <p className="font-medium">
+                    {row.creator?.displayName ?? t("creator")}
+                  </p>
                   <p className="t-body-s font-mono text-fg-muted">
                     {t(`status.${row.status}`)}
                   </p>
@@ -79,27 +105,57 @@ export default async function CampaignPage({
                     />
                   ) : null}
                   {row.submission ? (
-                    <p className="t-body-s mt-2 break-all">{row.submission.url}</p>
+                    <p className="t-body-s mt-2 break-all">
+                      {row.submission.url}
+                    </p>
                   ) : null}
-                  {row.status === "hired" && row.submission?.status === "submitted" ? (
+                  {row.submission?.liveUrl ? (
+                    <p className="t-body-s mt-2 break-all">
+                      {row.submission.liveUrl}
+                    </p>
+                  ) : null}
+                  {row.submission?.reportedViews != null ? (
+                    <p className="t-body-s mt-2 font-mono">
+                      {t("reportedViews", {
+                        count: row.submission.reportedViews,
+                      })}
+                    </p>
+                  ) : null}
+                  {row.payout ? (
+                    <p className="t-body-s mt-2">
+                      {t(
+                        row.payout.status === "paid" ? "paidNote" : "owedNote",
+                        {
+                          amount: formatMinor(
+                            BigInt(row.payout.amountMinor),
+                            "USD",
+                            locale,
+                            { wholeWhenEven: true },
+                          ),
+                        },
+                      )}
+                    </p>
+                  ) : null}
+                  {row.status === "hired" &&
+                  row.submission?.status === "submitted" ? (
                     <div className="mt-3 flex flex-col gap-3">
                       <div className="flex flex-wrap gap-3">
-                      <UgcAction
-                        action="decide"
-                        label={t("acceptVideo")}
-                        body={{ inviteId: row.inviteId, to: "accepted" }}
-                        primary
-                      />
-                      <UgcAction
-                        action="decide"
-                        label={t("rejectVideo")}
-                        body={{ inviteId: row.inviteId, to: "rejected" }}
-                      />
-                      <UgcAction
-                        action="decide"
-                        label={t("winner")}
-                        body={{ inviteId: row.inviteId, to: "winner" }}
-                      />
+                        <UgcAction
+                          action="decide"
+                          label={t("acceptVideo")}
+                          body={{ inviteId: row.inviteId, to: "accepted" }}
+                          primary
+                        />
+                        <UgcAction
+                          action="decide"
+                          label={t("rejectVideo")}
+                          body={{ inviteId: row.inviteId, to: "rejected" }}
+                        />
+                        <UgcAction
+                          action="decide"
+                          label={t("winner")}
+                          body={{ inviteId: row.inviteId, to: "winner" }}
+                        />
                       </div>
                       {row.revisionUsed ? null : (
                         <UgcChanges inviteId={row.inviteId} />
@@ -145,7 +201,37 @@ export default async function CampaignPage({
             {view.submission ? (
               <p className="t-body-s break-all">{view.submission.url}</p>
             ) : null}
-            <ButtonLink href={`/chat?invite=${view.invite.id}`} variant="secondary">
+            {view.submission &&
+            (view.submission.status === "accepted" ||
+              view.submission.status === "winner") ? (
+              <UgcReport inviteId={view.invite.id} />
+            ) : null}
+            {view.submission?.liveUrl ? (
+              <p className="t-body-s break-all">{view.submission.liveUrl}</p>
+            ) : null}
+            {view.submission?.reportedViews != null ? (
+              <p className="t-body-s font-mono">
+                {t("reportedViews", { count: view.submission.reportedViews })}
+              </p>
+            ) : null}
+            {view.payout ? (
+              <p className="t-body-s">
+                {t(view.payout.status === "paid" ? "paidNote" : "owedNote", {
+                  amount: formatMinor(
+                    BigInt(view.payout.amountMinor),
+                    "USD",
+                    locale,
+                    {
+                      wholeWhenEven: true,
+                    },
+                  ),
+                })}
+              </p>
+            ) : null}
+            <ButtonLink
+              href={`/chat?invite=${view.invite.id}`}
+              variant="secondary"
+            >
               {t("thread")}
             </ButtonLink>
           </div>

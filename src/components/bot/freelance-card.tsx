@@ -1,23 +1,24 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { createContext, useContext } from "react";
+import {
+  cardText,
+  FREELANCE_CARD_TOOLS,
+  type FreelanceCardCopy,
+} from "./freelance-copy";
+
+export { cardText, FREELANCE_CARD_TOOLS, type FreelanceCardCopy };
+import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { formatUsd } from "@/modules/freelance/ui/format";
 
-/** Tools whose card is a freelance step (28.8, D460). */
-export const FREELANCE_CARD_TOOLS = [
-  "propose_freelancer_mode",
-  "propose_service",
-  "propose_service_update",
-  "send_service_request",
-  "cancel_request",
-  "respond_to_request",
-  "start_order",
-  "mark_delivered",
-  "review_delivery",
-  "propose_review",
-  "report_freelance",
-] as const;
+export const FreelanceCopyContext = createContext<FreelanceCardCopy>({});
+
+function useCardText() {
+  const copy = useContext(FreelanceCopyContext);
+  return (key: string, vars?: Record<string, string | number>) =>
+    cardText(copy, key, vars);
+}
 
 export function isFreelanceCardTool(tool: string): boolean {
   return (FREELANCE_CARD_TOOLS as readonly string[]).includes(tool);
@@ -50,7 +51,7 @@ export function FreelanceCardSummary({
   tool: string;
   args: unknown;
 }) {
-  const t = useTranslations("chat.freelanceCard");
+  const t = useCardText();
   const locale = useLocale();
   const a = (args ?? {}) as Args;
   const lines: string[] = [t(`${tool}.text`)];
@@ -110,7 +111,7 @@ export function FreelanceCardFields({
   values: Record<string, string>;
   onChange: (name: string, value: string) => void;
 }) {
-  const t = useTranslations("chat.freelanceCard");
+  const t = useCardText();
   return (
     <div className="flex flex-col gap-3">
       {fields.includes("links") && (
@@ -160,7 +161,7 @@ export function FreelanceServiceList({
 }: {
   services: FreelanceServiceCard[];
 }) {
-  const t = useTranslations("chat.freelanceCard");
+  const t = useCardText();
   const locale = useLocale();
   return (
     <ul className="grid gap-2">
@@ -197,7 +198,7 @@ export function FreelanceLinkCard({
   href: string;
   kind: "order" | "cabinet";
 }) {
-  const t = useTranslations("chat.freelanceCard");
+  const t = useCardText();
   return (
     <div className="flex max-w-md flex-col items-start gap-3 rounded-2xl border border-line bg-surface-2 px-4 py-3">
       <p className="font-medium">{t(`${kind}Title`)}</p>

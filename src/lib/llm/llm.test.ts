@@ -30,6 +30,9 @@ describe("wrapUntrusted", () => {
     expect(wrapUntrusted("job:123", "Build APIs")).toBe(
       '<untrusted_data source="job:123">Build APIs</untrusted_data>',
     );
+    expect(wrapUntrusted("ugc:brief", "reported")).toContain(
+      'source="ugc:brief"',
+    );
     expect(wrapUntrusted("user_message", "hi")).toContain(
       'source="user_message"',
     );
@@ -59,6 +62,8 @@ describe("wrapUntrusted", () => {
       "system",
       "company:a b",
       "user:1",
+      "ugc",
+      "ugc:bad id",
       "event:Bad Slug",
       'event:a" b="1',
     ]) {

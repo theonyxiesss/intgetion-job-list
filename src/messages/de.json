@@ -1787,71 +1787,6 @@
         "text": "Aufträge annehmen einschalten und einen Dienst anlegen. Er erscheint nach der Prüfung.",
         "action": "Bereich öffnen"
       }
-    },
-    "freelanceCard": {
-      "focus": "Wir besprechen „{title}“.",
-      "back": "Zurück zu Freelance",
-      "from": "ab {price} · {days} T.",
-      "package": "{tier}: {price}, {days} T.",
-      "tier": "Paket: {tier}",
-      "modeOn": "Aufträge annehmen einschalten.",
-      "modeOff": "Aufträge annehmen ausschalten.",
-      "answerAccept": "Annehmen: Kontakte öffnen sich für beide Seiten.",
-      "answerDecline": "Anfrage ablehnen.",
-      "decisionAccept": "Arbeit abnehmen.",
-      "decisionRevision": "Eine Korrektur anfordern.",
-      "rating": "Bewertung: {rating} von 5",
-      "linksLabel": "Links zu Arbeiten",
-      "linksHint": "Bis zu 5 https-Links, einer pro Zeile. Sie gehen direkt an die Website, nicht an Spoki.",
-      "deliveryLabel": "Link zum Ergebnis (https)",
-      "orderTitle": "Die Auftragsseite",
-      "orderAction": "Auftrag öffnen",
-      "cabinetTitle": "Ihre Dienste",
-      "cabinetAction": "Bereich öffnen",
-      "propose_freelancer_mode": {
-        "title": "Aufträge annehmen",
-        "text": "Ändern, ob Sie Freelance-Aufträge annehmen."
-      },
-      "propose_service": {
-        "title": "Neuer Dienst",
-        "text": "Den Dienst anlegen und zur Prüfung senden. Er erscheint nach der Freigabe im Katalog."
-      },
-      "propose_service_update": {
-        "title": "Dienst ändern",
-        "text": "Änderungen speichern. Ein veröffentlichter Dienst geht wieder in die Prüfung. Leere Links behalten die bisherigen."
-      },
-      "send_service_request": {
-        "title": "Anfrage senden",
-        "text": "Die Person hat 72 Stunden für die Antwort. Kontakte öffnen sich nach der Annahme."
-      },
-      "cancel_request": {
-        "title": "Auftrag stornieren",
-        "text": "Stornieren, bevor die Arbeit beginnt."
-      },
-      "respond_to_request": {
-        "title": "Anfrage beantworten",
-        "text": "Ihre Antwort geht an den Käufer."
-      },
-      "start_order": {
-        "title": "Arbeit beginnen",
-        "text": "Der Auftrag geht in Arbeit."
-      },
-      "mark_delivered": {
-        "title": "Ergebnis abgeben",
-        "text": "Der Käufer hat 7 Tage, um abzunehmen oder eine Korrektur anzufordern."
-      },
-      "review_delivery": {
-        "title": "Das Ergebnis",
-        "text": "Ihre Entscheidung geht an die Person."
-      },
-      "propose_review": {
-        "title": "Bewertung abgeben",
-        "text": "Öffentlich, ohne Ihren Namen."
-      },
-      "report_freelance": {
-        "title": "Beschwerde senden",
-        "text": "Ein Moderator liest sie. Die andere Seite sieht nicht, wer sie gesendet hat."
-      }
     }
   },
   "cookies": {
@@ -3794,7 +3729,9 @@
       "paused": "Profil pausieren",
       "videoUrl": "Video-Link",
       "hook": "Hook",
-      "changeNote": "Was sich ändern soll"
+      "changeNote": "Was sich ändern soll",
+      "liveUrl": "Link zum Live-Beitrag",
+      "views": "Aufrufe, die Sie sehen"
     },
     "goals": {
       "awareness": "Bekanntheit",
@@ -3819,6 +3756,82 @@
       "organic": "Organisch",
       "ads": "Anzeigen",
       "whitelist": "Whitelist"
+    },
+    "winners": "Gewinner",
+    "winnersEmpty": "Noch kein Gewinner.",
+    "winnersIntro": "Links, die das Unternehmen für Werbung markiert hat. Die Aufrufe hat die Person gemeldet. Wir haben sie nicht geprüft.",
+    "winnersNoCount": "Die Person hat noch keinen Live-Beitrag und keine Aufrufe gemeldet.",
+    "reportedViews": "Gemeldete Aufrufe: {count}",
+    "reportLive": "Live-Beitrag speichern",
+    "owedNote": "Erfasst {amount}. Nichts wurde abgebucht und nichts wurde gesendet.",
+    "paidNote": "Ein Admin hat dies als ausgezahlt markiert. Die Plattform hat das Geld nicht gesendet.",
+    "markPaid": "Als ausgezahlt markieren",
+    "payoutsTitle": "Erfasste Belohnungen",
+    "payoutsEmpty": "Keine erfasste Belohnung wartet auf eine Markierung."
+  },
+  "chatFreelance": {
+    "focus": "Wir besprechen „{title}“.",
+    "back": "Zurück zu Freelance",
+    "from": "ab {price} · {days} T.",
+    "package": "{tier}: {price}, {days} T.",
+    "tier": "Paket: {tier}",
+    "modeOn": "Aufträge annehmen einschalten.",
+    "modeOff": "Aufträge annehmen ausschalten.",
+    "answerAccept": "Annehmen: Kontakte öffnen sich für beide Seiten.",
+    "answerDecline": "Anfrage ablehnen.",
+    "decisionAccept": "Arbeit abnehmen.",
+    "decisionRevision": "Eine Korrektur anfordern.",
+    "rating": "Bewertung: {rating} von 5",
+    "linksLabel": "Links zu Arbeiten",
+    "linksHint": "Bis zu 5 https-Links, einer pro Zeile. Sie gehen direkt an die Website, nicht an Spoki.",
+    "deliveryLabel": "Link zum Ergebnis (https)",
+    "orderTitle": "Die Auftragsseite",
+    "orderAction": "Auftrag öffnen",
+    "cabinetTitle": "Ihre Dienste",
+    "cabinetAction": "Bereich öffnen",
+    "propose_freelancer_mode": {
+      "title": "Aufträge annehmen",
+      "text": "Ändern, ob Sie Freelance-Aufträge annehmen."
+    },
+    "propose_service": {
+      "title": "Neuer Dienst",
+      "text": "Den Dienst anlegen und zur Prüfung senden. Er erscheint nach der Freigabe im Katalog."
+    },
+    "propose_service_update": {
+      "title": "Dienst ändern",
+      "text": "Änderungen speichern. Ein veröffentlichter Dienst geht wieder in die Prüfung. Leere Links behalten die bisherigen."
+    },
+    "send_service_request": {
+      "title": "Anfrage senden",
+      "text": "Die Person hat 72 Stunden für die Antwort. Kontakte öffnen sich nach der Annahme."
+    },
+    "cancel_request": {
+      "title": "Auftrag stornieren",
+      "text": "Stornieren, bevor die Arbeit beginnt."
+    },
+    "respond_to_request": {
+      "title": "Anfrage beantworten",
+      "text": "Ihre Antwort geht an den Käufer."
+    },
+    "start_order": {
+      "title": "Arbeit beginnen",
+      "text": "Der Auftrag geht in Arbeit."
+    },
+    "mark_delivered": {
+      "title": "Ergebnis abgeben",
+      "text": "Der Käufer hat 7 Tage, um abzunehmen oder eine Korrektur anzufordern."
+    },
+    "review_delivery": {
+      "title": "Das Ergebnis",
+      "text": "Ihre Entscheidung geht an die Person."
+    },
+    "propose_review": {
+      "title": "Bewertung abgeben",
+      "text": "Öffentlich, ohne Ihren Namen."
+    },
+    "report_freelance": {
+      "title": "Beschwerde senden",
+      "text": "Ein Moderator liest sie. Die andere Seite sieht nicht, wer sie gesendet hat."
     }
   }
 }

@@ -258,7 +258,7 @@ export async function submitService(
   return updated;
 }
 
-/** Absolute price flags; the full set is `serviceFlags` (28.9, D461). */
+/** Absolute price flags; the full set is `serviceFlags` (28.9, D462). */
 export function riskFlags(
   packages: readonly { priceMinor: bigint }[],
 ): string[] {

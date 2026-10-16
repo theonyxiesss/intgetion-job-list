@@ -83,4 +83,6 @@ export const UGC_LIMITS = {
   joinTokenDays: 14,
   offersPerCreatorPerDay: 3,
   draftsPerCompanyPerHour: 5,
+  /** Creator-reported views. Not measured by us (phase B). */
+  reportedViewsMax: 2_000_000_000,
 } as const;

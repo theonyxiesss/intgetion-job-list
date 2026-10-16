@@ -38,14 +38,24 @@ export default async function InvitesPage({
     <main className="py-10 md:py-16">
       <Container className="flex flex-col gap-6">
         <PageHeader title={t("invitesTitle")} />
-        {rows.length === 0 ? <p className="text-fg-muted">{t("emptyInvites")}</p> : null}
+        {rows.length === 0 ? (
+          <p className="text-fg-muted">{t("emptyInvites")}</p>
+        ) : null}
         <ul className="flex flex-col gap-4">
           {rows.map((row) => (
-            <li key={row.inviteId} className="rounded-lg border border-line p-4">
+            <li
+              key={row.inviteId}
+              className="rounded-lg border border-line p-4"
+            >
               <p className="font-medium">{row.productName}</p>
-              <p className="t-body-s font-mono text-fg-muted">{t(`status.${row.status}`)}</p>
+              <p className="t-body-s font-mono text-fg-muted">
+                {t(`status.${row.status}`)}
+              </p>
               <div className="mt-3">
-                <ButtonLink href={`/chat?invite=${row.inviteId}`} variant="secondary">
+                <ButtonLink
+                  href={`/chat?invite=${row.inviteId}`}
+                  variant="secondary"
+                >
                   {t("thread")}
                 </ButtonLink>
               </div>

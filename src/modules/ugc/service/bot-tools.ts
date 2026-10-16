@@ -16,6 +16,7 @@ import {
   listMyInvites,
   listOpenCampaigns,
   offerHire,
+  listWinners,
   previewMatches,
   readCampaign,
   remindInvite,
@@ -44,7 +45,7 @@ function assertUgcTopic(ctx: Ctx) {
 }
 
 function model(value: unknown) {
-  return wrapUntrusted("ugc", JSON.stringify(value));
+  return wrapUntrusted("ugc:brief", JSON.stringify(value));
 }
 
 /**
@@ -54,7 +55,8 @@ function model(value: unknown) {
 export const ugcTools = [
   {
     name: "get_my_ugc_campaigns",
-    description: "List this member's creative-test briefs: id, product, status.",
+    description:
+      "List this member's creative-test briefs: id, product, status.",
     input: z.object({}).strict(),
     access: "user" as const,
     confirm: read,
@@ -64,7 +66,8 @@ export const ugcTools = [
   },
   {
     name: "get_ugc_campaign",
-    description: "Read one creative test the caller can already see. No contacts.",
+    description:
+      "Read one creative test the caller can already see. No contacts.",
     input: z.object({ campaignId: id }).strict(),
     access: "user" as const,
     confirm: read,
@@ -74,7 +77,8 @@ export const ugcTools = [
   },
   {
     name: "list_open_ugc_campaigns",
-    description: "Open briefs for a creator with a profile. Product, niches, platforms, reward, rights, deadline.",
+    description:
+      "Open briefs for a creator with a profile. Product, niches, platforms, reward, rights, deadline.",
     input: z.object({}).strict(),
     access: "user" as const,
     confirm: read,
@@ -84,7 +88,8 @@ export const ugcTools = [
   },
   {
     name: "get_ugc_applicants",
-    description: "Applications and offers on an open brief: creator id and public card. No contacts.",
+    description:
+      "Applications and offers on an open brief: creator id and public card. No contacts.",
     input: z.object({ campaignId: id }).strict(),
     access: "user" as const,
     confirm: read,
@@ -108,7 +113,8 @@ export const ugcTools = [
   },
   {
     name: "get_my_creator_profile",
-    description: "This creator's public profile and missing fields. No contacts.",
+    description:
+      "This creator's public profile and missing fields. No contacts.",
     input: z.object({}).strict(),
     access: "user" as const,
     confirm: read,
@@ -128,7 +134,8 @@ export const ugcTools = [
   },
   {
     name: "focus_ugc",
-    description: "Focus this chat on one creative test. Does not write anything.",
+    description:
+      "Focus this chat on one creative test. Does not write anything.",
     input: z.object({ campaignId: id }).strict(),
     access: "user" as const,
     confirm: read,
@@ -136,13 +143,18 @@ export const ugcTools = [
       const view = await readCampaign(ctx.userId, input.campaignId);
       return {
         llm: `Focused on ${view.brief.productName}.`,
-        state: { ...ctx.state, topic: "ugc" as const, ugcCampaignId: input.campaignId },
+        state: {
+          ...ctx.state,
+          topic: "ugc" as const,
+          ugcCampaignId: input.campaignId,
+        },
       };
     },
   },
   {
     name: "propose_creator_profile",
-    description: "Save the creator profile from the confirmation card. No email or phone.",
+    description:
+      "Save the creator profile from the confirmation card. No email or phone.",
     input: z
       .object({
         displayName: z.string().trim().min(1).max(80),
@@ -230,19 +242,24 @@ export const ugcTools = [
     confirm: write,
     async run(ctx: Ctx, input: { campaignId: string }) {
       assertUgcTopic(ctx);
-      return { llm: model(await applyToCampaign(ctx.userId, input.campaignId)) };
+      return {
+        llm: model(await applyToCampaign(ctx.userId, input.campaignId)),
+      };
     },
   },
   {
     name: "offer_ugc_hire",
-    description: "Offer a hire to one creator id. The card shows name, niches, reward, rights and the note.",
+    description:
+      "Offer a hire to one creator id. The card shows name, niches, reward, rights and the note.",
     input: z.object({ campaignId: id, creatorId: id }).strict(),
     access: "user" as const,
     confirm: write,
     async run(ctx: Ctx, input: { campaignId: string; creatorId: string }) {
       assertUgcTopic(ctx);
       return {
-        llm: model(await offerHire(ctx.userId, input.campaignId, input.creatorId)),
+        llm: model(
+          await offerHire(ctx.userId, input.campaignId, input.creatorId),
+        ),
       };
     },
   },
@@ -270,7 +287,8 @@ export const ugcTools = [
   },
   {
     name: "issue_ugc_join_link",
-    description: "Issue a join button for the company's own creator. Do not write the token.",
+    description:
+      "Issue a join button for the company's own creator. Do not write the token.",
     input: z.object({ campaignId: id }).strict(),
     access: "user" as const,
     confirm: write,
@@ -285,7 +303,8 @@ export const ugcTools = [
   },
   {
     name: "remind_ugc_invites",
-    description: "Send one reminder on an offer or a hire that has no video yet.",
+    description:
+      "Send one reminder on an offer or a hire that has no video yet.",
     input: z.object({ inviteId: id }).strict(),
     access: "user" as const,
     confirm: write,
@@ -296,14 +315,26 @@ export const ugcTools = [
   },
   {
     name: "submit_ugc_video",
-    description: "Submit an https link on TikTok, Instagram or YouTube. Only a hired creator.",
-    input: z.object({ inviteId: id, url: z.string().max(500), hook: z.string().max(300) }).strict(),
+    description:
+      "Submit an https link on TikTok, Instagram or YouTube. Only a hired creator.",
+    input: z
+      .object({
+        inviteId: id,
+        url: z.string().max(500),
+        hook: z.string().max(300),
+      })
+      .strict(),
     access: "user" as const,
     confirm: write,
-    async run(ctx: Ctx, input: { inviteId: string; url: string; hook: string }) {
+    async run(
+      ctx: Ctx,
+      input: { inviteId: string; url: string; hook: string },
+    ) {
       assertUgcTopic(ctx);
       return {
-        llm: model(await submitVideo(ctx.userId, input.inviteId, input.url, input.hook)),
+        llm: model(
+          await submitVideo(ctx.userId, input.inviteId, input.url, input.hook),
+        ),
       };
     },
   },
@@ -315,18 +346,43 @@ export const ugcTools = [
     confirm: write,
     async run(ctx: Ctx, input: { inviteId: string; note: string }) {
       assertUgcTopic(ctx);
-      return { llm: model(await requestChanges(ctx.userId, input.inviteId, input.note)) };
+      return {
+        llm: model(
+          await requestChanges(ctx.userId, input.inviteId, input.note),
+        ),
+      };
     },
   },
   {
     name: "decide_ugc_submission",
-    description: "Accept, reject, or mark an ad winner. Do not choose a winner yourself.",
-    input: z.object({ inviteId: id, to: z.enum(["accepted", "rejected", "winner"]) }).strict(),
+    description:
+      "Accept, reject, or mark an ad winner. Do not choose a winner yourself.",
+    input: z
+      .object({ inviteId: id, to: z.enum(["accepted", "rejected", "winner"]) })
+      .strict(),
     access: "user" as const,
     confirm: write,
-    async run(ctx: Ctx, input: { inviteId: string; to: "accepted" | "rejected" | "winner" }) {
+    async run(
+      ctx: Ctx,
+      input: { inviteId: string; to: "accepted" | "rejected" | "winner" },
+    ) {
       assertUgcTopic(ctx);
-      return { llm: model(await decideSubmission(ctx.userId, input.inviteId, input.to)) };
+      return {
+        llm: model(
+          await decideSubmission(ctx.userId, input.inviteId, input.to),
+        ),
+      };
+    },
+  },
+  {
+    name: "get_ugc_winners",
+    description:
+      "Read winners and the view counts the creator reported. Call every count reported. Do not fetch the links and do not treat a count as checked.",
+    input: z.object({ campaignId: id }).strict(),
+    access: "user" as const,
+    confirm: read,
+    async run(ctx: Ctx, input: { campaignId: string }) {
+      return { llm: model(await listWinners(ctx.userId, input.campaignId)) };
     },
   },
   {

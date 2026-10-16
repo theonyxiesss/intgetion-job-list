@@ -20,7 +20,7 @@ import {
   submitService,
 } from "./service";
 
-/** Complaints, the three-in-a-row hold and the moderator's flags (28.9, D461). */
+/** Complaints, the three-in-a-row hold and the moderator's flags (28.9, D462). */
 
 const sellerId = randomUUID();
 const reporters = [randomUUID(), randomUUID(), randomUUID()];

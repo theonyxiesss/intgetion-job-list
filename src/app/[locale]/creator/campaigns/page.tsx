@@ -40,7 +40,9 @@ export default async function OpenBriefsPage({
     <main className="py-10 md:py-16">
       <Container className="flex flex-col gap-6">
         <PageHeader title={t("openTitle")} />
-        {rows.length === 0 ? <p className="text-fg-muted">{t("emptyOpen")}</p> : null}
+        {rows.length === 0 ? (
+          <p className="text-fg-muted">{t("emptyOpen")}</p>
+        ) : null}
         <ul className="flex flex-col gap-4">
           {rows.map((row) => (
             <li key={row.id} className="rounded-lg border border-line p-4">
@@ -53,7 +55,12 @@ export default async function OpenBriefsPage({
                 })}
               </p>
               <div className="mt-3">
-                <UgcAction action="apply" label={t("apply")} body={{ campaignId: row.id }} primary />
+                <UgcAction
+                  action="apply"
+                  label={t("apply")}
+                  body={{ campaignId: row.id }}
+                  primary
+                />
               </div>
             </li>
           ))}

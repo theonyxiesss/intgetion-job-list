@@ -1787,71 +1787,6 @@
         "text": "Activez « J’accepte des commandes » et publiez un service. Il paraît après modération.",
         "action": "Ouvrir l’espace"
       }
-    },
-    "freelanceCard": {
-      "focus": "Nous parlons de « {title} ».",
-      "back": "Retour au freelance",
-      "from": "dès {price} · {days} j",
-      "package": "{tier} : {price}, {days} j",
-      "tier": "Formule : {tier}",
-      "modeOn": "Activer la prise de commandes.",
-      "modeOff": "Désactiver la prise de commandes.",
-      "answerAccept": "Accepter : les contacts s’ouvrent aux deux parties.",
-      "answerDecline": "Refuser la demande.",
-      "decisionAccept": "Accepter le travail.",
-      "decisionRevision": "Demander une retouche.",
-      "rating": "Note : {rating} sur 5",
-      "linksLabel": "Liens vers des travaux",
-      "linksHint": "Jusqu’à 5 liens https, un par ligne. Ils vont directement au site, pas à Spoki.",
-      "deliveryLabel": "Lien vers le résultat (https)",
-      "orderTitle": "La page de la commande",
-      "orderAction": "Ouvrir la commande",
-      "cabinetTitle": "Vos services",
-      "cabinetAction": "Ouvrir l’espace",
-      "propose_freelancer_mode": {
-        "title": "Prise de commandes",
-        "text": "Changer si vous acceptez des commandes freelance."
-      },
-      "propose_service": {
-        "title": "Nouveau service",
-        "text": "Créer le service et l’envoyer en modération. Il paraît au catalogue après validation."
-      },
-      "propose_service_update": {
-        "title": "Modifier le service",
-        "text": "Enregistrer les modifications. Un service publié repasse en modération. Des liens vides gardent les actuels."
-      },
-      "send_service_request": {
-        "title": "Envoyer la demande",
-        "text": "Le freelance a 72 heures pour répondre. Les contacts s’ouvrent après acceptation."
-      },
-      "cancel_request": {
-        "title": "Annuler la commande",
-        "text": "Annuler avant le début du travail."
-      },
-      "respond_to_request": {
-        "title": "Répondre à la demande",
-        "text": "Votre réponse va à l’acheteur."
-      },
-      "start_order": {
-        "title": "Commencer le travail",
-        "text": "La commande passe en cours."
-      },
-      "mark_delivered": {
-        "title": "Remettre le résultat",
-        "text": "L’acheteur a 7 jours pour accepter ou demander une retouche."
-      },
-      "review_delivery": {
-        "title": "Le résultat",
-        "text": "Votre décision va au freelance."
-      },
-      "propose_review": {
-        "title": "Laisser un avis",
-        "text": "Public, sans votre nom."
-      },
-      "report_freelance": {
-        "title": "Envoyer un signalement",
-        "text": "Un modérateur le lit. L’autre partie ne voit pas qui l’a envoyé."
-      }
     }
   },
   "cookies": {
@@ -3794,7 +3729,9 @@
       "paused": "Mettre mon profil en pause",
       "videoUrl": "Lien de la vidéo",
       "hook": "Accroche",
-      "changeNote": "Quoi changer"
+      "changeNote": "Quoi changer",
+      "liveUrl": "Lien de la publication en ligne",
+      "views": "Vues que vous voyez"
     },
     "goals": {
       "awareness": "Notoriété",
@@ -3819,6 +3756,82 @@
       "organic": "Organique",
       "ads": "Publicités",
       "whitelist": "Liste blanche"
+    },
+    "winners": "Gagnants",
+    "winnersEmpty": "Pas encore de gagnant.",
+    "winnersIntro": "Liens que l’entreprise a marqués pour la publicité. Les vues sont celles qu’a indiquées l’auteur. Nous ne les avons pas vérifiées.",
+    "winnersNoCount": "L’auteur n’a pas indiqué de publication en ligne ni de nombre de vues.",
+    "reportedViews": "Vues indiquées : {count}",
+    "reportLive": "Enregistrer la publication en ligne",
+    "owedNote": "Enregistré {amount}. Rien n’a été débité et rien n’a été envoyé.",
+    "paidNote": "Un administrateur a marqué ceci comme payé. La plateforme n’a pas envoyé l’argent.",
+    "markPaid": "Marquer comme payé",
+    "payoutsTitle": "Récompenses enregistrées",
+    "payoutsEmpty": "Aucune récompense n’attend de marque."
+  },
+  "chatFreelance": {
+    "focus": "Nous parlons de « {title} ».",
+    "back": "Retour au freelance",
+    "from": "dès {price} · {days} j",
+    "package": "{tier} : {price}, {days} j",
+    "tier": "Formule : {tier}",
+    "modeOn": "Activer la prise de commandes.",
+    "modeOff": "Désactiver la prise de commandes.",
+    "answerAccept": "Accepter : les contacts s’ouvrent aux deux parties.",
+    "answerDecline": "Refuser la demande.",
+    "decisionAccept": "Accepter le travail.",
+    "decisionRevision": "Demander une retouche.",
+    "rating": "Note : {rating} sur 5",
+    "linksLabel": "Liens vers des travaux",
+    "linksHint": "Jusqu’à 5 liens https, un par ligne. Ils vont directement au site, pas à Spoki.",
+    "deliveryLabel": "Lien vers le résultat (https)",
+    "orderTitle": "La page de la commande",
+    "orderAction": "Ouvrir la commande",
+    "cabinetTitle": "Vos services",
+    "cabinetAction": "Ouvrir l’espace",
+    "propose_freelancer_mode": {
+      "title": "Prise de commandes",
+      "text": "Changer si vous acceptez des commandes freelance."
+    },
+    "propose_service": {
+      "title": "Nouveau service",
+      "text": "Créer le service et l’envoyer en modération. Il paraît au catalogue après validation."
+    },
+    "propose_service_update": {
+      "title": "Modifier le service",
+      "text": "Enregistrer les modifications. Un service publié repasse en modération. Des liens vides gardent les actuels."
+    },
+    "send_service_request": {
+      "title": "Envoyer la demande",
+      "text": "Le freelance a 72 heures pour répondre. Les contacts s’ouvrent après acceptation."
+    },
+    "cancel_request": {
+      "title": "Annuler la commande",
+      "text": "Annuler avant le début du travail."
+    },
+    "respond_to_request": {
+      "title": "Répondre à la demande",
+      "text": "Votre réponse va à l’acheteur."
+    },
+    "start_order": {
+      "title": "Commencer le travail",
+      "text": "La commande passe en cours."
+    },
+    "mark_delivered": {
+      "title": "Remettre le résultat",
+      "text": "L’acheteur a 7 jours pour accepter ou demander une retouche."
+    },
+    "review_delivery": {
+      "title": "Le résultat",
+      "text": "Votre décision va au freelance."
+    },
+    "propose_review": {
+      "title": "Laisser un avis",
+      "text": "Public, sans votre nom."
+    },
+    "report_freelance": {
+      "title": "Envoyer un signalement",
+      "text": "Un modérateur le lit. L’autre partie ne voit pas qui l’a envoyé."
     }
   }
 }

@@ -3,7 +3,7 @@ import * as repo from "../repo/freelance-repo";
 import { priceRange } from "./rules";
 
 /**
- * Flags the moderator sees next to a service (28.9, D461). They do not
+ * Flags the moderator sees next to a service (28.9, D462). They do not
  * block anything: the moderator decides. Hard contacts (email, phone, link,
  * @handle) are already refused on save; these catch the softer ones.
  */
