@@ -2142,3 +2142,16 @@
 - Отклонения от ТЗ: окно отзыва 14 дней таймером не двигается — оно проверяется при чтении (уже так в коде D).
 - OPEN QUESTION: нет новых; 28.13 открыты.
 - Следующая подфаза: F (оплата на адрес исполнителя) — только по команде основателя.
+
+## [2026-10-16] — hotfix красного CI: формат и e2e после D453 — DONE (`check` и e2e зелёные; `database` красная только на LCP главной)
+
+- Задача: основатель — «доделай все задачи»; по правилу 1 взят один hotfix — красный CI, из-за которого typecheck/test/build в CI не запускались. «Да» на коммит и push в `master` получено в чате.
+- Сделано: `prettier --write` ровно по 17 файлам из лога `format:check` run 38810516586 (фриланс-страницы и API, `chat.tsx`, `button.tsx`, `nav-icons.test.ts`, `freelance-repo.ts`, `order-actions.tsx`, `request-form.tsx`, `service-form.tsx`). В 18 файлах `tests/e2e/*.spec.ts` убран выбор «looking for work» при регистрации: окна выбора нет с D453, 30 тестов ждали его до таймаута. «Sign in» в шапке — кнопка, не ссылка (`auth.spec.ts`, `security.spec.ts`). После первого прогона: на `/en/login` две кнопки «Sign in» (шапка и форма) — отправка формы ищется внутри `#content`. Коммиты `4e21c1ea`, `fbcf6e0e`.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1190 прошли, 1 пропущен); `SWC_NATIVE_BINDING_CACHE='C:\Users\Admin\.swc-cache-claude' pnpm build` → 0; `prettier --check . --end-of-line auto` → чисто вне `.claude/worktrees/` (локальные worktree, не в git). CI run 38871490862 (`4e21c1ea`): `check` ✅, e2e 81 прошли, 2 упали (две кнопки «Sign in»). CI run 38872667996 (`fbcf6e0e`): `check` ✅, интеграционные ✅, e2e 82 прошли, 1 нестабильный (`auth.spec.ts:258`, агент помнит гостя — как раньше); `database` ❌ только Lighthouse: LCP главной медиана 3274 мс при бюджете 2500. Прогон CI теперь ~9 минут вместо ~59 (ушли таймауты e2e).
+- Выкладка: push собрал `dpl_AeoNZNjW8bvaoRd7iGHGgvwRxK4Y`; `/api/health` и `/ru/freelance` → 200. Код страниц не менялся, только формат.
+- P-тесты подфазы: нет
+- Миграции: нет
+- Изменённые файлы: 17 файлов выше, `tests/e2e/{admin-a1,admin-a2,admin,applications,auth,company,cookie-settings,employer-applications,express-interest,feedback,jobs,markers,matches,mobile-app,notifications,privacy,profile,security,verification}.spec.ts`, `MISSION_LOG.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`. Незакоммиченный модуль креативных тестов (D448) не трогался.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: LCP главной вырос с ~2700 до 3274 мс, причина не разобрана; решение по LCP (вид, бюджет D41, клиентский JS) за основателем.
+- Следующая подфаза: только по команде основателя.
