@@ -2289,3 +2289,6 @@
 - Изменённые файлы: `src/modules/ugc/service/{pricing.ts,progress.ts,bot-tools.ts,commands.ts,index.ts,store.ts,memory.ts,telegram-start.ts}`, `src/modules/ugc/repo/ugc-repo.ts`, `src/modules/ugc/ui/{step-track.tsx,brief-form.tsx}`, `src/app/[locale]/campaigns/{page.tsx,new/page.tsx,[id]/page.tsx}`, `src/components/bot/{chat.tsx,freelance-card.tsx}`, `src/modules/bot/prompts/system.ts`, `src/modules/bot/service/{eval-run.ts,service-focus.ts,telegram-agent.ts,ugc-focus.ts}`, `src/messages/*.json` (7), тесты `src/modules/ugc/__tests__/pricing.test.ts`, `src/modules/bot/__tests__/{eval-ci,memory,tools}.test.ts`, `evals/schema.ts`, `evals/ugc/*`, docs.
 - Отклонения от ТЗ: нет. 27.16 п. 1 закрыт.
 - OPEN QUESTION: нет новых; 27.16 пп. 2–4 открыты.
+- CI: run 38969297391 на `0902f62` — `check` и `database` зелёные.
+- Выкладка: fast-forward `master` → `0902f62` → `dpl_am3916A4w7YQeKDwXrBNBNmsX77J`. `/campaigns`, `/ru/campaigns`, `/api/health` → 200; на `/ru/campaigns` подпись «UGC-видео» и две двери.
+- Отклонение от порядка: `master` продвинут до конца CI (не дождался `database`), а не после зелёного CI, как договорились. CI потом прошёл целиком; откатывать не пришлось.
