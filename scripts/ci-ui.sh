@@ -13,9 +13,11 @@ cleanup() {
 }
 trap cleanup EXIT
 
+# The home page is `/`: English has no prefix since D335 and `/en` is only a
+# 308 to `/`. A served `/` also renders the page once before it is measured.
 ready=0
 for _ in $(seq 1 40); do
-  if curl -sf -o /dev/null "http://127.0.0.1:3000/en"; then
+  if curl -sf -o /dev/null "http://127.0.0.1:3000/"; then
     ready=1
     break
   fi
@@ -23,7 +25,7 @@ for _ in $(seq 1 40); do
 done
 
 if [[ "$ready" -ne 1 ]]; then
-  echo "production server did not serve /en" >&2
+  echo "production server did not serve /" >&2
   cat /tmp/next-start.log >&2 || true
   exit 1
 fi
@@ -43,6 +45,8 @@ fi
 
 # Simulated LCP on a shared runner swings by several hundred ms between runs,
 # so the 2500 ms budget applies to the median of five runs (D41, D145).
+# Measured on `/`, the address people open: on `/en` Lighthouse also counted
+# the 308 hop, ~600 ms of simulated time (D461).
 # Chrome on the runner sometimes exits before the debugging port is ready; retry once.
 lh() {
   local out="$1"
@@ -65,7 +69,7 @@ lh() {
 }
 
 for run in 1 2 3 4 5; do
-  lh "/tmp/lh-${run}.json" "http://127.0.0.1:3000/en"
+  lh "/tmp/lh-${run}.json" "http://127.0.0.1:3000/"
 done
 
 node --input-type=module <<'EOF'
@@ -84,6 +88,15 @@ const runs = [1, 2, 3, 4, 5].map((run) => {
       if (item.phase) console.log(`  ${item.phase}: ${Math.round(item.timing)} ms`);
     }
   }
+  // The simulation is bandwidth-bound: the document and every script that
+  // arrived before the first frame count (D434, D461).
+  const requests = report.audits["network-requests"]?.details?.items ?? [];
+  const bytes = (type) =>
+    requests.filter((r) => r.resourceType === type).reduce((sum, r) => sum + (r.transferSize ?? 0), 0);
+  const redirects = report.audits.redirects?.numericValue ?? 0;
+  console.log(
+    `  document ${bytes("Document")} B, scripts ${bytes("Script")} B, fonts ${bytes("Font")} B, redirects ${Math.round(redirects)} ms`,
+  );
   return lcp;
 });
 if (!runs.every((lcp) => typeof lcp === "number")) process.exit(1);
