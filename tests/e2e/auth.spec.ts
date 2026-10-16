@@ -57,7 +57,11 @@ async function signInWithPassword(page: Page, email: string, pw: string) {
   await page.goto("/en/login");
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.locator('input[type="password"]').fill(pw);
-  await page.getByRole("button", { name: "Sign in" }).click();
+  // The header has its own "Sign in" button since D453; submit the form's.
+  await page
+    .locator("#content")
+    .getByRole("button", { name: "Sign in" })
+    .click();
 }
 
 test("password: unconfirmed email cannot sign in or write; confirmed can", async ({
