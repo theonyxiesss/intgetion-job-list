@@ -243,6 +243,11 @@ export const ugcPayouts = pgTable(
     paidBy: uuid("paid_by").references(() => users.id, {
       onDelete: "restrict",
     }),
+    /** Set when the reward went out from the campaign wallet (D466). */
+    chain: text("chain"),
+    token: text("token"),
+    recipient: text("recipient"),
+    txHash: text("tx_hash"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

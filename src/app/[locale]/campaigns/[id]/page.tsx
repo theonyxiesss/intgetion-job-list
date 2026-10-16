@@ -8,6 +8,7 @@ import { formatMinor } from "@/lib/money";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import {
+  campaignDepositState,
   campaignProgress,
   countParticipants,
   readCampaign,
@@ -56,6 +57,8 @@ export default async function CampaignPage({
   const steps = Object.fromEntries(
     UGC_STEPS.map((step) => [step, h(`steps.${step}`)]),
   ) as Record<(typeof UGC_STEPS)[number], string>;
+  const deposit =
+    view.role === "company" ? await campaignDepositState(user.id, id) : null;
   const progress =
     view.role === "company"
       ? campaignProgress(
@@ -66,8 +69,12 @@ export default async function CampaignPage({
               row.submission ? [row.submission] : [],
             ),
           ),
+          { depositNeeded: Boolean(deposit?.required && !deposit.paid) },
         )
       : null;
+  const budget = usdLabel(
+    ugcBudgetMinor(view.brief.videosWanted, Number(view.brief.bountyMinor)),
+  );
   return (
     <main className="py-10 md:py-16">
       <Container className="flex max-w-3xl flex-col gap-6">
@@ -86,14 +93,7 @@ export default async function CampaignPage({
               label={view.brief.productName}
             />
             <p className="t-body-s font-mono text-fg-muted">
-              {h("budget", {
-                total: usdLabel(
-                  ugcBudgetMinor(
-                    view.brief.videosWanted,
-                    Number(view.brief.bountyMinor),
-                  ),
-                ),
-              })}
+              {h("budget", { total: budget })}
               {" · "}
               {h("counts", {
                 applied: progress.counts.applied,
@@ -103,7 +103,40 @@ export default async function CampaignPage({
             </p>
           </div>
         ) : null}
-        <p className="t-body-s text-fg-muted">{t("moneyNote")}</p>
+        {deposit?.required && (deposit.paid || view.brief.status === "open") ? (
+          <section
+            className="flex flex-col gap-3 rounded-lg border border-line p-4 md:p-5"
+            aria-labelledby="ugc-deposit"
+          >
+            <h2 id="ugc-deposit" className="font-medium">
+              {h("deposit.title")}
+            </h2>
+            <p className="t-body-s text-fg-muted">
+              {deposit.paid
+                ? h("deposit.paid", { total: budget })
+                : h("deposit.needed", {
+                    total: budget,
+                    videos: view.brief.videosWanted,
+                    price: money,
+                  })}
+            </p>
+            {deposit.deposit?.status === "checking" ? (
+              <p className="t-body-s" role="status">
+                {h("deposit.checking")}
+              </p>
+            ) : null}
+            {deposit.payable ? (
+              <ButtonLink
+                href={`/billing/crypto?ugc=${id}`}
+                className="self-start"
+              >
+                {h("deposit.action", { total: budget })}
+              </ButtonLink>
+            ) : null}
+          </section>
+        ) : (
+          <p className="t-body-s text-fg-muted">{t("moneyNote")}</p>
+        )}
         <div className="flex flex-wrap gap-3">
           <ButtonLink
             href={`/chat?campaign=${view.brief.id}`}

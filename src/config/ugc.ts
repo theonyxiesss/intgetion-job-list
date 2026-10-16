@@ -86,3 +86,9 @@ export const UGC_LIMITS = {
   /** Creator-reported views. Not measured by us (phase B). */
   reportedViewsMax: 2_000_000_000,
 } as const;
+
+/**
+ * Campaign wallet (D465, D466): with the crypto checkout on, a brief takes
+ * offers only after its budget is paid in. Off: the reward is only recorded.
+ */
+export const UGC_ESCROW_LIVE = true;

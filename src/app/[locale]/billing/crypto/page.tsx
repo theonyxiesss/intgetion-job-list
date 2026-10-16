@@ -21,6 +21,7 @@ import {
   orderPayState,
 } from "@/modules/freelance/service";
 import { formatUsd } from "@/modules/freelance/ui/format";
+import { campaignDepositState, readCampaign } from "@/modules/ugc/service";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -49,6 +50,10 @@ export default async function CryptoBillingPage({
     freelance?: string;
     /** The freelancer proves the payout address (D463). */
     payout?: string;
+    /** `ugc`: a UGC creator proves the same payout address (D466). */
+    for?: string;
+    /** A UGC brief whose budget is paid in (D466). */
+    ugc?: string;
   }>;
 }) {
   const { locale } = await params;
@@ -68,9 +73,20 @@ export default async function CryptoBillingPage({
     process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID?.trim() ?? "";
   const freelanceOrder =
     query.freelance && UUID.test(query.freelance) ? query.freelance : "";
-  if (freelanceOrder || query.payout === "1") {
+  const ugcCampaign = query.ugc && UUID.test(query.ugc) ? query.ugc : "";
+  const forUgc = query.for === "ugc" || Boolean(ugcCampaign);
+  if (freelanceOrder || ugcCampaign || query.payout === "1") {
     const f = await getTranslations("freelance");
-    const copy = f.raw("pay") as Record<string, string>;
+    const base = f.raw("pay") as Record<string, string>;
+    const copy = forUgc
+      ? {
+          ...base,
+          ...((await getTranslations("ugcHub")).raw("pay") as Record<
+            string,
+            string
+          >),
+        }
+      : base;
     const panel =
       "mx-auto flex w-full max-w-md flex-col gap-4 border border-line bg-surface p-6";
     let body: React.ReactNode;
@@ -81,8 +97,40 @@ export default async function CryptoBillingPage({
           address={status.address}
           projectId={projectIdEarly}
           copy={copy}
+          noncePath={forUgc ? "/api/ugc/payout/nonce" : undefined}
         />
       );
+    } else if (ugcCampaign) {
+      let title = "";
+      let state: Awaited<ReturnType<typeof campaignDepositState>> | null = null;
+      try {
+        title = (await readCampaign(user.id, ugcCampaign)).brief.productName;
+        state = await campaignDepositState(user.id, ugcCampaign);
+      } catch (error) {
+        if (!(error instanceof HttpError)) throw error;
+      }
+      body =
+        state && (state.payable || state.paid) ? (
+          <FreelancePay
+            orderId={ugcCampaign}
+            title={title}
+            amount={formatUsd(BigInt(state.budgetMinor), locale)}
+            projectId={projectIdEarly}
+            copy={copy}
+            createUrl={`/api/ugc/campaigns/${ugcCampaign}/deposit`}
+            paymentsBase="/api/ugc/deposits"
+          />
+        ) : (
+          <div className={panel}>
+            <p className="text-fg-muted">{copy.notPayable}</p>
+            <ButtonLink
+              href={state ? `/campaigns/${ugcCampaign}` : "/campaigns"}
+              variant="secondary"
+            >
+              {copy.backToOrder}
+            </ButtonLink>
+          </div>
+        );
     } else {
       let order: Awaited<ReturnType<typeof getOrderForParty>> | null = null;
       let state: Awaited<ReturnType<typeof orderPayState>> | null = null;

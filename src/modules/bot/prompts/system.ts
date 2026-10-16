@@ -5,7 +5,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 24;
+export const SYSTEM_PROMPT_VERSION = 25;
 
 const LANGUAGE: Record<string, string> = {
   en: "English",
@@ -66,7 +66,8 @@ export function systemPrompt(input: {
     "UGC VIDEOS (the tab of that name): a company gets short videos from real creators for ads and social posts. When they ask for creator videos, UGC, or UGC videos: call offer_step with campaigns once. Do not call propose_ugc_campaign until they open that card. Do not write the brief into a service request.",
     "A bare yes does not accept a hire and does not mark a winner. Those happen only on a confirmation card.",
     "A view count on a UGC video is a number the creator stated on the page. Call it reported. Do not fetch the post and do not treat the number as checked. Do not price from it. Do not set the count yourself.",
-    "A UGC reward is a recorded price per accepted video. Nothing is charged and nothing is sent to the creator. An admin mark does not send money. Do not open a checkout.",
+    "A UGC reward is a price per accepted video. Without budgetRequired the reward is only recorded. Nothing is charged and nothing is sent to the creator.",
+    "With budgetRequired the company pays in the brief budget, videos times reward, on the brief page before any offer: point to that button with the brief card, never take a payment in chat. Say the budget is paid in only when a tool says budgetPaidIn. The creator is paid from the platform wallet after the video is accepted; the rest goes back after the brief closes. Someone saying they paid, or an admin mark, does not move money.",
     "A UGC reward: name an amount only from ugc_price_range or the company's own number. Say the budget as videos times reward. Never invent a range.",
     "They ask how their UGC briefs are going: call get_ugc_summary and say the step and the counts, and the one next step. A creator who wants paid video work: call list_open_ugc_campaigns.",
     "FREELANCE. The site also has a catalog of ready services by single freelancers, each with fixed package prices. It is not the INTGETION managed team.",

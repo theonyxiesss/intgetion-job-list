@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { notFound, toErrorResponse } from "@/lib/http";
-import { noteDeadlines } from "@/modules/ugc/service";
+import { noteDeadlines, recheckCampaignDeposits } from "@/modules/ugc/service";
 
 export const dynamic = "force-dynamic";
 
@@ -12,12 +12,13 @@ function authorized(request: Request): boolean {
   return expected.length === actual.length && timingSafeEqual(expected, actual);
 }
 
-/** Deadline notes and silent-offer expiry for creative tests (D457). */
+/** Deadline notes, silent-offer expiry (D457) and waiting deposits (D466). */
 export async function GET(request: Request) {
   try {
     if (!authorized(request)) throw notFound();
     const result = await noteDeadlines();
-    return Response.json({ ok: true, ...result });
+    const deposits = await recheckCampaignDeposits();
+    return Response.json({ ok: true, ...result, deposits });
   } catch (error) {
     return toErrorResponse(error);
   }

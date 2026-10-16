@@ -84,12 +84,17 @@ export function FreelancePay({
   amount,
   projectId,
   copy,
+  createUrl,
+  paymentsBase = "/api/freelance/payments",
 }: {
   orderId: string;
   title: string;
   amount: string;
   projectId: string;
   copy: FreelancePayCopy;
+  /** Where the payment is opened. A UGC brief budget passes its own (D466). */
+  createUrl?: string;
+  paymentsBase?: string;
 }) {
   const [token, setToken] = useState<"USDC" | "USDT">("USDC");
   const [payment, setPayment] = useState<Payment | null>(null);
@@ -110,11 +115,14 @@ export function FreelancePay({
     try {
       const provider = await connectWallet(projectId, route);
       const address = await signIn(provider);
-      const created = await fetch(`/api/freelance/orders/${orderId}/payment`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ token }),
-      });
+      const created = await fetch(
+        createUrl ?? `/api/freelance/orders/${orderId}/payment`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ token }),
+        },
+      );
       if (!created.ok) {
         const code = await errorCode(created);
         if (code === "TOKEN_UNSUPPORTED") throw new Error("token");
@@ -142,19 +150,16 @@ export function FreelancePay({
           },
         ],
       })) as string;
-      const confirmed = await fetch(
-        `/api/freelance/payments/${next.id}/confirm`,
-        {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ txHash: hash }),
-        },
-      );
+      const confirmed = await fetch(`${paymentsBase}/${next.id}/confirm`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ txHash: hash }),
+      });
       if (!confirmed.ok) throw new Error("confirm");
       setPayment((await confirmed.json()) as Payment);
       if (poll.current !== null) window.clearInterval(poll.current);
       poll.current = window.setInterval(async () => {
-        const fresh = await fetch(`/api/freelance/payments/${next.id}`);
+        const fresh = await fetch(`${paymentsBase}/${next.id}`);
         if (!fresh.ok) return;
         const body = (await fresh.json()) as Payment;
         setPayment(body);

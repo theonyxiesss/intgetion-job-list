@@ -3916,6 +3916,46 @@
       "hire": "Embauche",
       "videos": "Vidéos",
       "decision": "Décision"
+    },
+    "nextDeposit": "Verser le budget",
+    "pay": {
+      "payFor": "Budget du brief UGC",
+      "direct": "Vers le portefeuille de la plateforme. Le créateur est payé quand sa vidéo est acceptée ; le reste revient à la clôture du brief.",
+      "checkWallet": "Vérifiez l’adresse dans votre portefeuille : c’est le portefeuille de la plateforme.",
+      "status_paid": "Budget versé. Vous pouvez maintenant engager des créateurs.",
+      "status_underpaid": "Moins que le budget est arrivé",
+      "error_unavailable": "Ce budget ne peut pas être versé ici pour l’instant",
+      "payoutText": "Les récompenses des vidéos acceptées arrivent à cette adresse. Signez un message dans votre portefeuille pour prouver qu’elle est à vous.",
+      "notPayable": "Ce budget ne peut pas être versé ici pour l’instant.",
+      "backToOrder": "Retour au brief"
+    },
+    "deposit": {
+      "title": "Budget du brief",
+      "needed": "L’embauche s’ouvre une fois le budget versé : {total} ({videos} × {price}). L’argent va au portefeuille de la plateforme. Le créateur est payé quand sa vidéo est acceptée ; le reste revient à la clôture du brief.",
+      "paid": "Budget versé : {total}. Le créateur est payé quand sa vidéo est acceptée ; le reste revient à la clôture du brief.",
+      "action": "Verser {total}",
+      "checking": "Le virement est vérifié sur le réseau."
+    },
+    "payout": {
+      "title": "Adresse de paiement",
+      "text": "Votre récompense pour une vidéo acceptée arrive ici. Confirmez l’adresse par une signature du portefeuille.",
+      "none": "Pas encore d’adresse.",
+      "action": "Confirmer l’adresse"
+    },
+    "admin": {
+      "payoutWallet": "Du portefeuille de la campagne vers {address}",
+      "payoutNoAddress": "Le créateur n’a pas encore confirmé d’adresse de paiement.",
+      "payoutManual": "Ce brief n’a pas de budget versé : marquez le paiement à la main.",
+      "chain": "Réseau",
+      "token": "Jeton",
+      "txHash": "Hash de la transaction",
+      "savePayout": "Enregistrer le paiement",
+      "refundsTitle": "Retour du reste",
+      "refundLine": "{product} : rendre {amount} à {address}",
+      "refundWaiting": "Une vidéo remise attend encore une décision : rendez plus tard.",
+      "saveRefund": "Enregistrer le retour",
+      "refundsEmpty": "Rien à rendre.",
+      "txError": "Le virement ne correspond pas : {code}"
     }
   }
 }

@@ -3916,6 +3916,46 @@
       "hire": "Contratación",
       "videos": "Vídeos",
       "decision": "Decisión"
+    },
+    "nextDeposit": "Depositar el presupuesto",
+    "pay": {
+      "payFor": "Presupuesto del brief UGC",
+      "direct": "A la billetera de la plataforma. Al creador se le paga cuando se acepta su vídeo; el resto vuelve al cerrar el brief.",
+      "checkWallet": "Revisa la dirección en tu billetera: es la billetera de la plataforma.",
+      "status_paid": "Presupuesto depositado. Ya puedes contratar creadores.",
+      "status_underpaid": "Llegó menos que el presupuesto",
+      "error_unavailable": "Ahora no se puede depositar este presupuesto aquí",
+      "payoutText": "Aquí llega la recompensa por los vídeos aceptados. Firma un mensaje en tu billetera para probar que la dirección es tuya.",
+      "notPayable": "Ahora no se puede depositar este presupuesto aquí.",
+      "backToOrder": "Volver al brief"
+    },
+    "deposit": {
+      "title": "Presupuesto del brief",
+      "needed": "La contratación se abre al depositar el presupuesto: {total} ({videos} × {price}). El dinero va a la billetera de la plataforma. Al creador se le paga cuando se acepta su vídeo; el resto vuelve al cerrar el brief.",
+      "paid": "Presupuesto depositado: {total}. Al creador se le paga cuando se acepta su vídeo; el resto vuelve al cerrar el brief.",
+      "action": "Depositar {total}",
+      "checking": "La transferencia se está comprobando en la red."
+    },
+    "payout": {
+      "title": "Dirección de pago",
+      "text": "Aquí llega tu recompensa por un vídeo aceptado. Confirma la dirección con una firma de la billetera.",
+      "none": "Aún no hay dirección.",
+      "action": "Confirmar la dirección"
+    },
+    "admin": {
+      "payoutWallet": "Desde la billetera de la campaña a {address}",
+      "payoutNoAddress": "El creador aún no ha confirmado una dirección de pago.",
+      "payoutManual": "Este brief no tiene presupuesto depositado: marca el pago a mano.",
+      "chain": "Red",
+      "token": "Token",
+      "txHash": "Hash de la transacción",
+      "savePayout": "Registrar el pago",
+      "refundsTitle": "Devolución del resto",
+      "refundLine": "{product}: devolver {amount} a {address}",
+      "refundWaiting": "Un vídeo entregado aún espera decisión: devuélvelo más tarde.",
+      "saveRefund": "Registrar la devolución",
+      "refundsEmpty": "No hay nada que devolver.",
+      "txError": "La transferencia no coincide: {code}"
     }
   }
 }

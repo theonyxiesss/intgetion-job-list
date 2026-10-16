@@ -3916,6 +3916,46 @@
       "hire": "Assunzione",
       "videos": "Video",
       "decision": "Decisione"
+    },
+    "nextDeposit": "Versa il budget",
+    "pay": {
+      "payFor": "Budget del brief UGC",
+      "direct": "Al wallet della piattaforma. Il creator viene pagato quando il video è accettato; il resto torna alla chiusura del brief.",
+      "checkWallet": "Controlla l’indirizzo nel wallet: è il wallet della piattaforma.",
+      "status_paid": "Budget versato. Ora puoi ingaggiare i creator.",
+      "status_underpaid": "È arrivato meno del budget",
+      "error_unavailable": "Ora questo budget non si può versare qui",
+      "payoutText": "Le ricompense per i video accettati arrivano a questo indirizzo. Firma un messaggio nel wallet per provare che l’indirizzo è tuo.",
+      "notPayable": "Ora questo budget non si può versare qui.",
+      "backToOrder": "Torna al brief"
+    },
+    "deposit": {
+      "title": "Budget del brief",
+      "needed": "L’ingaggio si apre dopo il versamento del budget: {total} ({videos} × {price}). Il denaro va al wallet della piattaforma. Il creator viene pagato quando il video è accettato; il resto torna alla chiusura del brief.",
+      "paid": "Budget versato: {total}. Il creator viene pagato quando il video è accettato; il resto torna alla chiusura del brief.",
+      "action": "Versa {total}",
+      "checking": "Il trasferimento è in verifica sulla rete."
+    },
+    "payout": {
+      "title": "Indirizzo di pagamento",
+      "text": "La ricompensa per un video accettato arriva qui. Conferma l’indirizzo con una firma del wallet.",
+      "none": "Ancora nessun indirizzo.",
+      "action": "Conferma l’indirizzo"
+    },
+    "admin": {
+      "payoutWallet": "Dal wallet della campagna a {address}",
+      "payoutNoAddress": "Il creator non ha ancora confermato un indirizzo di pagamento.",
+      "payoutManual": "Questo brief non ha budget versato: segna il pagamento a mano.",
+      "chain": "Rete",
+      "token": "Token",
+      "txHash": "Hash della transazione",
+      "savePayout": "Registra il pagamento",
+      "refundsTitle": "Restituzione del resto",
+      "refundLine": "{product}: restituire {amount} a {address}",
+      "refundWaiting": "Un video consegnato attende ancora una decisione: restituisci più tardi.",
+      "saveRefund": "Registra la restituzione",
+      "refundsEmpty": "Niente da restituire.",
+      "txError": "Il trasferimento non corrisponde: {code}"
     }
   }
 }

@@ -200,7 +200,7 @@ describe("freelance order payment (28.6)", () => {
       address: sellerAccount.address,
       chainId: 8453,
     });
-    expect(message).toContain("freelance payouts");
+    expect(message).toContain("for payouts on INTGETION JOB LIST");
     await expectCode(
       verifyPayoutSignature(sellerId, {
         signature: await buyerAccount.signMessage({ message }),

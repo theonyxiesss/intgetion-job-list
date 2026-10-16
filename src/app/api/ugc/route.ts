@@ -13,6 +13,8 @@ import {
   issueJoinLink,
   markPayoutPaid,
   offerHire,
+  payRewardByTx,
+  refundByTx,
   redeemJoinToken,
   remindInvite,
   reportLivePost,
@@ -90,6 +92,20 @@ const body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("redeem"), payload: z.string().max(64) }),
   z.object({ action: z.literal("markPaid"), payoutId: z.uuid() }),
   z.object({
+    action: z.literal("payoutTx"),
+    payoutId: z.uuid(),
+    chain: z.string().max(32),
+    token: z.enum(["USDC", "USDT"]),
+    txHash: z.string().max(80),
+  }),
+  z.object({
+    action: z.literal("refundTx"),
+    campaignId: z.uuid(),
+    chain: z.string().max(32),
+    token: z.enum(["USDC", "USDT"]),
+    txHash: z.string().max(80),
+  }),
+  z.object({
     action: z.literal("moderate"),
     campaignId: z.uuid(),
     to: z.enum(["open", "rejected"]),
@@ -166,6 +182,26 @@ export async function POST(request: Request) {
           adminId: id,
           isAdmin: user.platformRole === "admin",
           payoutId: input.payoutId,
+        }),
+      );
+    }
+    if (input.action === "payoutTx") {
+      return Response.json(
+        await payRewardByTx({
+          adminId: id,
+          isAdmin: user.platformRole === "admin",
+          payoutId: input.payoutId,
+          tx: { chain: input.chain, token: input.token, txHash: input.txHash },
+        }),
+      );
+    }
+    if (input.action === "refundTx") {
+      return Response.json(
+        await refundByTx({
+          adminId: id,
+          isAdmin: user.platformRole === "admin",
+          campaignId: input.campaignId,
+          tx: { chain: input.chain, token: input.token, txHash: input.txHash },
         }),
       );
     }

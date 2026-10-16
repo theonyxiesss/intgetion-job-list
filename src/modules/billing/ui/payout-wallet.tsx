@@ -14,10 +14,13 @@ export function PayoutWallet({
   address,
   projectId,
   copy,
+  noncePath = "/api/freelance/payout/nonce",
 }: {
   address: string | null;
   projectId: string;
   copy: FreelancePayCopy;
+  /** A UGC creator asks through its own route; verify is shared (D466). */
+  noncePath?: string;
 }) {
   const [saved, setSaved] = useState(address);
   const [busy, setBusy] = useState(false);
@@ -36,7 +39,7 @@ export function PayoutWallet({
       );
       const wallet = accounts[0];
       if (!wallet) throw new Error("wallet");
-      const nonce = await fetch("/api/freelance/payout/nonce", {
+      const nonce = await fetch(noncePath, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ address: wallet, chainId }),

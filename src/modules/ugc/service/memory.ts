@@ -25,6 +25,8 @@ export class MemoryUgcStore implements UgcStore {
   invites = new Map<string, Invite>();
   submissions = new Map<string, Submission>();
   payouts = new Map<string, Payout>();
+  /** Confirmed budget per campaign id, in cents (D466). */
+  deposits = new Map<string, bigint>();
   tokens: JoinToken[] = [];
   notices: UgcNotice[] = [];
   audits: {
@@ -153,6 +155,9 @@ export class MemoryUgcStore implements UgcStore {
   }
   async listOwedPayouts() {
     return [...this.payouts.values()].filter((row) => row.status === "owed");
+  }
+  async confirmedDepositMinor(campaignId: string) {
+    return this.deposits.get(campaignId) ?? null;
   }
   async insertPayout(row: Payout) {
     this.payouts.set(row.id, row);

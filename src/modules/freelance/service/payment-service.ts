@@ -40,8 +40,9 @@ import { FREELANCE_ERRORS } from "./rules";
  * notices, only after every check of PAYMENTS §4.3 passes.
  */
 
+/** One address for freelance and UGC payouts alike (D463, D466). */
 export const PAYOUT_STATEMENT =
-  "Confirm this address for freelance payouts on INTGETION JOB LIST.";
+  "Confirm this address for payouts on INTGETION JOB LIST.";
 
 const NONCE_MS = 10 * 60 * 1000;
 const PAYMENT_MS = 30 * 60 * 1000;
@@ -78,18 +79,22 @@ export async function getPayoutStatus(userId: string): Promise<PayoutStatus> {
   };
 }
 
-/** Step one: the message the freelancer signs. Only a seller may ask. */
+/**
+ * Step one: the message the freelancer signs. Only a seller may ask, unless
+ * the caller already proved another payee, a UGC creator (D466).
+ */
 export async function issuePayoutNonce(
   userId: string,
   raw: unknown,
   now = new Date(),
+  payee: "seller" | "creator" = "seller",
 ): Promise<{ message: string }> {
   const parsed = z
     .object({ address: z.string().max(64), chainId: z.number().int() })
     .strict()
     .safeParse(raw);
   if (!parsed.success) throw validationError(parsed.error.issues);
-  if (!(await repo.findSeller(userId))) {
+  if (payee === "seller" && !(await repo.findSeller(userId))) {
     throw payError(
       FREELANCE_ERRORS.candidateProfileRequired,
       "Turn on taking orders first",

@@ -29,7 +29,7 @@ export type UgcProgress = {
   /** The step the brief is on now; `done` once closed. */
   step: UgcStep | "done" | "rejected";
   /** What the company should do next; null when it only waits. */
-  next: "hire" | "decide" | "remind" | null;
+  next: "deposit" | "hire" | "decide" | "remind" | null;
   counts: UgcCounts;
 };
 
@@ -66,6 +66,7 @@ export function countParticipants(
 export function campaignProgress(
   status: UgcCampaignStatus,
   counts: UgcCounts,
+  options: { depositNeeded?: boolean } = {},
 ): UgcProgress {
   if (status === "draft") return { step: "brief", next: null, counts };
   if (status === "pending_review") {
@@ -74,6 +75,14 @@ export function campaignProgress(
   if (status === "rejected") return { step: "rejected", next: null, counts };
   if (status === "closed") return { step: "done", next: null, counts };
   if (counts.waiting > 0) return { step: "decision", next: "decide", counts };
+  // No offer goes out before the budget is paid in (D466).
+  if (options.depositNeeded && counts.hired === 0 && counts.offered === 0) {
+    return {
+      step: counts.applied > 0 ? "hire" : "responses",
+      next: "deposit",
+      counts,
+    };
+  }
   if (counts.hired > 0) {
     const decided = counts.accepted + counts.winners;
     return decided >= counts.hired

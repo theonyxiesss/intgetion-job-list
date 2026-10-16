@@ -3916,6 +3916,46 @@
       "hire": "Einstellung",
       "videos": "Videos",
       "decision": "Entscheidung"
+    },
+    "nextDeposit": "Budget einzahlen",
+    "pay": {
+      "payFor": "Budget des UGC-Briefings",
+      "direct": "An die Wallet der Plattform. Creator werden bezahlt, sobald ihr Video angenommen ist; der Rest kommt zurück, wenn das Briefing geschlossen ist.",
+      "checkWallet": "Prüfen Sie die Adresse in der Wallet: Es ist die Wallet der Plattform.",
+      "status_paid": "Budget eingezahlt. Sie können jetzt Creator beauftragen.",
+      "status_underpaid": "Es kam weniger als das Budget an",
+      "error_unavailable": "Dieses Budget lässt sich hier gerade nicht einzahlen",
+      "payoutText": "Belohnungen für angenommene Videos gehen an diese Adresse. Signieren Sie eine Nachricht in der Wallet, um zu zeigen, dass die Adresse Ihnen gehört.",
+      "notPayable": "Dieses Budget lässt sich hier gerade nicht einzahlen.",
+      "backToOrder": "Zurück zum Briefing"
+    },
+    "deposit": {
+      "title": "Budget des Briefings",
+      "needed": "Beauftragen ist möglich, sobald das Budget eingezahlt ist: {total} ({videos} × {price}). Das Geld geht an die Wallet der Plattform. Creator werden bezahlt, sobald ihr Video angenommen ist; der Rest kommt zurück, wenn das Briefing geschlossen ist.",
+      "paid": "Budget eingezahlt: {total}. Creator werden bezahlt, sobald ihr Video angenommen ist; der Rest kommt zurück, wenn das Briefing geschlossen ist.",
+      "action": "{total} einzahlen",
+      "checking": "Die Überweisung wird im Netzwerk geprüft."
+    },
+    "payout": {
+      "title": "Auszahlungsadresse",
+      "text": "Ihre Belohnung für ein angenommenes Video geht hierhin. Bestätigen Sie die Adresse mit einer Wallet-Signatur.",
+      "none": "Noch keine Adresse.",
+      "action": "Adresse bestätigen"
+    },
+    "admin": {
+      "payoutWallet": "Von der Kampagnen-Wallet an {address}",
+      "payoutNoAddress": "Der Creator hat noch keine Auszahlungsadresse bestätigt.",
+      "payoutManual": "Dieses Briefing hat kein eingezahltes Budget: Auszahlung von Hand markieren.",
+      "chain": "Netzwerk",
+      "token": "Token",
+      "txHash": "Transaktions-Hash",
+      "savePayout": "Auszahlung erfassen",
+      "refundsTitle": "Rest zurückzahlen",
+      "refundLine": "{product}: {amount} an {address} zurückzahlen",
+      "refundWaiting": "Ein abgegebenes Video wartet noch auf eine Entscheidung: später zurückzahlen.",
+      "saveRefund": "Rückzahlung erfassen",
+      "refundsEmpty": "Nichts zurückzuzahlen.",
+      "txError": "Die Überweisung passt nicht: {code}"
     }
   }
 }

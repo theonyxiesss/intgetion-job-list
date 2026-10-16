@@ -4422,6 +4422,46 @@
       "hire": "Hire",
       "videos": "Videos",
       "decision": "Decision"
+    },
+    "nextDeposit": "Pay in the budget",
+    "pay": {
+      "payFor": "UGC brief budget",
+      "direct": "To the platform wallet. The creator is paid after their video is accepted; the rest comes back when the brief is closed.",
+      "checkWallet": "Check the address in your wallet: it is the platform wallet.",
+      "status_paid": "Paid in. You can now hire creators.",
+      "status_underpaid": "Less than the budget arrived",
+      "error_unavailable": "This budget cannot be paid in here right now",
+      "payoutText": "Rewards for accepted videos are sent to this address. Sign a message in your wallet to prove it is yours.",
+      "notPayable": "This budget cannot be paid in here right now.",
+      "backToOrder": "Back to the brief"
+    },
+    "deposit": {
+      "title": "Brief budget",
+      "needed": "Hiring opens once the budget is paid in: {total} ({videos} × {price}). The money goes to the platform wallet. Creators are paid after their video is accepted; the rest comes back after the brief is closed.",
+      "paid": "Budget paid in: {total}. Creators are paid after their video is accepted; the rest comes back after the brief is closed.",
+      "action": "Pay in {total}",
+      "checking": "The transfer is being checked on the network."
+    },
+    "payout": {
+      "title": "Payout address",
+      "text": "Your reward for an accepted video is sent here. Prove the address with a wallet signature.",
+      "none": "No address yet.",
+      "action": "Confirm the address"
+    },
+    "admin": {
+      "payoutWallet": "From the campaign wallet to {address}",
+      "payoutNoAddress": "The creator has not confirmed a payout address yet.",
+      "payoutManual": "This brief has no budget paid in: mark the reward by hand.",
+      "chain": "Network",
+      "token": "Token",
+      "txHash": "Transaction hash",
+      "savePayout": "Record the payout",
+      "refundsTitle": "Returning the rest",
+      "refundLine": "{product}: return {amount} to {address}",
+      "refundWaiting": "A handed-in video still waits for a decision: return it later.",
+      "saveRefund": "Record the return",
+      "refundsEmpty": "Nothing to return.",
+      "txError": "The transfer did not match: {code}"
     }
   }
 }

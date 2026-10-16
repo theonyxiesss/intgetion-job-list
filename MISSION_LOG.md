@@ -2299,3 +2299,14 @@
 - Сделано: D465, `docs/tz/27-ugc.md` (27.16, 27.15), `docs/OPEN_TASKS.md`, `docs/CURRENT.md`. Кода, кассы, миграций нет.
 - Проверки: `prettier --check` изменённых файлов.
 - OPEN QUESTION: цена плана «UGC»; ответ юриста о тексте прав и о хранении бюджета.
+
+## [2026-10-16] — UGC-видео, фаза D: кошелёк кампании (D466)
+
+- Задача: основатель — «давай» на фазу по D465; «Включить сразу»; «Да, до сайта» (`0057` путём D438, коммит, `master` после зелёного CI, выкладка).
+- План (до кода): 1) `0057_ugc_escrow.sql` — `ugc_deposits`, `ugc_refunds`, колонки хэша в `ugc_payouts`; 2) `ugc/service/escrow*.ts` + `repo/escrow-repo.ts` по образцу оплаты фриланса F (та же касса, `verifyTransfer`, санкции); 3) `offerHire` — без взноса и сверх него нет; 4) адрес выплаты автора — общий с фрилансом, свой вход `/api/ugc/payout/nonce`; 5) админка — выплата и возврат по хэшу; 6) страницы брифа, списка, `/creator`, касса `?ugc=`; 7) Spoki промпт 25; 8) unit `escrow.test.ts`, интеграционный `escrow.integration.test.ts`.
+- Сделано: по плану.
+- Проверки (локально): `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1258 прошли, 1 пропущен); `pnpm eval` → 0; `pnpm build` → 0; `pnpm db:migrate` + `db:verify` на чистой базе → 0 (81 таблица под deny-all); `pnpm test:integration` → 0 (149 прошли, 7 пропущены); мутация (снята проверка повторного хэша) ловится интеграционным тестом. `pnpm env:check` → 1: в контейнере нет `.env.local`; новых переменных нет.
+- Миграции: `0057_ugc_escrow.sql`.
+- Изменённые файлы: `src/db/migrations/0057_ugc_escrow.sql`, `src/db/schema/ugc.ts`, `src/config/ugc.ts`, `src/modules/ugc/service/{escrow.ts,escrow-gate.ts,escrow-rules.ts,commands.ts,store.ts,memory.ts,rules.ts,progress.ts,bot-tools.ts,index.ts}`, `src/modules/ugc/repo/{escrow-repo.ts,ugc-repo.ts}`, `src/modules/ugc/ui/tx-form.tsx`, `src/modules/billing/ui/{freelance-pay.tsx,payout-wallet.tsx}`, `src/modules/freelance/service/payment-service.ts`, `src/app/api/ugc/{route.ts,campaigns/[id]/deposit,deposits/[id],deposits/[id]/confirm,payout/nonce}`, `src/app/api/cron/ugc/route.ts`, страницы `campaigns`, `campaigns/[id]`, `creator`, `billing/crypto`, `admin/campaigns`, `src/modules/bot/{prompts/system.ts,service/ugc-focus.ts}`, `src/messages/*.json` (7), тесты `src/modules/ugc/__tests__/escrow.test.ts`, `src/modules/ugc/escrow.integration.test.ts`, `src/modules/bot/__tests__/memory.test.ts`, `src/modules/freelance/payments.integration.test.ts` (текст подписи), docs.
+- Отклонения от ТЗ: нет. Живой перевод не делался.
+- OPEN QUESTION: цена плана «UGC»; ответ юриста.

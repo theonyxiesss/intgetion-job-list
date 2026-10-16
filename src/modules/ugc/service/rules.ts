@@ -22,6 +22,13 @@ export const UGC_ERRORS = {
   organicWinner: "ORGANIC_WINNER",
   profileIncomplete: "PROFILE_INCOMPLETE",
   creatorPaused: "CREATOR_PAUSED",
+  depositRequired: "UGC_DEPOSIT_REQUIRED",
+  budgetExceeded: "UGC_BUDGET_EXCEEDED",
+  txRequired: "UGC_TX_REQUIRED",
+  txPending: "UGC_TX_PENDING",
+  txInvalid: "UGC_TX_INVALID",
+  refundWait: "UGC_REFUND_WAIT",
+  nothingToRefund: "UGC_NOTHING_TO_REFUND",
 } as const;
 
 const DAY_MS = 24 * 60 * 60 * 1000;

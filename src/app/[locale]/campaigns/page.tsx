@@ -167,14 +167,20 @@ export default async function CampaignsPage({
                       </p>
                       {next ? (
                         <ButtonLink
-                          href={`/campaigns/${row.id}`}
+                          href={
+                            next === "deposit"
+                              ? `/billing/crypto?ugc=${row.id}`
+                              : `/campaigns/${row.id}`
+                          }
                           className="self-start"
                         >
-                          {next === "hire"
-                            ? h("nextHire")
-                            : next === "decide"
-                              ? h("nextDecide")
-                              : h("nextRemind")}
+                          {next === "deposit"
+                            ? h("nextDeposit")
+                            : next === "hire"
+                              ? h("nextHire")
+                              : next === "decide"
+                                ? h("nextDecide")
+                                : h("nextRemind")}
                         </ButtonLink>
                       ) : row.progress.step === "responses" ||
                         row.progress.step === "review" ? (

@@ -5,6 +5,7 @@ import { wrapUntrusted } from "@/lib/llm";
 import {
   acceptInvite,
   applyToCampaign,
+  campaignBudget,
   campaignWriteAllowed,
   closeCampaign,
   createCampaign,
@@ -58,7 +59,7 @@ function model(value: unknown) {
 /** What Spoki may say about a reward: only these numbers (D464). */
 export function priceGuideForModel(guide: UgcPriceGuide): string {
   const hint =
-    "Rights for paid ads or the brand's own account usually cost more than an organic post; that is a hint, the company decides. The reward is recorded per accepted video; nothing is charged.";
+    "Rights for paid ads or the brand's own account usually cost more than an organic post; that is a hint, the company decides. The reward is per accepted video.";
   if (guide.source === "presets") {
     return `Too few reviewed UGC briefs to show a range. Ready amounts per video: ${guide.presets.map(usdLabel).join(", ")}; ${usdLabel(guide.medianMinor)} is the usual pick. ${hint} Name only these amounts.`;
   }
@@ -101,7 +102,7 @@ export const ugcTools = [
   {
     name: "get_ugc_summary",
     description:
-      "How this member's UGC briefs are going: per brief the step, counts of applications, offers, hires, videos waiting for a decision, accepted and winners, the budget, and what to do next. No contacts.",
+      "How this member's UGC briefs are going: per brief the step, counts of applications, offers, hires, videos waiting for a decision, accepted and winners, the budget, and what to do next (deposit: pay in the budget on the brief page before any offer). No contacts.",
     input: z.object({}).strict(),
     access: "user" as const,
     confirm: read,
@@ -112,6 +113,7 @@ export const ugcTools = [
       }
       const focus =
         rows.find((row) => row.progress.next === "decide") ??
+        rows.find((row) => row.progress.next === "deposit") ??
         rows.find((row) => row.progress.next === "hire") ??
         rows[0]!;
       return {
@@ -126,6 +128,7 @@ export const ugcTools = [
             videosWanted: row.videosWanted,
             rewardPerVideo: usdLabel(Number(row.bountyMinor)),
             budget: usdLabel(row.budgetMinor),
+            budgetRequired: row.progress.next === "deposit",
             deadline: row.deadline,
           })),
         ),
@@ -135,12 +138,23 @@ export const ugcTools = [
   },
   {
     name: "get_ugc_campaign",
-    description: "Read one UGC brief the caller can already see. No contacts.",
+    description:
+      "Read one UGC brief the caller can already see. For the company also budgetRequired and budgetPaidIn. No contacts.",
     input: z.object({ campaignId: id }).strict(),
     access: "user" as const,
     confirm: read,
     async run(ctx: Ctx, input: { campaignId: string }) {
-      return { llm: model(await readCampaign(ctx.userId, input.campaignId)) };
+      const view = await readCampaign(ctx.userId, input.campaignId);
+      if (view.role !== "company") return { llm: model(view) };
+      const budget = await campaignBudget(ctx.userId, input.campaignId);
+      return {
+        llm: model({
+          ...view,
+          budget: usdLabel(budget.budgetMinor),
+          budgetRequired: budget.required,
+          budgetPaidIn: budget.paid,
+        }),
+      };
     },
   },
   {

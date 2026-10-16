@@ -36,6 +36,7 @@ import {
   participationFromApply,
   participationFromJoin,
   profileReady,
+  UGC_ERRORS,
 } from "./rules";
 import {
   checkCampaignTransition,
@@ -54,6 +55,8 @@ import type {
 import type { UgcStore } from "./store";
 import { priceGuide, ugcBudgetMinor } from "./pricing";
 import { campaignProgress, countParticipants } from "./progress";
+import { assertBudgetRoom, committedMinor } from "./escrow-rules";
+import { escrowOn } from "./escrow-gate";
 
 /**
  * Rules live in `rules.ts`. This file is the only write path (27.8, 27.17):
@@ -65,7 +68,8 @@ export function useUgcStore(store: UgcStore | null) {
   injected = store;
 }
 
-async function db(): Promise<UgcStore> {
+/** The store for this module's other services (escrow). Not exported from index. */
+export async function db(): Promise<UgcStore> {
   if (injected) return injected;
   const { productionUgcStore } = await import("../repo/ugc-repo");
   return productionUgcStore();
@@ -265,7 +269,7 @@ async function requireMember(
   return role;
 }
 
-async function campaignForMember(
+export async function campaignForMember(
   store: UgcStore,
   campaignId: string,
   userId: string,
@@ -667,6 +671,12 @@ export async function offerHire(
       errorCodes.invalidTransition,
       "This creator already has an answer",
     );
+  }
+  if (escrowOn()) {
+    assertBudgetRoom({
+      depositMinor: await store.confirmedDepositMinor(campaign.id),
+      committedMinor: committedMinor(invites, campaign.bountyMinor),
+    });
   }
   if (!existing) {
     const matches = creatorMatches(
@@ -1198,6 +1208,14 @@ export async function markPayoutPaid(input: {
       "This reward is already marked",
     );
   }
+  const invite = await store.getInvite(payout.inviteId);
+  if (invite && (await store.confirmedDepositMinor(invite.campaignId))) {
+    throw new HttpError(
+      409,
+      UGC_ERRORS.txRequired,
+      "This reward goes out from the campaign wallet: record its transaction",
+    );
+  }
   payout.status = "paid";
   payout.paidAt = store.now();
   payout.paidBy = adminId;
@@ -1310,12 +1328,17 @@ export async function listMyCampaignSummaries(userId: string | null) {
   const store = await db();
   const companies = await store.companiesFor(id);
   const rows = await store.listByCompanies(companies.map((row) => row.id));
+  const wallet = escrowOn();
   const out = [];
   for (const row of rows) {
     const invites = await store.listInvites(row.id);
     const submissions = await store.listSubmissions(
       invites.map((invite) => invite.id),
     );
+    const depositNeeded =
+      wallet &&
+      row.status === "open" &&
+      (await store.confirmedDepositMinor(row.id)) === null;
     out.push({
       id: row.id,
       productName: row.productName,
@@ -1327,8 +1350,27 @@ export async function listMyCampaignSummaries(userId: string | null) {
       progress: campaignProgress(
         row.status,
         countParticipants(invites, submissions),
+        { depositNeeded },
       ),
     });
   }
   return out;
+}
+
+/** The budget line Spoki reads: no deposit row, only whether it is paid (D466). */
+export async function campaignBudget(
+  userId: string | null,
+  campaignId: string,
+) {
+  const id = requireUser(userId);
+  const store = await db();
+  const campaign = await campaignForMember(store, campaignId, id);
+  return {
+    budgetMinor: ugcBudgetMinor(
+      campaign.videosWanted,
+      Number(campaign.bountyMinor),
+    ),
+    required: escrowOn(),
+    paid: (await store.confirmedDepositMinor(campaign.id)) !== null,
+  };
 }

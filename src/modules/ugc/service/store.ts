@@ -40,6 +40,8 @@ export interface UgcStore {
   getPayout(id: string): Promise<Payout | null>;
   getPayoutBySubmission(submissionId: string): Promise<Payout | null>;
   listOwedPayouts(): Promise<Payout[]>;
+  /** The confirmed budget paid into the campaign wallet, or null (D466). */
+  confirmedDepositMinor(campaignId: string): Promise<bigint | null>;
   insertPayout(row: Payout): Promise<void>;
   savePayout(row: Payout): Promise<void>;
   revokeJoinTokens(campaignId: string, at: Date): Promise<void>;

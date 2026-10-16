@@ -57,6 +57,7 @@ export {
   acceptInvite,
   applyToCampaign,
   campaignWriteAllowed,
+  campaignBudget,
   closeCampaign,
   createCampaign,
   decideCampaign,
@@ -107,3 +108,29 @@ export {
 export type { UgcCounts, UgcProgress, UgcStep } from "./progress";
 export { startPayloadRoute, ugcTokenFromStart } from "./start-payload";
 export { handleUgcTelegramStart } from "./telegram-start";
+export {
+  campaignDepositState,
+  confirmCampaignDeposit,
+  createCampaignDeposit,
+  listRefundsDue,
+  listWalletPayouts,
+  payRewardByTx,
+  recheckCampaignDeposits,
+  refreshCampaignDeposit,
+  refundByTx,
+  setUgcChainReaderForTests,
+} from "./escrow";
+export type {
+  DepositState,
+  DepositView,
+  RefundDueRow,
+  WalletPayoutRow,
+} from "./escrow";
+export { escrowOn } from "./escrow-gate";
+export {
+  assertBudgetRoom,
+  committedMinor,
+  escrowRequired,
+  refundableMinor,
+  refundBlocked,
+} from "./escrow-rules";

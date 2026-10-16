@@ -1,4 +1,4 @@
-import { and, eq, gte, inArray, isNull } from "drizzle-orm";
+import { and, eq, gte, inArray, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   creatorProfiles,
@@ -340,6 +340,15 @@ export function productionUgcStore(): UgcStore {
         .from(ugcPayouts)
         .where(eq(ugcPayouts.status, "owed"));
       return rows.map(payoutOf);
+    },
+    async confirmedDepositMinor(campaignId) {
+      const rows = await db.execute<{ amount_minor: string }>(sql`
+        select amount_minor::text from public.ugc_deposits
+        where campaign_id = ${campaignId} and status = 'confirmed'
+        limit 1
+      `);
+      const row = rows[0];
+      return row ? BigInt(row.amount_minor) : null;
     },
     async insertPayout(row) {
       await db.insert(ugcPayouts).values(row);

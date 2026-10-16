@@ -3916,6 +3916,46 @@
       "hire": "Contratação",
       "videos": "Vídeos",
       "decision": "Decisão"
+    },
+    "nextDeposit": "Depositar o orçamento",
+    "pay": {
+      "payFor": "Orçamento do brief UGC",
+      "direct": "Para a carteira da plataforma. O criador recebe depois que o vídeo é aceito; o restante volta quando o brief é encerrado.",
+      "checkWallet": "Confira o endereço na carteira: é a carteira da plataforma.",
+      "status_paid": "Orçamento depositado. Você já pode contratar criadores.",
+      "status_underpaid": "Chegou menos que o orçamento",
+      "error_unavailable": "Agora não dá para depositar este orçamento aqui",
+      "payoutText": "A recompensa por vídeos aceitos chega neste endereço. Assine uma mensagem na carteira para provar que o endereço é seu.",
+      "notPayable": "Agora não dá para depositar este orçamento aqui.",
+      "backToOrder": "Voltar ao brief"
+    },
+    "deposit": {
+      "title": "Orçamento do brief",
+      "needed": "A contratação abre depois do depósito do orçamento: {total} ({videos} × {price}). O dinheiro vai para a carteira da plataforma. O criador recebe depois que o vídeo é aceito; o restante volta quando o brief é encerrado.",
+      "paid": "Orçamento depositado: {total}. O criador recebe depois que o vídeo é aceito; o restante volta quando o brief é encerrado.",
+      "action": "Depositar {total}",
+      "checking": "A transferência está sendo verificada na rede."
+    },
+    "payout": {
+      "title": "Endereço de pagamento",
+      "text": "Sua recompensa por um vídeo aceito chega aqui. Confirme o endereço com uma assinatura da carteira.",
+      "none": "Ainda não há endereço.",
+      "action": "Confirmar o endereço"
+    },
+    "admin": {
+      "payoutWallet": "Da carteira da campanha para {address}",
+      "payoutNoAddress": "O criador ainda não confirmou um endereço de pagamento.",
+      "payoutManual": "Este brief não tem orçamento depositado: marque o pagamento à mão.",
+      "chain": "Rede",
+      "token": "Token",
+      "txHash": "Hash da transação",
+      "savePayout": "Registrar o pagamento",
+      "refundsTitle": "Devolução do restante",
+      "refundLine": "{product}: devolver {amount} para {address}",
+      "refundWaiting": "Um vídeo entregue ainda espera decisão: devolva depois.",
+      "saveRefund": "Registrar a devolução",
+      "refundsEmpty": "Nada a devolver.",
+      "txError": "A transferência não confere: {code}"
     }
   }
 }
