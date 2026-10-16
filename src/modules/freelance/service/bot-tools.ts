@@ -30,6 +30,7 @@ import {
   type PartyOrder,
 } from "./order-service";
 import { moveOrder } from "./party-service";
+import { FREELANCE_REPORT_REASONS, reportFreelance } from "./report-service";
 import { minorToUsd, sortPackages, type PriceRange } from "./rules";
 
 /**
@@ -638,6 +639,40 @@ export const freelanceTools = [
         body: input.body ?? "",
       });
       return { llm: `Review saved: ${review.rating} of 5.` };
+    },
+  },
+  {
+    name: "report_freelance",
+    description:
+      "Send a complaint to the moderators about a published service or about one of this person's orders: scam, spam, wrong_info, inappropriate or other, with optional details in their words. The other side does not see who sent it. The card sends it.",
+    input: z
+      .object({
+        entity: z.enum(["service", "order"]),
+        id,
+        reason: z.enum(FREELANCE_REPORT_REASONS),
+        details: z.string().trim().max(1000).optional(),
+      })
+      .strict(),
+    access: "user" as const,
+    confirm: write,
+    async run(
+      ctx: Ctx,
+      input: {
+        entity: "service" | "order";
+        id: string;
+        reason: (typeof FREELANCE_REPORT_REASONS)[number];
+        details?: string;
+      },
+    ) {
+      await enforceRateLimit("report", ctx.userId!);
+      await reportFreelance(
+        ctx.userId!,
+        { kind: input.entity, id: input.id },
+        { reason: input.reason, details: input.details },
+      );
+      return {
+        llm: "Complaint sent. A moderator reads it; nothing else changes for now.",
+      };
     },
   },
 ];

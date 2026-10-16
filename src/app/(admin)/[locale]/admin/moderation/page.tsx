@@ -128,6 +128,16 @@ export default async function AdminModerationPage({
                 </Td>
                 <Td mono className="text-fg-muted">
                   {item.reason}
+                  {Array.isArray(item.riskFlags) &&
+                    item.riskFlags.length > 0 && (
+                      <span className="mt-1 flex flex-wrap gap-1">
+                        {item.riskFlags.map((flag) => (
+                          <Badge key={String(flag)} tone="pending">
+                            {String(flag)}
+                          </Badge>
+                        ))}
+                      </span>
+                    )}
                 </Td>
                 <Td numeric>{item.subject?.riskScore ?? "—"}</Td>
                 <Td>

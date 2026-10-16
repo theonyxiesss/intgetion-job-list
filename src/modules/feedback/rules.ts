@@ -94,7 +94,13 @@ export const REPORT_REASONS = [
 
 export type ReportReasonValue = (typeof REPORT_REASONS)[number];
 
-export const REPORT_ENTITY_TYPES = ["job", "company", "user"] as const;
+export const REPORT_ENTITY_TYPES = [
+  "job",
+  "company",
+  "user",
+  "freelance_service",
+  "freelance_order",
+] as const;
 export type ReportEntityType = (typeof REPORT_ENTITY_TYPES)[number];
 
 export const REPORT_DETAILS_MAX_LENGTH = 1000;

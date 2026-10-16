@@ -4207,7 +4207,21 @@
       "error_INVALID_TRANSITION": "That step is not available.",
       "error_VALIDATION": "Check the fields and try again.",
       "error_NETWORK": "No connection. Try again.",
-      "error_INTERNAL": "Could not save. Try again."
+      "error_INTERNAL": "Could not save. Try again.",
+      "report_open": "Report",
+      "report_title": "Report to the moderators",
+      "report_reason": "Reason",
+      "report_details": "What happened (optional)",
+      "report_send": "Send",
+      "report_cancel": "Cancel",
+      "report_sent": "Sent. A moderator will look at it.",
+      "report_reason_scam": "Scam",
+      "report_reason_spam": "Spam",
+      "report_reason_wrong_info": "Wrong information",
+      "report_reason_inappropriate": "Inappropriate content",
+      "report_reason_other": "Other",
+      "error_ALREADY_REPORTED": "You have already reported this.",
+      "error_RATE_LIMITED": "Too many reports. Try again later."
     },
     "askSpoki": "Discuss with the assistant"
   },

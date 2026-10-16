@@ -3701,7 +3701,21 @@
       "error_INVALID_TRANSITION": "Этот шаг сейчас недоступен.",
       "error_VALIDATION": "Проверьте поля и попробуйте снова.",
       "error_NETWORK": "Нет соединения. Попробуйте снова.",
-      "error_INTERNAL": "Не сохранилось. Попробуйте ещё раз."
+      "error_INTERNAL": "Не сохранилось. Попробуйте ещё раз.",
+      "report_open": "Пожаловаться",
+      "report_title": "Жалоба модераторам",
+      "report_reason": "Причина",
+      "report_details": "Что случилось (необязательно)",
+      "report_send": "Отправить",
+      "report_cancel": "Отмена",
+      "report_sent": "Отправлено. Модератор посмотрит.",
+      "report_reason_scam": "Мошенничество",
+      "report_reason_spam": "Спам",
+      "report_reason_wrong_info": "Неверные сведения",
+      "report_reason_inappropriate": "Недопустимое содержание",
+      "report_reason_other": "Другое",
+      "error_ALREADY_REPORTED": "Вы уже пожаловались на это.",
+      "error_RATE_LIMITED": "Слишком много жалоб. Попробуйте позже."
     },
     "askSpoki": "Обсудить с ассистентом"
   },

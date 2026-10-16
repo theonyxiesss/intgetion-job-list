@@ -1,12 +1,26 @@
 import { recordAudit } from "@/lib/audit";
 import { HttpError, notFound } from "@/lib/http";
 import type { CurrentUser } from "@/modules/auth/service";
+import {
+  getOrdersForModeration,
+  getServicesForModeration,
+} from "@/modules/freelance/service";
 import { pausePublishedJobsOfCompany } from "@/modules/jobs/service";
 import { safeNotify } from "@/modules/notifications/service";
 import * as repo from "../repo/reports-repo";
 
-const reportedEntity = (type: string): type is "job" | "company" | "user" =>
-  type === "job" || type === "company" || type === "user";
+const REPORTED_ENTITIES = [
+  "job",
+  "company",
+  "user",
+  "freelance_service",
+  "freelance_order",
+] as const;
+
+const reportedEntity = (
+  type: string,
+): type is (typeof REPORTED_ENTITIES)[number] =>
+  (REPORTED_ENTITIES as readonly string[]).includes(type);
 
 /** 14.5: this many confirmed reports in the window pause the company. */
 export const AUTO_PAUSE_THRESHOLD = 3;
@@ -27,6 +41,9 @@ export type AdminReportDto = {
   jobTitle: string | null;
   companyId: string | null;
   companyName: string | null;
+  /** Freelance service behind a service or order complaint (28.9). */
+  serviceId: string | null;
+  serviceTitle: string | null;
 };
 
 const encodeCursor = (row: { createdAt: Date; id: string }) =>
@@ -54,6 +71,7 @@ export async function listReports(query: {
   });
   const items = rows.slice(0, query.limit);
   const last = items.at(-1);
+  const services = await freelanceSubjects(items);
   return {
     items: items.map((row): AdminReportDto => ({
       id: row.id,
@@ -66,9 +84,33 @@ export async function listReports(query: {
       jobTitle: row.jobTitle,
       companyId: row.companyId,
       companyName: row.companyName,
+      serviceId: services.get(row.entityId)?.id ?? null,
+      serviceTitle: services.get(row.entityId)?.title ?? null,
     })),
     nextCursor: rows.length > query.limit && last ? encodeCursor(last) : null,
   };
+}
+
+/** Report entity id → the freelance service it is about, with its title. */
+async function freelanceSubjects(
+  rows: readonly { entityType: string; entityId: string }[],
+): Promise<Map<string, { id: string; title: string }>> {
+  const out = new Map<string, { id: string; title: string }>();
+  const serviceIds = rows
+    .filter((row) => row.entityType === "freelance_service")
+    .map((row) => row.entityId);
+  const orderIds = rows
+    .filter((row) => row.entityType === "freelance_order")
+    .map((row) => row.entityId);
+  for (const service of await getServicesForModeration(serviceIds)) {
+    out.set(service.id, { id: service.id, title: service.title });
+  }
+  for (const order of await getOrdersForModeration(orderIds)) {
+    if (order.serviceId) {
+      out.set(order.id, { id: order.serviceId, title: order.serviceTitle });
+    }
+  }
+  return out;
 }
 
 /**

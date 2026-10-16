@@ -171,7 +171,13 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
   }),
   reportDecided: strict({
     reportId: idSchema,
-    entityType: z.enum(["job", "company", "user"]),
+    entityType: z.enum([
+      "job",
+      "company",
+      "user",
+      "freelance_service",
+      "freelance_order",
+    ]),
     decision: z.enum(["confirmed", "dismissed"]),
   }),
   // D456: the service title only — no names, contacts or order text.

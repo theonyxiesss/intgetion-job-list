@@ -9,6 +9,7 @@ import { hasCandidateProfile } from "@/modules/candidates/service";
 import { safeNotify } from "@/modules/notifications/service";
 import { listActiveSkills, matchSkillSlug } from "@/modules/taxonomy/service";
 import * as repo from "../repo/freelance-repo";
+import { absolutePriceFlags, serviceFlags } from "./flags";
 import { serviceInput, type ServiceInput } from "../schemas";
 import {
   assertServiceRules,
@@ -191,6 +192,10 @@ export async function updateService(
   const status = statusAfterEdit(row.status);
   const values = serviceValues(input);
   const packages = packageValues(input);
+  const flags =
+    status === "pending" && row.status !== "pending"
+      ? await serviceFlags({ ...values, packages })
+      : [];
   return repo.runInTransaction(async (tx) => {
     const updated = await repo.replaceService(
       tx,
@@ -204,7 +209,7 @@ export async function updateService(
         tx,
         row.id,
         "freelance_service_edit",
-        riskFlags(packages),
+        flags,
       );
     }
     return updated;
@@ -236,6 +241,7 @@ export async function submitService(
   if (row.status !== "draft") throw invalidServiceStep();
   await assertBelowLimit(userId, row.id);
   const packages = await repo.listPackages([row.id]);
+  const flags = await serviceFlags({ ...row, packages });
   const updated = await repo.runInTransaction(async (tx) => {
     const pending = await repo.setPendingInTx(tx, row.id, now);
     if (pending) {
@@ -243,7 +249,7 @@ export async function submitService(
         tx,
         row.id,
         "freelance_service_review",
-        riskFlags(packages),
+        flags,
       );
     }
     return pending;
@@ -252,18 +258,11 @@ export async function submitService(
   return updated;
 }
 
-/** Flags the moderator sees next to a service (28.9): prices at the edges. */
+/** Absolute price flags; the full set is `serviceFlags` (28.9, D461). */
 export function riskFlags(
   packages: readonly { priceMinor: bigint }[],
 ): string[] {
-  const flags: string[] = [];
-  if (packages.some((pkg) => pkg.priceMinor <= BigInt(2000))) {
-    flags.push("price_very_low");
-  }
-  if (packages.some((pkg) => pkg.priceMinor >= BigInt(1_000_000))) {
-    flags.push("price_very_high");
-  }
-  return flags;
+  return absolutePriceFlags(packages);
 }
 
 export type ServiceForModeration = {
@@ -279,6 +278,11 @@ export async function getServicesForModeration(
   ids: readonly string[],
 ): Promise<ServiceForModeration[]> {
   return repo.findServicesForModeration(ids);
+}
+
+/** Orders behind complaints, for the admin list (28.9). */
+export async function getOrdersForModeration(ids: readonly string[]) {
+  return repo.findOrdersForModeration(ids);
 }
 
 /** Pause a published service or show a paused one again. */

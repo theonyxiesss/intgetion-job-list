@@ -586,7 +586,10 @@ export const FREELANCE_QUEUE_ENTITY = "freelance_service";
 export async function queueForModeration(
   tx: FreelanceTx,
   serviceId: string,
-  reason: "freelance_service_review" | "freelance_service_edit",
+  reason:
+    | "freelance_service_review"
+    | "freelance_service_edit"
+    | "freelance_service_reports",
   riskFlags: string[],
 ): Promise<void> {
   await tx.insert(moderationQueue).values({
@@ -634,4 +637,63 @@ export async function findServicesForModeration(
     })
     .from(freelanceServices)
     .where(inArray(freelanceServices.id, [...ids]));
+}
+
+/**
+ * Open complaints about a service and about orders of that service (28.9).
+ * Decided ones do not count: a moderator's decision starts the count again.
+ */
+export async function countOpenServiceReports(
+  serviceId: string,
+): Promise<number> {
+  const rows = await getDb().execute<{ n: number }>(sql`
+    select count(*)::int as n from public.reports r
+    where r.status = 'open' and (
+      (r.entity_type = 'freelance_service' and r.entity_id = ${serviceId})
+      or (r.entity_type = 'freelance_order' and r.entity_id in (
+        select o.id from public.freelance_orders o where o.service_id = ${serviceId}))
+    )
+  `);
+  return Number(rows[0]?.n ?? 0);
+}
+
+/**
+ * Takes a live service out of the catalog until a moderator decides
+ * (28.9). Only `published` or `paused` move; the queue item is added once.
+ */
+export async function holdForReports(
+  serviceId: string,
+  flags: string[],
+  now: Date,
+): Promise<ServiceRow | null> {
+  return runInTransaction(async (tx) => {
+    const [row] = await tx
+      .update(freelanceServices)
+      .set({ status: "pending", updatedAt: now })
+      .where(
+        and(
+          eq(freelanceServices.id, serviceId),
+          inArray(freelanceServices.status, ["published", "paused"]),
+        ),
+      )
+      .returning();
+    if (!row) return null;
+    await queueForModeration(tx, serviceId, "freelance_service_reports", flags);
+    return row;
+  });
+}
+
+/** Service titles behind orders, for the admin list of complaints. */
+export async function findOrdersForModeration(
+  ids: readonly string[],
+): Promise<{ id: string; serviceId: string | null; serviceTitle: string }[]> {
+  if (ids.length === 0) return [];
+  return getDb()
+    .select({
+      id: freelanceOrders.id,
+      serviceId: freelanceOrders.serviceId,
+      serviceTitle: freelanceOrders.serviceTitle,
+    })
+    .from(freelanceOrders)
+    .where(inArray(freelanceOrders.id, [...ids]));
 }

@@ -15,6 +15,7 @@ import {
   shouldRecordExternalApply,
   validateFeedbackEvent,
   type HiddenSets,
+  type ReportEntityType,
 } from "../rules";
 
 function postgresCode(error: unknown): string | undefined {
@@ -171,6 +172,19 @@ export async function reportJobForUser(
   input: ReportInput,
 ): Promise<ReportResult> {
   await visibleJobOr404(jobId, userId);
+  return fileReport(userId, "job", jobId, input);
+}
+
+/**
+ * One open report on any reportable object. The caller has already checked
+ * that the reporter may see it; freelance services and orders use this (D461).
+ */
+export async function fileReport(
+  userId: string,
+  entityType: ReportEntityType,
+  entityId: string,
+  input: ReportInput,
+): Promise<ReportResult> {
   if (!isReportReason(input.reason)) {
     throw validationError(`reason must be one of the fixed report reasons`);
   }
@@ -183,8 +197,8 @@ export async function reportJobForUser(
   try {
     const { id } = await repo.insertReport({
       reporterId: userId,
-      entityType: "job",
-      entityId: jobId,
+      entityType,
+      entityId,
       reason: input.reason,
       details,
     });
@@ -194,7 +208,7 @@ export async function reportJobForUser(
       throw new HttpError(
         409,
         "ALREADY_REPORTED",
-        "You have already reported this job",
+        "You have already reported this",
       );
     }
     throw error;

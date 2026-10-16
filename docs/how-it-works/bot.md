@@ -7,7 +7,7 @@
 - Модуль: `src/modules/bot/**`
 - Пустой чат: приветствие по центру, капсула ввода (D409) и три вкладки с четырьмя вопросами из запаса в 20 (D408). Свой текст по-прежнему в поле ввода. На тарифе «Команда» описание роли и критериев ставит вакансию в очередь админа (D411). На сайт не выложено.
 - События (D435): `find_events` читает предстоящие события по темам, стране и удалённой работе (гостю тоже), ссылка — карточка `offer_step` `events` → `/events`. Промпт версии 17: предлагать событие как нетворкинг, не на каждом сообщении. См. [events.md](events.md)
-- Фриланс-услуги (D460): инструменты из `src/modules/freelance/service/bot-tools.ts`, ссылки на работы и результат — поля карточки (`cardFields`), мимо модели. Входы `/chat?service=`, `/chat?order=`; открытые карточки нити отдаёт `GET /api/bot/conversation`, из Telegram карточка открывается по `/chat?confirm=<id>`. Промпт версии 19. Eval: `evals/freelance`
+- Фриланс-услуги (D460): инструменты из `src/modules/freelance/service/bot-tools.ts`, ссылки на работы и результат — поля карточки (`cardFields`), мимо модели. Входы `/chat?service=`, `/chat?order=`; открытые карточки нити отдаёт `GET /api/bot/conversation`, из Telegram карточка открывается по `/chat?confirm=<id>`. Промпт версии 19 (с H — 20). Eval: `evals/freelance`
 - Web chat SSE: `/api/bot/**`, UI `/[locale]/chat`
 - LLM: `src/lib/llm/**`, провайдер через env (OpenRouter по D317)
 - Telegram-бот: скилл `.claude/skills/intgetion-telegram-bot/` (D410). Вход, Mini App и канал: `.claude/skills/intgetion-telegram/`

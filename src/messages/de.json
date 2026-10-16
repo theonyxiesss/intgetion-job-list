@@ -3701,7 +3701,21 @@
       "error_INVALID_TRANSITION": "Dieser Schritt ist nicht möglich.",
       "error_VALIDATION": "Prüfe die Felder und versuch es noch einmal.",
       "error_NETWORK": "Keine Verbindung. Versuch es noch einmal.",
-      "error_INTERNAL": "Nicht gespeichert. Versuch es noch einmal."
+      "error_INTERNAL": "Nicht gespeichert. Versuch es noch einmal.",
+      "report_open": "Melden",
+      "report_title": "Meldung an die Moderation",
+      "report_reason": "Grund",
+      "report_details": "Was ist passiert (optional)",
+      "report_send": "Senden",
+      "report_cancel": "Abbrechen",
+      "report_sent": "Gesendet. Die Moderation sieht es sich an.",
+      "report_reason_scam": "Betrug",
+      "report_reason_spam": "Spam",
+      "report_reason_wrong_info": "Falsche Angaben",
+      "report_reason_inappropriate": "Unangemessener Inhalt",
+      "report_reason_other": "Sonstiges",
+      "error_ALREADY_REPORTED": "Sie haben das bereits gemeldet.",
+      "error_RATE_LIMITED": "Zu viele Meldungen. Später erneut versuchen."
     },
     "askSpoki": "Mit dem Assistenten besprechen"
   },

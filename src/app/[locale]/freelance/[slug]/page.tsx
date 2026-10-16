@@ -17,6 +17,7 @@ import {
   minorToUsd,
   type ServicePage,
 } from "@/modules/freelance/service";
+import { ReportForm } from "@/modules/freelance/ui/report-form";
 import { RequestForm } from "@/modules/freelance/ui/request-form";
 import { freelanceClientCopy } from "@/modules/freelance/ui/server-copy";
 import {
@@ -292,6 +293,13 @@ export default async function FreelanceServicePage({
               <p className="t-body-s text-fg-muted">{t("contactsNote")}</p>
               <p className="t-body-s text-fg-muted">{t("payNote")}</p>
             </div>
+            {viewer && viewer.id !== page.seller.userId ? (
+              <ReportForm
+                kind="services"
+                id={page.id}
+                copy={await freelanceClientCopy(locale)}
+              />
+            ) : null}
             <Link
               href={`/chat?service=${page.id}`}
               className={buttonClass("secondary")}

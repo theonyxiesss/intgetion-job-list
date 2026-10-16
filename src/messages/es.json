@@ -3701,7 +3701,21 @@
       "error_INVALID_TRANSITION": "Ese paso no está disponible.",
       "error_VALIDATION": "Revisa los campos e inténtalo de nuevo.",
       "error_NETWORK": "Sin conexión. Inténtalo de nuevo.",
-      "error_INTERNAL": "No se guardó. Inténtalo de nuevo."
+      "error_INTERNAL": "No se guardó. Inténtalo de nuevo.",
+      "report_open": "Denunciar",
+      "report_title": "Denuncia a los moderadores",
+      "report_reason": "Motivo",
+      "report_details": "Qué pasó (opcional)",
+      "report_send": "Enviar",
+      "report_cancel": "Cancelar",
+      "report_sent": "Enviado. Un moderador lo revisará.",
+      "report_reason_scam": "Estafa",
+      "report_reason_spam": "Spam",
+      "report_reason_wrong_info": "Información falsa",
+      "report_reason_inappropriate": "Contenido inapropiado",
+      "report_reason_other": "Otro",
+      "error_ALREADY_REPORTED": "Ya lo denunciaste.",
+      "error_RATE_LIMITED": "Demasiadas denuncias. Inténtalo más tarde."
     },
     "askSpoki": "Hablar con el asistente"
   },

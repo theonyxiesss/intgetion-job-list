@@ -1,3 +1,4 @@
+import { Link } from "@/i18n/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ReportDecision } from "@/components/admin/admin-actions";
 import {
@@ -71,9 +72,20 @@ export default async function AdminReportsPage({
                 <Td>
                   <span className="flex flex-wrap items-center gap-2">
                     <Badge>{report.entityType}</Badge>
-                    <span className="font-medium">
-                      {report.jobTitle ?? report.companyName ?? report.entityId}
-                    </span>
+                    {report.serviceId && report.serviceTitle ? (
+                      <Link
+                        href={`/admin/freelance/${report.serviceId}`}
+                        className="font-medium underline underline-offset-4"
+                      >
+                        {report.serviceTitle}
+                      </Link>
+                    ) : (
+                      <span className="font-medium">
+                        {report.jobTitle ??
+                          report.companyName ??
+                          report.entityId}
+                      </span>
+                    )}
                   </span>
                   {report.jobTitle && report.companyName && (
                     <span className="t-caption block text-fg-muted">

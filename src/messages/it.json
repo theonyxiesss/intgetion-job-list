@@ -3701,7 +3701,21 @@
       "error_INVALID_TRANSITION": "Questo passo non è disponibile.",
       "error_VALIDATION": "Controlla i campi e riprova.",
       "error_NETWORK": "Nessuna connessione. Riprova.",
-      "error_INTERNAL": "Non salvato. Riprova."
+      "error_INTERNAL": "Non salvato. Riprova.",
+      "report_open": "Segnala",
+      "report_title": "Segnalazione ai moderatori",
+      "report_reason": "Motivo",
+      "report_details": "Cosa è successo (facoltativo)",
+      "report_send": "Invia",
+      "report_cancel": "Annulla",
+      "report_sent": "Inviata. Un moderatore la vedrà.",
+      "report_reason_scam": "Truffa",
+      "report_reason_spam": "Spam",
+      "report_reason_wrong_info": "Informazioni errate",
+      "report_reason_inappropriate": "Contenuto inappropriato",
+      "report_reason_other": "Altro",
+      "error_ALREADY_REPORTED": "L’hai già segnalato.",
+      "error_RATE_LIMITED": "Troppe segnalazioni. Riprova più tardi."
     },
     "askSpoki": "Parlane con l’assistente"
   },

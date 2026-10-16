@@ -13,6 +13,7 @@ import { HttpError } from "@/lib/http";
 import { clientIp } from "@/lib/request-ip";
 import { canLeaveReview, getOrderView } from "@/modules/freelance/service";
 import { formatUsd } from "@/modules/freelance/ui/format";
+import { ReportForm } from "@/modules/freelance/ui/report-form";
 import { OrderActions, ReviewForm } from "@/modules/freelance/ui/order-actions";
 import {
   freelanceClientCopy,
@@ -242,6 +243,7 @@ export default async function FreelanceOrderPage({
         >
           {t("askSpoki")}
         </Link>
+        <ReportForm kind="orders" id={order.id} copy={copy} />
         <p className="t-body-s text-fg-muted">{t("payNote")}</p>
       </Container>
     </main>

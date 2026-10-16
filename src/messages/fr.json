@@ -3701,7 +3701,21 @@
       "error_INVALID_TRANSITION": "Cette étape n’est pas disponible.",
       "error_VALIDATION": "Vérifiez les champs et réessayez.",
       "error_NETWORK": "Pas de connexion. Réessayez.",
-      "error_INTERNAL": "Pas enregistré. Réessayez."
+      "error_INTERNAL": "Pas enregistré. Réessayez.",
+      "report_open": "Signaler",
+      "report_title": "Signalement aux modérateurs",
+      "report_reason": "Motif",
+      "report_details": "Ce qui s’est passé (facultatif)",
+      "report_send": "Envoyer",
+      "report_cancel": "Annuler",
+      "report_sent": "Envoyé. Un modérateur va regarder.",
+      "report_reason_scam": "Arnaque",
+      "report_reason_spam": "Spam",
+      "report_reason_wrong_info": "Informations fausses",
+      "report_reason_inappropriate": "Contenu inapproprié",
+      "report_reason_other": "Autre",
+      "error_ALREADY_REPORTED": "Vous l’avez déjà signalé.",
+      "error_RATE_LIMITED": "Trop de signalements. Réessayez plus tard."
     },
     "askSpoki": "En parler avec l’assistant"
   },
