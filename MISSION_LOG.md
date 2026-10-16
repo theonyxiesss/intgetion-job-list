@@ -2325,3 +2325,5 @@
 - Изменённые файлы: `src/modules/ugc/service/{next-step.ts,index.ts}`, `src/modules/bot/service/{ugc-next.ts,tools.ts,index.ts}`, `src/modules/bot/repo/bot-repo.ts`, `src/modules/bot/prompts/system.ts`, `src/app/api/bot/conversation/route.ts`, `src/components/bot/{chat.tsx,freelance-card.tsx}`, `src/messages/*.json` (7, `chatFreelance`), тесты `src/modules/ugc/__tests__/next-step.test.ts`, `src/modules/bot/__tests__/{ugc-next,memory}.test.ts`, `src/modules/bot/ugc-next.integration.test.ts`, docs.
 - Отклонения от ТЗ: нет.
 - OPEN QUESTION: нет новых.
+- CI: run 38981131551 на `028c4f3` — `check` и `database` зелёные (проверено по API до слияния).
+- Выкладка: fast-forward `master` → `028c4f3` → `dpl_3xzskRksYdAin71FCJWV3VF1M36B`. `/api/health`, `/ru/chat`, `/ru/campaigns` → 200; `GET /api/bot/conversation?campaign=` гостю → 200, `next: null`, нить не создаётся. Под входом с реальным брифом на сайте не проходилось.
