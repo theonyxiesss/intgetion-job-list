@@ -19,8 +19,9 @@ export async function handleUgcTelegramStart(
   token: string,
   raw: unknown,
 ): Promise<boolean> {
-  const message = (raw as { message?: { text?: string; chat?: { id?: number } } })
-    .message;
+  const message = (
+    raw as { message?: { text?: string; chat?: { id?: number } } }
+  ).message;
   if (!message?.text || typeof message.chat?.id !== "number") return false;
   const payload = startPayload(message.text);
   if (payload === null || startPayloadRoute(payload) !== "ugc") return false;

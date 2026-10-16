@@ -37,8 +37,9 @@ export default async function ChatPage({
     try {
       const resolved =
         campaignId ??
-        (await listMyInvites(user.id)).find((item) => item.inviteId === inviteId)
-          ?.campaignId;
+        (await listMyInvites(user.id)).find(
+          (item) => item.inviteId === inviteId,
+        )?.campaignId;
       if (resolved) {
         ugcProduct = (await readCampaign(user.id, resolved)).brief.productName;
       }

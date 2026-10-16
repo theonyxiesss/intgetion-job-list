@@ -118,6 +118,13 @@ export function assertSubmissionUrl(url: string): void {
   }
 }
 
+/** A count the creator stated. The host is not fetched (phase B). */
+export function assertReportedViews(views: number): void {
+  if (!Number.isInteger(views) || views < 0 || views > L.reportedViewsMax) {
+    throw validationError([{ path: "views", problem: "range" }]);
+  }
+}
+
 export function profileReady(input: {
   displayName: string;
   languages: readonly string[];

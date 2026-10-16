@@ -3704,7 +3704,9 @@
       "paused": "Profil pausieren",
       "videoUrl": "Video-Link",
       "hook": "Hook",
-      "changeNote": "Was sich ändern soll"
+      "changeNote": "Was sich ändern soll",
+      "liveUrl": "Link zum Live-Beitrag",
+      "views": "Aufrufe, die Sie sehen"
     },
     "goals": {
       "awareness": "Bekanntheit",
@@ -3729,6 +3731,17 @@
       "organic": "Organisch",
       "ads": "Anzeigen",
       "whitelist": "Whitelist"
-    }
+    },
+    "winners": "Gewinner",
+    "winnersEmpty": "Noch kein Gewinner.",
+    "winnersIntro": "Links, die das Unternehmen für Werbung markiert hat. Die Aufrufe hat die Person gemeldet. Wir haben sie nicht geprüft.",
+    "winnersNoCount": "Die Person hat noch keinen Live-Beitrag und keine Aufrufe gemeldet.",
+    "reportedViews": "Gemeldete Aufrufe: {count}",
+    "reportLive": "Live-Beitrag speichern",
+    "owedNote": "Erfasst {amount}. Nichts wurde abgebucht und nichts wurde gesendet.",
+    "paidNote": "Ein Admin hat dies als ausgezahlt markiert. Die Plattform hat das Geld nicht gesendet.",
+    "markPaid": "Als ausgezahlt markieren",
+    "payoutsTitle": "Erfasste Belohnungen",
+    "payoutsEmpty": "Keine erfasste Belohnung wartet auf eine Markierung."
   }
 }

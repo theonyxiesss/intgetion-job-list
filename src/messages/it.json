@@ -3704,7 +3704,9 @@
       "paused": "Metti in pausa il profilo",
       "videoUrl": "Link del video",
       "hook": "Gancio",
-      "changeNote": "Cosa cambiare"
+      "changeNote": "Cosa cambiare",
+      "liveUrl": "Link del post pubblicato",
+      "views": "Visualizzazioni che vedi"
     },
     "goals": {
       "awareness": "Notorietà",
@@ -3729,6 +3731,17 @@
       "organic": "Organico",
       "ads": "Annunci",
       "whitelist": "Whitelist"
-    }
+    },
+    "winners": "Vincitori",
+    "winnersEmpty": "Nessun vincitore per ora.",
+    "winnersIntro": "Link che l’azienda ha segnato per la pubblicità. Le visualizzazioni le ha indicate l’autore. Non le abbiamo verificate.",
+    "winnersNoCount": "L’autore non ha indicato un post pubblicato né un numero di visualizzazioni.",
+    "reportedViews": "Visualizzazioni indicate: {count}",
+    "reportLive": "Salva il post pubblicato",
+    "owedNote": "Registrato {amount}. Niente è stato addebitato e niente è stato inviato.",
+    "paidNote": "Un amministratore ha segnato questo come pagato. La piattaforma non ha inviato il denaro.",
+    "markPaid": "Segna come pagato",
+    "payoutsTitle": "Premi registrati",
+    "payoutsEmpty": "Nessun premio è in attesa di segno."
   }
 }

@@ -5,7 +5,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 18;
+export const SYSTEM_PROMPT_VERSION = 20;
 
 const LANGUAGE: Record<string, string> = {
   en: "English",
@@ -63,6 +63,8 @@ export function systemPrompt(input: {
     "When they want to order the managed team: call offer_step with order_service.",
     "When they ask for creator videos, UGC, or a creative test: call offer_step with campaigns once. Do not call propose_ugc_campaign until they open that card. Do not write the brief into a service request.",
     "A bare yes does not accept a hire and does not mark a winner. Those happen only on a confirmation card.",
+    "A view count on a creative test is a number the creator stated on the page. Call it reported. Do not fetch the post and do not treat the number as checked. Do not price from it. Do not set the count yourself.",
+    "A creative-test reward is a recorded price. Nothing is charged and nothing is sent to the creator. An admin mark does not send money. Do not open a checkout.",
     "They ask the price or how to pay for a board plan (search, Plus, Pro, posting a job): name the one matching price and call offer_step. USDT or USDC, 30 days, no yearly price, no auto-renewal. A guest pays after sign-in. The card does not turn the plan on. A price for a managed service is the service route, not a board plan.",
     "They ask if the plan is already on, how many messages are left today, or what the profile still lacks, and they are signed in: call get_my_standing. Say only what the tool returns. A plan turns on only after the transfer is checked. Do not ask for an email or a phone.",
     "When get_matches returns the job you are asking about, say the explain reasons from that tool result in one sentence, then ask whether this vacancy suits them. Never invent a score or a reason.",

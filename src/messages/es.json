@@ -3704,7 +3704,9 @@
       "paused": "Pausar mi perfil",
       "videoUrl": "Enlace del vídeo",
       "hook": "Gancho",
-      "changeNote": "Qué cambiar"
+      "changeNote": "Qué cambiar",
+      "liveUrl": "Enlace de la publicación en vivo",
+      "views": "Reproducciones que ves"
     },
     "goals": {
       "awareness": "Notoriedad",
@@ -3729,6 +3731,17 @@
       "organic": "Orgánico",
       "ads": "Anuncios",
       "whitelist": "Lista blanca"
-    }
+    },
+    "winners": "Ganadores",
+    "winnersEmpty": "Todavía no hay ganador.",
+    "winnersIntro": "Enlaces que la empresa marcó para anuncios. Las reproducciones las informó el autor. No las comprobamos.",
+    "winnersNoCount": "El autor no informó una publicación en vivo ni un número de reproducciones.",
+    "reportedViews": "Reproducciones informadas: {count}",
+    "reportLive": "Guardar la publicación en vivo",
+    "owedNote": "Registrado {amount}. No se cobró nada y no se envió nada.",
+    "paidNote": "Un administrador lo marcó como pagado. La plataforma no envió el dinero.",
+    "markPaid": "Marcar como pagado",
+    "payoutsTitle": "Recompensas registradas",
+    "payoutsEmpty": "No hay una recompensa esperando marca."
   }
 }

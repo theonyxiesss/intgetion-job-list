@@ -3704,7 +3704,9 @@
       "paused": "Mettre mon profil en pause",
       "videoUrl": "Lien de la vidéo",
       "hook": "Accroche",
-      "changeNote": "Quoi changer"
+      "changeNote": "Quoi changer",
+      "liveUrl": "Lien de la publication en ligne",
+      "views": "Vues que vous voyez"
     },
     "goals": {
       "awareness": "Notoriété",
@@ -3729,6 +3731,17 @@
       "organic": "Organique",
       "ads": "Publicités",
       "whitelist": "Liste blanche"
-    }
+    },
+    "winners": "Gagnants",
+    "winnersEmpty": "Pas encore de gagnant.",
+    "winnersIntro": "Liens que l’entreprise a marqués pour la publicité. Les vues sont celles qu’a indiquées l’auteur. Nous ne les avons pas vérifiées.",
+    "winnersNoCount": "L’auteur n’a pas indiqué de publication en ligne ni de nombre de vues.",
+    "reportedViews": "Vues indiquées : {count}",
+    "reportLive": "Enregistrer la publication en ligne",
+    "owedNote": "Enregistré {amount}. Rien n’a été débité et rien n’a été envoyé.",
+    "paidNote": "Un administrateur a marqué ceci comme payé. La plateforme n’a pas envoyé l’argent.",
+    "markPaid": "Marquer comme payé",
+    "payoutsTitle": "Récompenses enregistrées",
+    "payoutsEmpty": "Aucune récompense n’attend de marque."
   }
 }

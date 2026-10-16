@@ -336,7 +336,10 @@ export function Chat({
           });
         } else if (data.type === "tool_result" && data.kind === "ugc_join") {
           const payload = (data.data as { payload?: unknown } | null)?.payload;
-          if (typeof payload === "string" && /^ugc_[A-Za-z0-9_-]+$/.test(payload)) {
+          if (
+            typeof payload === "string" &&
+            /^ugc_[A-Za-z0-9_-]+$/.test(payload)
+          ) {
             setThinking(false);
             add({ key: nextKey(), kind: "ugc_join", payload });
           }

@@ -41,7 +41,9 @@ export default async function NewCampaignPage({
         {companies.length === 0 ? (
           <p>{t("needCompany")}</p>
         ) : (
-          <BriefForm companies={companies.map((row) => ({ id: row.id, name: row.name }))} />
+          <BriefForm
+            companies={companies.map((row) => ({ id: row.id, name: row.name }))}
+          />
         )}
       </Container>
     </main>

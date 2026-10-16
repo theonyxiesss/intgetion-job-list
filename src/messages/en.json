@@ -4210,7 +4210,9 @@
       "paused": "Pause my profile",
       "videoUrl": "Video link",
       "hook": "Hook",
-      "changeNote": "What to change"
+      "changeNote": "What to change",
+      "liveUrl": "Live post link",
+      "views": "Views you saw"
     },
     "goals": {
       "awareness": "Awareness",
@@ -4235,6 +4237,17 @@
       "organic": "Organic",
       "ads": "Ads",
       "whitelist": "Whitelist"
-    }
+    },
+    "winners": "Winners",
+    "winnersEmpty": "No winner yet.",
+    "winnersIntro": "Links the company marked for ads. View counts are what the creator reported. We did not check them.",
+    "winnersNoCount": "The creator has not reported a live post or a view count.",
+    "reportedViews": "Reported views: {count}",
+    "reportLive": "Save the live post",
+    "owedNote": "Recorded {amount}. Nothing was charged and nothing was sent.",
+    "paidNote": "An admin marked this paid. The platform did not send the money.",
+    "markPaid": "Mark paid",
+    "payoutsTitle": "Recorded rewards",
+    "payoutsEmpty": "No recorded reward is waiting."
   }
 }

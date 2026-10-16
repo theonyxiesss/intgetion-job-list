@@ -11,9 +11,11 @@ import {
   decideSubmission,
   declineInvite,
   issueJoinLink,
+  markPayoutPaid,
   offerHire,
   redeemJoinToken,
   remindInvite,
+  reportLivePost,
   requestChanges,
   saveCreatorProfile,
   submitVideo,
@@ -76,10 +78,17 @@ const body = z.discriminatedUnion("action", [
     inviteId: z.uuid(),
     to: z.enum(["accepted", "rejected", "winner"]),
   }),
+  z.object({
+    action: z.literal("report"),
+    inviteId: z.uuid(),
+    liveUrl: z.string().max(500),
+    views: z.number().int().min(0).max(2_000_000_000),
+  }),
   z.object({ action: z.literal("remind"), inviteId: z.uuid() }),
   z.object({ action: z.literal("close"), campaignId: z.uuid() }),
   z.object({ action: z.literal("join"), campaignId: z.uuid() }),
   z.object({ action: z.literal("redeem"), payload: z.string().max(64) }),
+  z.object({ action: z.literal("markPaid"), payoutId: z.uuid() }),
   z.object({
     action: z.literal("moderate"),
     campaignId: z.uuid(),
@@ -134,6 +143,11 @@ export async function POST(request: Request) {
         await decideSubmission(id, input.inviteId, input.to),
       );
     }
+    if (input.action === "report") {
+      return Response.json(
+        await reportLivePost(id, input.inviteId, input.liveUrl, input.views),
+      );
+    }
     if (input.action === "remind") {
       return Response.json(await remindInvite(id, input.inviteId));
     }
@@ -145,6 +159,15 @@ export async function POST(request: Request) {
     }
     if (input.action === "redeem") {
       return Response.json(await redeemJoinToken(id, input.payload));
+    }
+    if (input.action === "markPaid") {
+      return Response.json(
+        await markPayoutPaid({
+          adminId: id,
+          isAdmin: user.platformRole === "admin",
+          payoutId: input.payoutId,
+        }),
+      );
     }
     return Response.json(
       await decideCampaign({
