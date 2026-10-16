@@ -1,12 +1,23 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { LoginForm } from "@/components/auth/login-form";
-import { RegisterForm } from "@/components/auth/register-form";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Link } from "@/i18n/navigation";
+
+// The forms bring zod and react-hook-form (~100 KB gzip). The header is on
+// every page, so they load on first hover or click, not with the page (LCP).
+const loadLogin = () => import("@/components/auth/login-form");
+const loadRegister = () => import("@/components/auth/register-form");
+const LoginForm = dynamic(() => loadLogin().then((m) => m.LoginForm));
+const RegisterForm = dynamic(() => loadRegister().then((m) => m.RegisterForm));
+
+function preloadForms() {
+  void loadLogin();
+  void loadRegister();
+}
 
 /**
  * Guest sign-in for the header. The dialog is mounted only while open so
@@ -25,6 +36,8 @@ export function HeaderAuth({ social }: { social: ReactNode }) {
         variant="secondary"
         className="min-h-9! px-4! text-[14px]!"
         type="button"
+        onPointerEnter={preloadForms}
+        onFocus={preloadForms}
         onClick={() => {
           setMode("login");
           setOpen(true);
