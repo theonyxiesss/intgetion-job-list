@@ -72,7 +72,9 @@ export default async function EditFreelanceServicePage({
     description: service.description,
     buyerNeeds: service.buyerNeeds,
     languages: service.languages.join(", "),
-    skills: service.skillSlugs.map((slug) => skills.get(slug) ?? slug).join(", "),
+    skills: service.skillSlugs
+      .map((slug) => skills.get(slug) ?? slug)
+      .join(", "),
     links: service.links.join("\n"),
     packages,
   };
@@ -83,7 +85,11 @@ export default async function EditFreelanceServicePage({
       <Container narrow className="flex flex-col gap-8">
         <PageHeader
           title={t("editTitle")}
-          intro={service.status === "published" || service.status === "paused" ? t("editLiveNote") : t("formIntro")}
+          intro={
+            service.status === "published" || service.status === "paused"
+              ? t("editLiveNote")
+              : t("formIntro")
+          }
         />
         <ServiceForm copy={copy} initial={initial} serviceId={service.id} />
       </Container>

@@ -2,7 +2,8 @@ import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "./cn";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "plan";
+export type ButtonVariant =
+  "primary" | "secondary" | "ghost" | "danger" | "plan";
 export type ButtonSize = "md" | "lg" | "icon";
 
 /** Pills in Geist, sentence case (D428). */

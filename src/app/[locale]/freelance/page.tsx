@@ -97,10 +97,16 @@ export default async function FreelancePage({
           intro={t("subtitle")}
           actions={
             <div className="flex flex-wrap gap-2">
-              <Link href="/freelance/orders" className={buttonClass("secondary")}>
+              <Link
+                href="/freelance/orders"
+                className={buttonClass("secondary")}
+              >
                 {t("myOrders")}
               </Link>
-              <Link href="/profile/freelance" className={buttonClass("secondary")}>
+              <Link
+                href="/profile/freelance"
+                className={buttonClass("secondary")}
+              >
                 {t("sellerCabinet")}
               </Link>
             </div>

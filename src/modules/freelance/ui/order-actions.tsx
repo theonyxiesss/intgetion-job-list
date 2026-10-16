@@ -33,10 +33,13 @@ export function OrderActions({
   async function move(to: FreelanceOrderStatus) {
     setBusy(to);
     setError(null);
-    const result = await callApi(`/api/freelance/orders/${orderId}/transition`, {
-      to,
-      ...(to === "delivered" ? { deliveryUrl: url } : {}),
-    });
+    const result = await callApi(
+      `/api/freelance/orders/${orderId}/transition`,
+      {
+        to,
+        ...(to === "delivered" ? { deliveryUrl: url } : {}),
+      },
+    );
     setBusy(null);
     if (!result.ok) {
       setError(errorText(copy, result.code));
@@ -70,7 +73,13 @@ export function OrderActions({
         {next.map((to) => (
           <Button
             key={to}
-            variant={DANGER.has(to) ? "danger" : to === next[0] ? "primary" : "secondary"}
+            variant={
+              DANGER.has(to)
+                ? "danger"
+                : to === next[0]
+                  ? "primary"
+                  : "secondary"
+            }
             loading={busy === to}
             disabled={busy !== null && busy !== to}
             onClick={() => move(to)}
@@ -123,7 +132,10 @@ export function ReviewForm({
     <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
       <h2 className="t-h3">{copy.reviewTitle}</h2>
       <Field label={copy.rating ?? ""}>
-        <Select value={rating} onChange={(event) => setRating(event.target.value)}>
+        <Select
+          value={rating}
+          onChange={(event) => setRating(event.target.value)}
+        >
           {["5", "4", "3", "2", "1"].map((value) => (
             <option key={value} value={value}>
               {`${value}/5`}

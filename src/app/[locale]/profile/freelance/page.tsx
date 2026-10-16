@@ -56,7 +56,9 @@ export default async function FreelanceCabinetPage({
   const seller = profile ? await getSeller(user.id) : null;
   const services = seller ? await listOwnServices(user.id) : [];
   const incoming = seller
-    ? (await listOrders(user.id, "seller")).filter((order) => order.status === "sent")
+    ? (await listOrders(user.id, "seller")).filter(
+        (order) => order.status === "sent",
+      )
     : [];
   const copy = await freelanceClientCopy(locale);
   const active = services.filter((service) =>
@@ -88,8 +90,13 @@ export default async function FreelanceCabinetPage({
         ) : (
           <>
             <section className="flex flex-col gap-3 rounded-lg border border-line p-4 md:p-6">
-              <SellerSwitch accepting={seller?.accepting ?? false} copy={copy} />
-              <p className="t-body-s text-fg-muted">{t("cabinet.acceptingNote")}</p>
+              <SellerSwitch
+                accepting={seller?.accepting ?? false}
+                copy={copy}
+              />
+              <p className="t-body-s text-fg-muted">
+                {t("cabinet.acceptingNote")}
+              </p>
             </section>
             {seller ? (
               <>
@@ -100,7 +107,10 @@ export default async function FreelanceCabinetPage({
                   ) : (
                     <ul className="flex flex-col divide-y divide-line rounded-lg border border-line">
                       {incoming.map((order) => (
-                        <li key={order.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
+                        <li
+                          key={order.id}
+                          className="flex flex-wrap items-center justify-between gap-3 p-4"
+                        >
                           <div className="flex min-w-0 flex-col gap-1">
                             <p className="font-medium">{order.serviceTitle}</p>
                             <p className="t-data text-fg-muted">
@@ -145,7 +155,10 @@ export default async function FreelanceCabinetPage({
                             </Badge>
                             <p className="t-data text-fg-muted">
                               {t("from", {
-                                price: formatUsd(service.packages[0]?.priceMinor ?? BigInt(0), locale),
+                                price: formatUsd(
+                                  service.packages[0]?.priceMinor ?? BigInt(0),
+                                  locale,
+                                ),
                               })}
                             </p>
                           </div>
@@ -161,13 +174,18 @@ export default async function FreelanceCabinetPage({
                               service.title
                             )}
                           </p>
-                          {service.status === "rejected" && service.moderationNote ? (
+                          {service.status === "rejected" &&
+                          service.moderationNote ? (
                             <p className="t-body-s text-danger">
-                              {t("cabinet.rejectedNote", { note: service.moderationNote })}
+                              {t("cabinet.rejectedNote", {
+                                note: service.moderationNote,
+                              })}
                             </p>
                           ) : null}
                           {service.status === "pending" ? (
-                            <p className="t-body-s text-fg-muted">{t("cabinet.pendingNote")}</p>
+                            <p className="t-body-s text-fg-muted">
+                              {t("cabinet.pendingNote")}
+                            </p>
                           ) : null}
                           <div className="flex flex-wrap items-start gap-2">
                             <ServiceActions

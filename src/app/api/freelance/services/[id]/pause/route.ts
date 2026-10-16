@@ -12,7 +12,9 @@ export async function POST(
     const { id } = await context.params;
     const input = await readJson(request, pauseInput);
     const service = await setServicePaused(user.id, id, input.paused);
-    return Response.json({ service: { id: service.id, status: service.status } });
+    return Response.json({
+      service: { id: service.id, status: service.status },
+    });
   } catch (error) {
     return toErrorResponse(error);
   }

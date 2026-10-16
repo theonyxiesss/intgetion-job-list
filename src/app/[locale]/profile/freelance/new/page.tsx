@@ -3,10 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Container, PageHeader } from "@/components/ui/container";
 import { redirect } from "@/i18n/navigation";
 import { getSeller } from "@/modules/freelance/service";
-import {
-  EMPTY_DRAFT,
-  ServiceForm,
-} from "@/modules/freelance/ui/service-form";
+import { EMPTY_DRAFT, ServiceForm } from "@/modules/freelance/ui/service-form";
 import {
   freelanceClientCopy,
   userOrLogin,

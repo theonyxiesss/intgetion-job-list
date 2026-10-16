@@ -11,7 +11,9 @@ export async function POST(
     const user = await requireUser();
     const { id } = await context.params;
     const service = await submitService(user.id, id);
-    return Response.json({ service: { id: service.id, status: service.status } });
+    return Response.json({
+      service: { id: service.id, status: service.status },
+    });
   } catch (error) {
     return toErrorResponse(error);
   }

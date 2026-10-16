@@ -72,7 +72,10 @@ export default async function AdminFreelanceServicePage({
             <li key={pkg.tier} className="rounded-lg border border-line p-4">
               <p className="t-data">
                 {pkg.tier} · {formatUsd(pkg.priceMinor, locale)} ·{" "}
-                {t("terms", { days: pkg.deliveryDays, revisions: pkg.revisions })}
+                {t("terms", {
+                  days: pkg.deliveryDays,
+                  revisions: pkg.revisions,
+                })}
               </p>
               <ul className="t-body-s mt-2 list-disc pl-5">
                 {pkg.includes.map((item) => (

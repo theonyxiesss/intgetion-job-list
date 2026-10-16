@@ -55,17 +55,29 @@ export default async function FreelanceOrdersPage({
             },
             {
               label: t("orders.selling"),
-              href: { pathname: "/freelance/orders", query: { side: "seller" } },
+              href: {
+                pathname: "/freelance/orders",
+                query: { side: "seller" },
+              },
               active: side === "seller",
             },
           ]}
         />
         {orders.length === 0 ? (
           <EmptyState
-            title={side === "buyer" ? t("orders.emptyBuying") : t("orders.emptySelling")}
+            title={
+              side === "buyer"
+                ? t("orders.emptyBuying")
+                : t("orders.emptySelling")
+            }
             action={
-              <Link href={side === "buyer" ? "/freelance" : "/profile/freelance"} className="underline underline-offset-4">
-                {side === "buyer" ? t("orders.toCatalog") : t("orders.toCabinet")}
+              <Link
+                href={side === "buyer" ? "/freelance" : "/profile/freelance"}
+                className="underline underline-offset-4"
+              >
+                {side === "buyer"
+                  ? t("orders.toCatalog")
+                  : t("orders.toCabinet")}
               </Link>
             }
           />
@@ -81,13 +93,24 @@ export default async function FreelanceOrdersPage({
                   <span className="flex min-w-0 flex-col gap-1">
                     <span className="font-medium">{order.serviceTitle}</span>
                     <span className="t-data text-fg-muted">
-                      {t(`tiers.${order.packageTier}`)} · {formatUsd(order.priceMinor, locale)} ·{" "}
+                      {t(`tiers.${order.packageTier}`)} ·{" "}
+                      {formatUsd(order.priceMinor, locale)} ·{" "}
                       <time dateTime={order.createdAt.toISOString()}>
                         {dates.format(order.createdAt)}
                       </time>
                     </span>
                   </span>
-                  <Badge tone={WAITING.has(order.status) ? (order.next.length > 0 ? "new" : "pending") : order.status === "completed" ? "success" : "neutral"}>
+                  <Badge
+                    tone={
+                      WAITING.has(order.status)
+                        ? order.next.length > 0
+                          ? "new"
+                          : "pending"
+                        : order.status === "completed"
+                          ? "success"
+                          : "neutral"
+                    }
+                  >
                     {t(`orders.status.${order.status}`)}
                   </Badge>
                 </Link>

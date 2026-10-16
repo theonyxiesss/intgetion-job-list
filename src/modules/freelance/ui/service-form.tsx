@@ -82,7 +82,11 @@ export function ServiceForm({
 
   const set = (key: keyof ServiceDraft, value: string) =>
     setDraft((current) => ({ ...current, [key]: value }));
-  const setPackage = (tier: Tier, key: keyof PackageDraft, value: string | boolean) =>
+  const setPackage = (
+    tier: Tier,
+    key: keyof PackageDraft,
+    value: string | boolean,
+  ) =>
     setDraft((current) => ({
       ...current,
       packages: {
@@ -111,7 +115,9 @@ export function ServiceForm({
       links: lines(draft.links),
       packages: tiers.map((tier) => ({
         tier,
-        price: draft.packages[tier].price.replace(",", ".").replace(/[$\s]/g, ""),
+        price: draft.packages[tier].price
+          .replace(",", ".")
+          .replace(/[$\s]/g, ""),
         deliveryDays: Number(draft.packages[tier].days),
         revisions: Number(draft.packages[tier].revisions),
         includes: lines(draft.packages[tier].includes),
@@ -131,7 +137,8 @@ export function ServiceForm({
         }
       } else if (details && typeof details === "object") {
         const fields = (details as { fields?: unknown }).fields;
-        if (Array.isArray(fields)) for (const field of fields) paths.add(String(field));
+        if (Array.isArray(fields))
+          for (const field of fields) paths.add(String(field));
       }
       setBad(paths);
       setError(errorText(copy, result.code));
@@ -144,7 +151,12 @@ export function ServiceForm({
   return (
     <form onSubmit={submit} className="flex flex-col gap-8" noValidate>
       <FieldGroup legend={copy.serviceLegend ?? ""}>
-        <Field label={copy.title ?? ""} help={copy.titleHint} error={flag("title")} required>
+        <Field
+          label={copy.title ?? ""}
+          help={copy.titleHint}
+          error={flag("title")}
+          required
+        >
           <Input
             value={draft.title}
             maxLength={80}
@@ -153,7 +165,10 @@ export function ServiceForm({
           />
         </Field>
         <Field label={copy.category ?? ""} required>
-          <Select value={draft.category} onChange={(event) => set("category", event.target.value)}>
+          <Select
+            value={draft.category}
+            onChange={(event) => set("category", event.target.value)}
+          >
             {FREELANCE_CATEGORIES.map((category) => (
               <option key={category} value={category}>
                 {copy[`category_${category}`] ?? category}
@@ -175,7 +190,11 @@ export function ServiceForm({
             onChange={(event) => set("description", event.target.value)}
           />
         </Field>
-        <Field label={copy.buyerNeeds ?? ""} help={copy.buyerNeedsHint} error={flag("buyerNeeds")}>
+        <Field
+          label={copy.buyerNeeds ?? ""}
+          help={copy.buyerNeedsHint}
+          error={flag("buyerNeeds")}
+        >
           <Textarea
             value={draft.buyerNeeds}
             rows={3}
@@ -195,10 +214,21 @@ export function ServiceForm({
             onChange={(event) => set("languages", event.target.value)}
           />
         </Field>
-        <Field label={copy.skills ?? ""} help={copy.skillsHint} error={flag("skills") ?? flag("skillSlugs")}>
-          <Input value={draft.skills} onChange={(event) => set("skills", event.target.value)} />
+        <Field
+          label={copy.skills ?? ""}
+          help={copy.skillsHint}
+          error={flag("skills") ?? flag("skillSlugs")}
+        >
+          <Input
+            value={draft.skills}
+            onChange={(event) => set("skills", event.target.value)}
+          />
         </Field>
-        <Field label={copy.links ?? ""} help={copy.linksHint} error={flag("links")}>
+        <Field
+          label={copy.links ?? ""}
+          help={copy.linksHint}
+          error={flag("links")}
+        >
           <Textarea
             value={draft.links}
             rows={3}
@@ -211,54 +241,85 @@ export function ServiceForm({
         {FREELANCE_TIERS.map((tier, index) => {
           const pkg = draft.packages[tier];
           const position = FREELANCE_TIERS.filter(
-            (other, otherIndex) => otherIndex < index && draft.packages[other].on,
+            (other, otherIndex) =>
+              otherIndex < index && draft.packages[other].on,
           ).length;
           const at = `packages.${position}`;
           return (
-            <div key={tier} className="flex flex-col gap-4 rounded-lg border border-line p-4">
+            <div
+              key={tier}
+              className="flex flex-col gap-4 rounded-lg border border-line p-4"
+            >
               {tier === "basic" ? (
                 <h3 className="t-h3">{copy[`tier_${tier}`]}</h3>
               ) : (
                 <Choice
                   label={copy[`tier_${tier}`] ?? tier}
                   checked={pkg.on}
-                  onChange={(event) => setPackage(tier, "on", event.target.checked)}
+                  onChange={(event) =>
+                    setPackage(tier, "on", event.target.checked)
+                  }
                 />
               )}
               {pkg.on ? (
                 <>
                   <div className="grid gap-4 sm:grid-cols-3">
-                    <Field label={copy.price ?? ""} error={pkg.on ? flag(`${at}.price`) : null} required>
+                    <Field
+                      label={copy.price ?? ""}
+                      error={pkg.on ? flag(`${at}.price`) : null}
+                      required
+                    >
                       <Input
                         value={pkg.price}
                         inputMode="decimal"
                         required
-                        onChange={(event) => setPackage(tier, "price", event.target.value)}
+                        onChange={(event) =>
+                          setPackage(tier, "price", event.target.value)
+                        }
                       />
                     </Field>
-                    <Field label={copy.days ?? ""} error={flag(`${at}.deliveryDays`)} required>
+                    <Field
+                      label={copy.days ?? ""}
+                      error={flag(`${at}.deliveryDays`)}
+                      required
+                    >
                       <Input
                         value={pkg.days}
                         inputMode="numeric"
                         required
-                        onChange={(event) => setPackage(tier, "days", event.target.value)}
+                        onChange={(event) =>
+                          setPackage(tier, "days", event.target.value)
+                        }
                       />
                     </Field>
-                    <Field label={copy.revisions ?? ""} error={flag(`${at}.revisions`)} required>
+                    <Field
+                      label={copy.revisions ?? ""}
+                      error={flag(`${at}.revisions`)}
+                      required
+                    >
                       <Input
                         value={pkg.revisions}
                         inputMode="numeric"
                         required
-                        onChange={(event) => setPackage(tier, "revisions", event.target.value)}
+                        onChange={(event) =>
+                          setPackage(tier, "revisions", event.target.value)
+                        }
                       />
                     </Field>
                   </div>
-                  <Field label={copy.includes ?? ""} help={copy.includesHint} error={flag(`${at}.includes`)} required>
+                  <Field
+                    label={copy.includes ?? ""}
+                    help={copy.includesHint}
+                    error={flag(`${at}.includes`)}
+                    required
+                  >
                     <Textarea
                       value={pkg.includes}
                       rows={3}
                       required
-                      onChange={(event) => setPackage(tier, "includes", event.target.value)}
+                      onChange={(event) =>
+                        setPackage(tier, "includes", event.target.value)
+                      }
                     />
                   </Field>
                 </>

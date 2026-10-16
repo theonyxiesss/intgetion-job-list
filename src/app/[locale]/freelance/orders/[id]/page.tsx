@@ -61,7 +61,11 @@ export default async function FreelanceOrderPage({
     <main className="py-10 md:py-16">
       <Container narrow className="flex flex-col gap-8">
         <Link
-          href={order.side === "buyer" ? "/freelance/orders" : "/freelance/orders?side=seller"}
+          href={
+            order.side === "buyer"
+              ? "/freelance/orders"
+              : "/freelance/orders?side=seller"
+          }
           {...navBack}
           className="t-label inline-flex min-h-11 items-center self-start text-fg-muted"
         >
@@ -73,25 +77,44 @@ export default async function FreelanceOrderPage({
               {t(`orders.status.${order.status}`)}
             </Badge>
             <p className="t-label text-fg-muted">
-              {order.side === "buyer" ? t("orders.youBuy") : t("orders.youSell")}
+              {order.side === "buyer"
+                ? t("orders.youBuy")
+                : t("orders.youSell")}
             </p>
           </div>
           <h1 className="t-h2">
             {order.serviceSlug ? (
-              <Link href={`/freelance/${order.serviceSlug}`} className="underline-offset-4 hover:underline">
+              <Link
+                href={`/freelance/${order.serviceSlug}`}
+                className="underline-offset-4 hover:underline"
+              >
                 {order.serviceTitle}
               </Link>
             ) : (
               order.serviceTitle
             )}
           </h1>
-          <p className="text-fg-muted">{t(`orders.hint.${order.side}.${order.status}`)}</p>
+          <p className="text-fg-muted">
+            {t(`orders.hint.${order.side}.${order.status}`)}
+          </p>
         </header>
         <StatRow>
-          <Stat label={t("orders.package")} value={t(`tiers.${order.packageTier}`)} />
-          <Stat label={t("priceLabel")} value={formatUsd(order.priceMinor, locale)} />
-          <Stat label={t("termLabel")} value={t("days", { count: order.deliveryDays })} />
-          <Stat label={t("orders.revisionsLeft")} value={String(order.revisionsLeft)} />
+          <Stat
+            label={t("orders.package")}
+            value={t(`tiers.${order.packageTier}`)}
+          />
+          <Stat
+            label={t("priceLabel")}
+            value={formatUsd(order.priceMinor, locale)}
+          />
+          <Stat
+            label={t("termLabel")}
+            value={t("days", { count: order.deliveryDays })}
+          />
+          <Stat
+            label={t("orders.revisionsLeft")}
+            value={String(order.revisionsLeft)}
+          />
         </StatRow>
         <section className="flex flex-col gap-2">
           <h2 className="t-h3">{t("orders.task")}</h2>
@@ -125,21 +148,30 @@ export default async function FreelanceOrderPage({
             <dl className="grid gap-2 sm:grid-cols-[160px_minmax(0,1fr)]">
               {contact.name ? (
                 <>
-                  <dt className="t-label text-fg-muted">{t("orders.contactName")}</dt>
+                  <dt className="t-label text-fg-muted">
+                    {t("orders.contactName")}
+                  </dt>
                   <dd>{contact.name}</dd>
                 </>
               ) : null}
               {contact.company ? (
                 <>
-                  <dt className="t-label text-fg-muted">{t("orders.contactCompany")}</dt>
+                  <dt className="t-label text-fg-muted">
+                    {t("orders.contactCompany")}
+                  </dt>
                   <dd>{contact.company}</dd>
                 </>
               ) : null}
               {contact.email ? (
                 <>
-                  <dt className="t-label text-fg-muted">{t("orders.contactEmail")}</dt>
+                  <dt className="t-label text-fg-muted">
+                    {t("orders.contactEmail")}
+                  </dt>
                   <dd className="t-data break-all">
-                    <a href={`mailto:${contact.email}`} className="underline underline-offset-4">
+                    <a
+                      href={`mailto:${contact.email}`}
+                      className="underline underline-offset-4"
+                    >
                       {contact.email}
                     </a>
                   </dd>
@@ -147,19 +179,25 @@ export default async function FreelanceOrderPage({
               ) : null}
               {contact.telegram ? (
                 <>
-                  <dt className="t-label text-fg-muted">{t("orders.contactTelegram")}</dt>
+                  <dt className="t-label text-fg-muted">
+                    {t("orders.contactTelegram")}
+                  </dt>
                   <dd className="t-data break-all">{contact.telegram}</dd>
                 </>
               ) : null}
               {contact.phone ? (
                 <>
-                  <dt className="t-label text-fg-muted">{t("orders.contactPhone")}</dt>
+                  <dt className="t-label text-fg-muted">
+                    {t("orders.contactPhone")}
+                  </dt>
                   <dd className="t-data">{contact.phone}</dd>
                 </>
               ) : null}
               {contact.linkedinUrl ? (
                 <>
-                  <dt className="t-label text-fg-muted">{t("orders.contactLinkedin")}</dt>
+                  <dt className="t-label text-fg-muted">
+                    {t("orders.contactLinkedin")}
+                  </dt>
                   <dd className="t-data break-all">{contact.linkedinUrl}</dd>
                 </>
               ) : null}
@@ -187,7 +225,10 @@ export default async function FreelanceOrderPage({
           <ol className="flex flex-col gap-1">
             {order.history.map((row) => (
               <li key={row.id} className="t-body-s flex flex-wrap gap-2">
-                <time className="t-data text-fg-muted" dateTime={row.createdAt.toISOString()}>
+                <time
+                  className="t-data text-fg-muted"
+                  dateTime={row.createdAt.toISOString()}
+                >
                   {dates.format(row.createdAt)}
                 </time>
                 <span>{t(`orders.status.${row.toStatus}`)}</span>

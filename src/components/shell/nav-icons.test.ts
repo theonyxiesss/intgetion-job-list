@@ -102,13 +102,7 @@ describe("phone menu order", () => {
     ]);
     expect(
       orderPhoneNav(
-        menu([
-          "/jobs",
-          "/chat",
-          "/post-job",
-          "/for-employers",
-          "/login",
-        ]),
+        menu(["/jobs", "/chat", "/post-job", "/for-employers", "/login"]),
         "guest",
       ).map((item) => item.href),
     ).not.toContain("/services");

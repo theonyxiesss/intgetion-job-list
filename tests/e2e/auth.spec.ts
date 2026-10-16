@@ -21,8 +21,6 @@ async function registerWithPassword(page: Page, email: string, pw = password) {
   await page.goto("/en/register");
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.locator('input[type="password"]').fill(pw);
-  // D331: the account type is required; it does not change rights.
-  await page.getByRole("radio", { name: /looking for work/ }).check();
   await page.getByLabel("I accept the terms").check();
   await page.getByRole("button", { name: "Create account" }).click();
   await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
@@ -43,7 +41,7 @@ async function expectSignedIn(page: Page) {
 async function signOut(page: Page) {
   await signOutFromMenu(page);
   await expect(
-    page.getByRole("navigation", { name: "Account" }).getByRole("link", {
+    page.getByRole("navigation", { name: "Account" }).getByRole("button", {
       name: "Sign in",
     }),
   ).toBeVisible();
@@ -111,8 +109,6 @@ test("magic link: register and sign in without a password", async ({
   await page.goto("/en/register");
   await page.getByRole("button", { name: "Email link" }).click();
   await page.getByLabel("Email", { exact: true }).fill(email);
-  // D331: the account type is required; it does not change rights.
-  await page.getByRole("radio", { name: /looking for work/ }).check();
   await page.getByLabel("I accept the terms").check();
   await page.getByRole("button", { name: "Create account" }).click();
   await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);

@@ -11,7 +11,9 @@ export async function POST(request: Request) {
     });
     const service = await createService(user.id, body);
     return Response.json(
-      { service: { id: service.id, slug: service.slug, status: service.status } },
+      {
+        service: { id: service.id, slug: service.slug, status: service.status },
+      },
       { status: 201 },
     );
   } catch (error) {

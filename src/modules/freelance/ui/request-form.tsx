@@ -62,7 +62,10 @@ export function RequestForm({
       <h2 className="t-h3">{copy.requestTitle}</h2>
       {tiers.length > 1 ? (
         <Field label={copy.package ?? ""}>
-          <Select value={tier} onChange={(event) => setTier(event.target.value)}>
+          <Select
+            value={tier}
+            onChange={(event) => setTier(event.target.value)}
+          >
             {tiers.map((item) => (
               <option key={item.tier} value={item.tier}>
                 {item.label}
@@ -94,7 +97,10 @@ export function RequestForm({
       </Field>
       {companies.length > 0 ? (
         <Field label={copy.from ?? ""}>
-          <Select value={from} onChange={(event) => setFrom(event.target.value)}>
+          <Select
+            value={from}
+            onChange={(event) => setFrom(event.target.value)}
+          >
             {companies.map((company) => (
               <option key={company.id} value={company.id}>
                 {company.name}

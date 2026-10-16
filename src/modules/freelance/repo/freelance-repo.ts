@@ -615,7 +615,13 @@ export async function setPendingInTx(
 export async function findServicesForModeration(
   ids: readonly string[],
 ): Promise<
-  { id: string; title: string; status: FreelanceServiceStatus; sellerId: string; slug: string }[]
+  {
+    id: string;
+    title: string;
+    status: FreelanceServiceStatus;
+    sellerId: string;
+    slug: string;
+  }[]
 > {
   if (ids.length === 0) return [];
   return getDb()
