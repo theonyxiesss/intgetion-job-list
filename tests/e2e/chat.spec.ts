@@ -37,6 +37,9 @@ test("chat composer grows a few lines, then scrolls inside", async ({
     await page.setViewportSize(viewport);
     await page.goto("/en/chat");
     const field = page.getByLabel("Write a message");
+    // On a phone, writing hides the header and the tab bar (D431, D468);
+    // the size is compared from that moment on.
+    await field.focus();
     const shellBefore = await page.locator(".chat-shell").boundingBox();
     const heightOf = async (value: string) => {
       await field.fill(value);

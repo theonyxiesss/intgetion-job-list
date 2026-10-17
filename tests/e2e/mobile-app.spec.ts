@@ -53,23 +53,27 @@ async function signUpCandidate(page: Page) {
   await expect(page).toHaveURL(/:\d+\/profile$/);
 }
 
-test("a candidate on a phone gets the tab bar; a guest does not", async ({
+test("everyone on a phone gets the tab bar with the main services (D468)", async ({
   page,
 }) => {
   test.setTimeout(120_000);
   await page.setViewportSize({ width: 360, height: 800 });
   await page.goto("/en/jobs");
-  await expect(
-    page.getByRole("navigation", { name: "Main sections" }),
-  ).toHaveCount(0);
+  const guestTabs = page.getByRole("navigation", { name: "Main sections" });
+  await expect(guestTabs).toBeVisible();
+  await expect(guestTabs.getByRole("link")).toHaveCount(4);
 
   await signUpCandidate(page);
   await page.goto("/en/jobs");
   const tabs = page.getByRole("navigation", { name: "Main sections" });
   await expect(tabs).toBeVisible();
-  // Jobs, applications, agent, profile; matches left the bar in D399.
+  // Jobs, freelance, agent, UGC videos, then More (D468).
   await expect(tabs.getByRole("link")).toHaveCount(4);
-  for (const link of await tabs.getByRole("link").all()) {
+  await expect(tabs.getByRole("button", { name: "More" })).toBeVisible();
+  for (const link of [
+    ...(await tabs.getByRole("link").all()),
+    tabs.getByRole("button", { name: "More" }),
+  ]) {
     const box = await link.boundingBox();
     expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
