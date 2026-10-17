@@ -2413,7 +2413,7 @@
 - Не проверено: ответы Spoki и карточка отклика под вошедшим аккаунтом на сайте; `pnpm eval:live` (нет ключа).
 - Отклонения от ТЗ: нет. OPEN QUESTION: нет новых.
 
-## [2026-10-17] — сообщения клиента только там, где они нужны (D476) — NOT DONE (локально; нужны «да» на коммит и push, затем прогон CI)
+## [2026-10-17] — сообщения клиента только там, где они нужны (D476) — DONE (CI зелёная; документ главной 62,9 → 49,2 КБ, медиана LCP та же — 2466 мс)
 
 - Задача: основатель — «выполни эту задачу здесь»: не слать `chat`/`admin` и другие пространства имён страниц на каждую страницу (запас LCP главной после D461 — 35 мс).
 - Сделано: `src/i18n/client-messages.ts` (`SHELL_NAMESPACES`, `pickMessages`); `src/components/shell/route-messages.tsx` (сервер) и `merge-messages.tsx` (клиент, сливает с оболочкой); `src/app/[locale]/layout.tsx` шлёт только оболочку; 17 страниц обёрнуты в `RouteMessages`: `/chat`, `/applications`, `/billing/crypto`, `/campaigns/[id]`, `/campaigns/new`, `/companies/[slug]`, `/creator`, `/creator/campaigns`, `/creator/join`, `/employer/company/verify`, `/jobs`, `/profile`, `/profile/edit`, `/saved-searches`, `/settings/account`, `/settings/email/confirm`, `/settings/privacy`. Тест `src/i18n/client-namespaces.test.ts`.
@@ -2421,8 +2421,9 @@
 - Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm build` → 0; `pnpm test` → 1 (1305 прошли, 1 пропущен, 1 упал: `src/content/legal/legal.test.ts` — `docs/content/legal-privacy.md` в этой рабочей папке с CRLF после `git pull`; файл не трогался, в CI на master тот же тест зелёный); новый тест отдельно → 3 из 3. До обёрток он перечислял ровно 28 пропусков на 17 страницах. prettier на изменённых файлах → 0.
 - Браузер (`next start`, гость): `/ru/chat` — чат с переводами, `/ru` — окно «Войти» с полями и кнопками, `/ru/jobs` — без ошибок next-intl; в логе сервера `MISSING_MESSAGE` 0. В консоли только «An unknown error occurred when fetching the script» (service worker в панели браузера, есть и на нетронутой `/pricing`). Страницы под входом (настройки, профиль, кабинет, касса) вживую не открывались: нет тестового входа; их покрывает e2e в CI.
 - Размер: блок сообщений в HTML главной 51,6 → 6,6 КБ, gzip 15,8 → 2,2 КБ.
-- Где работает: только локально.
-- Git: `git pull --ff-only` до `9db30db` перед работой (рабочая папка была чистой); правки не закоммичены, ветка `master`.
+- CI run 39066212170 (`f8a5b96`): `check` ✅, `database` ✅. e2e 85 прошли, 1 нестабильный — `auth.spec.ts:258` (агент помнит гостя, нестабилен и раньше); `MISSING_MESSAGE` в логе 0. Lighthouse главной 2631/2464/2466/2463/2469, медиана 2466 мс (было 2465); документ по сети 62,9 → 49,2 КБ — выше порога ~43,8 КБ, поэтому модель не дала целого RTT, как и ожидалось по D461. Каталог 3192, вакансия 2317 (бюджет 4000).
+- Где работает: CI на master; выкладка на сайт не делалась (о ней не просили).
+- Git: `git pull --ff-only` до `9db30db` перед работой; коммит `f8a5b96` в `master`, запушено.
 - Миграции: нет
 - Изменённые файлы: `src/i18n/client-messages.ts`, `src/i18n/client-namespaces.test.ts`, `src/components/shell/route-messages.tsx`, `src/components/shell/merge-messages.tsx`, `src/app/[locale]/layout.tsx`, 17 `page.tsx` (выше), D476, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `MISSION_LOG.md`
 - Отклонения от ТЗ: нет.
