@@ -2356,3 +2356,18 @@
 - CI: run 39022317463 на `18ee0f9` и run 39023500952 на `5046199` — зелёные (проверено по API до слияния).
 - Выкладка: fast-forward `master` → `5046199` → `dpl_DRked68yoU93AfHEHQrqXPRrXw1T` (READY). `/api/health`, `/ru`, `/ru/chat` → 200; `/ru/settings/privacy` гостю → 307 на вход; `GET /api/bot/memory` гостю → 401, `POST` без Origin → 403, с Origin → 401; политика `/privacy` и `/ru/privacy` содержит пункт о памяти. 390 px: футера нет на `/?tgb=1`, `/ru`, `/ru/jobs`, `/ru/freelance`, язык в меню «Ещё»; 1280 px — футер есть. Под вошедшим аккаунтом раздел «Память Spoki» и живой ответ Spoki на сайте не проверялись.
 - Следующая подфаза: 2 — переписка 24 часа (по команде основателя).
+
+## [2026-10-17] — Spoki как ассистент, подфаза 2: переписка 24 часа (D471) — DONE
+
+- Задача: основатель — «Делай подфазу 2»: чат не хранится, хранится память. Выборы кнопками: уже сохранённую переписку стереть сразу (отдельное «да» на удаление данных), «да» до сайта с кроном раз в час.
+- План (до кода): окно 24 ч в `bot-repo.listMessages`; в `privacy-repo.purgeExpired` стирать `content`/`tool_call` старше суток (строки со счётчиками расходов — до 180 дней, на них предохранитель и аномалии 12.5), удалять `bot_confirmations` старше суток; крон retention каждый час; экспорт без пустых; тексты (раздел памяти, политика 7 языков); интеграционный тест. Миграций нет.
+- Сделано: по плану. Срок — `src/config/retention.ts`.
+- Проверки (локально): `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1284 прошли, 1 пропущен); `pnpm eval` → 0; `pnpm build` → 0; `pnpm format:check` → 0; чистый Postgres 16: `db:migrate` + `db:verify` → 0, `pnpm test:integration` → 0 (160 прошли, 7 пропущены; новый `bot/chat-ttl.integration.test.ts`); мутация (снять окно в `listMessages`) → тест падает.
+- Миграции: нет.
+- Изменённые файлы: `src/config/retention.ts`, `src/modules/bot/repo/bot-repo.ts`, `src/modules/bot/chat-ttl.integration.test.ts`, `src/modules/privacy/{repo/privacy-repo.ts,service/privacy-service.ts}`, `vercel.json`, `src/messages/*.json` (7, `spokiMemory.text`), `docs/content/legal-privacy.md`, `src/content/legal/legal.json`, `docs/{DECISIONS,RUNBOOK}.md`, `docs/tz/12-bot.md`, `docs/how-it-works/bot.md`.
+- Отклонения от ТЗ: строки сообщений не удаляются сразу, стирается только текст — иначе ломаются предохранитель бюджета и проверка аномалий (D471).
+- OPEN QUESTION: нет новых (`TERMS_VERSION` — из D469).
+- Git: локальный `master` в этой копии — несвязанная история; не трогался, работа от `origin/master`.
+- CI: run 39025418602 на `5cb69e3` — зелёный (по API до слияния).
+- Выкладка: fast-forward `master` → `5cb69e3` → `dpl_44CSq9z87ZocS37rAK9PWdd5sfdC` (READY, алиас intgetion.com). `/api/health`, `/ru/chat` → 200; `/ru/settings/privacy` гостю → 307; `GET /api/bot/memory` гостю → 401; `/ru/privacy` и `/privacy` показывают «текст — 24 часа» / «text: 24 hours». Первый прогон крона (в :20) стирает текст старше суток; результат прогона не смотрелся.
+- Следующая подфаза: 3 — действия на аккаунте (по команде основателя).
