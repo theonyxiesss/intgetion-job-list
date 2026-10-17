@@ -1710,6 +1710,19 @@
       "JOB_NEEDS_COMPANY": "Add a company on the post form first.",
       "generic": "Something went wrong. Try again."
     },
+    "account": {
+      "title": "Change this on your account?",
+      "unsave_job": "Remove “{name}” from saved jobs.",
+      "withdraw_application": "Withdraw your application to “{name}”. The company will be told.",
+      "save_search": "Save the search “{name}”.",
+      "delete_saved_search": "Delete the saved search “{name}”.",
+      "set_search_alert": "{on, select, true {Turn on} other {Turn off}} the daily alert for “{name}”.",
+      "follow_company": "Follow {name} to get its new jobs.",
+      "unfollow_company": "Stop following {name}.",
+      "set_notification": "{on, select, true {Turn on} other {Turn off}} “{name}” · {channel}.",
+      "set_profile_hidden": "{on, select, true {Hide your profile from employers.} other {Show your profile to employers again.}}",
+      "set_morning_briefs": "{on, select, true {Turn on} other {Turn off}} morning job briefs."
+    },
     "confirm": {
       "applyTitle": "Apply to this job?",
       "profileTitle": "Save these profile changes?",

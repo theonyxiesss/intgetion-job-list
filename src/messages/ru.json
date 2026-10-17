@@ -1710,6 +1710,19 @@
       "JOB_NEEDS_COMPANY": "Сначала добавьте компанию в форме вакансии.",
       "generic": "Что-то пошло не так. Попробуйте ещё раз."
     },
+    "account": {
+      "title": "Изменить это в аккаунте?",
+      "unsave_job": "Убрать «{name}» из сохранённых вакансий.",
+      "withdraw_application": "Отозвать отклик на «{name}». Компания получит уведомление.",
+      "save_search": "Сохранить поиск «{name}».",
+      "delete_saved_search": "Удалить сохранённый поиск «{name}».",
+      "set_search_alert": "{on, select, true {Включить} other {Выключить}} ежедневное оповещение по поиску «{name}».",
+      "follow_company": "Подписаться на {name}, чтобы получать её новые вакансии.",
+      "unfollow_company": "Отписаться от {name}.",
+      "set_notification": "{on, select, true {Включить} other {Выключить}} «{name}» · {channel}.",
+      "set_profile_hidden": "{on, select, true {Скрыть профиль от работодателей.} other {Снова показывать профиль работодателям.}}",
+      "set_morning_briefs": "{on, select, true {Включить} other {Выключить}} утренние подборки вакансий."
+    },
     "confirm": {
       "applyTitle": "Откликнуться на эту вакансию?",
       "profileTitle": "Сохранить изменения профиля?",

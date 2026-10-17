@@ -1710,6 +1710,19 @@
       "JOB_NEEDS_COMPANY": "Ajoutez d’abord une entreprise dans le formulaire.",
       "generic": "Une erreur s’est produite. Réessayez."
     },
+    "account": {
+      "title": "Modifier cela dans votre compte ?",
+      "unsave_job": "Retirer « {name} » des offres enregistrées.",
+      "withdraw_application": "Retirer votre candidature à « {name} ». L’entreprise sera prévenue.",
+      "save_search": "Enregistrer la recherche « {name} ».",
+      "delete_saved_search": "Supprimer la recherche enregistrée « {name} ».",
+      "set_search_alert": "{on, select, true {Activer l’alerte} other {Désactiver l’alerte}} quotidienne de « {name} ».",
+      "follow_company": "Suivre {name} pour recevoir ses nouvelles offres.",
+      "unfollow_company": "Ne plus suivre {name}.",
+      "set_notification": "{on, select, true {Activer l’avis} other {Désactiver l’avis}} « {name} » · {channel}.",
+      "set_profile_hidden": "{on, select, true {Masquer votre profil aux employeurs.} other {Montrer à nouveau votre profil aux employeurs.}}",
+      "set_morning_briefs": "{on, select, true {Activer les sélections} other {Désactiver les sélections}} d’offres du matin."
+    },
     "confirm": {
       "applyTitle": "Postuler à cette offre ?",
       "profileTitle": "Enregistrer ces modifications du profil ?",

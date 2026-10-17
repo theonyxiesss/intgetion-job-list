@@ -26,6 +26,10 @@ import {
   isFreelanceCardTool,
   type FreelanceServiceCard,
 } from "@/components/bot/freelance-card";
+import {
+  AccountCardText,
+  isAccountCardTool,
+} from "@/components/bot/account-card";
 import { ConfirmCard } from "@/components/ui/dialog";
 import { ugcBudgetMinor, usdLabel } from "@/modules/ugc/service/pricing";
 import { Alert } from "@/components/ui/feedback";
@@ -89,6 +93,8 @@ type Entry =
       /** Typed into the card by the person (D460). */
       fields?: string[];
       values?: Record<string, string>;
+      /** The target named by the server (D472). */
+      preview?: string;
       state: "open" | "busy" | "accepted" | "declined" | "failed";
     };
 
@@ -97,6 +103,7 @@ type PendingCard = {
   tool: string;
   args?: unknown;
   fields?: string[];
+  preview?: unknown;
 };
 
 const UUID = /^[0-9a-f-]{36}$/i;
@@ -110,6 +117,7 @@ function confirmEntry(card: PendingCard): Entry {
     args: card.args,
     fields: Array.isArray(card.fields) ? card.fields.map(String) : [],
     values: {},
+    ...(typeof card.preview === "string" ? { preview: card.preview } : {}),
     state: "open",
   };
 }
@@ -513,6 +521,7 @@ export function Chat({
               tool: String(data.tool),
               args: data.args,
               fields: data.fields as string[] | undefined,
+              preview: data.preview,
             }),
             key: nextKey(),
           });
@@ -944,14 +953,16 @@ export function Chat({
                     title={
                       isFreelanceCardTool(entry.tool)
                         ? cardText(freelanceCopy, `${entry.tool}.title`)
-                        : entry.tool === "apply_to_job"
-                          ? t("confirm.applyTitle")
-                          : entry.tool === "propose_team_job"
-                            ? t("confirm.jobTitle")
-                            : entry.tool.includes("ugc") ||
-                                entry.tool === "propose_creator_profile"
-                              ? t("confirm.ugcTitle")
-                              : t("confirm.profileTitle")
+                        : isAccountCardTool(entry.tool)
+                          ? t("account.title")
+                          : entry.tool === "apply_to_job"
+                            ? t("confirm.applyTitle")
+                            : entry.tool === "propose_team_job"
+                              ? t("confirm.jobTitle")
+                              : entry.tool.includes("ugc") ||
+                                  entry.tool === "propose_creator_profile"
+                                ? t("confirm.ugcTitle")
+                                : t("confirm.profileTitle")
                     }
                     confirmLabel={t("confirm.accept")}
                     cancelLabel={t("confirm.decline")}
@@ -985,6 +996,12 @@ export function Chat({
                           />
                         ) : null}
                       </div>
+                    ) : isAccountCardTool(entry.tool) ? (
+                      <AccountCardText
+                        tool={entry.tool}
+                        args={entry.args}
+                        preview={entry.preview}
+                      />
                     ) : entry.tool === "propose_ugc_campaign" ? (
                       <UgcBudgetLine args={entry.args} text={ugcText} />
                     ) : (

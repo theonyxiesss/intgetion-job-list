@@ -95,6 +95,7 @@ import {
   runTool,
   toolCardFields,
   toolNeedsConfirmation,
+  toolPreview,
   toolsFor,
   type BotState,
   type ToolContext,
@@ -122,6 +123,8 @@ export type BotEvent =
       expiresAt: string;
       /** Fields the person types into the card (D460). */
       fields?: readonly string[];
+      /** What the card acts on, named by the server (D472). Plain text. */
+      preview?: string;
     }
   | { type: "error"; code: string }
   | { type: "signup_hint"; text: string }
@@ -523,14 +526,31 @@ export async function pendingConfirmations(
     userId,
     now,
   });
-  return rows.map((row) => ({
-    type: "confirm_request" as const,
-    confirmationId: row.id,
-    tool: row.tool,
-    args: row.args,
-    expiresAt: row.expiresAt.toISOString(),
-    fields: toolCardFields(row.tool),
-  }));
+  const ctx: ToolContext = {
+    userId,
+    conversationId,
+    locale: "en",
+    state: {},
+  };
+  const cards = await Promise.all(
+    rows.map(async (row) => {
+      const preview = await toolPreview(ctx, row.tool, row.args).catch(
+        () => undefined,
+      );
+      // The target is gone or no longer this person's: no card (D472).
+      if (preview === undefined) return null;
+      return {
+        type: "confirm_request" as const,
+        confirmationId: row.id,
+        tool: row.tool,
+        args: row.args,
+        expiresAt: row.expiresAt.toISOString(),
+        fields: toolCardFields(row.tool),
+        ...(preview !== null ? { preview } : {}),
+      };
+    }),
+  );
+  return cards.filter((card) => card !== null);
 }
 
 /** The thread a card belongs to, when the card is this user's (D460). */
@@ -1355,6 +1375,18 @@ async function callTool(
   jobCards?: JobCardFacts[];
 }> {
   if (ctx.userId && toolNeedsConfirmation(ctx, call.name)) {
+    let preview: string | null;
+    try {
+      preview = await toolPreview(ctx, call.name, call.input);
+    } catch (error) {
+      if (!(error instanceof HttpError)) throw error;
+      return {
+        llm:
+          error.status === 404
+            ? "Not found among this person's own items. No card was shown. Read the list again."
+            : "These arguments cannot be used. No card was shown.",
+      };
+    }
     const confirmation = await repo.createConfirmation({
       conversationId: ctx.conversationId,
       userId: ctx.userId,
@@ -1370,6 +1402,7 @@ async function callTool(
       args: call.input,
       expiresAt: confirmation.expiresAt.toISOString(),
       fields: toolCardFields(call.name),
+      ...(preview !== null ? { preview } : {}),
     });
     return {
       llm: "A confirmation card was shown. Nothing is done until the user accepts it.",

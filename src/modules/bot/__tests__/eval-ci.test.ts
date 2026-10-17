@@ -3,6 +3,7 @@ import {
   SKILL_RECALL_MIN,
   TIMEZONE_ERRORS_MAX,
   pricesInText,
+  runAccountEvals,
   runFreelanceEvals,
   runMemoryEvals,
   runUgcPriceEvals,
@@ -46,5 +47,13 @@ describe("memory evals (D469)", () => {
     const report = await runMemoryEvals();
     expect(report.cases).toBeGreaterThanOrEqual(8);
     expect(report.kept).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe("account evals (D472)", () => {
+  it("turn an account change into one card and never claim it is done", async () => {
+    const report = await runAccountEvals();
+    expect(report.cases).toBeGreaterThanOrEqual(8);
+    expect(report.cards).toBeGreaterThanOrEqual(6);
   });
 });

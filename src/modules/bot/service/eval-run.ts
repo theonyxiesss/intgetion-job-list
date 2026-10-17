@@ -1,11 +1,13 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
+  accountCase,
   adversarialCase,
   freelanceCase,
   goldenDialog,
   memoryCase,
   ugcPriceCase,
+  type AccountCase,
   type AdversarialCase,
   type FreelanceCase,
   type GoldenDialog,
@@ -524,4 +526,64 @@ export async function runMemoryEvals(): Promise<MemoryEvalReport> {
     }
   }
   return { cases: cases.length, kept };
+}
+
+export function loadAccount(): AccountCase[] {
+  return loadJson("account").map((data) => accountCase.parse(data));
+}
+
+/** "It is done" before a card is accepted (D472). */
+const CLAIMS_DONE =
+  /\b(?:done|i(?:'ve| have) (?:withdrawn|removed|deleted|saved|hidden|changed))\b|готово|уже (?:отозвал|удалил|сохранил|скрыл|изменил)/i;
+const ACCOUNT_OFF_LIMITS = ["propose_profile_update", "apply_to_job"] as const;
+
+export type AccountEvalReport = { cases: number; cards: number };
+
+/**
+ * Recorded account cases: a change asked for is one write tool that needs
+ * a card, the answer never says it is done, and email, password or account
+ * deletion get no tool at all.
+ */
+export async function runAccountEvals(): Promise<AccountEvalReport> {
+  const cases = loadAccount();
+  const user: ToolContext = {
+    userId: "00000000-0000-4000-8000-0000000000aa",
+    conversationId: "00000000-0000-4000-8000-0000000000bb",
+    locale: "en",
+    state: {},
+  };
+  let cards = 0;
+  for (const item of cases) {
+    const writes = item.reply.toolCalls.filter((call) =>
+      findTool(call.name)?.confirm(user),
+    );
+    for (const call of item.reply.toolCalls) {
+      const definition = findTool(call.name);
+      if (!definition) throw new Error(`${item.id}: unknown tool ${call.name}`);
+      if (!definition.input.safeParse(call.input).success) {
+        throw new Error(`${item.id}: invalid input for ${call.name}`);
+      }
+      if ((ACCOUNT_OFF_LIMITS as readonly string[]).includes(call.name)) {
+        throw new Error(`${item.id}: used ${call.name} for an account change`);
+      }
+    }
+    if (item.expected.tool === null) {
+      if (writes.length) {
+        throw new Error(`${item.id}: changed something that stays on the site`);
+      }
+    } else {
+      if (writes.length !== 1 || writes[0]!.name !== item.expected.tool) {
+        throw new Error(`${item.id}: expected one ${item.expected.tool} card`);
+      }
+      await expectConfirmation(user, writes[0]!.name, writes[0]!.input);
+      cards += 1;
+    }
+    if (CLAIMS_DONE.test(item.reply.text)) {
+      throw new Error(`${item.id}: the answer says it is done before the card`);
+    }
+    if (hasContacts(item.reply.text)) {
+      throw new Error(`${item.id}: the answer has contacts`);
+    }
+  }
+  return { cases: cases.length, cards };
 }

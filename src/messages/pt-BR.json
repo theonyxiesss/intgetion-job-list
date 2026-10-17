@@ -1710,6 +1710,19 @@
       "JOB_NEEDS_COMPANY": "Primeiro adicione uma empresa no formulário.",
       "generic": "Algo deu errado. Tente novamente."
     },
+    "account": {
+      "title": "Alterar isto na sua conta?",
+      "unsave_job": "Remover “{name}” das vagas salvas.",
+      "withdraw_application": "Retirar sua candidatura a “{name}”. A empresa será avisada.",
+      "save_search": "Salvar a busca “{name}”.",
+      "delete_saved_search": "Excluir a busca salva “{name}”.",
+      "set_search_alert": "{on, select, true {Ativar o alerta} other {Desativar o alerta}} diário de “{name}”.",
+      "follow_company": "Seguir {name} para receber as novas vagas.",
+      "unfollow_company": "Deixar de seguir {name}.",
+      "set_notification": "{on, select, true {Ativar o aviso} other {Desativar o aviso}} “{name}” · {channel}.",
+      "set_profile_hidden": "{on, select, true {Ocultar seu perfil dos empregadores.} other {Mostrar seu perfil aos empregadores de novo.}}",
+      "set_morning_briefs": "{on, select, true {Ativar os resumos} other {Desativar os resumos}} matinais de vagas."
+    },
     "confirm": {
       "applyTitle": "Candidatar-se a esta vaga?",
       "profileTitle": "Salvar estas alterações no perfil?",

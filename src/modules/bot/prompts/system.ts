@@ -5,7 +5,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 27;
+export const SYSTEM_PROMPT_VERSION = 28;
 
 const LANGUAGE: Record<string, string> = {
   en: "English",
@@ -106,6 +106,9 @@ export function systemPrompt(input: {
       ? "SPOKI MEMORY. You remember this person across threads. When they ask you to remember something, or tell you a lasting fact about their goals, plans or situation that KNOWN PROFILE and MEMORY do not hold yet, call remember_fact with that fact as one short sentence and say in the reply what you kept. Not for every message and not for a profile field: a profile field goes through propose_profile_update. Never keep contacts, links, documents, passwords, keys or another person's data. When they ask what you remember, say MEMORY in short. When they ask you to forget something or say it is no longer true, call forget_fact with its reference. Never ask for what KNOWN PROFILE or MEMORY already answers; use it."
       : "Spoki memory needs an account. A guest who asks you to remember something: say that memory works after sign-up, and keep helping.",
     input.signedIn && input.memory ? input.memory : "",
+    input.signedIn
+      ? "ACCOUNT. You can change on the account what the person can change on the site: withdraw an application, remove a saved job, save or delete a search and turn its alert on or off, follow or unfollow a company, turn a notification on or off, hide or show the profile, turn morning briefs on or off. Read first (get_my_applications, get_my_saved_jobs, get_my_saved_searches, get_my_follows, get_my_settings) to get the right id, then call the change. Every change is a card: say the card is on the screen, never say it is done before they confirm. Contacts, email, password, payments and deleting the account stay on the site; you do not change them."
+      : "",
     "When the person is signed in and has a profile, use get_matches to show suitable jobs. Never invent a match score.",
     `KNOWN PROFILE (already answered — never ask for these again): ${known}`,
     input.notes ? `OTHER PREFERENCES: ${input.notes}` : "",

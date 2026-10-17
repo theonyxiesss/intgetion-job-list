@@ -1710,6 +1710,19 @@
       "JOB_NEEDS_COMPANY": "Prima aggiungi un’azienda nel modulo.",
       "generic": "Qualcosa è andato storto. Riprova."
     },
+    "account": {
+      "title": "Modificare questo nel tuo account?",
+      "unsave_job": "Togliere «{name}» dalle offerte salvate.",
+      "withdraw_application": "Ritirare la candidatura a «{name}». L’azienda riceverà un avviso.",
+      "save_search": "Salvare la ricerca «{name}».",
+      "delete_saved_search": "Eliminare la ricerca salvata «{name}».",
+      "set_search_alert": "{on, select, true {Attivare l’avviso} other {Disattivare l’avviso}} giornaliero per «{name}».",
+      "follow_company": "Seguire {name} per ricevere le sue nuove offerte.",
+      "unfollow_company": "Smettere di seguire {name}.",
+      "set_notification": "{on, select, true {Attivare l’avviso} other {Disattivare l’avviso}} «{name}» · {channel}.",
+      "set_profile_hidden": "{on, select, true {Nascondere il profilo ai datori di lavoro.} other {Mostrare di nuovo il profilo ai datori di lavoro.}}",
+      "set_morning_briefs": "{on, select, true {Attivare le selezioni} other {Disattivare le selezioni}} di offerte del mattino."
+    },
     "confirm": {
       "applyTitle": "Candidarti a questa offerta?",
       "profileTitle": "Salvare queste modifiche al profilo?",

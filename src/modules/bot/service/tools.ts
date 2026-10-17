@@ -46,6 +46,7 @@ import { freelanceTools } from "@/modules/freelance/service";
 import { ugcTools } from "@/modules/ugc/service";
 import { OFFER_ACTIONS, offerPath } from "./offers";
 import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
+import { accountTools } from "./account-tools";
 import { formatStanding, standingMissing } from "./standing";
 import {
   MEMORY_MAX_CHARS,
@@ -116,7 +117,7 @@ export type ToolOutcome = {
 
 type Access = "guest" | "user";
 
-type BotTool<T extends z.ZodType = z.ZodType> = {
+export type BotTool<T extends z.ZodType = z.ZodType> = {
   name: string;
   description: string;
   input: T;
@@ -129,6 +130,11 @@ type BotTool<T extends z.ZodType = z.ZodType> = {
    * URL). They reach `run` after the card, never the model or the hash.
    */
   cardFields?: readonly string[];
+  /**
+   * Names the target for the card from the database (a job title, a search
+   * name). Throws 404 when it is not this person's, so no card is shown.
+   */
+  preview?: (ctx: ToolContext, input: z.infer<T>) => Promise<string>;
   run: (
     ctx: ToolContext,
     input: z.infer<T>,
@@ -532,7 +538,8 @@ export const TOOLS: readonly BotTool[] = [
   }),
   tool({
     name: "get_my_applications",
-    description: "List the user's applications with their status.",
+    description:
+      "List the user's applications with their status and applicationId (for withdraw_application).",
     input: z.object({}).strict(),
     access: "user",
     confirm: never,
@@ -544,7 +551,11 @@ export const TOOLS: readonly BotTool[] = [
               .map((a) =>
                 wrapUntrusted(
                   `job:${a.jobId}`,
-                  JSON.stringify({ job: a.jobTitle, status: a.status }),
+                  JSON.stringify({
+                    applicationId: a.id,
+                    job: a.jobTitle,
+                    status: a.status,
+                  }),
                 ),
               )
               .join("\n")
@@ -604,6 +615,7 @@ export const TOOLS: readonly BotTool[] = [
       };
     },
   }),
+  ...accountTools,
   ...(ugcTools as unknown as BotTool[]),
   ...(freelanceTools as unknown as BotTool[]),
 ];
@@ -644,6 +656,21 @@ export type Confirmed = { tool: string; argsHash: string; userId: string };
 
 export function toolNeedsConfirmation(ctx: ToolContext, name: string) {
   return findTool(name)?.confirm(ctx) ?? false;
+}
+
+/** What the card names (D472), or null when the tool has no preview. */
+export async function toolPreview(
+  ctx: ToolContext,
+  name: string,
+  rawInput: unknown,
+): Promise<string | null> {
+  const definition = findTool(name);
+  if (!definition?.preview) return null;
+  const parsed = definition.input.safeParse(rawInput);
+  if (!parsed.success) {
+    throw new HttpError(400, "VALIDATION_ERROR", `Invalid input for ${name}`);
+  }
+  return definition.preview(ctx, parsed.data);
 }
 
 /** Names of the fields the card collects for this tool; empty for most. */

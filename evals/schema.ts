@@ -237,3 +237,26 @@ export const memoryCase = z
   .strict();
 
 export type MemoryCase = z.infer<typeof memoryCase>;
+
+/** Spoki account actions (D472): a change is a card, never "done". */
+export const accountCase = z
+  .object({
+    id: z.string().regex(/^account-\d{2}$/),
+    locale: z.enum(["en", "ru"]),
+    turns: z.array(z.object({ user: z.string().min(1) }).strict()).min(1),
+    reply: z
+      .object({
+        text: z.string(),
+        toolCalls: z.array(recordedCall).default([]),
+      })
+      .strict(),
+    expected: z
+      .object({
+        /** The write tool the answer must call, or null for "stays on the site". */
+        tool: z.string().nullable(),
+      })
+      .strict(),
+  })
+  .strict();
+
+export type AccountCase = z.infer<typeof accountCase>;

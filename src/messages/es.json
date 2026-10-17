@@ -1710,6 +1710,19 @@
       "JOB_NEEDS_COMPANY": "Primero añade una empresa en el formulario.",
       "generic": "Algo ha salido mal. Inténtalo de nuevo."
     },
+    "account": {
+      "title": "¿Cambiar esto en tu cuenta?",
+      "unsave_job": "Quitar «{name}» de los empleos guardados.",
+      "withdraw_application": "Retirar tu postulación a «{name}». La empresa recibirá un aviso.",
+      "save_search": "Guardar la búsqueda «{name}».",
+      "delete_saved_search": "Eliminar la búsqueda guardada «{name}».",
+      "set_search_alert": "{on, select, true {Activar la alerta} other {Desactivar la alerta}} diaria de «{name}».",
+      "follow_company": "Seguir a {name} para recibir sus nuevos empleos.",
+      "unfollow_company": "Dejar de seguir a {name}.",
+      "set_notification": "{on, select, true {Activar el aviso} other {Desactivar el aviso}} «{name}» · {channel}.",
+      "set_profile_hidden": "{on, select, true {Ocultar tu perfil a los empleadores.} other {Volver a mostrar tu perfil a los empleadores.}}",
+      "set_morning_briefs": "{on, select, true {Activar los resúmenes} other {Desactivar los resúmenes}} matutinos de empleos."
+    },
     "confirm": {
       "applyTitle": "¿Postularte a este empleo?",
       "profileTitle": "¿Guardar estos cambios del perfil?",

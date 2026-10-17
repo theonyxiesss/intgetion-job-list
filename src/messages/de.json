@@ -1710,6 +1710,19 @@
       "JOB_NEEDS_COMPANY": "Fügen Sie zuerst ein Unternehmen im Formular hinzu.",
       "generic": "Etwas ist schiefgelaufen. Versuchen Sie es erneut."
     },
+    "account": {
+      "title": "Das im Konto ändern?",
+      "unsave_job": "„{name}“ aus den gespeicherten Jobs entfernen.",
+      "withdraw_application": "Bewerbung auf „{name}“ zurückziehen. Das Unternehmen wird benachrichtigt.",
+      "save_search": "Suche „{name}“ speichern.",
+      "delete_saved_search": "Gespeicherte Suche „{name}“ löschen.",
+      "set_search_alert": "Tägliche Benachrichtigung für „{name}“ {on, select, true {jetzt einschalten} other {jetzt ausschalten}}.",
+      "follow_company": "{name} folgen, um neue Jobs zu bekommen.",
+      "unfollow_company": "{name} nicht mehr folgen.",
+      "set_notification": "„{name}“ · {channel} {on, select, true {jetzt einschalten} other {jetzt ausschalten}}.",
+      "set_profile_hidden": "{on, select, true {Profil vor Arbeitgebern verbergen.} other {Profil Arbeitgebern wieder zeigen.}}",
+      "set_morning_briefs": "Morgendliche Job-Übersichten {on, select, true {jetzt einschalten} other {jetzt ausschalten}}."
+    },
     "confirm": {
       "applyTitle": "Auf diesen Job bewerben?",
       "profileTitle": "Diese Profiländerungen speichern?",
