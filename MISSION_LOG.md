@@ -2371,3 +2371,17 @@
 - CI: run 39025418602 на `5cb69e3` — зелёный (по API до слияния).
 - Выкладка: fast-forward `master` → `5cb69e3` → `dpl_44CSq9z87ZocS37rAK9PWdd5sfdC` (READY, алиас intgetion.com). `/api/health`, `/ru/chat` → 200; `/ru/settings/privacy` гостю → 307; `GET /api/bot/memory` гостю → 401; `/ru/privacy` и `/privacy` показывают «текст — 24 часа» / «text: 24 hours». После прогона крона в 11:20 UTC (проверка SELECT в 11:44): сообщений старше суток с текстом или `tool_call` — 0; строк старше суток осталось 233 (только счётчики; с расходом > 0 среди них 0); карточек подтверждения старше суток — 0; сообщений за последние сутки с текстом — 4.
 - Следующая подфаза: 3 — действия на аккаунте (по команде основателя).
+
+## [2026-10-17] — Spoki как ассистент, подфаза 3: действия на аккаунте (D472) — DONE
+
+- Задача: основатель — «Делай подфазу 3»; «да» до сайта.
+- План (до кода): `bot/service/account-tools.ts` — 4 чтения и 10 записей через сервисы модулей (applications, feedback, saved-searches, follows, notifications, candidates, jobs); `preview` у записи называет цель из базы до карточки (чужое — 404, карточки нет), то же при повторном открытии карточек; карточка `src/components/bot/account-card.tsx`, тексты `chat.account` на 7 языков; промпт 28; unit, интеграционный, eval `evals/account`. Миграций нет.
+- Сделано: по плану. `get_my_applications` отдаёт `applicationId`.
+- Проверки (локально): `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1291 прошли, 1 пропущен; тест разбора ICU на 7 языках); `pnpm eval` → 0 (6 наборов; порча «Готово, профиль скрыт» ловится); `pnpm build` → 0; `pnpm format:check` → 0; чистый Postgres 16: `db:migrate` + `db:verify` → 0, `pnpm test:integration` → 0 (165 прошли, 7 пропущены); мутация (убрать `preview` в `callTool`) → интеграционный тест падает. Первый прогон `messages.test` упал: однословные ветки ICU (`{Activar}`) читались как плейсхолдеры — ветки переписаны.
+- Миграции: нет.
+- Изменённые файлы: `src/modules/bot/service/{account-tools,tools,conversation,eval-run}.ts`, `src/modules/bot/prompts/system.ts`, `src/components/bot/{account-card,chat}.tsx`, `src/messages/*.json` (7, `chat.account`), `evals/{schema.ts,account/*}`, тесты `src/modules/bot/__tests__/{account-tools,memory,eval-ci}.test.ts`, `src/modules/bot/account-tools.integration.test.ts`, docs.
+- Отклонения от ТЗ: `unsave_job` теперь через карточку, хотя `save_job` без неё (поручение основателя: каждая запись — карточка).
+- OPEN QUESTION: нет новых.
+- CI: run 39030765464 на `4931ed0` — зелёный (по API до слияния).
+- Выкладка: fast-forward `master` → `4931ed0` → `dpl_2PyCqMLgyVVvM2auooyxTcyUynDe` (READY, алиас intgetion.com). `/api/health`, `/ru/chat` → 200; `GET /api/bot/memory` гостю → 401; на `/ru/chat` есть текст карточки «Изменить это в аккаунте?». Под вошедшим аккаунтом карточки не проверялись.
+- Следующая подфаза: 4 — напоминания в Telegram (по команде основателя).
