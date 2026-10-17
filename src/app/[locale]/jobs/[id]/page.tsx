@@ -33,6 +33,8 @@ import { localePrefix } from "@/i18n/paths";
 import { intlLocale } from "@/i18n/locale";
 import { publicHttpUrl } from "@/lib/company-mark";
 import { publicJobText } from "@/lib/public-job-text";
+import { AppRail } from "@/components/shell/app-rail";
+import { ThreeColumn } from "@/components/shell/three-column";
 
 export const dynamic = "force-dynamic";
 
@@ -94,6 +96,81 @@ export default async function JobPage({
   const applyHref = publicHttpUrl(job.applicationUrl);
   const sourceHref = publicHttpUrl(job.source.url);
 
+  const aside = (
+    <aside className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg p-4 lg:sticky lg:top-24 lg:border lg:p-5">
+      <div className="flex flex-col gap-3">
+        <ButtonLink href={`/chat?job=${job.id}`} variant="secondary">
+          {t("talkToAssistant")}
+        </ButtonLink>
+        {applyHref && job.applicationMethod === "external_url" ? (
+          <ExternalApplyLink
+            jobId={job.id}
+            href={applyHref}
+            label={t("apply")}
+          />
+        ) : null}
+        {user ? (
+          <JobFeedbackActions
+            jobId={job.id}
+            initialSaved={initialSaved}
+            text={{
+              save: actions("save"),
+              saved: actions("saved"),
+              unsave: actions("unsave"),
+              saveError: actions("saveError"),
+              hide: actions("hide"),
+              hideTitle: actions("hideTitle"),
+              hideScopeJob: actions("hideScopeJob"),
+              hideScopeCompany: actions("hideScopeCompany"),
+              reasonLabel: actions("reasonLabel"),
+              reasonNone: actions("reasonNone"),
+              confirm: actions("confirm"),
+              cancel: actions("cancel"),
+              hideError: actions("hideError"),
+              report: actions("report"),
+              reportTitle: actions("reportTitle"),
+              detailsLabel: actions("detailsLabel"),
+              reportSuccess: actions("reportSuccess"),
+              alreadyReported: actions("alreadyReported"),
+              rateLimited: actions("rateLimited"),
+              reportError: actions("reportError"),
+              hideReasons: {
+                salary: actions("reasons.salary"),
+                format: actions("reasons.format"),
+                timezone: actions("reasons.timezone"),
+                company: actions("reasons.company"),
+                role: actions("reasons.role"),
+                other: actions("reasons.other"),
+              },
+              reportReasons: {
+                scam: actions("reportReasons.scam"),
+                spam: actions("reportReasons.spam"),
+                fake_company: actions("reportReasons.fake_company"),
+                discrimination: actions("reportReasons.discrimination"),
+                wrong_info: actions("reportReasons.wrong_info"),
+                inappropriate: actions("reportReasons.inappropriate"),
+                other: actions("reportReasons.other"),
+              },
+            }}
+          />
+        ) : null}
+        {user ? <WhyItFits userId={user.id} jobId={job.id} /> : null}
+        <div className="hidden lg:block">
+          <ShareJob
+            url={`${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`}
+            title={job.title}
+            text={{
+              title: t("share.title"),
+              copy: t("share.copy"),
+              copied: t("share.copied"),
+              more: t("share.more"),
+            }}
+          />
+        </div>
+      </div>
+    </aside>
+  );
+
   return (
     <main className="py-10 md:py-16">
       <RememberViewedJob jobId={job.id} />
@@ -116,14 +193,28 @@ export default async function JobPage({
         ])}
       />
       <Container className="flex flex-col gap-8">
-        <Link
-          href="/jobs"
-          {...navBack}
-          className="t-label self-start text-fg-muted"
+        <ThreeColumn
+          rail={
+            <AppRail
+              current="/jobs"
+              viewer={
+                !user
+                  ? "guest"
+                  : user.accountType === "employer"
+                    ? "employer"
+                    : "candidate"
+              }
+            />
+          }
+          aside={aside}
         >
-          {t("backToJobs")}
-        </Link>
-        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <Link
+            href="/jobs"
+            {...navBack}
+            className="t-label self-start text-fg-muted"
+          >
+            {t("backToJobs")}
+          </Link>
           <article className="flex flex-col gap-8 pb-28 lg:pb-0">
             <header className="flex flex-col gap-4">
               <div className="flex flex-wrap items-center gap-2">
@@ -185,7 +276,8 @@ export default async function JobPage({
                 <p className="t-label text-fg-muted">{sourceLabel}</p>
               ) : null}
             </header>
-            <StatRow>
+            {/* The middle column is too narrow for four in a row (D477). */}
+            <StatRow className="xl:grid xl:grid-cols-2 xl:gap-6 xl:[&>*]:border-l-0 xl:[&>*]:px-0">
               <Stat
                 label={t("salaryMin")}
                 value={salary}
@@ -274,79 +366,7 @@ export default async function JobPage({
               }}
             />
           </article>
-          <aside className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg p-4 lg:sticky lg:top-24 lg:border lg:p-5">
-            <div className="flex flex-col gap-3">
-              <ButtonLink href={`/chat?job=${job.id}`} variant="secondary">
-                {t("talkToAssistant")}
-              </ButtonLink>
-              {applyHref && job.applicationMethod === "external_url" ? (
-                <ExternalApplyLink
-                  jobId={job.id}
-                  href={applyHref}
-                  label={t("apply")}
-                />
-              ) : null}
-              {user ? (
-                <JobFeedbackActions
-                  jobId={job.id}
-                  initialSaved={initialSaved}
-                  text={{
-                    save: actions("save"),
-                    saved: actions("saved"),
-                    unsave: actions("unsave"),
-                    saveError: actions("saveError"),
-                    hide: actions("hide"),
-                    hideTitle: actions("hideTitle"),
-                    hideScopeJob: actions("hideScopeJob"),
-                    hideScopeCompany: actions("hideScopeCompany"),
-                    reasonLabel: actions("reasonLabel"),
-                    reasonNone: actions("reasonNone"),
-                    confirm: actions("confirm"),
-                    cancel: actions("cancel"),
-                    hideError: actions("hideError"),
-                    report: actions("report"),
-                    reportTitle: actions("reportTitle"),
-                    detailsLabel: actions("detailsLabel"),
-                    reportSuccess: actions("reportSuccess"),
-                    alreadyReported: actions("alreadyReported"),
-                    rateLimited: actions("rateLimited"),
-                    reportError: actions("reportError"),
-                    hideReasons: {
-                      salary: actions("reasons.salary"),
-                      format: actions("reasons.format"),
-                      timezone: actions("reasons.timezone"),
-                      company: actions("reasons.company"),
-                      role: actions("reasons.role"),
-                      other: actions("reasons.other"),
-                    },
-                    reportReasons: {
-                      scam: actions("reportReasons.scam"),
-                      spam: actions("reportReasons.spam"),
-                      fake_company: actions("reportReasons.fake_company"),
-                      discrimination: actions("reportReasons.discrimination"),
-                      wrong_info: actions("reportReasons.wrong_info"),
-                      inappropriate: actions("reportReasons.inappropriate"),
-                      other: actions("reportReasons.other"),
-                    },
-                  }}
-                />
-              ) : null}
-              {user ? <WhyItFits userId={user.id} jobId={job.id} /> : null}
-              <div className="hidden lg:block">
-                <ShareJob
-                  url={`${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`}
-                  title={job.title}
-                  text={{
-                    title: t("share.title"),
-                    copy: t("share.copy"),
-                    copied: t("share.copied"),
-                    more: t("share.more"),
-                  }}
-                />
-              </div>
-            </div>
-          </aside>
-        </div>
+        </ThreeColumn>
         <div className="lg:hidden">
           <ShareJob
             url={`${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`}

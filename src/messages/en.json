@@ -1,5 +1,18 @@
 {
   "jobs": {
+    "moreFilters": "More filters",
+    "aside": {
+      "spokiTitle": "Let Spoki find jobs",
+      "spokiText": "Tell Spoki about yourself in chat. It finds matching roles and helps you apply.",
+      "spokiAction": "Ask Spoki",
+      "alertsTitle": "Don’t miss new jobs",
+      "alertsText": "Save a search and we send the new jobs once a day.",
+      "savedSearches": "Saved searches",
+      "notifications": "Notification settings",
+      "signIn": "Sign in to save searches",
+      "hireTitle": "Hiring?",
+      "hireText": "Describe the role. It goes live in the feed after review."
+    },
     "title": "Remote jobs",
     "subtitle": "Search published remote roles.",
     "filters": "Filters",
@@ -140,7 +153,11 @@
     "company": "Company",
     "freelance": "Freelance",
     "campaigns": "UGC videos",
-    "more": "More"
+    "more": "More",
+    "rail": "Site sections",
+    "railSections": "Sections",
+    "railCategories": "Categories",
+    "railMine": "Your account"
   },
   "locale": {
     "en": "English",

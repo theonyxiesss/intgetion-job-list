@@ -1,5 +1,18 @@
 {
   "jobs": {
+    "moreFilters": "Más filtros",
+    "aside": {
+      "spokiTitle": "Spoki te busca empleo",
+      "spokiText": "Cuéntale a Spoki sobre ti en el chat. Encuentra puestos que encajan y te ayuda a postularte.",
+      "spokiAction": "Preguntar a Spoki",
+      "alertsTitle": "No te pierdas los nuevos",
+      "alertsText": "Guarda una búsqueda y te enviamos los empleos nuevos una vez al día.",
+      "savedSearches": "Búsquedas guardadas",
+      "notifications": "Ajustes de notificaciones",
+      "signIn": "Inicia sesión para guardar búsquedas",
+      "hireTitle": "¿Contratas?",
+      "hireText": "Describe el puesto. Aparece en el listado tras la revisión."
+    },
     "title": "Empleos remotos",
     "subtitle": "Busca puestos remotos publicados.",
     "filters": "Filtros",
@@ -140,7 +153,11 @@
     "company": "Empresa",
     "freelance": "Freelance",
     "campaigns": "Vídeos UGC",
-    "more": "Más"
+    "more": "Más",
+    "rail": "Secciones del sitio",
+    "railSections": "Secciones",
+    "railCategories": "Categorías",
+    "railMine": "Tu cuenta"
   },
   "locale": {
     "en": "Inglés",

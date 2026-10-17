@@ -38,6 +38,10 @@ import { cookies } from "next/headers";
 import { CONSENT_COOKIE, consentAllows, consentInForce } from "@/lib/consent";
 import { localePrefix } from "@/i18n/paths";
 import { RouteMessages } from "@/components/shell/route-messages";
+import { AppRail } from "@/components/shell/app-rail";
+import type { RailViewer } from "@/components/shell/rail-items";
+import { ThreeColumn } from "@/components/shell/three-column";
+import { JobsAside } from "@/modules/jobs/ui/jobs-aside";
 
 export const dynamic = "force-dynamic";
 
@@ -72,6 +76,26 @@ function activeCount(raw: Record<string, string | string[] | undefined>) {
   if (text(raw, "period") && text(raw, "period") !== "month") count += 1;
   if (text(raw, "basis") && text(raw, "basis") !== "gross") count += 1;
   if (text(raw, "sort") && text(raw, "sort") !== "newest") count += 1;
+  return count;
+}
+
+/** Filters folded under "More filters" on the catalog (D477). */
+function advancedCount(raw: Record<string, string | string[] | undefined>) {
+  const keys = [
+    "skills",
+    "sector",
+    "perk",
+    "country",
+    "tzOverlapWith",
+    "salaryMin",
+    "currency",
+  ];
+  let count = keys.filter(
+    (key) => text(raw, key) || Array.isArray(raw[key]),
+  ).length;
+  if (text(raw, "minOverlap") && text(raw, "minOverlap") !== "3") count += 1;
+  if (text(raw, "period") && text(raw, "period") !== "month") count += 1;
+  if (text(raw, "basis") && text(raw, "basis") !== "gross") count += 1;
   return count;
 }
 
@@ -124,6 +148,7 @@ export default async function JobsPage({
   const categoryNames = await getTranslations("categories");
   const markers = await getTranslations("markers");
   let signedIn = false;
+  let railViewer: RailViewer = "guest";
   const raw = await searchParams;
   // "You viewed" exists only with preferences consent (D228).
   const jar = await cookies();
@@ -140,6 +165,8 @@ export default async function JobsPage({
     const viewerUser = await getCurrentUser(supabase.auth);
     if (viewerUser) {
       signedIn = true;
+      railViewer =
+        viewerUser.accountType === "employer" ? "employer" : "candidate";
       viewer = { hidden: await getHiddenSetsForViewer(viewerUser.id) };
     }
   } catch {
@@ -182,48 +209,67 @@ export default async function JobsPage({
   return (
     <RouteMessages namespaces={["savedSearches"]}>
       <main className="py-10 md:py-16">
-        <Container className="flex flex-col gap-8">
-          <PageHeader
-            title={t("title")}
-            intro={t("subtitle")}
-            actions={
-              <a
-                className="t-label text-fg-muted"
-                href={`${localePrefix(locale)}/jobs/rss.xml`}
-              >
-                {markers("rss")}
-              </a>
+        <Container>
+          <ThreeColumn
+            rail={
+              <AppRail
+                current="/jobs"
+                category={text(raw, "category") || undefined}
+                viewer={railViewer}
+              />
             }
-          />
-          <QuickFilters signedIn={signedIn} />
-          <RememberFilters
-            query={
-              activeCount(raw) > 0
-                ? without(raw, "cursor").replace(/^\?/, "")
-                : ""
-            }
-            label={t("restoreFilters")}
-          />
-          {activeCount(raw) === 0 ? (
-            <RecentlyViewed ids={recentIds} locale={locale} />
-          ) : signedIn ? (
-            <SaveSearchButton
-              query={without(raw, "cursor").replace(/^\?/, "")}
-              name={
-                chips
-                  .map((chip) => chip.label)
-                  .join(", ")
-                  .slice(0, 80) || t("title")
+            aside={<JobsAside viewer={railViewer} />}
+          >
+            <PageHeader
+              title={t("title")}
+              intro={t("subtitle")}
+              actions={
+                <a
+                  className="t-label text-fg-muted"
+                  href={`${localePrefix(locale)}/jobs/rss.xml`}
+                >
+                  {markers("rss")}
+                </a>
               }
             />
-          ) : null}
-          <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
+            <QuickFilters signedIn={signedIn} />
+            <RememberFilters
+              query={
+                activeCount(raw) > 0
+                  ? without(raw, "cursor").replace(/^\?/, "")
+                  : ""
+              }
+              label={t("restoreFilters")}
+            />
+            {activeCount(raw) === 0 ? (
+              <RecentlyViewed ids={recentIds} locale={locale} />
+            ) : signedIn ? (
+              <SaveSearchButton
+                query={without(raw, "cursor").replace(/^\?/, "")}
+                name={
+                  chips
+                    .map((chip) => chip.label)
+                    .join(", ")
+                    .slice(0, 80) || t("title")
+                }
+              />
+            ) : null}
             <form
               id="catalog-filters"
               action=""
               className="flex flex-col gap-4"
             >
+              <label className="sr-only" htmlFor="job-q">
+                {t("search")}
+              </label>
+              <Input
+                id="job-q"
+                name="q"
+                defaultValue={text(raw, "q")}
+                placeholder={t("search")}
+              />
               <FilterShell
+                layout="grid"
                 count={activeCount(raw)}
                 filtersLabel={t("filters")}
                 closeLabel={t("closeFilters")}
@@ -237,23 +283,6 @@ export default async function JobsPage({
                   {categories.map((id) => (
                     <option key={id} value={id}>
                       {categoryNames(id)}
-                    </option>
-                  ))}
-                </Select>
-                <Select
-                  aria-label={t("skillsFilter")}
-                  name="skills"
-                  multiple
-                  size={3}
-                  defaultValue={
-                    typeof raw.skills === "string"
-                      ? raw.skills.split(",")
-                      : (raw.skills ?? [])
-                  }
-                >
-                  {skillOptions.map((skill) => (
-                    <option key={skill.id} value={skill.id}>
-                      {skill.name}
                     </option>
                   ))}
                 </Select>
@@ -280,18 +309,6 @@ export default async function JobsPage({
                   <option value="internship">{t("internship")}</option>
                 </Select>
                 <Select
-                  aria-label={markers("sector")}
-                  name="sector"
-                  defaultValue={text(raw, "sector")}
-                >
-                  <option value="">{markers("anySector")}</option>
-                  {SECTORS.map((id) => (
-                    <option key={id} value={id}>
-                      {markers(`sectors.${id}`)}
-                    </option>
-                  ))}
-                </Select>
-                <Select
                   aria-label={markers("seniorityLabel")}
                   name="seniority"
                   defaultValue={text(raw, "seniority")}
@@ -302,70 +319,6 @@ export default async function JobsPage({
                       {markers(`seniority.${id}`)}
                     </option>
                   ))}
-                </Select>
-                <Select
-                  aria-label={markers("perk")}
-                  name="perk"
-                  defaultValue={text(raw, "perk")}
-                >
-                  <option value="">{markers("anyPerk")}</option>
-                  {PERKS.map((id) => (
-                    <option key={id} value={id}>
-                      {markers(`perks.${id}`)}
-                    </option>
-                  ))}
-                </Select>
-                <Input
-                  aria-label={t("country")}
-                  name="country"
-                  defaultValue={text(raw, "country")}
-                  placeholder={t("country")}
-                  maxLength={2}
-                />
-                <Input
-                  aria-label={t("timezone")}
-                  name="tzOverlapWith"
-                  defaultValue={text(raw, "tzOverlapWith")}
-                  placeholder={t("timezoneExample")}
-                />
-                <Input
-                  aria-label={t("minimumOverlap")}
-                  name="minOverlap"
-                  type="number"
-                  min="0"
-                  max="12"
-                  defaultValue={text(raw, "minOverlap") || "3"}
-                />
-                <Input
-                  aria-label={t("salaryMin")}
-                  name="salaryMin"
-                  inputMode="numeric"
-                  defaultValue={text(raw, "salaryMin")}
-                  placeholder={t("salaryMin")}
-                />
-                <Input
-                  aria-label={t("currency")}
-                  name="currency"
-                  defaultValue={text(raw, "currency")}
-                  placeholder={t("currencyExample")}
-                  maxLength={3}
-                />
-                <Select
-                  aria-label={t("period")}
-                  name="period"
-                  defaultValue={text(raw, "period") || "month"}
-                >
-                  <option value="hour">{t("hour")}</option>
-                  <option value="month">{t("month")}</option>
-                  <option value="year">{t("year")}</option>
-                </Select>
-                <Select
-                  aria-label={t("basis")}
-                  name="basis"
-                  defaultValue={text(raw, "basis") || "gross"}
-                >
-                  <option value="gross">{t("gross")}</option>
-                  <option value="net">{t("net")}</option>
                 </Select>
                 <Select
                   aria-label={t("postedWithinLabel")}
@@ -386,20 +339,117 @@ export default async function JobsPage({
                   <option value="relevance">{t("relevance")}</option>
                   <option value="salary">{t("highestSalary")}</option>
                 </Select>
-                <Button type="submit">{t("applyFilters")}</Button>
+                <details
+                  className="lg:col-span-3"
+                  open={advancedCount(raw) > 0}
+                >
+                  <summary className="t-body-s flex min-h-11 cursor-pointer items-center text-fg-muted hover:text-fg">
+                    {advancedCount(raw) > 0
+                      ? `${t("moreFilters")} (${advancedCount(raw)})`
+                      : t("moreFilters")}
+                  </summary>
+                  <div className="grid gap-3 pt-3 lg:grid-cols-3">
+                    <Select
+                      aria-label={t("skillsFilter")}
+                      name="skills"
+                      multiple
+                      size={3}
+                      defaultValue={
+                        typeof raw.skills === "string"
+                          ? raw.skills.split(",")
+                          : (raw.skills ?? [])
+                      }
+                    >
+                      {skillOptions.map((skill) => (
+                        <option key={skill.id} value={skill.id}>
+                          {skill.name}
+                        </option>
+                      ))}
+                    </Select>
+                    <Select
+                      aria-label={markers("sector")}
+                      name="sector"
+                      defaultValue={text(raw, "sector")}
+                    >
+                      <option value="">{markers("anySector")}</option>
+                      {SECTORS.map((id) => (
+                        <option key={id} value={id}>
+                          {markers(`sectors.${id}`)}
+                        </option>
+                      ))}
+                    </Select>
+                    <Select
+                      aria-label={markers("perk")}
+                      name="perk"
+                      defaultValue={text(raw, "perk")}
+                    >
+                      <option value="">{markers("anyPerk")}</option>
+                      {PERKS.map((id) => (
+                        <option key={id} value={id}>
+                          {markers(`perks.${id}`)}
+                        </option>
+                      ))}
+                    </Select>
+                    <Input
+                      aria-label={t("country")}
+                      name="country"
+                      defaultValue={text(raw, "country")}
+                      placeholder={t("country")}
+                      maxLength={2}
+                    />
+                    <Input
+                      aria-label={t("timezone")}
+                      name="tzOverlapWith"
+                      defaultValue={text(raw, "tzOverlapWith")}
+                      placeholder={t("timezoneExample")}
+                    />
+                    <Input
+                      aria-label={t("minimumOverlap")}
+                      name="minOverlap"
+                      type="number"
+                      min="0"
+                      max="12"
+                      defaultValue={text(raw, "minOverlap") || "3"}
+                    />
+                    <Input
+                      aria-label={t("salaryMin")}
+                      name="salaryMin"
+                      inputMode="numeric"
+                      defaultValue={text(raw, "salaryMin")}
+                      placeholder={t("salaryMin")}
+                    />
+                    <Input
+                      aria-label={t("currency")}
+                      name="currency"
+                      defaultValue={text(raw, "currency")}
+                      placeholder={t("currencyExample")}
+                      maxLength={3}
+                    />
+                    <Select
+                      aria-label={t("period")}
+                      name="period"
+                      defaultValue={text(raw, "period") || "month"}
+                    >
+                      <option value="hour">{t("hour")}</option>
+                      <option value="month">{t("month")}</option>
+                      <option value="year">{t("year")}</option>
+                    </Select>
+                    <Select
+                      aria-label={t("basis")}
+                      name="basis"
+                      defaultValue={text(raw, "basis") || "gross"}
+                    >
+                      <option value="gross">{t("gross")}</option>
+                      <option value="net">{t("net")}</option>
+                    </Select>
+                  </div>
+                </details>
+                <Button type="submit" className="lg:justify-self-start">
+                  {t("applyFilters")}
+                </Button>
               </FilterShell>
             </form>
             <div className="relative z-10 flex min-w-0 flex-col gap-4">
-              <label className="sr-only" htmlFor="job-q">
-                {t("search")}
-              </label>
-              <Input
-                id="job-q"
-                name="q"
-                form="catalog-filters"
-                defaultValue={text(raw, "q")}
-                placeholder={t("search")}
-              />
               {chips.length > 0 ? (
                 <ul className="flex flex-wrap gap-2">
                   {chips.map((chip) => (
@@ -457,7 +507,7 @@ export default async function JobsPage({
                 </Link>
               ) : null}
             </div>
-          </div>
+          </ThreeColumn>
         </Container>
       </main>
     </RouteMessages>

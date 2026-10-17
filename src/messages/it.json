@@ -1,5 +1,18 @@
 {
   "jobs": {
+    "moreFilters": "Altri filtri",
+    "aside": {
+      "spokiTitle": "Spoki trova offerte per te",
+      "spokiText": "Racconta a Spoki di te in chat. Trova i ruoli adatti e ti aiuta a candidarti.",
+      "spokiAction": "Chiedi a Spoki",
+      "alertsTitle": "Non perdere le nuove offerte",
+      "alertsText": "Salva una ricerca e ti inviamo le nuove offerte una volta al giorno.",
+      "savedSearches": "Ricerche salvate",
+      "notifications": "Impostazioni notifiche",
+      "signIn": "Accedi per salvare le ricerche",
+      "hireTitle": "Stai assumendo?",
+      "hireText": "Descrivi il ruolo. Compare nel feed dopo la verifica."
+    },
     "title": "Lavori da remoto",
     "subtitle": "Cerca tra le posizioni da remoto pubblicate.",
     "filters": "Filtri",
@@ -140,7 +153,11 @@
     "company": "Azienda",
     "freelance": "Freelance",
     "campaigns": "Video UGC",
-    "more": "Altro"
+    "more": "Altro",
+    "rail": "Sezioni del sito",
+    "railSections": "Sezioni",
+    "railCategories": "Categorie",
+    "railMine": "Il tuo account"
   },
   "locale": {
     "en": "Inglese",

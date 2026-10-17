@@ -1,5 +1,18 @@
 {
   "jobs": {
+    "moreFilters": "Weitere Filter",
+    "aside": {
+      "spokiTitle": "Spoki findet Jobs für Sie",
+      "spokiText": "Erzählen Sie Spoki im Chat von sich. Spoki findet passende Rollen und hilft bei der Bewerbung.",
+      "spokiAction": "Spoki fragen",
+      "alertsTitle": "Keine neuen Jobs verpassen",
+      "alertsText": "Speichern Sie eine Suche, und wir senden die neuen Jobs einmal täglich.",
+      "savedSearches": "Gespeicherte Suchen",
+      "notifications": "Benachrichtigungen einstellen",
+      "signIn": "Anmelden, um Suchen zu speichern",
+      "hireTitle": "Sie stellen ein?",
+      "hireText": "Beschreiben Sie die Rolle. Nach der Prüfung erscheint sie im Feed."
+    },
     "title": "Remote-Jobs",
     "subtitle": "Veröffentlichte Remote-Stellen durchsuchen.",
     "filters": "Filter",
@@ -140,7 +153,11 @@
     "company": "Unternehmen",
     "freelance": "Freelance",
     "campaigns": "UGC-Videos",
-    "more": "Mehr"
+    "more": "Mehr",
+    "rail": "Bereiche der Website",
+    "railSections": "Bereiche",
+    "railCategories": "Kategorien",
+    "railMine": "Ihr Konto"
   },
   "locale": {
     "en": "Englisch",
