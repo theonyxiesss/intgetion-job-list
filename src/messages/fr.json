@@ -1792,6 +1792,11 @@
         "title": "Adresse de versement",
         "text": "Confirmez l’adresse où l’on vous paie.",
         "action": "Confirmer l’adresse"
+      },
+      "memory": {
+        "title": "Mémoire de Spoki",
+        "text": "Ce dont Spoki se souvient à votre sujet. Vous pouvez le corriger ou l’effacer.",
+        "action": "Ouvrir la mémoire"
       }
     }
   },
@@ -3962,5 +3967,31 @@
       "refundsEmpty": "Rien à rendre.",
       "txError": "Le virement ne correspond pas : {code}"
     }
+  },
+  "spokiMemory": {
+    "title": "Mémoire de Spoki",
+    "text": "Les faits que vous avez confiés à Spoki sur vous et vos objectifs. Spoki les lit dans chaque chat et ne redemande pas. Les contacts et mots de passe ne sont jamais gardés. Les messages du chat n’en font pas partie.",
+    "empty": "Spoki ne se souvient de rien pour l’instant. Dites-le dans le chat ou ajoutez un fait ici.",
+    "count": "{count} sur {max}",
+    "addLabel": "Nouveau fait",
+    "placeholder": "Par exemple : je veux une équipe sans travail de nuit",
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "editLabel": "Modifier le fait",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Effacer",
+    "deleteLabel": "Effacer le fait",
+    "deleteAll": "Tout effacer",
+    "deleteAllTitle": "Effacer toute la mémoire de Spoki ?",
+    "deleteAllText": "Spoki oubliera tous les faits. Votre profil reste tel quel.",
+    "fromChat": "du chat",
+    "fromSite": "ajouté ici",
+    "saved": "Enregistré",
+    "deleted": "Effacé",
+    "failed": "Échec de l’enregistrement. Réessayez.",
+    "errorContacts": "Les contacts et les liens ne sont pas gardés en mémoire.",
+    "errorSecret": "Les mots de passe, clés et numéros de carte ne sont pas gardés en mémoire.",
+    "errorFull": "La mémoire est pleine. Effacez d’abord un fait."
   }
 }

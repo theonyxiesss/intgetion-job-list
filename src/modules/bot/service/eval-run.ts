@@ -4,10 +4,12 @@ import {
   adversarialCase,
   freelanceCase,
   goldenDialog,
+  memoryCase,
   ugcPriceCase,
   type AdversarialCase,
   type FreelanceCase,
   type GoldenDialog,
+  type MemoryCase,
   type UgcPriceCase,
 } from "../../../../evals/schema";
 import {
@@ -29,6 +31,7 @@ import {
 } from "@/lib/llm";
 import { systemPrompt } from "../prompts/system";
 import { findTool, runTool, type ToolContext } from "./tools";
+import { memoryBlock, profileDraft, screenFact } from "./user-memory";
 import {
   catalogSkillSlug,
   draftFromExtraction,
@@ -427,4 +430,98 @@ export async function runUgcPriceEvals(): Promise<{ cases: number }> {
     }
   }
   return { cases: cases.length };
+}
+
+export function loadMemory(): MemoryCase[] {
+  return loadJson("memory").map((data) => memoryCase.parse(data));
+}
+
+/** Questions for a fact the profile or memory already answers (D469). */
+const ASKED: Record<MemoryCase["expected"]["notAsked"][number], RegExp> = {
+  country:
+    /which country|what country|where are you (?:based|located)|в какой стране|из какой страны/i,
+  role: /what (?:kind of )?(?:work|job|role)|какую работу|какую должность|кем вы хотите/i,
+  workFormat:
+    /remote, hybrid|remote or (?:on-site|office)|удал[её]нно,? гибрид|удал[её]нно или в офисе/i,
+  experience: /how many years|сколько (?:у вас )?лет опыта/i,
+};
+
+export type MemoryEvalReport = { cases: number; kept: number };
+
+/**
+ * Recorded memory cases: the prompt carries the profile and memory, the
+ * answer does not ask for them again, and nothing kept is a contact or a
+ * secret. Every remember_fact input passes the same screen as the server.
+ */
+export async function runMemoryEvals(): Promise<MemoryEvalReport> {
+  const cases = loadMemory();
+  let kept = 0;
+  for (const item of cases) {
+    const draft = profileDraft({
+      headline: null,
+      desiredTitles: item.profile.desiredTitles,
+      country: item.profile.country,
+      city: null,
+      timezone: "",
+      workFormats: item.profile.workFormats,
+      employmentTypes: [],
+      experienceYears: item.profile.experienceYears,
+      salaryMin: null,
+      languages: [],
+      skills: [],
+    });
+    const facts = item.memory.map((fact, index) => ({
+      id: `00000000-0000-4000-8000-${String(index).padStart(12, "0")}`,
+      fact,
+      source: "chat" as const,
+      createdAt: "2026-10-17T00:00:00.000Z",
+      updatedAt: "2026-10-17T00:00:00.000Z",
+    }));
+    const prompt = systemPrompt({
+      locale: item.locale,
+      signedIn: true,
+      draft,
+      memory: memoryBlock(facts),
+    });
+    for (const fact of item.memory) {
+      if (!prompt.includes(fact)) {
+        throw new Error(`${item.id}: the prompt lost a memory fact`);
+      }
+    }
+    for (const slot of item.expected.notAsked) {
+      if (prompt.includes(`that fact is about: ${slot}`)) {
+        throw new Error(`${item.id}: the prompt still asks for ${slot}`);
+      }
+      if (ASKED[slot].test(item.reply.text)) {
+        throw new Error(`${item.id}: the answer asks again for ${slot}`);
+      }
+    }
+    if (hasContacts(item.reply.text)) {
+      throw new Error(`${item.id}: the answer has contacts`);
+    }
+    const keeps = item.reply.toolCalls.filter(
+      (call) => call.name === "remember_fact",
+    );
+    if (item.expected.keeps === true && keeps.length === 0) {
+      throw new Error(`${item.id}: the answer did not keep the fact`);
+    }
+    if (item.expected.keeps === false && keeps.length > 0) {
+      throw new Error(`${item.id}: the answer kept a fact it must not keep`);
+    }
+    for (const call of item.reply.toolCalls) {
+      const definition = findTool(call.name);
+      if (!definition) throw new Error(`${item.id}: unknown tool ${call.name}`);
+      if (!definition.input.safeParse(call.input).success) {
+        throw new Error(`${item.id}: invalid input for ${call.name}`);
+      }
+    }
+    for (const call of keeps) {
+      const fact = String((call.input as { fact?: unknown }).fact ?? "");
+      if (!screenFact(fact).ok) {
+        throw new Error(`${item.id}: a kept fact is a contact or a secret`);
+      }
+      kept += 1;
+    }
+  }
+  return { cases: cases.length, kept };
 }

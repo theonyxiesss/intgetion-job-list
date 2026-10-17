@@ -1792,6 +1792,11 @@
         "title": "Auszahlungsadresse",
         "text": "Bestätigen Sie die Adresse, an die Käufer zahlen.",
         "action": "Adresse bestätigen"
+      },
+      "memory": {
+        "title": "Spoki-Gedächtnis",
+        "text": "Was Spoki über dich weiß. Du kannst es korrigieren oder löschen.",
+        "action": "Gedächtnis öffnen"
       }
     }
   },
@@ -3962,5 +3967,31 @@
       "refundsEmpty": "Nichts zurückzuzahlen.",
       "txError": "Die Überweisung passt nicht: {code}"
     }
+  },
+  "spokiMemory": {
+    "title": "Spoki-Gedächtnis",
+    "text": "Fakten, die du Spoki über dich und deine Ziele erzählt hast. Spoki liest sie in jedem Chat und fragt nicht erneut. Kontakte und Passwörter werden nie gespeichert. Chatnachrichten gehören nicht dazu.",
+    "empty": "Spoki weiß noch nichts. Erzähl es im Chat oder füge hier einen Fakt hinzu.",
+    "count": "{count} von {max}",
+    "addLabel": "Neuer Fakt",
+    "placeholder": "Zum Beispiel: Ich möchte ein Team ohne Nachtschichten",
+    "add": "Hinzufügen",
+    "edit": "Bearbeiten",
+    "editLabel": "Fakt bearbeiten",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "deleteLabel": "Fakt löschen",
+    "deleteAll": "Alles löschen",
+    "deleteAllTitle": "Das ganze Spoki-Gedächtnis löschen?",
+    "deleteAllText": "Spoki vergisst alle Fakten. Dein Profil bleibt, wie es ist.",
+    "fromChat": "aus dem Chat",
+    "fromSite": "hier hinzugefügt",
+    "saved": "Gespeichert",
+    "deleted": "Gelöscht",
+    "failed": "Speichern fehlgeschlagen. Versuch es noch einmal.",
+    "errorContacts": "Kontakte und Links werden nicht im Gedächtnis gespeichert.",
+    "errorSecret": "Passwörter, Schlüssel und Kartennummern werden nicht im Gedächtnis gespeichert.",
+    "errorFull": "Das Gedächtnis ist voll. Lösch zuerst einen Fakt."
   }
 }

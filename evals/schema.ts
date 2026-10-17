@@ -187,3 +187,53 @@ export const ugcPriceCase = z
   .strict();
 
 export type UgcPriceCase = z.infer<typeof ugcPriceCase>;
+
+/** Spoki memory (D469): Spoki uses the profile and memory and keeps no contacts. */
+export const memoryCase = z
+  .object({
+    id: z.string().regex(/^memory-\d{2}$/),
+    locale: z.enum(["en", "ru"]),
+    /** Saved profile fields the prompt receives as KNOWN PROFILE. */
+    profile: z
+      .object({
+        desiredTitles: z.array(z.string().min(2)).default([]),
+        country: z
+          .string()
+          .regex(/^[A-Z]{2}$/)
+          .nullable()
+          .default(null),
+        workFormats: z
+          .array(z.enum(["remote", "hybrid", "onsite"]))
+          .default([]),
+        experienceYears: z
+          .number()
+          .int()
+          .min(0)
+          .max(60)
+          .nullable()
+          .default(null),
+      })
+      .strict(),
+    /** Facts already in memory. */
+    memory: z.array(z.string().min(1).max(200)).default([]),
+    turns: z.array(z.object({ user: z.string().min(1) }).strict()).min(1),
+    reply: z
+      .object({
+        text: z.string(),
+        toolCalls: z.array(recordedCall).default([]),
+      })
+      .strict(),
+    expected: z
+      .object({
+        /** Facts the answer must not ask for: the profile or memory has them. */
+        notAsked: z
+          .array(z.enum(["country", "role", "workFormat", "experience"]))
+          .default([]),
+        /** True: the answer keeps a fact. False: it must not keep one. */
+        keeps: z.boolean().optional(),
+      })
+      .strict(),
+  })
+  .strict();
+
+export type MemoryCase = z.infer<typeof memoryCase>;

@@ -1792,6 +1792,11 @@
         "title": "Endereço de recebimento",
         "text": "Confirme o endereço em que pagam você.",
         "action": "Confirmar o endereço"
+      },
+      "memory": {
+        "title": "Memória do Spoki",
+        "text": "O que o Spoki lembra sobre você. Dá para corrigir ou apagar.",
+        "action": "Abrir a memória"
       }
     }
   },
@@ -3962,5 +3967,31 @@
       "refundsEmpty": "Nada a devolver.",
       "txError": "A transferência não confere: {code}"
     }
+  },
+  "spokiMemory": {
+    "title": "Memória do Spoki",
+    "text": "Fatos que você contou ao Spoki sobre você e seus objetivos. O Spoki os lê em cada chat e não pergunta de novo. Contatos e senhas nunca são guardados. As mensagens do chat não fazem parte dela.",
+    "empty": "O Spoki ainda não lembra de nada. Conte no chat ou adicione um fato aqui.",
+    "count": "{count} de {max}",
+    "addLabel": "Novo fato",
+    "placeholder": "Por exemplo: quero uma equipe sem turnos noturnos",
+    "add": "Adicionar",
+    "edit": "Editar",
+    "editLabel": "Editar fato",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Apagar",
+    "deleteLabel": "Apagar fato",
+    "deleteAll": "Apagar tudo",
+    "deleteAllTitle": "Apagar toda a memória do Spoki?",
+    "deleteAllText": "O Spoki vai esquecer todos os fatos. Seu perfil continua como está.",
+    "fromChat": "do chat",
+    "fromSite": "adicionado aqui",
+    "saved": "Salvo",
+    "deleted": "Apagado",
+    "failed": "Não foi possível salvar. Tente de novo.",
+    "errorContacts": "Contatos e links não são guardados na memória.",
+    "errorSecret": "Senhas, chaves e números de cartão não são guardados na memória.",
+    "errorFull": "A memória está cheia. Apague um fato primeiro."
   }
 }

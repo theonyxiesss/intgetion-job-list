@@ -4,6 +4,7 @@ import {
   TIMEZONE_ERRORS_MAX,
   pricesInText,
   runFreelanceEvals,
+  runMemoryEvals,
   runUgcPriceEvals,
   runRecordedEvals,
 } from "../service/eval-run";
@@ -37,5 +38,13 @@ describe("freelance evals (28.8, D460)", () => {
 describe("UGC reward evals (D464)", () => {
   it("names only guide amounts and budgets made of them", async () => {
     expect((await runUgcPriceEvals()).cases).toBeGreaterThanOrEqual(5);
+  });
+});
+
+describe("memory evals (D469)", () => {
+  it("does not ask again what the profile or memory holds, and keeps no contacts", async () => {
+    const report = await runMemoryEvals();
+    expect(report.cases).toBeGreaterThanOrEqual(8);
+    expect(report.kept).toBeGreaterThanOrEqual(2);
   });
 });

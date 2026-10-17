@@ -19,6 +19,7 @@ export const OFFER_ACTIONS = [
   "freelance",
   "freelance_sell",
   "freelance_payout",
+  "memory",
 ] as const;
 
 export type OfferAction = (typeof OFFER_ACTIONS)[number];
@@ -57,6 +58,9 @@ export function offerPath(
   if (action === "freelance") return "/freelance";
   if (action === "freelance_payout") {
     return signedIn ? "/billing/crypto?payout=1" : "/register?next=chat";
+  }
+  if (action === "memory") {
+    return signedIn ? "/settings/privacy#memory" : null;
   }
   if (action === "freelance_sell") {
     return signedIn ? "/profile/freelance" : "/register?next=chat";

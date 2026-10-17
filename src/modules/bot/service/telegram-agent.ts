@@ -173,6 +173,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     freelance: "Freelance services",
     freelance_sell: "Sell a service",
     freelance_payout: "Confirm payout address",
+    memory: "Spoki memory",
   },
   ru: {
     pay_hire: "Оплатить «Найм»",
@@ -188,6 +189,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     freelance: "Фриланс-услуги",
     freelance_sell: "Выставить услугу",
     freelance_payout: "Подтвердить адрес выплаты",
+    memory: "Память Spoki",
   },
   "pt-BR": {
     pay_hire: "Pagar Hire",
@@ -203,6 +205,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     freelance: "Serviços freelance",
     freelance_sell: "Oferecer um serviço",
     freelance_payout: "Confirmar endereço de recebimento",
+    memory: "Memória do Spoki",
   },
   de: {
     pay_hire: "Hire bezahlen",
@@ -218,6 +221,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     freelance: "Freelance-Dienste",
     freelance_sell: "Dienst anbieten",
     freelance_payout: "Auszahlungsadresse bestätigen",
+    memory: "Spoki-Gedächtnis",
   },
   fr: {
     pay_hire: "Payer Hire",
@@ -233,6 +237,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     freelance: "Services freelance",
     freelance_sell: "Proposer un service",
     freelance_payout: "Confirmer l’adresse de versement",
+    memory: "Mémoire de Spoki",
   },
   it: {
     pay_hire: "Paga Hire",
@@ -248,6 +253,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     freelance: "Servizi freelance",
     freelance_sell: "Offri un servizio",
     freelance_payout: "Conferma l’indirizzo di pagamento",
+    memory: "Memoria di Spoki",
   },
 };
 

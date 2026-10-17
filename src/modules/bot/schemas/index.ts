@@ -42,3 +42,10 @@ export const botConfirmInput = z
       .optional(),
   })
   .strict();
+
+/** `POST /api/bot/memory`, `PATCH /api/bot/memory/:id` (D469). */
+export const botMemoryFactInput = z
+  .object({
+    fact: z.string().trim().min(1).max(200),
+  })
+  .strict();

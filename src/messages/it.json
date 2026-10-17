@@ -1792,6 +1792,11 @@
         "title": "Indirizzo di pagamento",
         "text": "Conferma l’indirizzo a cui ti pagano.",
         "action": "Conferma l’indirizzo"
+      },
+      "memory": {
+        "title": "Memoria di Spoki",
+        "text": "Ciò che Spoki ricorda di te. Puoi correggerlo o cancellarlo.",
+        "action": "Apri la memoria"
       }
     }
   },
@@ -3962,5 +3967,31 @@
       "refundsEmpty": "Niente da restituire.",
       "txError": "Il trasferimento non corrisponde: {code}"
     }
+  },
+  "spokiMemory": {
+    "title": "Memoria di Spoki",
+    "text": "Fatti che hai raccontato a Spoki su di te e sui tuoi obiettivi. Spoki li legge in ogni chat e non chiede di nuovo. Contatti e password non vengono mai conservati. I messaggi della chat non ne fanno parte.",
+    "empty": "Spoki non ricorda ancora nulla. Diglielo in chat o aggiungi un fatto qui.",
+    "count": "{count} di {max}",
+    "addLabel": "Nuovo fatto",
+    "placeholder": "Per esempio: voglio un team senza turni di notte",
+    "add": "Aggiungi",
+    "edit": "Modifica",
+    "editLabel": "Modifica il fatto",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Cancella",
+    "deleteLabel": "Cancella il fatto",
+    "deleteAll": "Cancella tutto",
+    "deleteAllTitle": "Cancellare tutta la memoria di Spoki?",
+    "deleteAllText": "Spoki dimenticherà tutti i fatti. Il tuo profilo resta com’è.",
+    "fromChat": "dalla chat",
+    "fromSite": "aggiunto qui",
+    "saved": "Salvato",
+    "deleted": "Cancellato",
+    "failed": "Salvataggio non riuscito. Riprova.",
+    "errorContacts": "Contatti e link non vengono conservati in memoria.",
+    "errorSecret": "Password, chiavi e numeri di carta non vengono conservati in memoria.",
+    "errorFull": "La memoria è piena. Cancella prima un fatto."
   }
 }

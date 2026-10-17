@@ -1792,6 +1792,11 @@
         "title": "Dirección de cobro",
         "text": "Confirma la dirección a la que te pagan.",
         "action": "Confirmar la dirección"
+      },
+      "memory": {
+        "title": "Memoria de Spoki",
+        "text": "Lo que Spoki recuerda de ti. Puedes corregirlo o borrarlo.",
+        "action": "Abrir la memoria"
       }
     }
   },
@@ -3962,5 +3967,31 @@
       "refundsEmpty": "No hay nada que devolver.",
       "txError": "La transferencia no coincide: {code}"
     }
+  },
+  "spokiMemory": {
+    "title": "Memoria de Spoki",
+    "text": "Datos que le contaste a Spoki sobre ti y tus objetivos. Spoki los lee en cada chat y no vuelve a preguntar. Nunca guarda contactos ni contraseñas. Los mensajes del chat no forman parte de ella.",
+    "empty": "Spoki aún no recuerda nada. Cuéntaselo en el chat o añade un dato aquí.",
+    "count": "{count} de {max}",
+    "addLabel": "Nuevo dato",
+    "placeholder": "Por ejemplo: quiero un equipo sin turnos de noche",
+    "add": "Añadir",
+    "edit": "Editar",
+    "editLabel": "Editar dato",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Borrar",
+    "deleteLabel": "Borrar dato",
+    "deleteAll": "Borrar todo",
+    "deleteAllTitle": "¿Borrar toda la memoria de Spoki?",
+    "deleteAllText": "Spoki olvidará todos los datos. Tu perfil se queda como está.",
+    "fromChat": "del chat",
+    "fromSite": "añadido aquí",
+    "saved": "Guardado",
+    "deleted": "Borrado",
+    "failed": "No se pudo guardar. Inténtalo de nuevo.",
+    "errorContacts": "Los contactos y enlaces no se guardan en la memoria.",
+    "errorSecret": "Las contraseñas, claves y números de tarjeta no se guardan en la memoria.",
+    "errorFull": "La memoria está llena. Borra primero un dato."
   }
 }

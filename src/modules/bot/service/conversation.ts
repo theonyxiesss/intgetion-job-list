@@ -22,6 +22,7 @@ import { botMessageBucket, enforceRateLimit } from "@/lib/rate-limit";
 import { billingMe } from "@/modules/billing/service";
 import {
   candidatePatchInput,
+  getOwnCandidate,
   patchCandidateProfile,
 } from "@/modules/candidates/service";
 import { matchSkillSlug } from "@/modules/taxonomy/service";
@@ -87,6 +88,7 @@ import {
   spokiFillIntro,
 } from "./memory";
 import * as repo from "../repo/bot-repo";
+import { listMemory, memoryBlock, profileDraft } from "./user-memory";
 import { draftFromExtraction, extractDraft } from "./extract";
 import {
   hashArgs,
@@ -1019,6 +1021,11 @@ export async function handleMessage(
   }
 
   state = await absorbExtraction(input, llm, state, emit);
+  const remembered = await readRemembered(userId);
+  // The saved profile answers what this thread has not heard yet (D469).
+  const known = remembered
+    ? mergeDraft(remembered.draft, state.draft ?? {})
+    : state.draft;
 
   const focus = current.jobId
     ? await readJobFocus(userId, current.jobId, input.locale)
@@ -1026,7 +1033,7 @@ export async function handleMessage(
   const system = systemPrompt({
     locale: input.locale,
     signedIn: userId !== null,
-    draft: state.draft,
+    draft: known,
     notes: state.notes,
     profileFill: state.fillMode === "spoki",
     jobFocus: focus ? jobFocusBlock(focus) : undefined,
@@ -1039,6 +1046,7 @@ export async function handleMessage(
         ? ugcFocusBlock(state.ugcProduct ?? "")
         : undefined,
     freelanceFocus: current.jobId ? undefined : freelanceFocusBlock(state),
+    memory: remembered?.memory,
   });
   const tools = toolsFor(userId);
   const lang = replyLanguage(input.text, input.locale);
@@ -1143,7 +1151,7 @@ export async function handleMessage(
     const modelCalls = lastRound ? [] : response.toolCalls;
     const calls = shapeToolCalls(modelCalls, {
       userText: input.text,
-      ready: readyToSearch(state.draft),
+      ready: readyToSearch(known),
       jobThread: Boolean(focusedId),
       showedJobs,
       waiting,
@@ -1230,7 +1238,7 @@ export async function handleMessage(
   if (!spoke && !waiting && !showedJobs) {
     const text = followUp(
       input.locale,
-      state.draft,
+      mergeDraft(known, state.draft ?? {}),
       state.fillMode === "spoki",
     );
     await repo.insertMessage({
@@ -1241,6 +1249,26 @@ export async function handleMessage(
     emit({ type: "token", text });
   }
   return finish(input, state, emit, now);
+}
+
+/**
+ * Saved profile and Spoki memory of a signed-in person (D469). A failed read
+ * leaves the turn as it was before memory existed, so the chat still answers.
+ */
+async function readRemembered(
+  userId: string | null,
+): Promise<{ draft: Record<string, unknown>; memory: string } | null> {
+  if (!userId) return null;
+  try {
+    const [profile, facts] = await Promise.all([
+      getOwnCandidate(userId),
+      listMemory(userId),
+    ]);
+    return { draft: profileDraft(profile), memory: memoryBlock(facts) };
+  } catch (error) {
+    logger.warn({ err: error }, "bot: memory read failed");
+    return null;
+  }
 }
 
 function cardsFrom(data: unknown): JobCardFacts[] {

@@ -1792,6 +1792,11 @@
         "title": "Payout address",
         "text": "Confirm the address buyers pay you to.",
         "action": "Confirm the address"
+      },
+      "memory": {
+        "title": "Spoki memory",
+        "text": "What Spoki remembers about you. You can correct or erase it.",
+        "action": "Open memory"
       }
     }
   },
@@ -4468,5 +4473,31 @@
       "refundsEmpty": "Nothing to return.",
       "txError": "The transfer did not match: {code}"
     }
+  },
+  "spokiMemory": {
+    "title": "Spoki memory",
+    "text": "Facts you told Spoki about yourself and your goals. Spoki reads them in every chat and does not ask again. Contacts and passwords are never kept. Chat messages are not part of it.",
+    "empty": "Spoki remembers nothing yet. Tell it in the chat, or add a fact here.",
+    "count": "{count} of {max}",
+    "addLabel": "New fact",
+    "placeholder": "For example: I want a team without night shifts",
+    "add": "Add",
+    "edit": "Edit",
+    "editLabel": "Edit fact",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Erase",
+    "deleteLabel": "Erase fact",
+    "deleteAll": "Erase all",
+    "deleteAllTitle": "Erase all of Spoki's memory?",
+    "deleteAllText": "Spoki will forget every fact. Your profile stays as it is.",
+    "fromChat": "from the chat",
+    "fromSite": "added here",
+    "saved": "Saved",
+    "deleted": "Erased",
+    "failed": "Could not save. Try again.",
+    "errorContacts": "Contacts and links are not kept in memory.",
+    "errorSecret": "Passwords, keys and card numbers are not kept in memory.",
+    "errorFull": "Memory is full. Erase a fact first."
   }
 }

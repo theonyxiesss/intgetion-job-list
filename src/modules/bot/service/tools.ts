@@ -47,6 +47,13 @@ import { ugcTools } from "@/modules/ugc/service";
 import { OFFER_ACTIONS, offerPath } from "./offers";
 import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
 import { formatStanding, standingMissing } from "./standing";
+import {
+  MEMORY_MAX_CHARS,
+  MEMORY_MAX_FACTS,
+  factRef,
+  forgetFactByRef,
+  rememberFact,
+} from "./user-memory";
 
 /**
  * Tool layer of 12.3 (D173): the only way from the model to data. Every
@@ -289,7 +296,7 @@ export const TOOLS: readonly BotTool[] = [
   tool({
     name: "offer_step",
     description:
-      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, order_service, events, freelance (the freelance catalog), freelance_sell (the seller cabinet), or freelance_payout (a freelancer confirms the payout address). Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet. Use order_service only after they ask to order a managed team or leave the task. Do not use it to answer a question about a service.",
+      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, order_service, events, freelance (the freelance catalog), freelance_sell (the seller cabinet), freelance_payout (a freelancer confirms the payout address), or memory (what Spoki remembers, in settings). Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet. Use order_service only after they ask to order a managed team or leave the task. Do not use it to answer a question about a service.",
     input: z.object({ action: z.enum(OFFER_ACTIONS) }).strict(),
     access: "guest",
     confirm: never,
@@ -542,6 +549,58 @@ export const TOOLS: readonly BotTool[] = [
               )
               .join("\n")
           : "No applications yet.",
+      };
+    },
+  }),
+  tool({
+    name: "remember_fact",
+    description:
+      "Keep one short fact about this person in Spoki memory, in their words: a goal, a preference, a situation (D469). Call it when they ask you to remember something, or tell you a lasting fact about themselves that is not already in KNOWN PROFILE or MEMORY. Never contacts, links, documents, passwords, keys or other people's data. Say in the same reply what you kept.",
+    input: z
+      .object({ fact: z.string().trim().min(1).max(MEMORY_MAX_CHARS) })
+      .strict(),
+    access: "user",
+    confirm: never,
+    async run(ctx, input) {
+      const result = await rememberFact(ctx.userId!, input.fact, "chat");
+      if (!result.ok) {
+        return {
+          llm:
+            result.reason === "full"
+              ? `Not kept: memory already holds ${MEMORY_MAX_FACTS} facts. They can erase some in settings.`
+              : result.reason === "contacts" || result.reason === "secret"
+                ? "Not kept: contacts and secrets are never stored. Say so in one sentence."
+                : "Not kept: the fact was empty or too long.",
+        };
+      }
+      return {
+        llm: result.duplicate
+          ? "Already in memory."
+          : `Kept in memory as [${factRef(result.fact.id)}]. Tell them they can see and erase it in settings.`,
+        client: { kind: "offer", data: { action: "memory" } },
+      };
+    },
+  }),
+  tool({
+    name: "forget_fact",
+    description:
+      "Erase one fact from Spoki memory by the reference in brackets from MEMORY. Call it when they ask you to forget it or say it is no longer true.",
+    input: z
+      .object({
+        ref: z
+          .string()
+          .trim()
+          .regex(/^[0-9a-f]{8}$/i),
+      })
+      .strict(),
+    access: "user",
+    confirm: never,
+    async run(ctx, input) {
+      const gone = await forgetFactByRef(ctx.userId!, input.ref);
+      return {
+        llm: gone
+          ? "Erased from memory."
+          : "No fact with that reference. Nothing was erased.",
       };
     },
   }),

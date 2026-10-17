@@ -28,6 +28,7 @@ export async function readUserData(userId: string) {
     notifications,
     notificationPreferences,
     botMessages,
+    spokiMemory,
     consentRecords,
   ] = await Promise.all([
     rows(
@@ -79,6 +80,9 @@ export async function readUserData(userId: string) {
       sql`select m.conversation_id, m.role, m.content, m.created_at from public.bot_messages m join public.bot_conversations c on c.id = m.conversation_id where c.user_id = ${userId} and m.role in ('user', 'assistant', 'system_event') order by m.created_at`,
     ),
     rows(
+      sql`select fact, source, created_at, updated_at from public.bot_memory_facts where user_id = ${userId} order by created_at`,
+    ),
+    rows(
       sql`select choice, policy_version, gpc, source, created_at from public.consent_records where user_id = ${userId} order by created_at`,
     ),
   ]);
@@ -99,6 +103,7 @@ export async function readUserData(userId: string) {
     notifications,
     notificationPreferences,
     botMessages,
+    spokiMemory,
     cookieConsents: consentRecords,
   };
 }
@@ -198,6 +203,10 @@ export async function anonymizeUser(userId: string, now: Date) {
     );
     await tx.execute(
       sql`delete from public.matching_results where user_id = ${userId}`,
+    );
+    // The user row stays (status deleted), so the cascade does not fire.
+    await tx.execute(
+      sql`delete from public.bot_memory_facts where user_id = ${userId}`,
     );
     // Messages and confirmations go with the conversation (cascade).
     await tx.execute(

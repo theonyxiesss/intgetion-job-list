@@ -2,12 +2,18 @@ import { Download } from "lucide-react";
 import { cookies, headers } from "next/headers";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CookieChoice } from "@/components/settings/cookie-choice";
+import { SpokiMemory } from "@/components/settings/spoki-memory";
 import {
   MarketingOptIn,
   ProfileVisibility,
 } from "@/components/settings/settings-controls";
 import { Container, Icon, PageHeader, buttonClass } from "@/components/ui";
 import { CONSENT_COOKIE, consentInForce } from "@/lib/consent";
+import {
+  MEMORY_MAX_CHARS,
+  MEMORY_MAX_FACTS,
+  listMemory,
+} from "@/modules/bot/service";
 import { getOwnCandidate } from "@/modules/candidates/service";
 import { requireSettingsUser } from "../require-settings-user";
 import { SettingsTabs } from "../settings-tabs";
@@ -21,7 +27,10 @@ export default async function PrivacySettingsPage({
   setRequestLocale(locale);
   const user = await requireSettingsUser(locale);
   const t = await getTranslations("settings");
-  const profile = await getOwnCandidate(user.id);
+  const [profile, memory] = await Promise.all([
+    getOwnCandidate(user.id),
+    listMemory(user.id),
+  ]);
   const consent = consentInForce((await cookies()).get(CONSENT_COOKIE)?.value);
   // Global Privacy Control keeps analytics off whatever is chosen (D220).
   const gpc = (await headers()).get("sec-gpc") === "1";
@@ -50,6 +59,11 @@ export default async function PrivacySettingsPage({
             gpcHint: t("cookies.gpcHint"),
             saved: t("cookies.saved"),
           }}
+        />
+        <SpokiMemory
+          initial={memory.map(({ id, fact, source }) => ({ id, fact, source }))}
+          max={MEMORY_MAX_FACTS}
+          maxChars={MEMORY_MAX_CHARS}
         />
         <section
           aria-labelledby="export-title"

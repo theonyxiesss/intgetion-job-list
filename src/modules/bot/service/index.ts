@@ -41,6 +41,17 @@ export {
   type ToolContext,
 } from "./tools";
 export { postSystemEvent } from "./system-event";
+export {
+  MEMORY_MAX_CHARS,
+  MEMORY_MAX_FACTS,
+  clearMemory,
+  editFact,
+  forgetFact,
+  listMemory,
+  memoryError,
+  rememberFact,
+  type MemoryFact,
+} from "./user-memory";
 export { handleTelegramAgentUpdate } from "./telegram-agent";
 export { offerUgcNextStep, ugcNextLine } from "./ugc-next";
 export type { UgcNextLink } from "./ugc-next";

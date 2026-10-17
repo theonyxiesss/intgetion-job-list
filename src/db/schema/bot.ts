@@ -93,6 +93,36 @@ export const botMessages = pgTable(
   ],
 );
 
+/** Facts a person told Spoki about themselves (D469). No contacts. */
+export const botMemoryFacts = pgTable(
+  "bot_memory_facts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    fact: text("fact").notNull(),
+    source: text("source").notNull().default("chat"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("bot_memory_facts_user_idx").on(table.userId, table.createdAt),
+    check(
+      "bot_memory_facts_fact_check",
+      sql`char_length(${table.fact}) between 1 and 200`,
+    ),
+    check(
+      "bot_memory_facts_source_check",
+      sql`${table.source} in ('chat', 'site')`,
+    ),
+  ],
+);
+
 export const botConfirmations = pgTable(
   "bot_confirmations",
   {
