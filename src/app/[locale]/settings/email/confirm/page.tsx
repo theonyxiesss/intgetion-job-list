@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AuthPage } from "@/components/auth/auth-page";
 import { ConfirmEmail } from "@/components/settings/confirm-email";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 export const dynamic = "force-dynamic";
 
@@ -21,12 +22,14 @@ export default async function ConfirmEmailPage({
   const { token } = await searchParams;
 
   return (
-    <AuthPage title={t("confirmTitle")}>
-      {token ? (
-        <ConfirmEmail token={token} />
-      ) : (
-        <p role="alert">{t("errors.invalid_link")}</p>
-      )}
-    </AuthPage>
+    <RouteMessages namespaces={["settings"]}>
+      <AuthPage title={t("confirmTitle")}>
+        {token ? (
+          <ConfirmEmail token={token} />
+        ) : (
+          <p role="alert">{t("errors.invalid_link")}</p>
+        )}
+      </AuthPage>
+    </RouteMessages>
   );
 }

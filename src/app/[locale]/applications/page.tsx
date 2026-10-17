@@ -13,6 +13,7 @@ import {
   TERMINAL_APPLICATION_STATUSES,
   type ApplicationStatus,
 } from "@/modules/applications/service";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 const terminal = new Set<ApplicationStatus>(TERMINAL_APPLICATION_STATUSES);
 const progress = new Set<ApplicationStatus>(["interview", "offer"]);
@@ -50,78 +51,82 @@ export default async function ApplicationsPage({
   const visible = rows.filter((row) => bucket(row.status) === selected);
 
   return (
-    <main className="py-10 md:py-16">
-      <Container narrow className="flex flex-col gap-8">
-        <PageHeader title={t("title")} />
-        {!profile ? (
-          <p>
-            {t("needProfile")}{" "}
-            <Link href="/profile/edit" {...navForward} className="underline">
-              {t("createProfile")}
-            </Link>
-          </p>
-        ) : (
-          <>
-            <LinkTabs
-              label={t("tabsLabel")}
-              indicatorName="application-tabs"
-              items={[
-                {
-                  label: t("tabActive"),
-                  href: "/applications",
-                  active: selected === "active",
-                  count: rows.filter((row) => bucket(row.status) === "active")
-                    .length,
-                },
-                {
-                  label: t("tabProgress"),
-                  href: "/applications?view=progress",
-                  active: selected === "progress",
-                  count: rows.filter((row) => bucket(row.status) === "progress")
-                    .length,
-                },
-                {
-                  label: t("tabArchive"),
-                  href: "/applications?view=archive",
-                  active: selected === "archive",
-                  count: rows.filter((row) => bucket(row.status) === "archive")
-                    .length,
-                },
-              ]}
-            />
-            {visible.length === 0 ? (
-              <EmptyState
-                title={
-                  rows.length === 0
-                    ? t("empty")
-                    : t(
-                        selected === "progress"
-                          ? "emptyProgress"
-                          : selected === "archive"
-                            ? "emptyArchive"
-                            : "emptyActive",
-                      )
-                }
+    <RouteMessages namespaces={["applications"]}>
+      <main className="py-10 md:py-16">
+        <Container narrow className="flex flex-col gap-8">
+          <PageHeader title={t("title")} />
+          {!profile ? (
+            <p>
+              {t("needProfile")}{" "}
+              <Link href="/profile/edit" {...navForward} className="underline">
+                {t("createProfile")}
+              </Link>
+            </p>
+          ) : (
+            <>
+              <LinkTabs
+                label={t("tabsLabel")}
+                indicatorName="application-tabs"
+                items={[
+                  {
+                    label: t("tabActive"),
+                    href: "/applications",
+                    active: selected === "active",
+                    count: rows.filter((row) => bucket(row.status) === "active")
+                      .length,
+                  },
+                  {
+                    label: t("tabProgress"),
+                    href: "/applications?view=progress",
+                    active: selected === "progress",
+                    count: rows.filter(
+                      (row) => bucket(row.status) === "progress",
+                    ).length,
+                  },
+                  {
+                    label: t("tabArchive"),
+                    href: "/applications?view=archive",
+                    active: selected === "archive",
+                    count: rows.filter(
+                      (row) => bucket(row.status) === "archive",
+                    ).length,
+                  },
+                ]}
               />
-            ) : (
-              <ApplicationList
-                items={visible.map((item) => ({
-                  id: item.id,
-                  jobTitle: item.jobTitle,
-                  companyName: item.companyName,
-                  companySlug: item.companySlug,
-                  status: item.status,
-                  createdAt: item.createdAt,
-                  createdLabel: new Intl.DateTimeFormat(locale, {
-                    dateStyle: "medium",
-                  }).format(new Date(item.createdAt)),
-                  canWithdraw: !terminal.has(item.status),
-                }))}
-              />
-            )}
-          </>
-        )}
-      </Container>
-    </main>
+              {visible.length === 0 ? (
+                <EmptyState
+                  title={
+                    rows.length === 0
+                      ? t("empty")
+                      : t(
+                          selected === "progress"
+                            ? "emptyProgress"
+                            : selected === "archive"
+                              ? "emptyArchive"
+                              : "emptyActive",
+                        )
+                  }
+                />
+              ) : (
+                <ApplicationList
+                  items={visible.map((item) => ({
+                    id: item.id,
+                    jobTitle: item.jobTitle,
+                    companyName: item.companyName,
+                    companySlug: item.companySlug,
+                    status: item.status,
+                    createdAt: item.createdAt,
+                    createdLabel: new Intl.DateTimeFormat(locale, {
+                      dateStyle: "medium",
+                    }).format(new Date(item.createdAt)),
+                    canWithdraw: !terminal.has(item.status),
+                  }))}
+                />
+              )}
+            </>
+          )}
+        </Container>
+      </main>
+    </RouteMessages>
   );
 }

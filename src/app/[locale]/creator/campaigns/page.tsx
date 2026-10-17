@@ -8,6 +8,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { listOpenCampaigns } from "@/modules/ugc/service";
 import { UgcAction } from "@/modules/ugc/ui/action";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 export const dynamic = "force-dynamic";
 
@@ -37,35 +38,37 @@ export default async function OpenBriefsPage({
   }
   const rows = await listOpenCampaigns(user.id);
   return (
-    <main className="py-10 md:py-16">
-      <Container className="flex flex-col gap-6">
-        <PageHeader title={t("openTitle")} />
-        {rows.length === 0 ? (
-          <p className="text-fg-muted">{t("emptyOpen")}</p>
-        ) : null}
-        <ul className="flex flex-col gap-4">
-          {rows.map((row) => (
-            <li key={row.id} className="rounded-lg border border-line p-4">
-              <Link href={`/campaigns/${row.id}`} className="font-medium">
-                {row.productName}
-              </Link>
-              <p className="mt-1 font-mono">
-                {formatMinor(BigInt(row.bountyMinor), "USD", locale, {
-                  wholeWhenEven: true,
-                })}
-              </p>
-              <div className="mt-3">
-                <UgcAction
-                  action="apply"
-                  label={t("apply")}
-                  body={{ campaignId: row.id }}
-                  primary
-                />
-              </div>
-            </li>
-          ))}
-        </ul>
-      </Container>
-    </main>
+    <RouteMessages namespaces={["ugc"]}>
+      <main className="py-10 md:py-16">
+        <Container className="flex flex-col gap-6">
+          <PageHeader title={t("openTitle")} />
+          {rows.length === 0 ? (
+            <p className="text-fg-muted">{t("emptyOpen")}</p>
+          ) : null}
+          <ul className="flex flex-col gap-4">
+            {rows.map((row) => (
+              <li key={row.id} className="rounded-lg border border-line p-4">
+                <Link href={`/campaigns/${row.id}`} className="font-medium">
+                  {row.productName}
+                </Link>
+                <p className="mt-1 font-mono">
+                  {formatMinor(BigInt(row.bountyMinor), "USD", locale, {
+                    wholeWhenEven: true,
+                  })}
+                </p>
+                <div className="mt-3">
+                  <UgcAction
+                    action="apply"
+                    label={t("apply")}
+                    body={{ campaignId: row.id }}
+                    primary
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </main>
+    </RouteMessages>
   );
 }

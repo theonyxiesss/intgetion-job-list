@@ -22,6 +22,7 @@ import {
 } from "@/modules/freelance/service";
 import { formatUsd } from "@/modules/freelance/ui/format";
 import { campaignDepositState, readCampaign } from "@/modules/ugc/service";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -199,39 +200,73 @@ export default async function CryptoBillingPage({
     "mx-auto flex w-full max-w-md flex-col gap-4 border border-line bg-surface p-6";
 
   return (
-    <main className="flex-1 py-10">
-      <Container className="flex flex-col gap-6">
-        <h1 className="t-h2">{t("title")}</h1>
-        {!ready ? (
-          <InterestForm />
-        ) : plan === "plus" || plan === "pro" ? (
-          <CryptoPay
-            plan={plan}
-            amount={amount}
-            projectId={projectId}
-            {...rails}
-          />
-        ) : plan === "team" ? (
-          teamCompany ? (
+    <RouteMessages namespaces={["billing"]}>
+      <main className="flex-1 py-10">
+        <Container className="flex flex-col gap-6">
+          <h1 className="t-h2">{t("title")}</h1>
+          {!ready ? (
+            <InterestForm />
+          ) : plan === "plus" || plan === "pro" ? (
             <CryptoPay
-              plan="team"
+              plan={plan}
               amount={amount}
-              companyId={teamCompany.id}
               projectId={projectId}
               {...rails}
             />
-          ) : companies.length > 0 ? (
+          ) : plan === "team" ? (
+            teamCompany ? (
+              <CryptoPay
+                plan="team"
+                amount={amount}
+                companyId={teamCompany.id}
+                projectId={projectId}
+                {...rails}
+              />
+            ) : companies.length > 0 ? (
+              <div className={panel}>
+                <p className="text-fg-muted">{t("pickCompany")}</p>
+                <ul className="flex flex-col gap-3">
+                  {companies.map((item) => (
+                    <li key={item.id}>
+                      <ButtonLink
+                        href={`/billing/crypto?plan=team&company=${item.id}`}
+                        variant="secondary"
+                        className="w-full"
+                      >
+                        {item.name}
+                      </ButtonLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div className={panel}>
+                <p className="text-fg-muted">{t("noCompany")}</p>
+                <ButtonLink href="/employer/company">
+                  {t("createCompany")}
+                </ButtonLink>
+              </div>
+            )
+          ) : job ? (
+            <CryptoPay
+              plan="hire"
+              amount={amount}
+              jobId={job}
+              projectId={projectId}
+              {...rails}
+            />
+          ) : jobs.length > 0 ? (
             <div className={panel}>
-              <p className="text-fg-muted">{t("pickCompany")}</p>
+              <p className="text-fg-muted">{t("pickJob")}</p>
               <ul className="flex flex-col gap-3">
-                {companies.map((item) => (
+                {jobs.map((item) => (
                   <li key={item.id}>
                     <ButtonLink
-                      href={`/billing/crypto?plan=team&company=${item.id}`}
+                      href={`/billing/crypto?plan=hire&job=${item.id}`}
                       variant="secondary"
                       className="w-full"
                     >
-                      {item.name}
+                      {item.title}
                     </ButtonLink>
                   </li>
                 ))}
@@ -239,44 +274,14 @@ export default async function CryptoBillingPage({
             </div>
           ) : (
             <div className={panel}>
-              <p className="text-fg-muted">{t("noCompany")}</p>
-              <ButtonLink href="/employer/company">
-                {t("createCompany")}
+              <p className="text-fg-muted">{t("noJobs")}</p>
+              <ButtonLink href="/employer/jobs/new">
+                {t("postToPay")}
               </ButtonLink>
             </div>
-          )
-        ) : job ? (
-          <CryptoPay
-            plan="hire"
-            amount={amount}
-            jobId={job}
-            projectId={projectId}
-            {...rails}
-          />
-        ) : jobs.length > 0 ? (
-          <div className={panel}>
-            <p className="text-fg-muted">{t("pickJob")}</p>
-            <ul className="flex flex-col gap-3">
-              {jobs.map((item) => (
-                <li key={item.id}>
-                  <ButtonLink
-                    href={`/billing/crypto?plan=hire&job=${item.id}`}
-                    variant="secondary"
-                    className="w-full"
-                  >
-                    {item.title}
-                  </ButtonLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : (
-          <div className={panel}>
-            <p className="text-fg-muted">{t("noJobs")}</p>
-            <ButtonLink href="/employer/jobs/new">{t("postToPay")}</ButtonLink>
-          </div>
-        )}
-      </Container>
-    </main>
+          )}
+        </Container>
+      </main>
+    </RouteMessages>
   );
 }

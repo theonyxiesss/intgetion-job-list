@@ -6,6 +6,7 @@ import { readFreelanceFocus } from "@/modules/bot/service";
 import { getJobForPublic } from "@/modules/jobs/service";
 import { listMyInvites, readCampaign } from "@/modules/ugc/service";
 import { HttpError } from "@/lib/http";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 export const dynamic = "force-dynamic";
 
@@ -67,24 +68,36 @@ export default async function ChatPage({
     unknown
   >;
   return (
-    <main className="flex min-h-0 flex-1 flex-col">
-      <Chat
-        signedIn={user !== null}
-        jobId={row?.id}
-        fromServices={from === "services" && !row && !ugcProduct}
-        fromCampaigns={from === "campaigns" && !row && !campaignId && !inviteId}
-        campaignId={campaignId}
-        inviteId={inviteId}
-        ugcProduct={ugcProduct}
-        serviceId={freelance?.kind === "service" ? freelance.id : undefined}
-        orderId={freelance?.kind === "order" ? freelance.id : undefined}
-        freelanceTitle={freelance?.title}
-        freelanceCopy={freelanceCopy}
-        confirmId={freelance ? undefined : confirmId}
-        focus={
-          row ? { title: row.title, company: row.company.name } : undefined
-        }
-      />
-    </main>
+    <RouteMessages
+      namespaces={[
+        "chat",
+        "explain",
+        "ugc",
+        "notifications",
+        "notificationSettings",
+      ]}
+    >
+      <main className="flex min-h-0 flex-1 flex-col">
+        <Chat
+          signedIn={user !== null}
+          jobId={row?.id}
+          fromServices={from === "services" && !row && !ugcProduct}
+          fromCampaigns={
+            from === "campaigns" && !row && !campaignId && !inviteId
+          }
+          campaignId={campaignId}
+          inviteId={inviteId}
+          ugcProduct={ugcProduct}
+          serviceId={freelance?.kind === "service" ? freelance.id : undefined}
+          orderId={freelance?.kind === "order" ? freelance.id : undefined}
+          freelanceTitle={freelance?.title}
+          freelanceCopy={freelanceCopy}
+          confirmId={freelance ? undefined : confirmId}
+          focus={
+            row ? { title: row.title, company: row.company.name } : undefined
+          }
+        />
+      </main>
+    </RouteMessages>
   );
 }

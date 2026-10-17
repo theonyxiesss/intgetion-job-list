@@ -7,6 +7,7 @@ import { listFollows } from "@/modules/follows/service";
 import { FollowList } from "@/modules/follows/ui/follow-list";
 import { listSavedSearches } from "@/modules/saved-searches/service";
 import { SavedSearchList } from "@/modules/saved-searches/ui/saved-search-list";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 export const dynamic = "force-dynamic";
 
@@ -28,24 +29,26 @@ export default async function SavedSearchesPage({
   ]);
 
   return (
-    <main className="py-10 md:py-16">
-      <Container narrow className="flex flex-col gap-6">
-        <PageHeader title={t("title")} intro={t("intro")} />
-        <SavedSearchList
-          initial={searches.map(({ id, name, query, alert }) => ({
-            id,
-            name,
-            query,
-            alert,
-          }))}
-        />
-        <FollowList
-          initial={follows.map((follow) => ({
-            slug: follow.companySlug,
-            name: follow.companyName,
-          }))}
-        />
-      </Container>
-    </main>
+    <RouteMessages namespaces={["savedSearches", "follows"]}>
+      <main className="py-10 md:py-16">
+        <Container narrow className="flex flex-col gap-6">
+          <PageHeader title={t("title")} intro={t("intro")} />
+          <SavedSearchList
+            initial={searches.map(({ id, name, query, alert }) => ({
+              id,
+              name,
+              query,
+              alert,
+            }))}
+          />
+          <FollowList
+            initial={follows.map((follow) => ({
+              slug: follow.companySlug,
+              name: follow.companyName,
+            }))}
+          />
+        </Container>
+      </main>
+    </RouteMessages>
   );
 }

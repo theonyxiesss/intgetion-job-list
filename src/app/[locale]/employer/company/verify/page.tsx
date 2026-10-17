@@ -10,6 +10,7 @@ import {
   getVerificationState,
 } from "@/modules/companies/service";
 import { localePrefix } from "@/i18n/paths";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 export default async function CompanyVerifyPage({
   params,
@@ -33,28 +34,30 @@ export default async function CompanyVerifyPage({
   const t = await getTranslations("companyVerify");
   const companyT = await getTranslations("company");
   return (
-    <main className="flex-1 py-10">
-      <Container className="flex flex-col gap-8">
-        <header className="flex flex-col gap-3">
-          <p className="t-label text-fg-muted">{t("title")}</p>
-          <h1 className="t-display-l">{company.name}</h1>
-          <div className="flex flex-wrap gap-2">
-            <StatusBadge status={state.companyStatus}>
-              {companyT(`statusLabel.${state.companyStatus}`)}
-            </StatusBadge>
-            {state.isTrusted && <Badge tone="trusted">{t("trusted")}</Badge>}
-          </div>
-        </header>
-        <CompanyTabs active="verify" showVerify />
-        <VerificationPanel
-          companyId={company.id}
-          domain={state.domain}
-          companyStatus={state.companyStatus}
-          steps={state.steps}
-          requisites={state.requisites}
-          initialToken={query.token ?? ""}
-        />
-      </Container>
-    </main>
+    <RouteMessages namespaces={["companyVerify"]}>
+      <main className="flex-1 py-10">
+        <Container className="flex flex-col gap-8">
+          <header className="flex flex-col gap-3">
+            <p className="t-label text-fg-muted">{t("title")}</p>
+            <h1 className="t-display-l">{company.name}</h1>
+            <div className="flex flex-wrap gap-2">
+              <StatusBadge status={state.companyStatus}>
+                {companyT(`statusLabel.${state.companyStatus}`)}
+              </StatusBadge>
+              {state.isTrusted && <Badge tone="trusted">{t("trusted")}</Badge>}
+            </div>
+          </header>
+          <CompanyTabs active="verify" showVerify />
+          <VerificationPanel
+            companyId={company.id}
+            domain={state.domain}
+            companyStatus={state.companyStatus}
+            steps={state.steps}
+            requisites={state.requisites}
+            initialToken={query.token ?? ""}
+          />
+        </Container>
+      </main>
+    </RouteMessages>
   );
 }

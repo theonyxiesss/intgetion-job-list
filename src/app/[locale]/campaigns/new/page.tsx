@@ -7,6 +7,7 @@ import { getCurrentUser } from "@/modules/auth/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
 import { ugcPriceGuide } from "@/modules/ugc/service";
 import { BriefForm } from "@/modules/ugc/ui/brief-form";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 export const dynamic = "force-dynamic";
 
@@ -36,18 +37,23 @@ export default async function NewCampaignPage({
   }
   const companies = await getCompaniesForUser(user.id);
   return (
-    <main className="py-10 md:py-16">
-      <Container className="flex flex-col gap-8">
-        <PageHeader title={t("newBrief")} intro={t("moneyNote")} />
-        {companies.length === 0 ? (
-          <p>{t("needCompany")}</p>
-        ) : (
-          <BriefForm
-            companies={companies.map((row) => ({ id: row.id, name: row.name }))}
-            guide={await ugcPriceGuide()}
-          />
-        )}
-      </Container>
-    </main>
+    <RouteMessages namespaces={["ugc"]}>
+      <main className="py-10 md:py-16">
+        <Container className="flex flex-col gap-8">
+          <PageHeader title={t("newBrief")} intro={t("moneyNote")} />
+          {companies.length === 0 ? (
+            <p>{t("needCompany")}</p>
+          ) : (
+            <BriefForm
+              companies={companies.map((row) => ({
+                id: row.id,
+                name: row.name,
+              }))}
+              guide={await ugcPriceGuide()}
+            />
+          )}
+        </Container>
+      </main>
+    </RouteMessages>
   );
 }

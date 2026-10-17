@@ -23,6 +23,7 @@ import {
   siteUrl,
 } from "@/modules/seo/site";
 import { localePrefix } from "@/i18n/paths";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 export const dynamic = "force-dynamic";
 
@@ -84,91 +85,93 @@ export default async function CompanyPage({
   const jobsTab = tab === "jobs";
 
   return (
-    <main className="py-10 md:py-16">
-      <JsonLd
-        data={breadcrumbListJsonLd([
-          { name: seo("home"), url: `${siteUrl()}${localePrefix(locale)}` },
-          {
-            name: company.name,
-            url: `${siteUrl()}${localePrefix(locale)}/companies/${company.slug}`,
-          },
-        ])}
-      />
-      <Container className="flex flex-col gap-8">
-        <header className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
-          <div className="flex min-w-0 items-start gap-4 sm:items-end">
-            <CompanyMarkFor company={company} size="profile" />
-            <div className="min-w-0 flex-1 sm:flex-none">
-              <PageHeader
-                title={company.name}
-                label={
-                  company.isTrusted
-                    ? t("trusted")
-                    : company.status === "verified"
-                      ? t("verified")
-                      : undefined
-                }
+    <RouteMessages namespaces={["follows"]}>
+      <main className="py-10 md:py-16">
+        <JsonLd
+          data={breadcrumbListJsonLd([
+            { name: seo("home"), url: `${siteUrl()}${localePrefix(locale)}` },
+            {
+              name: company.name,
+              url: `${siteUrl()}${localePrefix(locale)}/companies/${company.slug}`,
+            },
+          ])}
+        />
+        <Container className="flex flex-col gap-8">
+          <header className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
+            <div className="flex min-w-0 items-start gap-4 sm:items-end">
+              <CompanyMarkFor company={company} size="profile" />
+              <div className="min-w-0 flex-1 sm:flex-none">
+                <PageHeader
+                  title={company.name}
+                  label={
+                    company.isTrusted
+                      ? t("trusted")
+                      : company.status === "verified"
+                        ? t("verified")
+                        : undefined
+                  }
+                />
+              </div>
+            </div>
+            <div className="sm:ml-auto">
+              <FollowButton
+                slug={slug}
+                initial={following}
+                signedIn={viewerId !== null}
               />
             </div>
-          </div>
-          <div className="sm:ml-auto">
-            <FollowButton
-              slug={slug}
-              initial={following}
-              signedIn={viewerId !== null}
-            />
-          </div>
-        </header>
-        <LinkTabs
-          label={t("tabsLabel")}
-          items={[
-            {
-              label: t("about"),
-              href: `/companies/${slug}`,
-              active: !jobsTab,
-            },
-            {
-              label: t("jobsTab"),
-              href: `/companies/${slug}?tab=jobs`,
-              active: jobsTab,
-              count: jobs.length,
-            },
-          ]}
-        />
-        {jobsTab ? (
-          jobs.length ? (
-            <ul className="grid gap-4">
-              {jobs.map((job) => (
-                <li key={job.id}>
-                  <PublicJobCard job={job} locale={locale} />
-                </li>
-              ))}
-            </ul>
+          </header>
+          <LinkTabs
+            label={t("tabsLabel")}
+            items={[
+              {
+                label: t("about"),
+                href: `/companies/${slug}`,
+                active: !jobsTab,
+              },
+              {
+                label: t("jobsTab"),
+                href: `/companies/${slug}?tab=jobs`,
+                active: jobsTab,
+                count: jobs.length,
+              },
+            ]}
+          />
+          {jobsTab ? (
+            jobs.length ? (
+              <ul className="grid gap-4">
+                {jobs.map((job) => (
+                  <li key={job.id}>
+                    <PublicJobCard job={job} locale={locale} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <EmptyState title={t("empty")} />
+            )
+          ) : company.description ||
+            company.websiteUrl ||
+            company.linkedinUrl ||
+            company.telegramUrl ||
+            company.xUrl ? (
+            <div className="flex max-w-[68ch] flex-col gap-4">
+              <CompanyLinks
+                links={[
+                  { href: company.websiteUrl, label: t("links.website") },
+                  { href: company.linkedinUrl, label: t("links.linkedin") },
+                  { href: company.telegramUrl, label: t("links.telegram") },
+                  { href: company.xUrl, label: t("links.x") },
+                ]}
+              />
+              {company.description ? (
+                <p className="whitespace-pre-wrap">{company.description}</p>
+              ) : null}
+            </div>
           ) : (
-            <EmptyState title={t("empty")} />
-          )
-        ) : company.description ||
-          company.websiteUrl ||
-          company.linkedinUrl ||
-          company.telegramUrl ||
-          company.xUrl ? (
-          <div className="flex max-w-[68ch] flex-col gap-4">
-            <CompanyLinks
-              links={[
-                { href: company.websiteUrl, label: t("links.website") },
-                { href: company.linkedinUrl, label: t("links.linkedin") },
-                { href: company.telegramUrl, label: t("links.telegram") },
-                { href: company.xUrl, label: t("links.x") },
-              ]}
-            />
-            {company.description ? (
-              <p className="whitespace-pre-wrap">{company.description}</p>
-            ) : null}
-          </div>
-        ) : (
-          <EmptyState title={t("emptyAbout")} />
-        )}
-      </Container>
-    </main>
+            <EmptyState title={t("emptyAbout")} />
+          )}
+        </Container>
+      </main>
+    </RouteMessages>
   );
 }

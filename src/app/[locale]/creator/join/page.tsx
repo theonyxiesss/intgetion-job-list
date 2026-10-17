@@ -5,6 +5,7 @@ import { Container, PageHeader } from "@/components/ui/container";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { UgcAction } from "@/modules/ugc/ui/action";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 export const dynamic = "force-dynamic";
 
@@ -33,20 +34,22 @@ export default async function JoinPage({
   const user = await getCurrentUser(supabase.auth);
   if (!user) redirect({ href: "/login", locale });
   return (
-    <main className="py-10 md:py-16">
-      <Container className="flex flex-col gap-6">
-        <PageHeader title={t("title")} intro={t("moneyNote")} />
-        {token ? (
-          <UgcAction
-            action="redeem"
-            label={t("apply")}
-            body={{ payload: token }}
-            primary
-          />
-        ) : (
-          <p>{t("error")}</p>
-        )}
-      </Container>
-    </main>
+    <RouteMessages namespaces={["ugc"]}>
+      <main className="py-10 md:py-16">
+        <Container className="flex flex-col gap-6">
+          <PageHeader title={t("title")} intro={t("moneyNote")} />
+          {token ? (
+            <UgcAction
+              action="redeem"
+              label={t("apply")}
+              body={{ payload: token }}
+              primary
+            />
+          ) : (
+            <p>{t("error")}</p>
+          )}
+        </Container>
+      </main>
+    </RouteMessages>
   );
 }

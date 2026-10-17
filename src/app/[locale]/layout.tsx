@@ -28,34 +28,10 @@ import { routing, type AppLocale } from "@/i18n/routing";
 import { TELEGRAM_WEB_APP_SCRIPT } from "@/lib/security-headers";
 import { TELEGRAM_WEB_APP_BOOT_SCRIPT } from "@/lib/telegram-web-app-boot";
 import { siteUrl, siteVerification } from "@/modules/seo/site";
+import { SHELL_NAMESPACES, pickMessages } from "@/i18n/client-messages";
 import "../globals.css";
 import { fontVariables } from "../fonts";
 import { localePrefix } from "@/i18n/paths";
-
-/** Namespaces used by "use client" components; add one when a client component needs it. */
-const CLIENT_NAMESPACES = [
-  "nav",
-  "chat",
-  "explain",
-  "ui",
-  "locale",
-  "error",
-  "auth",
-  "applications",
-  "profile",
-  "companyVerify",
-  "admin",
-  "notifications",
-  "notificationSettings",
-  "jobActions",
-  "savedJobs",
-  "settings",
-  "savedSearches",
-  "follows",
-  "miniApp",
-  "billing",
-  "ugc",
-] as const;
 
 // Only an explicit "light" choice changes the default dark theme (D141).
 const themeScript = `(function(){try{if(localStorage.getItem("theme")==="light")document.documentElement.dataset.theme="light";}catch(e){}})();`;
@@ -116,11 +92,11 @@ export default async function LocaleLayout({
   const framed = isFramedRequest(requestHeaders);
   const inMiniApp = framed || hasMiniAppMarker(requestHeaders);
   const t = await getTranslations();
-  // Only namespaces that client components read go into the page (D41b);
-  // the full catalogue added ~22 KB to every HTML document.
-  const all = await getMessages();
-  const clientMessages = Object.fromEntries(
-    CLIENT_NAMESPACES.filter((key) => key in all).map((key) => [key, all[key]]),
+  // Only the shell namespaces go into every page (D41b, D476); a page adds
+  // its own with RouteMessages.
+  const clientMessages = pickMessages(
+    (await getMessages()) as Record<string, unknown>,
+    SHELL_NAMESPACES,
   );
 
   return (

@@ -9,6 +9,7 @@ import { SecurityStubs } from "@/components/settings/security-stubs";
 import { Alert, Container, PageHeader } from "@/components/ui";
 import { requireSettingsUser } from "../require-settings-user";
 import { SettingsTabs } from "../settings-tabs";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 export default async function AccountSettingsPage({
   params,
@@ -24,25 +25,27 @@ export default async function AccountSettingsPage({
   const t = await getTranslations("settings");
 
   return (
-    <main className="py-10 md:py-16">
-      <Container narrow className="flex flex-col gap-8">
-        <PageHeader title={t("title")} />
-        <SettingsTabs active="account" />
-        <AccountSignIn
-          locale={locale}
-          user={user}
-          error={error}
-          provider={provider}
-        />
-        <AccountTypeSetting value={user.accountType} />
-        <EmailLanguage locale={user.locale} />
-        <SecurityStubs />
-        {user.platformRole === "admin" ? (
-          <Alert tone="warning" title={t("adminCannotDelete")} />
-        ) : (
-          <DeleteAccount />
-        )}
-      </Container>
-    </main>
+    <RouteMessages namespaces={["settings"]}>
+      <main className="py-10 md:py-16">
+        <Container narrow className="flex flex-col gap-8">
+          <PageHeader title={t("title")} />
+          <SettingsTabs active="account" />
+          <AccountSignIn
+            locale={locale}
+            user={user}
+            error={error}
+            provider={provider}
+          />
+          <AccountTypeSetting value={user.accountType} />
+          <EmailLanguage locale={user.locale} />
+          <SecurityStubs />
+          {user.platformRole === "admin" ? (
+            <Alert tone="warning" title={t("adminCannotDelete")} />
+          ) : (
+            <DeleteAccount />
+          )}
+        </Container>
+      </main>
+    </RouteMessages>
   );
 }

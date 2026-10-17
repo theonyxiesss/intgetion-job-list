@@ -17,6 +17,7 @@ import {
 import { getOwnCandidate } from "@/modules/candidates/service";
 import { requireSettingsUser } from "../require-settings-user";
 import { SettingsTabs } from "../settings-tabs";
+import { RouteMessages } from "@/components/shell/route-messages";
 
 export default async function PrivacySettingsPage({
   params,
@@ -36,55 +37,61 @@ export default async function PrivacySettingsPage({
   const gpc = (await headers()).get("sec-gpc") === "1";
 
   return (
-    <main className="py-10 md:py-16">
-      <Container narrow className="flex flex-col gap-8">
-        <PageHeader title={t("title")} />
-        <SettingsTabs active="privacy" />
-        <section className="flex flex-col">
-          {profile && <ProfileVisibility hidden={profile.isHidden} />}
-          <MarketingOptIn enabled={user.marketingOptIn} />
-        </section>
-        <CookieChoice
-          initial={consent}
-          gpc={gpc}
-          text={{
-            title: t("cookies.title"),
-            text: t("cookies.text"),
-            necessary: t("cookies.necessary"),
-            necessaryHint: t("cookies.necessaryHint"),
-            preferences: t("cookies.preferences"),
-            preferencesHint: t("cookies.preferencesHint"),
-            analytics: t("cookies.analytics"),
-            analyticsHint: t("cookies.analyticsHint"),
-            gpcHint: t("cookies.gpcHint"),
-            saved: t("cookies.saved"),
-          }}
-        />
-        <SpokiMemory
-          initial={memory.map(({ id, fact, source }) => ({ id, fact, source }))}
-          max={MEMORY_MAX_FACTS}
-          maxChars={MEMORY_MAX_CHARS}
-        />
-        <section
-          aria-labelledby="export-title"
-          className="flex flex-col gap-3 border border-line p-6"
-        >
-          <h2 id="export-title" className="t-h3">
-            {t("exportTitle")}
-          </h2>
-          <p className="t-body-s max-w-[60ch] text-fg-muted">
-            {t("exportText")}
-          </p>
-          <a
-            href="/api/me/export"
-            download
-            className={buttonClass("secondary", "md", "self-start")}
+    <RouteMessages namespaces={["settings", "spokiMemory"]}>
+      <main className="py-10 md:py-16">
+        <Container narrow className="flex flex-col gap-8">
+          <PageHeader title={t("title")} />
+          <SettingsTabs active="privacy" />
+          <section className="flex flex-col">
+            {profile && <ProfileVisibility hidden={profile.isHidden} />}
+            <MarketingOptIn enabled={user.marketingOptIn} />
+          </section>
+          <CookieChoice
+            initial={consent}
+            gpc={gpc}
+            text={{
+              title: t("cookies.title"),
+              text: t("cookies.text"),
+              necessary: t("cookies.necessary"),
+              necessaryHint: t("cookies.necessaryHint"),
+              preferences: t("cookies.preferences"),
+              preferencesHint: t("cookies.preferencesHint"),
+              analytics: t("cookies.analytics"),
+              analyticsHint: t("cookies.analyticsHint"),
+              gpcHint: t("cookies.gpcHint"),
+              saved: t("cookies.saved"),
+            }}
+          />
+          <SpokiMemory
+            initial={memory.map(({ id, fact, source }) => ({
+              id,
+              fact,
+              source,
+            }))}
+            max={MEMORY_MAX_FACTS}
+            maxChars={MEMORY_MAX_CHARS}
+          />
+          <section
+            aria-labelledby="export-title"
+            className="flex flex-col gap-3 border border-line p-6"
           >
-            <Icon icon={Download} size={16} />
-            {t("exportButton")}
-          </a>
-        </section>
-      </Container>
-    </main>
+            <h2 id="export-title" className="t-h3">
+              {t("exportTitle")}
+            </h2>
+            <p className="t-body-s max-w-[60ch] text-fg-muted">
+              {t("exportText")}
+            </p>
+            <a
+              href="/api/me/export"
+              download
+              className={buttonClass("secondary", "md", "self-start")}
+            >
+              <Icon icon={Download} size={16} />
+              {t("exportButton")}
+            </a>
+          </section>
+        </Container>
+      </main>
+    </RouteMessages>
   );
 }

@@ -2412,3 +2412,19 @@
 - Выкладка: `master` → `e387f62` → `dpl_HAxpvpRFnSLx7Qx4npV26dkE5WvF` (READY). Затем `master` → `6b5c730` → `dpl_vKg9vDHe42RaCAunsWnegyY4fRgJ` (READY): `/api/health`, `/ru/chat` → 200, на `/ru/chat` есть «Письмо работодателю».
 - Не проверено: ответы Spoki и карточка отклика под вошедшим аккаунтом на сайте; `pnpm eval:live` (нет ключа).
 - Отклонения от ТЗ: нет. OPEN QUESTION: нет новых.
+
+## [2026-10-17] — сообщения клиента только там, где они нужны (D476) — NOT DONE (локально; нужны «да» на коммит и push, затем прогон CI)
+
+- Задача: основатель — «выполни эту задачу здесь»: не слать `chat`/`admin` и другие пространства имён страниц на каждую страницу (запас LCP главной после D461 — 35 мс).
+- Сделано: `src/i18n/client-messages.ts` (`SHELL_NAMESPACES`, `pickMessages`); `src/components/shell/route-messages.tsx` (сервер) и `merge-messages.tsx` (клиент, сливает с оболочкой); `src/app/[locale]/layout.tsx` шлёт только оболочку; 17 страниц обёрнуты в `RouteMessages`: `/chat`, `/applications`, `/billing/crypto`, `/campaigns/[id]`, `/campaigns/new`, `/companies/[slug]`, `/creator`, `/creator/campaigns`, `/creator/join`, `/employer/company/verify`, `/jobs`, `/profile`, `/profile/edit`, `/saved-searches`, `/settings/account`, `/settings/email/confirm`, `/settings/privacy`. Тест `src/i18n/client-namespaces.test.ts`.
+- Попутно: `spokiMemory` (D469) не передавался в браузер — блок памяти на `/settings/privacy` был без переводов; теперь страница его передаёт.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm build` → 0; `pnpm test` → 1 (1305 прошли, 1 пропущен, 1 упал: `src/content/legal/legal.test.ts` — `docs/content/legal-privacy.md` в этой рабочей папке с CRLF после `git pull`; файл не трогался, в CI на master тот же тест зелёный); новый тест отдельно → 3 из 3. До обёрток он перечислял ровно 28 пропусков на 17 страницах. prettier на изменённых файлах → 0.
+- Браузер (`next start`, гость): `/ru/chat` — чат с переводами, `/ru` — окно «Войти» с полями и кнопками, `/ru/jobs` — без ошибок next-intl; в логе сервера `MISSING_MESSAGE` 0. В консоли только «An unknown error occurred when fetching the script» (service worker в панели браузера, есть и на нетронутой `/pricing`). Страницы под входом (настройки, профиль, кабинет, касса) вживую не открывались: нет тестового входа; их покрывает e2e в CI.
+- Размер: блок сообщений в HTML главной 51,6 → 6,6 КБ, gzip 15,8 → 2,2 КБ.
+- Где работает: только локально.
+- Git: `git pull --ff-only` до `9db30db` перед работой (рабочая папка была чистой); правки не закоммичены, ветка `master`.
+- Миграции: нет
+- Изменённые файлы: `src/i18n/client-messages.ts`, `src/i18n/client-namespaces.test.ts`, `src/components/shell/route-messages.tsx`, `src/components/shell/merge-messages.tsx`, `src/app/[locale]/layout.tsx`, 17 `page.tsx` (выше), D476, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `MISSION_LOG.md`
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по команде основателя.
