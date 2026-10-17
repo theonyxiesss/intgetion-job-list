@@ -30,7 +30,7 @@ import { TELEGRAM_WEB_APP_BOOT_SCRIPT } from "@/lib/telegram-web-app-boot";
 import { siteUrl, siteVerification } from "@/modules/seo/site";
 import "../globals.css";
 import { fontVariables } from "../fonts";
-import { isSiteHome, localePrefix } from "@/i18n/paths";
+import { localePrefix } from "@/i18n/paths";
 
 /** Namespaces used by "use client" components; add one when a client component needs it. */
 const CLIENT_NAMESPACES = [
@@ -159,9 +159,7 @@ export default async function LocaleLayout({
             <div id="content" tabIndex={-1} className="flex flex-1 flex-col">
               {children}
             </div>
-            <Footer
-              showOnPhone={isSiteHome(requestHeaders.get("x-pathname") ?? "")}
-            />
+            <Footer />
             <AnalyticsTracker />
             <TelegramLoginResume />
             {flags.telegramMiniAppEnabled && !signedIn && (

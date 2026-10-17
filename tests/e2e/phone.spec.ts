@@ -135,3 +135,20 @@ test("phone tab bar shows the main services to everyone (D468)", async ({
   await expect(menu).toBeHidden();
   await expect(more).toBeFocused();
 });
+
+test("phone has no footer, and the language switch is in the menu (D470)", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  for (const path of ["/", "/ru", "/jobs"]) {
+    await page.goto(path);
+    await expect(page.locator("footer")).toBeHidden();
+  }
+  await page.locator("[data-bottom-nav]").getByRole("button").last().click();
+  const menu = page.locator("dialog[open]");
+  await expect(menu.locator('a[hreflang="es"]')).toBeVisible();
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.keyboard.press("Escape");
+  await page.goto("/");
+  await expect(page.locator("footer")).toBeVisible();
+});

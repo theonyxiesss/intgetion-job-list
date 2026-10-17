@@ -1,26 +1,22 @@
 import { useTranslations } from "next-intl";
 import { Suspense } from "react";
-import { Logo, cn, navFade } from "@/components/ui";
+import { Logo, navFade } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { SCRAPER_TRAP_PATH } from "@/modules/seo/site";
 import { footerGroups } from "./footer-groups";
 import { LocaleSwitch } from "./locale-switch";
 
 /**
- * Site footer (DESIGN.md 8.11). On a phone it stays on the home page only:
- * other pages keep the bottom bar and drop this block (max-width 767px).
+ * Site footer (DESIGN.md 8.11). A phone (max-width 767px) does not show it
+ * on any page (D470): the bottom bar and the menu carry its links, and the
+ * language switch lives in the menu. The markup stays for search engines.
  */
-export function Footer({ showOnPhone = false }: { showOnPhone?: boolean }) {
+export function Footer() {
   const t = useTranslations();
   const year = new Date().getUTCFullYear();
 
   return (
-    <footer
-      className={cn(
-        "mt-auto border-t border-line",
-        showOnPhone ? "" : "max-[767px]:hidden",
-      )}
-    >
+    <footer className="mt-auto border-t border-line max-[767px]:hidden">
       <div className="mx-auto grid w-full max-w-[1376px] gap-10 px-4 pt-12 pb-10 md:px-6 md:pt-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-16 xl:px-12">
         <div className="flex flex-col gap-3">
           <Link

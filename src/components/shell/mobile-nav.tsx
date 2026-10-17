@@ -1,13 +1,14 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { navFade } from "@/components/ui/page-transition";
 import { Link } from "@/i18n/navigation";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { OPEN_MENU_EVENT } from "./bottom-nav";
+import { LocaleSwitch } from "./locale-switch";
 import { iconForNav } from "./nav-icons";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -99,6 +100,12 @@ export function MobileNav({
         <div className="flex items-center gap-2 px-4">
           <ThemeToggle />
           {signedIn && <LogoutButton />}
+        </div>
+        {/* The phone has no footer (D470): the language switch is here. */}
+        <div className="px-4 pt-6">
+          <Suspense fallback={null}>
+            <LocaleSwitch />
+          </Suspense>
         </div>
       </dialog>
     </>
