@@ -14,6 +14,8 @@ export const ACCOUNT_CARD_TOOLS = [
   "set_notification",
   "set_profile_hidden",
   "set_morning_briefs",
+  "create_reminder",
+  "cancel_reminder",
 ] as const;
 
 export function isAccountCardTool(tool: string): boolean {

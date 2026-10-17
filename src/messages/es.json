@@ -1721,7 +1721,9 @@
       "unfollow_company": "Dejar de seguir a {name}.",
       "set_notification": "{on, select, true {Activar el aviso} other {Desactivar el aviso}} «{name}» · {channel}.",
       "set_profile_hidden": "{on, select, true {Ocultar tu perfil a los empleadores.} other {Volver a mostrar tu perfil a los empleadores.}}",
-      "set_morning_briefs": "{on, select, true {Activar los resúmenes} other {Desactivar los resúmenes}} matutinos de empleos."
+      "set_morning_briefs": "{on, select, true {Activar los resúmenes} other {Desactivar los resúmenes}} matutinos de empleos.",
+      "create_reminder": "Recordártelo en Telegram: {name}.",
+      "cancel_reminder": "Cancelar el recordatorio: {name}."
     },
     "confirm": {
       "applyTitle": "¿Postularte a este empleo?",
@@ -1810,6 +1812,11 @@
         "title": "Memoria de Spoki",
         "text": "Lo que Spoki recuerda de ti. Puedes corregirlo o borrarlo.",
         "action": "Abrir la memoria"
+      },
+      "link_telegram": {
+        "title": "Vincular Telegram",
+        "text": "Los recordatorios llegan a tu Telegram. Vincúlalo en los ajustes de la cuenta.",
+        "action": "Vincular Telegram"
       }
     }
   },
@@ -4006,5 +4013,8 @@
     "errorContacts": "Los contactos y enlaces no se guardan en la memoria.",
     "errorSecret": "Las contraseñas, claves y números de tarjeta no se guardan en la memoria.",
     "errorFull": "La memoria está llena. Borra primero un dato."
+  },
+  "reminders": {
+    "telegram": "Recordatorio de Spoki: {text}\n{when}"
   }
 }

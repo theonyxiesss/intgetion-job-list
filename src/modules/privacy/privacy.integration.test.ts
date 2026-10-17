@@ -88,6 +88,10 @@ beforeAll(async () => {
     values (${candidateId}, 'Wants a calm team with no on-call')
   `);
   await db.execute(sql`
+    insert into public.bot_reminders (user_id, text, remind_at, time_zone)
+    values (${candidateId}, 'Interview with Acme', now() + interval '2 days', 'UTC')
+  `);
+  await db.execute(sql`
     insert into public.notifications (user_id, type, payload)
     values (${candidateId}, 'application.viewed', '{}'::jsonb)
   `);
@@ -170,6 +174,7 @@ describe("privacy (10C)", () => {
     expect(await count("company_members")).toBe(0);
     expect(await count("bot_conversations")).toBe(0);
     expect(await count("bot_memory_facts")).toBe(0);
+    expect(await count("bot_reminders")).toBe(0);
 
     const [application] = (await db.execute(
       sql`select status, cover_note from public.applications where id = ${applicationId}`,

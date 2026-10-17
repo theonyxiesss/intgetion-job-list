@@ -1721,7 +1721,9 @@
       "unfollow_company": "Stop following {name}.",
       "set_notification": "{on, select, true {Turn on} other {Turn off}} “{name}” · {channel}.",
       "set_profile_hidden": "{on, select, true {Hide your profile from employers.} other {Show your profile to employers again.}}",
-      "set_morning_briefs": "{on, select, true {Turn on} other {Turn off}} morning job briefs."
+      "set_morning_briefs": "{on, select, true {Turn on} other {Turn off}} morning job briefs.",
+      "create_reminder": "Remind you in Telegram: {name}.",
+      "cancel_reminder": "Cancel the reminder: {name}."
     },
     "confirm": {
       "applyTitle": "Apply to this job?",
@@ -1810,6 +1812,11 @@
         "title": "Spoki memory",
         "text": "What Spoki remembers about you. You can correct or erase it.",
         "action": "Open memory"
+      },
+      "link_telegram": {
+        "title": "Link Telegram",
+        "text": "Reminders come to your Telegram. Link it in account settings.",
+        "action": "Link Telegram"
       }
     }
   },
@@ -4512,5 +4519,8 @@
     "errorContacts": "Contacts and links are not kept in memory.",
     "errorSecret": "Passwords, keys and card numbers are not kept in memory.",
     "errorFull": "Memory is full. Erase a fact first."
+  },
+  "reminders": {
+    "telegram": "Reminder from Spoki: {text}\n{when}"
   }
 }

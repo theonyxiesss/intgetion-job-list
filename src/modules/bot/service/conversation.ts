@@ -18,6 +18,7 @@ import {
   type PriceTable,
 } from "@/lib/llm";
 import { logger } from "@/lib/logger";
+import { isValidTimeZone } from "@/lib/tz";
 import { botMessageBucket, enforceRateLimit } from "@/lib/rate-limit";
 import { billingMe } from "@/modules/billing/service";
 import {
@@ -1067,6 +1068,7 @@ export async function handleMessage(
         : undefined,
     freelanceFocus: current.jobId ? undefined : freelanceFocusBlock(state),
     memory: remembered?.memory,
+    now: userId ? localNow(now, known?.timezone) : undefined,
   });
   const tools = toolsFor(userId);
   const lang = replyLanguage(input.text, input.locale);
@@ -1271,6 +1273,25 @@ export async function handleMessage(
   return finish(input, state, emit, now);
 }
 
+/** "2026-10-17 Saturday 14:05 (Europe/Lisbon)" for reminders (D473). */
+function localNow(now: Date, zone: unknown): string {
+  const timeZone =
+    typeof zone === "string" && isValidTimeZone(zone) ? zone : "UTC";
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(now);
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("year")}-${get("month")}-${get("day")} ${get("weekday")} ${get("hour")}:${get("minute")} (${timeZone})`;
+}
+
 /**
  * Saved profile and Spoki memory of a signed-in person (D469). A failed read
  * leaves the turn as it was before memory existed, so the chat still answers.
@@ -1384,7 +1405,9 @@ async function callTool(
         llm:
           error.status === 404
             ? "Not found among this person's own items. No card was shown. Read the list again."
-            : "These arguments cannot be used. No card was shown.",
+            : error.status === 409 || error.status === 422
+              ? `No card was shown: ${error.message}`
+              : "These arguments cannot be used. No card was shown.",
       };
     }
     const confirmation = await repo.createConfirmation({

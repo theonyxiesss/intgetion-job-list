@@ -1721,7 +1721,9 @@
       "unfollow_company": "Smettere di seguire {name}.",
       "set_notification": "{on, select, true {Attivare l’avviso} other {Disattivare l’avviso}} «{name}» · {channel}.",
       "set_profile_hidden": "{on, select, true {Nascondere il profilo ai datori di lavoro.} other {Mostrare di nuovo il profilo ai datori di lavoro.}}",
-      "set_morning_briefs": "{on, select, true {Attivare le selezioni} other {Disattivare le selezioni}} di offerte del mattino."
+      "set_morning_briefs": "{on, select, true {Attivare le selezioni} other {Disattivare le selezioni}} di offerte del mattino.",
+      "create_reminder": "Ricordartelo su Telegram: {name}.",
+      "cancel_reminder": "Annullare il promemoria: {name}."
     },
     "confirm": {
       "applyTitle": "Candidarti a questa offerta?",
@@ -1810,6 +1812,11 @@
         "title": "Memoria di Spoki",
         "text": "Ciò che Spoki ricorda di te. Puoi correggerlo o cancellarlo.",
         "action": "Apri la memoria"
+      },
+      "link_telegram": {
+        "title": "Collega Telegram",
+        "text": "I promemoria arrivano sul tuo Telegram. Collegalo nelle impostazioni dell’account.",
+        "action": "Collega Telegram"
       }
     }
   },
@@ -4006,5 +4013,8 @@
     "errorContacts": "Contatti e link non vengono conservati in memoria.",
     "errorSecret": "Password, chiavi e numeri di carta non vengono conservati in memoria.",
     "errorFull": "La memoria è piena. Cancella prima un fatto."
+  },
+  "reminders": {
+    "telegram": "Promemoria da Spoki: {text}\n{when}"
   }
 }

@@ -3,6 +3,7 @@ import { ACCOUNT_CARD_TOOLS } from "@/components/bot/account-card";
 import en from "@/messages/en.json";
 import { systemPrompt } from "../prompts/system";
 import { accountTools } from "../service/account-tools";
+import { reminderTools } from "../service/reminders";
 import { hashArgs, runTool, toolPreview, toolsFor } from "../service/tools";
 
 const ctx = { userId: "u1", conversationId: "c1", locale: "en", state: {} };
@@ -25,10 +26,15 @@ describe("account tools (D472)", () => {
   });
 
   it("confirm every write on a card that names its target", () => {
-    expect(writes.map((tool) => tool.name).sort()).toEqual(
+    const cardTools = [...writes, ...reminderTools].filter((tool) =>
+      tool.confirm(ctx),
+    );
+    expect(cardTools.map((tool) => tool.name).sort()).toEqual(
       [...ACCOUNT_CARD_TOOLS].sort(),
     );
-    for (const tool of writes) expect(tool.preview).toBeTypeOf("function");
+    for (const tool of cardTools) {
+      expect(tool.preview).toBeTypeOf("function");
+    }
     const copy = en.chat.account as Record<string, string>;
     for (const name of ACCOUNT_CARD_TOOLS) expect(copy[name]).toBeTruthy();
   });

@@ -47,6 +47,7 @@ import { ugcTools } from "@/modules/ugc/service";
 import { OFFER_ACTIONS, offerPath } from "./offers";
 import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
 import { accountTools } from "./account-tools";
+import { reminderTools } from "./reminders";
 import { formatStanding, standingMissing } from "./standing";
 import {
   MEMORY_MAX_CHARS,
@@ -616,6 +617,7 @@ export const TOOLS: readonly BotTool[] = [
     },
   }),
   ...accountTools,
+  ...reminderTools,
   ...(ugcTools as unknown as BotTool[]),
   ...(freelanceTools as unknown as BotTool[]),
 ];

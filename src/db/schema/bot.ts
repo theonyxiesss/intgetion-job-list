@@ -123,6 +123,42 @@ export const botMemoryFacts = pgTable(
   ],
 );
 
+/** Reminders Spoki sends to the person's Telegram (D473). */
+export const botReminders = pgTable(
+  "bot_reminders",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    text: text("text").notNull(),
+    remindAt: timestamp("remind_at", { withTimezone: true }).notNull(),
+    timeZone: text("time_zone").notNull(),
+    status: text("status").notNull().default("pending"),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("bot_reminders_user_idx").on(table.userId, table.remindAt),
+    index("bot_reminders_due_idx")
+      .on(table.remindAt)
+      .where(sql`${table.status} = 'pending'`),
+    check(
+      "bot_reminders_text_check",
+      sql`char_length(${table.text}) between 1 and 200`,
+    ),
+    check(
+      "bot_reminders_status_check",
+      sql`${table.status} in ('pending', 'sent', 'failed', 'cancelled')`,
+    ),
+  ],
+);
+
 export const botConfirmations = pgTable(
   "bot_confirmations",
   {

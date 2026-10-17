@@ -30,6 +30,7 @@ export async function readUserData(userId: string) {
     notificationPreferences,
     botMessages,
     spokiMemory,
+    spokiReminders,
     consentRecords,
   ] = await Promise.all([
     rows(
@@ -84,6 +85,9 @@ export async function readUserData(userId: string) {
       sql`select fact, source, created_at, updated_at from public.bot_memory_facts where user_id = ${userId} order by created_at`,
     ),
     rows(
+      sql`select text, remind_at, time_zone, status, created_at from public.bot_reminders where user_id = ${userId} order by remind_at`,
+    ),
+    rows(
       sql`select choice, policy_version, gpc, source, created_at from public.consent_records where user_id = ${userId} order by created_at`,
     ),
   ]);
@@ -105,6 +109,7 @@ export async function readUserData(userId: string) {
     notificationPreferences,
     botMessages,
     spokiMemory,
+    spokiReminders,
     cookieConsents: consentRecords,
   };
 }
@@ -209,6 +214,9 @@ export async function anonymizeUser(userId: string, now: Date) {
     await tx.execute(
       sql`delete from public.bot_memory_facts where user_id = ${userId}`,
     );
+    await tx.execute(
+      sql`delete from public.bot_reminders where user_id = ${userId}`,
+    );
     // Messages and confirmations go with the conversation (cascade).
     await tx.execute(
       sql`delete from public.bot_conversations where user_id = ${userId}`,
@@ -250,6 +258,9 @@ export async function purgeExpired(now: Date) {
       returning 1`),
     botConfirmations: await count(sql`
       delete from public.bot_confirmations where created_at < ${chatCutoff}::timestamptz returning 1`),
+    // D473: a reminder that was sent, failed or cancelled goes after 30 days.
+    botReminders: await count(sql`
+      delete from public.bot_reminders where status <> 'pending' and updated_at < ${days(30)}::timestamptz returning 1`),
     botMessages: await count(sql`
       delete from public.bot_messages where created_at < ${days(180)}::timestamptz returning 1`),
     guestConversations: await count(sql`

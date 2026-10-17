@@ -41,6 +41,7 @@ export {
   type ToolContext,
 } from "./tools";
 export { postSystemEvent } from "./system-event";
+export { runReminderDispatch } from "./reminders";
 export {
   MEMORY_MAX_CHARS,
   MEMORY_MAX_FACTS,

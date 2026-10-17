@@ -48,6 +48,8 @@
 
 Память агента: короткие факты о вас и ваших целях, которые вы сами попросили запомнить или добавили в «Настройках → Приватность → Память Spoki». Агент читает их в каждой беседе, чтобы не переспрашивать. Контакты, ссылки, пароли и ключи в память не принимаются. Каждый факт можно исправить или стереть, а также стереть всю память сразу.
 
+Напоминания: текст и время, которые вы попросили агента напомнить; приходят в привязанный Telegram.
+
 ### 3.6 Согласия
 
 Журнал выбора кук: какие категории разрешены, версия политики, был ли сигнал Global Privacy Control, где сделан выбор и хеш IP-адреса. Это нужно, чтобы доказать, что согласие было дано.
@@ -131,6 +133,7 @@
 | Отклики                                        | пока существует вакансия; после удаления аккаунта — без связи с вами |
 | Сообщения карьерному агенту                    | текст — 24 часа; счётчики расходов без текста — 180 дней             |
 | Память агента                                  | пока вы не сотрёте факт или аккаунт                                  |
+| Напоминания                                    | до отправки; после — 30 дней                                         |
 | Гостевые беседы с агентом                      | 30 дней                                                              |
 | Прочитанные уведомления                        | 90 дней                                                              |
 | Письма в очереди отправки                      | 90 дней                                                              |
@@ -151,7 +154,7 @@
 
 - **Доступ и перенос**: «Настройки → Приватность → Скачать свои данные» — файл JSON со всеми данными о вас.
 - **Исправление**: в профиле и настройках; остальное — по запросу.
-- **Удаление**: «Настройки → Приватность → Удалить аккаунт». Профиль обезличивается («Удалённый пользователь»), контакты, сообщения агенту, память агента, сохранённые вакансии и уведомления удаляются, аккаунт входа удаляется; отклики остаются у работодателей без ваших контактов; компании, где вы единственный владелец, приостанавливаются.
+- **Удаление**: «Настройки → Приватность → Удалить аккаунт». Профиль обезличивается («Удалённый пользователь»), контакты, сообщения агенту, память агента, напоминания, сохранённые вакансии и уведомления удаляются, аккаунт входа удаляется; отклики остаются у работодателей без ваших контактов; компании, где вы единственный владелец, приостанавливаются.
 - **Отзыв согласия**: куки — в баннере или «Настройках → Приватность»; новости — в настройках уведомлений или по ссылке в письме.
 - **Возражение и ограничение** обработки на основании законного интереса — по запросу на {{privacyEmail}}.
 - **Жалоба** в надзорный орган по защите данных вашей страны.
@@ -214,6 +217,8 @@ Applications and their statuses, saved and hidden jobs, reports, saved searches,
 Messages with the agent and draft profile changes. Emails, phone numbers and document-like numbers are removed from the text before it reaches the model. Guest chats are tied to a random identifier in a cookie, not to a person.
 
 Agent memory: short facts about you and your goals that you asked the agent to remember or added in Settings → Privacy → Spoki memory. The agent reads them in every conversation so it does not ask again. Contacts, links, passwords and keys are not accepted. You can edit or erase each fact, or erase the whole memory at once.
+
+Reminders: the text and time you asked the agent to remind you of; they come to your linked Telegram.
 
 ### 3.6 Consent
 
@@ -298,6 +303,7 @@ Public authorities only on a lawful request. In a sale or reorganisation of the 
 | Applications                 | while the job exists; after account deletion without a link to you   |
 | Messages to the career agent | text: 24 hours; usage counters without text: 180 days                |
 | Agent memory                 | until you erase the fact or the account                              |
+| Reminders                    | until sent; then 30 days                                             |
 | Guest agent chats            | 30 days                                                              |
 | Read notifications           | 90 days                                                              |
 | Queued emails                | 90 days                                                              |
@@ -318,7 +324,7 @@ Encrypted connections (HTTPS, HSTS), encrypted disks at the provider, role-based
 
 - **Access and portability**: Settings → Privacy → Download your data — a JSON file with all data about you.
 - **Rectification**: in the profile and settings; the rest on request.
-- **Erasure**: Settings → Privacy → Delete account. The profile is anonymised ("Deleted user"); contacts, agent messages, agent memory, saved jobs and notifications are deleted; the sign-in account is deleted; applications stay with employers without your contacts; companies where you are the only owner are suspended.
+- **Erasure**: Settings → Privacy → Delete account. The profile is anonymised ("Deleted user"); contacts, agent messages, agent memory, reminders, saved jobs and notifications are deleted; the sign-in account is deleted; applications stay with employers without your contacts; companies where you are the only owner are suspended.
 - **Withdrawing consent**: cookies — in the banner or Settings → Privacy; newsletters — in notification settings or via the link in the email.
 - **Objection and restriction** of processing based on legitimate interest — on request to {{privacyEmail}}.
 - **Complaint** to the data protection authority of your country.
@@ -381,6 +387,8 @@ Candidaturas e seus status, vagas salvas e ocultas, denúncias, pesquisas salvas
 Mensagens com o agente e rascunhos de alterações do perfil. E-mails, números de telefone e números semelhantes a documentos são removidos do texto antes de chegarem ao modelo. Conversas de visitantes ficam ligadas a um identificador aleatório em um cookie, não a uma pessoa.
 
 Memória do agente: fatos curtos sobre você e seus objetivos que você pediu ao agente para lembrar ou adicionou em Configurações → Privacidade → Memória do Spoki. O agente os lê em cada conversa para não perguntar de novo. Contatos, links, senhas e chaves não são aceitos. Você pode editar ou apagar cada fato, ou apagar toda a memória de uma vez.
+
+Lembretes: o texto e a hora que você pediu ao agente para lembrar; chegam ao seu Telegram vinculado.
 
 ### 3.6 Consentimento
 
@@ -465,6 +473,7 @@ Autoridades públicas apenas mediante pedido legal. Em caso de venda ou reorgani
 | Candidaturas                          | enquanto a vaga existir; após a exclusão da conta, sem vínculo com você    |
 | Mensagens ao agente de carreira       | texto: 24 horas; contadores de uso sem texto: 180 dias                     |
 | Memória do agente                     | até você apagar o fato ou a conta                                          |
+| Lembretes                             | até o envio; depois, 30 dias                                               |
 | Conversas de visitantes com o agente  | 30 dias                                                                    |
 | Notificações lidas                    | 90 dias                                                                    |
 | E-mails na fila                       | 90 dias                                                                    |
@@ -485,7 +494,7 @@ Conexões criptografadas (HTTPS, HSTS), discos criptografados no provedor, acess
 
 - **Acesso e portabilidade**: Configurações → Privacidade → Baixar seus dados — um arquivo JSON com todos os dados sobre você.
 - **Correção**: no perfil e nas configurações; o restante mediante pedido.
-- **Eliminação**: Configurações → Privacidade → Excluir conta. O perfil é anonimizado ("Usuário excluído"); contatos, mensagens ao agente, memória do agente, vagas salvas e notificações são excluídos; a conta de login é excluída; as candidaturas ficam com os empregadores sem os seus contatos; empresas em que você é o único proprietário são suspensas.
+- **Eliminação**: Configurações → Privacidade → Excluir conta. O perfil é anonimizado ("Usuário excluído"); contatos, mensagens ao agente, memória do agente, lembretes, vagas salvas e notificações são excluídos; a conta de login é excluída; as candidaturas ficam com os empregadores sem os seus contatos; empresas em que você é o único proprietário são suspensas.
 - **Revogação do consentimento**: cookies — no banner ou em Configurações → Privacidade; newsletters — nas configurações de notificação ou pelo link no e-mail.
 - **Oposição e limitação** do tratamento baseado em legítimo interesse — mediante pedido para {{privacyEmail}}.
 - **Reclamação** à autoridade de proteção de dados do seu país.
@@ -548,6 +557,8 @@ Postulaciones y sus estados, empleos guardados y ocultos, reportes, búsquedas g
 Mensajes con el agente y borradores de cambios del perfil. Los correos, números de teléfono y números con aspecto de documento se eliminan del texto antes de que llegue al modelo. Los chats de invitados se vinculan a un identificador aleatorio en una cookie, no a una persona.
 
 Memoria del agente: datos breves sobre usted y sus objetivos que pidió al agente recordar o añadió en Ajustes → Privacidad → Memoria de Spoki. El agente los lee en cada conversación para no volver a preguntar. No se aceptan contactos, enlaces, contraseñas ni claves. Puede editar o borrar cada dato, o borrar toda la memoria de una vez.
+
+Recordatorios: el texto y la hora que pidió al agente recordarle; llegan a su Telegram vinculado.
 
 ### 3.6 Consentimiento
 
@@ -632,6 +643,7 @@ Autoridades públicas, solo ante una solicitud legal. En una venta o reorganizac
 | Postulaciones                           | mientras exista el empleo; tras eliminar la cuenta, sin vínculo con usted |
 | Mensajes al agente de carrera           | texto: 24 horas; contadores de uso sin texto: 180 días                    |
 | Memoria del agente                      | hasta que borre el dato o la cuenta                                       |
+| Recordatorios                           | hasta el envío; después, 30 días                                          |
 | Chats de invitados con el agente        | 30 días                                                                   |
 | Notificaciones leídas                   | 90 días                                                                   |
 | Correos en cola                         | 90 días                                                                   |
@@ -652,7 +664,7 @@ Conexiones cifradas (HTTPS, HSTS), discos cifrados en el proveedor, acceso basad
 
 - **Acceso y portabilidad**: Ajustes → Privacidad → Descargar sus datos — un archivo JSON con todos los datos sobre usted.
 - **Rectificación**: en el perfil y los ajustes; el resto, a petición.
-- **Supresión**: Ajustes → Privacidad → Eliminar cuenta. El perfil se anonimiza («Usuario eliminado»); se eliminan los contactos, los mensajes con el agente, la memoria del agente, los empleos guardados y las notificaciones; se elimina la cuenta de inicio de sesión; las postulaciones quedan con los empleadores sin sus contactos; las empresas en las que usted es el único propietario se suspenden.
+- **Supresión**: Ajustes → Privacidad → Eliminar cuenta. El perfil se anonimiza («Usuario eliminado»); se eliminan los contactos, los mensajes con el agente, la memoria del agente, los recordatorios, los empleos guardados y las notificaciones; se elimina la cuenta de inicio de sesión; las postulaciones quedan con los empleadores sin sus contactos; las empresas en las que usted es el único propietario se suspenden.
 - **Retirada del consentimiento**: cookies — en el banner o en Ajustes → Privacidad; boletines — en los ajustes de notificaciones o con el enlace del correo.
 - **Oposición y limitación** del tratamiento basado en interés legítimo — a petición en {{privacyEmail}}.
 - **Reclamación** ante la autoridad de protección de datos de su país.
@@ -715,6 +727,8 @@ Bewerbungen und ihre Status, gespeicherte und ausgeblendete Jobs, Meldungen, ges
 Nachrichten mit dem Agenten und Entwürfe von Profiländerungen. E-Mail-Adressen, Telefonnummern und dokumentähnliche Nummern werden aus dem Text entfernt, bevor er das Modell erreicht. Gast-Chats sind an eine zufällige Kennung in einem Cookie gebunden, nicht an eine Person.
 
 Gedächtnis des Agenten: kurze Fakten über Sie und Ihre Ziele, die Sie den Agenten zu merken gebeten oder unter Einstellungen → Datenschutz → Spoki-Gedächtnis hinzugefügt haben. Der Agent liest sie in jedem Gespräch, damit er nicht erneut fragt. Kontakte, Links, Passwörter und Schlüssel werden nicht angenommen. Sie können jeden Fakt bearbeiten oder löschen oder das ganze Gedächtnis auf einmal löschen.
+
+Erinnerungen: Text und Zeit, an die der Agent Sie erinnern soll; sie kommen in Ihr verknüpftes Telegram.
 
 ### 3.6 Einwilligung
 
@@ -799,6 +813,7 @@ Behörden nur auf rechtmäßige Anfrage. Bei einem Verkauf oder einer Umstruktur
 | Bewerbungen                         | solange der Job besteht; nach Löschung des Kontos ohne Verbindung zu Ihnen |
 | Nachrichten an den Karriere-Agenten | Text: 24 Stunden; Nutzungszähler ohne Text: 180 Tage                       |
 | Gedächtnis des Agenten              | bis Sie den Fakt oder das Konto löschen                                    |
+| Erinnerungen                        | bis zum Versand; danach 30 Tage                                            |
 | Gast-Chats mit dem Agenten          | 30 Tage                                                                    |
 | Gelesene Benachrichtigungen         | 90 Tage                                                                    |
 | E-Mails in der Warteschlange        | 90 Tage                                                                    |
@@ -819,7 +834,7 @@ Verschlüsselte Verbindungen (HTTPS, HSTS), verschlüsselte Datenträger beim An
 
 - **Auskunft und Übertragbarkeit**: Einstellungen → Datenschutz → Ihre Daten herunterladen — eine JSON-Datei mit allen Daten über Sie.
 - **Berichtigung**: im Profil und in den Einstellungen; alles andere auf Anfrage.
-- **Löschung**: Einstellungen → Datenschutz → Konto löschen. Das Profil wird anonymisiert („Gelöschter Nutzer“); Kontakte, Nachrichten an den Agenten, das Gedächtnis des Agenten, gespeicherte Jobs und Benachrichtigungen werden gelöscht; das Anmeldekonto wird gelöscht; Bewerbungen bleiben ohne Ihre Kontakte bei den Arbeitgebern; Unternehmen, deren einziger Inhaber Sie sind, werden gesperrt.
+- **Löschung**: Einstellungen → Datenschutz → Konto löschen. Das Profil wird anonymisiert („Gelöschter Nutzer“); Kontakte, Nachrichten an den Agenten, das Gedächtnis des Agenten, Erinnerungen, gespeicherte Jobs und Benachrichtigungen werden gelöscht; das Anmeldekonto wird gelöscht; Bewerbungen bleiben ohne Ihre Kontakte bei den Arbeitgebern; Unternehmen, deren einziger Inhaber Sie sind, werden gesperrt.
 - **Widerruf der Einwilligung**: Cookies — im Banner oder unter Einstellungen → Datenschutz; Newsletter — in den Benachrichtigungseinstellungen oder über den Link in der E-Mail.
 - **Widerspruch und Einschränkung** der Verarbeitung auf Grundlage berechtigten Interesses — auf Anfrage an {{privacyEmail}}.
 - **Beschwerde** bei der Datenschutzbehörde Ihres Landes.
@@ -882,6 +897,8 @@ Candidatures et leurs statuts, offres enregistrées et masquées, signalements, 
 Les messages échangés avec l’agent et les brouillons de modifications du profil. Les e-mails, numéros de téléphone et numéros ressemblant à des pièces d’identité sont retirés du texte avant qu’il n’atteigne le modèle. Les conversations des invités sont liées à un identifiant aléatoire dans un cookie, pas à une personne.
 
 Mémoire de l’agent : de courts faits sur vous et vos objectifs que vous avez demandé à l’agent de retenir ou ajoutés dans Paramètres → Confidentialité → Mémoire de Spoki. L’agent les lit dans chaque conversation pour ne pas redemander. Les coordonnées, liens, mots de passe et clés ne sont pas acceptés. Vous pouvez modifier ou effacer chaque fait, ou effacer toute la mémoire d’un coup.
+
+Rappels : le texte et l’heure que vous avez demandé à l’agent de vous rappeler ; ils arrivent dans votre Telegram lié.
 
 ### 3.6 Consentement
 
@@ -966,6 +983,7 @@ Les autorités publiques uniquement sur demande légale. En cas de vente ou de r
 | Candidatures                            | tant que l’offre existe ; après suppression du compte, sans lien avec vous        |
 | Messages à l’agent carrière             | texte : 24 heures ; compteurs d’usage sans texte : 180 jours                      |
 | Mémoire de l’agent                      | jusqu’à l’effacement du fait ou du compte                                         |
+| Rappels                                 | jusqu’à l’envoi ; ensuite 30 jours                                                |
 | Conversations des invités avec l’agent  | 30 jours                                                                          |
 | Notifications lues                      | 90 jours                                                                          |
 | E-mails en file d’attente               | 90 jours                                                                          |
@@ -986,7 +1004,7 @@ Connexions chiffrées (HTTPS, HSTS), disques chiffrés chez le fournisseur, acc�
 
 - **Accès et portabilité** : Paramètres → Confidentialité → Télécharger vos données — un fichier JSON contenant toutes les données vous concernant.
 - **Rectification** : dans le profil et les paramètres ; le reste sur demande.
-- **Effacement** : Paramètres → Confidentialité → Supprimer le compte. Le profil est anonymisé (« Utilisateur supprimé ») ; les coordonnées, les messages à l’agent, la mémoire de l’agent, les offres enregistrées et les notifications sont supprimés ; le compte de connexion est supprimé ; les candidatures restent chez les employeurs sans vos coordonnées ; les entreprises dont vous êtes le seul propriétaire sont suspendues.
+- **Effacement** : Paramètres → Confidentialité → Supprimer le compte. Le profil est anonymisé (« Utilisateur supprimé ») ; les coordonnées, les messages à l’agent, la mémoire de l’agent, les rappels, les offres enregistrées et les notifications sont supprimés ; le compte de connexion est supprimé ; les candidatures restent chez les employeurs sans vos coordonnées ; les entreprises dont vous êtes le seul propriétaire sont suspendues.
 - **Retrait du consentement** : cookies — dans le bandeau ou dans Paramètres → Confidentialité ; newsletters — dans les paramètres de notifications ou via le lien dans l’e-mail.
 - **Opposition et limitation** du traitement fondé sur l’intérêt légitime — sur demande à {{privacyEmail}}.
 - **Réclamation** auprès de l’autorité de protection des données de votre pays.
@@ -1049,6 +1067,8 @@ Candidature e relativi stati, offerte salvate e nascoste, segnalazioni, ricerche
 I messaggi con l’agente e le bozze di modifica del profilo. Email, numeri di telefono e numeri simili a documenti vengono rimossi dal testo prima che raggiunga il modello. Le chat degli ospiti sono legate a un identificativo casuale in un cookie, non a una persona.
 
 Memoria dell’agente: brevi fatti su di te e sui tuoi obiettivi che hai chiesto all’agente di ricordare o hai aggiunto in Impostazioni → Privacy → Memoria di Spoki. L’agente li legge in ogni conversazione per non chiedere di nuovo. Contatti, link, password e chiavi non vengono accettati. Puoi modificare o cancellare ogni fatto, o cancellare tutta la memoria in una volta.
+
+Promemoria: il testo e l’ora che hai chiesto all’agente di ricordarti; arrivano sul tuo Telegram collegato.
 
 ### 3.6 Consenso
 
@@ -1133,6 +1153,7 @@ Le autorità pubbliche solo su richiesta legittima. In caso di vendita o riorgan
 | Candidature                             | finché l’offerta esiste; dopo la cancellazione dell’account senza collegamento a te |
 | Messaggi all’agente di carriera         | testo: 24 ore; contatori d’uso senza testo: 180 giorni                              |
 | Memoria dell’agente                     | finché non cancelli il fatto o l’account                                            |
+| Promemoria                              | fino all’invio; poi 30 giorni                                                       |
 | Chat degli ospiti con l’agente          | 30 giorni                                                                           |
 | Notifiche lette                         | 90 giorni                                                                           |
 | Email in coda                           | 90 giorni                                                                           |
@@ -1153,7 +1174,7 @@ Connessioni cifrate (HTTPS, HSTS), dischi cifrati presso il fornitore, accesso b
 
 - **Accesso e portabilità**: Impostazioni → Privacy → Scarica i tuoi dati — un file JSON con tutti i dati che ti riguardano.
 - **Rettifica**: nel profilo e nelle impostazioni; il resto su richiesta.
-- **Cancellazione**: Impostazioni → Privacy → Elimina l’account. Il profilo viene anonimizzato («Utente eliminato»); contatti, messaggi all’agente, memoria dell’agente, offerte salvate e notifiche vengono eliminati; l’account di accesso viene eliminato; le candidature restano ai datori di lavoro senza i tuoi contatti; le aziende di cui sei l’unico proprietario vengono sospese.
+- **Cancellazione**: Impostazioni → Privacy → Elimina l’account. Il profilo viene anonimizzato («Utente eliminato»); contatti, messaggi all’agente, memoria dell’agente, promemoria, offerte salvate e notifiche vengono eliminati; l’account di accesso viene eliminato; le candidature restano ai datori di lavoro senza i tuoi contatti; le aziende di cui sei l’unico proprietario vengono sospese.
 - **Revoca del consenso**: cookie — nel banner o in Impostazioni → Privacy; newsletter — nelle impostazioni delle notifiche o tramite il link nell’email.
 - **Opposizione e limitazione** del trattamento basato sul legittimo interesse — su richiesta a {{privacyEmail}}.
 - **Reclamo** all’autorità per la protezione dei dati del tuo paese.

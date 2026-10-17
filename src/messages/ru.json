@@ -1721,7 +1721,9 @@
       "unfollow_company": "Отписаться от {name}.",
       "set_notification": "{on, select, true {Включить} other {Выключить}} «{name}» · {channel}.",
       "set_profile_hidden": "{on, select, true {Скрыть профиль от работодателей.} other {Снова показывать профиль работодателям.}}",
-      "set_morning_briefs": "{on, select, true {Включить} other {Выключить}} утренние подборки вакансий."
+      "set_morning_briefs": "{on, select, true {Включить} other {Выключить}} утренние подборки вакансий.",
+      "create_reminder": "Напомнить в Telegram: {name}.",
+      "cancel_reminder": "Отменить напоминание: {name}."
     },
     "confirm": {
       "applyTitle": "Откликнуться на эту вакансию?",
@@ -1810,6 +1812,11 @@
         "title": "Память Spoki",
         "text": "Что Spoki помнит о вас. Можно исправить или стереть.",
         "action": "Открыть память"
+      },
+      "link_telegram": {
+        "title": "Привязать Telegram",
+        "text": "Напоминания приходят в Telegram. Привяжите его в настройках аккаунта.",
+        "action": "Привязать Telegram"
       }
     }
   },
@@ -4006,5 +4013,8 @@
     "errorContacts": "Контакты и ссылки в памяти не хранятся.",
     "errorSecret": "Пароли, ключи и номера карт в памяти не хранятся.",
     "errorFull": "Память заполнена. Сначала сотрите какой-нибудь факт."
+  },
+  "reminders": {
+    "telegram": "Напоминание от Spoki: {text}\n{when}"
   }
 }

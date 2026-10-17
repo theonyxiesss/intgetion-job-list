@@ -1721,7 +1721,9 @@
       "unfollow_company": "{name} nicht mehr folgen.",
       "set_notification": "„{name}“ · {channel} {on, select, true {jetzt einschalten} other {jetzt ausschalten}}.",
       "set_profile_hidden": "{on, select, true {Profil vor Arbeitgebern verbergen.} other {Profil Arbeitgebern wieder zeigen.}}",
-      "set_morning_briefs": "Morgendliche Job-Übersichten {on, select, true {jetzt einschalten} other {jetzt ausschalten}}."
+      "set_morning_briefs": "Morgendliche Job-Übersichten {on, select, true {jetzt einschalten} other {jetzt ausschalten}}.",
+      "create_reminder": "In Telegram erinnern: {name}.",
+      "cancel_reminder": "Erinnerung absagen: {name}."
     },
     "confirm": {
       "applyTitle": "Auf diesen Job bewerben?",
@@ -1810,6 +1812,11 @@
         "title": "Spoki-Gedächtnis",
         "text": "Was Spoki über dich weiß. Du kannst es korrigieren oder löschen.",
         "action": "Gedächtnis öffnen"
+      },
+      "link_telegram": {
+        "title": "Telegram verknüpfen",
+        "text": "Erinnerungen kommen in dein Telegram. Verknüpfe es in den Kontoeinstellungen.",
+        "action": "Telegram verknüpfen"
       }
     }
   },
@@ -4006,5 +4013,8 @@
     "errorContacts": "Kontakte und Links werden nicht im Gedächtnis gespeichert.",
     "errorSecret": "Passwörter, Schlüssel und Kartennummern werden nicht im Gedächtnis gespeichert.",
     "errorFull": "Das Gedächtnis ist voll. Lösch zuerst einen Fakt."
+  },
+  "reminders": {
+    "telegram": "Erinnerung von Spoki: {text}\n{when}"
   }
 }

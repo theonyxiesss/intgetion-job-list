@@ -4,6 +4,7 @@ import { siteUrl } from "@/lib/supabase/env";
 import { telegramActionSecret } from "@/lib/telegram-actions";
 import { telegramSender } from "@/lib/telegram-bot";
 import { telegramBotToken } from "@/modules/auth/service";
+import { runReminderDispatch } from "@/modules/bot/service";
 import { runJobsAlert } from "@/modules/jobs/service";
 import { runTelegramDispatch } from "@/modules/notifications/service";
 
@@ -17,7 +18,7 @@ function authorized(request: Request): boolean {
   return expected.length === actual.length && timingSafeEqual(expected, actual);
 }
 
-/** Notifications as Telegram messages, every 5 minutes (D237). */
+/** Notifications, Spoki reminders (D473) and the channel post, every 5 minutes (D237). */
 export async function GET(request: Request) {
   try {
     if (!authorized(request)) throw notFound();
@@ -30,12 +31,14 @@ export async function GET(request: Request) {
       siteUrl: siteUrl(),
       actionSecret: telegramActionSecret(token),
     });
+    // Reminders set through Spoki (D473), each sent once.
+    const reminders = await runReminderDispatch({ sender });
     const jobsAlert = await runJobsAlert({
       sender,
       host: new URL(siteUrl()).host,
       chatIdRaw: process.env.JOBS_ALERT_CHAT_ID,
     });
-    return Response.json({ ok: true, ...dispatch, jobsAlert });
+    return Response.json({ ok: true, ...dispatch, reminders, jobsAlert });
   } catch (error) {
     return toErrorResponse(error);
   }
