@@ -354,7 +354,12 @@ body:has(.chat-shell) footer {
 
 @media (max-width: 767px) {
   body:has([data-bottom-nav]) .chat-shell {
-    bottom: 4rem;
+    bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+
+  /* The cookie notice sits above the tab bar, so the bar stays usable (D468). */
+  body:has([data-bottom-nav]) [data-cookie-banner] {
+    bottom: calc(4rem + env(safe-area-inset-bottom));
   }
 
   /* Same width as the phone tab bar (md:hidden). Spoki stays in that bar. */
@@ -377,8 +382,17 @@ body:has(.chat-shell) footer {
     display: none;
   }
 
+  /* While writing, the chat takes exactly the part of the page the keyboard
+     leaves: Safari pans the page instead of shrinking it, so a bottom of 0
+     would sit under the keys. The header steps aside too (D468). */
   html[data-keyboard] body:has(.chat-shell) .chat-shell {
-    bottom: 0;
+    top: var(--vv-top, 0px);
+    bottom: auto;
+    height: var(--vv-height, 100dvh);
+  }
+
+  html[data-keyboard] body:has(.chat-shell) .vt-site-header {
+    display: none;
   }
 }
 

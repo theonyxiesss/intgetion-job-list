@@ -7,6 +7,7 @@ import { Icon } from "@/components/ui/icon";
 import { navFade } from "@/components/ui/page-transition";
 import { Link } from "@/i18n/navigation";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { OPEN_MENU_EVENT } from "./bottom-nav";
 import { iconForNav } from "./nav-icons";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -41,6 +42,13 @@ export function MobileNav({
     if (open && !dialog.open) dialog.showModal();
     if (!open && dialog.open) dialog.close();
   }, [open]);
+
+  // "More" in the phone tab bar opens this same menu (D468).
+  useEffect(() => {
+    const show = () => setOpen(true);
+    window.addEventListener(OPEN_MENU_EVENT, show);
+    return () => window.removeEventListener(OPEN_MENU_EVENT, show);
+  }, []);
 
   return (
     <>

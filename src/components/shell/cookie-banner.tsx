@@ -75,6 +75,7 @@ export function CookieBanner({ text }: { text: CookieBannerText }) {
   return (
     <section
       aria-label={text.label}
+      data-cookie-banner
       className="fixed inset-x-0 bottom-0 z-50 border-t border-line-strong bg-surface"
     >
       <div className="mx-auto flex w-full max-w-[1376px] flex-col gap-4 px-4 py-4 md:px-6 xl:px-12">

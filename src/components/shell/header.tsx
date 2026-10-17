@@ -19,7 +19,6 @@ import { requireUser } from "@/lib/auth-guards";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { sessionCard } from "@/modules/auth/service";
-import { hasCandidateProfile } from "@/modules/candidates/service";
 import { countUnread } from "@/modules/notifications/service";
 import { BottomNav } from "./bottom-nav";
 import { MobileNav, type NavItem } from "./mobile-nav";
@@ -39,7 +38,6 @@ export async function Header() {
   const signedIn = hasSessionMark(await headers());
   let unread = 0;
   let isAdmin = false;
-  let candidate = false;
   let employer = false;
   let accountName = "";
   let accountEmail: string | null = null;
@@ -49,7 +47,6 @@ export async function Header() {
       isAdmin = user.platformRole === "admin";
       employer = user.accountType === "employer";
       unread = await countUnread(user.id);
-      candidate = await hasCandidateProfile(user.id);
       const card = await sessionCard((await createSupabaseServerClient()).auth);
       accountName = card?.name ?? "";
       accountEmail = card?.email ?? null;
@@ -143,11 +140,12 @@ export async function Header() {
   return (
     <ScrollFrame className="sticky top-0 z-40 border-b border-transparent bg-bg transition-colors duration-200 data-[scrolled]:border-line">
       <div className="mx-auto flex h-16 w-full max-w-[1376px] items-center gap-2 px-4 sm:gap-4 md:px-6 xl:px-12">
+        {/* Phones get the space for actions; the tab bar is the way around (D468). */}
         <Link
           {...navFade}
           href="/"
           aria-label={t("product.name")}
-          className="inline-flex min-h-11 shrink-0 items-center"
+          className="inline-flex min-h-11 shrink-0 items-center max-md:hidden"
         >
           <Logo name={t("product.wordmark")} sub={t("product.wordmarkSub")} />
         </Link>
@@ -170,7 +168,7 @@ export async function Header() {
           ))}
         </nav>
 
-        <div className="ml-auto flex shrink-0 items-center gap-1">
+        <div className="ml-auto flex shrink-0 items-center gap-1 max-md:ml-0 max-md:w-full">
           <span data-header-chat className="mr-1 inline-flex sm:mr-2">
             <ButtonLink
               {...navFade}
@@ -183,18 +181,7 @@ export async function Header() {
               aria-label={t("nav.chatWithAgent")}
             />
           </span>
-          <span className="mr-1 inline-flex sm:hidden">
-            <ButtonLink
-              {...navFade}
-              href="/post-job"
-              size="icon"
-              className="size-9!"
-              title={t("nav.postJob")}
-              aria-label={t("nav.postJob")}
-              icon={<Icon icon={Plus} size={16} />}
-            />
-          </span>
-          <span className="mr-1 hidden sm:inline-flex">
+          <span className="mr-1 inline-flex max-md:mr-auto">
             <ButtonLink
               {...navFade}
               href="/post-job"
@@ -261,24 +248,23 @@ export async function Header() {
             openLabel={t("nav.menu")}
             closeLabel={t("ui.close")}
             signedIn={signedIn}
-            triggerClassName={untilBar}
+            triggerClassName={cn(untilBar, "max-md:hidden")}
           />
         </div>
       </div>
       <Suspense>
         <NavProgress />
       </Suspense>
-      {candidate ? (
-        <BottomNav
-          label={t("nav.bottom")}
-          items={[
-            { href: "/jobs", label: t("nav.jobs") },
-            { href: "/applications", label: t("applications.nav") },
-            { href: "/chat", label: t("nav.chat") },
-            { href: "/profile", label: t("profile.nav") },
-          ]}
-        />
-      ) : null}
+      <BottomNav
+        label={t("nav.bottom")}
+        moreLabel={t("nav.more")}
+        items={[
+          { href: "/jobs", label: t("nav.jobs") },
+          { href: "/freelance", label: t("nav.freelance") },
+          { href: "/chat", label: t("nav.chat") },
+          { href: "/campaigns", label: t("nav.campaigns") },
+        ]}
+      />
     </ScrollFrame>
   );
 }

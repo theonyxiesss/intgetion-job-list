@@ -10,15 +10,17 @@ export type KeyboardPhase = {
 
 /**
  * True when the visible viewport is shorter than the layout viewport by
- * about a keyboard. Telegram's webview lifts a fixed bar instead of
- * shrinking the page, so this is only a signal, not a second offset.
+ * about a keyboard. Safari pans the visible page up to the field, so the
+ * pan (`offsetTop`) is not subtracted: it would hide the keyboard and bring
+ * the tab bar back onto it (D468). Pinch zoom also shrinks the visible
+ * page, so its height is counted at the zoom scale.
  */
 export function keyboardOverlaps(
   layoutHeight: number,
   visualHeight: number,
-  offsetTop: number,
+  scale = 1,
 ): boolean {
-  return layoutHeight - visualHeight - offsetTop > KEYBOARD_OVERLAP_PX;
+  return layoutHeight - visualHeight * scale > KEYBOARD_OVERLAP_PX;
 }
 
 /**

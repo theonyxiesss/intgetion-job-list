@@ -129,7 +129,7 @@ export default async function LocaleLayout({
       className={`h-full ${fontVariables}`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col has-[[data-bottom-nav]]:pb-16 md:has-[[data-bottom-nav]]:pb-0">
+      <body className="flex min-h-full flex-col has-[[data-bottom-nav]]:pb-[calc(4rem+env(safe-area-inset-bottom))] md:has-[[data-bottom-nav]]:pb-0">
         <script
           nonce={nonce}
           dangerouslySetInnerHTML={{ __html: themeScript }}

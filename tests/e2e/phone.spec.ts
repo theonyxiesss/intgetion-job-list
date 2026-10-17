@@ -111,3 +111,27 @@ test("phone pages do not scroll sideways and controls are at least 44px", async 
     );
   }
 });
+
+test("phone tab bar shows the main services to everyone (D468)", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto("/en");
+  const bar = page.locator("[data-bottom-nav]");
+  await expect(bar).toBeVisible();
+  await expect(bar.locator('a[href$="/freelance"]')).toBeVisible();
+  await expect(bar.locator('a[href$="/campaigns"]')).toBeVisible();
+  await expect(bar.locator('a[href$="/chat"]')).toBeVisible();
+  // The wordmark gives its place to the actions on a phone.
+  await expect(
+    page.locator("header").getByRole("link", { name: "INTGETION JOB LIST" }),
+  ).toBeHidden();
+  const more = bar.getByRole("button", { name: "More" });
+  await more.click();
+  const menu = page.locator("dialog[open]");
+  await expect(menu).toBeVisible();
+  await expect(menu.locator('a[href$="/services"]')).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(menu).toBeHidden();
+  await expect(more).toBeFocused();
+});

@@ -384,19 +384,26 @@ export function Chat({
       const viewport = window.visualViewport;
       const covered =
         viewport != null &&
-        keyboardOverlaps(
-          window.innerHeight,
-          viewport.height,
-          viewport.offsetTop,
-        );
+        keyboardOverlaps(window.innerHeight, viewport.height, viewport.scale);
       const wasOpen = phase.open;
       phase = nextKeyboardPhase(phase, {
         narrow: narrow.matches,
         covered,
         writing: document.activeElement === fieldRef.current,
       });
-      if (phase.open) root.dataset.keyboard = "";
-      else delete root.dataset.keyboard;
+      if (phase.open) {
+        root.dataset.keyboard = "";
+        // The chat sits on the part of the page the keyboard leaves (D468).
+        root.style.setProperty("--vv-top", `${viewport?.offsetTop ?? 0}px`);
+        root.style.setProperty(
+          "--vv-height",
+          `${viewport?.height ?? window.innerHeight}px`,
+        );
+      } else {
+        delete root.dataset.keyboard;
+        root.style.removeProperty("--vv-top");
+        root.style.removeProperty("--vv-height");
+      }
       if (phase.open && !wasOpen) {
         endRef.current?.scrollIntoView({ block: "end" });
       }
@@ -411,6 +418,8 @@ export function Chat({
     window.addEventListener("focusout", sync, true);
     return () => {
       delete root.dataset.keyboard;
+      root.style.removeProperty("--vv-top");
+      root.style.removeProperty("--vv-height");
       viewport?.removeEventListener("resize", sync);
       viewport?.removeEventListener("scroll", sync);
       narrow.removeEventListener("change", sync);
@@ -1037,7 +1046,7 @@ export function Chat({
           )}
           <form
             onSubmit={send}
-            className={`flex shrink-0 flex-col gap-2 ${welcome ? "" : "pb-[max(0.75rem,env(safe-area-inset-bottom))]"}`}
+            className={`flex shrink-0 flex-col gap-2 ${welcome ? "max-md:pb-3" : "pb-[max(0.75rem,env(safe-area-inset-bottom))]"}`}
           >
             <div className="flex items-end gap-2 rounded-[1.75rem] bg-surface-2 py-1.5 pr-1.5 pl-5 ring-1 ring-line-strong focus-within:ring-2 focus-within:ring-fg-subtle">
               <label className="sr-only" htmlFor="chat-input">
@@ -1088,7 +1097,7 @@ export function Chat({
         {welcome && (
           <div
             aria-hidden="true"
-            className="min-h-0 flex-1 [@media(max-height:520px)]:hidden"
+            className="min-h-0 flex-1 max-md:hidden [@media(max-height:520px)]:hidden"
           />
         )}
       </div>

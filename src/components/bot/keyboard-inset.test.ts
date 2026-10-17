@@ -9,16 +9,23 @@ const closed: KeyboardPhase = { open: false, sawKeyboard: false };
 
 describe("keyboardOverlaps", () => {
   it("is open when the visible page is shorter by a keyboard", () => {
-    expect(keyboardOverlaps(800, 420, 0)).toBe(true);
+    expect(keyboardOverlaps(800, 420)).toBe(true);
   });
 
   it("stays closed for browser chrome and a full page", () => {
-    expect(keyboardOverlaps(800, 760, 0)).toBe(false);
-    expect(keyboardOverlaps(800, 800, 0)).toBe(false);
+    expect(keyboardOverlaps(800, 760)).toBe(false);
+    expect(keyboardOverlaps(800, 800)).toBe(false);
   });
 
-  it("counts the visual viewport offset", () => {
-    expect(keyboardOverlaps(800, 500, 40)).toBe(true);
+  it("stays open while Safari pans the page up to the field (D468)", () => {
+    // The visible page is 420 high whatever its offset; the keyboard is 380.
+    expect(keyboardOverlaps(800, 420, 1)).toBe(true);
+    expect(keyboardOverlaps(800, 500)).toBe(true);
+  });
+
+  it("does not take pinch zoom for a keyboard", () => {
+    expect(keyboardOverlaps(800, 400, 2)).toBe(false);
+    expect(keyboardOverlaps(800, 200, 2)).toBe(true);
   });
 });
 
