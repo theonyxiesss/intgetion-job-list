@@ -129,7 +129,7 @@
 | Аккаунт и профиль                              | пока аккаунт существует; при удалении — сразу обезличиваются (п. 9)  |
 | Контакты кандидата                             | до удаления аккаунта или до изменения                                |
 | Отклики                                        | пока существует вакансия; после удаления аккаунта — без связи с вами |
-| Сообщения карьерному агенту                    | 180 дней                                                             |
+| Сообщения карьерному агенту                    | текст — 24 часа; счётчики расходов без текста — 180 дней             |
 | Память агента                                  | пока вы не сотрёте факт или аккаунт                                  |
 | Гостевые беседы с агентом                      | 30 дней                                                              |
 | Прочитанные уведомления                        | 90 дней                                                              |
@@ -296,7 +296,7 @@ Public authorities only on a lawful request. In a sale or reorganisation of the 
 | Account and profile          | while the account exists; anonymised at once on deletion (section 9) |
 | Candidate contacts           | until account deletion or change                                     |
 | Applications                 | while the job exists; after account deletion without a link to you   |
-| Messages to the career agent | 180 days                                                             |
+| Messages to the career agent | text: 24 hours; usage counters without text: 180 days                |
 | Agent memory                 | until you erase the fact or the account                              |
 | Guest agent chats            | 30 days                                                              |
 | Read notifications           | 90 days                                                              |
@@ -463,7 +463,7 @@ Autoridades públicas apenas mediante pedido legal. Em caso de venda ou reorgani
 | Conta e perfil                        | enquanto a conta existir; anonimizados imediatamente na exclusão (seção 9) |
 | Contatos do candidato                 | até a exclusão ou alteração da conta                                       |
 | Candidaturas                          | enquanto a vaga existir; após a exclusão da conta, sem vínculo com você    |
-| Mensagens ao agente de carreira       | 180 dias                                                                   |
+| Mensagens ao agente de carreira       | texto: 24 horas; contadores de uso sem texto: 180 dias                     |
 | Memória do agente                     | até você apagar o fato ou a conta                                          |
 | Conversas de visitantes com o agente  | 30 dias                                                                    |
 | Notificações lidas                    | 90 dias                                                                    |
@@ -630,7 +630,7 @@ Autoridades públicas, solo ante una solicitud legal. En una venta o reorganizac
 | Cuenta y perfil                         | mientras exista la cuenta; se anonimizan en cuanto se elimina (sección 9) |
 | Contactos del candidato                 | hasta que se elimine la cuenta o se cambien                               |
 | Postulaciones                           | mientras exista el empleo; tras eliminar la cuenta, sin vínculo con usted |
-| Mensajes al agente de carrera           | 180 días                                                                  |
+| Mensajes al agente de carrera           | texto: 24 horas; contadores de uso sin texto: 180 días                    |
 | Memoria del agente                      | hasta que borre el dato o la cuenta                                       |
 | Chats de invitados con el agente        | 30 días                                                                   |
 | Notificaciones leídas                   | 90 días                                                                   |
@@ -797,7 +797,7 @@ Behörden nur auf rechtmäßige Anfrage. Bei einem Verkauf oder einer Umstruktur
 | Konto und Profil                    | solange das Konto besteht; bei Löschung sofort anonymisiert (Abschnitt 9)  |
 | Kontakte von Kandidaten             | bis zur Löschung des Kontos oder Änderung                                  |
 | Bewerbungen                         | solange der Job besteht; nach Löschung des Kontos ohne Verbindung zu Ihnen |
-| Nachrichten an den Karriere-Agenten | 180 Tage                                                                   |
+| Nachrichten an den Karriere-Agenten | Text: 24 Stunden; Nutzungszähler ohne Text: 180 Tage                       |
 | Gedächtnis des Agenten              | bis Sie den Fakt oder das Konto löschen                                    |
 | Gast-Chats mit dem Agenten          | 30 Tage                                                                    |
 | Gelesene Benachrichtigungen         | 90 Tage                                                                    |
@@ -964,7 +964,7 @@ Les autorités publiques uniquement sur demande légale. En cas de vente ou de r
 | Compte et profil                        | tant que le compte existe ; anonymisés immédiatement à la suppression (section 9) |
 | Coordonnées des candidats               | jusqu’à la suppression du compte ou leur modification                             |
 | Candidatures                            | tant que l’offre existe ; après suppression du compte, sans lien avec vous        |
-| Messages à l’agent carrière             | 180 jours                                                                         |
+| Messages à l’agent carrière             | texte : 24 heures ; compteurs d’usage sans texte : 180 jours                      |
 | Mémoire de l’agent                      | jusqu’à l’effacement du fait ou du compte                                         |
 | Conversations des invités avec l’agent  | 30 jours                                                                          |
 | Notifications lues                      | 90 jours                                                                          |
@@ -1131,7 +1131,7 @@ Le autorità pubbliche solo su richiesta legittima. In caso di vendita o riorgan
 | Account e profilo                       | finché l’account esiste; anonimizzati subito alla cancellazione (sezione 9)         |
 | Contatti dei candidati                  | fino alla cancellazione dell’account o alla modifica                                |
 | Candidature                             | finché l’offerta esiste; dopo la cancellazione dell’account senza collegamento a te |
-| Messaggi all’agente di carriera         | 180 giorni                                                                          |
+| Messaggi all’agente di carriera         | testo: 24 ore; contatori d’uso senza testo: 180 giorni                              |
 | Memoria dell’agente                     | finché non cancelli il fatto o l’account                                            |
 | Chat degli ospiti con l’agente          | 30 giorni                                                                           |
 | Notifiche lette                         | 90 giorni                                                                           |

@@ -4476,7 +4476,7 @@
   },
   "spokiMemory": {
     "title": "Spoki memory",
-    "text": "Facts you told Spoki about yourself and your goals. Spoki reads them in every chat and does not ask again. Contacts and passwords are never kept. Chat messages are not part of it.",
+    "text": "Facts you told Spoki about yourself and your goals. Spoki reads them in every chat and does not ask again. Contacts and passwords are never kept. Chat messages are not part of it: their text is wiped after 24 hours.",
     "empty": "Spoki remembers nothing yet. Tell it in the chat, or add a fact here.",
     "count": "{count} of {max}",
     "addLabel": "New fact",

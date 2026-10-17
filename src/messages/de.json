@@ -3970,7 +3970,7 @@
   },
   "spokiMemory": {
     "title": "Spoki-Gedächtnis",
-    "text": "Fakten, die du Spoki über dich und deine Ziele erzählt hast. Spoki liest sie in jedem Chat und fragt nicht erneut. Kontakte und Passwörter werden nie gespeichert. Chatnachrichten gehören nicht dazu.",
+    "text": "Fakten, die du Spoki über dich und deine Ziele erzählt hast. Spoki liest sie in jedem Chat und fragt nicht erneut. Kontakte und Passwörter werden nie gespeichert. Chatnachrichten gehören nicht dazu: ihr Text wird nach 24 Stunden gelöscht.",
     "empty": "Spoki weiß noch nichts. Erzähl es im Chat oder füge hier einen Fakt hinzu.",
     "count": "{count} von {max}",
     "addLabel": "Neuer Fakt",

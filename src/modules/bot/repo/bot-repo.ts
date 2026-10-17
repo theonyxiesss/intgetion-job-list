@@ -1,4 +1,5 @@
-import { and, asc, desc, eq, gt, isNull, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, isNull, sql } from "drizzle-orm";
+import { CHAT_TEXT_TTL_MS } from "@/config/retention";
 import { getDb } from "@/db/client";
 import { botConfirmations, botConversations, botMessages } from "@/db/schema";
 
@@ -214,15 +215,25 @@ export async function insertMessage(input: {
   return row!;
 }
 
-/** Newest `limit` messages, returned oldest first. */
+/**
+ * Newest `limit` messages of the last 24 hours, returned oldest first. Older
+ * text is gone by D471, so it is never read back even before the cron runs.
+ */
 export async function listMessages(
   conversationId: string,
   limit: number,
+  now = new Date(),
 ): Promise<MessageRow[]> {
+  const since = new Date(now.getTime() - CHAT_TEXT_TTL_MS);
   const rows = await getDb()
     .select()
     .from(botMessages)
-    .where(eq(botMessages.conversationId, conversationId))
+    .where(
+      and(
+        eq(botMessages.conversationId, conversationId),
+        gte(botMessages.createdAt, since),
+      ),
+    )
     .orderBy(desc(botMessages.createdAt), desc(botMessages.id))
     .limit(limit);
   return rows.reverse();

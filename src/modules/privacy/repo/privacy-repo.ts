@@ -1,4 +1,5 @@
 import { sql } from "drizzle-orm";
+import { CHAT_TEXT_TTL_MS } from "@/config/retention";
 import { getDb } from "@/db/client";
 
 type Rows = Record<string, unknown>[];
@@ -77,7 +78,7 @@ export async function readUserData(userId: string) {
       sql`select type, channel, enabled from public.notification_preferences where user_id = ${userId}`,
     ),
     rows(
-      sql`select m.conversation_id, m.role, m.content, m.created_at from public.bot_messages m join public.bot_conversations c on c.id = m.conversation_id where c.user_id = ${userId} and m.role in ('user', 'assistant', 'system_event') order by m.created_at`,
+      sql`select m.conversation_id, m.role, m.content, m.created_at from public.bot_messages m join public.bot_conversations c on c.id = m.conversation_id where c.user_id = ${userId} and m.role in ('user', 'assistant', 'system_event') and m.content <> '' order by m.created_at`,
     ),
     rows(
       sql`select fact, source, created_at, updated_at from public.bot_memory_facts where user_id = ${userId} order by created_at`,
@@ -230,6 +231,7 @@ export async function purgeExpired(now: Date) {
     new Date(now.getTime() - n * 24 * 60 * 60 * 1000).toISOString();
   const count = async (query: ReturnType<typeof sql>) =>
     ((await getDb().execute(query)) as unknown as unknown[]).length;
+  const chatCutoff = new Date(now.getTime() - CHAT_TEXT_TTL_MS).toISOString();
   return {
     jobFeedback: await count(sql`
       delete from public.user_job_feedback where created_at < ${days(365)}::timestamptz returning 1`),
@@ -239,6 +241,15 @@ export async function purgeExpired(now: Date) {
       delete from public.matching_results where computed_at < ${days(30)}::timestamptz returning 1`),
     readNotifications: await count(sql`
       delete from public.notifications where read_at is not null and read_at < ${days(90)}::timestamptz returning 1`),
+    // D471: the chat text lives 24 hours. The row keeps its token and cost
+    // counters for the budget breaker and the anomaly check until 180 days.
+    chatTextWiped: await count(sql`
+      update public.bot_messages set content = '', tool_call = null
+      where created_at < ${chatCutoff}::timestamptz
+        and (content <> '' or tool_call is not null)
+      returning 1`),
+    botConfirmations: await count(sql`
+      delete from public.bot_confirmations where created_at < ${chatCutoff}::timestamptz returning 1`),
     botMessages: await count(sql`
       delete from public.bot_messages where created_at < ${days(180)}::timestamptz returning 1`),
     guestConversations: await count(sql`

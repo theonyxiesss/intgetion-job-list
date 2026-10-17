@@ -3970,7 +3970,7 @@
   },
   "spokiMemory": {
     "title": "Memoria de Spoki",
-    "text": "Datos que le contaste a Spoki sobre ti y tus objetivos. Spoki los lee en cada chat y no vuelve a preguntar. Nunca guarda contactos ni contraseñas. Los mensajes del chat no forman parte de ella.",
+    "text": "Datos que le contaste a Spoki sobre ti y tus objetivos. Spoki los lee en cada chat y no vuelve a preguntar. Nunca guarda contactos ni contraseñas. Los mensajes del chat no forman parte de ella: su texto se borra a las 24 horas.",
     "empty": "Spoki aún no recuerda nada. Cuéntaselo en el chat o añade un dato aquí.",
     "count": "{count} de {max}",
     "addLabel": "Nuevo dato",

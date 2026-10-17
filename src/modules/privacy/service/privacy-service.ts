@@ -78,7 +78,7 @@ export async function deleteMyAccount(
 export const AUTH_DELETE_RETRY_DAYS = 7;
 
 /**
- * Daily `/api/cron/retention` (section 17). Rate-limit counters, import
+ * Hourly `/api/cron/retention` (section 17, hourly since D471 for the chat). Rate-limit counters, import
  * runs and email queue rows have their own crons; bot tables join with 7A.
  */
 export async function runRetention(now = new Date()) {

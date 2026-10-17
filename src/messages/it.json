@@ -3970,7 +3970,7 @@
   },
   "spokiMemory": {
     "title": "Memoria di Spoki",
-    "text": "Fatti che hai raccontato a Spoki su di te e sui tuoi obiettivi. Spoki li legge in ogni chat e non chiede di nuovo. Contatti e password non vengono mai conservati. I messaggi della chat non ne fanno parte.",
+    "text": "Fatti che hai raccontato a Spoki su di te e sui tuoi obiettivi. Spoki li legge in ogni chat e non chiede di nuovo. Contatti e password non vengono mai conservati. I messaggi della chat non ne fanno parte: il loro testo viene cancellato dopo 24 ore.",
     "empty": "Spoki non ricorda ancora nulla. Diglielo in chat o aggiungi un fatto qui.",
     "count": "{count} di {max}",
     "addLabel": "Nuovo fatto",

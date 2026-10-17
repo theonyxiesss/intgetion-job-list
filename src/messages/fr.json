@@ -3970,7 +3970,7 @@
   },
   "spokiMemory": {
     "title": "Mémoire de Spoki",
-    "text": "Les faits que vous avez confiés à Spoki sur vous et vos objectifs. Spoki les lit dans chaque chat et ne redemande pas. Les contacts et mots de passe ne sont jamais gardés. Les messages du chat n’en font pas partie.",
+    "text": "Les faits que vous avez confiés à Spoki sur vous et vos objectifs. Spoki les lit dans chaque chat et ne redemande pas. Les contacts et mots de passe ne sont jamais gardés. Les messages du chat n’en font pas partie : leur texte est effacé après 24 heures.",
     "empty": "Spoki ne se souvient de rien pour l’instant. Dites-le dans le chat ou ajoutez un fait ici.",
     "count": "{count} sur {max}",
     "addLabel": "Nouveau fait",
