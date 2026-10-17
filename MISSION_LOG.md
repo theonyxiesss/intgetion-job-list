@@ -2369,5 +2369,5 @@
 - OPEN QUESTION: нет новых (`TERMS_VERSION` — из D469).
 - Git: локальный `master` в этой копии — несвязанная история; не трогался, работа от `origin/master`.
 - CI: run 39025418602 на `5cb69e3` — зелёный (по API до слияния).
-- Выкладка: fast-forward `master` → `5cb69e3` → `dpl_44CSq9z87ZocS37rAK9PWdd5sfdC` (READY, алиас intgetion.com). `/api/health`, `/ru/chat` → 200; `/ru/settings/privacy` гостю → 307; `GET /api/bot/memory` гостю → 401; `/ru/privacy` и `/privacy` показывают «текст — 24 часа» / «text: 24 hours». Первый прогон крона (в :20) стирает текст старше суток; результат прогона не смотрелся.
+- Выкладка: fast-forward `master` → `5cb69e3` → `dpl_44CSq9z87ZocS37rAK9PWdd5sfdC` (READY, алиас intgetion.com). `/api/health`, `/ru/chat` → 200; `/ru/settings/privacy` гостю → 307; `GET /api/bot/memory` гостю → 401; `/ru/privacy` и `/privacy` показывают «текст — 24 часа» / «text: 24 hours». После прогона крона в 11:20 UTC (проверка SELECT в 11:44): сообщений старше суток с текстом или `tool_call` — 0; строк старше суток осталось 233 (только счётчики; с расходом > 0 среди них 0); карточек подтверждения старше суток — 0; сообщений за последние сутки с текстом — 4.
 - Следующая подфаза: 3 — действия на аккаунте (по команде основателя).
