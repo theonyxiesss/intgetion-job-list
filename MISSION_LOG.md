@@ -2385,3 +2385,17 @@
 - CI: run 39030765464 на `4931ed0` — зелёный (по API до слияния).
 - Выкладка: fast-forward `master` → `4931ed0` → `dpl_2PyCqMLgyVVvM2auooyxTcyUynDe` (READY, алиас intgetion.com). `/api/health`, `/ru/chat` → 200; `GET /api/bot/memory` гостю → 401; на `/ru/chat` есть текст карточки «Изменить это в аккаунте?». Под вошедшим аккаунтом карточки не проверялись.
 - Следующая подфаза: 4 — напоминания в Telegram (по команде основателя).
+
+## [2026-10-17] — Spoki как ассистент, подфаза 4: напоминания в Telegram (D473) — DONE
+
+- Задача: основатель — «Делай подфазу 4». Выборы кнопками: без Telegram — предложить привязать; «да» до сайта с миграцией `0059` на облако.
+- План (до кода): таблица `bot_reminders` (`0059`); `bot/service/reminders.ts` — `create_reminder` (карточка), `list_my_reminders`, `cancel_reminder` (карточка), местное время в поясе профиля или названном; проверки до карточки (Telegram, время, лимит 20); `runReminderDispatch` в `/api/cron/telegram`; экспорт, удаление, 30 дней хранения; тексты 7 языков; промпт 29 с `NOW`; unit, интеграционный, eval.
+- Сделано: по плану. Кнопка `offer_step link_telegram` → `/settings/account`. `callTool` передаёт модели причину отказа 409/422 (свои серверные строки).
+- Проверки (локально): `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (1296 прошли, 1 пропущен); `pnpm eval` → 0 (6 наборов, account 09–11); `pnpm build` → 0; `pnpm format:check` → 0; чистый Postgres 16: `db:migrate` дважды (второй — без изменений) + `db:verify` (83 таблицы под deny-all) + `pnpm test:integration` → 0 (169 прошли, 7 пропущены); мутация (захват без перевода в `sent`) → тест «отправка ровно один раз» падает.
+- Миграции: `0059_bot_reminders.sql` — CI с нуля; облако путём D438 2026-10-17 ~15:38 UTC: владелец `migrator`, RLS включён и принудителен, 3 политики, `app_rw` DML, журнал 57, членство `postgres` вернулось к `set=false` от `supabase_admin`. Советники: только известные (SEC-20261014-6/7).
+- Изменённые файлы: `src/db/migrations/0059_bot_reminders.sql`, `src/db/schema/bot.ts`, `src/modules/bot/{repo/reminder-repo.ts,service/{reminders,tools,conversation,offers,telegram-agent,eval-run,index}.ts,prompts/system.ts,reminders.integration.test.ts,__tests__/{reminders,account-tools,memory}.test.ts}`, `src/app/api/cron/telegram/route.ts`, `src/components/bot/account-card.tsx`, `src/modules/privacy/{repo/privacy-repo.ts,privacy.integration.test.ts}`, `src/messages/*.json` (7: `reminders`, `chat.account`, `chat.offer.link_telegram`), `evals/account/account-09..11.json`, `docs/content/legal-privacy.md`, `src/content/legal/legal.json`, docs.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет новых.
+- CI: run 39034104597 на `101c973` — зелёный (по API до облака и слияния).
+- Выкладка: fast-forward `master` → `101c973` → `dpl_9dPukUtfhLvkD5NN4Cz5yem4xRzu` (READY). `/api/health`, `/ru/chat` → 200; `GET /api/bot/memory` гостю → 401; `/api/cron/telegram` без секрета → 404; на `/ru/chat` есть «Напомнить в Telegram», на `/ru/privacy` — «Напоминания». Живых сообщений в Telegram агент не отправлял; создание и доставка под вошедшим аккаунтом не проверялись.
+- Следующая подфаза: 5 — рекомендация работодателю при отклике (по команде основателя).
