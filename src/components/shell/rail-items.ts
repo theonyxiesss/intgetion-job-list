@@ -30,3 +30,18 @@ export function railMine(viewer: RailViewer): readonly RailLink[] {
     ];
   return [];
 }
+
+/**
+ * Pages without the rail: the home hero and the chat use the full width.
+ * `pathname` is without the locale prefix.
+ */
+export function railHidden(pathname: string): boolean {
+  return (
+    pathname === "/" || pathname === "/chat" || pathname.startsWith("/chat/")
+  );
+}
+
+/** Same section or a page inside it. */
+export function railActive(pathname: string, href: string): boolean {
+  return pathname === href || pathname.startsWith(`${href}/`);
+}

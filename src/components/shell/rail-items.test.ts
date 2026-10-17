@@ -7,7 +7,7 @@ import itMessages from "@/messages/it.json";
 import ptBR from "@/messages/pt-BR.json";
 import ru from "@/messages/ru.json";
 import { NAV_ICONS } from "./nav-icons";
-import { railMine, railServices } from "./rail-items";
+import { railActive, railHidden, railMine, railServices } from "./rail-items";
 
 const catalogs = { en, ru, es, "pt-BR": ptBR, de, fr, it: itMessages };
 
@@ -53,6 +53,21 @@ describe("left rail (D477)", () => {
       "/employer/company",
       "/employer/billing",
     ]);
+  });
+
+  it("stays off the home hero and the chat only", () => {
+    expect(railHidden("/")).toBe(true);
+    expect(railHidden("/chat")).toBe(true);
+    expect(railHidden("/chat/history")).toBe(true);
+    expect(railHidden("/jobs")).toBe(false);
+    expect(railHidden("/events")).toBe(false);
+    expect(railHidden("/chatter")).toBe(false);
+  });
+
+  it("marks a section and the pages inside it", () => {
+    expect(railActive("/jobs/123", "/jobs")).toBe(true);
+    expect(railActive("/jobs", "/jobs")).toBe(true);
+    expect(railActive("/jobsearch", "/jobs")).toBe(false);
   });
 
   it("has a mark for every link", () => {

@@ -15,7 +15,7 @@ import { HeaderAuth } from "./header-auth";
 import { Suspense } from "react";
 import { NavProgress } from "./nav-progress";
 import { Link } from "@/i18n/navigation";
-import { requireUser } from "@/lib/auth-guards";
+import { requireUser, sessionUserOnce } from "@/lib/auth-guards";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { sessionCard } from "@/modules/auth/service";
@@ -43,7 +43,7 @@ export async function Header() {
   let accountEmail: string | null = null;
   if (signedIn) {
     try {
-      const user = await requireUser();
+      const user = await requireUser(sessionUserOnce);
       isAdmin = user.platformRole === "admin";
       employer = user.accountType === "employer";
       unread = await countUnread(user.id);

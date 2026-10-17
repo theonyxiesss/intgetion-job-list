@@ -38,9 +38,8 @@ import { cookies } from "next/headers";
 import { CONSENT_COOKIE, consentAllows, consentInForce } from "@/lib/consent";
 import { localePrefix } from "@/i18n/paths";
 import { RouteMessages } from "@/components/shell/route-messages";
-import { AppRail } from "@/components/shell/app-rail";
 import type { RailViewer } from "@/components/shell/rail-items";
-import { ThreeColumn } from "@/components/shell/three-column";
+import { WithAside } from "@/components/shell/with-aside";
 import { JobsAside } from "@/modules/jobs/ui/jobs-aside";
 
 export const dynamic = "force-dynamic";
@@ -210,16 +209,7 @@ export default async function JobsPage({
     <RouteMessages namespaces={["savedSearches"]}>
       <main className="py-10 md:py-16">
         <Container>
-          <ThreeColumn
-            rail={
-              <AppRail
-                current="/jobs"
-                category={text(raw, "category") || undefined}
-                viewer={railViewer}
-              />
-            }
-            aside={<JobsAside viewer={railViewer} />}
-          >
+          <WithAside aside={<JobsAside viewer={railViewer} />}>
             <PageHeader
               title={t("title")}
               intro={t("subtitle")}
@@ -507,7 +497,7 @@ export default async function JobsPage({
                 </Link>
               ) : null}
             </div>
-          </ThreeColumn>
+          </WithAside>
         </Container>
       </main>
     </RouteMessages>

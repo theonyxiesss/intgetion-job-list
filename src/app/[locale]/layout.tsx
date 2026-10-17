@@ -14,6 +14,14 @@ import { AnalyticsTracker } from "@/components/shell/analytics-tracker";
 import { ServiceWorker } from "@/components/shell/service-worker";
 import { CookieBanner } from "@/components/shell/cookie-banner";
 import { Header } from "@/components/shell/header";
+import { SiteRail, type SiteRailData } from "@/components/shell/site-rail";
+import {
+  railMine,
+  railServices,
+  type RailViewer,
+} from "@/components/shell/rail-items";
+import { JOB_CATEGORIES } from "@/config/markers";
+import { sessionUserOnce } from "@/lib/auth-guards";
 import { MiniAppBar } from "@/components/auth/mini-app-bar";
 import { TelegramLoginResume } from "@/components/auth/telegram-login-resume";
 import { TelegramMiniApp } from "@/components/auth/telegram-mini-app";
@@ -92,6 +100,35 @@ export default async function LocaleLayout({
   const framed = isFramedRequest(requestHeaders);
   const inMiniApp = framed || hasMiniAppMarker(requestHeaders);
   const t = await getTranslations();
+  let viewer: RailViewer = "guest";
+  if (signedIn) {
+    try {
+      const user = await sessionUserOnce();
+      if (user)
+        viewer = user.accountType === "employer" ? "employer" : "candidate";
+    } catch {
+      viewer = "guest";
+    }
+  }
+  // Labels only: the client part of the rail keeps no message namespace (D476, D477).
+  const rail: SiteRailData = {
+    label: t("nav.rail"),
+    sectionsTitle: t("nav.railSections"),
+    categoriesTitle: t("nav.railCategories"),
+    mineTitle: t("nav.railMine"),
+    services: railServices.map((link) => ({
+      href: link.href,
+      label: t(link.label),
+    })),
+    categories: JOB_CATEGORIES.map((id) => ({
+      id,
+      label: t(`categories.${id}`),
+    })),
+    mine: railMine(viewer).map((link) => ({
+      href: link.href,
+      label: t(link.label),
+    })),
+  };
   // Only the shell namespaces go into every page (D41b, D476); a page adds
   // its own with RouteMessages.
   const clientMessages = pickMessages(
@@ -133,7 +170,11 @@ export default async function LocaleLayout({
           <ToastProvider closeLabel={t("ui.close")}>
             <Header />
             <div id="content" tabIndex={-1} className="flex flex-1 flex-col">
-              {children}
+              {/* Left rail from 1280 px, kept across navigations (D477). */}
+              <div className="flex w-full flex-1 flex-col xl:has-[>[data-rail]]:mx-auto xl:has-[>[data-rail]]:grid xl:has-[>[data-rail]]:max-w-[1376px] xl:has-[>[data-rail]]:grid-cols-[268px_minmax(0,1fr)]">
+                <SiteRail data={rail} />
+                <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+              </div>
             </div>
             <Footer />
             <AnalyticsTracker />

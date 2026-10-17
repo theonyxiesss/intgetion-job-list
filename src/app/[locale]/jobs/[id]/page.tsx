@@ -33,8 +33,7 @@ import { localePrefix } from "@/i18n/paths";
 import { intlLocale } from "@/i18n/locale";
 import { publicHttpUrl } from "@/lib/company-mark";
 import { publicJobText } from "@/lib/public-job-text";
-import { AppRail } from "@/components/shell/app-rail";
-import { ThreeColumn } from "@/components/shell/three-column";
+import { WithAside } from "@/components/shell/with-aside";
 
 export const dynamic = "force-dynamic";
 
@@ -193,21 +192,7 @@ export default async function JobPage({
         ])}
       />
       <Container className="flex flex-col gap-8">
-        <ThreeColumn
-          rail={
-            <AppRail
-              current="/jobs"
-              viewer={
-                !user
-                  ? "guest"
-                  : user.accountType === "employer"
-                    ? "employer"
-                    : "candidate"
-              }
-            />
-          }
-          aside={aside}
-        >
+        <WithAside aside={aside}>
           <Link
             href="/jobs"
             {...navBack}
@@ -366,7 +351,7 @@ export default async function JobPage({
               }}
             />
           </article>
-        </ThreeColumn>
+        </WithAside>
         <div className="lg:hidden">
           <ShareJob
             url={`${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`}

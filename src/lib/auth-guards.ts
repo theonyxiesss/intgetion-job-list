@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { memberRole } from "@/db/schema";
 import { forbidden, notFound, unauthenticated } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -26,6 +27,12 @@ async function loadSessionUser(): Promise<CurrentUser | null> {
   const supabase = await createSupabaseServerClient();
   return getCurrentUser(supabase.auth);
 }
+
+/**
+ * The session user, loaded once per request: the header and the left rail
+ * in the layout both need it (D477).
+ */
+export const sessionUserOnce: UserLoader = cache(loadSessionUser);
 
 /** Signed in with a confirmed email and an active account, else 401. */
 export async function requireUser(
