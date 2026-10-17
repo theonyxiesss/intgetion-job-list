@@ -90,6 +90,11 @@ import {
 } from "./memory";
 import * as repo from "../repo/bot-repo";
 import { listMemory, memoryBlock, profileDraft } from "./user-memory";
+import {
+  ANSWER_THE_QUESTION,
+  isBareGreetingReply,
+  isGreetingOnly,
+} from "./greeting";
 import { draftFromExtraction, extractDraft } from "./extract";
 import {
   hashArgs,
@@ -1143,10 +1148,12 @@ export async function handleMessage(
   let showedJobs = false;
   let fitSpoken = false;
 
+  let roundSystem = system;
+  let greetingRetried = false;
   for (let round = 0; round < MAX_TOOL_ROUNDS + 1; round += 1) {
     const rows = await repo.listMessages(conversation.id, HISTORY_READ);
     const { messages } = trimContext({
-      system,
+      system: roundSystem,
       summary: conversation.summary ?? undefined,
       messages: toLLMMessages(rows),
     });
@@ -1156,7 +1163,7 @@ export async function handleMessage(
     try {
       response = await chat(llm.provider, {
         model: llm.model,
-        system,
+        system: roundSystem,
         messages: context,
         tools: lastRound ? undefined : tools,
         maxTokens: MAX_OUTPUT_TOKENS,
@@ -1188,6 +1195,28 @@ export async function handleMessage(
       : hadOffGoal(response.text)
         ? ""
         : stripped;
+    // A question answered with a bare greeting: keep the cost, hide the text
+    // and ask once more with a nudge (hotfix 2026-10-17).
+    if (
+      !greetingRetried &&
+      !lastRound &&
+      calls.length === 0 &&
+      isBareGreetingReply(visible) &&
+      !isGreetingOnly(input.text)
+    ) {
+      greetingRetried = true;
+      roundSystem = `${system}\n${ANSWER_THE_QUESTION}`;
+      await repo.insertMessage({
+        conversationId: conversation.id,
+        role: "assistant",
+        content: "",
+        toolCall: { promptVersion: SYSTEM_PROMPT_VERSION, retried: "greeting" },
+        tokensIn: response.usage.tokensIn,
+        tokensOut: response.usage.tokensOut,
+        costMicroUsd: cost,
+      });
+      continue;
+    }
     await repo.insertMessage({
       conversationId: conversation.id,
       role: "assistant",
