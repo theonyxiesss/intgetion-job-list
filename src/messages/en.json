@@ -1727,6 +1727,7 @@
     },
     "confirm": {
       "applyTitle": "Apply to this job?",
+      "applyNote": "Letter to the employer",
       "profileTitle": "Save these profile changes?",
       "jobTitle": "Post this job for review?",
       "ugcTitle": "Save this UGC video step?",

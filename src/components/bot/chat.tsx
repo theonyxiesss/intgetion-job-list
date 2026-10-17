@@ -28,6 +28,7 @@ import {
 } from "@/components/bot/freelance-card";
 import {
   AccountCardText,
+  ApplyCardText,
   isAccountCardTool,
 } from "@/components/bot/account-card";
 import { ConfirmCard } from "@/components/ui/dialog";
@@ -996,6 +997,13 @@ export function Chat({
                           />
                         ) : null}
                       </div>
+                    ) : entry.tool === "apply_to_job" ? (
+                      <ApplyCardText
+                        args={entry.args}
+                        preview={entry.preview}
+                        noteLabel={t("confirm.applyNote")}
+                        fallback={t("confirm.text")}
+                      />
                     ) : isAccountCardTool(entry.tool) ? (
                       <AccountCardText
                         tool={entry.tool}

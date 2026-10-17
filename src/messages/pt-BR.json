@@ -1727,6 +1727,7 @@
     },
     "confirm": {
       "applyTitle": "Candidatar-se a esta vaga?",
+      "applyNote": "Carta para a empresa",
       "profileTitle": "Salvar estas alterações no perfil?",
       "jobTitle": "Enviar esta vaga para revisão?",
       "ugcTitle": "Salvar esta etapa dos vídeos UGC?",

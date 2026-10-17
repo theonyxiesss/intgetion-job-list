@@ -68,3 +68,35 @@ export function AccountCardText({
   }
   return t(tool as (typeof ACCOUNT_CARD_TOOLS)[number], { name });
 }
+
+/**
+ * The apply card (D475): the job and the letter Spoki wrote for the
+ * candidate, shown as plain text before they confirm.
+ */
+export function ApplyCardText({
+  args,
+  preview,
+  noteLabel,
+  fallback,
+}: {
+  args: unknown;
+  preview?: string;
+  noteLabel: string;
+  fallback: string;
+}) {
+  const note = (args as { coverNote?: unknown } | null)?.coverNote;
+  return (
+    <div className="flex flex-col gap-2">
+      {preview ? <p className="font-medium text-fg">{preview}</p> : null}
+      {typeof note === "string" && note.trim() ? (
+        <>
+          <p className="t-label">{noteLabel}</p>
+          <p className="border-l-2 border-line pl-3 whitespace-pre-line text-fg">
+            {note}
+          </p>
+        </>
+      ) : null}
+      <p>{fallback}</p>
+    </div>
+  );
+}

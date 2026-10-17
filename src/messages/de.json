@@ -1727,6 +1727,7 @@
     },
     "confirm": {
       "applyTitle": "Auf diesen Job bewerben?",
+      "applyNote": "Anschreiben an das Unternehmen",
       "profileTitle": "Diese Profiländerungen speichern?",
       "jobTitle": "Diese Stelle zur Prüfung senden?",
       "ugcTitle": "Diesen Schritt der UGC-Videos speichern?",

@@ -47,6 +47,7 @@ import { ugcTools } from "@/modules/ugc/service";
 import { OFFER_ACTIONS, offerPath } from "./offers";
 import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
 import { accountTools } from "./account-tools";
+import { pitchTools, screenCoverNote } from "./pitch";
 import { reminderTools } from "./reminders";
 import { formatStanding, standingMissing } from "./standing";
 import {
@@ -426,7 +427,7 @@ export const TOOLS: readonly BotTool[] = [
   tool({
     name: "apply_to_job",
     description:
-      "Apply to an internal job. The user confirms on a card first. Imported jobs cannot be applied to here; give the link instead.",
+      "Apply to an internal job. Call get_pitch_facts first and pass coverNote: the candidate's letter to the employer, first person, 3 to 5 sentences, only from those facts and MEMORY (D475). The candidate reads it on the card and confirms. Imported jobs cannot be applied to here; give the link instead.",
     input: z
       .object({
         jobId: id,
@@ -435,10 +436,16 @@ export const TOOLS: readonly BotTool[] = [
       .strict(),
     access: "user",
     confirm: () => true,
+    async preview(ctx, input) {
+      screenCoverNote(input.coverNote);
+      const job = await getJobForPublic(input.jobId, { locale: ctx.locale });
+      if (!job) throw new HttpError(404, "NOT_FOUND", "Not found");
+      return job.title;
+    },
     async run(ctx, input) {
       const application = await applyToJob(ctx.userId!, {
         jobId: input.jobId,
-        coverNote: input.coverNote ?? null,
+        coverNote: screenCoverNote(input.coverNote),
       });
       return {
         llm: `Applied. Application status: ${application.status}.`,
@@ -617,6 +624,7 @@ export const TOOLS: readonly BotTool[] = [
     },
   }),
   ...accountTools,
+  ...pitchTools,
   ...reminderTools,
   ...(ugcTools as unknown as BotTool[]),
   ...(freelanceTools as unknown as BotTool[]),

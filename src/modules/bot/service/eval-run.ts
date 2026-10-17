@@ -6,12 +6,14 @@ import {
   freelanceCase,
   goldenDialog,
   memoryCase,
+  pitchCase,
   ugcPriceCase,
   type AccountCase,
   type AdversarialCase,
   type FreelanceCase,
   type GoldenDialog,
   type MemoryCase,
+  type PitchCase,
   type UgcPriceCase,
 } from "../../../../evals/schema";
 import {
@@ -34,6 +36,7 @@ import {
 import { systemPrompt } from "../prompts/system";
 import { findTool, runTool, type ToolContext } from "./tools";
 import { memoryBlock, profileDraft, screenFact } from "./user-memory";
+import { screenCoverNote } from "./pitch";
 import {
   catalogSkillSlug,
   draftFromExtraction,
@@ -586,4 +589,62 @@ export async function runAccountEvals(): Promise<AccountEvalReport> {
     }
   }
   return { cases: cases.length, cards };
+}
+
+export function loadPitch(): PitchCase[] {
+  return loadJson("pitch").map((data) => pitchCase.parse(data));
+}
+
+const APPLIED_CLAIM =
+  /\b(?:applied|application (?:is )?sent|i(?:'ve| have) applied)\b|отклик (?:отправлен|ушёл)|уже откликнул|отправил отклик/i;
+
+/**
+ * Recorded pitch cases (D475): facts first, then one apply card with a
+ * letter that claims no skill the candidate lacks, carries no contacts and
+ * is short; the answer never says the application went out.
+ */
+export async function runPitchEvals(): Promise<{ cases: number }> {
+  const cases = loadPitch();
+  const user: ToolContext = {
+    userId: "00000000-0000-4000-8000-0000000000aa",
+    conversationId: "00000000-0000-4000-8000-0000000000bb",
+    locale: "en",
+    state: {},
+  };
+  for (const item of cases) {
+    const names = item.reply.toolCalls.map((call) => call.name);
+    const facts = names.indexOf("get_pitch_facts");
+    const apply = names.indexOf("apply_to_job");
+    if (facts < 0 || apply < 0 || facts > apply) {
+      throw new Error(`${item.id}: read the facts before the apply card`);
+    }
+    const call = item.reply.toolCalls[apply]!;
+    if (!findTool("apply_to_job")!.input.safeParse(call.input).success) {
+      throw new Error(`${item.id}: invalid apply input`);
+    }
+    const note = String(
+      (call.input as { coverNote?: unknown }).coverNote ?? "",
+    );
+    if (!note) throw new Error(`${item.id}: no letter for the employer`);
+    screenCoverNote(note);
+    const sentences = note.split(/[.!?]+\s/).filter((part) => part.trim());
+    if (sentences.length < 2 || sentences.length > 6) {
+      throw new Error(`${item.id}: the letter is not 3 to 5 sentences`);
+    }
+    for (const skill of item.missingSkills) {
+      if (note.toLowerCase().includes(skill.toLowerCase())) {
+        throw new Error(`${item.id}: the letter claims ${skill}`);
+      }
+    }
+    if (!item.profileSkills.some((skill) => note.includes(skill))) {
+      throw new Error(`${item.id}: the letter names none of their skills`);
+    }
+    if (APPLIED_CLAIM.test(item.reply.text) || hasContacts(item.reply.text)) {
+      throw new Error(
+        `${item.id}: the answer says it was sent or has contacts`,
+      );
+    }
+    await expectConfirmation(user, "apply_to_job", call.input);
+  }
+  return { cases: cases.length };
 }

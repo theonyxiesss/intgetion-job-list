@@ -1727,6 +1727,7 @@
     },
     "confirm": {
       "applyTitle": "Postuler à cette offre ?",
+      "applyNote": "Lettre à l’employeur",
       "profileTitle": "Enregistrer ces modifications du profil ?",
       "jobTitle": "Envoyer cette offre en vérification ?",
       "ugcTitle": "Enregistrer cette étape des vidéos UGC ?",

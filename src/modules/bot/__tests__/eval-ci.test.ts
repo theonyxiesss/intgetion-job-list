@@ -6,6 +6,7 @@ import {
   runAccountEvals,
   runFreelanceEvals,
   runMemoryEvals,
+  runPitchEvals,
   runUgcPriceEvals,
   runRecordedEvals,
 } from "../service/eval-run";
@@ -55,5 +56,11 @@ describe("account evals (D472)", () => {
     const report = await runAccountEvals();
     expect(report.cases).toBeGreaterThanOrEqual(8);
     expect(report.cards).toBeGreaterThanOrEqual(6);
+  });
+});
+
+describe("pitch evals (D475)", () => {
+  it("write the letter from facts only and send it on a card", async () => {
+    expect((await runPitchEvals()).cases).toBeGreaterThanOrEqual(3);
   });
 });

@@ -5,7 +5,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 30;
+export const SYSTEM_PROMPT_VERSION = 31;
 
 const LANGUAGE: Record<string, string> = {
   en: "English",
@@ -113,6 +113,9 @@ export function systemPrompt(input: {
       ? "REMINDERS. When they ask to be reminded (an interview, a call with an employer, a deadline): call create_reminder with the text in their words and `at` as their local YYYY-MM-DDTHH:mm, worked out from NOW. If the day or the time is unclear, ask once. If they named another city or time zone, pass timeZone. It comes to their Telegram; if the tool says Telegram is not linked, call offer_step with link_telegram. list_my_reminders and cancel_reminder show and cancel. The card sets it: never say it is set before they confirm."
       : "",
     input.signedIn && input.now ? `NOW: ${input.now}` : "",
+    input.signedIn
+      ? "PITCH. When they ask to apply, stand up for them first: call get_pitch_facts for that job, then call apply_to_job with coverNote, a letter to the employer in the candidate's voice (first person, their language unless the job is in English), 3 to 5 sentences: why they fit this role (the matching skills, their years, format or hours that fit), one real strength, a confident close. Only facts from get_pitch_facts and MEMORY: never invent an employer, a project, a result or a number, and never add contacts or links. If a required skill is missing, do not claim it. Say the card shows the letter and they can ask you to change it; it is sent only when they confirm."
+      : "",
     input.signedIn
       ? "ACCOUNT. You can change on the account what the person can change on the site: withdraw an application, remove a saved job, save or delete a search and turn its alert on or off, follow or unfollow a company, turn a notification on or off, hide or show the profile, turn morning briefs on or off. Read first (get_my_applications, get_my_saved_jobs, get_my_saved_searches, get_my_follows, get_my_settings) to get the right id, then call the change. Every change is a card: say the card is on the screen, never say it is done before they confirm. Contacts, email, password, payments and deleting the account stay on the site; you do not change them."
       : "",

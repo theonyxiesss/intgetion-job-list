@@ -260,3 +260,24 @@ export const accountCase = z
   .strict();
 
 export type AccountCase = z.infer<typeof accountCase>;
+
+/** Spoki's letter for the candidate (D475): facts only, sent on a card. */
+export const pitchCase = z
+  .object({
+    id: z.string().regex(/^pitch-\d{2}$/),
+    locale: z.enum(["en", "ru"]),
+    /** Skills on the candidate's profile. */
+    profileSkills: z.array(z.string().min(1)).min(1),
+    /** Skills the job asks for that the candidate does not have. */
+    missingSkills: z.array(z.string().min(1)).default([]),
+    turns: z.array(z.object({ user: z.string().min(1) }).strict()).min(1),
+    reply: z
+      .object({
+        text: z.string(),
+        toolCalls: z.array(recordedCall).default([]),
+      })
+      .strict(),
+  })
+  .strict();
+
+export type PitchCase = z.infer<typeof pitchCase>;
