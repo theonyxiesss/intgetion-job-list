@@ -23,6 +23,10 @@ describe("needsOriginCheck (D313)", () => {
     expect(isAllowedOrigin("POST", null, site)).toBe(false);
   });
 
+  it("leaves only the MCP endpoint itself to its own Origin check (D486)", () => {
+    expect(needsOriginCheck("/api/mcp")).toBe(false);
+  });
+
   it("keeps every other API route behind the rule", () => {
     for (const path of [
       "/api/bot/message",
@@ -30,6 +34,9 @@ describe("needsOriginCheck (D313)", () => {
       "/api/admin/users/1/ban",
       "/api/telegram/webhook/extra",
       "/api/cron/import",
+      "/api/mcp/extra",
+      "/api/mcpx",
+      "/api/bot/confirm",
     ]) {
       expect(needsOriginCheck(path), path).toBe(true);
     }

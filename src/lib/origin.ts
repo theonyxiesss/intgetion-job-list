@@ -30,6 +30,14 @@ const SECRET_AUTHENTICATED = new Set([
   "/api/auth/hooks/send-email",
 ]);
 
+/**
+ * The MCP endpoint (D486). Outside assistants call it from their servers
+ * with no Origin, so the site-origin rule would refuse every call. The route
+ * checks Origin and Host itself: no Origin passes, a browser Origin must be
+ * this site (DNS rebinding). It reads no session cookie and writes nothing.
+ */
+export const MCP_PATH = "/api/mcp";
+
 export function needsOriginCheck(pathname: string): boolean {
-  return !SECRET_AUTHENTICATED.has(pathname);
+  return !SECRET_AUTHENTICATED.has(pathname) && pathname !== MCP_PATH;
 }

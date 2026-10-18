@@ -11,5 +11,6 @@
 | [morning-briefs.md](morning-briefs.md)       | Утренние сводки, 3 слота   | `src/modules/notifications/service/morning-briefs.ts` |
 | [jobs-applications.md](jobs-applications.md) | Вакансии и отклики         | `src/modules/jobs`, `applications`                    |
 | [events.md](events.md)                       | События Web3 и IT (D435)   | `src/modules/events`, `src/app/[locale]/events`       |
+| [mcp.md](mcp.md)                             | MCP для ИИ-ассистентов     | `src/modules/mcp`, `src/app/api/mcp`                  |
 
 Статус работы: [../status/INDEX.md](../status/INDEX.md).
