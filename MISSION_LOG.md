@@ -2608,3 +2608,10 @@
 - Браузер, localhost:3000/ru/chat: после отправки строка «✦ Thinking…» появилась и исчезла с ответом. Локально нет ключа LLM (ответ «Агент сейчас недоступен»), поэтому шаги инструментов вживую не проверены; скриншот не снят — окно браузера не отрисовывалось.
 - Где работает: только локально. Git: не закоммичено.
 - OPEN QUESTION: нет.
+
+## [2026-10-18] — D490 на сайте — DONE
+
+- По слову основателя («закоммить и выкати в прод»): коммит `426b684` (только файлы D490, поверх `origin/master` `5dc1f4d` через временный индекс; `bot.integration.test.ts` — версия `origin` с правкой D490, чтобы не откатить правку MCP), push в `master`, Vercel из git: `dpl_62AsNbaRBskEcrSw3w1RfGbS3MKJ`, статус GitHub `Vercel success`.
+- Проверка коммита в чистой выгрузке: `format:check` 0, `typecheck` 0, `lint` 0, `test` 0 (1352 прошли), `eval` 0, `build` 0.
+- Сайт: `/`, `/ru/chat`, `/ru/jobs`, `/ru/events`, `/api/health` → 200. Живой чат гостем, «Find remote Python developer jobs»: строка «✦ Thinking…», с 2 с счётчик, слова Pondering → Considering → Mulling it over, затем `tool_start` → «Searching jobs…» (диктору тоже), после ответа ещё один шаг «Reading the job…»; ответ с карточками вакансий. CI на `426b684` не дожидался.
+- Git: локальная `master` в основной папке по-прежнему на `fcceb59`.
