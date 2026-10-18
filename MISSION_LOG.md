@@ -2550,3 +2550,12 @@
 - Проверки: `prettier --check --end-of-line auto docs/CURRENT.md MISSION_LOG.md` → 0. Код не менялся.
 - Git: ветка `claude/mcp-current-doc` от master `996fa37` (без привязки к `origin/master`), коммит вместе с записью журнала о выкладке PR #20, push ветки, PR. Слияние в master = выкладка: только после «да» основателя.
 - Основная папка: её незакоммиченный `docs/CURRENT.md` (D479 другой сессии) расходится с master; при коммите D479 нужно взять строку MCP из master.
+
+## [2026-10-18] — смена пароля только со свежей сессией (D487) — в ветке `claude/secure-password-change`; облако ждёт основателя
+
+- Задача: основатель — пункт 11: включить `secure_password_change` в Supabase.
+- Разбор: пароль меняется только по ссылке сброса, которая открывает новую сессию; сброс из админки — та же ссылка; смены пароля в настройках нет. Хук `send-email` не отправляет `reauthentication`. Значит, включение не ломает сброс и закрывает смену пароля старым или украденным токеном.
+- Сделано (ветка от master `6db1f49`, без привязки к `origin/master`): `supabase/config.toml` — `secure_password_change = true`; D487; строка в `docs/how-it-works/auth.md`. Код не менялся.
+- Облако: настройку в облачном Supabase из этой сессии не включить — у инструментов Supabase нет доступа к настройкам Auth, токена Supabase CLI нет; `supabase config push` не используется (перезаписал бы все настройки Auth). Нужно основателю: Dashboard → Authentication → Sign In / Providers → Email → «Secure password change» → включить → Save; «Require current password» не трогать.
+- Проверки: `prettier --check` по изменённым документам; CI `database` прогоняет e2e «password reset sets a new password through the emailed link» с включённой настройкой.
+- Git: коммит в `claude/secure-password-change`, push ветки, PR. Слияние в master = выкладка: только после «да» основателя.
