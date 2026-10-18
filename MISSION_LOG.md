@@ -2577,3 +2577,10 @@
 - Проверки: `prettier --check --end-of-line auto` по изменённым → 0; `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1 (1312 прошли, тот же `legal.test.ts` из-за CRLF); `pnpm build` → 0. Браузер, localhost:3000/ru/jobs на 1440 px: в футере у знака «INTGETION»; «JOB LIST» на странице только в «© 2026 INTGETION JOB LIST» (`product.name`, оставлено намеренно).
 - Где работает: только локально. Git: `master`, не закоммичено.
 - OPEN QUESTION: нет.
+
+## [2026-10-18] — D488 на сайте — DONE
+
+- По слову основателя («выкати в прод»; копирайт не трогать): коммит `8f1ac60` (только файлы D488, собран поверх `origin/master` `5ef5716` через временный индекс; чужие правки рабочей папки — карточки D479 и др. — не вошли), push в `master`, Vercel из git: `dpl_6tSxfAN6A1Cno1XuGFmy4jn9kzVL`, статус GitHub `Vercel success`. Vercel MCP отвечал 403, статус взят из GitHub.
+- Проверка коммита в чистой выгрузке (`git archive`, `pnpm install --frozen-lockfile`): `format:check` 0, `typecheck` 0, `lint` 0, `test` 0 (1347 прошли), `build` 0.
+- Сайт: `/`, `/ru`, `/ru/jobs`, `/ru/events`, `/ru/chat`, `/api/health` → 200. В браузере на 1440 px: `/ru/jobs` — в шапке и футере «INTGETION», разделов в шапке нет, они в левом меню; `/ru` — кнопка «Меню» видна. CI на `8f1ac60` не дожидался.
+- Git: локальная ветка `master` в основной папке осталась на `fcceb59` (отстаёт от `origin/master`): обновлять её поверх грязной рабочей папки не стал.
