@@ -7,7 +7,7 @@ import itMessages from "@/messages/it.json";
 import ptBR from "@/messages/pt-BR.json";
 import ru from "@/messages/ru.json";
 import { NAV_ICONS } from "./nav-icons";
-import { railActive, railHidden, railMine, railServices } from "./rail-items";
+import { railActive, railHidden, railServices } from "./rail-items";
 
 const catalogs = { en, ru, es, "pt-BR": ptBR, de, fr, it: itMessages };
 
@@ -23,11 +23,7 @@ function text(catalog: object, key: string): unknown {
     );
 }
 
-const everyLink = [
-  ...railServices,
-  ...railMine("candidate"),
-  ...railMine("employer"),
-];
+const everyLink = railServices;
 
 describe("left rail (D477)", () => {
   it("lists the services in the order of the phone menu", () => {
@@ -41,18 +37,10 @@ describe("left rail (D477)", () => {
     ]);
   });
 
-  it("shows the account group by who is looking", () => {
-    expect(railMine("guest")).toEqual([]);
-    expect(railMine("candidate").map((link) => link.href)).toEqual([
-      "/profile",
-      "/applications",
-      "/saved-jobs",
-    ]);
-    expect(railMine("employer").map((link) => link.href)).toEqual([
-      "/employer/jobs",
-      "/employer/company",
-      "/employer/billing",
-    ]);
+  it("has no account group: those pages are in the account menu (D489)", () => {
+    const hrefs = railServices.map((link) => link.href);
+    for (const href of ["/profile", "/applications", "/saved-jobs"])
+      expect(hrefs).not.toContain(href);
   });
 
   it("stays off the home hero and the chat only", () => {
@@ -80,7 +68,6 @@ describe("left rail (D477)", () => {
       "nav.rail",
       "nav.railSections",
       "nav.railCategories",
-      "nav.railMine",
     ];
     for (const [locale, catalog] of Object.entries(catalogs))
       for (const key of keys)

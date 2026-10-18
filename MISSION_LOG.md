@@ -2584,3 +2584,11 @@
 - Проверка коммита в чистой выгрузке (`git archive`, `pnpm install --frozen-lockfile`): `format:check` 0, `typecheck` 0, `lint` 0, `test` 0 (1347 прошли), `build` 0.
 - Сайт: `/`, `/ru`, `/ru/jobs`, `/ru/events`, `/ru/chat`, `/api/health` → 200. В браузере на 1440 px: `/ru/jobs` — в шапке и футере «INTGETION», разделов в шапке нет, они в левом меню; `/ru` — кнопка «Меню» видна. CI на `8f1ac60` не дожидался.
 - Git: локальная ветка `master` в основной папке осталась на `fcceb59` (отстаёт от `origin/master`): обновлять её поверх грязной рабочей папки не стал.
+
+## [2026-10-18] — Левая колонка шире и без «Кабинета» (D489) — DONE локально, не закоммичено
+
+- Запрос основателя: левую колонку на десктопе сделать больше и убрать «Кабинет» (профиль, отклики, сохранённые).
+- Файлы: `src/app/[locale]/layout.tsx` (колонка 300 px, без чтения пользователя для колонки), `src/components/shell/site-rail.tsx` (пункты 15 px, `min-h-11`, без группы «Кабинет»), `src/components/shell/rail-items.ts` (`railMine` удалён, `RailViewer` оставлен для `JobsAside`), `src/components/shell/rail-items.test.ts`, `src/messages/{de,en,es,fr,it,pt-BR,ru}.json` (удалён только `nav.railMine`), `docs/DECISIONS.md` (D489), `docs/CURRENT.md`.
+- Проверки: `prettier --check --end-of-line auto` по изменённым → 0; `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1 (1312 прошли, тот же `legal.test.ts` из-за CRLF рабочей папки; тесты колонки 23/23); `pnpm build` → 0. Браузер, localhost:3000/ru/jobs: на 1440 px колонка 300 px, пункт 252×44, 15 px, группы «Разделы» и «Категории»; на 1280 px горизонтальной прокрутки нет. Вошедший кабинет не открывался (сессии нет); отсутствие группы доказывает код и тест.
+- Где работает: только локально. Git: не закоммичено.
+- OPEN QUESTION: нет.

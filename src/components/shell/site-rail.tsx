@@ -12,14 +12,12 @@ export type SiteRailData = {
   label: string;
   sectionsTitle: string;
   categoriesTitle: string;
-  mineTitle: string;
   services: SiteRailLink[];
   categories: { id: string; label: string }[];
-  mine: SiteRailLink[];
 };
 
 const item =
-  "flex min-h-10 items-center gap-3 rounded-md px-3 text-[14px] transition-colors hover:bg-surface hover:text-fg";
+  "flex min-h-11 items-center gap-3 rounded-md px-3 text-[15px] transition-colors hover:bg-surface hover:text-fg";
 
 function Group({
   id,
@@ -91,7 +89,8 @@ function CategoriesFromUrl({
 /**
  * The left column from 1280 px (D477). It lives in the layout, so a click
  * inside it changes only the page: the column, its scroll position and its
- * place stay. Only the highlight follows the address.
+ * place stay. Only the highlight follows the address. Sections and job
+ * categories only: the account pages live in the account menu (D489).
  */
 export function SiteRail({ data }: { data: SiteRailData }) {
   const pathname = usePathname();
@@ -123,18 +122,6 @@ export function SiteRail({ data }: { data: SiteRailData }) {
             <CategoriesFromUrl items={data.categories} onCatalog={onCatalog} />
           </Suspense>
         </Group>
-        {data.mine.length > 0 ? (
-          <Group id="rail-mine" title={data.mineTitle}>
-            {data.mine.map((link) => (
-              <RailItem
-                key={link.href}
-                {...link}
-                active={railActive(pathname, link.href)}
-                mark={iconForNav(link.href)}
-              />
-            ))}
-          </Group>
-        ) : null}
       </nav>
     </aside>
   );

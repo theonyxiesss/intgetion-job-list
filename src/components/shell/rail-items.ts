@@ -1,10 +1,11 @@
 /**
  * Left column of the three-column desktop layout (D477). Labels are message
- * keys; hrefs are real routes and match NAV_ICONS. Who is looking decides
- * the account group only; the services are the same for everyone.
+ * keys; hrefs are real routes and match NAV_ICONS. The same for everyone:
+ * the account pages are in the account menu, not here (D489).
  */
-export type RailViewer = "guest" | "candidate" | "employer";
 export type RailLink = { href: string; label: string };
+/** Who is looking; the right column (`JobsAside`) still reads it. */
+export type RailViewer = "guest" | "candidate" | "employer";
 
 export const railServices: readonly RailLink[] = [
   { href: "/jobs", label: "nav.jobs" },
@@ -14,22 +15,6 @@ export const railServices: readonly RailLink[] = [
   { href: "/services", label: "nav.services" },
   { href: "/chat", label: "nav.chat" },
 ];
-
-export function railMine(viewer: RailViewer): readonly RailLink[] {
-  if (viewer === "employer")
-    return [
-      { href: "/employer/jobs", label: "nav.myJobs" },
-      { href: "/employer/company", label: "nav.company" },
-      { href: "/employer/billing", label: "billing.nav" },
-    ];
-  if (viewer === "candidate")
-    return [
-      { href: "/profile", label: "profile.nav" },
-      { href: "/applications", label: "applications.nav" },
-      { href: "/saved-jobs", label: "nav.saved" },
-    ];
-  return [];
-}
 
 /**
  * Pages without the rail: the home hero and the chat use the full width.
