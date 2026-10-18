@@ -2528,3 +2528,10 @@
 - Тесты: `src/modules/mcp/__tests__/server.test.ts` — поиск вызывается с `syndicatedOnly: true` и `limit` из запроса (MCP-тесты 25/25); новый `src/modules/jobs/syndicated-search.integration.test.ts` — своя вакансия и Jobicy находятся, хотя шесть более новых из Remotive; без флага страницу заполняют закрытые (вид сайта); при `limit` 20 закрытых нет.
 - Проверки: `prettier --check --end-of-line auto` → 0; `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1 (1346 прошли, 1 упал — тот же `legal.test.ts`, CRLF); `pnpm eval` → 0; `pnpm build` → 0. Интеграционный тест локально не запускался (нужна локальная база, Docker нет) — его гоняет CI `database`; к облачной базе не обращался.
 - Git: ветка `claude/mcp-search-recall` от master `4583b73` (без привязки к `origin/master`), коммит, push ветки, PR. В master не вливалось, на сайт не выкладывалось. Вместе с этим коммитом в журнал входит запись о выкладке фазы 1.
+
+## [2026-10-18] — CI PR #20: нестабильный `bot.integration.test.ts` (Auto-fix) — DONE в ветке `claude/mcp-search-recall`
+
+- Событие Auto-fix: в push-прогоне 39123870942 упала задача `database`; PR-прогон того же коммита `f4408e3` (39123889421) зелёный, новый `syndicated-search.integration.test.ts` прошёл в обоих.
+- Причина: `src/modules/bot/bot.integration.test.ts` — «answers a guest with search results…» получил лишнее событие `signup_hint`. Токен теста — первые 8 hex-символов uuid; `countryFromText` режет текст гостя на буквенные куски, и кусок вроде `cc`, `ca`, `be` распознаётся как страна, черновик получает страну, Spoki добавляет подсказку входа. Локальная проба: 138 из 10 000 hex-токенов дают страну (≈1,4% прогонов), цифровой токен — 0 из 10 000. С этой веткой не связано.
+- Сделано: токен теста — только цифры (`randomUUID().replace(/\D/g, "")`, 8 знаков). Код продукта не менялся.
+- Проверки: `prettier --check` → 0, `pnpm typecheck` → 0, `pnpm lint` → 0. Интеграционный тест локально не запускался (нет локальной базы) — проверит CI.
