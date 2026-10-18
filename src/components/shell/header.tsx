@@ -1,14 +1,7 @@
 import { Bell, Bot, Plus } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
-import {
-  ButtonLink,
-  Icon,
-  Logo,
-  ScrollFrame,
-  cn,
-  navFade,
-} from "@/components/ui";
+import { ButtonLink, Icon, Logo, ScrollFrame, navFade } from "@/components/ui";
 import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
 import { AccountMenu, type AccountLink } from "./account-menu";
 import { HeaderAuth } from "./header-auth";
@@ -55,26 +48,22 @@ export async function Header() {
     }
   }
 
-  // Top level follows who is looking. A guest sees both sides; a signed-in
-  // person sees their own. Chat and hiring pages stay in the menu.
+  // Site sections live in the left rail from xl up (D477, D478) and in the
+  // menu below it; the top bar keeps only the employer's own pages (D488).
+  const sections: NavItem[] = [
+    { href: "/jobs", label: t("nav.jobs") },
+    { href: "/events", label: t("nav.events") },
+    { href: "/freelance", label: t("nav.freelance") },
+    { href: "/campaigns", label: t("nav.campaigns") },
+    { href: "/services", label: t("nav.services") },
+  ];
   const main: NavItem[] = employer
     ? [
-        { href: "/jobs", label: t("nav.jobs") },
-        { href: "/events", label: t("nav.events") },
-        { href: "/freelance", label: t("nav.freelance") },
-        { href: "/campaigns", label: t("nav.campaigns") },
-        { href: "/services", label: t("nav.services") },
         { href: "/employer/jobs", label: t("nav.myJobs") },
         { href: "/employer/company", label: t("nav.company") },
         { href: "/employer/billing", label: t("billing.nav") },
       ]
-    : [
-        { href: "/jobs", label: t("nav.jobs") },
-        { href: "/events", label: t("nav.events") },
-        { href: "/freelance", label: t("nav.freelance") },
-        { href: "/campaigns", label: t("nav.campaigns") },
-        { href: "/services", label: t("nav.services") },
-      ];
+    : [];
   const more: NavItem[] = employer
     ? [
         { href: "/chat", label: t("nav.chatWithAgent") },
@@ -90,11 +79,6 @@ export async function Header() {
           { href: "/chat", label: t("nav.chatWithAgent") },
           { href: "/for-employers", label: t("nav.employers") },
         ];
-  // Five tracked labels plus two long actions do not fit beside the wordmark
-  // until the bar is wider than a laptop (D371). Fewer links can come out sooner.
-  const wide = main.length >= 5;
-  const bar = wide ? "min-[1440px]:flex" : "xl:flex";
-  const untilBar = wide ? "min-[1440px]:hidden" : "xl:hidden";
   const cabinet: AccountLink[] = employer
     ? []
     : [
@@ -147,26 +131,25 @@ export async function Header() {
           aria-label={t("product.name")}
           className="inline-flex min-h-11 shrink-0 items-center max-md:hidden"
         >
-          <Logo name={t("product.wordmark")} sub={t("product.wordmarkSub")} />
+          <Logo name={t("product.wordmark")} />
         </Link>
 
-        <nav
-          aria-label={t("nav.main")}
-          className={cn(
-            "ml-4 hidden min-w-0 flex-1 items-center gap-3 2xl:ml-6 2xl:gap-6",
-            bar,
-          )}
-        >
-          {main.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="t-nav inline-flex min-h-11 shrink-0 items-center whitespace-nowrap text-fg-muted transition-colors hover:text-fg"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        {main.length > 0 && (
+          <nav
+            aria-label={t("nav.main")}
+            className="ml-4 hidden min-w-0 flex-1 items-center gap-3 xl:flex 2xl:ml-6 2xl:gap-6"
+          >
+            {main.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="t-nav inline-flex min-h-11 shrink-0 items-center whitespace-nowrap text-fg-muted transition-colors hover:text-fg"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        )}
 
         <div className="ml-auto flex shrink-0 items-center gap-1 max-md:ml-0 max-md:w-full">
           <span data-header-chat className="mr-1 inline-flex sm:mr-2">
@@ -241,14 +224,15 @@ export async function Header() {
           </span>
           <MobileNav
             items={orderPhoneNav(
-              [...main, ...more, ...account],
+              [...sections, ...main, ...more, ...account],
               employer ? "employer" : signedIn ? "candidate" : "guest",
             )}
             label={t("nav.menu")}
             openLabel={t("nav.menu")}
             closeLabel={t("ui.close")}
             signedIn={signedIn}
-            triggerClassName={cn(untilBar, "max-md:hidden")}
+            triggerClassName="xl:hidden max-md:hidden"
+            railessTriggerClassName="max-md:hidden"
           />
         </div>
       </div>

@@ -2560,3 +2560,20 @@
 - Проверки: `prettier --check` по изменённым документам; CI `database` прогоняет e2e «password reset sets a new password through the emailed link» с включённой настройкой.
 - Git: коммит в `claude/secure-password-change`, push ветки, PR. Слияние в master = выкладка: только после «да» основателя.
 - Облако (2026-10-18, по слову основателя «включи только Secure password change в Email, ничего больше не меняй»): основатель вошёл в Supabase во встроенном браузере, агент включил «Secure password change» в Authentication → Sign In / Providers → Email и сохранил. После перезагрузки: Enable email provider вкл, Secure email change вкл, Secure password change вкл, Require current password выкл, Prevent leaked passwords выкл, Minimum password length 6, Email OTP expiration 3600, Email OTP length 8 — всё, кроме одной настройки, как до правки.
+
+## [2026-10-18] — Шапка без разделов и без «Job list» (D488) — DONE локально, не закоммичено
+
+- Запрос основателя: убрать из верхнего меню «Вакансии», «События», «Фриланс», «UGC-видео», «Услуги» (теперь в левом меню) и «Job list» из названия.
+- Файлы: `src/components/shell/header.tsx` (разделы вынесены из верхней полосы в `sections`, остаются в «Меню»; у работодателя в полосе только его страницы; знак без подписи), `src/components/shell/mobile-nav.tsx` (`railessTriggerClassName`: на страницах без левого меню «Меню» видно и с 1280 px), `src/components/ui/logo.tsx` (`sub` необязательный), `docs/DECISIONS.md` (D488), `docs/CURRENT.md`.
+- Скиллы: `intgetion-design` не читался отдельно — правка только убирает пункты, вид не менялся.
+- Проверки: `prettier --check --end-of-line auto` по изменённым → 0; `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1 (1312 прошли, 1 упал — `src/content/legal/legal.test.ts`, CRLF непроизменённых `docs/content/legal-*.md`, тот же сбой, что в D479); `pnpm build` (с `SWC_NATIVE_BINDING_CACHE`) → 0. Браузер, localhost:3000: на 1440 px `/ru/jobs` и `/ru/events` — в шапке «INTGETION», разделов и «Меню» нет, разделы в левом меню; `/ru` на 1440 — «Меню» есть; на 1024 px «Меню» открывает все разделы. e2e не запускались (нет Chromium локально); тесты e2e на верхнюю полосу разделов не опираются (поиск по `tests/`).
+- Где работает: только локально. Git: `master`, не закоммичено.
+- OPEN QUESTION: «Job list» в футере — оставить или убрать. Номер D488, потому что D487 занят в ветке MCP.
+
+## [2026-10-18] — «Job list» убран и из футера (D488, продолжение) — DONE локально, не закоммичено
+
+- Основатель: «Да, убери Job list и из футера».
+- Файлы: `src/components/shell/footer.tsx` (знак без подписи), `src/components/ui/logo.tsx` (параметр `sub` удалён — больше не используется), `src/messages/{de,en,es,fr,it,pt-BR,ru}.json` (удалён ключ `product.wordmarkSub`, только эта строка), `docs/DECISIONS.md` (D488), `docs/CURRENT.md`.
+- Проверки: `prettier --check --end-of-line auto` по изменённым → 0; `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1 (1312 прошли, тот же `legal.test.ts` из-за CRLF); `pnpm build` → 0. Браузер, localhost:3000/ru/jobs на 1440 px: в футере у знака «INTGETION»; «JOB LIST» на странице только в «© 2026 INTGETION JOB LIST» (`product.name`, оставлено намеренно).
+- Где работает: только локально. Git: `master`, не закоммичено.
+- OPEN QUESTION: нет.

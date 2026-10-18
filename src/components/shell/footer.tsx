@@ -25,7 +25,7 @@ export function Footer() {
             aria-label={t("product.name")}
             className="inline-flex min-h-11 items-center self-start"
           >
-            <Logo name={t("product.wordmark")} sub={t("product.wordmarkSub")} />
+            <Logo name={t("product.wordmark")} />
           </Link>
           <p className="t-body-s max-w-[36ch] text-fg-muted">
             {t("home.tagline")}

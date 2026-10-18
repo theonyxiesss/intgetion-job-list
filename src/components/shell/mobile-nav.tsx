@@ -5,11 +5,12 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { navFade } from "@/components/ui/page-transition";
-import { Link } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { OPEN_MENU_EVENT } from "./bottom-nav";
 import { LocaleSwitch } from "./locale-switch";
 import { iconForNav } from "./nav-icons";
+import { railHidden } from "./rail-items";
 import { ThemeToggle } from "./theme-toggle";
 
 export type NavItem = { href: string; label: string };
@@ -25,17 +26,26 @@ export function MobileNav({
   closeLabel,
   signedIn,
   triggerClassName = "xl:hidden",
+  railessTriggerClassName,
 }: {
   items: NavItem[];
   label: string;
   openLabel: string;
   closeLabel: string;
   signedIn: boolean;
-  /** When the wide bar takes over. Defaults to the xl breakpoint. */
+  /** When the left rail takes over. Defaults to the xl breakpoint. */
   triggerClassName?: string;
+  /** Used instead on pages without the rail (home, chat): the menu is then
+   * the only way to the sections at any width (D488). */
+  railessTriggerClassName?: string;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDialogElement>(null);
+  const pathname = usePathname();
+  const trigger =
+    railessTriggerClassName !== undefined && railHidden(pathname)
+      ? railessTriggerClassName
+      : triggerClassName;
 
   useEffect(() => {
     const dialog = ref.current;
@@ -60,7 +70,7 @@ export function MobileNav({
         aria-expanded={open}
         onClick={() => setOpen(true)}
         icon={<Icon icon={Menu} />}
-        className={triggerClassName}
+        className={trigger}
       />
       <dialog
         ref={ref}
