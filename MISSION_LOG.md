@@ -2623,3 +2623,10 @@
 - Файлы: `src/app/[locale]/layout.tsx` (`min-h-0` у двух обёрток), `tests/e2e/chat.spec.ts` (новый тест на длинную ленту), `docs/DECISIONS.md` (D491), `docs/CURRENT.md`.
 - Проверки: prettier по изменённым → 0; `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1 (1317 прошли, тот же `legal.test.ts` из-за CRLF); `pnpm build` → 0. Браузер localhost: 1440×900 — чат 835 px, поле внизу (853), лента прокручивается; 390×800 — поле над нижним меню (668), лента прокручивается; `/ru/jobs` — страница 7838 px, футер внизу. e2e локально не запускался (нет Chromium), будет в CI.
 - Где работает: только локально. Git: не закоммичено.
+
+## [2026-10-18] — D491 на сайте — DONE
+
+- По слову основателя («закоммить и выкати в прод»): коммит `551d300` (только файлы D491, поверх `origin/master` `5c2c245` через временный индекс), push в `master`, Vercel из git: `dpl_GRFBupLYKEeQmCpaVw4yEYWjJ8bC`, статус GitHub `Vercel success`.
+- Проверка коммита в чистой выгрузке: `format:check` 0, `typecheck` 0, `lint` 0, `test` 0 (1352 прошли), `build` 0. Новый e2e — в CI.
+- Сайт: `/`, `/ru/chat`, `/ru/jobs`, `/api/health` → 200. На https://intgetion.com/ru/chat с лентой +3000 px: 1440×900 — чат 835 px, поле в окне, лента прокручивается; 390×800 — поле на 668 px, лента прокручивается. CI на `551d300` не дожидался.
+- Git: локальная `master` в основной папке по-прежнему на `fcceb59`.
