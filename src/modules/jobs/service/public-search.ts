@@ -1,3 +1,4 @@
+import { SYNDICATED_IMPORT_SOURCES } from "@/config/import-sources";
 import { HIGH_PAY_USD_YEAR } from "@/config/markers";
 import { publicHttpUrl } from "@/lib/company-mark";
 import {
@@ -232,6 +233,12 @@ export interface SearchViewer {
     hiddenJobIds: ReadonlySet<string>;
     hiddenCompanyIds: ReadonlySet<string>;
   } | null;
+  /**
+   * A third party reads the results (an outside assistant over MCP): own
+   * jobs and imports whose source allows other sites only (D412, D484).
+   * Filtered in the query, so a page is never emptied by closed sources.
+   */
+  syndicatedOnly?: boolean;
 }
 
 export async function searchJobs(
@@ -251,6 +258,9 @@ export async function searchJobs(
   const rows = await repo.searchPublicJobs({
     ...query,
     nonTechnical: query.nonTechnical !== undefined,
+    ...(viewer.syndicatedOnly
+      ? { syndicatedSources: SYNDICATED_IMPORT_SOURCES }
+      : {}),
     cursor,
     limit: fetchLimit,
   });

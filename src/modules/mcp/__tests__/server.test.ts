@@ -383,6 +383,14 @@ describe("D484: closed sources stay closed", () => {
     expect(result.content[0]!.text).not.toContain(REMOTIVE);
   });
 
+  it("asks the search for open sources only, so closed ones never fill the page", async () => {
+    await call("search_jobs", { category: "engineering", limit: 3 });
+    expect(searchJobs).toHaveBeenCalledTimes(1);
+    const [query, , viewer] = searchJobs.mock.calls[0]!;
+    expect(query).toMatchObject({ category: "engineering", limit: 3 });
+    expect(viewer).toEqual({ hidden: null, syndicatedOnly: true });
+  });
+
   it("an allowed imported job names its source and links to it", async () => {
     const result = await call("search_jobs", {});
     const jobs = result.structuredContent!.jobs as {
