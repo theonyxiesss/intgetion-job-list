@@ -120,6 +120,8 @@ const ANOMALY_DAYS = 14;
 
 export type BotEvent =
   | { type: "token"; text: string }
+  /** A tool is about to run; the web chat shows what Spoki is doing (D490). */
+  | { type: "tool_start"; name: string }
   | { type: "tool_result"; name: string; kind: string; data: unknown }
   | {
       type: "confirm_request";
@@ -1424,6 +1426,8 @@ async function callTool(
   jobs?: boolean;
   jobCards?: JobCardFacts[];
 }> {
+  // The web chat names the step while it runs (D490). Name only, no input.
+  emit({ type: "tool_start", name: call.name });
   if (ctx.userId && toolNeedsConfirmation(ctx, call.name)) {
     let preview: string | null;
     try {

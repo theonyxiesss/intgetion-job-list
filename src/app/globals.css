@@ -338,6 +338,62 @@
   animation-delay: calc(var(--i, 0) * 80ms);
 }
 
+/* Spoki at work (D490): a pulsing spark and a light sweeping over the words. */
+@keyframes spoki-spark {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.85) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1) rotate(90deg);
+  }
+}
+
+@keyframes spoki-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.spoki-spark {
+  display: inline-block;
+  color: var(--signal);
+  animation: spoki-spark 1.6s ease-in-out infinite;
+}
+
+.spoki-shimmer {
+  background: linear-gradient(
+      90deg,
+      var(--fg-muted) 0%,
+      var(--fg-muted) 40%,
+      var(--fg) 50%,
+      var(--fg-muted) 60%,
+      var(--fg-muted) 100%
+    )
+    0 0 / 200% 100%;
+  background-clip: text;
+  color: transparent;
+  animation:
+    spoki-shimmer 2s linear infinite,
+    ui-fade-in var(--d-base) ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spoki-spark,
+  .spoki-shimmer {
+    animation: none;
+  }
+  .spoki-shimmer {
+    color: var(--fg-muted);
+    background: none;
+  }
+}
+
 /* Chat fills the viewport. Only the thread scrolls. The phone tab bar sits below it (D287). */
 body:has(.chat-shell) {
   height: 100%;

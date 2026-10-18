@@ -31,6 +31,7 @@ import {
   ApplyCardText,
   isAccountCardTool,
 } from "@/components/bot/account-card";
+import { ThinkingStatusLine } from "@/components/bot/thinking-status-line";
 import { ConfirmCard } from "@/components/ui/dialog";
 import { ugcBudgetMinor, usdLabel } from "@/modules/ugc/service/pricing";
 import { Alert } from "@/components/ui/feedback";
@@ -254,6 +255,8 @@ export function Chat({
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [thinking, setThinking] = useState(false);
+  /** The tool Spoki runs right now, named in the status line (D490). */
+  const [activity, setActivity] = useState<string | null>(null);
   const [actions, setActions] = useState<ChatActions>({
     signup: false,
     fillChoice: false,
@@ -456,6 +459,7 @@ export function Chat({
     fieldRef.current?.focus();
     setSending(true);
     setThinking(true);
+    setActivity(null);
     add({ key: nextKey(), kind: "user", text: message });
     const answerKey = nextKey();
     try {
@@ -483,6 +487,9 @@ export function Chat({
         if (data.type === "token") {
           setThinking(false);
           appendAnswer(answerKey, String(data.text));
+        } else if (data.type === "tool_start") {
+          setActivity(String(data.name));
+          setThinking(true);
         } else if (
           data.type === "tool_result" &&
           (data.kind === "jobs" || data.kind === "matches")
@@ -553,6 +560,7 @@ export function Chat({
       add({ key: nextKey(), kind: "notice", code: "BOT_TRY_LATER" });
     } finally {
       setThinking(false);
+      setActivity(null);
       setSending(false);
     }
   }
@@ -1024,11 +1032,7 @@ export function Chat({
                 </p>
               );
             })}
-            {thinking && (
-              <p className="t-label text-fg-muted" aria-live="polite">
-                {t("thinking")}
-              </p>
-            )}
+            {thinking && <ThinkingStatusLine tool={activity} />}
             <div ref={endRef} />
           </div>
         </div>

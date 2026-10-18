@@ -2599,3 +2599,12 @@
 - Проверка коммита в чистой выгрузке: `format:check` 0, `typecheck` 0, `lint` 0, `test` 0 (1347 прошли), `build` 0.
 - Сайт: `/`, `/ru`, `/ru/jobs`, `/ru/events`, `/api/health` → 200, `/ru/profile` гостю → 307 на вход. В браузере на 1440 px `/ru/jobs`: колонка 300 px, пункт 252×44, 15 px, группы «Разделы» и «Категории», горизонтальной прокрутки нет. CI на `a27e547` не дожидался.
 - Git: локальная `master` в основной папке по-прежнему на `fcceb59`.
+
+## [2026-10-18] — Живая строка Spoki на английском (D490) — DONE локально, не закоммичено
+
+- Запрос основателя: вместо «Думает…» сделать интерактивно, как у Claude, и только на английском.
+- Файлы: `src/modules/bot/service/conversation.ts` (событие `tool_start` с именем инструмента), `src/components/bot/thinking-status.ts` + `.test.ts` (шаг по инструменту, смена слов, секунды), `src/components/bot/thinking-status-line.tsx` (строка), `src/components/bot/chat.tsx` (подключение), `src/app/globals.css` (`.spoki-spark`, `.spoki-shimmer`, без анимации при reduced motion), `src/messages/*.json` (`chat.status.*` английские во всех 7, `chat.thinking` удалён), `src/modules/bot/bot.integration.test.ts` (порядок событий + `tool_start` без аргументов), `docs/DECISIONS.md` (D490), `docs/CURRENT.md`.
+- Проверки: prettier по изменённым → 0; `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1 (1317 прошли, новые 5 прошли; упал тот же `legal.test.ts` из-за CRLF рабочей папки); `pnpm build` → 0. Интеграционный тест бота — только в CI. `pnpm eval` не запускался: промпт и инструменты не менялись.
+- Браузер, localhost:3000/ru/chat: после отправки строка «✦ Thinking…» появилась и исчезла с ответом. Локально нет ключа LLM (ответ «Агент сейчас недоступен»), поэтому шаги инструментов вживую не проверены; скриншот не снят — окно браузера не отрисовывалось.
+- Где работает: только локально. Git: не закоммичено.
+- OPEN QUESTION: нет.

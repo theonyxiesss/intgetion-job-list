@@ -1662,7 +1662,20 @@
     "emptyGuest": "Conte ao Spoki onde você está e que trabalho você quer.",
     "emptySignedIn": "Conte ao Spoki o que você quer encontrar. A conversa continua de onde você parou.",
     "score": "{score}% de correspondência",
-    "thinking": "Pensando…",
+    "status": {
+      "thinking": "Thinking",
+      "pondering": "Pondering",
+      "considering": "Considering",
+      "mulling": "Mulling it over",
+      "searchJobs": "Searching jobs",
+      "readJob": "Reading the job",
+      "events": "Looking for events",
+      "services": "Browsing freelance services",
+      "account": "Checking your account",
+      "memory": "Updating memory",
+      "ugc": "Working on UGC",
+      "working": "Working on it"
+    },
     "suggestions": {
       "one": "Vagas remotas de Solidity",
       "two": "Design em meio período na Europa",

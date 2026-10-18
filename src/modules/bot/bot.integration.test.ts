@@ -169,11 +169,14 @@ describe("bot conversation (7A)", () => {
       `Find ${title}. Mail me at jane@example.com or +49 151 2345 6789`,
     );
     expect(events.map((event) => event.type)).toEqual([
+      "tool_start",
       "tool_result",
       "token",
       "done",
     ]);
-    expect(events[0]).toMatchObject({
+    // The step name only: the arguments carry the person's words (D490).
+    expect(events[0]).toEqual({ type: "tool_start", name: "search_jobs" });
+    expect(events[1]).toMatchObject({
       kind: "jobs",
       data: [{ id: jobId, title }],
     });
