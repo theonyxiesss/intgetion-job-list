@@ -34,12 +34,16 @@ export {
   TOOLS,
   findTool,
   hashArgs,
+  mcpTools,
+  runMcpTool,
   runTool,
   toolNeedsConfirmation,
   toolsFor,
   type BotState,
+  type McpToolDefinition,
   type ToolContext,
 } from "./tools";
+export { UNTRUSTED_NOTE, type McpOutcome } from "./mcp-faces";
 export { postSystemEvent } from "./system-event";
 export { runReminderDispatch } from "./reminders";
 export {

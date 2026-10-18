@@ -49,6 +49,15 @@ import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
 import { accountTools } from "./account-tools";
 import { pitchTools, screenCoverNote } from "./pitch";
 import { reminderTools } from "./reminders";
+import {
+  findEventsFace,
+  getCompanyFace,
+  getJobFace,
+  listJobCategoriesFace,
+  searchJobsFace,
+  type McpFace,
+  type McpOutcome,
+} from "./mcp-faces";
 import { formatStanding, standingMissing } from "./standing";
 import {
   MEMORY_MAX_CHARS,
@@ -142,6 +151,10 @@ export type BotTool<T extends z.ZodType = z.ZodType> = {
     input: z.infer<T>,
     card?: Record<string, unknown>,
   ) => Promise<ToolOutcome>;
+  /** False for a tool that only outside assistants get over MCP (D486). */
+  spoki?: false;
+  /** What the tool shows over MCP; absent means the tool is not on MCP (D486). */
+  mcp?: McpFace<z.infer<T>>;
 };
 
 const id = z.uuid();
@@ -209,6 +222,7 @@ export const TOOLS: readonly BotTool[] = [
     input: searchInput,
     access: "guest",
     confirm: never,
+    mcp: searchJobsFace,
     async run(ctx, input) {
       const remembered = searchFiltersFromDraft(ctx.state.draft);
       const query = jobSearchQuery.parse({
@@ -236,6 +250,7 @@ export const TOOLS: readonly BotTool[] = [
     input: z.object({ id }).strict(),
     access: "guest",
     confirm: never,
+    mcp: getJobFace,
     async run(ctx, input) {
       const job = await getJobForPublic(input.id, {
         userId: ctx.userId ?? undefined,
@@ -269,6 +284,7 @@ export const TOOLS: readonly BotTool[] = [
     input: eventsInput,
     access: "guest",
     confirm: never,
+    mcp: findEventsFace,
     async run(ctx, input) {
       const known = eventPlaceFromDraft(ctx.state.draft);
       const events = await findEventsForPerson({
@@ -623,6 +639,37 @@ export const TOOLS: readonly BotTool[] = [
       };
     },
   }),
+  tool({
+    name: "list_job_categories",
+    description: listJobCategoriesFace.description,
+    input: z.object({}).strict(),
+    access: "guest",
+    confirm: never,
+    spoki: false,
+    mcp: listJobCategoriesFace,
+    async run() {
+      return { llm: (await listJobCategoriesFace.run({})).text };
+    },
+  }),
+  tool({
+    name: "get_company",
+    description: getCompanyFace.description,
+    input: z
+      .object({
+        slug: z
+          .string()
+          .trim()
+          .regex(/^[a-z0-9-]{1,80}$/),
+      })
+      .strict(),
+    access: "guest",
+    confirm: never,
+    spoki: false,
+    mcp: getCompanyFace,
+    async run(_ctx, input) {
+      return { llm: (await getCompanyFace.run(input)).text };
+    },
+  }),
   ...accountTools,
   ...pitchTools,
   ...reminderTools,
@@ -630,15 +677,74 @@ export const TOOLS: readonly BotTool[] = [
   ...(freelanceTools as unknown as BotTool[]),
 ];
 
+/** Tools Spoki has; MCP-only tools are not among them (D486). */
+const SPOKI_TOOLS = TOOLS.filter((t) => t.spoki !== false);
+
 /** Tools offered to the model: guests never even see user tools (P11). */
 export function toolsFor(userId: string | null): LLMToolDefinition[] {
-  return TOOLS.filter((t) => userId !== null || t.access === "guest").map(
+  return SPOKI_TOOLS.filter((t) => userId !== null || t.access === "guest").map(
     (t) => ({ name: t.name, description: t.description, input: t.input }),
   );
 }
 
 export function findTool(name: string): BotTool | undefined {
-  return TOOLS.find((t) => t.name === name);
+  return SPOKI_TOOLS.find((t) => t.name === name);
+}
+
+/**
+ * The MCP face of the registry (D486): only guest reads with a face.
+ * The gate is checked here once more, so a write or a user tool never
+ * reaches MCP even if it got a face by mistake.
+ */
+function isMcpReadTool(t: BotTool): boolean {
+  const ctx: ToolContext = {
+    userId: null,
+    conversationId: "mcp",
+    locale: "en",
+    state: {},
+  };
+  // A card for anyone (guest or user) marks a write: never on MCP.
+  return (
+    t.mcp !== undefined &&
+    t.access === "guest" &&
+    !t.confirm(ctx) &&
+    !t.confirm({ ...ctx, userId: "mcp" })
+  );
+}
+
+const MCP_TOOLS = TOOLS.filter(isMcpReadTool);
+
+export type McpToolDefinition = {
+  name: string;
+  title: string;
+  description: string;
+  input: z.ZodType;
+};
+
+/** MCP tools in registry order, so `tools/list` is always the same. */
+export function mcpTools(): McpToolDefinition[] {
+  return MCP_TOOLS.map((t) => ({
+    name: t.name,
+    title: t.mcp!.title,
+    description: t.mcp!.description,
+    input: t.input,
+  }));
+}
+
+/** Runs one MCP call. Unknown or non-MCP tool: 400. Bad args: 400. */
+export async function runMcpTool(
+  name: string,
+  rawInput: unknown,
+): Promise<McpOutcome> {
+  const definition = MCP_TOOLS.find((t) => t.name === name);
+  if (!definition) {
+    throw new HttpError(400, "VALIDATION_ERROR", `Unknown tool ${name}`);
+  }
+  const parsed = definition.input.safeParse(rawInput ?? {});
+  if (!parsed.success) {
+    throw new HttpError(400, "VALIDATION_ERROR", `Invalid input for ${name}`);
+  }
+  return definition.mcp!.run(parsed.data);
 }
 
 /** Stable hash of tool arguments, so a confirmation fits only these args. */

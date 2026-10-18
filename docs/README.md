@@ -26,6 +26,7 @@
 | [PARALLEL_WORK.md](PARALLEL_WORK.md)           | Worktree / ветки агентов                                               |
 | [DESIGN.md](DESIGN.md)                         | UI-фундамент                                                           |
 | [ADMIN.md](ADMIN.md)                           | Админка                                                                |
+| [MCP.md](MCP.md)                               | MCP-сервер для внешних ИИ-ассистентов: план и фазы (D480–D486)         |
 | [security/AUDIT_LOG.md](security/AUDIT_LOG.md) | Журнал проверок безопасности: что проверено, на каком коммите, находки |
 | [archive/](archive/INDEX.md)                   | Замороженные монолиты и старые логи                                    |
 | [TZ_INTGETION_v6.md](TZ_INTGETION_v6.md)       | Stub-указатель (монолит в archive)                                     |

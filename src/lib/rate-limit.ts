@@ -51,6 +51,8 @@ export const rateRules = {
   beacon: { limit: 600, windowSeconds: 60 * 60 },
   /** guest JSON reads of jobs, keyed by IP (P-SCRAPE, D218) */
   publicApi: { limit: 120, windowSeconds: 60 },
+  /** MCP calls without sign-in, keyed by IP (D486) */
+  mcpGuest: { limit: 60, windowSeconds: 60 },
   /** admin host sign-in failures, keyed by account and by IP (D252) */
   adminLogin: { limit: 5, windowSeconds: 15 * 60 },
   /** Wallet sign-in before a crypto order (D353). */
