@@ -94,6 +94,8 @@ export async function searchPublicJobs(query: {
   employmentType?: string[];
   country?: string;
   source?: string;
+  /** Own jobs plus imports from these sources only (D412, D484). */
+  syndicatedSources?: readonly string[];
   postedWithin?: number;
   cursor?: {
     publishedAt: string;
@@ -141,6 +143,12 @@ export async function searchPublicJobs(query: {
     );
   if (query.source)
     predicates.push(eq(jobs.source, query.source as "internal" | "imported"));
+  if (query.syndicatedSources)
+    predicates.push(
+      query.syndicatedSources.length
+        ? sql`(${jobs.source} = 'internal' or ${inArray(importSources.name, [...query.syndicatedSources])})`
+        : eq(jobs.source, "internal"),
+    );
   if (query.postedWithin)
     predicates.push(
       gte(
