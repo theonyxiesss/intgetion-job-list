@@ -2535,3 +2535,18 @@
 - Причина: `src/modules/bot/bot.integration.test.ts` — «answers a guest with search results…» получил лишнее событие `signup_hint`. Токен теста — первые 8 hex-символов uuid; `countryFromText` режет текст гостя на буквенные куски, и кусок вроде `cc`, `ca`, `be` распознаётся как страна, черновик получает страну, Spoki добавляет подсказку входа. Локальная проба: 138 из 10 000 hex-токенов дают страну (≈1,4% прогонов), цифровой токен — 0 из 10 000. С этой веткой не связано.
 - Сделано: токен теста — только цифры (`randomUUID().replace(/\D/g, "")`, 8 знаков). Код продукта не менялся.
 - Проверки: `prettier --check` → 0, `pnpm typecheck` → 0, `pnpm lint` → 0. Интеграционный тест локально не запускался (нет локальной базы) — проверит CI.
+
+## [2026-10-18] — MCP: PR #20 на сайте (D484) — DONE, production `dpl_CmTkmCgCj2wmcxRqPNVg1wagymjH`
+
+- Задача: основатель — «давай»: влить PR #20 и проверить `search_jobs` на сайте.
+- CI на `efbb63d`: `check` и `database` зелёные в push- и PR-прогоне. PR #20 влит rebase 2026-10-18 12:32 UTC: master `996fa37` (`837871c` + `996fa37`), дерево совпадает с `efbb63d`. Выкладка из git: `dpl_CmTkmCgCj2wmcxRqPNVg1wagymjH`, Ready, алиас `intgetion.com`.
+- Проверено на production: `search_jobs` с `category=engineering` — 3 вакансии (2 Jobicy, 1 своя; до правки 0); без категории — 5 Jobicy; `get_job` вакансии Remote OK — `source_terms`; `initialize` — `tools.listChanged: false`; Origin/Host/GET как раньше; `/api/bot/confirm` без Origin 403; `/api/health` 200. Выдача сайта не изменилась: `/api/jobs?category=engineering` — те же 50 вакансий со страниц компаний.
+- Не сделано: claude.ai и ChatGPT (нужен вход в аккаунты основателя); эта запись журнала не закоммичена (новый коммит в master = новая выкладка).
+
+## [2026-10-18] — `docs/CURRENT.md`: MCP на сайте — DONE в ветке `claude/mcp-current-doc`, не в master
+
+- Задача: основатель — пункт 6 списка «что ещё не готово»: в `docs/CURRENT.md` в master нет строки о том, что MCP на сайте.
+- Сделано: `docs/CURRENT.md` — строка «MCP-сервер (D480–D486)» под строкой ветки (адрес, 8 инструментов только для чтения, правило D484, защита, `dpl_CmTkmCgCj2wmcxRqPNVg1wagymjH`, что не проверено, следующая фаза) и строка MCP в таблице «Куда читать по задаче». Строка «Активная задача» не тронута.
+- Проверки: `prettier --check --end-of-line auto docs/CURRENT.md MISSION_LOG.md` → 0. Код не менялся.
+- Git: ветка `claude/mcp-current-doc` от master `996fa37` (без привязки к `origin/master`), коммит вместе с записью журнала о выкладке PR #20, push ветки, PR. Слияние в master = выкладка: только после «да» основателя.
+- Основная папка: её незакоммиченный `docs/CURRENT.md` (D479 другой сессии) расходится с master; при коммите D479 нужно взять строку MCP из master.
