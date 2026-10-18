@@ -71,6 +71,33 @@ test("chat composer grows a few lines, then scrolls inside", async ({
   }
 });
 
+// D491: a long thread scrolls inside the conversation; the field stays on
+// screen. The layout wrappers of the left rail once grew with the thread.
+test("a long conversation scrolls inside and keeps the field in view", async ({
+  page,
+}) => {
+  const viewport = { width: 1280, height: 800 };
+  await page.setViewportSize(viewport);
+  await page.goto("/en/chat");
+  const log = page.getByRole("log", { name: "Conversation" });
+  await log.evaluate((node) => {
+    const tall = document.createElement("div");
+    tall.style.height = "3000px";
+    (node.firstElementChild ?? node).appendChild(tall);
+  });
+  const field = page.getByLabel("Write a message");
+  const box = await field.boundingBox();
+  expect(box).not.toBeNull();
+  expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(
+    viewport.height,
+  );
+  expect(
+    await log.evaluate((node) => node.scrollHeight > node.clientHeight + 1),
+  ).toBe(true);
+  await field.fill("still typing");
+  await expect(field).toHaveValue("still typing");
+});
+
 test("7A: guests cannot confirm actions (P11)", async ({ request }) => {
   const response = await request.post("/api/bot/confirm", {
     headers: sameOrigin,

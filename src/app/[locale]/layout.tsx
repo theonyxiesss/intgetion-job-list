@@ -150,10 +150,14 @@ export default async function LocaleLayout({
           <ToastProvider closeLabel={t("ui.close")}>
             <Header />
             <div id="content" tabIndex={-1} className="flex flex-1 flex-col">
-              {/* Left rail from 1280 px, kept across navigations (D477, D489). */}
-              <div className="flex w-full flex-1 flex-col xl:has-[>[data-rail]]:mx-auto xl:has-[>[data-rail]]:grid xl:has-[>[data-rail]]:max-w-[1376px] xl:has-[>[data-rail]]:grid-cols-[300px_minmax(0,1fr)]">
+              {/* Left rail from 1280 px, kept across navigations (D477, D489).
+                  min-h-0 on both wrappers: the chat keeps the window height and
+                  scrolls its thread instead of pushing the field down (D491). */}
+              <div className="flex min-h-0 w-full flex-1 flex-col xl:has-[>[data-rail]]:mx-auto xl:has-[>[data-rail]]:grid xl:has-[>[data-rail]]:max-w-[1376px] xl:has-[>[data-rail]]:grid-cols-[300px_minmax(0,1fr)]">
                 <SiteRail data={rail} />
-                <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+                <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                  {children}
+                </div>
               </div>
             </div>
             <Footer />
