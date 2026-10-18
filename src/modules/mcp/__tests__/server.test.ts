@@ -274,6 +274,34 @@ describe("MCP protocol (D486)", () => {
     expect(searchJobs).not.toHaveBeenCalled();
   });
 
+  it("does not advertise tools.listChanged: the list changes only with a deploy", async () => {
+    const init = await rpc(
+      legacy("initialize", {
+        protocolVersion: LEGACY,
+        capabilities: {},
+        clientInfo: { name: "legacy", version: "1" },
+      }),
+    );
+    expect(init.json.result.capabilities.tools?.listChanged).not.toBe(true);
+  });
+
+  it("closes a subscriptions/listen stream at once instead of holding it open", async () => {
+    const response = await handleMcpRequest(
+      modern("subscriptions/listen", {
+        notifications: { toolsListChanged: true },
+      }),
+    );
+    expect(response.status).toBe(200);
+    const text = await Promise.race([
+      response.text(),
+      new Promise<string>((_, reject) =>
+        setTimeout(() => reject(new Error("stream stayed open")), 2000),
+      ),
+    ]);
+    expect(text).toContain("notifications/subscriptions/acknowledged");
+    expect(text).not.toContain('"toolsListChanged":true');
+  });
+
   it("answers GET with 405: there are no sessions", async () => {
     const response = await handleMcpRequest(post(null, {}, "GET"));
     expect(response.status).toBe(405);

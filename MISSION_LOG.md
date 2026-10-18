@@ -2482,3 +2482,31 @@
 - Не проверялось: живой сервер против облачной базы (каждый вызов пишет счётчик лимита в общую с продакшеном базу — по условию «не менять production» не запускалось); реальные клиенты (Claude Code, claude.ai, ChatGPT, Cursor) и MCP Inspector; CI (`database`, e2e) — нет push.
 - Где работает: только в ветке. Git: по слову основателя («Закоммить фазу 1 в ветку claude/mcp-phase1 вместе с docs/MCP.md и D484–D486, сделай push ветки и PR, дождись CI. В master не мерджить, не выкладывать») — коммит в `claude/mcp-phase1`, push ветки, PR в master без слияния. Вместе с кодом в ветку взяты `docs/MCP.md`, D480–D486 и эти записи журнала из основной папки; запись и правки D479 другой сессии не взяты. Production, миграции, секреты в репозитории — нет.
 - Отклонения: чеклист скилла безопасности п. 2 (маршрут без Origin — только с подписью): для `/api/mcp` вместо подписи своя проверка Host и Origin, маршрут только читает и не читает cookie (D486, «да» основателя). `docs/how-it-works/mcp.md` ссылается на `docs/MCP.md`, который пока лежит незакоммиченным в основной папке. OPEN QUESTION: нет новых.
+
+## [2026-10-18] — MCP, фаза 1: CI PR #19 и проверка Vercel Preview — проверка, без изменений кода
+
+- Задача: основатель — дождаться повторного CI, проверить `check` и `database` для текущего коммита, при повторном падении LCP разобрать причину без правки кода, проверить, использует ли Vercel Preview production-базу, не раскрывая секретов; без commit, push, merge и deployment.
+- CI на `7f11911`: прогон `pull_request` (39118951089) — `check` и `database` зелёные, LCP главной 2441 мс. Прогон `push` (39118935024), попытка 1 — `database` упал только на бюджете LCP главной (медиана 2689 мс при 2500; 5 замеров 2471–2975 мс; элемент `hero-wordmark-run`, Render Delay 2,0–2,5 с), интеграционные 174 и e2e 85 (+1 нестабильный) прошли; главная этой веткой не менялась. Попытка 2 запущена (`gh run rerun --failed`), на момент записи шла.
+- Vercel: `vercel env ls` (CLI 64.3.1 из кэша npx, только имена и окружения): `DATABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `PRIVACY_HASH_SECRET`, `NEXT_PUBLIC_SUPABASE_URL` и `NEXT_PUBLIC_SITE_URL` — одни переменные сразу для Production и Preview. Preview работает с production-базой и с адресом сайта `intgetion.com`. Превью ветки закрыто Vercel Authentication: `POST /api/mcp` на нём → 401. Коннектор Vercel проект не видит (404).
+- Код, коммиты, push, выкладки: нет.
+
+## [2026-10-18] — MCP, фаза 1: живая проверка локально (D486) — DONE, без изменений кода
+
+- Задача: основатель — «запусти pnpm dev в рабочей копии mcp1 против облачной базы (пишутся только счётчики лимита) и проверь /api/mcp из Claude Code и MCP Inspector через npx. Без commit, push, merge и выкладки».
+- CI PR #19 на `7f11911` итог: прогон `push` попытка 2 — `check` и `database` зелёные (LCP главной 2468 мс, e2e 85); прогон `pull_request` — зелёный.
+- Сервер: `pnpm --dir "…mcp1" dev --port 3401` во вкладке терминала, страницы сайта не открывались. Запросы только к `/api/mcp` и один `GET /api/jobs?source=imported` (поиск id закрытого источника). В базу писались только счётчики лимитов.
+- curl: `initialize` 2025-11-25 и `tools/list` — 8 инструментов, у всех `readOnlyHint`; `search_jobs` на живых данных — 5 вакансий Jobicy с атрибуцией, без описаний и контактов; `get_job` по id вакансии Remote OK → `available: false`, `source_terms`, без названия (D484); `find_events` с источником; `find_services` и `freelance_price_range` — пусто (услуг в базе нет). Без Origin 200, Origin сайта 200, чужой Origin 403, `null` 403, чужой Host 403, GET 405; `/api/bot/confirm` без Origin по-прежнему 403. Лимит: 60 в минуту, дальше 429 с `Retry-After`. Лог `mcp_tool_call`: инструмент, `ok`, время, `ipHash` — без аргументов и IP.
+- MCP Inspector 2.9.0 (`npx`, CLI): `tools/list` — 8 инструментов; `search_jobs`, `list_job_categories`; `get_company` с неверным slug — ошибка валидации; `apply_to_job` — «not found on server»; `get_company` импортной компании — `source_terms`. Пустая папка `~/.mcp-inspector`, созданная инспектором, удалена.
+- Claude Code 2.1.296 (`claude -p`, временный `--mcp-config` + `--strict-mcp-config`, только три разрешённых инструмента, модель haiku, $0.005): вызвал `search_jobs` → `get_job` → `get_company`, правильно прочёл источник Jobicy и закрытую компанию. Настройки Claude Code не менялись.
+- Замечено: один запрос клиента длился 15 с (вероятно, поток уведомлений `subscriptions/listen`: сервер объявляет `tools.listChanged`). На Vercel такой поток держит функцию до `maxDuration` 30 с. Кандидат на правку: не объявлять `listChanged`.
+- Не проверено: claude.ai и ChatGPT (нужен публичный адрес — production или открытое превью); Cursor.
+- Код, коммиты, push, выкладки: нет. В рабочей копии не закоммичен только этот журнал.
+
+## [2026-10-18] — MCP, фаза 1: без `tools.listChanged` (D486) — DONE в ветке `claude/mcp-phase1`, не в master, не выложено
+
+- Задача: основатель — «Сначала убери объявление tools.listChanged (поток subscriptions/listen на Vercel держит функцию до 30 с), прогони тесты, закоммить вместе с журналом в claude/mcp-phase1 и запушь ветку. В master не мерджить, не выкладывать».
+- Причина: SDK по умолчанию объявляет `tools.listChanged: true` (`registerCapabilities(... ?? true)`), и поток `subscriptions/listen` остаётся открытым с keepalive до `maxDuration`.
+- Сделано: `src/modules/mcp/service/server.ts` — `capabilities: { tools: { listChanged: false } }`; SDK отвечает на `subscriptions/listen` пустым подтверждением и закрывает поток. Тесты в `src/modules/mcp/__tests__/server.test.ts`: `initialize` без `listChanged: true`; поток `subscriptions/listen` закрывается сразу. Мутация (снять строку) — оба теста падают, поток висит. `docs/how-it-works/mcp.md` — строка.
+- Проверки: `prettier --check --end-of-line auto` → 0; `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1 (1345 прошли, 1 упал — тот же `legal.test.ts`, CRLF); MCP-тесты 24/24; `pnpm eval` → 0; `pnpm build` → 0.
+- Не проверено: живой прогон с dev-сервером и Claude Code после правки (разрешение на него было в прошлой задаче).
+- Git: коммит в `claude/mcp-phase1` вместе с записями журнала от живой проверки; push ветки. В master не вливалось, не выкладывалось.

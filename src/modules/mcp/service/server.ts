@@ -80,7 +80,14 @@ function logCall(input: {
 function buildServer(ipHash: string | undefined): McpServer {
   const server = new McpServer(
     { name: MCP_SERVER_NAME, title: PRODUCT_NAME, version: MCP_SERVER_VERSION },
-    { instructions: INSTRUCTIONS },
+    {
+      instructions: INSTRUCTIONS,
+      // The tool list changes only with a deploy, so there is nothing to
+      // push. Without this the SDK advertises listChanged, and a client's
+      // subscriptions/listen stream holds the function open on Vercel until
+      // maxDuration. With it the stream is acknowledged empty and closed.
+      capabilities: { tools: { listChanged: false } },
+    },
   );
   for (const definition of mcpTools()) {
     server.registerTool(

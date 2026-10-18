@@ -6,6 +6,7 @@
 
 - Адрес: `POST https://intgetion.com/api/mcp` (`src/app/api/mcp/route.ts`). Streamable HTTP без состояния. GET и DELETE отвечают 405: сессий нет.
 - SDK: `@modelcontextprotocol/server` 2.3.1 (официальный v2), `createMcpHandler`. Сервер на каждый запрос новый. Клиенты 2026-07-28 и 2025-era (`initialize`, до 2025-11-25) обслуживаются одной фабрикой.
+- Сервер объявляет `tools.listChanged: false`: список меняется только с выкладкой. Поток `subscriptions/listen` получает пустое подтверждение и сразу закрывается, функция Vercel не висит до `maxDuration`.
 - Протокол: `src/modules/mcp/service/server.ts`. Порядок на запросе: Host (только хост сайта, вне production ещё loopback) → Origin (нет Origin — можно, иной Origin — 403, `null` — 403) → лимит `mcpGuest` 60 в минуту на IP → тело до 64 КБ → вызов.
 - Инструменты берутся из реестра Spoki (`src/modules/bot/service/tools.ts`). У инструмента есть необязательное поле `mcp` (`McpFace`: название, описание, свой формат ответа). `spoki: false` — инструмент только для MCP (`list_job_categories`, `get_company`). `mcpTools()` и `runMcpTool()` пускают в MCP только гостевые инструменты, у которых нет карточки ни для гостя, ни для вошедшего.
 - Ответы: `src/modules/bot/service/mcp-faces.ts` (вакансии, компании, категории, события), `src/modules/freelance/service/bot-tools.ts` (услуги, вилка цен). Результат — `structuredContent` и тот же JSON текстом.
