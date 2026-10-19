@@ -19,6 +19,16 @@ describe("publicJobText", () => {
     );
   });
 
+  it("mends the Latin-1 reading of a no-break space (D479)", () => {
+    const broken = String.fromCharCode(0xc2, 0xa0);
+    expect(
+      publicJobText(`About${broken}the${broken}Company: Kodland${broken}is`),
+    ).toBe("About the Company: Kodland is");
+    expect(publicJobText(`Pay${String.fromCharCode(0xa0)}in USD`)).toBe(
+      "Pay in USD",
+    );
+  });
+
   it("leaves a real description alone", () => {
     expect(publicJobText("Build APIs. Remote.")).toBe("Build APIs. Remote.");
   });

@@ -1,7 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { Tag } from "@/components/ui/badge";
-import { navForward } from "@/components/ui/page-transition";
-import { Link } from "@/i18n/navigation";
+import { ListingCard } from "@/components/ui/listing-card";
 import type { CatalogCard } from "../service";
 import { formatUsd, utcLabel } from "./format";
 
@@ -36,7 +34,7 @@ export async function TrackRecord({ card }: { card: CatalogCard }) {
   );
 }
 
-/** One service in the catalog (28.11 C). The title links to its page. */
+/** One service in the catalog (28.11 C), on the shared card (D479). */
 export async function ServiceCard({
   card,
   locale,
@@ -46,38 +44,29 @@ export async function ServiceCard({
 }) {
   const t = await getTranslations("freelance");
   return (
-    <article className="flex h-full flex-col gap-3 rounded-lg border border-line bg-surface p-4 transition-colors hover:border-line-strong md:p-6">
-      <SellerLine card={card} />
-      <h2 className="t-h3">
-        <Link
-          href={`/freelance/${card.slug}`}
-          {...navForward}
-          className="underline-offset-4 hover:underline"
-        >
-          {card.title}
-        </Link>
-      </h2>
-      <ul className="flex flex-wrap gap-2" aria-label={t("skills")}>
-        <li>
-          <Tag>{t(`categories.${card.category}`)}</Tag>
-        </li>
-        {card.skills.slice(0, 3).map((skill) => (
-          <li key={skill}>
-            <Tag>{skill}</Tag>
-          </li>
-        ))}
-      </ul>
-      <div className="mt-auto flex flex-wrap items-baseline justify-between gap-2 border-t border-line pt-3">
+    <ListingCard
+      href={`/freelance/${card.slug}`}
+      title={card.title}
+      headingLevel={2}
+      label={t(`categories.${card.category}`)}
+      subtitle={<SellerLine card={card} />}
+      tags={card.skills}
+      tagLimit={3}
+      moreTagsLabel={(hidden) => `+${hidden}`}
+      lead={
         <p className="t-data-l">
           {t("from", { price: formatUsd(card.fromMinor, locale) })}
         </p>
+      }
+      trail={
         <p className="flex flex-col items-end gap-1 text-right">
           <span className="t-data text-fg-muted">
             {t("days", { count: card.fromDays })}
           </span>
           <TrackRecord card={card} />
         </p>
-      </div>
-    </article>
+      }
+      viewLabel={t("viewService")}
+    />
   );
 }

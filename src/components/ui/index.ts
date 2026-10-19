@@ -15,6 +15,7 @@ export { Stat, StatRow } from "./stat";
 export { Alert, EmptyState, ErrorState, Skeleton } from "./feedback";
 export { JobCard } from "./job-card";
 export type { JobCardStat } from "./job-card";
+export { ListingCard } from "./listing-card";
 export { Table, Td, Th, Tr } from "./table";
 export { LinkTabs } from "./tabs";
 export type { TabItem } from "./tabs";
