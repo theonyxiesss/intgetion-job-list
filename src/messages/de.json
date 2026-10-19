@@ -1633,6 +1633,7 @@
     }
   },
   "chat": {
+      "jobDraft": {"title":"Gemeinsamer Stellenentwurf","missing":"Noch {count} Pflichtangaben fehlen.","edit":"Anzeige prüfen und senden","fields":{"companyName":"Unternehmen","title":"Rolle","description":"Beschreibung","category":"Kategorie","employmentType":"Beschäftigungsart","location":"Standort","salaryMin":"Mindestgehalt","salaryMax":"Höchstgehalt","salaryCurrency":"Währung","salaryPeriod":"Gehaltszeitraum","applicationMethod":"Bewerbungsweg","countries":"Zulässige Länder"}},
     "title": "Spoki Assistant",
     "welcome": "Womit fangen wir an?",
     "disclaimer": "Spoki kann sich irren. Prüfe, was wichtig ist. Auch in Telegram:",
@@ -1652,6 +1653,14 @@
     "ugcJoin": {
       "title": "Link für den Blogger",
       "action": "In Telegram öffnen"
+    },
+        "freelanceDraft": { "title": "Gemeinsamer Entwurf des Freelance-Angebots", "missing": "Noch {count} Pflichtfelder offen.", "edit": "Angebot prüfen und bearbeiten", "fields": { "title": "Titel", "category": "Kategorie", "description": "Beschreibung", "buyerNeeds": "Angaben des Käufers", "languages": "Sprachen", "skills": "Fähigkeiten", "packages": "Pakete" } },
+    "ugcDraft": {
+      "title": "Gemeinsamer UGC-Briefentwurf",
+      "missing": "Noch {count} Pflichtfelder offen.",
+      "edit": "Entwurf prüfen und bearbeiten",
+      "assumptions": "Annahmen von Spoki",
+      "fields": { "productName": "Produkt", "description": "Beschreibung", "goal": "Ziel", "audience": "Zielgruppe", "countries": "Länder", "languages": "Sprachen", "platform": "Plattform", "niche": "Nische", "videoCount": "Videos", "rewardCents": "Vergütung pro Video", "deadline": "Frist", "rights": "Nutzungsrechte", "mustSay": "Muss enthalten", "mustNot": "Muss vermeiden", "pitch": "Ansprache", "links": "Links" }
     },
     "intro": "Ein Gespräch, das lernt, welche Arbeit Sie wollen, und weitersucht.",
     "log": "Gespräch",
@@ -2745,10 +2754,14 @@
     }
   },
   "postJob": {
+      "assistantDraft": "Stellenanzeige mit dem Assistenten erstellen",
     "title": "Job ausschreiben",
     "guest": "Um einen Job auszuschreiben, melden Sie sich an oder erstellen Sie ein Konto.",
     "register": "Registrieren",
     "form": {
+        "completePrivate": "Ergänzen Sie vor dem Absenden die fehlenden Kontakt- und Bewerbungsangaben in diesem Formular.",
+        "alreadySubmitted": "Dieser Stellenentwurf wurde bereits gesendet.",
+        "chooseOption": "Option wählen",
       "intro": "Rolle, Bezahlung und Bewerbungsweg eintragen. Ein Admin prüft die Stelle, bevor sie in der Liste steht.",
       "introLive": "Rolle, Bezahlung und Bewerbungsweg eintragen. Mit dem Senden steht die Stelle in der Liste.",
       "company": "Firmenname",
@@ -3377,6 +3390,7 @@
     }
   },
   "events": {
+    "viewEvent": "Event öffnen",
     "title": "Web3- & Tech-Events",
     "subtitle": "Summits, Konferenzen, Meetups, Hackathons, Business- und Karrieretreffen. Gehen Sie dorthin, wo eingestellt wird: Networking führt oft zur nächsten Stelle.",
     "filters": "Filter",
@@ -3437,6 +3451,7 @@
     }
   },
   "freelance": {
+    "viewService": "Service öffnen",
     "telegram": {
       "confirmAccept": "Anfrage für „{serviceTitle}“ annehmen? Beide Seiten sehen dann die Kontakte.",
       "confirmDecline": "Anfrage für „{serviceTitle}“ ablehnen?",
@@ -3632,6 +3647,7 @@
       "submit": "Zur Prüfung",
       "pause": "Pause",
       "resume": "Wieder zeigen",
+      "assistantDraft": "Mit Spoki erstellen",
       "saveDraft": "Entwurf speichern",
       "saveNote": "Ein Entwurf ist nicht im Katalog. Zur Prüfung schickst du ihn, wenn er fertig ist.",
       "serviceLegend": "Die Leistung",

@@ -47,6 +47,7 @@ function campaignOf(row: CampaignRow): Campaign {
     niches: row.niches,
     audience: row.audience,
     country: row.country,
+    countries: row.countries ?? [],
     languages: row.languages,
     platforms: row.platforms,
     mustSay: row.mustSay,

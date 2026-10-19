@@ -13,6 +13,7 @@ import {
   usdLabel,
   type UgcPriceGuide,
 } from "../service/pricing";
+import type { BriefDraftRow } from "../service";
 
 /**
  * The same fields the bot collects. Sending calls createCampaign. The price
@@ -21,19 +22,22 @@ import {
 export function BriefForm({
   companies,
   guide,
+  draft,
 }: {
   companies: { id: string; name: string }[];
   guide: UgcPriceGuide;
+  draft: BriefDraftRow;
 }) {
   const t = useTranslations("ugc");
   const locale = useLocale();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const d = draft.draft;
   const [dollars, setDollars] = useState(
-    String(Math.round(guide.medianMinor / 100)),
+    typeof d.rewardCents === "number" ? String(d.rewardCents / 100) : "",
   );
-  const [videos, setVideos] = useState("1");
-  const [rights, setRights] = useState("organic");
+  const [videos, setVideos] = useState(typeof d.videoCount === "number" ? String(d.videoCount) : "");
+  const [rights, setRights] = useState(typeof d.rights === "string" ? d.rights : "");
   const rewardMinor = /^\d+$/.test(dollars) ? Number(dollars) * 100 : 0;
   const videoCount = Number.parseInt(videos, 10) || 0;
   const budget = ugcBudgetMinor(videoCount, rewardMinor);
@@ -48,38 +52,40 @@ export function BriefForm({
       setError(t("error"));
       return;
     }
-    const country = String(form.get("country") ?? "").trim();
-    const body = {
-      action: "create",
-      companyId: String(form.get("companyId") ?? ""),
+    const countries = String(form.get("country") ?? "").split(/[;,\s]+/).map((item) => item.trim().toUpperCase()).filter(Boolean);
+    const platforms = form.getAll("platforms").map(String);
+    const niches = form.getAll("niches").map(String);
+    const list = (key: string) => String(form.get(key) ?? "").split(/[;,\n]+/).map((item) => item.trim()).filter(Boolean);
+    const patch = {
       productName: String(form.get("productName") ?? ""),
-      productSummary: String(form.get("productSummary") ?? ""),
+      description: String(form.get("productSummary") ?? ""),
       goal: String(form.get("goal") ?? ""),
-      niches: form.getAll("niches").map(String),
+      ...(niches[0] ? { niche: niches[0] } : {}),
       audience: String(form.get("audience") ?? ""),
-      country: country ? country.toUpperCase() : null,
+      countries,
       languages: String(form.get("languages") ?? "")
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean),
-      mustSay: String(form.get("mustSay") ?? ""),
-      mustNot: String(form.get("mustNot") ?? ""),
-      platforms: form.getAll("platforms").map(String),
-      videosWanted: Number(form.get("videosWanted")),
-      bountyMinor: (BigInt(dollars) * BigInt(100)).toString(),
+      ...(platforms[0] ? { platform: platforms[0] } : {}),
+      mustSay: list("mustSay"),
+      mustNot: list("mustNot"),
+      videoCount: Number(form.get("videosWanted")),
+      rewardCents: Number(BigInt(dollars) * BigInt(100)),
       deadline: String(form.get("deadline") ?? ""),
       rights: String(form.get("rights") ?? ""),
       pitch: String(form.get("pitch") ?? ""),
-      exampleUrls: String(form.get("exampleUrls") ?? "")
-        .split(/\s+/)
-        .map((item) => item.trim())
-        .filter(Boolean),
+      links: String(form.get("exampleUrls") ?? "").split(/\s+/).map((item) => item.trim()).filter(Boolean),
     };
-    const response = await fetch("/api/ugc", {
-      method: "POST",
+    const saved = await fetch("/api/ugc/brief-draft", {
+      method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ draftId: draft.id, companyId: String(form.get("companyId") ?? ""), patch }),
     });
+    const response = saved.ok ? await fetch("/api/ugc/brief-draft", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ action: "confirm", draftId: draft.id }),
+    }) : saved;
     setBusy(false);
     if (!response.ok) {
       setError(t("error"));
@@ -94,7 +100,7 @@ export function BriefForm({
   return (
     <form className="flex max-w-xl flex-col gap-4" onSubmit={onSubmit}>
       <Field label={t("fields.company")}>
-        <Select name="companyId" required defaultValue={companies[0]?.id ?? ""}>
+        <Select name="companyId" required defaultValue={draft.companyId ?? companies[0]?.id ?? ""}>
           {companies.map((company) => (
             <option key={company.id} value={company.id}>
               {company.name}
@@ -103,13 +109,14 @@ export function BriefForm({
         </Select>
       </Field>
       <Field label={t("fields.productName")}>
-        <Input name="productName" required maxLength={120} />
+        <Input name="productName" required maxLength={120} defaultValue={String(d.productName ?? "")} />
       </Field>
       <Field label={t("fields.productSummary")}>
-        <Input name="productSummary" required maxLength={400} />
+        <Input name="productSummary" required maxLength={400} defaultValue={String(d.description ?? "")} />
       </Field>
       <Field label={t("fields.goal")}>
-        <Select name="goal" required defaultValue="awareness">
+        <Select name="goal" required defaultValue={String(d.goal ?? "")}>
+          <option value="" disabled />
           {UGC_GOALS.map((goal) => (
             <option key={goal} value={goal}>
               {t(`goals.${goal}`)}
@@ -121,7 +128,7 @@ export function BriefForm({
         <legend className="t-label text-fg-muted">{t("fields.niches")}</legend>
         {UGC_NICHES.map((niche) => (
           <label key={niche} className="flex min-h-11 items-center gap-2">
-            <input type="checkbox" name="niches" value={niche} />
+            <input type="checkbox" name="niches" value={niche} defaultChecked={d.niche === niche} />
             {t(`niches.${niche}`)}
           </label>
         ))}
@@ -132,25 +139,25 @@ export function BriefForm({
         </legend>
         {UGC_PLATFORMS.map((platform) => (
           <label key={platform} className="flex min-h-11 items-center gap-2">
-            <input type="checkbox" name="platforms" value={platform} />
+            <input type="checkbox" name="platforms" value={platform} defaultChecked={d.platform === platform} />
             {t(`platforms.${platform}`)}
           </label>
         ))}
       </fieldset>
       <Field label={t("fields.audience")}>
-        <Input name="audience" required maxLength={300} />
+        <Input name="audience" maxLength={300} defaultValue={String(d.audience ?? "")} />
       </Field>
       <Field label={t("fields.country")}>
-        <Input name="country" maxLength={2} autoComplete="country" />
+        <Input name="country" maxLength={60} autoComplete="country" defaultValue={Array.isArray(d.countries) ? d.countries.join("; ") : ""} />
       </Field>
       <Field label={t("fields.languages")}>
-        <Input name="languages" required />
+        <Input name="languages" defaultValue={Array.isArray(d.languages) ? d.languages.join(", ") : ""} />
       </Field>
       <Field label={t("fields.mustSay")}>
-        <Input name="mustSay" required maxLength={1000} />
+        <Input name="mustSay" maxLength={1000} defaultValue={Array.isArray(d.mustSay) ? d.mustSay.join("; ") : ""} />
       </Field>
       <Field label={t("fields.mustNot")}>
-        <Input name="mustNot" required maxLength={1000} />
+        <Input name="mustNot" maxLength={1000} defaultValue={Array.isArray(d.mustNot) ? d.mustNot.join("; ") : ""} />
       </Field>
       <Field label={t("fields.videos")}>
         <Input
@@ -211,7 +218,7 @@ export function BriefForm({
         ) : null}
       </div>
       <Field label={t("fields.deadline")}>
-        <Input name="deadline" type="date" required />
+        <Input name="deadline" type="date" required defaultValue={String(d.deadline ?? "")} />
       </Field>
       <Field label={t("fields.rights")}>
         <Select
@@ -220,6 +227,7 @@ export function BriefForm({
           value={rights}
           onChange={(event) => setRights(event.target.value)}
         >
+          <option value="" disabled />
           {UGC_RIGHTS.map((rights) => (
             <option key={rights} value={rights}>
               {t(`rights.${rights}`)}
@@ -231,10 +239,10 @@ export function BriefForm({
         <p className="t-body-s text-fg-muted">{t("rightsHint")}</p>
       ) : null}
       <Field label={t("fields.pitch")}>
-        <Input name="pitch" maxLength={300} />
+        <Input name="pitch" maxLength={300} defaultValue={String(d.pitch ?? "")} />
       </Field>
       <Field label={t("fields.examples")}>
-        <Input name="exampleUrls" />
+        <Input name="exampleUrls" defaultValue={Array.isArray(d.links) ? d.links.join(" ") : ""} />
       </Field>
       {error ? (
         <p className="t-body-s text-fg" role="alert">

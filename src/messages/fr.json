@@ -1633,6 +1633,7 @@
     }
   },
   "chat": {
+      "jobDraft": {"title":"Brouillon partagé de l’offre","missing":"Il manque encore {count} informations obligatoires.","edit":"Vérifier et envoyer l’offre","fields":{"companyName":"Entreprise","title":"Poste","description":"Description","category":"Catégorie","employmentType":"Type de contrat","location":"Lieu","salaryMin":"Salaire minimum","salaryMax":"Salaire maximum","salaryCurrency":"Devise","salaryPeriod":"Période salariale","applicationMethod":"Modalité de candidature","countries":"Pays éligibles"}},
     "title": "Spoki Assistant",
     "welcome": "Par où on commence ?",
     "disclaimer": "Spoki peut se tromper. Vérifie ce qui compte. Aussi sur Telegram :",
@@ -1652,6 +1653,14 @@
     "ugcJoin": {
       "title": "Lien pour le blogueur",
       "action": "Ouvrir dans Telegram"
+    },
+        "freelanceDraft": { "title": "Brouillon partagé du service freelance", "missing": "Il reste {count} champs obligatoires à remplir.", "edit": "Vérifier et modifier l’annonce", "fields": { "title": "Titre", "category": "Catégorie", "description": "Description", "buyerNeeds": "Besoins de l’acheteur", "languages": "Langues", "skills": "Compétences", "packages": "Forfaits" } },
+    "ugcDraft": {
+      "title": "Brouillon UGC partagé",
+      "missing": "Il reste {count} champs obligatoires à remplir.",
+      "edit": "Vérifier et modifier le brouillon",
+      "assumptions": "Suggestions de Spoki",
+      "fields": { "productName": "Produit", "description": "Description", "goal": "Objectif", "audience": "Public", "countries": "Pays", "languages": "Langues", "platform": "Plateforme", "niche": "Secteur", "videoCount": "Vidéos", "rewardCents": "Paiement par vidéo", "deadline": "Date limite", "rights": "Droits", "mustSay": "À mentionner", "mustNot": "À éviter", "pitch": "Message", "links": "Liens" }
     },
     "intro": "Une conversation qui apprend quel travail vous voulez et continue à chercher.",
     "log": "Conversation",
@@ -2745,10 +2754,14 @@
     }
   },
   "postJob": {
+      "assistantDraft": "Préparer l’offre avec l’assistant",
     "title": "Publier une offre",
     "guest": "Pour publier une offre, connectez-vous ou créez un compte.",
     "register": "S’inscrire",
     "form": {
+        "completePrivate": "Complétez dans ce formulaire les coordonnées et modalités de candidature manquantes avant l’envoi.",
+        "alreadySubmitted": "Ce brouillon a déjà été envoyé.",
+        "chooseOption": "Choisir une option",
       "intro": "Indiquez le poste, la rémunération et le mode de candidature. Un admin vérifie l’offre avant qu’elle n’apparaisse dans la liste.",
       "introLive": "Indiquez le poste, la rémunération et le mode de candidature. L’envoi met l’offre dans la liste.",
       "company": "Nom de l’entreprise",
@@ -3377,6 +3390,7 @@
     }
   },
   "events": {
+    "viewEvent": "Ouvrir l’événement",
     "title": "Événements Web3 et tech",
     "subtitle": "Sommets, conférences, meetups, hackathons, rencontres business et carrière. Allez là où l’on recrute : le networking mène souvent au prochain poste.",
     "filters": "Filtres",
@@ -3437,6 +3451,7 @@
     }
   },
   "freelance": {
+    "viewService": "Ouvrir le service",
     "telegram": {
       "confirmAccept": "Accepter la demande pour « {serviceTitle} » ? Les contacts s’ouvriront aux deux parties.",
       "confirmDecline": "Refuser la demande pour « {serviceTitle} » ?",
@@ -3632,6 +3647,7 @@
       "submit": "Envoyer en revue",
       "pause": "Pause",
       "resume": "Montrer à nouveau",
+      "assistantDraft": "Créer avec Spoki",
       "saveDraft": "Enregistrer le brouillon",
       "saveNote": "Le brouillon n’est pas au catalogue. Envoyez-le en revue quand il est prêt.",
       "serviceLegend": "Le service",

@@ -1633,6 +1633,7 @@
     }
   },
   "chat": {
+      "jobDraft": {"title":"Shared job draft","missing":"{count} required job details still need a value.","edit":"Review and submit job","fields":{"companyName":"Company","title":"Role","description":"Description","category":"Category","employmentType":"Employment type","location":"Location","salaryMin":"Minimum salary","salaryMax":"Maximum salary","salaryCurrency":"Currency","salaryPeriod":"Salary period","applicationMethod":"How to apply","countries":"Eligible countries"}},
     "title": "Spoki Assistant",
     "welcome": "Where should we start?",
     "disclaimer": "Spoki can make mistakes. Check what matters. Also in Telegram:",
@@ -1652,6 +1653,14 @@
     "ugcJoin": {
       "title": "Blogger join link",
       "action": "Open in Telegram"
+    },
+    "freelanceDraft": { "title": "Shared freelance service draft", "missing": "{count} required fields still need a value.", "edit": "Review and edit listing", "fields": { "title": "Title", "category": "Category", "description": "Description", "buyerNeeds": "Buyer needs", "languages": "Languages", "skills": "Skills", "packages": "Packages" } },
+    "ugcDraft": {
+      "title": "Shared UGC brief draft",
+      "missing": "{count} required fields still need a value.",
+      "edit": "Review and edit draft",
+      "assumptions": "Spoki assumptions",
+      "fields": { "productName": "Product", "description": "Description", "goal": "Goal", "audience": "Audience", "countries": "Countries", "languages": "Languages", "platform": "Platform", "niche": "Niche", "videoCount": "Videos", "rewardCents": "Reward per video", "deadline": "Deadline", "rights": "Rights", "mustSay": "Must say", "mustNot": "Must avoid", "pitch": "Pitch", "links": "Links" }
     },
     "intro": "A conversation that learns what work you want and keeps looking.",
     "log": "Conversation",
@@ -2745,10 +2754,14 @@
     }
   },
   "postJob": {
+      "assistantDraft": "Draft this vacancy with the assistant",
     "title": "Post a job",
     "guest": "To post a job, sign in or create an account.",
     "register": "Register",
     "form": {
+        "completePrivate": "Complete the remaining required contact and application details in this form before submitting.",
+        "alreadySubmitted": "This job draft has already been submitted.",
+        "chooseOption": "Choose an option",
       "intro": "Fill in the role, the pay, and how people should apply. An admin checks it before it appears on the list.",
       "introLive": "Fill in the role, the pay, and how people should apply. Sending it puts the job on the list.",
       "company": "Company name",
@@ -3883,6 +3896,7 @@
     }
   },
   "events": {
+    "viewEvent": "Open event",
     "title": "Web3 & tech events",
     "subtitle": "Summits, conferences, meetups, hackathons, business and career meetups. Go where people hire: networking often leads to the next role.",
     "filters": "Filters",
@@ -3943,6 +3957,7 @@
     }
   },
   "freelance": {
+    "viewService": "Open service",
     "telegram": {
       "confirmAccept": "Accept the request for “{serviceTitle}”? Contacts open to both of you.",
       "confirmDecline": "Decline the request for “{serviceTitle}”?",
@@ -4138,6 +4153,7 @@
       "submit": "Send to review",
       "pause": "Pause",
       "resume": "Show again",
+      "assistantDraft": "Create with Spoki",
       "saveDraft": "Save draft",
       "saveNote": "A draft is not in the catalog. Send it to review when it is ready.",
       "serviceLegend": "The service",

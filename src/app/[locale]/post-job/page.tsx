@@ -10,6 +10,9 @@ import { getCompaniesForUser } from "@/modules/companies/service";
 import { hirePublishesNow } from "@/modules/jobs/schemas/hire";
 import { HireForm } from "@/modules/jobs/ui/hire-form";
 import { jobFormOptions } from "../employer/jobs/form-options";
+import { readJobDraft } from "@/modules/jobs/service";
+
+const UUID = /^[0-9a-f-]{36}$/i;
 
 /**
  * Public hire form (D391). A signed-in person fills one page and the job
@@ -17,10 +20,13 @@ import { jobFormOptions } from "../employer/jobs/form-options";
  */
 export default async function PostJobPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ draft?: string }>;
 }) {
   const { locale } = await params;
+  const { draft: draftId } = await searchParams;
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
@@ -52,11 +58,18 @@ export default async function PostJobPage({
       item.origin === "internal" &&
       ["owner", "admin", "recruiter"].includes(item.role),
   );
+  const sharedDraft =
+    draftId && UUID.test(draftId)
+      ? await readJobDraft(user.id, draftId).catch(() => undefined)
+      : undefined;
   const options = await jobFormOptions();
   return (
     <main className="flex-1 py-10">
       <Container className="flex flex-col gap-8">
         <PageHeader title={t("title")} />
+        <ButtonLink href="/chat?from=post_job" variant="secondary">
+          {t("assistantDraft")}
+        </ButtonLink>
         <HireForm
           companyId={company?.id ?? null}
           companyName={company?.name ?? ""}
@@ -67,6 +80,7 @@ export default async function PostJobPage({
           text={t.raw("form")}
           categories={options.categories}
           employment={options.employment}
+          sharedDraft={sharedDraft}
         />
       </Container>
     </main>

@@ -34,6 +34,14 @@ import { moveOrder } from "./party-service";
 import { orderPayState } from "./payment-service";
 import { FREELANCE_REPORT_REASONS, reportFreelance } from "./report-service";
 import { minorToUsd, sortPackages, type PriceRange } from "./rules";
+import {
+  confirmServiceBriefDraft,
+  isExplicitServiceDraftConfirmation,
+  patchServiceBriefDraft,
+  resetServiceBriefDraft,
+  unconfirmedServiceRanges,
+  withoutUnconfirmedServiceRanges,
+} from "./drafts";
 
 /**
  * Spoki tools for freelance services (28.8, D460). Reads run by themselves.
@@ -41,7 +49,15 @@ import { minorToUsd, sortPackages, type PriceRange } from "./rules";
  * person and never pass through the model (`cardFields`).
  */
 
-type Ctx = { userId: string | null };
+type Ctx = {
+  userId: string | null;
+  locale?: string;
+  state?: {
+    freelanceDraftMode?: boolean;
+    freelanceDraftId?: string;
+    lastUserText?: string;
+  };
+};
 type Card = Record<string, unknown> | undefined;
 
 const id = z.uuid();
@@ -322,6 +338,133 @@ const findInput = z
 const orderIdInput = z.object({ orderId: id }).strict();
 
 export const freelanceTools = [
+  {
+    name: "patch_service_draft",
+    description:
+      "In the service-listing thread, save only listing facts stated or corrected in the latest user message. Omit unknown fields. Do not invent package prices, delivery times, or promises. Never collect portfolio links in chat; the owner enters those in the form. This immediately updates the shared draft shown in the form.",
+    input: z
+      .object({
+        patch: z
+          .object({
+            title: z.string().optional(),
+            category: z.enum(FREELANCE_CATEGORIES).optional(),
+            description: z.string().optional(),
+            buyerNeeds: z.string().optional(),
+            languages: z.array(z.string()).optional(),
+            skills: z.array(z.string()).optional(),
+            packages: z
+              .array(
+                z
+                  .object({
+                    tier: z.enum(FREELANCE_TIERS),
+                    price: z.string().optional(),
+                    deliveryDays: z.number().int().optional(),
+                    revisions: z.number().int().optional(),
+                    includes: z.array(z.string()).optional(),
+                  })
+                  .strict(),
+              )
+              .optional(),
+          })
+          .strict(),
+      })
+      .strict(),
+    access: "user" as const,
+    confirm: read,
+    async run(ctx: Ctx, input: { patch: Record<string, unknown> }) {
+      if (!ctx.state?.freelanceDraftMode)
+        throw new HttpError(
+          409,
+          "FREELANCE_DRAFT_THREAD_REQUIRED",
+          "Open the freelance listing assistant first",
+        );
+      const ranges = unconfirmedServiceRanges(
+        ctx.state.lastUserText ?? "",
+        input.patch,
+      );
+      const safePatch = withoutUnconfirmedServiceRanges(input.patch, ranges);
+      const result = await patchServiceBriefDraft(ctx.userId, {
+        draftId: ctx.state.freelanceDraftId,
+        patch: safePatch,
+      });
+      return {
+        llm: wrapUntrusted(
+          "freelance:service_draft",
+          cleanForModel(
+            JSON.stringify({
+              draft: result.draft,
+              missingRequired: result.missingRequired,
+              suggestedRanges: ranges,
+            }),
+          ),
+        ),
+        state: { ...ctx.state, freelanceDraftId: result.id },
+        client: { kind: "freelance_service_draft", data: result },
+      };
+    },
+  },
+  {
+    name: "confirm_service_draft",
+    description:
+      "Create and submit the freelance service for moderation only after the person explicitly confirms the complete listing summary.",
+    input: z.object({}).strict(),
+    access: "user" as const,
+    confirm: read,
+    async run(ctx: Ctx) {
+      if (
+        !ctx.state?.freelanceDraftMode ||
+        !isExplicitServiceDraftConfirmation(ctx.state.lastUserText ?? "")
+      )
+        throw new HttpError(
+          409,
+          "FREELANCE_EXPLICIT_CONFIRMATION_REQUIRED",
+          "Wait for an explicit confirmation of the complete listing",
+        );
+      const result = await confirmServiceBriefDraft(
+        ctx.userId,
+        ctx.state.freelanceDraftId,
+      );
+      return {
+        llm: wrapUntrusted("freelance:service_draft", JSON.stringify(result)),
+        state: {
+          ...ctx.state,
+          freelanceDraftMode: false,
+          freelanceDraftId: undefined,
+        },
+        client: { kind: "freelance_service_saved", data: result },
+      };
+    },
+  },
+  {
+    name: "reset_service_draft",
+    description:
+      "Clear the current freelance service draft only after an explicit request to start over or replace the service.",
+    input: z.object({}).strict(),
+    access: "user" as const,
+    confirm: read,
+    async run(ctx: Ctx) {
+      if (
+        !ctx.state?.freelanceDraftMode ||
+        !/(?:начать заново|сброси(?:ть)? черновик|очисти черновик|другая услуга|новая услуга|start over|reset the draft|new service)/i.test(
+          ctx.state.lastUserText ?? "",
+        )
+      )
+        throw new HttpError(
+          409,
+          "FREELANCE_EXPLICIT_RESET_REQUIRED",
+          "Wait for an explicit reset request",
+        );
+      const result = await resetServiceBriefDraft(
+        ctx.userId,
+        ctx.state.freelanceDraftId,
+      );
+      return {
+        llm: wrapUntrusted("freelance:service_draft", JSON.stringify(result)),
+        state: { ...ctx.state, freelanceDraftId: result.id },
+        client: { kind: "freelance_service_draft", data: result },
+      };
+    },
+  },
   {
     name: "find_services",
     description:

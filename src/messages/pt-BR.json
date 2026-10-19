@@ -1633,6 +1633,7 @@
     }
   },
   "chat": {
+      "jobDraft": {"title":"Rascunho compartilhado da vaga","missing":"Ainda faltam {count} informações obrigatórias.","edit":"Revisar e enviar vaga","fields":{"companyName":"Empresa","title":"Cargo","description":"Descrição","category":"Categoria","employmentType":"Tipo de emprego","location":"Localização","salaryMin":"Salário mínimo","salaryMax":"Salário máximo","salaryCurrency":"Moeda","salaryPeriod":"Período salarial","applicationMethod":"Como se candidatar","countries":"Países elegíveis"}},
     "title": "Spoki Assistant",
     "welcome": "Por onde começamos?",
     "disclaimer": "O Spoki pode errar. Confira o que importa. Também no Telegram:",
@@ -1652,6 +1653,14 @@
     "ugcJoin": {
       "title": "Link para o blogueiro",
       "action": "Abrir no Telegram"
+    },
+        "freelanceDraft": { "title": "Rascunho compartilhado do serviço freelancer", "missing": "Faltam {count} campos obrigatórios.", "edit": "Revisar e editar anúncio", "fields": { "title": "Título", "category": "Categoria", "description": "Descrição", "buyerNeeds": "Necessidades do comprador", "languages": "Idiomas", "skills": "Habilidades", "packages": "Pacotes" } },
+    "ugcDraft": {
+      "title": "Rascunho UGC compartilhado",
+      "missing": "Faltam {count} campos obrigatórios.",
+      "edit": "Revisar e editar rascunho",
+      "assumptions": "Suposições do Spoki",
+      "fields": { "productName": "Produto", "description": "Descrição", "goal": "Objetivo", "audience": "Público", "countries": "Países", "languages": "Idiomas", "platform": "Plataforma", "niche": "Nicho", "videoCount": "Vídeos", "rewardCents": "Pagamento por vídeo", "deadline": "Prazo", "rights": "Direitos", "mustSay": "Deve dizer", "mustNot": "Deve evitar", "pitch": "Mensagem", "links": "Links" }
     },
     "intro": "Uma conversa que aprende que trabalho você quer e continua procurando.",
     "log": "Conversa",
@@ -2745,10 +2754,14 @@
     }
   },
   "postJob": {
+      "assistantDraft": "Preparar a vaga com o assistente",
     "title": "Publicar vaga",
     "guest": "Para publicar uma vaga, entre ou crie uma conta.",
     "register": "Cadastrar",
     "form": {
+        "completePrivate": "Complete neste formulário os dados de contato e candidatura que faltam antes de enviar.",
+        "alreadySubmitted": "Este rascunho de vaga já foi enviado.",
+        "chooseOption": "Escolha uma opção",
       "intro": "Informe o cargo, o pagamento e como as pessoas devem se candidatar. Um administrador confere antes de a vaga aparecer na lista.",
       "introLive": "Informe o cargo, o pagamento e como as pessoas devem se candidatar. Ao enviar, a vaga entra na lista.",
       "company": "Nome da empresa",
@@ -3377,6 +3390,7 @@
     }
   },
   "events": {
+    "viewEvent": "Abrir evento",
     "title": "Eventos Web3 e tech",
     "subtitle": "Cúpulas, conferências, meetups, hackathons, encontros de negócios e de carreira. Vá aonde se contrata: o networking costuma levar à próxima vaga.",
     "filters": "Filtros",
@@ -3437,6 +3451,7 @@
     }
   },
   "freelance": {
+    "viewService": "Abrir serviço",
     "telegram": {
       "confirmAccept": "Aceitar a solicitação para “{serviceTitle}”? Os contatos se abrem para os dois.",
       "confirmDecline": "Recusar a solicitação para “{serviceTitle}”?",
@@ -3632,6 +3647,7 @@
       "submit": "Enviar para revisão",
       "pause": "Pausar",
       "resume": "Mostrar de novo",
+      "assistantDraft": "Criar com o Spoki",
       "saveDraft": "Salvar rascunho",
       "saveNote": "O rascunho não está no catálogo. Envie para revisão quando estiver pronto.",
       "serviceLegend": "O serviço",

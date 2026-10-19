@@ -33,6 +33,7 @@ export type Campaign = {
   niches: UgcNiche[];
   audience: string;
   country: string | null;
+  countries?: string[];
   languages: string[];
   platforms: UgcPlatform[];
   mustSay: string;
@@ -107,6 +108,7 @@ export type BriefInput = {
   niches: UgcNiche[];
   audience: string;
   country: string | null;
+  countries?: string[];
   languages: string[];
   mustSay: string;
   mustNot: string;

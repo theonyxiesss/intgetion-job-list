@@ -44,6 +44,7 @@ import {
 } from "@/modules/matching/service";
 import { freelanceTools } from "@/modules/freelance/service";
 import { ugcTools } from "@/modules/ugc/service";
+import { jobDraftTools } from "./job-tools";
 import { OFFER_ACTIONS, offerPath } from "./offers";
 import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
 import { accountTools } from "./account-tools";
@@ -110,6 +111,16 @@ export type BotState = {
   ugcProduct?: string;
   /** The UGC next step last offered in this thread (D467). */
   ugcNextKey?: string;
+  /** The general thread is collecting a new UGC brief (D492). */
+  ugcDraftMode?: boolean;
+  ugcDraftId?: string;
+  /** The general thread is collecting a job listing (D494). */
+  jobDraftMode?: boolean;
+  jobDraftId?: string;
+  /** The general thread is collecting a freelance service listing (D493). */
+  freelanceDraftMode?: boolean;
+  freelanceDraftId?: string;
+  lastUserText?: string;
 };
 
 export type ToolContext = {
@@ -117,6 +128,8 @@ export type ToolContext = {
   conversationId: string;
   locale: string;
   state: BotState;
+  /** The matching site confirmation card was accepted. */
+  confirmedAction?: boolean;
 };
 
 /** What the model reads back, and an optional card for the chat UI. */
@@ -675,16 +688,54 @@ export const TOOLS: readonly BotTool[] = [
   ...reminderTools,
   ...(ugcTools as unknown as BotTool[]),
   ...(freelanceTools as unknown as BotTool[]),
+  ...jobDraftTools,
 ];
 
 /** Tools Spoki has; MCP-only tools are not among them (D486). */
 const SPOKI_TOOLS = TOOLS.filter((t) => t.spoki !== false);
 
 /** Tools offered to the model: guests never even see user tools (P11). */
-export function toolsFor(userId: string | null): LLMToolDefinition[] {
-  return SPOKI_TOOLS.filter((t) => userId !== null || t.access === "guest").map(
-    (t) => ({ name: t.name, description: t.description, input: t.input }),
-  );
+export function toolsFor(
+  userId: string | null,
+  state?: BotState,
+): LLMToolDefinition[] {
+  return SPOKI_TOOLS.filter((t) => userId !== null || t.access === "guest")
+    .filter((t) => {
+      if (state?.ugcDraftMode)
+        return userId === null
+          ? t.name === "offer_step"
+          : ["patch_brief", "confirm_brief", "reset_draft"].includes(t.name);
+      if (state?.freelanceDraftMode)
+        return userId === null
+          ? t.name === "offer_step"
+          : [
+              "patch_service_draft",
+              "confirm_service_draft",
+              "reset_service_draft",
+            ].includes(t.name);
+      if (state?.jobDraftMode)
+        return userId === null
+          ? t.name === "offer_step"
+          : [
+              "patch_job_draft",
+              "confirm_job_draft",
+              "reset_job_draft",
+            ].includes(t.name);
+      if (state?.topic === "ugc")
+        return (
+          (t.name.includes("ugc") ||
+            t.name.includes("creator_profile") ||
+            t.name === "offer_step") &&
+          ![
+            "patch_brief",
+            "confirm_brief",
+            "reset_draft",
+            "propose_ugc_campaign",
+          ].includes(t.name)
+        );
+      return true;
+    })
+    .map((t) => ({ name: t.name, description: t.description, input: t.input }));
 }
 
 export function findTool(name: string): BotTool | undefined {
@@ -817,6 +868,7 @@ export async function runTool(
   if (!parsed.success) {
     throw new HttpError(400, "VALIDATION_ERROR", `Invalid input for ${name}`);
   }
+  let confirmedAction = false;
   if (definition.confirm(ctx)) {
     const valid =
       confirmed !== undefined &&
@@ -830,6 +882,7 @@ export async function runTool(
         "This action needs the user's confirmation",
       );
     }
+    confirmedAction = true;
   }
   // Card fields only after a valid confirmation, and only the tool's own.
   const allowed = definition.cardFields ?? [];
@@ -839,5 +892,5 @@ export async function runTool(
           Object.entries(card).filter(([key]) => allowed.includes(key)),
         )
       : undefined;
-  return definition.run(ctx, parsed.data, fields);
+  return definition.run({ ...ctx, confirmedAction }, parsed.data, fields);
 }

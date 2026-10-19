@@ -4,6 +4,26 @@
 
 ## OPEN
 
+### Job listing draft (D494) — local implementation
+
+- Spoki's `/chat?from=post_job`, `/post_job` in Telegram, and the `/post-job` form share `job_drafts`; chat facts appear in the review form and form edits are read in later chat turns.
+- `patch_job_draft` stores only supplied fields. `confirm_job_draft` waits for explicit consent and then uses the existing hire submission/moderation workflow. Private contact fields stay in the form.
+- Migration `0063_job_drafts.sql` is local and not deployed. Production requires migrations `0061`–`0063` in order, then a deploy.
+- Telegram uses the same Spoki conversation and draft. Guests receive a sign-in link; linked users can start with `/post_job` or an explicit job-posting request. Final review/submission uses the site card/form.
+- Cloud migration, commit, and deploy need the founder's explicit yes under the safe zone.
+
+### Freelance service draft (D493) — local implementation
+
+- Spoki's `/chat?from=freelance_sell` and the new-service form now share `freelance_service_drafts`; the explicit confirmation submits the listing to moderation.
+- Migration `0062_freelance_service_drafts.sql` is local and not deployed. Production requires migrations `0061` and `0062` in order, then a deploy.
+- Existing listing edits are not included in this subphase.
+- Cloud migration, commit, and deploy need the founder's explicit yes under the safe zone.
+
+### UGC-brief draft (D492) — local implementation
+
+- Architecture and code are in the working tree. Migration `0061_ugc_brief_drafts.sql` is not applied to the cloud, and the change is not deployed. The new chat/card flow requires that migration before it works on the live site.
+- Cloud migration and deploy require the founder's explicit yes under the safe zone.
+
 ### Spoki как ассистент (D469) — подфазы 1–5 сделаны
 
 Основатель 2026-10-17: Spoki как Claude — помнит человека, правит аккаунт по просьбе, напоминает в Telegram, хранит память, а не переписку. Подфаза 1 (память) на сайте `dpl_DRked68yoU93AfHEHQrqXPRrXw1T`. Дальше по одной за сессию, по команде основателя:

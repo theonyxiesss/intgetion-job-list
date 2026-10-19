@@ -39,6 +39,7 @@ export type MatchSide = {
   niches: readonly UgcNiche[];
   /** Null means any country. */
   country: string | null;
+  countries?: readonly string[];
 };
 
 export type CreatorMatchSide = MatchSide & {
@@ -51,12 +52,15 @@ function overlap<T>(left: readonly T[], right: readonly T[]): boolean {
   return right.some((item) => set.has(item));
 }
 
-/** Country matches when either side is "any" or both name the same country. */
+/** Any campaign country matches; null on either side means any country. */
 export function countryMatches(
-  campaign: string | null,
+  campaign: string | null | readonly string[],
   creator: string | null,
 ): boolean {
-  return campaign === null || creator === null || campaign === creator;
+  if (creator === null || campaign === null) return true;
+  return Array.isArray(campaign)
+    ? campaign.length === 0 || campaign.includes(creator)
+    : campaign === creator;
 }
 
 /** Platform, language, niche and country (27.7). A paused or blocked creator never matches. */
@@ -69,7 +73,7 @@ export function creatorMatches(
     overlap(campaign.platforms, creator.platforms) &&
     overlap(campaign.languages, creator.languages) &&
     overlap(campaign.niches, creator.niches) &&
-    countryMatches(campaign.country, creator.country)
+    countryMatches(campaign.countries?.length ? campaign.countries : campaign.country, creator.country)
   );
 }
 

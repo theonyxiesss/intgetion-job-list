@@ -58,11 +58,19 @@ import {
 } from "./fit";
 import {
   freelanceFocusBlock,
+  freelanceDraftContextBlock,
+  freelanceDraftOpener,
   freelanceOpener,
   freelanceTopicState,
   type FreelanceFocus,
 } from "./freelance-focus";
 import { jobFocusBlock, jobFocusOpener, readJobFocus } from "./job-focus";
+import {
+  isJobDraftRequest,
+  jobDraftFocusBlock,
+  jobDraftOpener,
+} from "./job-draft-focus";
+import { isExplicitJobDraftConfirmation } from "./job-tools";
 import {
   isServiceFrom,
   serviceFocusBlock,
@@ -71,6 +79,7 @@ import {
 } from "./service-focus";
 import {
   ugcFocusBlock,
+  ugcDraftContextBlock,
   ugcHomeOpener,
   ugcThreadOpener,
   ugcTopicState,
@@ -90,6 +99,16 @@ import {
 } from "./memory";
 import * as repo from "../repo/bot-repo";
 import { listMemory, memoryBlock, profileDraft } from "./user-memory";
+import { readBriefDraft } from "@/modules/ugc/service";
+import {
+  jobDraftForModel,
+  readJobDraft,
+  resetJobDraft,
+} from "@/modules/jobs/service";
+import {
+  cleanForModel,
+  readServiceBriefDraft,
+} from "@/modules/freelance/service";
 import {
   ANSWER_THE_QUESTION,
   isBareGreetingReply,
@@ -392,7 +411,7 @@ export async function openUgcHomeConversation(input: {
 }): Promise<{ conversation: repo.ConversationRow; token: string }> {
   const opened = await resolveConversation({ ...input, generalOnly: true });
   const previous = (opened.conversation.state ?? {}) as BotState;
-  const state = ugcTopicState(previous);
+  const state = { ...ugcTopicState(previous), ugcDraftMode: true };
   let conversation = opened.conversation;
   if (state !== previous) {
     await repo.updateConversation(
@@ -410,6 +429,83 @@ export async function openUgcHomeConversation(input: {
       content: ugcHomeOpener(input.locale),
     });
   }
+  return { conversation, token: opened.token };
+}
+
+export async function openFreelanceDraftConversation(input: {
+  userId: string | null;
+  token: string | undefined;
+  locale: string;
+}): Promise<{ conversation: repo.ConversationRow; token: string }> {
+  const opened = await resolveConversation({ ...input, generalOnly: true });
+  const previous = (opened.conversation.state ?? {}) as BotState;
+  const state: BotState = {
+    ...previous,
+    topic: "freelance",
+    freelanceDraftMode: true,
+    freelanceServiceId: undefined,
+    freelanceOrderId: undefined,
+  };
+  await repo.updateConversation(
+    opened.conversation.id,
+    { state, locale: input.locale },
+    new Date(),
+  );
+  const conversation = { ...opened.conversation, state, locale: input.locale };
+  const existing = await repo.listMessages(conversation.id, 1);
+  if (existing.length === 0)
+    await repo.insertMessage({
+      conversationId: conversation.id,
+      role: "assistant",
+      content: freelanceDraftOpener(input.locale),
+    });
+  return { conversation, token: opened.token };
+}
+
+export async function openJobDraftConversation(input: {
+  userId: string | null;
+  token: string | undefined;
+  locale: string;
+}): Promise<{ conversation: repo.ConversationRow; token: string }> {
+  if (!input.userId)
+    throw new HttpError(
+      401,
+      "UNAUTHENTICATED",
+      "Sign in to draft a job listing",
+    );
+  const opened = await resolveConversation({ ...input, generalOnly: true });
+  const previous = (opened.conversation.state ?? {}) as BotState;
+  let draft = await readJobDraft(
+    input.userId,
+    previous.jobDraftMode ? previous.jobDraftId : undefined,
+  );
+  if (!previous.jobDraftMode && draft.status === "submitted")
+    draft = await resetJobDraft(input.userId, draft.id);
+  const state: BotState = {
+    ...previous,
+    topic: undefined,
+    ugcDraftMode: false,
+    ugcDraftId: undefined,
+    freelanceDraftMode: false,
+    freelanceDraftId: undefined,
+    freelanceServiceId: undefined,
+    freelanceOrderId: undefined,
+    jobDraftMode: true,
+    jobDraftId: draft.id,
+  };
+  await repo.updateConversation(
+    opened.conversation.id,
+    { state, locale: input.locale },
+    new Date(),
+  );
+  const conversation = { ...opened.conversation, state, locale: input.locale };
+  const existing = await repo.listMessages(conversation.id, 1);
+  if (existing.length === 0)
+    await repo.insertMessage({
+      conversationId: conversation.id,
+      role: "assistant",
+      content: jobDraftOpener(input.locale),
+    });
   return { conversation, token: opened.token };
 }
 
@@ -443,6 +539,7 @@ export async function openUgcThread(input: {
   }
   const state = {
     ...ugcTopicState((conversation.state ?? {}) as BotState),
+    ugcDraftMode: false,
     ugcCampaignId: input.campaignId,
     ugcProduct: product,
   };
@@ -704,6 +801,49 @@ export async function resumeConversation(input: {
   }
   if (input.from === "campaigns") {
     const opened = await openUgcHomeConversation({
+      userId: input.userId,
+      token: input.token,
+      locale: input.locale ?? "en",
+    });
+    const offer = await takeDraftOffer(
+      opened.conversation,
+      input.userId,
+      new Date(),
+    );
+    return {
+      conversation: opened.conversation,
+      offer,
+      token: opened.token,
+      actions: chatActions(
+        input.userId,
+        (opened.conversation.state ?? {}) as BotState,
+      ),
+    };
+  }
+  if (input.from === "freelance_sell") {
+    const opened = await openFreelanceDraftConversation({
+      userId: input.userId,
+      token: input.token,
+      locale: input.locale ?? "en",
+    });
+    const offer = await takeDraftOffer(
+      opened.conversation,
+      input.userId,
+      new Date(),
+    );
+    return {
+      conversation: opened.conversation,
+      offer,
+      token: opened.token,
+      actions: chatActions(
+        input.userId,
+        (opened.conversation.state ?? {}) as BotState,
+      ),
+    };
+  }
+  if (input.from === "post_job") {
+    if (!input.userId) return empty;
+    const opened = await openJobDraftConversation({
       userId: input.userId,
       token: input.token,
       locale: input.locale ?? "en",
@@ -1021,7 +1161,7 @@ export async function handleMessage(
     now,
   );
   const acked = await acknowledgeResume(conversation, input.locale, emit);
-  const current = acked ?? conversation;
+  let current = acked ?? conversation;
   await repo.insertMessage({
     conversationId: current.id,
     role: "user",
@@ -1032,6 +1172,32 @@ export async function handleMessage(
     ...(current.state as BotState),
     draft: rememberUtterance((current.state as BotState).draft, input.text),
   };
+  if (
+    userId &&
+    !current.jobId &&
+    !state.jobDraftMode &&
+    !state.topic &&
+    isJobDraftRequest(input.text)
+  ) {
+    let draft = await readJobDraft(userId);
+    if (draft.status === "submitted")
+      draft = await resetJobDraft(userId, draft.id);
+    state = {
+      ...state,
+      ugcDraftMode: false,
+      freelanceDraftMode: false,
+      jobDraftMode: true,
+      jobDraftId: draft.id,
+    };
+    await repo.updateConversation(
+      current.id,
+      { state, locale: input.locale },
+      now,
+    );
+    current = { ...current, state, locale: input.locale };
+  }
+  let ugcDraftContext: Record<string, unknown> | undefined;
+  let freelanceDraftContext: Record<string, unknown> | undefined;
   const offer = await takeDraftOffer(current, userId, now);
   if (offer) {
     emit(offer);
@@ -1048,7 +1214,8 @@ export async function handleMessage(
     return finish(input, state, emit, now);
   }
 
-  state = await absorbExtraction(input, llm, state, emit);
+  if (!state.jobDraftMode)
+    state = await absorbExtraction(input, llm, state, emit);
   const remembered = await readRemembered(userId);
   // The saved profile answers what this thread has not heard yet (D469).
   const known = remembered
@@ -1071,13 +1238,20 @@ export async function handleMessage(
         : undefined,
     ugcFocus:
       !current.jobId && state.topic === "ugc"
-        ? ugcFocusBlock(state.ugcProduct ?? "")
+        ? ugcFocusBlock(
+            state.ugcProduct ?? "",
+            state.ugcDraftMode === true,
+            userId !== null,
+          )
         : undefined,
-    freelanceFocus: current.jobId ? undefined : freelanceFocusBlock(state),
+    freelanceFocus:
+      current.jobId || state.jobDraftMode
+        ? undefined
+        : freelanceFocusBlock(state, userId !== null),
     memory: remembered?.memory,
     now: userId ? localNow(now, known?.timezone) : undefined,
   });
-  const tools = toolsFor(userId);
+  const tools = toolsFor(userId, state);
   const lang = replyLanguage(input.text, input.locale);
   const focusedId = current.jobId;
   const knownJobId = state.presentedJobId ?? focusedId ?? null;
@@ -1152,7 +1326,70 @@ export async function handleMessage(
 
   let roundSystem = system;
   let greetingRetried = false;
+  let greetingNudge = false;
+  const ugcDraftTurn = state.ugcDraftMode === true;
+  const freelanceDraftTurn = state.freelanceDraftMode === true;
+  const jobDraftTurn = state.jobDraftMode === true;
+  let ugcToolUsed = false;
   for (let round = 0; round < MAX_TOOL_ROUNDS + 1; round += 1) {
+    if (state.ugcDraftMode && userId) {
+      try {
+        const brief = await readBriefDraft(userId, state.ugcDraftId);
+        state.ugcDraftId = brief.id;
+        ugcDraftContext = {
+          thread: "ugc",
+          locale: input.locale,
+          draft: brief.draft,
+          missingRequired: brief.missingRequired,
+          assumptions: brief.assumptions,
+          companies: brief.companies,
+        };
+        roundSystem = `${system}\n${ugcDraftContextBlock(ugcDraftContext)}`;
+      } catch (error) {
+        logger.warn({ err: error }, "bot: UGC draft context refresh failed");
+        roundSystem = system;
+      }
+    } else if (state.freelanceDraftMode && userId) {
+      try {
+        const brief = await readServiceBriefDraft(
+          userId,
+          state.freelanceDraftId,
+        );
+        state.freelanceDraftId = brief.id;
+        const safeDraft = JSON.parse(
+          cleanForModel(JSON.stringify(brief.draft)),
+        ) as Record<string, unknown>;
+        freelanceDraftContext = {
+          thread: "freelance_service",
+          locale: input.locale,
+          draft: safeDraft,
+          missingRequired: brief.missingRequired,
+        };
+        roundSystem = `${system}\n${freelanceDraftContextBlock(freelanceDraftContext)}`;
+      } catch (error) {
+        logger.warn(
+          { err: error },
+          "bot: freelance draft context refresh failed",
+        );
+        roundSystem = system;
+      }
+    } else if (state.jobDraftMode && userId) {
+      try {
+        const draft = await readJobDraft(userId, state.jobDraftId);
+        state.jobDraftId = draft.id;
+        roundSystem = `${system}\n${jobDraftFocusBlock({
+          locale: input.locale,
+          draft: jobDraftForModel(draft.draft),
+          missingRequired: draft.missingRequired,
+        })}`;
+      } catch (error) {
+        logger.warn({ err: error }, "bot: job draft context refresh failed");
+        roundSystem = system;
+      }
+    } else {
+      roundSystem = system;
+    }
+    if (greetingNudge) roundSystem += `\n${ANSWER_THE_QUESTION}`;
     const rows = await repo.listMessages(conversation.id, HISTORY_READ);
     const { messages } = trimContext({
       system: roundSystem,
@@ -1167,7 +1404,11 @@ export async function handleMessage(
         model: llm.model,
         system: roundSystem,
         messages: context,
-        tools: lastRound ? undefined : tools,
+        tools:
+          lastRound ||
+          ((ugcDraftTurn || freelanceDraftTurn || jobDraftTurn) && ugcToolUsed)
+            ? undefined
+            : tools,
         maxTokens: MAX_OUTPUT_TOKENS,
       });
     } catch (error) {
@@ -1180,13 +1421,52 @@ export async function handleMessage(
     }
     const cost = costMicroUsd(llm.model, response.usage, llm.prices);
     const modelCalls = lastRound ? [] : response.toolCalls;
-    const calls = shapeToolCalls(modelCalls, {
+    const shapedCalls = shapeToolCalls(modelCalls, {
       userText: input.text,
-      ready: readyToSearch(known),
+      ready:
+        state.topic === "ugc" || state.freelanceDraftMode || state.jobDraftMode
+          ? false
+          : readyToSearch(known),
       jobThread: Boolean(focusedId),
       showedJobs,
       waiting,
     });
+    const calls = state.jobDraftMode
+      ? shapedCalls
+          .filter((call) =>
+            [
+              "patch_job_draft",
+              "confirm_job_draft",
+              "reset_job_draft",
+            ].includes(call.name),
+          )
+          .slice(0, 1)
+      : state.topic === "ugc"
+        ? shapedCalls
+            .filter((call) =>
+              state.ugcDraftMode
+                ? userId === null
+                  ? call.name === "offer_step"
+                  : ["patch_brief", "confirm_brief", "reset_draft"].includes(
+                      call.name,
+                    )
+                : (call.name.includes("ugc") ||
+                    call.name.includes("creator_profile") ||
+                    call.name === "offer_step") &&
+                  call.name !== "propose_ugc_campaign",
+            )
+            .slice(0, state.ugcDraftMode ? 1 : undefined)
+        : state.freelanceDraftMode
+          ? shapedCalls
+              .filter((call) =>
+                [
+                  "patch_service_draft",
+                  "confirm_service_draft",
+                  "reset_service_draft",
+                ].includes(call.name),
+              )
+              .slice(0, 1)
+          : shapedCalls;
     const stripped = stripOffGoalEnding(
       stripLeakedToolMarkup(response.text),
       input.text,
@@ -1207,7 +1487,8 @@ export async function handleMessage(
       !isGreetingOnly(input.text)
     ) {
       greetingRetried = true;
-      roundSystem = `${system}\n${ANSWER_THE_QUESTION}`;
+      greetingNudge = true;
+      roundSystem += `\n${ANSWER_THE_QUESTION}`;
       await repo.insertMessage({
         conversationId: conversation.id,
         role: "assistant",
@@ -1237,12 +1518,14 @@ export async function handleMessage(
 
     let roundCards: JobCardFacts[] = [];
     if (calls.length) {
+      if (ugcDraftTurn || freelanceDraftTurn || jobDraftTurn)
+        ugcToolUsed = true;
       for (const call of calls) {
         const ctx: ToolContext = {
           userId,
           conversationId: conversation.id,
           locale: input.locale,
-          state,
+          state: { ...state, lastUserText: input.text },
         };
         const content = await callTool(ctx, call, emit, now);
         if (content.state) state = content.state;
@@ -1428,6 +1711,14 @@ async function callTool(
 }> {
   // The web chat names the step while it runs (D490). Name only, no input.
   emit({ type: "tool_start", name: call.name });
+  if (
+    call.name === "confirm_job_draft" &&
+    !isExplicitJobDraftConfirmation(ctx.state.lastUserText ?? "")
+  ) {
+    return {
+      llm: "No confirmation card was shown. Wait until the user clearly says yes to submitting this vacancy.",
+    };
+  }
   if (ctx.userId && toolNeedsConfirmation(ctx, call.name)) {
     let preview: string | null;
     try {
@@ -1520,7 +1811,9 @@ async function finish(
   emit: Emit,
   now: Date,
 ) {
-  const next = await maybeSignup(input, state, emit);
+  const safeState = { ...state };
+  delete safeState.lastUserText;
+  const next = await maybeSignup(input, safeState, emit);
   await repo.updateConversation(
     input.conversation.id,
     { state: next, locale: input.locale },

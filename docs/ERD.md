@@ -42,6 +42,39 @@ erDiagram
   users ||--o{ bot_confirmations : decides
   users ||--o{ bot_memory_facts : remembers
   users ||--o{ bot_reminders : reminds
+  users ||--o{ ugc_brief_drafts : drafts
+  users ||--o{ freelance_service_drafts : drafts
+  users ||--o{ job_drafts : drafts
+  companies ||--o{ ugc_brief_drafts : selected_for
+  ugc_brief_drafts {
+    uuid id PK
+    uuid user_id FK
+    uuid company_id FK
+    jsonb draft
+    jsonb assumptions
+    timestamptz updated_at
+  }
+  freelance_service_drafts {
+    uuid id PK
+    uuid user_id FK
+    jsonb draft
+    timestamptz updated_at
+  }
+  job_drafts {
+    uuid id PK
+    uuid user_id FK
+    jsonb draft
+    uuid submitted_job_id FK
+    text status
+    timestamptz updated_at
+  }
+  ugc_campaigns {
+    uuid id PK
+    uuid company_id FK
+    text country
+    text[] countries
+    text[] languages
+  }
   fx_rates {
     char currency
     numeric rate_to_usd

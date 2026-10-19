@@ -4,6 +4,7 @@ import {
   boolean,
   check,
   index,
+  jsonb,
   integer,
   pgTable,
   smallint,
@@ -22,6 +23,31 @@ import type {
 } from "@/config/freelance";
 import { companies } from "./companies";
 import { users } from "./users";
+
+/** Partial listing shared by the seller chat and the listing form (D493). */
+export const freelanceServiceDrafts = pgTable(
+  "freelance_service_drafts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .unique()
+      .references(() => users.id, { onDelete: "cascade" }),
+    draft: jsonb("draft")
+      .$type<Record<string, unknown>>()
+      .notNull()
+      .default({}),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("freelance_service_drafts_updated_idx").on(
+      table.userId,
+      table.updatedAt,
+    ),
+  ],
+);
 
 /** A person who takes orders (D446). The storefront is the candidate profile. */
 export const freelanceSellers = pgTable("freelance_sellers", {

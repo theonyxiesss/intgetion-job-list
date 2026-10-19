@@ -55,6 +55,9 @@ type Text = {
   submitting: string;
   submittingLive: string;
   error: string;
+  completePrivate: string;
+  alreadySubmitted: string;
+  chooseOption: string;
 };
 
 export function HireForm({
@@ -65,6 +68,7 @@ export function HireForm({
   text,
   categories,
   employment,
+  sharedDraft,
 }: {
   companyId: string | null;
   companyName: string;
@@ -73,17 +77,35 @@ export function HireForm({
   text: Text;
   categories: Record<string, string>;
   employment: Record<string, string>;
+  sharedDraft?: {
+    id: string;
+    draft: Record<string, unknown>;
+    status: "draft" | "submitting" | "submitted";
+    submittedJobId: string | null;
+  };
 }) {
   const router = useRouter();
   const toast = useToast();
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState<string | null>(logoSrc);
   const [error, setError] = useState<string | null>(null);
-  const [countries, setCountries] = useState("");
-  const [method, setMethod] = useState<"internal" | "email" | "external_url">(
-    "email",
+  const saved = sharedDraft?.draft ?? {};
+  const value = (key: string) => String(saved[key] ?? "");
+  const [countries, setCountries] = useState(
+    Array.isArray(saved.countries) ? saved.countries.join(", ") : "",
   );
-  const [questions, setQuestions] = useState(["", "", ""]);
+  const [method, setMethod] = useState<string>(
+    value("applicationMethod") || (sharedDraft ? "" : "email"),
+  );
+  const [questions, setQuestions] = useState(
+    Array.isArray(saved.questions)
+      ? [
+          String(saved.questions[0] ?? ""),
+          String(saved.questions[1] ?? ""),
+          String(saved.questions[2] ?? ""),
+        ]
+      : ["", "", ""],
+  );
 
   function toggleRegion(key: (typeof HIRE_REGION_KEYS)[number]) {
     const current = new Set(
@@ -123,7 +145,7 @@ export function HireForm({
         .split(/[^A-Za-z]+/)
         .map((code) => code.toUpperCase())
         .filter((code) => code.length === 2),
-      applicationMethod: method,
+      ...(method ? { applicationMethod: method } : {}),
       applicationEmail: read("applicationEmail") || undefined,
       applicationUrl: read("applicationUrl") || undefined,
       website: read("website") || undefined,
@@ -134,13 +156,43 @@ export function HireForm({
       questions: questions.map((item) => item.trim()).filter(Boolean),
     };
     try {
-      const response = await fetch("/api/hire", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!response.ok) throw new Error(text.error);
-      const result = (await response.json()) as { job: { companyId: string } };
+      let result: { job: { companyId: string } };
+      if (sharedDraft) {
+        const patch: Record<string, unknown> = { ...payload };
+        delete patch.companyId;
+        const savedDraft = await fetch("/api/jobs/draft", {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ draftId: sharedDraft.id, patch }),
+        });
+        if (!savedDraft.ok) throw new Error(text.error);
+        const response = await fetch("/api/jobs/draft", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ action: "confirm", draftId: sharedDraft.id }),
+        });
+        if (!response.ok) throw new Error(text.error);
+        const submission = (await response.json()) as {
+          submitted?: boolean;
+          companyId?: string;
+        };
+        if (!submission.submitted) {
+          setError(text.completePrivate);
+          setSaving(false);
+          return;
+        }
+        result = {
+          job: { companyId: submission.companyId ?? companyId ?? "" },
+        };
+      } else {
+        const response = await fetch("/api/hire", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) throw new Error(text.error);
+        result = (await response.json()) as { job: { companyId: string } };
+      }
       const logo = data.get("logo");
       if (logo instanceof File && logo.size > 0) {
         const picture = new FormData();
@@ -161,6 +213,22 @@ export function HireForm({
     }
   }
 
+  if (sharedDraft?.status === "submitted")
+    return (
+      <div className="flex max-w-[720px] flex-col gap-4">
+        <p>{text.alreadySubmitted}</p>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => router.push("/employer/jobs")}
+        >
+          {text.submitLive}
+        </Button>
+      </div>
+    );
+  if (sharedDraft?.status === "submitting")
+    return <p className="max-w-[60ch] text-fg-muted">{text.submittingLive}</p>;
+
   return (
     <form className="flex max-w-[720px] flex-col gap-10" onSubmit={submit}>
       <p className="max-w-[60ch] text-fg-muted">
@@ -168,7 +236,13 @@ export function HireForm({
       </p>
       <FieldGroup legend={text.title}>
         <Field label={text.title} required>
-          <Input name="title" required minLength={3} maxLength={140} />
+          <Input
+            name="title"
+            required
+            minLength={3}
+            maxLength={140}
+            defaultValue={value("title")}
+          />
         </Field>
         <Field label={text.company} help={text.companyHelp} required>
           <Input
@@ -176,7 +250,7 @@ export function HireForm({
             required
             minLength={2}
             maxLength={160}
-            defaultValue={companyName}
+            defaultValue={value("companyName") || companyName}
           />
         </Field>
         <Field label={text.description} required>
@@ -186,17 +260,31 @@ export function HireForm({
             minLength={50}
             maxLength={20000}
             className="min-h-60"
+            defaultValue={value("description")}
           />
         </Field>
       </FieldGroup>
 
       <FieldGroup legend={text.location}>
         <Field label={text.location} help={text.locationHelp}>
-          <Input name="location" maxLength={200} />
+          <Input
+            name="location"
+            maxLength={200}
+            defaultValue={value("location")}
+          />
         </Field>
         <div className="grid gap-4 md:grid-cols-2">
           <Field label={text.category}>
-            <Select name="category" defaultValue="engineering">
+            <Select
+              name="category"
+              required
+              defaultValue={
+                value("category") || (sharedDraft ? "" : "engineering")
+              }
+            >
+              <option value="" disabled>
+                {text.chooseOption}
+              </option>
               {JOB_CATEGORIES.map((value) => (
                 <option key={value} value={value}>
                   {categories[value] ?? value}
@@ -205,7 +293,16 @@ export function HireForm({
             </Select>
           </Field>
           <Field label={text.employment}>
-            <Select name="employmentType" defaultValue="full_time">
+            <Select
+              name="employmentType"
+              required
+              defaultValue={
+                value("employmentType") || (sharedDraft ? "" : "full_time")
+              }
+            >
+              <option value="" disabled>
+                {text.chooseOption}
+              </option>
               {EMPLOYMENT_TYPES.map((value) => (
                 <option key={value} value={value}>
                   {employment[value] ?? value}
@@ -219,22 +316,43 @@ export function HireForm({
       <FieldGroup legend={text.salaryMin}>
         <div className="grid gap-4 md:grid-cols-4">
           <Field label={text.salaryMin} required>
-            <Input name="salaryMin" required inputMode="numeric" />
+            <Input
+              name="salaryMin"
+              required
+              inputMode="numeric"
+              defaultValue={value("salaryMin")}
+            />
           </Field>
           <Field label={text.salaryMax} required>
-            <Input name="salaryMax" required inputMode="numeric" />
+            <Input
+              name="salaryMax"
+              required
+              inputMode="numeric"
+              defaultValue={value("salaryMax")}
+            />
           </Field>
           <Field label={text.currency} required>
             <Input
               name="salaryCurrency"
               required
-              defaultValue="USD"
+              defaultValue={
+                value("salaryCurrency") || (sharedDraft ? "" : "USD")
+              }
               maxLength={3}
               className="uppercase"
             />
           </Field>
           <Field label={text.period}>
-            <Select name="salaryPeriod" defaultValue="year">
+            <Select
+              name="salaryPeriod"
+              required
+              defaultValue={
+                value("salaryPeriod") || (sharedDraft ? "" : "year")
+              }
+            >
+              <option value="" disabled>
+                {text.chooseOption}
+              </option>
               <option value="year">{text.periods.year}</option>
               <option value="month">{text.periods.month}</option>
             </Select>
@@ -272,6 +390,7 @@ export function HireForm({
                 type="radio"
                 name="applicationMethod"
                 checked={method === value}
+                required={value === "internal"}
                 onChange={() => setMethod(value)}
               />
               {text.methods[value]}
@@ -289,19 +408,29 @@ export function HireForm({
               type="email"
               required
               maxLength={320}
+              defaultValue={value("applicationEmail")}
             />
           </Field>
         ) : null}
         {method === "external_url" ? (
           <Field label={text.applicationUrl} required>
-            <Input name="applicationUrl" required maxLength={2048} />
+            <Input
+              name="applicationUrl"
+              required
+              maxLength={2048}
+              defaultValue={value("applicationUrl")}
+            />
           </Field>
         ) : null}
       </FieldGroup>
 
       <FieldGroup legend={text.website}>
         <Field label={text.website}>
-          <Input name="website" maxLength={2048} />
+          <Input
+            name="website"
+            maxLength={2048}
+            defaultValue={value("website")}
+          />
         </Field>
         <Field label={text.logo} help={text.logoHelp}>
           <Input
@@ -332,10 +461,18 @@ export function HireForm({
         ) : null}
         <div className="grid gap-4 md:grid-cols-2">
           <Field label={text.x}>
-            <Input name="xHandle" maxLength={40} />
+            <Input
+              name="xHandle"
+              maxLength={40}
+              defaultValue={value("xHandle")}
+            />
           </Field>
           <Field label={text.telegram}>
-            <Input name="telegram" maxLength={40} />
+            <Input
+              name="telegram"
+              maxLength={40}
+              defaultValue={value("telegram")}
+            />
           </Field>
         </div>
       </FieldGroup>
@@ -343,10 +480,20 @@ export function HireForm({
       <FieldGroup legend={text.manager}>
         <div className="grid gap-4 md:grid-cols-2">
           <Field label={text.firstName} required>
-            <Input name="firstName" required maxLength={80} />
+            <Input
+              name="firstName"
+              required
+              maxLength={80}
+              defaultValue={value("firstName")}
+            />
           </Field>
           <Field label={text.lastName} required>
-            <Input name="lastName" required maxLength={80} />
+            <Input
+              name="lastName"
+              required
+              maxLength={80}
+              defaultValue={value("lastName")}
+            />
           </Field>
         </div>
       </FieldGroup>

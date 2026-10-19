@@ -89,6 +89,20 @@ export {
 } from "./commands";
 export { ugcTools } from "./bot-tools";
 export {
+  confirmBriefDraft,
+  isExplicitBriefConfirmation,
+  isExplicitDraftReset,
+  unconfirmedBriefRanges,
+  missingBriefFields,
+  mergeBriefPatch,
+  normalizedLanguages,
+  patchBriefDraft,
+  readBriefDraft,
+  resetBriefDraft,
+  type BriefDraft,
+  type BriefDraftRow,
+} from "./drafts";
+export {
   priceGuide,
   rewardInLimits,
   ugcBudgetMinor,

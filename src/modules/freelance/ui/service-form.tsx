@@ -32,18 +32,50 @@ export type ServiceDraft = {
 
 export const EMPTY_DRAFT: ServiceDraft = {
   title: "",
-  category: "development",
+  category: "",
   description: "",
   buyerNeeds: "",
   languages: "",
   skills: "",
   links: "",
   packages: {
-    basic: { on: true, price: "", days: "", revisions: "1", includes: "" },
-    standard: { on: false, price: "", days: "", revisions: "2", includes: "" },
-    pro: { on: false, price: "", days: "", revisions: "3", includes: "" },
+    basic: { on: true, price: "", days: "", revisions: "", includes: "" },
+    standard: { on: false, price: "", days: "", revisions: "", includes: "" },
+    pro: { on: false, price: "", days: "", revisions: "", includes: "" },
   },
 };
+
+function hydrateSharedDraft(value: Record<string, unknown>): ServiceDraft {
+  const packages = Array.isArray(value.packages)
+    ? (value.packages as Record<string, unknown>[])
+    : [];
+  return {
+    title: String(value.title ?? ""),
+    category: String(value.category ?? ""),
+    description: String(value.description ?? ""),
+    buyerNeeds: String(value.buyerNeeds ?? ""),
+    languages: Array.isArray(value.languages) ? value.languages.join(", ") : "",
+    skills: Array.isArray(value.skills) ? value.skills.join(", ") : "",
+    links: Array.isArray(value.links) ? value.links.join("\n") : "",
+    packages: Object.fromEntries(
+      FREELANCE_TIERS.map((tier) => {
+        const pkg = packages.find((item) => item.tier === tier);
+        return [
+          tier,
+          {
+            on: tier === "basic" || Boolean(pkg),
+            price: String(pkg?.price ?? ""),
+            days: String(pkg?.deliveryDays ?? ""),
+            revisions: String(pkg?.revisions ?? ""),
+            includes: Array.isArray(pkg?.includes)
+              ? pkg.includes.join("\n")
+              : "",
+          },
+        ];
+      }),
+    ) as Record<Tier, PackageDraft>,
+  };
+}
 
 const lines = (text: string) =>
   text
@@ -69,13 +101,17 @@ export function ServiceForm({
   copy,
   initial,
   serviceId,
+  sharedDraft,
 }: {
   copy: ClientCopy;
   initial: ServiceDraft;
   serviceId?: string;
+  sharedDraft?: { id: string; draft: Record<string, unknown> };
 }) {
   const router = useRouter();
-  const [draft, setDraft] = useState<ServiceDraft>(initial);
+  const [draft, setDraft] = useState<ServiceDraft>(() =>
+    sharedDraft ? hydrateSharedDraft(sharedDraft.draft) : initial,
+  );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bad, setBad] = useState<Set<string>>(new Set());
@@ -123,6 +159,47 @@ export function ServiceForm({
         includes: lines(draft.packages[tier].includes),
       })),
     };
+    if (!serviceId && sharedDraft) {
+      const patch = {
+        ...(body.title ? { title: body.title } : {}),
+        ...(body.category ? { category: body.category } : {}),
+        ...(body.description ? { description: body.description } : {}),
+        buyerNeeds: body.buyerNeeds,
+        ...(body.languages.length ? { languages: body.languages } : {}),
+        skills: body.skills,
+        links: body.links,
+        packages: body.packages.map((pkg) => ({
+          tier: pkg.tier,
+          ...(pkg.price ? { price: pkg.price } : {}),
+          ...(draft.packages[pkg.tier].days
+            ? { deliveryDays: pkg.deliveryDays }
+            : {}),
+          ...(draft.packages[pkg.tier].revisions !== ""
+            ? { revisions: pkg.revisions }
+            : {}),
+          ...(pkg.includes.length ? { includes: pkg.includes } : {}),
+        })),
+      };
+      const saved = await callApi("/api/freelance/service-draft", {
+        draftId: sharedDraft.id,
+        patch,
+        replacePackages: true,
+      });
+      const result = saved.ok
+        ? await callApi("/api/freelance/service-draft", {
+            action: "confirm",
+            draftId: sharedDraft.id,
+          })
+        : saved;
+      setBusy(false);
+      if (!result.ok) {
+        setError(errorText(copy, result.code));
+        return;
+      }
+      router.push("/profile/freelance");
+      router.refresh();
+      return;
+    }
     const result = serviceId
       ? await callApi(`/api/freelance/services/${serviceId}`, body, "PUT")
       : await callApi("/api/freelance/services", body);
@@ -169,6 +246,7 @@ export function ServiceForm({
             value={draft.category}
             onChange={(event) => set("category", event.target.value)}
           >
+            <option value="" disabled />
             {FREELANCE_CATEGORIES.map((category) => (
               <option key={category} value={category}>
                 {copy[`category_${category}`] ?? category}
@@ -335,7 +413,7 @@ export function ServiceForm({
       ) : null}
       <div className="flex flex-wrap gap-3">
         <Button type="submit" loading={busy}>
-          {copy.saveDraft}
+          {sharedDraft && !serviceId ? copy.submit : copy.saveDraft}
         </Button>
       </div>
       <p className="t-body-s text-fg-muted">{copy.saveNote}</p>

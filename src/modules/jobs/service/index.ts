@@ -17,6 +17,18 @@ export {
 export type { AdminJobRow } from "../repo/admin-jobs-repo";
 export { transitionOwnedJob } from "./notify-job";
 export { submitHireListing } from "./hire-post";
+export {
+  confirmJobDraft,
+  jobDraftForModel,
+  mergeJobDraft,
+  missingJobDraftFields,
+  missingJobFormFields,
+  patchJobDraft,
+  readJobDraft,
+  resetJobDraft,
+  validateJobDraftPatch,
+} from "./drafts";
+export type { JobDraft, JobDraftView } from "./drafts";
 export { findMemberRole } from "@/modules/companies/service";
 export { JOB_TRANSITIONS, transitionJob } from "./status-machine";
 export type { JobAction, JobActor, JobStatus } from "./status-machine";

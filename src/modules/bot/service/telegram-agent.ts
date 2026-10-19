@@ -9,6 +9,7 @@ import {
 } from "@/modules/auth/service";
 import {
   handleMessage,
+  openJobDraftConversation,
   resolveConversation,
   type BotEvent,
 } from "./conversation";
@@ -40,9 +41,13 @@ const copy = {
     reset: "Forgotten. What are you looking for?",
     help:
       "Ask in plain words: «remote solidity jobs», «part-time design in Europe». " +
-      "Sign in on {site} to save jobs and apply. /reset starts a new conversation.",
+      "Sign in on {site} to save jobs and apply. Send /post_job to prepare a listing. /reset starts a new conversation.",
     signIn: "To save a job or apply, sign in, then come back here.",
     signInButton: "Sign in",
+    jobSignIn: "Sign in to prepare a job listing.",
+    jobDraftButton: "Review job draft",
+    startJob:
+      "Let's prepare a job listing draft. Tell me who you need, and I'll save the details and ask only about the next important gap.",
     confirmOnSite: "Confirm this on the site, then come back here.",
     openChat: "Open the chat",
     openJob: "Open",
@@ -57,10 +62,14 @@ const copy = {
     reset: "Забыл. Что ищете?",
     help:
       "Пишите словами: «удалённая работа solidity», «дизайн на part-time в Европе». " +
-      "Войдите на {site}, чтобы сохранять вакансии и откликаться. /reset — начать заново.",
+      "Войдите на {site}, чтобы сохранять вакансии и откликаться. Отправьте /post_job, чтобы подготовить вакансию. /reset — начать заново.",
     signIn:
       "Чтобы сохранить вакансию или откликнуться, войдите и возвращайтесь сюда.",
     signInButton: "Войти",
+    jobSignIn: "Войдите, чтобы подготовить вакансию.",
+    jobDraftButton: "Проверить черновик вакансии",
+    startJob:
+      "Давайте подготовим черновик вакансии. Напишите, кого ищете, а я сохраню детали и спрошу только о следующем важном пробеле.",
     confirmOnSite: "Подтвердите это на сайте и возвращайтесь сюда.",
     openChat: "Открыть чат",
     openJob: "Открыть",
@@ -79,9 +88,13 @@ const copy = {
     reset: "Esquecido. O que você procura?",
     help:
       "Pergunte com suas palavras: «vagas remotas de solidity», «design em meio período na Europa». " +
-      "Entre em {site} para salvar vagas e se candidatar. /reset começa uma nova conversa.",
+      "Entre em {site} para salvar vagas e se candidatar. Envie /post_job para preparar uma vaga. /reset começa uma nova conversa.",
     signIn: "Para salvar uma vaga ou se candidatar, entre e depois volte aqui.",
     signInButton: "Entrar",
+    jobSignIn: "Entre para preparar uma vaga.",
+    jobDraftButton: "Revisar rascunho da vaga",
+    startJob:
+      "Vamos preparar um rascunho da vaga. Diga quem você procura; vou salvar os detalhes e perguntar apenas sobre o próximo dado importante que faltar.",
     confirmOnSite: "Confirme isso no site e depois volte aqui.",
     openChat: "Abrir o chat",
     openJob: "Abrir",
@@ -106,6 +119,10 @@ const copy = {
     signIn:
       "Um einen Job zu speichern oder sich zu bewerben, melden Sie sich an und kommen Sie dann hierher zurück.",
     signInButton: "Anmelden",
+    jobSignIn: "Melden Sie sich an, um eine Stellenanzeige vorzubereiten.",
+    jobDraftButton: "Stellenentwurf ansehen",
+    startJob:
+      "Lass uns einen Stellenentwurf erstellen. Beschreibe, wen du suchst; ich speichere die Angaben und frage nur nach der nächsten wichtigen Lücke.",
     confirmOnSite:
       "Bestätigen Sie das auf der Website und kommen Sie dann hierher zurück.",
     openChat: "Chat öffnen",
@@ -126,10 +143,14 @@ const copy = {
     reset: "Oublié. Que cherchez-vous ?",
     help:
       "Demandez avec vos mots : «emplois Solidity à distance», «design à temps partiel en Europe». " +
-      "Connectez-vous sur {site} pour enregistrer des offres et postuler. /reset démarre une nouvelle conversation.",
+      "Connectez-vous sur {site} pour enregistrer des offres et postuler. Envoyez /post_job pour préparer une offre. /reset démarre une nouvelle conversation.",
     signIn:
       "Pour enregistrer une offre ou postuler, connectez-vous, puis revenez ici.",
     signInButton: "Se connecter",
+    jobSignIn: "Connectez-vous pour préparer une offre d’emploi.",
+    jobDraftButton: "Vérifier le brouillon d’offre",
+    startJob:
+      "Préparons un brouillon d’offre d’emploi. Décris le profil recherché ; j’enregistre les informations et ne demande que le prochain élément important manquant.",
     confirmOnSite: "Confirmez cela sur le site, puis revenez ici.",
     openChat: "Ouvrir le chat",
     openJob: "Ouvrir",
@@ -146,9 +167,13 @@ const copy = {
     reset: "Dimenticato. Cosa cerchi?",
     help:
       "Chiedi con parole tue: «lavori Solidity da remoto», «design part-time in Europa». " +
-      "Accedi su {site} per salvare offerte e candidarti. /reset avvia una nuova conversazione.",
+      "Accedi su {site} per salvare offerte e candidarti. Invia /post_job per preparare un’offerta. /reset avvia una nuova conversazione.",
     signIn: "Per salvare un’offerta o candidarti, accedi e poi torna qui.",
     signInButton: "Accedi",
+    jobSignIn: "Accedi per preparare un’offerta di lavoro.",
+    jobDraftButton: "Rivedi la bozza dell’offerta",
+    startJob:
+      "Prepariamo una bozza dell’offerta. Dimmi chi cerchi; salverò i dettagli e chiederò solo il prossimo dato importante che manca.",
     confirmOnSite: "Confermalo sul sito e poi torna qui.",
     openChat: "Apri la chat",
     openJob: "Apri",
@@ -406,6 +431,18 @@ function render(
         });
       }
     }
+    if (event.kind === "job_draft") {
+      const draftId = (event.data as { id?: unknown } | null)?.id;
+      if (typeof draftId === "string" && /^[0-9a-f-]{36}$/i.test(draftId)) {
+        const label = lines.jobDraftButton;
+        out.push({
+          text: label,
+          links: [
+            { label, url: pageUrl(locale, `/post-job?draft=${draftId}`) },
+          ],
+        });
+      }
+    }
   }
 
   const labels = buttonsFor(locale);
@@ -490,6 +527,31 @@ export async function handleTelegramAgentUpdate(
   if (text === "/reset") {
     resets.set(chatId, resetSessionToken(chatId, now));
     await sendTelegramMessage(token, chatId, fill(lines.reset));
+    return;
+  }
+  if (/^\/post_job(?:@intgetion_bot)?$/i.test(text)) {
+    const linkedUserId = await userIdForTelegramId(from.id);
+    if (!linkedUserId) {
+      await sendTelegramLinks(token, chatId, fill(lines.jobSignIn), [
+        {
+          label: lines.signInButton,
+          url: pageUrl(locale, "/login?next=post-job"),
+        },
+      ]);
+      return;
+    }
+    const sessionToken = resets.get(chatId) ?? chatSessionToken(chatId);
+    try {
+      await openJobDraftConversation({
+        userId: linkedUserId,
+        token: sessionToken,
+        locale,
+      });
+      await sendTelegramMessage(token, chatId, lines.startJob);
+    } catch (error) {
+      logger.warn({ err: error }, "telegram job draft could not be opened");
+      await sendTelegramMessage(token, chatId, fill(lines.tryLater));
+    }
     return;
   }
   // Other slash commands are not ours; stay quiet rather than guess.

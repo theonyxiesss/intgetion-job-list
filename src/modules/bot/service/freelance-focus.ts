@@ -36,8 +36,21 @@ export function freelanceOpener(locale: string, focus: FreelanceFocus): string {
 }
 
 /** System addendum while the thread is about one service or order. */
-export function freelanceFocusBlock(state: BotState): string | undefined {
+export function freelanceFocusBlock(
+  state: BotState,
+  signedIn = true,
+): string | undefined {
   if (state.topic !== "freelance") return undefined;
+  if (state.freelanceDraftMode)
+    return [
+      "FREELANCE LISTING DRAFT. This thread collects a service listing from its owner. This is not a buyer order or job search.",
+      "Call patch_service_draft once per user message with only the facts stated in that message. Omit unknown fields and empty values. The server draft is the source of truth and is included every turn. Never enumerate every field; ask only one next missing fact.",
+      "Do not invent package prices, delivery times, revisions, language, scope or claims. If the person gives a price or duration range, suggest the midpoint and wait for agreement; the server will not save an unapproved midpoint. The minimum listing needs a title (10–80 chars), category, description (80–1500 chars), one language, and a Basic package with price, delivery days, revisions and inclusions. Match the user's language. Portfolio links must be entered by the owner in the form, never collected in chat.",
+      "When complete, summarize the saved listing and ask one explicit confirmation. Only confirm_service_draft after an explicit yes to that summary. A successful confirmation submits it for moderation. reset_service_draft only after an explicit reset request.",
+      signedIn
+        ? "The user is signed in and can save this draft."
+        : "The user is a guest. Explain briefly they must sign in to save the shared draft, then offer the sign-in step. Do not claim anything was saved.",
+    ].join("\n");
   const title = wrapUntrusted(
     "freelance_title",
     name(state.freelanceTitle ?? ""),
@@ -57,6 +70,26 @@ export function freelanceFocusBlock(state: BotState): string | undefined {
     ].join("\n");
   }
   return undefined;
+}
+
+export function freelanceDraftContextBlock(
+  value: Record<string, unknown>,
+): string {
+  return `CURRENT FREELANCE SERVICE DRAFT (server source of truth; do not re-ask filled fields): ${wrapUntrusted("freelance_service_draft", JSON.stringify(value))}`;
+}
+
+export function freelanceDraftOpener(locale: string): string {
+  const lines: Record<string, string> = {
+    en: "Let’s create your freelance service listing. Tell me what you offer and I’ll fill the shared draft as we talk.",
+    ru: "Создадим объявление фриланс-услуги. Расскажите, что предлагаете, а я буду заполнять общий черновик прямо в чате.",
+    es: "Creemos tu anuncio de servicio freelance. Cuéntame qué ofreces y completaré el borrador compartido mientras hablamos.",
+    "pt-BR":
+      "Vamos criar seu anúncio de serviço freelancer. Conte o que você oferece e vou preencher o rascunho compartilhado enquanto conversamos.",
+    de: "Erstellen wir Ihr Freelance-Angebot. Erzählen Sie mir, was Sie anbieten, und ich fülle den gemeinsamen Entwurf während unseres Gesprächs aus.",
+    fr: "Créons votre annonce de service freelance. Dites-moi ce que vous proposez et je remplirai le brouillon partagé au fil de notre échange.",
+    it: "Creiamo il tuo annuncio freelance. Raccontami cosa offri e compilerò la bozza condivisa mentre parliamo.",
+  };
+  return lines[locale] ?? lines.en!;
 }
 
 /**

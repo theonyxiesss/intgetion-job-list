@@ -6,6 +6,7 @@ import {
   date,
   index,
   integer,
+  jsonb,
   pgTable,
   smallint,
   text,
@@ -25,6 +26,23 @@ import type {
 } from "@/config/ugc";
 import { companies } from "./companies";
 import { users } from "./users";
+
+/** Private editable UGC brief shared by the chat and form (D492). */
+export const ugcBriefDrafts = pgTable(
+  "ugc_brief_drafts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
+    companyId: uuid("company_id").references(() => companies.id, { onDelete: "cascade" }),
+    draft: jsonb("draft").$type<Record<string, unknown>>().notNull().default({}),
+    assumptions: jsonb("assumptions").$type<string[]>().notNull().default([]),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("ugc_brief_drafts_user_updated_idx").on(table.userId, table.updatedAt),
+  ],
+);
 
 /** A creator who can apply to creative tests (D448). Not a candidate profile. */
 export const creatorProfiles = pgTable(
@@ -88,6 +106,7 @@ export const ugcCampaigns = pgTable(
     niches: text("niches").array().$type<UgcNiche[]>().notNull(),
     audience: text("audience").notNull(),
     country: text("country"),
+    countries: text("countries").array().notNull().default([]),
     languages: text("languages").array().notNull(),
     mustSay: text("must_say").notNull(),
     mustNot: text("must_not").notNull(),

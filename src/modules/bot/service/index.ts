@@ -14,8 +14,10 @@ export {
   findOwnConversation,
   handleMessage,
   openFreelanceConversation,
-  pendingConfirmations,
+  openFreelanceDraftConversation,
+  openJobDraftConversation,
   readFreelanceFocus,
+  pendingConfirmations,
   hashSessionToken,
   openServiceConversation,
   openUgcHomeConversation,
@@ -30,6 +32,7 @@ export {
   type BotEvent,
   type ChatActions,
 } from "./conversation";
+export { jobDraftOpener } from "./job-draft-focus";
 export {
   TOOLS,
   findTool,

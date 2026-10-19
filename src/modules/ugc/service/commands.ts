@@ -183,6 +183,7 @@ function briefForReaders(campaign: Campaign) {
     niches: campaign.niches,
     audience: campaign.audience,
     country: campaign.country,
+    countries: campaign.countries ?? (campaign.country ? [campaign.country] : []),
     languages: campaign.languages,
     mustSay: campaign.mustSay,
     mustNot: campaign.mustNot,
@@ -244,6 +245,10 @@ function validateBrief(input: BriefInput, today: string): BriefInput {
   if (input.country !== null && !COUNTRY.test(input.country)) {
     throw validationError([{ path: "country", problem: "invalid" }]);
   }
+  const countries = [...new Set(input.countries ?? (input.country ? [input.country] : []))];
+  if (countries.length > 20 || countries.some((code) => !COUNTRY.test(code))) {
+    throw validationError([{ path: "countries", problem: "invalid" }]);
+  }
   return {
     ...input,
     productName,
@@ -253,6 +258,7 @@ function validateBrief(input: BriefInput, today: string): BriefInput {
     mustNot,
     pitch,
     languages,
+    countries,
     niches: asList(input.niches, UGC_NICHES, "niches"),
     platforms: asList(input.platforms, UGC_PLATFORMS, "platforms"),
     exampleUrls: httpsExamples(input.exampleUrls),
@@ -359,6 +365,7 @@ export async function createCampaign(userId: string | null, input: BriefInput) {
     niches: brief.niches,
     audience: brief.audience,
     country: brief.country,
+    countries: brief.countries ?? [],
     languages: brief.languages,
     mustSay: brief.mustSay,
     mustNot: brief.mustNot,
@@ -508,6 +515,7 @@ export async function listOpenCampaigns(userId: string | null) {
       productName: row.productName,
       niches: row.niches,
       platforms: row.platforms,
+      countries: row.countries ?? (row.country ? [row.country] : []),
       bountyMinor: row.bountyMinor.toString(),
       rights: row.rights,
       deadline: row.deadline,
@@ -621,6 +629,7 @@ export async function previewMatches(
           languages: campaign.languages,
           niches: campaign.niches,
           country: campaign.country,
+          countries: campaign.countries,
         },
         {
           platforms: profile.platforms,
@@ -685,6 +694,7 @@ export async function offerHire(
         languages: campaign.languages,
         niches: campaign.niches,
         country: campaign.country,
+        countries: campaign.countries,
       },
       {
         platforms: profile.platforms,

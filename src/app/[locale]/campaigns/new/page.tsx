@@ -5,7 +5,7 @@ import { Container, PageHeader } from "@/components/ui/container";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
-import { ugcPriceGuide } from "@/modules/ugc/service";
+import { readBriefDraft, ugcPriceGuide } from "@/modules/ugc/service";
 import { BriefForm } from "@/modules/ugc/ui/brief-form";
 import { RouteMessages } from "@/components/shell/route-messages";
 
@@ -23,10 +23,12 @@ export async function generateMetadata({
 
 export default async function NewCampaignPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ draft?: string }>;
 }) {
-  const { locale } = await params;
+  const [{ locale }, query] = await Promise.all([params, searchParams]);
   setRequestLocale(locale);
   const t = await getTranslations("ugc");
   const supabase = await createSupabaseServerClient();
@@ -36,6 +38,7 @@ export default async function NewCampaignPage({
     return null;
   }
   const companies = await getCompaniesForUser(user.id);
+  const briefDraft = await readBriefDraft(user.id, query.draft);
   return (
     <RouteMessages namespaces={["ugc"]}>
       <main className="py-10 md:py-16">
@@ -50,6 +53,7 @@ export default async function NewCampaignPage({
                 name: row.name,
               }))}
               guide={await ugcPriceGuide()}
+              draft={briefDraft}
             />
           )}
         </Container>

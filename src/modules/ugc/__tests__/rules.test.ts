@@ -63,6 +63,13 @@ describe("creator match (27.7)", () => {
     expect(creatorMatches(campaign, creator({ country: "JP" }))).toBe(false);
   });
 
+  it("matches creators in any of several requested countries", () => {
+    const multiCountry = { ...campaign, countries: ["IT", "ES", "DE"] };
+    expect(creatorMatches(multiCountry, creator({ country: "IT" }))).toBe(true);
+    expect(creatorMatches(multiCountry, creator({ country: "ES" }))).toBe(true);
+    expect(creatorMatches(multiCountry, creator({ country: "JP" }))).toBe(false);
+  });
+
   it("skips a paused or blocked creator", () => {
     expect(creatorMatches(campaign, creator({ status: "paused" }))).toBe(false);
     expect(creatorMatches(campaign, creator({ blocked: true }))).toBe(false);

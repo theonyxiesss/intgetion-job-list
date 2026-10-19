@@ -27,11 +27,13 @@ import {
   saveCreatorProfile,
   submitVideo,
 } from "./commands";
+import { confirmBriefDraft, isExplicitBriefConfirmation, isExplicitDraftReset, patchBriefDraft, resetBriefDraft, unconfirmedBriefRanges } from "./drafts";
 import { usdLabel, type UgcPriceGuide } from "./pricing";
 
 type Ctx = {
   userId: string | null;
-  state: { topic?: string; ugcCampaignId?: string };
+  state: { topic?: string; ugcCampaignId?: string; ugcDraftMode?: boolean; ugcDraftId?: string; lastUserText?: string };
+  locale: string;
 };
 
 const id = z.uuid();
@@ -67,6 +69,49 @@ export function priceGuideForModel(guide: UgcPriceGuide): string {
 }
 
 export const ugcTools = [
+  {
+    name: "patch_brief",
+    description: "In the new UGC brief thread, save only fields clearly stated or corrected in the latest user message. Omit unknown fields. Never guess numeric ranges. If the user explicitly says to choose defaults, set useDefaults=true. This updates the shared draft immediately.",
+    input: z.object({ companyId: z.uuid().optional(),
+      patch: z.object({
+        productName: z.string().optional(), description: z.string().optional(), goal: z.enum(UGC_GOALS).optional(), audience: z.string().optional(),
+        countries: z.array(z.string()).optional(), languages: z.array(z.string()).optional(), platform: z.enum(UGC_PLATFORMS).optional(), niche: z.enum(UGC_NICHES).optional(),
+        mustSay: z.array(z.string()).optional(), mustNot: z.array(z.string()).optional(), videoCount: z.number().int().optional(), rewardCents: z.number().int().optional(), deadline: z.string().optional(), rights: z.enum(UGC_RIGHTS).optional(), pitch: z.string().optional(), links: z.array(z.string()).optional(),
+      }).strict(), useDefaults: z.boolean().optional(),
+    }).strict(),
+    access: "user" as const, confirm: read,
+    async run(ctx: Ctx, input: { companyId?: string; patch: Record<string, unknown>; useDefaults?: boolean }) {
+      if (!ctx.state.ugcDraftMode) throw new HttpError(409, "UGC_DRAFT_THREAD_REQUIRED", "Open a new UGC brief thread first");
+      const requestedDefaults = /(?:заполни сам|на твое усмотрение|на твоё усмотрение|выбери сам|реши сам|decide for me|use your judgment|fill it in for me)/i.test(ctx.state.lastUserText ?? "");
+      if (input.useDefaults && !requestedDefaults) throw new HttpError(409, "UGC_DEFAULTS_NOT_REQUESTED", "Only apply defaults when the user explicitly asks");
+      const pendingRanges = unconfirmedBriefRanges(ctx.state.lastUserText ?? "", input.patch);
+      const safePatch = { ...input.patch };
+      for (const range of pendingRanges) delete safePatch[range.field];
+      const result = await patchBriefDraft(ctx.userId, { draftId: ctx.state.ugcDraftId, companyId: input.companyId, patch: safePatch, requestedDefaults: input.useDefaults && requestedDefaults, locale: ctx.locale });
+      return { llm: model({ draft: result.draft, missingRequired: result.missingRequired, assumptions: result.assumptions, suggestedRanges: pendingRanges }), state: { ...ctx.state, ugcDraftId: result.id }, client: { kind: "ugc_brief_draft", data: result } };
+    },
+  },
+  {
+    name: "confirm_brief",
+    description: "Create the UGC campaign only after the user explicitly says yes, launch it, or confirms the displayed complete brief.",
+    input: z.object({}).strict(), access: "user" as const, confirm: read,
+    async run(ctx: Ctx) {
+      if (!ctx.state.ugcDraftMode || !isExplicitBriefConfirmation(ctx.state.lastUserText ?? "")) throw new HttpError(409, "UGC_EXPLICIT_CONFIRMATION_REQUIRED", "Wait for explicit confirmation of the brief");
+      const result = await confirmBriefDraft(ctx.userId, ctx.state.ugcDraftId);
+      return { llm: model({ status: result.status, productName: result.productName }), state: { ...ctx.state, ugcDraftMode: false, ugcDraftId: undefined, ugcCampaignId: result.id }, client: { kind: "ugc_campaign", data: result } };
+    },
+  },
+  {
+    name: "reset_draft",
+    description: "Start a clean UGC brief when the user explicitly replaces the product or asks to reset.",
+    input: z.object({ patch: z.object({ productName: z.string().optional(), description: z.string().optional() }).strict().optional() }).strict(), access: "user" as const, confirm: read,
+    async run(ctx: Ctx, input: { patch?: Record<string, unknown> }) {
+      if (!ctx.state.ugcDraftMode) throw new HttpError(409, "UGC_DRAFT_THREAD_REQUIRED", "Open a new UGC brief thread first");
+      if (!isExplicitDraftReset(ctx.state.lastUserText ?? "")) throw new HttpError(409, "UGC_EXPLICIT_RESET_REQUIRED", "Wait for an explicit request to reset or replace the product");
+      const result = await resetBriefDraft(ctx.userId, ctx.state.ugcDraftId, input.patch);
+      return { llm: model(result), state: { ...ctx.state, ugcDraftId: result.id }, client: { kind: "ugc_brief_draft", data: result } };
+    },
+  },
   {
     name: "get_my_ugc_campaigns",
     description: "List this member's UGC briefs: id, product, status.",

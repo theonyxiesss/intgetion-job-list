@@ -159,3 +159,32 @@ export const jobStatusHistory = pgTable(
     ),
   ],
 );
+
+/** One editable hire listing shared by Spoki, Telegram and the hire form (D494). */
+export const jobDrafts = pgTable(
+  "job_drafts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .unique()
+      .references(() => users.id, { onDelete: "cascade" }),
+    draft: jsonb("draft")
+      .$type<Record<string, unknown>>()
+      .notNull()
+      .default(sql`'{}'::jsonb`),
+    submittedJobId: uuid("submitted_job_id").references(() => jobs.id, {
+      onDelete: "set null",
+    }),
+    status: text("status")
+      .$type<"draft" | "submitting" | "submitted">()
+      .notNull()
+      .default("draft"),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("job_drafts_user_updated_idx").on(table.userId, table.updatedAt),
+  ],
+);

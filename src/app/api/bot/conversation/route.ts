@@ -17,6 +17,9 @@ import {
   ugcNextStep,
 } from "@/modules/ugc/service";
 import { routing } from "@/i18n/routing";
+import { readBriefDraft } from "@/modules/ugc/service";
+import { readServiceBriefDraft } from "@/modules/freelance/service";
+import { readJobDraft } from "@/modules/jobs/service";
 import { sessionCookie, sessionToken } from "../session-cookie";
 
 const JOB_ID = /^[0-9a-f-]{36}$/i;
@@ -72,7 +75,10 @@ export async function GET(request: Request) {
       jobId,
       from: jobId
         ? undefined
-        : from === "services" || from === "campaigns"
+        : from === "services" ||
+            from === "campaigns" ||
+            from === "freelance_sell" ||
+            from === "post_job"
           ? from
           : undefined,
       campaignId,
@@ -84,6 +90,18 @@ export async function GET(request: Request) {
           ? locale
           : "en",
     });
+    const briefDraft =
+      userId && from === "campaigns"
+        ? await readBriefDraft(userId).catch(() => null)
+        : null;
+    const freelanceDraft =
+      userId && from === "freelance_sell"
+        ? await readServiceBriefDraft(userId).catch(() => null)
+        : null;
+    const jobDraft =
+      userId && from === "post_job"
+        ? await readJobDraft(userId).catch(() => null)
+        : null;
     // Spoki offers the one next step of this brief or invite (D467).
     const next =
       conversation && userId && (campaignId || inviteId)
@@ -108,6 +126,9 @@ export async function GET(request: Request) {
           : [],
         actions,
         next,
+        briefDraft,
+        freelanceDraft,
+        jobDraft,
       },
       { headers },
     );

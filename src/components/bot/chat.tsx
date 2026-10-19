@@ -88,6 +88,28 @@ type Entry =
   | { key: string; kind: "notice"; code: string }
   | {
       key: string;
+      kind: "ugc_brief_draft";
+      draftId: string;
+      missing: number;
+      draft: Record<string, unknown>;
+      assumptions: string[];
+    }
+  | {
+      key: string;
+      kind: "freelance_service_draft";
+      draftId: string;
+      missing: number;
+      draft: Record<string, unknown>;
+    }
+  | {
+      key: string;
+      kind: "job_draft";
+      draftId: string;
+      missing: number;
+      draft: Record<string, unknown>;
+    }
+  | {
+      key: string;
       kind: "confirm";
       confirmationId: string;
       tool: string;
@@ -215,6 +237,8 @@ export function Chat({
   jobId,
   fromServices = false,
   fromCampaigns = false,
+  fromFreelanceSell = false,
+  fromPostJob = false,
   campaignId,
   inviteId,
   focus,
@@ -238,6 +262,10 @@ export function Chat({
   fromServices?: boolean;
   /** Opened to write a creative-test brief (D457). */
   fromCampaigns?: boolean;
+  /** Opened to write a freelance listing (D493). */
+  fromFreelanceSell?: boolean;
+  /** Opened to write a job listing (D494). */
+  fromPostJob?: boolean;
   campaignId?: string;
   inviteId?: string;
   focus?: { title: string; company: string };
@@ -299,6 +327,12 @@ export function Chat({
     } else if (orderId) {
       params.set("order", orderId);
       params.set("locale", locale);
+    } else if (fromFreelanceSell) {
+      params.set("from", "freelance_sell");
+      params.set("locale", locale);
+    } else if (fromPostJob) {
+      params.set("from", "post_job");
+      params.set("locale", locale);
     } else if (serviceId) {
       params.set("service", serviceId);
       params.set("locale", locale);
@@ -320,6 +354,23 @@ export function Chat({
             actions?: ChatActions;
             /** The page of the next UGC step (D467). */
             next?: { href: string; link: string } | null;
+            briefDraft?: {
+              id: string;
+              draft: Record<string, unknown>;
+              assumptions: string[];
+              missingRequired: string[];
+            } | null;
+            freelanceDraft?: {
+              id: string;
+              draft: Record<string, unknown>;
+              missingRequired: string[];
+            } | null;
+            jobDraft?: {
+              id: string;
+              draft: Record<string, unknown>;
+              missingRequired: string[];
+              formMissingRequired: string[];
+            } | null;
           } | null,
         ) => {
           if (!body) return;
@@ -363,6 +414,33 @@ export function Chat({
               link: next.link,
             });
           }
+          if (body.briefDraft)
+            history.push({
+              key: `ugc-draft-${body.briefDraft.id}`,
+              kind: "ugc_brief_draft",
+              draftId: body.briefDraft.id,
+              missing: body.briefDraft.missingRequired.length,
+              draft: body.briefDraft.draft,
+              assumptions: body.briefDraft.assumptions,
+            });
+          if (body.freelanceDraft)
+            history.push({
+              key: `freelance-draft-${body.freelanceDraft.id}`,
+              kind: "freelance_service_draft",
+              draftId: body.freelanceDraft.id,
+              missing: body.freelanceDraft.missingRequired.length,
+              draft: body.freelanceDraft.draft,
+            });
+          if (body.jobDraft)
+            history.push({
+              key: `job-draft-${body.jobDraft.id}`,
+              kind: "job_draft",
+              draftId: body.jobDraft.id,
+              missing:
+                body.jobDraft.missingRequired.length +
+                body.jobDraft.formMissingRequired.length,
+              draft: body.jobDraft.draft,
+            });
           if (history.length) setEntries(history);
         },
       )
@@ -375,6 +453,8 @@ export function Chat({
     jobId,
     fromServices,
     fromCampaigns,
+    fromFreelanceSell,
+    fromPostJob,
     campaignId,
     inviteId,
     serviceId,
@@ -471,6 +551,8 @@ export function Chat({
           locale,
           ...(fromServices ? { from: "services" as const } : {}),
           ...(fromCampaigns ? { from: "campaigns" as const } : {}),
+          ...(fromFreelanceSell ? { from: "freelance_sell" as const } : {}),
+          ...(fromPostJob ? { from: "post_job" as const } : {}),
           ...(campaignId ? { campaignId } : {}),
           ...(inviteId ? { inviteId } : {}),
         }),
@@ -508,6 +590,31 @@ export function Chat({
           ) {
             setThinking(false);
             add({ key: nextKey(), kind: "ugc_join", payload });
+          }
+        } else if (
+          data.type === "tool_result" &&
+          data.kind === "ugc_brief_draft"
+        ) {
+          const draft = data.data as {
+            id?: unknown;
+            missingRequired?: unknown;
+            draft?: Record<string, unknown>;
+            assumptions?: unknown;
+          };
+          if (typeof draft.id === "string" && UUID.test(draft.id)) {
+            setThinking(false);
+            add({
+              key: `ugc-draft-${draft.id}`,
+              kind: "ugc_brief_draft",
+              draftId: draft.id,
+              missing: Array.isArray(draft.missingRequired)
+                ? draft.missingRequired.length
+                : 0,
+              draft: draft.draft ?? {},
+              assumptions: Array.isArray(draft.assumptions)
+                ? draft.assumptions.map(String)
+                : [],
+            });
           }
         } else if (data.type === "tool_result" && data.kind === "offer") {
           const action = (data.data as { action?: unknown } | null)?.action;
@@ -554,6 +661,41 @@ export function Chat({
           }
         } else if (data.type === "fill_choice") {
           setActions((current) => ({ ...current, fillChoice: true }));
+        } else if (
+          data.type === "tool_result" &&
+          data.kind === "freelance_service_draft"
+        ) {
+          const draft = data.data as {
+            id?: unknown;
+            missingRequired?: unknown;
+            draft?: Record<string, unknown>;
+          };
+          if (typeof draft.id === "string" && UUID.test(draft.id)) {
+            setThinking(false);
+            add({
+              key: `freelance-draft-${draft.id}`,
+              kind: "freelance_service_draft",
+              draftId: draft.id,
+              missing: Array.isArray(draft.missingRequired)
+                ? draft.missingRequired.length
+                : 0,
+              draft: draft.draft ?? {},
+            });
+          }
+        } else if (
+          data.type === "tool_result" &&
+          data.kind === "freelance_service_saved"
+        ) {
+          const saved = data.data as { id?: unknown };
+          if (typeof saved.id === "string" && UUID.test(saved.id)) {
+            setThinking(false);
+            add({
+              key: nextKey(),
+              kind: "freelance_link",
+              href: `/profile/freelance`,
+              link: "cabinet",
+            });
+          }
         }
       }
     } catch {
@@ -762,57 +904,67 @@ export function Chat({
                     ? t("serviceFocus.line")
                     : fromCampaigns
                       ? t("ugcFocus.home")
-                      : t("welcome")}
+                      : fromPostJob
+                        ? t("jobDraft.title")
+                        : t("welcome")}
                 </h2>
-                {fromServices || fromCampaigns ? null : (
+                {fromServices ||
+                fromCampaigns ||
+                fromFreelanceSell ||
+                fromPostJob ? null : (
                   <p className="t-body-s max-w-md text-fg-muted">
                     {signedIn ? t("emptySignedIn") : t("emptyGuest")}
                   </p>
                 )}
-                {historyReady && !jobId && !fromServices && !fromCampaigns && (
-                  <div className="flex w-full max-w-md flex-col gap-3">
-                    <div
-                      role="tablist"
-                      aria-label={t("starters.label")}
-                      className="flex flex-col gap-2"
-                    >
-                      {STARTER_LANES.map((id) => (
-                        <button
-                          key={id}
-                          type="button"
-                          role="tab"
-                          aria-selected={lane === id}
-                          className={`min-h-11 rounded-full border px-5 text-left ${
-                            lane === id
-                              ? "border-line-strong bg-surface-2"
-                              : "border-line"
-                          }`}
-                          onClick={() => setLane(id)}
-                        >
-                          {t(`starters.lanes.${id}`)}
-                        </button>
-                      ))}
+                {historyReady &&
+                  !jobId &&
+                  !fromServices &&
+                  !fromCampaigns &&
+                  !fromFreelanceSell &&
+                  !fromPostJob && (
+                    <div className="flex w-full max-w-md flex-col gap-3">
+                      <div
+                        role="tablist"
+                        aria-label={t("starters.label")}
+                        className="flex flex-col gap-2"
+                      >
+                        {STARTER_LANES.map((id) => (
+                          <button
+                            key={id}
+                            type="button"
+                            role="tab"
+                            aria-selected={lane === id}
+                            className={`min-h-11 rounded-full border px-5 text-left ${
+                              lane === id
+                                ? "border-line-strong bg-surface-2"
+                                : "border-line"
+                            }`}
+                            onClick={() => setLane(id)}
+                          >
+                            {t(`starters.lanes.${id}`)}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        {pickStarterKeys(
+                          STARTER_KEYS[lane],
+                          STARTER_SHOW,
+                          starterSeed,
+                        ).map((key) => (
+                          <button
+                            key={key}
+                            type="button"
+                            className="min-h-11 rounded-full border border-line px-5 text-left text-fg"
+                            onClick={() =>
+                              void ask(t(`starters.questions.${key}`))
+                            }
+                          >
+                            {t(`starters.questions.${key}`)}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-2">
-                      {pickStarterKeys(
-                        STARTER_KEYS[lane],
-                        STARTER_SHOW,
-                        starterSeed,
-                      ).map((key) => (
-                        <button
-                          key={key}
-                          type="button"
-                          className="min-h-11 rounded-full border border-line px-5 text-left text-fg"
-                          onClick={() =>
-                            void ask(t(`starters.questions.${key}`))
-                          }
-                        >
-                          {t(`starters.questions.${key}`)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                  )}
               </div>
             )}
             {entries.map((entry) => {
@@ -898,6 +1050,192 @@ export function Chat({
                     >
                       {t("ugcJoin.action")}
                     </a>
+                  </div>
+                );
+              }
+              if (entry.kind === "ugc_brief_draft") {
+                return (
+                  <div
+                    key={entry.key}
+                    className="flex max-w-md flex-col items-start gap-2 rounded-2xl border border-line bg-surface-2 px-4 py-3"
+                  >
+                    <p className="font-medium">{t("ugcDraft.title")}</p>
+                    <dl className="grid gap-1 text-sm">
+                      {(
+                        [
+                          ["productName", entry.draft.productName],
+                          ["description", entry.draft.description],
+                          ["goal", entry.draft.goal],
+                          ["audience", entry.draft.audience],
+                          ["countries", entry.draft.countries],
+                          ["languages", entry.draft.languages],
+                          ["platform", entry.draft.platform],
+                          ["niche", entry.draft.niche],
+                          ["videoCount", entry.draft.videoCount],
+                          ["rewardCents", entry.draft.rewardCents],
+                          ["deadline", entry.draft.deadline],
+                          ["rights", entry.draft.rights],
+                          ["mustSay", entry.draft.mustSay],
+                          ["mustNot", entry.draft.mustNot],
+                          ["pitch", entry.draft.pitch],
+                          ["links", entry.draft.links],
+                        ] as const
+                      )
+                        .filter(
+                          ([, value]) =>
+                            value !== undefined &&
+                            value !== null &&
+                            value !== "" &&
+                            (!Array.isArray(value) || value.length > 0),
+                        )
+                        .map(([field, value]) => (
+                          <div key={field} className="flex flex-wrap gap-x-2">
+                            <dt className="text-fg-muted">
+                              {t(`ugcDraft.fields.${field}` as never)}:
+                            </dt>
+                            <dd>
+                              {field === "rewardCents"
+                                ? new Intl.NumberFormat(locale, {
+                                    style: "currency",
+                                    currency: "USD",
+                                  }).format(Number(value) / 100)
+                                : Array.isArray(value)
+                                  ? value.join(", ")
+                                  : String(value)}
+                            </dd>
+                          </div>
+                        ))}
+                    </dl>
+                    {entry.assumptions.length > 0 ? (
+                      <p className="t-body-s text-fg-muted">
+                        {t("ugcDraft.assumptions")}:{" "}
+                        {entry.assumptions
+                          .map((value) =>
+                            t(
+                              `ugcDraft.fields.${value.split(":")[0]}` as never,
+                            ),
+                          )
+                          .join(", ")}
+                      </p>
+                    ) : null}
+                    <p className="t-body-s text-fg-muted">
+                      {t("ugcDraft.missing", { count: entry.missing })}
+                    </p>
+                    <Link
+                      href={`/campaigns/new?draft=${entry.draftId}`}
+                      className="inline-flex min-h-11 items-center rounded-full bg-fg px-5 text-bg"
+                    >
+                      {t("ugcDraft.edit")}
+                    </Link>
+                  </div>
+                );
+              }
+              if (entry.kind === "freelance_service_draft") {
+                return (
+                  <div
+                    key={entry.key}
+                    className="flex max-w-md flex-col items-start gap-2 rounded-2xl border border-line bg-surface-2 px-4 py-3"
+                  >
+                    <p className="font-medium">{t("freelanceDraft.title")}</p>
+                    <dl className="grid gap-1 text-sm">
+                      {(
+                        [
+                          "title",
+                          "category",
+                          "description",
+                          "buyerNeeds",
+                          "languages",
+                          "skills",
+                          "packages",
+                        ] as const
+                      )
+                        .filter(
+                          (field) =>
+                            entry.draft[field] !== undefined &&
+                            entry.draft[field] !== null &&
+                            entry.draft[field] !== "",
+                        )
+                        .map((field) => (
+                          <div key={field} className="flex flex-wrap gap-x-2">
+                            <dt className="text-fg-muted">
+                              {t(`freelanceDraft.fields.${field}` as never)}:
+                            </dt>
+                            <dd>
+                              {Array.isArray(entry.draft[field])
+                                ? JSON.stringify(entry.draft[field])
+                                : String(entry.draft[field])}
+                            </dd>
+                          </div>
+                        ))}
+                    </dl>
+                    <p className="t-body-s text-fg-muted">
+                      {t("freelanceDraft.missing", { count: entry.missing })}
+                    </p>
+                    <Link
+                      href={`/profile/freelance/new?draft=${entry.draftId}`}
+                      className="inline-flex min-h-11 items-center rounded-full bg-fg px-5 text-bg"
+                    >
+                      {t("freelanceDraft.edit")}
+                    </Link>
+                  </div>
+                );
+              }
+              if (entry.kind === "job_draft") {
+                const fields = [
+                  "companyName",
+                  "title",
+                  "description",
+                  "category",
+                  "employmentType",
+                  "location",
+                  "salaryMin",
+                  "salaryMax",
+                  "salaryCurrency",
+                  "salaryPeriod",
+                  "applicationMethod",
+                  "countries",
+                ] as const;
+                return (
+                  <div
+                    key={entry.key}
+                    className="flex max-w-md flex-col items-start gap-2 rounded-2xl border border-line bg-surface-2 px-4 py-3"
+                  >
+                    <p className="font-medium">{t("jobDraft.title")}</p>
+                    <dl className="grid gap-1 text-sm">
+                      {fields
+                        .filter((field) => {
+                          const value = entry.draft[field];
+                          return (
+                            value !== undefined &&
+                            value !== null &&
+                            value !== ""
+                          );
+                        })
+                        .map((field) => {
+                          const value = entry.draft[field];
+                          return (
+                            <div key={field} className="flex flex-wrap gap-x-2">
+                              <dt className="text-fg-muted">
+                                {t(`jobDraft.fields.${field}` as never)}:
+                              </dt>
+                              <dd>
+                                {Array.isArray(value)
+                                  ? value.join(", ")
+                                  : String(value)}
+                              </dd>
+                            </div>
+                          );
+                        })}
+                    </dl>
+                    <p className="t-body-s text-fg-muted">
+                      {t("jobDraft.missing", { count: entry.missing })}
+                    </p>
+                    <Link
+                      href={`/post-job?draft=${entry.draftId}`}
+                      className="inline-flex min-h-11 items-center rounded-full bg-fg px-5 text-bg"
+                    >
+                      {t("jobDraft.edit")}
+                    </Link>
                   </div>
                 );
               }

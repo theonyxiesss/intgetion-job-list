@@ -7,6 +7,8 @@ import { botMessageInput } from "@/modules/bot/schemas";
 import {
   handleMessage,
   openServiceConversation,
+  openFreelanceDraftConversation,
+  openJobDraftConversation,
   openUgcHomeConversation,
   openUgcThread,
   resolveConversation,
@@ -83,7 +85,7 @@ async function openForMessage(input: {
   userId: string | null;
   token: string | undefined;
   locale: string;
-  from?: "services" | "campaigns";
+  from?: "services" | "campaigns" | "freelance_sell" | "post_job";
   campaignId?: string;
   inviteId?: string;
 }) {
@@ -103,6 +105,25 @@ async function openForMessage(input: {
   }
   if (input.from === "campaigns") {
     return openUgcHomeConversation({
+      userId: input.userId,
+      token: input.token,
+      locale: input.locale,
+    });
+  }
+  if (input.from === "freelance_sell")
+    return openFreelanceDraftConversation({
+      userId: input.userId,
+      token: input.token,
+      locale: input.locale,
+    });
+  if (input.from === "post_job") {
+    if (!input.userId)
+      return resolveConversation({
+        userId: input.userId,
+        token: input.token,
+        locale: input.locale,
+      });
+    return openJobDraftConversation({
       userId: input.userId,
       token: input.token,
       locale: input.locale,

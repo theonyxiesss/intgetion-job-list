@@ -14,7 +14,9 @@ export const botMessageInput = z
     text: z.string().trim().min(1).max(2000),
     locale: locale.optional(),
     /** Set when the chat was opened from /services or creative tests. */
-    from: z.enum(["services", "campaigns"]).optional(),
+    from: z
+      .enum(["services", "campaigns", "freelance_sell", "post_job"])
+      .optional(),
     campaignId: z.uuid().optional(),
     inviteId: z.uuid().optional(),
   })

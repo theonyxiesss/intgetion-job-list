@@ -5,7 +5,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 31;
+export const SYSTEM_PROMPT_VERSION = 32;
 
 const LANGUAGE: Record<string, string> = {
   en: "English",

@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 const JOB_ID = /^[0-9a-f-]{36}$/i;
 
-/** `/chat` (section 9). `?job=` one vacancy. `?from=services` services. `?from=campaigns`, `?campaign=` and `?invite=` are creative tests (D457). `?service=`, `?order=` and `?confirm=` are freelance (D460). */
+/** `/chat` (section 9). `?job=` one vacancy. `?from=services` services. `?from=campaigns`, `?campaign=` and `?invite=` are creative tests (D457). `?service=`, `?order=` and `?confirm=` are freelance (D460). `?from=post_job` drafts a listing (D494). */
 export default async function ChatPage({
   params,
   searchParams,
@@ -85,6 +85,10 @@ export default async function ChatPage({
           fromCampaigns={
             from === "campaigns" && !row && !campaignId && !inviteId
           }
+          fromFreelanceSell={
+            from === "freelance_sell" && !row && !campaignId && !inviteId
+          }
+          fromPostJob={from === "post_job" && !row && !campaignId && !inviteId}
           campaignId={campaignId}
           inviteId={inviteId}
           ugcProduct={ugcProduct}

@@ -33,6 +33,8 @@ vi.mock("@/modules/auth/service", () => ({
 }));
 
 vi.mock("../service/conversation", () => ({
+  openJobDraftConversation: () =>
+    Promise.resolve({ conversation: { id: "c1", state: {} }, token: "tg" }),
   resolveConversation: (input: Record<string, unknown>) =>
     Promise.resolve({
       conversation: { id: "c1", state: {}, sessionTokenHash: "h" },
@@ -277,6 +279,27 @@ describe("the agent inside the Telegram bot (D311)", () => {
     sent.length = 0;
     await handleTelegramAgentUpdate("token", update("/reset"));
     expect(sent[0].text).toContain("Forgotten");
+  });
+
+  it("opens the shared vacancy draft from the Telegram command for a linked user", async () => {
+    linkedUserId = "user-1";
+    await handleTelegramAgentUpdate("token", update("/post_job", "ru"));
+    expect(sent).toEqual([
+      {
+        chatId: 42,
+        text: expect.stringContaining("черновик вакансии"),
+      },
+    ]);
+    expect(lastInput).toBeNull();
+  });
+
+  it("asks an unlinked Telegram user to sign in before creating a vacancy", async () => {
+    await handleTelegramAgentUpdate("token", update("/post_job", "ru"));
+    expect(sent[0].text).toContain("Войдите");
+    expect(sent[0].links?.[0]?.url).toBe(
+      "https://example.test/ru/login?next=post-job",
+    );
+    expect(lastInput).toBeNull();
   });
 
   it("explains itself on /help and ignores commands that are not ours", async () => {

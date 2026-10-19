@@ -47,6 +47,24 @@ describe("bot tool layer (7A)", () => {
     );
   });
 
+  it("D493: the freelance listing thread exposes only its draft actions", () => {
+    expect(
+      toolsFor("user-1", { topic: "freelance", freelanceDraftMode: true }).map(
+        (tool) => tool.name,
+      ),
+    ).toEqual([
+      "patch_service_draft",
+      "confirm_service_draft",
+      "reset_service_draft",
+    ]);
+  });
+
+  it("D494: the job listing thread exposes only shared-draft actions", () => {
+    expect(
+      toolsFor("user-1", { jobDraftMode: true }).map((tool) => tool.name),
+    ).toEqual(["patch_job_draft", "confirm_job_draft", "reset_job_draft"]);
+  });
+
   it.each([
     ["apply_to_job", { jobId }],
     ["save_job", { jobId }],
