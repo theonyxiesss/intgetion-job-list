@@ -2684,3 +2684,10 @@
 - Founder: «да запусти миграцию». `pnpm db:migrate` отказал (защита `scripts/db-url.mjs`, хост Supabase — production); применено путём D438 через MCP `execute_sql` одной транзакцией: `0061_ugc_brief_drafts.sql`, `0062_freelance_service_drafts.sql`, `0063_job_drafts.sql`.
 - Сверка до: журнал 57; отличия от папки — известные `0020_telegram_login` (только в журнале) и `0048_engagement_briefs` (не применялась, D438), плюс 0061–0063.
 - Проверка после: три таблицы — владелец `migrator`, RLS включён и принудителен, 3 политики, `app_rw` DML; `ugc_campaigns.countries` есть; журнал 60; членство `postgres` в `migrator` вернулось к `set=false, admin=true` от `supabase_admin`. Советники security: только прежние (search_path у 4 функций, leaked password protection).
+
+## [2026-10-20] — D496 — Spoki не отвечал на сайте
+
+- Founder: прогнать ассистента на сайте. Гостем `/ru/chat`: каждое сообщение → `BOT_TRY_LATER` за ~2 с. По БД: последний ответ гостю 2026-10-19 14:07 UTC, после выкладки D494 ответы шли только в UGC-режиме. Логи Vercel недоступны (MCP 403, CLI нет). Причина найдена через публичный OpenRouter: у основной модели чата единственный провайдер Nvidia, status −5, uptime 30m = 0.
+- Сделано: `src/lib/llm/openrouter.ts` — `models` с двумя запасными бесплатными моделями для `:free`; тест в `openrouter.test.ts`. D496.
+- Проверки: vitest `src/lib/llm` + `src/modules/bot` 186 passed → 0; `pnpm eval` 7/7 → 0; eslint → 0; prettier → 0; typecheck → только 3 известные ошибки MCP-пакета (локально не установлен).
+- Миграции: нет.

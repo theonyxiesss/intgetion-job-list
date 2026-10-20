@@ -3,6 +3,7 @@ import { z } from "zod";
 import { LLMProviderError } from "./anthropic";
 import {
   fromOpenRouterResponse,
+  OPENROUTER_FREE_FALLBACKS,
   OpenRouterProvider,
   toOpenRouterMessages,
   toOpenRouterRequest,
@@ -67,6 +68,31 @@ describe("OpenRouter wire format (D213)", () => {
       type: "function",
       function: { name: "record_result" },
     });
+  });
+
+  it("lets a free model fall back to other free models only (D496)", () => {
+    const base = {
+      system: "s",
+      messages: [{ role: "user" as const, content: "x" }],
+      maxTokens: 10,
+    };
+    const free = toOpenRouterRequest({
+      ...base,
+      model: OPENROUTER_DEFAULT_MODELS.chat,
+    });
+    expect(free.models?.[0]).toBe(OPENROUTER_DEFAULT_MODELS.chat);
+    expect(free.models?.slice(1)).toEqual([...OPENROUTER_FREE_FALLBACKS]);
+    expect(free.models?.length).toBeLessThanOrEqual(3);
+    expect(free.models?.every((m) => m.endsWith(":free"))).toBe(true);
+
+    const fallback = toOpenRouterRequest({
+      ...base,
+      model: OPENROUTER_FREE_FALLBACKS[0],
+    });
+    expect(new Set(fallback.models).size).toBe(fallback.models?.length);
+
+    const paid = toOpenRouterRequest({ ...base, model: "openai/gpt-5" });
+    expect(paid).not.toHaveProperty("models");
   });
 
   it("reads text, tool calls and usage", () => {

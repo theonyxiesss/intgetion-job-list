@@ -16,6 +16,22 @@ import type {
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const TIMEOUT_MS = 45_000;
 
+/**
+ * D496: a free model often has a single upstream provider, and when it is down
+ * every request fails. OpenRouter then tries these in order (`models`). Only
+ * `:free` models, so a fallback never bills. All accept tools; uptime checked
+ * on `/api/v1/models/<id>/endpoints` on 2026-10-20.
+ */
+export const OPENROUTER_FREE_FALLBACKS = [
+  "minimax/minimax-m3.1-flash:free",
+  "thinkingmachines/inkling:free",
+] as const;
+
+function fallbackModels(model: string): string[] | undefined {
+  if (!isFreeModel(model)) return undefined;
+  return [model, ...OPENROUTER_FREE_FALLBACKS.filter((m) => m !== model)];
+}
+
 type WireToolCall = {
   id: string;
   type: "function";
@@ -65,8 +81,10 @@ export function toOpenRouterMessages(
 }
 
 export function toOpenRouterRequest(request: LLMRequest) {
+  const models = fallbackModels(request.model);
   return {
     model: request.model,
+    ...(models ? { models } : {}),
     max_tokens: request.maxTokens,
     messages: toOpenRouterMessages(request.system, request.messages),
     ...(request.tools?.length
