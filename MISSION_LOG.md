@@ -2798,3 +2798,4 @@
 - Найдено для 6.4в: имя кандидата читают отклики (`applications.ts`), админка людей (`people-repo.ts`), витрина (`storefront.ts`); `employer_profiles.full_name` читает состав команды (`company-repo.ts`, вопреки D506 «не читается» — столбец ещё есть, ничего не сломано); пояс — утренние сводки (`morning-briefs.ts`, `briefs-admin.ts`).
 - Миграции: нет.
 - Проверки D507: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1437 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Фрагмент предотбора выполнен на облаке только чтением (счёт строк) — синтаксис и типы `char`/`text` верны.
+- D507 выкладка: коммит `560826d`, Vercel `dpl_F4Vf2ffrDujokUAMpZ9FdZpGasyh` success; `/ru`, `/ru/jobs`, `/ru/campaigns` → 200; `/ru/matches`, `/ru/creator` → 307 на вход.
