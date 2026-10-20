@@ -52,6 +52,7 @@ import { accountTools } from "./account-tools";
 import { employerJobTools } from "./employer-job-tools";
 import { accountProfileTools } from "./account-profile-tool";
 import { myCardsTools } from "./my-cards-tool";
+import { companyTools } from "./company-tools";
 import { pitchTools, screenCoverNote } from "./pitch";
 import { reminderTools } from "./reminders";
 import {
@@ -401,7 +402,7 @@ export const TOOLS: readonly BotTool[] = [
   tool({
     name: "offer_step",
     description:
-      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, order_service, events, freelance (the freelance catalog), freelance_sell (the seller cabinet), freelance_payout (a freelancer confirms the payout address), memory (what Spoki remembers, in settings), account_settings (email, password, sign-in methods, deleting the account) or my_account (the about-me profile and all roles). Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet. Use order_service only after they ask to order a managed team or leave the task. Do not use it to answer a question about a service.",
+      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, order_service, events, freelance (the freelance catalog), freelance_sell (the seller cabinet), freelance_payout (a freelancer confirms the payout address), memory (what Spoki remembers, in settings), account_settings (email, password, sign-in methods, deleting the account), my_account (the about-me profile and all roles) or company (the company page: website, domain, legal details, logo). Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet. Use order_service only after they ask to order a managed team or leave the task. Do not use it to answer a question about a service.",
     input: z.object({ action: z.enum(OFFER_ACTIONS) }).strict(),
     access: "guest",
     confirm: never,
@@ -755,6 +756,7 @@ export const TOOLS: readonly BotTool[] = [
   ...employerJobTools,
   ...accountProfileTools,
   ...myCardsTools,
+  ...companyTools,
   ...pitchTools,
   ...reminderTools,
   ...(ugcTools as unknown as BotTool[]),

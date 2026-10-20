@@ -1834,7 +1834,15 @@
         "addLanguages": "Ajouter des langues",
         "removeLanguages": "Retirer des langues"
       },
-      "set_email_language": "Les e-mails du site arriveront en {name}."
+      "set_email_language": "Les e-mails du site arriveront en {name}.",
+      "propose_company_update": "Modifier la fiche de l’entreprise « {name} » : {changes}.",
+      "companyFields": {
+        "name": "Nom",
+        "description": "Description",
+        "country": "Pays",
+        "size": "Taille",
+        "timezone": "Fuseau horaire de l’entreprise"
+      }
     },
     "confirm": {
       "applyTitle": "Postuler à cette offre ?",
@@ -1938,6 +1946,11 @@
       "my_account": {
         "title": "Mon compte",
         "text": "« À propos de moi » et tous vos rôles sur une page.",
+        "action": "Ouvrir"
+      },
+      "company": {
+        "title": "Page de l’entreprise",
+        "text": "Le site, le domaine, les informations légales et le logo de l’entreprise se changent ici.",
         "action": "Ouvrir"
       }
     }

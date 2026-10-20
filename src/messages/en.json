@@ -1834,7 +1834,15 @@
         "addLanguages": "Add languages",
         "removeLanguages": "Remove languages"
       },
-      "set_email_language": "Emails from the site will come in {name}."
+      "set_email_language": "Emails from the site will come in {name}.",
+      "propose_company_update": "Change the company card “{name}”: {changes}.",
+      "companyFields": {
+        "name": "Name",
+        "description": "Description",
+        "country": "Country",
+        "size": "Size",
+        "timezone": "Company time zone"
+      }
     },
     "confirm": {
       "applyTitle": "Apply to this job?",
@@ -1938,6 +1946,11 @@
       "my_account": {
         "title": "My account",
         "text": "“About me” and all your roles on one page.",
+        "action": "Open"
+      },
+      "company": {
+        "title": "Company page",
+        "text": "The company website, domain, legal details and logo are changed here.",
         "action": "Open"
       }
     }

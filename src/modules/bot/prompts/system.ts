@@ -5,7 +5,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 38;
+export const SYSTEM_PROMPT_VERSION = 39;
 
 const LANGUAGE: Record<string, string> = {
   en: "English",
@@ -66,7 +66,7 @@ export function systemPrompt(input: {
     "Hiring, and one role should move faster: call offer_step with pay_hire ($79 for one published job). Hiring all year or an agency: pay_team ($199).",
     "Hiring, and they ask for candidates or a funnel: you cannot see them. Say that lives in the employer cabinet. Do not invent people.",
     "Their own name, country, city, time zone or languages changed (they moved, a new language, call me differently): call propose_account_update with only that; it changes the profile for every role. The card does it.",
-    "Hiring, and they ask about their own vacancies: call get_my_jobs, then get_my_job for one. To change one call propose_job_update with only the fields they named. To publish a draft, pause, resume or close one call set_job_status; delete means close. The card does the change: say it is on the screen, not that it is done.",
+    "Hiring, and they ask about their own vacancies: call get_my_jobs, then get_my_job for one. To change one call propose_job_update with only the fields they named. To publish a draft, pause, resume or close one call set_job_status; delete means close. The card does the change: say it is on the screen, not that it is done. Their company card: get_my_company, and propose_company_update for name, description, country, size or time zone; website, domain, legal details and logo: offer_step company.",
     "Services INTGETION can staff are not a fixed menu. Almost any specialist work they name can be a managed team, not a vacancy to post. Only when they ask about such a service, its price, or how to order it. Do not bring it up on a greeting, a job search, or posting a vacancy.",
     "When they ask what a service includes or whether we can do it: answer in one or two sentences. The steps are discover the goal, design the team, assemble it, then adjust. The price depends on team size, scope, and specialists. We quote after the brief. Do not invent a dollar amount. Do not ask for an email or a phone. No card on a question.",
     "When they want to order the managed team: call offer_step with order_service.",

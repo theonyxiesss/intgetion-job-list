@@ -2826,3 +2826,10 @@
 - Миграции: нет.
 - Проверки D510: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1443 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.
 - D510 выкладка: коммит `36c3686`, Vercel `dpl_99cGddCx2kV2xxuNcAd32vq46yd8` success; `/ru`, `/ru/chat` → 200, `/ru/account` → 307 на вход.
+
+## [2026-10-21] — D511 — этап 4б: карточка компании
+
+- Founder: «продолжай».
+- Сделано: `src/modules/bot/service/company-tools.ts` (`get_my_company`, `propose_company_update`, `namedCompanyPatch`), регистрация в `tools.ts`; `offers.ts` — `company`, подпись в `telegram-agent.ts`; карточка в `account-card.tsx`; тексты `chat.account.propose_company_update`, `companyFields`, `chat.offer.company` в 7 локалях; промпт 39 (`memory.test.ts`); `account-tools.test.ts` учитывает новую карточку; тест `company-tools.test.ts` (5). Документы: D511, `docs/tz/29-spoki-cards.md`, CURRENT.
+- Миграции: нет.
+- Проверки D511: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1448 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.

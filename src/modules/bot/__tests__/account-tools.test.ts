@@ -39,6 +39,7 @@ describe("account tools (D472)", () => {
       ...employerJobTools,
       findTool("set_service_status")!,
       findTool("propose_account_update")!,
+      findTool("propose_company_update")!,
     ].filter((tool) => tool.confirm(ctx));
     expect(cardTools.map((tool) => tool.name).sort()).toEqual(
       [...ACCOUNT_CARD_TOOLS].sort(),

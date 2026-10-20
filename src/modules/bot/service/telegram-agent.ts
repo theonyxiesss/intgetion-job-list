@@ -202,6 +202,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     link_telegram: "Link Telegram",
     account_settings: "Account settings",
     my_account: "My account",
+    company: "Company page",
   },
   ru: {
     pay_hire: "Оплатить «Найм»",
@@ -221,6 +222,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     link_telegram: "Привязать Telegram",
     account_settings: "Настройки аккаунта",
     my_account: "Мой аккаунт",
+    company: "Страница компании",
   },
   "pt-BR": {
     pay_hire: "Pagar Hire",
@@ -240,6 +242,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     link_telegram: "Vincular Telegram",
     account_settings: "Configurações da conta",
     my_account: "Minha conta",
+    company: "Página da empresa",
   },
   de: {
     pay_hire: "Hire bezahlen",
@@ -259,6 +262,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     link_telegram: "Telegram verknüpfen",
     account_settings: "Kontoeinstellungen",
     my_account: "Mein Konto",
+    company: "Unternehmensseite",
   },
   fr: {
     pay_hire: "Payer Hire",
@@ -278,6 +282,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     link_telegram: "Lier Telegram",
     account_settings: "Paramètres du compte",
     my_account: "Mon compte",
+    company: "Page de l’entreprise",
   },
   it: {
     pay_hire: "Paga Hire",
@@ -297,6 +302,7 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     link_telegram: "Collega Telegram",
     account_settings: "Impostazioni account",
     my_account: "Il mio account",
+    company: "Pagina dell’azienda",
   },
 };
 

@@ -23,6 +23,7 @@ export const OFFER_ACTIONS = [
   "link_telegram",
   "account_settings",
   "my_account",
+  "company",
 ] as const;
 
 export type OfferAction = (typeof OFFER_ACTIONS)[number];
@@ -70,6 +71,7 @@ export function offerPath(
     return signedIn ? "/settings/account" : null;
   }
   if (action === "my_account") return signedIn ? "/account" : null;
+  if (action === "company") return signedIn ? "/employer/company" : null;
   if (action === "memory") {
     return signedIn ? "/settings/privacy#memory" : null;
   }

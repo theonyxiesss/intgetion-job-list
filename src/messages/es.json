@@ -1834,7 +1834,15 @@
         "addLanguages": "Añadir idiomas",
         "removeLanguages": "Quitar idiomas"
       },
-      "set_email_language": "Los correos del sitio llegarán en {name}."
+      "set_email_language": "Los correos del sitio llegarán en {name}.",
+      "propose_company_update": "Cambiar la ficha de la empresa «{name}»: {changes}.",
+      "companyFields": {
+        "name": "Nombre",
+        "description": "Descripción",
+        "country": "País",
+        "size": "Tamaño",
+        "timezone": "Zona horaria de la empresa"
+      }
     },
     "confirm": {
       "applyTitle": "¿Postularte a este empleo?",
@@ -1938,6 +1946,11 @@
       "my_account": {
         "title": "Mi cuenta",
         "text": "«Sobre mí» y todos tus roles en una página.",
+        "action": "Abrir"
+      },
+      "company": {
+        "title": "Página de la empresa",
+        "text": "El sitio web, el dominio, los datos legales y el logo de la empresa se cambian aquí.",
         "action": "Abrir"
       }
     }

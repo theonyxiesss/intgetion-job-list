@@ -21,6 +21,7 @@ export const ACCOUNT_CARD_TOOLS = [
   "set_service_status",
   "propose_account_update",
   "set_email_language",
+  "propose_company_update",
 ] as const;
 
 export function isAccountCardTool(tool: string): boolean {
@@ -90,6 +91,24 @@ export function AccountCardText({
       action: JOB_STATUS_ACTIONS.has(action) ? action : "other",
       name,
     });
+  }
+  if (tool === "propose_company_update") {
+    const changes = (
+      ["name", "description", "country", "size", "timezone"] as const
+    )
+      .filter((key) => typeof a[key] === "string" && String(a[key]).trim())
+      .map((key) => {
+        const raw = String(a[key]).trim();
+        const value =
+          key === "size"
+            ? raw.replace(/^s/, "").replace("_plus", "+").replace("_", "–")
+            : key === "description" && raw.length > 80
+              ? `${raw.slice(0, 80)}…`
+              : raw;
+        return `${t(`companyFields.${key}`)}: ${value}`;
+      })
+      .join("; ");
+    return t("propose_company_update", { name, changes });
   }
   if (tool === "propose_account_update") {
     const plain = (
