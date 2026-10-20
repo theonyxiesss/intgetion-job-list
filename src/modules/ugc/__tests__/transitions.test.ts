@@ -32,7 +32,7 @@ function allows(run: () => void): boolean {
 describe("campaign transitions", () => {
   const actors: CampaignActor[] = ["company", "admin"];
 
-  it("opens only after an admin, and never goes back", () => {
+  it("opens only after an admin; the company may take it back from review, pause and resume (D512)", () => {
     const found = new Set<string>();
     for (const from of UGC_CAMPAIGN_STATUSES) {
       for (const to of UGC_CAMPAIGN_STATUSES) {
@@ -56,8 +56,13 @@ describe("campaign transitions", () => {
         "draft>pending_review>company",
         "pending_review>open>admin",
         "pending_review>rejected>admin",
+        "pending_review>draft>company",
+        "open>paused>company",
+        "paused>open>company",
         "open>closed>company",
         "open>closed>admin",
+        "paused>closed>company",
+        "paused>closed>admin",
       ]),
     );
   });

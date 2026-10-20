@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "@/i18n/navigation";
 
 /** One confirmed write. The server checks the person and the row. */
 export function UgcAction({
@@ -19,6 +20,7 @@ export function UgcAction({
   const t = useTranslations("ugc");
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
+  const router = useRouter();
 
   async function run() {
     setBusy(true);
@@ -32,9 +34,20 @@ export function UgcAction({
       const data = (await response.json().catch(() => null)) as {
         payload?: string;
         forModel?: string;
+        redirect?: string;
+        error?: { code?: string };
       } | null;
       if (!response.ok) {
-        setNote(t("error"));
+        // An unsent draft blocks taking a brief back (D512).
+        setNote(
+          data?.error?.code === "UGC_DRAFT_IN_PROGRESS"
+            ? t("draftInProgress")
+            : t("error"),
+        );
+        return;
+      }
+      if (data?.redirect) {
+        router.push(data.redirect);
         return;
       }
       if (data?.payload) {

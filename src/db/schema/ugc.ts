@@ -142,7 +142,7 @@ export const ugcCampaigns = pgTable(
     index("ugc_campaigns_open_idx").on(table.status, table.deadline),
     check(
       "ugc_campaigns_status_check",
-      sql`${table.status} in ('draft', 'pending_review', 'open', 'closed', 'rejected')`,
+      sql`${table.status} in ('draft', 'pending_review', 'open', 'paused', 'closed', 'rejected')`,
     ),
     check(
       "ugc_campaigns_goal_check",

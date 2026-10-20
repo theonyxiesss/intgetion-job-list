@@ -227,6 +227,22 @@ export function productionUgcStore(): UgcStore {
         .set({ status: row.status, updatedAt: new Date() })
         .where(eq(ugcCampaigns.id, row.id));
     },
+    async saveCampaignText(row) {
+      await db
+        .update(ugcCampaigns)
+        .set({
+          productSummary: row.productSummary,
+          pitch: row.pitch,
+          mustSay: row.mustSay,
+          mustNot: row.mustNot,
+          exampleUrls: row.exampleUrls,
+          updatedAt: new Date(),
+        })
+        .where(eq(ugcCampaigns.id, row.id));
+    },
+    async deleteCampaign(id) {
+      await db.delete(ugcCampaigns).where(eq(ugcCampaigns.id, id));
+    },
     async getCampaign(id) {
       const [row] = await db
         .select()
@@ -254,7 +270,7 @@ export function productionUgcStore(): UgcStore {
       const rows = await db
         .select()
         .from(ugcCampaigns)
-        .where(inArray(ugcCampaigns.status, ["open", "closed"]))
+        .where(inArray(ugcCampaigns.status, ["open", "paused", "closed"]))
         .limit(2000);
       return rows.map(campaignOf);
     },

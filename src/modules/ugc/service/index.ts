@@ -73,6 +73,8 @@ export {
   listMyInvites,
   listOpenCampaigns,
   matchOpenCampaigns,
+  setCampaignPaused,
+  updateCampaignText,
   getOwnCreatorProfile,
   listOwedPayouts,
   listReviewQueue,
@@ -92,6 +94,7 @@ export {
 export { ugcTools } from "./bot-tools";
 export {
   confirmBriefDraft,
+  withdrawToDraft,
   isExplicitBriefConfirmation,
   isExplicitDraftReset,
   unconfirmedBriefRanges,

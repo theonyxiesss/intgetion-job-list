@@ -1842,6 +1842,16 @@
         "country": "Pays",
         "size": "Taille",
         "timezone": "Fuseau horaire de l’entreprise"
+      },
+      "set_ugc_status": "{action, select, pause {Mettre en pause le brief « {name} ». Les nouvelles candidatures et embauches s’arrêtent ; les créateurs engagés rendent leurs vidéos.} resume {Rouvrir le brief « {name} » aux candidatures.} other {Fermer le brief « {name} ». Plus de nouvelles candidatures ni de vidéos.}}",
+      "propose_ugc_update": "Modifier le texte du brief « {name} » : {changes}.",
+      "withdraw_ugc_campaign": "Retirer le brief « {name} » de la vérification vers le brouillon. Vous pourrez le modifier et le renvoyer.",
+      "ugcFields": {
+        "productSummary": "Ce que c’est",
+        "pitch": "Pitch",
+        "mustSay": "Ce qu’il faut dire",
+        "mustNot": "Ce qu’il ne faut pas dire",
+        "exampleUrls": "Exemples"
       }
     },
     "confirm": {
@@ -3912,7 +3922,8 @@
       "submitted": "Envoyé",
       "changes_requested": "Révision demandée",
       "accepted": "Accepté",
-      "winner": "Gagnant"
+      "winner": "Gagnant",
+      "paused": "En pause"
     },
     "fields": {
       "company": "Entreprise",
@@ -3979,7 +3990,17 @@
     "priceUsual": "En général {min}–{max} par vidéo",
     "pricePresets": "Montants prêts",
     "budget": "Budget : {videos} × {price} = {total}. Rien n’est débité.",
-    "rightsHint": "Pour les droits pub et whitelist, le prix est en général plus élevé qu’en organique."
+    "rightsHint": "Pour les droits pub et whitelist, le prix est en général plus élevé qu’en organique.",
+    "pause": "Mettre en pause",
+    "resume": "Reprendre",
+    "withdraw": "Retirer de la vérification",
+    "pausedNote": "Le brief est en pause : pas de nouvelles candidatures ni d’embauches ; les créateurs engagés rendent leurs vidéos et vous décidez.",
+    "withdrawNote": "Le brief est encore en vérification et les créateurs ne l’ont pas vu. Vous pouvez le remettre en brouillon, le modifier et le renvoyer.",
+    "draftInProgress": "Vous avez un brouillon de brief non envoyé. Envoyez-le ou réinitialisez-le, puis retirez ce brief.",
+    "editTextTitle": "Texte du brief",
+    "editTextHint": "Vous pouvez changer la description, le pitch, ce qu’il faut dire et ne pas dire, et les exemples. La rémunération, les droits, le nombre de vidéos et le délai restent : les créateurs engagés les ont acceptés.",
+    "editTextSave": "Enregistrer le texte",
+    "editTextSaved": "Le texte du brief est enregistré."
   },
   "chatFreelance": {
     "focus": "Nous parlons de « {title} ».",

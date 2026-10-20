@@ -25,7 +25,9 @@ import {
   remindInvite,
   requestChanges,
   saveCreatorProfile,
+  setCampaignPaused,
   submitVideo,
+  updateCampaignText,
 } from "./commands";
 import {
   confirmBriefDraft,
@@ -34,6 +36,7 @@ import {
   patchBriefDraft,
   resetBriefDraft,
   unconfirmedBriefRanges,
+  withdrawToDraft,
 } from "./drafts";
 import { usdLabel, type UgcPriceGuide } from "./pricing";
 
@@ -61,6 +64,14 @@ function assertUgcTopic(ctx: Ctx) {
       "Open the UGC videos card before writing a brief",
     );
   }
+}
+
+/** The product name of a brief the caller's company owns; else 404. */
+async function ownBriefName(ctx: Ctx, campaignId: string) {
+  const view = await readCampaign(ctx.userId, campaignId);
+  if (view.role !== "company")
+    throw new HttpError(404, "NOT_FOUND", "Not found");
+  return view.brief.productName;
 }
 
 function model(value: unknown) {
@@ -644,14 +655,90 @@ export const ugcTools = [
     },
   },
   {
-    name: "close_ugc_campaign",
-    description: "Close a brief. New applications and videos stop.",
+    name: "set_ugc_status",
+    description:
+      "Pause an open brief, resume a paused one, or close an open or paused one, by campaignId from get_my_ugc_campaigns. Paused: no new applications or hires; hired creators still hand in videos and the company decides them. Closed: new applications and videos stop for good. A request to delete or remove an open brief is close. Only a member of the brief's company. Confirmed on a card.",
+    input: z
+      .object({
+        campaignId: id,
+        action: z.enum(["pause", "resume", "close"]),
+      })
+      .strict(),
+    access: "user" as const,
+    confirm: write,
+    async preview(ctx: Ctx, input: { campaignId: string }) {
+      return ownBriefName(ctx, input.campaignId);
+    },
+    async run(
+      ctx: Ctx,
+      input: { campaignId: string; action: "pause" | "resume" | "close" },
+    ) {
+      if (input.action === "close")
+        return {
+          llm: model(await closeCampaign(ctx.userId, input.campaignId)),
+        };
+      return {
+        llm: model(
+          await setCampaignPaused(
+            ctx.userId,
+            input.campaignId,
+            input.action === "pause",
+          ),
+        ),
+      };
+    },
+  },
+  {
+    name: "propose_ugc_update",
+    description:
+      "Change the text of an open or paused brief, by campaignId from get_my_ugc_campaigns: productSummary (what it is, up to 400), pitch (up to 300, no contacts), mustSay and mustNot (up to 1000 each), exampleUrls (https, up to 5; replaces the list). Send only what they asked to change. Reward, rights, the number of videos, platforms and the deadline do not change: hired creators agreed to them; for those, close the brief and collect a new one. Confirmed on a card.",
+    input: z
+      .object({
+        campaignId: id,
+        productSummary: z.string().max(400).optional(),
+        pitch: z.string().max(300).optional(),
+        mustSay: z.string().max(1000).optional(),
+        mustNot: z.string().max(1000).optional(),
+        exampleUrls: z.array(z.string().max(500)).max(5).optional(),
+      })
+      .strict(),
+    access: "user" as const,
+    confirm: write,
+    async preview(ctx: Ctx, input: { campaignId: string }) {
+      return ownBriefName(ctx, input.campaignId);
+    },
+    async run(
+      ctx: Ctx,
+      input: {
+        campaignId: string;
+        productSummary?: string;
+        pitch?: string;
+        mustSay?: string;
+        mustNot?: string;
+        exampleUrls?: string[];
+      },
+    ) {
+      const { campaignId, ...patch } = input;
+      return {
+        llm: model(await updateCampaignText(ctx.userId, campaignId, patch)),
+      };
+    },
+  },
+  {
+    name: "withdraw_ugc_campaign",
+    description:
+      "Take a brief that is still in review back to the draft, by campaignId from get_my_ugc_campaigns. Creators have not seen it. All fields go back to the brief draft; the person edits it on the new brief page and sends it again. Refused when they already have an unsent draft. Confirmed on a card.",
     input: z.object({ campaignId: id }).strict(),
     access: "user" as const,
     confirm: write,
+    async preview(ctx: Ctx, input: { campaignId: string }) {
+      return ownBriefName(ctx, input.campaignId);
+    },
     async run(ctx: Ctx, input: { campaignId: string }) {
-      assertUgcTopic(ctx);
-      return { llm: model(await closeCampaign(ctx.userId, input.campaignId)) };
+      const result = await withdrawToDraft(ctx.userId, input.campaignId);
+      return {
+        llm: `${model(result)} The brief is back in the draft. To edit and send it again: offer_step campaigns.`,
+      };
     },
   },
 ];

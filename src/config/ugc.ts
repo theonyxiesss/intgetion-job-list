@@ -32,6 +32,7 @@ export const UGC_CAMPAIGN_STATUSES = [
   "draft",
   "pending_review",
   "open",
+  "paused",
   "closed",
   "rejected",
 ] as const;

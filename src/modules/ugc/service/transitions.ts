@@ -19,6 +19,12 @@ export const CAMPAIGN_TRANSITIONS: readonly Edge<
   { from: "pending_review", to: "open", actors: ["admin"] },
   { from: "pending_review", to: "rejected", actors: ["admin"] },
   { from: "open", to: "closed", actors: ["company", "admin"] },
+  // D512 (29.10 answers 2 and 4): a brief can go back from review to the
+  // draft, and an open brief can pause; a paused one resumes or closes.
+  { from: "pending_review", to: "draft", actors: ["company"] },
+  { from: "open", to: "paused", actors: ["company"] },
+  { from: "paused", to: "open", actors: ["company"] },
+  { from: "paused", to: "closed", actors: ["company", "admin"] },
 ];
 
 export const PARTICIPATION_TRANSITIONS: readonly Edge<

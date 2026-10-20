@@ -20,7 +20,10 @@ import {
   reportLivePost,
   requestChanges,
   saveCreatorProfile,
+  setCampaignPaused,
   submitVideo,
+  updateCampaignText,
+  withdrawToDraft,
 } from "@/modules/ugc/service";
 
 const brief = {
@@ -88,6 +91,18 @@ const body = z.discriminatedUnion("action", [
   }),
   z.object({ action: z.literal("remind"), inviteId: z.uuid() }),
   z.object({ action: z.literal("close"), campaignId: z.uuid() }),
+  z.object({ action: z.literal("pause"), campaignId: z.uuid() }),
+  z.object({ action: z.literal("resume"), campaignId: z.uuid() }),
+  z.object({ action: z.literal("withdraw"), campaignId: z.uuid() }),
+  z.object({
+    action: z.literal("editText"),
+    campaignId: z.uuid(),
+    productSummary: z.string().max(400).optional(),
+    pitch: z.string().max(2000).optional(),
+    mustSay: z.string().max(1000).optional(),
+    mustNot: z.string().max(1000).optional(),
+    exampleUrls: z.array(z.string().max(500)).max(10).optional(),
+  }),
   z.object({ action: z.literal("join"), campaignId: z.uuid() }),
   z.object({ action: z.literal("redeem"), payload: z.string().max(64) }),
   z.object({ action: z.literal("markPaid"), payoutId: z.uuid() }),
@@ -169,6 +184,21 @@ export async function POST(request: Request) {
     }
     if (input.action === "close") {
       return Response.json(await closeCampaign(id, input.campaignId));
+    }
+    // D512: pause, resume, back to the draft, and text changes.
+    if (input.action === "pause" || input.action === "resume") {
+      return Response.json(
+        await setCampaignPaused(id, input.campaignId, input.action === "pause"),
+      );
+    }
+    if (input.action === "withdraw") {
+      const result = await withdrawToDraft(id, input.campaignId);
+      return Response.json({ ...result, redirect: "/campaigns/new" });
+    }
+    if (input.action === "editText") {
+      const { action, campaignId, ...patch } = input;
+      void action;
+      return Response.json(await updateCampaignText(id, campaignId, patch));
     }
     if (input.action === "join") {
       return Response.json(await issueJoinLink(id, input.campaignId));

@@ -22,6 +22,9 @@ export const ACCOUNT_CARD_TOOLS = [
   "propose_account_update",
   "set_email_language",
   "propose_company_update",
+  "set_ugc_status",
+  "propose_ugc_update",
+  "withdraw_ugc_campaign",
 ] as const;
 
 export function isAccountCardTool(tool: string): boolean {
@@ -91,6 +94,32 @@ export function AccountCardText({
       action: JOB_STATUS_ACTIONS.has(action) ? action : "other",
       name,
     });
+  }
+  if (tool === "set_ugc_status") {
+    const action = typeof a.action === "string" ? a.action : "";
+    return t("set_ugc_status", {
+      action: action === "pause" || action === "resume" ? action : "close",
+      name,
+    });
+  }
+  if (tool === "propose_ugc_update") {
+    const changes = (
+      ["productSummary", "pitch", "mustSay", "mustNot", "exampleUrls"] as const
+    )
+      .filter((key) =>
+        Array.isArray(a[key])
+          ? (a[key] as unknown[]).length > 0
+          : typeof a[key] === "string" && String(a[key]).trim(),
+      )
+      .map((key) => {
+        const raw = Array.isArray(a[key])
+          ? (a[key] as unknown[]).map(String).join(", ")
+          : String(a[key]).trim();
+        const value = raw.length > 80 ? `${raw.slice(0, 80)}…` : raw;
+        return `${t(`ugcFields.${key}`)}: ${value}`;
+      })
+      .join("; ");
+    return t("propose_ugc_update", { name, changes });
   }
   if (tool === "propose_company_update") {
     const changes = (

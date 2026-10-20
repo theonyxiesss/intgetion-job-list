@@ -2834,3 +2834,10 @@
 - Миграции: нет.
 - Проверки D511: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1448 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.
 - D511 выкладка: коммит `92fd375`, Vercel `dpl_FvmKPDMeXnLYC94aD75oFvCXiBK8` success; `/ru`, `/ru/chat` → 200, `/ru/employer/company` → 307 на вход.
+
+## [2026-10-21] — D512 — этап 2Б: пауза, правка текста и отзыв брифа
+
+- Founder: на вопросы 29.10 — «Да, можно забрать», «Только текст», «Да, нужна» (с миграцией).
+- Сделано: `config/ugc.ts` (`paused`), `db/schema/ugc.ts`, `ugc/service/transitions.ts` (4 перехода), `rules.ts` (`acceptsSubmissions`), `store.ts`, `memory.ts`, `repo/ugc-repo.ts` (`saveCampaignText`, `deleteCampaign`, `listReviewed` с паузой), `commands.ts` (`setCampaignPaused`, `updateCampaignText`, `withdrawCampaign`, сдача на паузе), `drafts.ts` (`withdrawToDraft`), `service/index.ts`, `bot-tools.ts` (`set_ugc_status` вместо `close_ugc_campaign`, `propose_ugc_update`, `withdraw_ugc_campaign`); `api/ugc/route.ts` (`pause`, `resume`, `withdraw`, `editText`); `ugc/ui/action.tsx` (переход после отзыва, текст отказа), новый `ugc/ui/brief-text-form.tsx`, страница `campaigns/[id]`; `components/bot/account-card.tsx`; тексты `ugc.*` и `chat.account.*` в 7 локалях; промпт 40. Тесты: новый `ugc/__tests__/brief-controls.test.ts` (8), `transitions.test.ts`, `account-tools.test.ts`, `memory.test.ts`. Документы: D512, `docs/tz/27-ugc.md` (27.4 и таблица бота), `docs/tz/29-spoki-cards.md`, CURRENT.
+- Миграция `0067_ugc_campaign_paused.sql` применена путём D438 до выкладки: журнал 63 → 64, проверка статуса с `paused`, владелец `migrator`, RLS принудителен, членство `postgres` в `migrator` — `set=false`. Советники security: только прежние.
+- Проверки D512: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0; `pnpm test` → 1: 1456 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0 (с `SWC_NATIVE_BINDING_CACHE`, без него SWC не грузится на этой машине). Тестов маршрута `/api/ugc` в проекте нет; действия идут через покрытые функции сервиса.

@@ -18,6 +18,7 @@ import {
 } from "@/modules/ugc/service";
 import { StepTrack } from "@/modules/ugc/ui/step-track";
 import { UgcAction } from "@/modules/ugc/ui/action";
+import { BriefTextForm } from "@/modules/ugc/ui/brief-text-form";
 import { UgcChanges, UgcReport, UgcSubmit } from "@/modules/ugc/ui/fields";
 import { RouteMessages } from "@/components/shell/route-messages";
 
@@ -163,11 +164,64 @@ export default async function CampaignPage({
                     body={{ campaignId: id }}
                   />
                   <UgcAction
+                    action="pause"
+                    label={t("pause")}
+                    body={{ campaignId: id }}
+                  />
+                  <UgcAction
                     action="close"
                     label={t("close")}
                     body={{ campaignId: id }}
                   />
                 </div>
+              ) : null}
+              {view.brief.status === "paused" ? (
+                <div className="flex flex-col gap-2">
+                  <p className="t-body-s text-fg-muted">{t("pausedNote")}</p>
+                  <div className="flex flex-wrap gap-3">
+                    <UgcAction
+                      action="resume"
+                      label={t("resume")}
+                      body={{ campaignId: id }}
+                    />
+                    <UgcAction
+                      action="close"
+                      label={t("close")}
+                      body={{ campaignId: id }}
+                    />
+                  </div>
+                </div>
+              ) : null}
+              {view.brief.status === "pending_review" ? (
+                <div className="flex flex-col gap-2">
+                  <p className="t-body-s text-fg-muted">{t("withdrawNote")}</p>
+                  <UgcAction
+                    action="withdraw"
+                    label={t("withdraw")}
+                    body={{ campaignId: id }}
+                  />
+                </div>
+              ) : null}
+              {view.brief.status === "open" ||
+              view.brief.status === "paused" ? (
+                <section
+                  aria-labelledby="ugc-edit-text"
+                  className="flex flex-col gap-3 rounded-lg border border-line p-4 md:p-5"
+                >
+                  <h2 id="ugc-edit-text" className="font-medium">
+                    {t("editTextTitle")}
+                  </h2>
+                  <BriefTextForm
+                    campaignId={id}
+                    initial={{
+                      productSummary: view.brief.productSummary,
+                      pitch: view.brief.pitch,
+                      mustSay: view.brief.mustSay,
+                      mustNot: view.brief.mustNot,
+                      exampleUrls: view.brief.exampleUrls,
+                    }}
+                  />
+                </section>
               ) : null}
               <ul className="flex flex-col gap-4">
                 {view.participants.map((row) => (

@@ -1,13 +1,18 @@
 import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { ugcBriefDrafts } from "@/db/schema";
-import { notFound, unauthenticated, validationError } from "@/lib/http";
+import {
+  HttpError,
+  notFound,
+  unauthenticated,
+  validationError,
+} from "@/lib/http";
 import {
   getCompaniesForUser,
   findMemberRole,
 } from "@/modules/companies/service";
 import { UGC_GOALS, UGC_NICHES, UGC_PLATFORMS, UGC_RIGHTS } from "@/config/ugc";
-import { createCampaign } from "./commands";
+import { createCampaign, withdrawCampaign } from "./commands";
 
 export type BriefDraft = Record<string, unknown>;
 export type BriefDraftRow = {
@@ -505,4 +510,64 @@ export async function confirmBriefDraft(
       and(eq(ugcBriefDrafts.id, current.id), eq(ugcBriefDrafts.userId, userId)),
     );
   return { ...result, productName: String(d.productName) };
+}
+
+/**
+ * A brief taken back from review becomes the person's draft again (D512),
+ * the reverse of `confirmBriefDraft`. An unsent draft of their own is not
+ * overwritten: they send or reset it first.
+ */
+export async function withdrawToDraft(
+  userId: string | null,
+  campaignId: string,
+) {
+  if (!userId) throw unauthenticated();
+  return withdrawCampaign(userId, campaignId, async (campaign) => {
+    const [current] = await getDb()
+      .select()
+      .from(ugcBriefDrafts)
+      .where(eq(ugcBriefDrafts.userId, userId))
+      .limit(1);
+    if (current && Object.keys(current.draft ?? {}).length > 0)
+      throw new HttpError(
+        409,
+        "UGC_DRAFT_IN_PROGRESS",
+        "Send or reset the unsent brief draft first",
+      );
+    const split = (value: string) =>
+      value
+        .split(/;\s*/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    const draft: BriefDraft = {
+      productName: campaign.productName,
+      description: campaign.productSummary,
+      goal: campaign.goal,
+      niche: campaign.niches[0],
+      audience: campaign.audience,
+      countries: campaign.countries ?? [],
+      languages: campaign.languages,
+      mustSay: split(campaign.mustSay),
+      mustNot: split(campaign.mustNot),
+      platform: campaign.platforms[0],
+      videoCount: campaign.videosWanted,
+      rewardCents: Number(campaign.bountyMinor),
+      deadline: campaign.deadline,
+      rights: campaign.rights,
+      pitch: campaign.pitch,
+      links: campaign.exampleUrls,
+    };
+    await getDb()
+      .insert(ugcBriefDrafts)
+      .values({ userId, companyId: campaign.companyId, draft, assumptions: [] })
+      .onConflictDoUpdate({
+        target: ugcBriefDrafts.userId,
+        set: {
+          companyId: campaign.companyId,
+          draft,
+          assumptions: [],
+          updatedAt: new Date(),
+        },
+      });
+  });
 }

@@ -209,6 +209,21 @@ export function acceptsNewWork(input: {
   return input.status === "open" && input.deadline >= input.today;
 }
 
+/**
+ * Hired creators keep working while a brief is paused (D512): a video can
+ * still be handed in until the deadline. New applications and hires wait.
+ */
+export function acceptsSubmissions(input: {
+  status: string;
+  deadline: string;
+  today: string;
+}): boolean {
+  return (
+    (input.status === "open" || input.status === "paused") &&
+    input.deadline >= input.today
+  );
+}
+
 export function assertAcceptsNewWork(input: {
   status: string;
   deadline: string;

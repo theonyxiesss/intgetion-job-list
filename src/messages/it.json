@@ -1842,6 +1842,16 @@
         "country": "Paese",
         "size": "Dimensione",
         "timezone": "Fuso orario dell’azienda"
+      },
+      "set_ugc_status": "{action, select, pause {Mettere in pausa il brief «{name}». Nuove candidature e assunzioni si fermano; i creator assunti consegnano i video.} resume {Riaprire il brief «{name}» alle candidature.} other {Chiudere il brief «{name}». Niente nuove candidature né video.}}",
+      "propose_ugc_update": "Modificare il testo del brief «{name}»: {changes}.",
+      "withdraw_ugc_campaign": "Ritirare il brief «{name}» dalla verifica alla bozza. Puoi modificarlo e inviarlo di nuovo.",
+      "ugcFields": {
+        "productSummary": "Cos’è",
+        "pitch": "Pitch",
+        "mustSay": "Cosa dire",
+        "mustNot": "Cosa non dire",
+        "exampleUrls": "Esempi"
       }
     },
     "confirm": {
@@ -3912,7 +3922,8 @@
       "submitted": "Inviato",
       "changes_requested": "Revisione chiesta",
       "accepted": "Accettato",
-      "winner": "Vincitore"
+      "winner": "Vincitore",
+      "paused": "In pausa"
     },
     "fields": {
       "company": "Azienda",
@@ -3979,7 +3990,17 @@
     "priceUsual": "Di solito {min}–{max} per video",
     "pricePresets": "Importi pronti",
     "budget": "Budget: {videos} × {price} = {total}. Non si addebita nulla.",
-    "rightsHint": "Per i diritti pubblicitari e whitelist il prezzo di solito è più alto che per l’organico."
+    "rightsHint": "Per i diritti pubblicitari e whitelist il prezzo di solito è più alto che per l’organico.",
+    "pause": "Metti in pausa",
+    "resume": "Riprendi",
+    "withdraw": "Ritira dalla verifica",
+    "pausedNote": "Il brief è in pausa: niente nuove candidature o assunzioni; i creator assunti consegnano i video e tu decidi.",
+    "withdrawNote": "Il brief è ancora in verifica e i creator non l’hanno visto. Puoi riportarlo in bozza, modificarlo e inviarlo di nuovo.",
+    "draftInProgress": "Hai una bozza di brief non inviata. Inviala o reimpostala, poi ritira questo brief.",
+    "editTextTitle": "Testo del brief",
+    "editTextHint": "Puoi cambiare descrizione, pitch, cosa dire e cosa non dire, ed esempi. Compenso, diritti, numero di video e scadenza restano: i creator assunti li hanno accettati.",
+    "editTextSave": "Salva testo",
+    "editTextSaved": "Il testo del brief è salvato."
   },
   "chatFreelance": {
     "focus": "Parliamo di «{title}».",

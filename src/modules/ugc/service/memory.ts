@@ -71,6 +71,12 @@ export class MemoryUgcStore implements UgcStore {
   async saveCampaign(row: Campaign) {
     this.campaigns.set(row.id, row);
   }
+  async saveCampaignText(row: Campaign) {
+    this.campaigns.set(row.id, row);
+  }
+  async deleteCampaign(id: string) {
+    this.campaigns.delete(id);
+  }
   async getCampaign(id: string) {
     return this.campaigns.get(id) ?? null;
   }
@@ -83,7 +89,10 @@ export class MemoryUgcStore implements UgcStore {
   }
   async listReviewed() {
     return [...this.campaigns.values()].filter(
-      (row) => row.status === "open" || row.status === "closed",
+      (row) =>
+        row.status === "open" ||
+        row.status === "paused" ||
+        row.status === "closed",
     );
   }
   async countCreatedSince(companyId: string, since: Date) {

@@ -19,6 +19,7 @@ import {
   validationError,
 } from "@/lib/http";
 import {
+  acceptsSubmissions,
   assertAcceptsNewWork,
   assertBounty,
   assertHireRoom,
@@ -430,7 +431,11 @@ export async function readCampaign(userId: string | null, campaignId: string) {
     );
     return {
       role: "company" as const,
-      brief: { ...briefForReaders(campaign), pitch: campaign.pitch },
+      brief: {
+        ...briefForReaders(campaign),
+        pitch: campaign.pitch,
+        exampleUrls: campaign.exampleUrls,
+      },
       participants: await Promise.all(
         invites.map(async (invite, index) => {
           const submission =
@@ -921,11 +926,19 @@ export async function submitVideo(
   const store = await db();
   const { invite, campaign } = await inviteForCreator(store, inviteId, id);
   assertHired(invite.status);
-  assertAcceptsNewWork({
-    status: campaign.status,
-    deadline: campaign.deadline,
-    today: day(store.now()),
-  });
+  // A paused brief still takes the hired creators' videos (D512).
+  if (
+    !acceptsSubmissions({
+      status: campaign.status,
+      deadline: campaign.deadline,
+      today: day(store.now()),
+    })
+  )
+    assertAcceptsNewWork({
+      status: campaign.status,
+      deadline: campaign.deadline,
+      today: day(store.now()),
+    });
   assertSubmissionUrl(url);
   const note = hook.trim();
   if (note.length > 300) {
@@ -1195,6 +1208,122 @@ export async function closeCampaign(userId: string | null, campaignId: string) {
   campaign.status = "closed";
   await store.saveCampaign(campaign);
   return { status: campaign.status };
+}
+
+/**
+ * Pause or resume an open brief (D512, 29.10 answer 4): no new
+ * applications, hires or join links while paused; hired creators still
+ * hand in videos and the company still decides them.
+ */
+export async function setCampaignPaused(
+  userId: string | null,
+  campaignId: string,
+  paused: boolean,
+) {
+  const id = requireUser(userId);
+  const store = await db();
+  const campaign = await campaignForMember(store, campaignId, id);
+  const to = paused ? "paused" : "open";
+  checkCampaignTransition({ from: campaign.status, to, actor: "company" });
+  campaign.status = to;
+  await store.saveCampaign(campaign);
+  await store.audit(
+    id,
+    `ugc.campaign_${paused ? "pause" : "resume"}`,
+    campaign.id,
+  );
+  return { status: campaign.status, productName: campaign.productName };
+}
+
+/**
+ * Take a brief back from review (D512, 29.10 answer 2). Nobody but the
+ * company and the admin saw it, so it goes back to the draft: `toDraft`
+ * writes the fields there first, then the brief leaves the review queue.
+ * A paid-in budget would block it; the wallet is open only after review.
+ */
+export async function withdrawCampaign(
+  userId: string | null,
+  campaignId: string,
+  toDraft: (campaign: Campaign) => Promise<void>,
+) {
+  const id = requireUser(userId);
+  const store = await db();
+  const campaign = await campaignForMember(store, campaignId, id);
+  checkCampaignTransition({
+    from: campaign.status,
+    to: "draft",
+    actor: "company",
+  });
+  if ((await store.confirmedDepositMinor(campaign.id)) !== null)
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "A brief with a paid-in budget cannot go back to the draft",
+    );
+  await toDraft(campaign);
+  await store.deleteCampaign(campaign.id);
+  await store.audit(id, "ugc.campaign_withdraw", campaign.id);
+  return { status: "draft" as const, productName: campaign.productName };
+}
+
+export type BriefTextPatch = {
+  productSummary?: string;
+  pitch?: string;
+  mustSay?: string;
+  mustNot?: string;
+  exampleUrls?: string[];
+};
+
+/**
+ * The texts of an open or paused brief (D512, 29.10 answer 3): what it is,
+ * the pitch, what to say and not to say, example links. Reward, rights,
+ * the number of videos and the deadline stay: hired creators agreed to them.
+ */
+export async function updateCampaignText(
+  userId: string | null,
+  campaignId: string,
+  patch: BriefTextPatch,
+) {
+  const id = requireUser(userId);
+  const store = await db();
+  const campaign = await campaignForMember(store, campaignId, id);
+  if (campaign.status !== "open" && campaign.status !== "paused")
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "Only an open or paused brief takes text changes",
+    );
+  const named = Object.entries(patch).filter(
+    ([, value]) => value !== undefined,
+  );
+  if (!named.length)
+    throw validationError([{ path: "brief", problem: "required" }]);
+  const next = { ...campaign };
+  if (patch.productSummary !== undefined) {
+    const value = patch.productSummary.trim();
+    if (!value || value.length > 400)
+      throw validationError([{ path: "productSummary", problem: "length" }]);
+    next.productSummary = value;
+  }
+  for (const key of ["mustSay", "mustNot"] as const) {
+    if (patch[key] === undefined) continue;
+    const value = patch[key]!.trim();
+    if (!value || value.length > 1000)
+      throw validationError([{ path: key, problem: "length" }]);
+    next[key] = value;
+  }
+  if (patch.pitch !== undefined) {
+    const value = patch.pitch.trim();
+    if (value.length > L.pitchMax)
+      throw validationError([{ path: "pitch", problem: "length" }]);
+    assertNoContacts(value, "pitch");
+    next.pitch = value;
+  }
+  if (patch.exampleUrls !== undefined)
+    next.exampleUrls = httpsExamples(patch.exampleUrls);
+  await store.saveCampaignText(next);
+  await store.audit(id, "ugc.campaign_text", campaign.id);
+  return { status: next.status, productName: next.productName };
 }
 
 export async function issueJoinLink(userId: string | null, campaignId: string) {

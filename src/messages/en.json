@@ -1842,6 +1842,16 @@
         "country": "Country",
         "size": "Size",
         "timezone": "Company time zone"
+      },
+      "set_ugc_status": "{action, select, pause {Pause the brief “{name}”. New applications and hires stop; hired creators hand in videos.} resume {Open the brief “{name}” to applications again.} other {Close the brief “{name}”. No new applications or videos.}}",
+      "propose_ugc_update": "Change the text of the brief “{name}”: {changes}.",
+      "withdraw_ugc_campaign": "Take the brief “{name}” back from review to the draft. You can edit it and send it again.",
+      "ugcFields": {
+        "productSummary": "What it is",
+        "pitch": "Pitch",
+        "mustSay": "What to say",
+        "mustNot": "What not to say",
+        "exampleUrls": "Examples"
       }
     },
     "confirm": {
@@ -4418,7 +4428,8 @@
       "submitted": "Submitted",
       "changes_requested": "Revision requested",
       "accepted": "Accepted",
-      "winner": "Winner"
+      "winner": "Winner",
+      "paused": "Paused"
     },
     "fields": {
       "company": "Company",
@@ -4485,7 +4496,17 @@
     "priceUsual": "Usually {min}–{max} per video",
     "pricePresets": "Ready amounts",
     "budget": "Budget: {videos} × {price} = {total}. Nothing is charged.",
-    "rightsHint": "For ads and whitelist rights the price is usually higher than for organic."
+    "rightsHint": "For ads and whitelist rights the price is usually higher than for organic.",
+    "pause": "Pause",
+    "resume": "Resume",
+    "withdraw": "Take back from review",
+    "pausedNote": "The brief is paused: no new applications or hires; hired creators hand in videos and you decide them.",
+    "withdrawNote": "The brief is still in review and creators have not seen it. You can take it back to the draft, edit it and send it again.",
+    "draftInProgress": "You have an unsent brief draft. Send or reset it, then take this brief back.",
+    "editTextTitle": "Brief text",
+    "editTextHint": "You can change the description, pitch, what to say and not to say, and examples. Reward, rights, the number of videos and the deadline stay: hired creators agreed to them.",
+    "editTextSave": "Save text",
+    "editTextSaved": "The brief text is saved."
   },
   "chatFreelance": {
     "focus": "We are discussing “{title}”.",

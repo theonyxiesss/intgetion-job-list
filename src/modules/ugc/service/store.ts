@@ -20,10 +20,14 @@ export interface UgcStore {
   listOptInProfiles(): Promise<CreatorProfile[]>;
   insertCampaign(row: Campaign): Promise<void>;
   saveCampaign(row: Campaign): Promise<void>;
+  /** The brief texts a company may change while it is open or paused (D512). */
+  saveCampaignText(row: Campaign): Promise<void>;
+  /** A brief taken back from review before anyone saw it (D512). */
+  deleteCampaign(id: string): Promise<void>;
   getCampaign(id: string): Promise<Campaign | null>;
   listByCompanies(companyIds: readonly string[]): Promise<Campaign[]>;
   listOpen(): Promise<Campaign[]>;
-  /** Briefs an admin let through (open or closed), for the price guide (D464). */
+  /** Briefs an admin let through (open, paused or closed), for the price guide (D464). */
   listReviewed(): Promise<Campaign[]>;
   countCreatedSince(companyId: string, since: Date): Promise<number>;
   getInvite(id: string): Promise<Invite | null>;

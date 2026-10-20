@@ -1842,6 +1842,16 @@
         "country": "Land",
         "size": "Größe",
         "timezone": "Zeitzone des Unternehmens"
+      },
+      "set_ugc_status": "{action, select, pause {Das Briefing „{name}“ pausieren. Neue Bewerbungen und Buchungen stoppen; gebuchte Creator reichen Videos ein.} resume {Das Briefing „{name}“ wieder für Bewerbungen öffnen.} other {Das Briefing „{name}“ schließen. Keine neuen Bewerbungen oder Videos.}}",
+      "propose_ugc_update": "Den Text des Briefings „{name}“ ändern: {changes}.",
+      "withdraw_ugc_campaign": "Das Briefing „{name}“ aus der Prüfung in den Entwurf zurückholen. Sie können es ändern und erneut senden.",
+      "ugcFields": {
+        "productSummary": "Was es ist",
+        "pitch": "Pitch",
+        "mustSay": "Was gesagt werden soll",
+        "mustNot": "Was nicht gesagt werden soll",
+        "exampleUrls": "Beispiele"
       }
     },
     "confirm": {
@@ -3912,7 +3922,8 @@
       "submitted": "Eingereicht",
       "changes_requested": "Überarbeitung erbeten",
       "accepted": "Angenommen",
-      "winner": "Gewinner"
+      "winner": "Gewinner",
+      "paused": "Pausiert"
     },
     "fields": {
       "company": "Unternehmen",
@@ -3979,7 +3990,17 @@
     "priceUsual": "Meist {min}–{max} pro Video",
     "pricePresets": "Fertige Beträge",
     "budget": "Budget: {videos} × {price} = {total}. Nichts wird abgebucht.",
-    "rightsHint": "Für Werbe- und Whitelist-Rechte liegt der Preis meist höher als für organische Posts."
+    "rightsHint": "Für Werbe- und Whitelist-Rechte liegt der Preis meist höher als für organische Posts.",
+    "pause": "Pausieren",
+    "resume": "Fortsetzen",
+    "withdraw": "Aus der Prüfung zurückholen",
+    "pausedNote": "Das Briefing ist pausiert: keine neuen Bewerbungen oder Buchungen; gebuchte Creator reichen Videos ein, Sie entscheiden.",
+    "withdrawNote": "Das Briefing ist noch in Prüfung, Creator haben es nicht gesehen. Sie können es in den Entwurf zurückholen, ändern und erneut senden.",
+    "draftInProgress": "Sie haben einen nicht gesendeten Briefing-Entwurf. Senden oder verwerfen Sie ihn, dann holen Sie dieses Briefing zurück.",
+    "editTextTitle": "Text des Briefings",
+    "editTextHint": "Sie können Beschreibung, Pitch, was gesagt und was nicht gesagt werden soll, und Beispiele ändern. Vergütung, Rechte, Anzahl der Videos und Frist bleiben: gebuchte Creator haben zugestimmt.",
+    "editTextSave": "Text speichern",
+    "editTextSaved": "Der Text des Briefings ist gespeichert."
   },
   "chatFreelance": {
     "focus": "Wir besprechen „{title}“.",
