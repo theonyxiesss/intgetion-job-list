@@ -233,6 +233,24 @@ export async function saveProfile(
     });
 }
 
+/** Name and place from the shared profile, on an existing row only (D504). */
+export async function setBasics(
+  userId: string,
+  basics: {
+    fullName?: string | null;
+    country?: string | null;
+    city?: string | null;
+    timezone?: string;
+  },
+): Promise<boolean> {
+  const rows = await getDb()
+    .update(candidateProfiles)
+    .set({ ...basics, updatedAt: new Date() })
+    .where(eq(candidateProfiles.userId, userId))
+    .returning({ userId: candidateProfiles.userId });
+  return rows.length > 0;
+}
+
 export async function setCompleteness(
   userId: string,
   completeness: number,

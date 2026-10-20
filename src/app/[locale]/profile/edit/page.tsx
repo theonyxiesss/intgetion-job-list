@@ -8,6 +8,7 @@ import { HttpError } from "@/lib/http";
 import { requireUser } from "@/lib/auth-guards";
 import { getOwnCandidate } from "@/modules/candidates/service";
 import { getOwnContacts } from "@/modules/contacts/service";
+import { readSharedProfile } from "@/modules/users/service";
 import { redirect } from "@/i18n/navigation";
 import { Container, PageHeader } from "@/components/ui/container";
 import { RouteMessages } from "@/components/shell/route-messages";
@@ -95,6 +96,21 @@ export default async function EditProfilePage({
     initial.sectors = profile.preferences.sectors;
     initial.seniority = profile.preferences.seniority ?? "";
     initial.jobSearchStatus = profile.jobSearchStatus;
+  }
+  if (!profile) {
+    // A new candidate profile starts from the shared one (D504).
+    const shared = await readSharedProfile(user.id);
+    if (shared) {
+      initial.fullName = shared.displayName ?? "";
+      initial.country = shared.country ?? "";
+      initial.city = shared.city ?? "";
+      initial.timezone = shared.timezone ?? "";
+      const first = shared.languages[0];
+      if (first) {
+        initial.language = first.code;
+        if (first.level) initial.languageLevel = first.level;
+      }
+    }
   }
   if (contacts) {
     initial.contactEmail = contacts.email;

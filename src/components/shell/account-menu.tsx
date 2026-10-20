@@ -11,6 +11,7 @@ import {
   Settings,
   Shield,
   User,
+  UserRound,
   type LucideIcon,
 } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
@@ -22,6 +23,7 @@ import { Link } from "@/i18n/navigation";
 export type AccountLink = { href: string; label: string };
 
 const LINK_ICONS: Record<string, LucideIcon | undefined> = {
+  "/account": UserRound,
   "/profile": User,
   "/applications": Check,
   "/saved-jobs": Bookmark,

@@ -40,6 +40,16 @@ function slugify(name: string) {
   return slug || "company";
 }
 
+/** Updates the name on an existing employer row only (D504). */
+export async function updateEmployerFullName(userId: string, fullName: string) {
+  const rows = await getDb()
+    .update(employerProfiles)
+    .set({ fullName, updatedAt: new Date() })
+    .where(eq(employerProfiles.userId, userId))
+    .returning({ userId: employerProfiles.userId });
+  return rows.length > 0;
+}
+
 export async function setEmployerFullName(userId: string, fullName: string) {
   await getDb()
     .insert(employerProfiles)

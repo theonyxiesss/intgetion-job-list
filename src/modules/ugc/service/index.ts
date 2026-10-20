@@ -73,6 +73,8 @@ export {
   listMyInvites,
   listOpenCampaigns,
   matchOpenCampaigns,
+  getOwnCreatorProfile,
+  applySharedToCreator,
   listOwedPayouts,
   listReviewQueue,
   noteDeadlines,

@@ -4124,5 +4124,62 @@
   },
   "reminders": {
     "telegram": "Promemoria da Spoki: {text}\n{when}"
+  },
+  "account": {
+    "nav": "Il mio account",
+    "title": "Il mio account",
+    "intro": "Un account per lavoro, assunzioni, video dei creator e freelance. Compila i tuoi dati una volta e tutti i ruoli li usano.",
+    "profile": {
+      "title": "Su di me",
+      "text": "I ruoli mostrano questi dati solo dove è consentito. I contatti non sono salvati qui.",
+      "displayName": "Nome",
+      "displayNameHelp": "Come creator puoi indicare uno pseudonimo in quel profilo.",
+      "country": "Paese",
+      "countryHelp": "Codice di due lettere, ad esempio PL o DE.",
+      "city": "Città",
+      "timezone": "Fuso orario",
+      "timezoneHelp": "Ad esempio Europe/Warsaw.",
+      "languages": "Lingue",
+      "languagesHelp": "Separate da virgole, livello facoltativo: en C1, ru native.",
+      "languagesError": "Scrivi un codice lingua di due lettere e un livello A1–C2 o native, separati da virgole.",
+      "about": "Su di me",
+      "save": "Salva",
+      "saving": "Salvataggio…",
+      "saved": "Salvato. I tuoi ruoli sono aggiornati.",
+      "failed": "Impossibile salvare. Controlla i campi e riprova."
+    },
+    "roles": {
+      "title": "Ruoli",
+      "text": "Un ruolo si attiva quando inizi a usarlo. Puoi averne quanti vuoi.",
+      "active": "Attivo",
+      "open": "Apri",
+      "start": "Inizia",
+      "candidate": {
+        "name": "Cerco lavoro",
+        "on": "Profilo completo al {score}%",
+        "off": "Nessun profilo candidato"
+      },
+      "employer": {
+        "name": "Assumo",
+        "on": "{companies, plural, one {# azienda} other {# aziende}} · {jobs, plural, one {# offerta} other {# offerte}}",
+        "off": "Nessuna azienda"
+      },
+      "creator": {
+        "name": "Creator video",
+        "on": "Profilo attivo, le aziende possono trovarti",
+        "paused": "Profilo in pausa",
+        "off": "Nessun profilo creator"
+      },
+      "freelancer": {
+        "name": "Freelance",
+        "on": "{accepting, select, true {Accetti ordini} other {Non accetti ordini}} · {services, plural, one {# servizio} other {# servizi}}",
+        "off": "Nessun servizio"
+      },
+      "client": {
+        "name": "Ordino video",
+        "on": "{briefs, plural, one {# brief} other {# brief}}",
+        "off": "Nessun brief"
+      }
+    }
   }
 }

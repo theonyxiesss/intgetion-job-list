@@ -4124,5 +4124,62 @@
   },
   "reminders": {
     "telegram": "Recordatorio de Spoki: {text}\n{when}"
+  },
+  "account": {
+    "nav": "Mi cuenta",
+    "title": "Mi cuenta",
+    "intro": "Una cuenta para empleo, contratación, videos de creadores y freelance. Completa tus datos una vez y todos los roles los usan.",
+    "profile": {
+      "title": "Sobre mí",
+      "text": "Los roles muestran estos datos solo donde está permitido. Los contactos no se guardan aquí.",
+      "displayName": "Nombre",
+      "displayNameHelp": "Como creador puedes poner un seudónimo aparte en ese perfil.",
+      "country": "País",
+      "countryHelp": "Código de dos letras, por ejemplo PL o DE.",
+      "city": "Ciudad",
+      "timezone": "Zona horaria",
+      "timezoneHelp": "Por ejemplo Europe/Warsaw.",
+      "languages": "Idiomas",
+      "languagesHelp": "Separados por comas, nivel opcional: en C1, ru native.",
+      "languagesError": "Escribe un código de idioma de dos letras y un nivel A1–C2 o native, separados por comas.",
+      "about": "Sobre mí",
+      "save": "Guardar",
+      "saving": "Guardando…",
+      "saved": "Guardado. Tus roles se actualizaron.",
+      "failed": "No se pudo guardar. Revisa los campos e inténtalo de nuevo."
+    },
+    "roles": {
+      "title": "Roles",
+      "text": "Un rol se activa cuando empiezas a usarlo. Puedes tener tantos como quieras.",
+      "active": "Activo",
+      "open": "Abrir",
+      "start": "Empezar",
+      "candidate": {
+        "name": "Busco empleo",
+        "on": "Perfil completo al {score}%",
+        "off": "Aún no hay perfil de candidato"
+      },
+      "employer": {
+        "name": "Contrato",
+        "on": "{companies, plural, one {# empresa} other {# empresas}} · {jobs, plural, one {# vacante} other {# vacantes}}",
+        "off": "Aún no hay empresa"
+      },
+      "creator": {
+        "name": "Creador de videos",
+        "on": "Perfil activo, las empresas pueden encontrarte",
+        "paused": "Perfil en pausa",
+        "off": "Aún no hay perfil de creador"
+      },
+      "freelancer": {
+        "name": "Freelancer",
+        "on": "{accepting, select, true {Aceptas pedidos} other {No aceptas pedidos}} · {services, plural, one {# servicio} other {# servicios}}",
+        "off": "Aún no hay servicios"
+      },
+      "client": {
+        "name": "Encargo videos",
+        "on": "{briefs, plural, one {# brief} other {# briefs}}",
+        "off": "Aún no hay briefs"
+      }
+    }
   }
 }

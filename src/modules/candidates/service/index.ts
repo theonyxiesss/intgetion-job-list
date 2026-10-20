@@ -21,6 +21,7 @@ export type { UpdateCandidateInput } from "../schemas";
 export { isIanaTimeZone } from "./timezone";
 export {
   getCandidateForViewer,
+  applySharedBasics,
   getOwnCandidate,
   hasCandidateProfile,
   setProfileHidden,

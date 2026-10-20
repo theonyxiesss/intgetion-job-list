@@ -4630,5 +4630,62 @@
   },
   "reminders": {
     "telegram": "Reminder from Spoki: {text}\n{when}"
+  },
+  "account": {
+    "nav": "My account",
+    "title": "My account",
+    "intro": "One account for jobs, hiring, creator videos and freelance. Fill in your details once and every role uses them.",
+    "profile": {
+      "title": "About me",
+      "text": "Roles show these details only where they are allowed to. Contacts are not kept here.",
+      "displayName": "Name",
+      "displayNameHelp": "As a creator you can set a separate nickname in that profile.",
+      "country": "Country",
+      "countryHelp": "Two-letter code, for example PL or DE.",
+      "city": "City",
+      "timezone": "Time zone",
+      "timezoneHelp": "For example Europe/Warsaw.",
+      "languages": "Languages",
+      "languagesHelp": "Comma separated, level optional: en C1, ru native.",
+      "languagesError": "Write a two-letter language code and a level A1–C2 or native, separated by commas.",
+      "about": "About me",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved. Your roles are updated.",
+      "failed": "Could not save. Check the fields and try again."
+    },
+    "roles": {
+      "title": "Roles",
+      "text": "A role turns on when you start using it. You can have as many as you like.",
+      "active": "On",
+      "open": "Open",
+      "start": "Start",
+      "candidate": {
+        "name": "Looking for work",
+        "on": "Profile {score}% complete",
+        "off": "No candidate profile yet"
+      },
+      "employer": {
+        "name": "Hiring",
+        "on": "{companies, plural, one {# company} other {# companies}} · {jobs, plural, one {# job} other {# jobs}}",
+        "off": "No company yet"
+      },
+      "creator": {
+        "name": "Video creator",
+        "on": "Profile on, companies can find you",
+        "paused": "Profile paused",
+        "off": "No creator profile yet"
+      },
+      "freelancer": {
+        "name": "Freelancer",
+        "on": "{accepting, select, true {Taking orders} other {Not taking orders}} · {services, plural, one {# service} other {# services}}",
+        "off": "No services yet"
+      },
+      "client": {
+        "name": "Ordering videos",
+        "on": "{briefs, plural, one {# brief} other {# briefs}}",
+        "off": "No briefs yet"
+      }
+    }
   }
 }

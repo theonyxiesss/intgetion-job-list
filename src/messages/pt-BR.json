@@ -4124,5 +4124,62 @@
   },
   "reminders": {
     "telegram": "Lembrete do Spoki: {text}\n{when}"
+  },
+  "account": {
+    "nav": "Minha conta",
+    "title": "Minha conta",
+    "intro": "Uma conta para vagas, contratação, vídeos de criadores e freelance. Preencha seus dados uma vez e todos os papéis os usam.",
+    "profile": {
+      "title": "Sobre mim",
+      "text": "Os papéis mostram estes dados só onde é permitido. Contatos não ficam aqui.",
+      "displayName": "Nome",
+      "displayNameHelp": "Como criador você pode definir um apelido próprio nesse perfil.",
+      "country": "País",
+      "countryHelp": "Código de duas letras, por exemplo PL ou DE.",
+      "city": "Cidade",
+      "timezone": "Fuso horário",
+      "timezoneHelp": "Por exemplo Europe/Warsaw.",
+      "languages": "Idiomas",
+      "languagesHelp": "Separados por vírgula, nível opcional: en C1, ru native.",
+      "languagesError": "Escreva um código de idioma de duas letras e um nível A1–C2 ou native, separados por vírgula.",
+      "about": "Sobre mim",
+      "save": "Salvar",
+      "saving": "Salvando…",
+      "saved": "Salvo. Seus papéis foram atualizados.",
+      "failed": "Não foi possível salvar. Confira os campos e tente de novo."
+    },
+    "roles": {
+      "title": "Papéis",
+      "text": "Um papel é ativado quando você começa a usá-lo. Você pode ter quantos quiser.",
+      "active": "Ativo",
+      "open": "Abrir",
+      "start": "Começar",
+      "candidate": {
+        "name": "Procuro trabalho",
+        "on": "Perfil {score}% completo",
+        "off": "Ainda sem perfil de candidato"
+      },
+      "employer": {
+        "name": "Contrato",
+        "on": "{companies, plural, one {# empresa} other {# empresas}} · {jobs, plural, one {# vaga} other {# vagas}}",
+        "off": "Ainda sem empresa"
+      },
+      "creator": {
+        "name": "Criador de vídeos",
+        "on": "Perfil ativo, as empresas podem encontrar você",
+        "paused": "Perfil pausado",
+        "off": "Ainda sem perfil de criador"
+      },
+      "freelancer": {
+        "name": "Freelancer",
+        "on": "{accepting, select, true {Aceitando pedidos} other {Sem aceitar pedidos}} · {services, plural, one {# serviço} other {# serviços}}",
+        "off": "Ainda sem serviços"
+      },
+      "client": {
+        "name": "Encomendo vídeos",
+        "on": "{briefs, plural, one {# brief} other {# briefs}}",
+        "off": "Ainda sem briefs"
+      }
+    }
   }
 }

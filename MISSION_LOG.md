@@ -2765,3 +2765,10 @@
 - Облако: `0064_user_profiles.sql` применена путём D438 (журнал 60 → 61; до этого сверка: последняя `0063`, таблицы не было). Проверка: владелец `migrator`, RLS включён и принудителен, 3 политики, `app_rw` SELECT/INSERT/UPDATE/DELETE, членство вернулось к `supabase_admin:set=false`. Перенос под `migrator` дал 0 строк (нет BYPASSRLS при принудительном RLS) — тот же `INSERT … SELECT` повторён под `postgres`: 3 из 3. Советники security: только прежние (search_path у 4 функций, leaked password protection).
 - Проверки D503: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1: 1414 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Ловушка записана в `.claude/skills/intgetion-supabase/SKILL.md`.
 - D503 выкладка: коммит `9333ed1`, Vercel `dpl_6i6pqbXLfsMKh2jGRrPbiRwST8Qp` success; `/ru`, `/ru/chat` → 200, `/ru/profile`, `/ru/creator` → 307 (вход), как и было.
+
+## [2026-10-20] — D504 — этап 6.2: страница «Мой аккаунт»
+
+- Founder: «да, начинай 6.2».
+- Сделано: страница `src/app/[locale]/account/page.tsx`; форма `src/modules/users/ui/shared-profile-form.tsx` и разбор языков `src/modules/users/ui/languages.ts`; схема `src/modules/users/schemas/index.ts`, `updateSharedProfile`; маршрут `src/app/api/me/profile/route.ts`; перенос в роли: `candidates` (`applySharedBasics`, `repo/profiles.ts` `setBasics`), `companies` (`applySharedEmployerName`, `updateEmployerFullName`), `ugc` (`getOwnCreatorProfile`, `applySharedToCreator`); подстановка: `src/modules/ugc/ui/profile-form.tsx`, `src/app/[locale]/creator/page.tsx`, `src/app/[locale]/profile/edit/page.tsx`; меню: `header.tsx`, `account-menu.tsx`, `nav-icons.tsx` (+ `AccountMark`), `nav-icons.test.ts`; `src/modules/seo/site.ts`; тексты `account` в 7 локалях; тест `src/modules/users/__tests__/account-form.test.ts` (5). Документы: D504, `docs/tz/29-spoki-cards.md`, CURRENT.
+- Миграции: нет.
+- Проверки D504: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1: 1419 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0 (`/[locale]/account` в сборке). Страница под входом вживую не проверена: нет тестового аккаунта.

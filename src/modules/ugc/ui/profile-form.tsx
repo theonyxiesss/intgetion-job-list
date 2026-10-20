@@ -7,7 +7,19 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-export function ProfileForm() {
+/** What the form starts with: the own profile, or the shared one (D504). */
+export type CreatorFormDefaults = {
+  displayName: string;
+  languages: readonly string[];
+  platforms: readonly string[];
+  niches: readonly string[];
+  country: string | null;
+  exampleUrls: readonly string[];
+  inviteOptIn: boolean;
+  paused: boolean;
+};
+
+export function ProfileForm({ defaults }: { defaults?: CreatorFormDefaults }) {
   const t = useTranslations("ugc");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -49,10 +61,19 @@ export function ProfileForm() {
   return (
     <form className="flex max-w-xl flex-col gap-4" onSubmit={onSubmit}>
       <Field label={t("fields.displayName")}>
-        <Input name="displayName" required maxLength={80} />
+        <Input
+          name="displayName"
+          required
+          maxLength={80}
+          defaultValue={defaults?.displayName ?? ""}
+        />
       </Field>
       <Field label={t("fields.languages")}>
-        <Input name="languages" required />
+        <Input
+          name="languages"
+          required
+          defaultValue={defaults?.languages.join(", ") ?? ""}
+        />
       </Field>
       <fieldset className="flex flex-col gap-2">
         <legend className="t-label text-fg-muted">
@@ -60,7 +81,12 @@ export function ProfileForm() {
         </legend>
         {UGC_PLATFORMS.map((platform) => (
           <label key={platform} className="flex min-h-11 items-center gap-2">
-            <input type="checkbox" name="platforms" value={platform} />
+            <input
+              type="checkbox"
+              name="platforms"
+              value={platform}
+              defaultChecked={defaults?.platforms.includes(platform)}
+            />
             {t(`platforms.${platform}`)}
           </label>
         ))}
@@ -69,23 +95,44 @@ export function ProfileForm() {
         <legend className="t-label text-fg-muted">{t("fields.niches")}</legend>
         {UGC_NICHES.map((niche) => (
           <label key={niche} className="flex min-h-11 items-center gap-2">
-            <input type="checkbox" name="niches" value={niche} />
+            <input
+              type="checkbox"
+              name="niches"
+              value={niche}
+              defaultChecked={defaults?.niches.includes(niche)}
+            />
             {t(`niches.${niche}`)}
           </label>
         ))}
       </fieldset>
       <Field label={t("fields.country")}>
-        <Input name="country" maxLength={2} autoComplete="country" />
+        <Input
+          name="country"
+          maxLength={2}
+          autoComplete="country"
+          defaultValue={defaults?.country ?? ""}
+        />
       </Field>
       <Field label={t("fields.examples")}>
-        <Input name="exampleUrls" />
+        <Input
+          name="exampleUrls"
+          defaultValue={defaults?.exampleUrls.join(" ") ?? ""}
+        />
       </Field>
       <label className="flex min-h-11 items-center gap-2">
-        <input type="checkbox" name="inviteOptIn" />
+        <input
+          type="checkbox"
+          name="inviteOptIn"
+          defaultChecked={defaults?.inviteOptIn}
+        />
         {t("fields.inviteOptIn")}
       </label>
       <label className="flex min-h-11 items-center gap-2">
-        <input type="checkbox" name="paused" />
+        <input
+          type="checkbox"
+          name="paused"
+          defaultChecked={defaults?.paused}
+        />
         {t("fields.paused")}
       </label>
       {error ? (

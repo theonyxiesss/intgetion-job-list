@@ -157,6 +157,17 @@ function ProfileMark(props: NavMarkProps) {
   );
 }
 
+/** One account for every role (D504): a card with a person and lines. */
+function AccountMark(props: NavMarkProps) {
+  return (
+    <Frame {...props}>
+      <rect x="3.5" y="5" width="17" height="14" />
+      <circle cx="9" cy="10.5" r="2" />
+      <path d="M6 16 H12 M14.5 10 H18 M14.5 14 H18" />
+    </Frame>
+  );
+}
+
 function SettingsMark(props: NavMarkProps) {
   return (
     <Frame {...props}>
@@ -240,6 +251,7 @@ export const NAV_ICONS: Record<string, NavMark> = {
   "/notifications": NotificationsMark,
   "/applications": ApplicationsMark,
   "/saved-jobs": SavedMark,
+  "/account": AccountMark,
   "/profile": ProfileMark,
   "/settings/account": SettingsMark,
   "/admin": AdminMark,
@@ -266,6 +278,7 @@ const PHONE_NAV_ORDER = {
     "/campaigns",
     "/services",
     "/post-job",
+    "/account",
     "/settings/account",
     "/admin",
     "/admin/metrics",
@@ -293,6 +306,7 @@ const PHONE_NAV_ORDER = {
     "/campaigns",
     "/services",
     "/notifications",
+    "/account",
     "/settings/account",
     "/admin",
     "/admin/metrics",

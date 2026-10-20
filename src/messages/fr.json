@@ -4124,5 +4124,62 @@
   },
   "reminders": {
     "telegram": "Rappel de Spoki : {text}\n{when}"
+  },
+  "account": {
+    "nav": "Mon compte",
+    "title": "Mon compte",
+    "intro": "Un compte pour l’emploi, le recrutement, les vidéos de créateurs et le freelance. Remplissez vos informations une fois, tous les rôles les utilisent.",
+    "profile": {
+      "title": "À propos de moi",
+      "text": "Les rôles n’affichent ces informations que là où c’est permis. Les contacts ne sont pas gardés ici.",
+      "displayName": "Nom",
+      "displayNameHelp": "En tant que créateur, vous pouvez indiquer un pseudonyme dans ce profil.",
+      "country": "Pays",
+      "countryHelp": "Code à deux lettres, par exemple PL ou DE.",
+      "city": "Ville",
+      "timezone": "Fuseau horaire",
+      "timezoneHelp": "Par exemple Europe/Warsaw.",
+      "languages": "Langues",
+      "languagesHelp": "Séparées par des virgules, niveau facultatif : en C1, ru native.",
+      "languagesError": "Écrivez un code de langue à deux lettres et un niveau A1–C2 ou native, séparés par des virgules.",
+      "about": "À propos de moi",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "saved": "Enregistré. Vos rôles sont à jour.",
+      "failed": "Échec de l’enregistrement. Vérifiez les champs et réessayez."
+    },
+    "roles": {
+      "title": "Rôles",
+      "text": "Un rôle s’active quand vous commencez à l’utiliser. Vous pouvez en avoir autant que vous voulez.",
+      "active": "Actif",
+      "open": "Ouvrir",
+      "start": "Commencer",
+      "candidate": {
+        "name": "Je cherche un emploi",
+        "on": "Profil rempli à {score} %",
+        "off": "Pas encore de profil candidat"
+      },
+      "employer": {
+        "name": "Je recrute",
+        "on": "{companies, plural, one {# entreprise} other {# entreprises}} · {jobs, plural, one {# offre} other {# offres}}",
+        "off": "Pas encore d’entreprise"
+      },
+      "creator": {
+        "name": "Créateur vidéo",
+        "on": "Profil actif, les entreprises peuvent vous trouver",
+        "paused": "Profil en pause",
+        "off": "Pas encore de profil créateur"
+      },
+      "freelancer": {
+        "name": "Freelance",
+        "on": "{accepting, select, true {Vous acceptez des commandes} other {Pas de commandes}} · {services, plural, one {# service} other {# services}}",
+        "off": "Pas encore de services"
+      },
+      "client": {
+        "name": "Je commande des vidéos",
+        "on": "{briefs, plural, one {# brief} other {# briefs}}",
+        "off": "Pas encore de briefs"
+      }
+    }
   }
 }

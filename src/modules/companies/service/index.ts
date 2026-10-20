@@ -5,6 +5,7 @@ export {
   changeCompanyStatus,
   assertCanEditCompany,
   createCompany,
+  applySharedEmployerName,
   setEmployerFullName,
   editCompany,
   findMemberRole,

@@ -6,8 +6,15 @@ import { ButtonLink } from "@/components/ui/button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getPayoutStatus } from "@/modules/freelance/service";
-import { getMyCreatorProfile } from "@/modules/ugc/service";
-import { ProfileForm } from "@/modules/ugc/ui/profile-form";
+import {
+  getMyCreatorProfile,
+  getOwnCreatorProfile,
+} from "@/modules/ugc/service";
+import { readSharedProfile } from "@/modules/users/service";
+import {
+  ProfileForm,
+  type CreatorFormDefaults,
+} from "@/modules/ugc/ui/profile-form";
 import { RouteMessages } from "@/components/shell/route-messages";
 
 export const dynamic = "force-dynamic";
@@ -37,6 +44,32 @@ export default async function CreatorPage({
     return null;
   }
   const mine = await getMyCreatorProfile(user.id);
+  // The form starts from the own profile, or from the shared one (D504).
+  const own = await getOwnCreatorProfile(user.id);
+  const shared = own ? null : await readSharedProfile(user.id);
+  const defaults: CreatorFormDefaults | undefined = own
+    ? {
+        displayName: own.displayName,
+        languages: own.languages,
+        platforms: own.platforms,
+        niches: own.niches,
+        country: own.country,
+        exampleUrls: own.exampleUrls,
+        inviteOptIn: own.inviteOptIn,
+        paused: own.status === "paused",
+      }
+    : shared
+      ? {
+          displayName: shared.displayName ?? "",
+          languages: shared.languages.map((item) => item.code),
+          platforms: [],
+          niches: [],
+          country: shared.country,
+          exampleUrls: [],
+          inviteOptIn: false,
+          paused: false,
+        }
+      : undefined;
   const h = await getTranslations("ugcHub");
   const payout = mine.profile ? await getPayoutStatus(user.id) : null;
   return (
@@ -47,7 +80,7 @@ export default async function CreatorPage({
             title={t("profileTitle")}
             intro={mine.profile?.displayName ?? t("empty")}
           />
-          <ProfileForm />
+          <ProfileForm defaults={defaults} />
           {payout ? (
             <section
               className="flex flex-col gap-3 rounded-lg border border-line p-4 md:p-5"

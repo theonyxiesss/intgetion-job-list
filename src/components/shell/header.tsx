@@ -88,6 +88,7 @@ export async function Header() {
       ];
   const account: NavItem[] = signedIn
     ? [
+        { href: "/account", label: t("account.nav") },
         { href: "/notifications", label: t("notifications.nav") },
         ...cabinet,
         { href: "/settings/account", label: t("settings.title") },
@@ -101,6 +102,7 @@ export async function Header() {
     : [{ href: "/login", label: t("nav.login") }];
   const accountMenu: AccountLink[] = signedIn
     ? [
+        { href: "/account", label: t("account.nav") },
         { href: "/profile", label: t("profile.nav") },
         { href: "/applications", label: t("applications.nav") },
         { href: "/saved-jobs", label: t("nav.saved") },

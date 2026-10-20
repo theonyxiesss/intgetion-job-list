@@ -178,6 +178,28 @@ export async function saveCandidateProfile(
   };
 }
 
+/**
+ * The shared profile's name and place reach an existing candidate profile
+ * (D504). Languages stay in the candidate form: there a level is required.
+ * Completeness is scored again on the next save of the candidate form.
+ */
+export async function applySharedBasics(
+  userId: string,
+  basics: {
+    fullName: string | null;
+    country: string | null;
+    city: string | null;
+    timezone: string | null;
+  },
+): Promise<boolean> {
+  return profiles.setBasics(userId, {
+    fullName: basics.fullName,
+    country: basics.country,
+    city: basics.city,
+    ...(basics.timezone ? { timezone: basics.timezone } : {}),
+  });
+}
+
 export async function storeCompleteness(
   userId: string,
   score: number,

@@ -1,6 +1,7 @@
 import { logger } from "@/lib/logger";
 import { isValidTimeZone } from "@/lib/tz";
 import * as repo from "../repo/shared-profile-repo";
+import type { SharedProfileInput } from "../schemas";
 
 /**
  * The shared "about me" profile (D503, 29.8): one name, country, city, time
@@ -132,6 +133,22 @@ export async function noteSharedProfile(
   } catch (error) {
     logger.warn({ err: error }, "users: shared profile not noted");
   }
+}
+
+/** The account page saves the whole shared profile; empty clears (D504). */
+export async function updateSharedProfile(
+  userId: string,
+  input: SharedProfileInput,
+): Promise<SharedProfile> {
+  const seen = new Set<string>();
+  const profile: SharedProfile = {
+    ...input,
+    languages: input.languages.filter((item) =>
+      seen.has(item.code) ? false : (seen.add(item.code), true),
+    ),
+  };
+  await repo.saveSharedProfile(userId, profile);
+  return profile;
 }
 
 /** Export of personal data (17-gdpr). */

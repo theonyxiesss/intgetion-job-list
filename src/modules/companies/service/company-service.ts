@@ -24,6 +24,14 @@ export function assertCompanyEditable(
   if (role !== "owner" && role !== "admin") throw forbidden();
 }
 
+/** The shared profile's name reaches an existing employer profile (D504). */
+export async function applySharedEmployerName(
+  userId: string,
+  fullName: string,
+): Promise<boolean> {
+  return repo.updateEmployerFullName(userId, fullName);
+}
+
 export async function setEmployerFullName(userId: string, fullName: string) {
   await repo.setEmployerFullName(userId, fullName);
   await noteSharedProfile(userId, { displayName: fullName }, "replace");

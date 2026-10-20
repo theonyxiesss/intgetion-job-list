@@ -44,6 +44,8 @@ export const ROBOTS_DISALLOW = [
   "/employer",
   "/*/settings",
   "/settings",
+  "/*/account",
+  "/account",
   "/*/profile",
   "/profile",
   "/*/applications",
