@@ -2705,3 +2705,13 @@
 
 - Коммит `75b8994` в master, Vercel `dpl_61WW4XFRmdvXNE45X6zfwQinYQka` success; `/ru/chat` → 200; гость на сайте получил ответ Spoki (карточка UGC-видео). Вход и UGC-черновик на сайте не проверены: нет тестового аккаунта, проверяет основатель.
 - Локальный прогон разговоров не состоялся: `OPENROUTER_API_KEY` в Vercel помечен sensitive, `vercel env pull` отдаёт заглушку. Файл с переменными удалён, тестовые записи (8 бесед, пользователь, черновики) удалены.
+
+## [2026-10-20] — D498 — этап 1: Spoki ведёт вакансии работодателя — локально, ждёт выкладки
+
+- Founder: Spoki должен показывать, править, выкладывать и удалять карточки по просьбе и рассказывать о них. Ответы: «удалить» = снять с сайта; правка как на сайте; порядок — сначала D497, потом этап 1.
+- Сделано: `src/modules/bot/service/employer-job-tools.ts` (новый: `get_my_jobs`, `get_my_job`, `propose_job_update`, `set_job_status`), регистрация в `tools.ts`; карточки в `src/components/bot/account-card.tsx`; тексты `chat.account` в 7 локалях; `/chat` получает namespace `jobs`; правило в промпте, версия 33; тесты `employer-job-tools.test.ts` (10), обновлены `account-tools.test.ts`, `memory.test.ts` (версия 33). Документы: `docs/tz/12-bot.md`, `docs/how-it-works/bot.md`, D498, CURRENT.
+- Найдено: `patchJobInput.parse` подставляет remote, пустые навыки и языки для отсутствующих ключей — Spoki передаёт только названные поля (`namedJobPatch`) и проверяет связанные поля вместе с текущей вакансией.
+- Проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1388 passed, 1 failed — прежний `legal.test.ts` (D241), не связан; `pnpm build` → 0.
+- Миграции: нет. На сайте не проверено: нужен вход работодателя с вакансией.
+- Founder 2026-10-20: «да выкладывай» — коммит, push, production.
+- OPEN QUESTION: нет.

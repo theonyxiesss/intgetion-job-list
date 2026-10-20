@@ -1808,7 +1808,21 @@
       "set_profile_hidden": "{on, select, true {Скрыть профиль от работодателей.} other {Снова показывать профиль работодателям.}}",
       "set_morning_briefs": "{on, select, true {Включить} other {Выключить}} утренние подборки вакансий.",
       "create_reminder": "Напомнить в Telegram: {name}.",
-      "cancel_reminder": "Отменить напоминание: {name}."
+      "cancel_reminder": "Отменить напоминание: {name}.",
+      "propose_job_update": "Изменить вакансию «{name}»: {changes}.",
+      "set_job_status": "{action, select, publish {Опубликовать вакансию «{name}».} pause {Поставить вакансию «{name}» на паузу. Она скроется с сайта до возобновления.} resume {Вернуть вакансию «{name}» на сайт.} close {Закрыть вакансию «{name}». Она уйдёт с сайта и из поиска и останется в кабинете как закрытая.} other {Изменить статус вакансии «{name}».}}",
+      "jobFields": {
+        "title": "Название",
+        "description": "Описание",
+        "employmentType": "Тип занятости",
+        "workFormat": "Формат работы",
+        "location": "Место работы",
+        "salaryMin": "Зарплата от",
+        "salaryMax": "Зарплата до",
+        "salaryCurrency": "Валюта",
+        "salaryPeriod": "Период оплаты",
+        "salaryBasis": "До или после налогов"
+      }
     },
     "confirm": {
       "applyTitle": "Откликнуться на эту вакансию?",

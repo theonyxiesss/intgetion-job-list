@@ -16,6 +16,8 @@ export const ACCOUNT_CARD_TOOLS = [
   "set_morning_briefs",
   "create_reminder",
   "cancel_reminder",
+  "propose_job_update",
+  "set_job_status",
 ] as const;
 
 export function isAccountCardTool(tool: string): boolean {
@@ -23,6 +25,21 @@ export function isAccountCardTool(tool: string): boolean {
 }
 
 const CHANNELS = new Set(["inapp", "email", "telegram"]);
+
+/** Vacancy fields Spoki may change, in card order (D498). */
+const JOB_FIELDS = [
+  "title",
+  "description",
+  "employmentType",
+  "workFormat",
+  "location",
+  "salaryMin",
+  "salaryMax",
+  "salaryCurrency",
+  "salaryPeriod",
+  "salaryBasis",
+] as const;
+const JOB_STATUS_ACTIONS = new Set(["publish", "pause", "resume", "close"]);
 
 function flag(args: Record<string, unknown>, key: string): string {
   return args[key] === true ? "true" : "false";
@@ -43,6 +60,7 @@ export function AccountCardText({
 }) {
   const t = useTranslations("chat.account");
   const types = useTranslations("notifications.types");
+  const jobs = useTranslations("jobs");
   const channels = useTranslations("notificationSettings");
   const a = (args ?? {}) as Record<string, unknown>;
   const name = preview ?? "";
@@ -62,6 +80,29 @@ export function AccountCardText({
   }
   if (tool === "set_profile_hidden") {
     return t("set_profile_hidden", { on: flag(a, "hidden") });
+  }
+  if (tool === "set_job_status") {
+    const action = typeof a.action === "string" ? a.action : "";
+    return t("set_job_status", {
+      action: JOB_STATUS_ACTIONS.has(action) ? action : "other",
+      name,
+    });
+  }
+  if (tool === "propose_job_update") {
+    const changes = JOB_FIELDS.filter((key) => typeof a[key] === "string")
+      .map((key) => {
+        const raw = String(a[key]);
+        const value = key.startsWith("salaryM")
+          ? String(Number(raw) / 100)
+          : key === "description"
+            ? `${raw.slice(0, 80)}${raw.length > 80 ? "…" : ""}`
+            : jobs.has(raw)
+              ? jobs(raw)
+              : raw;
+        return `${t(`jobFields.${key}`)}: ${value}`;
+      })
+      .join("; ");
+    return t("propose_job_update", { name, changes });
   }
   if (tool === "set_morning_briefs") {
     return t("set_morning_briefs", { on: flag(a, "enabled") });

@@ -3,6 +3,7 @@ import { ACCOUNT_CARD_TOOLS } from "@/components/bot/account-card";
 import en from "@/messages/en.json";
 import { systemPrompt } from "../prompts/system";
 import { accountTools } from "../service/account-tools";
+import { employerJobTools } from "../service/employer-job-tools";
 import { reminderTools } from "../service/reminders";
 import { hashArgs, runTool, toolPreview, toolsFor } from "../service/tools";
 
@@ -26,8 +27,8 @@ describe("account tools (D472)", () => {
   });
 
   it("confirm every write on a card that names its target", () => {
-    const cardTools = [...writes, ...reminderTools].filter((tool) =>
-      tool.confirm(ctx),
+    const cardTools = [...writes, ...reminderTools, ...employerJobTools].filter(
+      (tool) => tool.confirm(ctx),
     );
     expect(cardTools.map((tool) => tool.name).sort()).toEqual(
       [...ACCOUNT_CARD_TOOLS].sort(),
@@ -35,7 +36,7 @@ describe("account tools (D472)", () => {
     for (const tool of cardTools) {
       expect(tool.preview).toBeTypeOf("function");
     }
-    const copy = en.chat.account as Record<string, string>;
+    const copy = en.chat.account as Record<string, unknown>;
     for (const name of ACCOUNT_CARD_TOOLS) expect(copy[name]).toBeTruthy();
   });
 
@@ -95,6 +96,8 @@ describe("account card copy (D472)", () => {
             name: "Acme",
             on: "true",
             channel: "Email",
+            action: "close",
+            changes: "Title: Lead",
           } as never,
         );
         expect(text).not.toContain("{");

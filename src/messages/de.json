@@ -1808,7 +1808,21 @@
       "set_profile_hidden": "{on, select, true {Profil vor Arbeitgebern verbergen.} other {Profil Arbeitgebern wieder zeigen.}}",
       "set_morning_briefs": "Morgendliche Job-Übersichten {on, select, true {jetzt einschalten} other {jetzt ausschalten}}.",
       "create_reminder": "In Telegram erinnern: {name}.",
-      "cancel_reminder": "Erinnerung absagen: {name}."
+      "cancel_reminder": "Erinnerung absagen: {name}.",
+      "propose_job_update": "Die Stelle „{name}“ ändern: {changes}.",
+      "set_job_status": "{action, select, publish {Die Stelle „{name}“ veröffentlichen.} pause {Die Stelle „{name}“ pausieren. Sie verschwindet von der Website, bis Sie sie fortsetzen.} resume {Die Stelle „{name}“ wieder auf die Website stellen.} close {Die Stelle „{name}“ schließen. Sie verschwindet von der Website und aus der Suche und bleibt im Bereich als geschlossen.} other {Den Status der Stelle „{name}“ ändern.}}",
+      "jobFields": {
+        "title": "Titel",
+        "description": "Beschreibung",
+        "employmentType": "Anstellungsart",
+        "workFormat": "Arbeitsmodell",
+        "location": "Arbeitsort",
+        "salaryMin": "Gehalt ab",
+        "salaryMax": "Gehalt bis",
+        "salaryCurrency": "Währung",
+        "salaryPeriod": "Zahlungszeitraum",
+        "salaryBasis": "Brutto oder netto"
+      }
     },
     "confirm": {
       "applyTitle": "Auf diesen Job bewerben?",

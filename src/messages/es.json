@@ -1808,7 +1808,21 @@
       "set_profile_hidden": "{on, select, true {Ocultar tu perfil a los empleadores.} other {Volver a mostrar tu perfil a los empleadores.}}",
       "set_morning_briefs": "{on, select, true {Activar los resúmenes} other {Desactivar los resúmenes}} matutinos de empleos.",
       "create_reminder": "Recordártelo en Telegram: {name}.",
-      "cancel_reminder": "Cancelar el recordatorio: {name}."
+      "cancel_reminder": "Cancelar el recordatorio: {name}.",
+      "propose_job_update": "Cambiar la vacante «{name}»: {changes}.",
+      "set_job_status": "{action, select, publish {Publicar la vacante «{name}».} pause {Pausar la vacante «{name}». Saldrá del sitio hasta que la reanudes.} resume {Volver a mostrar la vacante «{name}» en el sitio.} close {Cerrar la vacante «{name}». Saldrá del sitio y de la búsqueda y quedará cerrada en tu panel.} other {Cambiar el estado de la vacante «{name}».}}",
+      "jobFields": {
+        "title": "Título",
+        "description": "Descripción",
+        "employmentType": "Tipo de empleo",
+        "workFormat": "Modalidad",
+        "location": "Ubicación",
+        "salaryMin": "Salario desde",
+        "salaryMax": "Salario hasta",
+        "salaryCurrency": "Moneda",
+        "salaryPeriod": "Periodo de pago",
+        "salaryBasis": "Bruto o neto"
+      }
     },
     "confirm": {
       "applyTitle": "¿Postularte a este empleo?",

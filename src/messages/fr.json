@@ -1808,7 +1808,21 @@
       "set_profile_hidden": "{on, select, true {Masquer votre profil aux employeurs.} other {Montrer à nouveau votre profil aux employeurs.}}",
       "set_morning_briefs": "{on, select, true {Activer les sélections} other {Désactiver les sélections}} d’offres du matin.",
       "create_reminder": "Vous le rappeler dans Telegram : {name}.",
-      "cancel_reminder": "Annuler le rappel : {name}."
+      "cancel_reminder": "Annuler le rappel : {name}.",
+      "propose_job_update": "Modifier l’offre « {name} » : {changes}.",
+      "set_job_status": "{action, select, publish {Publier l’offre « {name} ».} pause {Mettre l’offre « {name} » en pause. Elle quitte le site jusqu’à sa reprise.} resume {Remettre l’offre « {name} » sur le site.} close {Fermer l’offre « {name} ». Elle quitte le site et la recherche et reste fermée dans votre espace.} other {Modifier le statut de l’offre « {name} ».}}",
+      "jobFields": {
+        "title": "Titre",
+        "description": "Description",
+        "employmentType": "Type de contrat",
+        "workFormat": "Mode de travail",
+        "location": "Lieu",
+        "salaryMin": "Salaire à partir de",
+        "salaryMax": "Salaire jusqu’à",
+        "salaryCurrency": "Devise",
+        "salaryPeriod": "Période de paie",
+        "salaryBasis": "Brut ou net"
+      }
     },
     "confirm": {
       "applyTitle": "Postuler à cette offre ?",

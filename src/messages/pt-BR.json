@@ -1808,7 +1808,21 @@
       "set_profile_hidden": "{on, select, true {Ocultar seu perfil dos empregadores.} other {Mostrar seu perfil aos empregadores de novo.}}",
       "set_morning_briefs": "{on, select, true {Ativar os resumos} other {Desativar os resumos}} matinais de vagas.",
       "create_reminder": "Lembrar você no Telegram: {name}.",
-      "cancel_reminder": "Cancelar o lembrete: {name}."
+      "cancel_reminder": "Cancelar o lembrete: {name}.",
+      "propose_job_update": "Alterar a vaga “{name}”: {changes}.",
+      "set_job_status": "{action, select, publish {Publicar a vaga “{name}”.} pause {Pausar a vaga “{name}”. Ela sai do site até você retomá-la.} resume {Colocar a vaga “{name}” de volta no site.} close {Encerrar a vaga “{name}”. Ela sai do site e da busca e fica no seu painel como encerrada.} other {Alterar o status da vaga “{name}”.}}",
+      "jobFields": {
+        "title": "Título",
+        "description": "Descrição",
+        "employmentType": "Tipo de contratação",
+        "workFormat": "Formato de trabalho",
+        "location": "Local",
+        "salaryMin": "Salário de",
+        "salaryMax": "Salário até",
+        "salaryCurrency": "Moeda",
+        "salaryPeriod": "Período de pagamento",
+        "salaryBasis": "Bruto ou líquido"
+      }
     },
     "confirm": {
       "applyTitle": "Candidatar-se a esta vaga?",

@@ -75,6 +75,7 @@ export default async function ChatPage({
         "ugc",
         "notifications",
         "notificationSettings",
+        "jobs",
       ]}
     >
       <main className="flex min-h-0 flex-1 flex-col">

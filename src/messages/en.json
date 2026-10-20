@@ -1808,7 +1808,21 @@
       "set_profile_hidden": "{on, select, true {Hide your profile from employers.} other {Show your profile to employers again.}}",
       "set_morning_briefs": "{on, select, true {Turn on} other {Turn off}} morning job briefs.",
       "create_reminder": "Remind you in Telegram: {name}.",
-      "cancel_reminder": "Cancel the reminder: {name}."
+      "cancel_reminder": "Cancel the reminder: {name}.",
+      "propose_job_update": "Change the vacancy “{name}”: {changes}.",
+      "set_job_status": "{action, select, publish {Publish the vacancy “{name}”.} pause {Pause the vacancy “{name}”. It leaves the site until you resume it.} resume {Put the vacancy “{name}” back on the site.} close {Close the vacancy “{name}”. It leaves the site and search and stays in your cabinet as closed.} other {Change the status of the vacancy “{name}”.}}",
+      "jobFields": {
+        "title": "Title",
+        "description": "Description",
+        "employmentType": "Employment type",
+        "workFormat": "Work format",
+        "location": "Location",
+        "salaryMin": "Salary from",
+        "salaryMax": "Salary to",
+        "salaryCurrency": "Currency",
+        "salaryPeriod": "Pay period",
+        "salaryBasis": "Before or after tax"
+      }
     },
     "confirm": {
       "applyTitle": "Apply to this job?",

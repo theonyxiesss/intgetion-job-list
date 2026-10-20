@@ -48,6 +48,7 @@ import { jobDraftTools } from "./job-tools";
 import { OFFER_ACTIONS, offerPath } from "./offers";
 import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
 import { accountTools } from "./account-tools";
+import { employerJobTools } from "./employer-job-tools";
 import { pitchTools, screenCoverNote } from "./pitch";
 import { reminderTools } from "./reminders";
 import {
@@ -684,6 +685,7 @@ export const TOOLS: readonly BotTool[] = [
     },
   }),
   ...accountTools,
+  ...employerJobTools,
   ...pitchTools,
   ...reminderTools,
   ...(ugcTools as unknown as BotTool[]),

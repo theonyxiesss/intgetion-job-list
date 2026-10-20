@@ -1808,7 +1808,21 @@
       "set_profile_hidden": "{on, select, true {Nascondere il profilo ai datori di lavoro.} other {Mostrare di nuovo il profilo ai datori di lavoro.}}",
       "set_morning_briefs": "{on, select, true {Attivare le selezioni} other {Disattivare le selezioni}} di offerte del mattino.",
       "create_reminder": "Ricordartelo su Telegram: {name}.",
-      "cancel_reminder": "Annullare il promemoria: {name}."
+      "cancel_reminder": "Annullare il promemoria: {name}.",
+      "propose_job_update": "Modificare l’offerta «{name}»: {changes}.",
+      "set_job_status": "{action, select, publish {Pubblicare l’offerta «{name}».} pause {Mettere in pausa l’offerta «{name}». Lascia il sito finché non la riprendi.} resume {Rimettere l’offerta «{name}» sul sito.} close {Chiudere l’offerta «{name}». Lascia il sito e la ricerca e resta chiusa nella tua area.} other {Cambiare lo stato dell’offerta «{name}».}}",
+      "jobFields": {
+        "title": "Titolo",
+        "description": "Descrizione",
+        "employmentType": "Tipo di impiego",
+        "workFormat": "Modalità di lavoro",
+        "location": "Sede",
+        "salaryMin": "Stipendio da",
+        "salaryMax": "Stipendio fino a",
+        "salaryCurrency": "Valuta",
+        "salaryPeriod": "Periodo di pagamento",
+        "salaryBasis": "Lordo o netto"
+      }
     },
     "confirm": {
       "applyTitle": "Candidarti a questa offerta?",
