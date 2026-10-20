@@ -114,7 +114,7 @@ describe("phone menu order", () => {
     ).not.toContain("/services");
   });
 
-  it("orders an employer with admin last", () => {
+  it("orders an employer with admin last and keeps the job-seeker profile (D506)", () => {
     const items = menu([
       "/jobs",
       "/events",
@@ -140,6 +140,7 @@ describe("phone menu order", () => {
       "/events",
       "/services",
       "/notifications",
+      "/profile",
       "/settings/account",
       "/admin",
       "/admin/metrics",

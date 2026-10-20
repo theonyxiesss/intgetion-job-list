@@ -153,8 +153,7 @@ export async function updateSharedProfile(
 
 /**
  * The shared profile reaches the roles that already exist (D504): name and
- * place to the candidate, name to the employer, country and languages to
- * the creator, whose name stays a nickname. A role that is not started yet
+ * place to the candidate, country and languages to the creator, whose name stays a nickname. A role that is not started yet
  * takes it from its prefilled form. Imported lazily: those modules note
  * their own saves back here.
  */
@@ -162,9 +161,8 @@ export async function applySharedToRoles(
   userId: string,
   profile: SharedProfile,
 ): Promise<void> {
-  const [candidates, companies, ugc] = await Promise.all([
+  const [candidates, ugc] = await Promise.all([
     import("@/modules/candidates/service"),
-    import("@/modules/companies/service"),
     import("@/modules/ugc/service"),
   ]);
   const steps: Promise<unknown>[] = [
@@ -179,8 +177,6 @@ export async function applySharedToRoles(
       languages: profile.languages.map((item) => item.code),
     }),
   ];
-  if (profile.displayName)
-    steps.push(companies.applySharedEmployerName(userId, profile.displayName));
   for (const result of await Promise.allSettled(steps))
     if (result.status === "rejected")
       logger.warn({ err: result.reason }, "users: role not updated");

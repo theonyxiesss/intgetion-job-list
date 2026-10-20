@@ -40,26 +40,6 @@ function slugify(name: string) {
   return slug || "company";
 }
 
-/** Updates the name on an existing employer row only (D504). */
-export async function updateEmployerFullName(userId: string, fullName: string) {
-  const rows = await getDb()
-    .update(employerProfiles)
-    .set({ fullName, updatedAt: new Date() })
-    .where(eq(employerProfiles.userId, userId))
-    .returning({ userId: employerProfiles.userId });
-  return rows.length > 0;
-}
-
-export async function setEmployerFullName(userId: string, fullName: string) {
-  await getDb()
-    .insert(employerProfiles)
-    .values({ userId, fullName })
-    .onConflictDoUpdate({
-      target: employerProfiles.userId,
-      set: { fullName, updatedAt: new Date() },
-    });
-}
-
 export async function findMemberRole(companyId: string, userId: string) {
   const rows = await getDb()
     .select({ role: companyMembers.role })
@@ -186,6 +166,16 @@ export async function listMemberUserIds(
   return rows
     .filter((row) => !roles || roles.includes(row.role))
     .map((row) => row.userId);
+}
+
+/** True when the person is a member of any company (D506). */
+export async function hasMembership(userId: string): Promise<boolean> {
+  const rows = await getDb()
+    .select({ userId: companyMembers.userId })
+    .from(companyMembers)
+    .where(eq(companyMembers.userId, userId))
+    .limit(1);
+  return rows.length > 0;
 }
 
 export async function findCompaniesForUser(userId: string) {

@@ -5,7 +5,6 @@ import {
   createCompany,
   editCompany,
   getCompaniesForUser,
-  setEmployerFullName,
 } from "@/modules/companies/service";
 import {
   hirePublishesNow,
@@ -14,6 +13,7 @@ import {
   withHttpScheme,
   type HireInput,
 } from "../schemas/hire";
+import { noteSharedProfile } from "@/modules/users/service";
 import { createJob } from "../repo/jobs-repo";
 import { transitionOwnedJob } from "./notify-job";
 
@@ -63,9 +63,12 @@ export async function submitHireListing(
     await editCompany(companyId, user, { name: input.companyName, ...links });
   }
 
-  await setEmployerFullName(
+  // The name goes to the shared profile, and only when it is empty: the
+  // person posting may name someone else as the hiring manager (D506).
+  await noteSharedProfile(
     user.id,
-    `${input.firstName.trim()} ${input.lastName.trim()}`,
+    { displayName: `${input.firstName.trim()} ${input.lastName.trim()}` },
+    "fill",
   );
   const created = await createJob(
     user,

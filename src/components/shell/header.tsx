@@ -12,6 +12,7 @@ import { requireUser, sessionUserOnce } from "@/lib/auth-guards";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { sessionCard } from "@/modules/auth/service";
+import { isEmployer } from "@/modules/companies/service";
 import { countUnread } from "@/modules/notifications/service";
 import { BottomNav } from "./bottom-nav";
 import { MobileNav, type NavItem } from "./mobile-nav";
@@ -38,7 +39,7 @@ export async function Header() {
     try {
       const user = await requireUser(sessionUserOnce);
       isAdmin = user.platformRole === "admin";
-      employer = user.accountType === "employer";
+      employer = await isEmployer(user.id);
       unread = await countUnread(user.id);
       const card = await sessionCard((await createSupabaseServerClient()).auth);
       accountName = card?.name ?? "";
@@ -79,13 +80,12 @@ export async function Header() {
           { href: "/chat", label: t("nav.chatWithAgent") },
           { href: "/for-employers", label: t("nav.employers") },
         ];
-  const cabinet: AccountLink[] = employer
-    ? []
-    : [
-        { href: "/profile", label: t("profile.nav") },
-        { href: "/applications", label: t("applications.nav") },
-        { href: "/saved-jobs", label: t("nav.saved") },
-      ];
+  // One account, many roles (D506): a company member keeps the job-seeker links.
+  const cabinet: AccountLink[] = [
+    { href: "/profile", label: t("profile.nav") },
+    { href: "/applications", label: t("applications.nav") },
+    { href: "/saved-jobs", label: t("nav.saved") },
+  ];
   const account: NavItem[] = signedIn
     ? [
         { href: "/account", label: t("account.nav") },

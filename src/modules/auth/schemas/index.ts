@@ -82,7 +82,6 @@ export const updateMeInput = z
   .object({
     locale: localeSchema.optional(),
     marketingOptIn: z.boolean().optional(),
-    accountType: accountTypeSchema.optional(),
   })
   .strict()
   .refine((value) => Object.keys(value).length > 0, { error: "empty_patch" });

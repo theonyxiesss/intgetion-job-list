@@ -89,7 +89,6 @@ export function googleSignupMetadata(
     terms_version: TERMS_VERSION,
     terms_accepted_at: now.toISOString(),
     locale,
-    account_type: "candidate",
   };
 }
 
@@ -284,7 +283,6 @@ export async function register(
     terms_version: TERMS_VERSION,
     terms_accepted_at: now.toISOString(),
     locale: input.locale,
-    account_type: input.accountType ?? "candidate",
   };
   const emailRedirectTo = callbackUrl(input.locale, input.next, input.wait);
 

@@ -149,10 +149,13 @@ describe("register", () => {
           terms_version: TERMS_VERSION,
           terms_accepted_at: "2026-10-03T10:00:00.000Z",
           locale: "ru",
-          account_type: "candidate",
         },
       },
     });
+    // D506: the account type is not stored any more, even when sent.
+    expect(JSON.stringify(vi.mocked(auth.signUp).mock.calls[0])).not.toContain(
+      "account_type",
+    );
     expect(auth.signInWithOtp).not.toHaveBeenCalled();
   });
 

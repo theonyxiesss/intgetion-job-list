@@ -1,5 +1,4 @@
 import { forbidden, HttpError, notFound } from "@/lib/http";
-import { noteSharedProfile } from "@/modules/users/service";
 import { recordAudit } from "@/lib/audit";
 import type { CurrentUser } from "@/modules/auth/service";
 import * as repo from "../repo/company-repo";
@@ -24,17 +23,12 @@ export function assertCompanyEditable(
   if (role !== "owner" && role !== "admin") throw forbidden();
 }
 
-/** The shared profile's name reaches an existing employer profile (D504). */
-export async function applySharedEmployerName(
-  userId: string,
-  fullName: string,
-): Promise<boolean> {
-  return repo.updateEmployerFullName(userId, fullName);
-}
-
-export async function setEmployerFullName(userId: string, fullName: string) {
-  await repo.setEmployerFullName(userId, fullName);
-  await noteSharedProfile(userId, { displayName: fullName }, "replace");
+/**
+ * An employer is a company member (D506). The soft account type chosen at
+ * registration (D331) is gone; membership already decides the rights (D13).
+ */
+export async function isEmployer(userId: string): Promise<boolean> {
+  return repo.hasMembership(userId);
 }
 
 export async function createCompany(

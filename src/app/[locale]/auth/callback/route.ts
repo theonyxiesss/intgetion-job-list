@@ -77,9 +77,6 @@ export async function GET(
     target.search = dest.search;
   } else if (backToAccount) {
     target.pathname = `${localePrefix(locale)}/settings/account`;
-  } else if (result.created && result.user.accountType === "employer") {
-    // A new employer starts with the company profile (D331).
-    target.pathname = `${localePrefix(locale)}/employer/company`;
   } else {
     const wait = query.get("wait");
     if (wait) {
@@ -94,11 +91,7 @@ export async function GET(
       }
     }
     // Same-device open, or wait handoff unavailable: success page (D326).
-    // A new employer starts with the company profile instead (D331).
-    target.pathname =
-      result.created && result.user.accountType === "employer"
-        ? `${localePrefix(locale)}/employer/company`
-        : `${localePrefix(locale)}/auth/confirmed`;
+    target.pathname = `${localePrefix(locale)}/auth/confirmed`;
   }
   const response = NextResponse.redirect(target);
   response.cookies.set(GOOGLE_TERMS_COOKIE, "", {

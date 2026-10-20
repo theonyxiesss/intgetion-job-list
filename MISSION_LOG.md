@@ -2781,3 +2781,11 @@
 - Миграции: нет.
 - Проверки D505: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1428 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.
 - D505 выкладка: коммит `483eb85`, Vercel `dpl_3RfSH2QU8HxB6f1EM6Y6hQNcpvpR` success; `/ru`, `/ru/chat` → 200, `/ru/account` → 307 на вход. Под входом не проверено: нет тестового аккаунта.
+
+## [2026-10-20] — D506 — этап 6.4а: без типа аккаунта
+
+- Founder: «давай 6.4»; на вопрос об объёме — «Всё, с переделкой подбора». План частями 6.4а–6.4г, удаление столбцов — отдельное «да».
+- Сделано: `companies` (`isEmployer`, `hasMembership`; убраны `setEmployerFullName`, `applySharedEmployerName`, `updateEmployerFullName`); `src/lib/viewer.ts`, `src/components/shell/header.tsx`, `src/app/[locale]/jobs/page.tsx` — работодатель по членству; `src/app/[locale]/auth/callback/route.ts` — без стартовой страницы по типу; настройки — без переключателя (`settings-controls.tsx`, `settings/account/page.tsx`); `auth` — тип не принимается в `PATCH /api/me`, не пишется при регистрации и входе через Google, `/api/me` отдаёт его по членству; `hire-post.ts` — имя в общую анкету (fill); `users` — перенос без имени работодателя; выгрузка без `employer_profiles.full_name`. Тесты: `auth-service.test.ts` (тип не пишется), новый `me-employer.test.ts`. Документы: D506, `docs/tz/29-spoki-cards.md`, CURRENT.
+- Миграции: нет (столбцы остаются до 6.4г).
+- Шапка: ссылки соискателя видны и члену компании (`header.tsx`, `nav-icons.tsx`, `nav-icons.test.ts` — порядок меню работодателя с профилем). База (чтение): отметку «работодатель» не имел никто, 3 члена компании были «соискателями».
+- Проверки D506: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1: 1429 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.

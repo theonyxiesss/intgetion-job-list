@@ -56,7 +56,7 @@ export async function readUserData(userId: string) {
       sql`select categories, company_sizes, notes from public.candidate_preferences where user_id = ${userId}`,
     ),
     rows(
-      sql`select full_name, title, linkedin_url, created_at from public.employer_profiles where user_id = ${userId}`,
+      sql`select title, linkedin_url, created_at from public.employer_profiles where user_id = ${userId}`,
     ),
     rows(
       sql`select display_name, country, city, timezone, languages, about, created_at, updated_at from public.user_profiles where user_id = ${userId}`,

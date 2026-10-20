@@ -1,7 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AccountSignIn } from "@/components/settings/account-sign-in";
 import {
-  AccountTypeSetting,
   DeleteAccount,
   EmailLanguage,
 } from "@/components/settings/settings-controls";
@@ -36,7 +35,6 @@ export default async function AccountSettingsPage({
             error={error}
             provider={provider}
           />
-          <AccountTypeSetting value={user.accountType} />
           <EmailLanguage locale={user.locale} />
           <SecurityStubs />
           {user.platformRole === "admin" ? (

@@ -17,6 +17,7 @@ import { Tag } from "@/components/ui/badge";
 import { navForward } from "@/components/ui/page-transition";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
+import { isEmployer } from "@/modules/companies/service";
 import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import {
@@ -164,8 +165,7 @@ export default async function JobsPage({
     const viewerUser = await getCurrentUser(supabase.auth);
     if (viewerUser) {
       signedIn = true;
-      railViewer =
-        viewerUser.accountType === "employer" ? "employer" : "candidate";
+      railViewer = (await isEmployer(viewerUser.id)) ? "employer" : "candidate";
       viewer = { hidden: await getHiddenSetsForViewer(viewerUser.id) };
     }
   } catch {
