@@ -4,6 +4,12 @@
 
 ## OPEN
 
+### UGC bot repeats saved product name (D495) — local hotfix
+
+- In brief-draft mode, the system prompt now treats the live server draft and `missingRequired` as the only authority for whether product name is missing. Legacy `state.ugcProduct` can no longer cause a contradictory “no product named” instruction.
+- Regression coverage added for a saved product name, remaining required fields, and the non-draft entry prompt.
+- Fix is local and not deployed. The broader UGC draft flow still requires migration `0061` before production.
+
 ### Job listing draft (D494) — local implementation
 
 - Spoki's `/chat?from=post_job`, `/post_job` in Telegram, and the `/post-job` form share `job_drafts`; chat facts appear in the review form and form edits are read in later chat turns.

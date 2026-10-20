@@ -2660,3 +2660,14 @@
 - Отклонения от ТЗ: публикация в production не выполнялась (safe zone: нет явного разрешения на cloud migration/deploy). Полный suite имеет два несвязанных с вакансиями падения.
 - OPEN QUESTION: нет.
 - Следующая подфаза: после зелёных локальных проверок — отдельно согласовать cloud migration и deploy для последовательности `0061`–`0063`.
+
+## [2026-10-19] — D495 — UGC повторно спрашивал название продукта — NOT DONE локально
+
+- Сделано: исправлена причина, по которой серверный JSON черновика не доходил до модели: `ugcDraftContextBlock` использовал source `ugc_brief_draft`, запрещённый `wrapUntrusted`. Исправлено на разрешённый `ugc:brief`. Убран конфликтующий fallback на legacy `state.ugcProduct`: при создании брифа вопрос о названии задаётся только если `missingRequired` содержит `productName`; существующие UGC-нити без режима draft сохраняют старое поведение.
+- Команды проверки: целевые `pnpm test -- src/modules/bot/__tests__/ugc-focus.test.ts src/modules/ugc/__tests__/drafts.test.ts` → 0 (10 тестов); `pnpm eval` → 0 (7); `pnpm lint` → 0; Prettier для двух изменённых TS-файлов → 0; `git diff --check` → 0 (предупреждения Git о преобразовании LF/CRLF); первая попытка Vitest в песочнице → `spawn EPERM`, повтор вне песочницы → 0; `pnpm typecheck` → 1 из-за отсутствующего `@modelcontextprotocol/server` и вызванных им TS implicit-any ошибок в `src/modules/mcp/service/server.ts`.
+- P-тесты подфазы: UGC draft 10/10 и eval 7/7 ✅; полный `pnpm test` не запускался.
+- Миграции: нет.
+- Изменённые файлы: `src/modules/bot/service/ugc-focus.ts`, новый `src/modules/bot/__tests__/ugc-focus.test.ts`, `docs/DECISIONS.md` (D495), `docs/CURRENT.md`, `docs/OPEN_TASKS.md`.
+- Отклонения от ТЗ: подфаза не закрыта, потому что обязательный typecheck не прошёл из-за отсутствующей зависимости; пакет не устанавливался.
+- OPEN QUESTION: нет.
+- Следующая подфаза: повторить typecheck после восстановления локального пакета `@modelcontextprotocol/server`, затем согласовать публикацию отдельно.
