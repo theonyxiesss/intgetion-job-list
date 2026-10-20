@@ -78,7 +78,7 @@ export function hardFilter(
     return { pass: false, reason: "location" };
   }
 
-  if (job.timezoneRequired !== null) {
+  if (job.timezoneRequired !== null && candidate.timezone !== null) {
     const overlap = workHoursOverlap({
       candidate: {
         timeZone: candidate.timezone,

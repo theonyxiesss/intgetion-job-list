@@ -82,16 +82,11 @@ describe("account page form (D504)", () => {
     expect(header.match(/href: "\/account"/g)).toHaveLength(2);
   });
 
-  it("does not overwrite a creator nickname from the account page", () => {
-    const route = readFileSync(
-      join(process.cwd(), "src/modules/users/service/shared-profile.ts"),
+  it("never takes a creator nickname over the shared name (D509)", () => {
+    const repo = readFileSync(
+      join(process.cwd(), "src/modules/ugc/repo/ugc-repo.ts"),
       "utf8",
     );
-    const creator = route.slice(
-      route.indexOf("ugc.applySharedToCreator(userId"),
-    );
-    expect(creator.slice(0, creator.indexOf("}),"))).not.toContain(
-      "displayName",
-    );
+    expect(repo).toMatch(/\{ displayName: own\.displayName \},\s*"fill"/);
   });
 });

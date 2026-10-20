@@ -2,7 +2,6 @@ import { readJson, toErrorResponse } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireCurrentUser } from "@/modules/auth/service";
 import {
-  applySharedToRoles,
   readSharedProfile,
   sharedProfileInput,
   updateSharedProfile,
@@ -25,8 +24,8 @@ export async function PATCH(request: Request) {
     const supabase = await createSupabaseServerClient();
     const user = await requireCurrentUser(supabase.auth);
     const input = await readJson(request, sharedProfileInput);
+    // Every role reads the shared profile itself (D509): nothing to copy.
     const profile = await updateSharedProfile(user.id, input);
-    await applySharedToRoles(user.id, profile);
     return Response.json({ profile });
   } catch (error) {
     return toErrorResponse(error);

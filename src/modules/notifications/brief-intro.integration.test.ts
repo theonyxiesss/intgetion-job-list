@@ -44,7 +44,11 @@ beforeAll(async () => {
     locale: "es",
   });
   await db.execute(sql`
-    insert into public.candidate_profiles (user_id, timezone)
+    insert into public.candidate_profiles (user_id) values (${userId})
+  `);
+  // The time zone lives in the shared profile (D509).
+  await getDb().execute(sql`
+    insert into public.user_profiles (user_id, timezone)
     values (${userId}, 'Europe/Moscow')
   `);
 });

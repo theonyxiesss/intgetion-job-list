@@ -50,7 +50,8 @@ export async function readUserData(userId: string) {
       sql`select company_name, title, start_month, end_month, description from public.candidate_experience where candidate_id = ${userId} order by sort`,
     ),
     rows(
-      sql`select lang, level from public.candidate_languages where candidate_id = ${userId}`,
+      // Languages live in the shared profile (D509); same shape as before.
+      sql`select l->>'code' as lang, l->>'level' as level from public.user_profiles up, jsonb_array_elements(up.languages) l where up.user_id = ${userId}`,
     ),
     rows(
       sql`select categories, company_sizes, notes from public.candidate_preferences where user_id = ${userId}`,
@@ -193,7 +194,7 @@ export async function anonymizeUser(userId: string, now: Date) {
     await tx.execute(
       sql`delete from public.company_members where user_id = ${userId}`,
     );
-    // Profile rows cascade to contacts, skills, experience, languages, preferences.
+    // Profile rows cascade to contacts, skills, experience, preferences.
     await tx.execute(
       sql`delete from public.candidate_profiles where user_id = ${userId}`,
     );

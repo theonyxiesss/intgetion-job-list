@@ -74,7 +74,7 @@ export default async function EditProfilePage({
     initial.desiredTitles = profile.desiredTitles.join(", ");
     initial.country = profile.country ?? "";
     initial.city = profile.city ?? "";
-    initial.timezone = profile.timezone;
+    initial.timezone = profile.timezone ?? "";
     initial.workHoursStart = profile.workHoursStart;
     initial.workHoursEnd = profile.workHoursEnd;
     initial.workDays = profile.workDays;

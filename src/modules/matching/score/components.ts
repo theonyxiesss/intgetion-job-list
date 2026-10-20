@@ -202,6 +202,9 @@ export function tzOverlapComponent({
   if (job.timezoneRequired === null) {
     return { neutral: true, reason: "no_timezone_required" };
   }
+  if (candidate.timezone === null) {
+    return { neutral: true, reason: "no_candidate_timezone" };
+  }
   const overlap = workHoursOverlap({
     candidate: {
       timeZone: candidate.timezone,

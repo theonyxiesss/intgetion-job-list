@@ -251,10 +251,9 @@ export async function listCompanyMembers(companyId: string) {
     auth_uid: string;
   }>(sql`
     select m.user_id, m.role,
-      coalesce(up.display_name, ep.full_name) as full_name, u.auth_uid
+      up.display_name as full_name, u.auth_uid
     from public.company_members m
     join public.users u on u.id = m.user_id
-    left join public.employer_profiles ep on ep.user_id = m.user_id
     left join public.user_profiles up on up.user_id = m.user_id
     where m.company_id = ${companyId}
     order by case m.role

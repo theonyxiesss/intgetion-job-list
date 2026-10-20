@@ -67,10 +67,8 @@ export const creatorProfiles = pgTable(
       .primaryKey()
       .references(() => users.id, { onDelete: "cascade" }),
     displayName: text("display_name").notNull(),
-    languages: text("languages").array().notNull(),
     platforms: text("platforms").array().$type<UgcPlatform[]>().notNull(),
     niches: text("niches").array().$type<UgcNiche[]>().notNull(),
-    country: text("country"),
     exampleUrls: text("example_urls").array().notNull().default([]),
     inviteOptIn: boolean("invite_opt_in").notNull().default(false),
     status: text("status")

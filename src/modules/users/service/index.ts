@@ -9,7 +9,7 @@ export {
   noteSharedProfile,
   readSharedProfile,
   updateSharedProfile,
-  applySharedToRoles,
+  writeSharedFacts,
   applySharedPatch,
   patchSharedProfile,
 } from "./shared-profile";

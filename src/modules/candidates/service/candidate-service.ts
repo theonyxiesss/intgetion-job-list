@@ -2,7 +2,7 @@ import { getDb } from "@/db/client";
 import { notFound } from "@/lib/http";
 import { normalizeSkill } from "@/modules/taxonomy/service";
 import { findContactEmail } from "@/modules/contacts/service";
-import { noteSharedProfile } from "@/modules/users/service";
+import { writeSharedFacts } from "@/modules/users/service";
 import type { CandidateDto } from "../api/dto";
 import * as profiles from "../repo/profiles";
 import type { UpdateCandidateInput } from "../schemas";
@@ -19,7 +19,7 @@ function completenessInput(
     fullName: string | null;
     headline: string | null;
     desiredTitles: readonly string[];
-    timezone: string;
+    timezone: string | null;
     workHoursStart: string;
     workHoursEnd: string;
     workDays: readonly number[];
@@ -152,22 +152,24 @@ export async function saveCandidateProfile(
 
   await getDb().transaction(async (tx) => {
     await profiles.saveProfile(userId, input, resolved, score, tx);
+    // Name, place and languages live only in the shared profile (D509):
+    // written in the same transaction, a failure fails the save.
+    await writeSharedFacts(
+      userId,
+      {
+        displayName: input.fullName,
+        country: input.country,
+        city: input.city,
+        timezone: input.timezone,
+        languages: input.languages.map((item) => ({
+          code: item.lang,
+          level: item.level,
+        })),
+      },
+      "replace",
+      tx,
+    );
   });
-  // The person's own name and place: the shared profile follows (D503).
-  await noteSharedProfile(
-    userId,
-    {
-      displayName: input.fullName,
-      country: input.country,
-      city: input.city,
-      timezone: input.timezone,
-      languages: input.languages.map((item) => ({
-        code: item.lang,
-        level: item.level,
-      })),
-    },
-    "replace",
-  );
 
   const dto = await toDto(userId, unrecognized);
   return {
@@ -176,28 +178,6 @@ export async function saveCandidateProfile(
     completeness: score,
     unrecognizedSkills: unrecognized,
   };
-}
-
-/**
- * The shared profile's name and place reach an existing candidate profile
- * (D504). Languages stay in the candidate form: there a level is required.
- * Completeness is scored again on the next save of the candidate form.
- */
-export async function applySharedBasics(
-  userId: string,
-  basics: {
-    fullName: string | null;
-    country: string | null;
-    city: string | null;
-    timezone: string | null;
-  },
-): Promise<boolean> {
-  return profiles.setBasics(userId, {
-    fullName: basics.fullName,
-    country: basics.country,
-    city: basics.city,
-    ...(basics.timezone ? { timezone: basics.timezone } : {}),
-  });
 }
 
 export async function storeCompleteness(

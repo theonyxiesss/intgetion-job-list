@@ -17,7 +17,6 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import {
-  cefrLevel,
   companySize,
   employmentType,
   jobSeniority,
@@ -41,12 +40,8 @@ export const candidateProfiles = pgTable(
     userId: uuid("user_id")
       .primaryKey()
       .references(() => users.id, { onDelete: "cascade" }),
-    fullName: text("full_name"),
     headline: text("headline"),
     desiredTitles: text("desired_titles").array().notNull().default([]),
-    country: char("country", { length: 2 }),
-    city: text("city"),
-    timezone: text("timezone").notNull(),
     workHoursStart: time("work_hours_start").notNull().default("09:00:00"),
     workHoursEnd: time("work_hours_end").notNull().default("18:00:00"),
     workDays: smallint("work_days").array().notNull().default([1, 2, 3, 4, 5]),
@@ -87,24 +82,12 @@ export const candidateProfiles = pgTable(
   },
   (table) => [
     check(
-      "candidate_profiles_full_name_check",
-      sql`${table.fullName} is null or char_length(${table.fullName}) between 1 and 120`,
-    ),
-    check(
       "candidate_profiles_headline_check",
       sql`${table.headline} is null or char_length(${table.headline}) between 1 and 160`,
     ),
     check(
       "candidate_profiles_desired_titles_check",
       sql`public.candidate_titles_valid(${table.desiredTitles})`,
-    ),
-    check(
-      "candidate_profiles_country_check",
-      sql`${table.country} is null or ${table.country} ~ '^[A-Z]{2}$'`,
-    ),
-    check(
-      "candidate_profiles_city_check",
-      sql`${table.city} is null or char_length(${table.city}) between 1 and 80`,
     ),
     check(
       "candidate_profiles_work_days_check",
@@ -198,20 +181,7 @@ export const candidateExperience = pgTable(
   ],
 );
 
-export const candidateLanguages = pgTable(
-  "candidate_languages",
-  {
-    candidateId: uuid("candidate_id")
-      .notNull()
-      .references(() => candidateProfiles.userId, { onDelete: "cascade" }),
-    lang: char("lang", { length: 2 }).notNull(),
-    level: cefrLevel("level").notNull(),
-  },
-  (table) => [
-    primaryKey({ columns: [table.candidateId, table.lang] }),
-    check("candidate_languages_lang_check", sql`${table.lang} ~ '^[a-z]{2}$'`),
-  ],
-);
+// candidate_languages: dropped by 0066; languages live in user_profiles (D509).
 
 export const candidatePreferences = pgTable(
   "candidate_preferences",

@@ -51,7 +51,7 @@ export type CandidateDto = {
   desiredTitles: string[];
   country: string | null;
   city: string | null;
-  timezone: string;
+  timezone: string | null;
   workHoursStart: string;
   workHoursEnd: string;
   workDays: number[];

@@ -2,7 +2,6 @@ import { asc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   candidateExperience,
-  candidateLanguages,
   candidatePreferences,
   candidateProfiles,
   candidateSkills,
@@ -59,7 +58,7 @@ export async function loadProfile(userId: string, conn: Conn = getDb()) {
     .limit(1);
   if (!profile) return null;
 
-  const [skillRows, experienceRows, languageRows, preferenceRows, sharedRows] =
+  const [skillRows, experienceRows, preferenceRows, sharedRows] =
     await Promise.all([
       conn
         .select({
@@ -81,11 +80,6 @@ export async function loadProfile(userId: string, conn: Conn = getDb()) {
         .orderBy(asc(candidateExperience.sort)),
       conn
         .select()
-        .from(candidateLanguages)
-        .where(eq(candidateLanguages.candidateId, userId))
-        .orderBy(asc(candidateLanguages.lang)),
-      conn
-        .select()
         .from(candidatePreferences)
         .where(eq(candidatePreferences.userId, userId))
         .limit(1),
@@ -100,33 +94,26 @@ export async function loadProfile(userId: string, conn: Conn = getDb()) {
     profile,
     skills: skillRows,
     experience: experienceRows,
-    languages: languageRows,
     preferences: preferenceRows[0] ?? null,
     shared: sharedRows.at(0) ?? null,
   };
 }
 
 const LEVELS = new Set(["A1", "A2", "B1", "B2", "C1", "C2", "native"]);
+type CefrLevel = "A1" | "A2" | "B1" | "B2" | "C1" | "C2" | "native";
 
 /**
- * Languages shown and edited: the shared profile's (D508), a level from
- * the candidate row for the same language, else B1 as in matching (D507).
+ * Languages shown and edited come from the shared profile (D509); a
+ * language without a level reads as B1, as in matching (D507).
  */
 function sharedLanguages(
   loaded: NonNullable<Awaited<ReturnType<typeof loadProfile>>>,
-) {
-  const own = loaded.languages.map((item) => ({
-    lang: item.lang.trim(),
-    level: item.level,
-  }));
-  const shared = loaded.shared?.languages ?? [];
-  if (!shared.length) return own;
-  const levels = new Map(own.map((item) => [item.lang, item.level]));
-  return shared.map((item) => ({
+): { lang: string; level: CefrLevel }[] {
+  return (loaded.shared?.languages ?? []).map((item) => ({
     lang: item.code,
     level: (item.level && LEVELS.has(item.level)
       ? item.level
-      : (levels.get(item.code) ?? "B1")) as (typeof own)[number]["level"],
+      : "B1") as CefrLevel,
   }));
 }
 
@@ -142,12 +129,8 @@ export async function saveProfile(
     .insert(candidateProfiles)
     .values({
       userId,
-      fullName: input.fullName,
       headline: input.headline,
       desiredTitles: [...input.desiredTitles],
-      country: input.country,
-      city: input.city,
-      timezone: input.timezone.trim(),
       workHoursStart: clock(input.workHoursStart),
       workHoursEnd: clock(input.workHoursEnd),
       workDays: input.workDays,
@@ -169,12 +152,8 @@ export async function saveProfile(
     .onConflictDoUpdate({
       target: candidateProfiles.userId,
       set: {
-        fullName: input.fullName,
         headline: input.headline,
         desiredTitles: [...input.desiredTitles],
-        country: input.country,
-        city: input.city,
-        timezone: input.timezone.trim(),
         workHoursStart: clock(input.workHoursStart),
         workHoursEnd: clock(input.workHoursEnd),
         workDays: input.workDays,
@@ -228,19 +207,8 @@ export async function saveProfile(
     );
   }
 
-  await conn
-    .delete(candidateLanguages)
-    .where(eq(candidateLanguages.candidateId, userId));
-  if (input.languages.length > 0) {
-    const byLang = new Map(input.languages.map((item) => [item.lang, item]));
-    await conn.insert(candidateLanguages).values(
-      [...byLang.values()].map((item) => ({
-        candidateId: userId,
-        lang: item.lang,
-        level: item.level,
-      })),
-    );
-  }
+  // Name, place and languages go to the shared profile (D509), in the
+  // service, inside the same transaction.
 
   await conn
     .insert(candidatePreferences)
@@ -262,24 +230,6 @@ export async function saveProfile(
         notes: input.preferences.notes,
       },
     });
-}
-
-/** Name and place from the shared profile, on an existing row only (D504). */
-export async function setBasics(
-  userId: string,
-  basics: {
-    fullName?: string | null;
-    country?: string | null;
-    city?: string | null;
-    timezone?: string;
-  },
-): Promise<boolean> {
-  const rows = await getDb()
-    .update(candidateProfiles)
-    .set({ ...basics, updatedAt: new Date() })
-    .where(eq(candidateProfiles.userId, userId))
-    .returning({ userId: candidateProfiles.userId });
-  return rows.length > 0;
 }
 
 export async function setCompleteness(
@@ -312,13 +262,13 @@ export function presentProfile(
 
   return {
     id: profile.userId,
-    // Name and place from the shared profile, the row as fallback (D508).
-    fullName: loaded.shared?.displayName ?? profile.fullName,
+    // Name and place live in the shared profile (D509).
+    fullName: loaded.shared?.displayName ?? null,
     headline: profile.headline,
     desiredTitles: profile.desiredTitles,
-    country: loaded.shared?.country ?? trimChar(profile.country),
-    city: loaded.shared?.city ?? profile.city,
-    timezone: loaded.shared?.timezone ?? profile.timezone,
+    country: loaded.shared?.country ?? null,
+    city: loaded.shared?.city ?? null,
+    timezone: loaded.shared?.timezone ?? null,
     workHoursStart: hourMinute(profile.workHoursStart),
     workHoursEnd: hourMinute(profile.workHoursEnd),
     workDays: profile.workDays,

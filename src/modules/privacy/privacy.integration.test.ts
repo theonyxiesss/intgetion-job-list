@@ -56,8 +56,13 @@ beforeAll(async () => {
            (${ownJobId}, ${ownCompanyId}, 'Own role', ${description}, 'engineering', 'remote', 'full_time', 'internal', 'published', now(), now() + interval '30 days')
   `);
   await db.execute(sql`
-    insert into public.candidate_profiles (user_id, full_name, headline, timezone, work_formats, employment_types, work_hours_start, work_hours_end, work_days, desired_titles, min_overlap_hours)
-    values (${candidateId}, 'Ada Privacy', 'Backend', 'Europe/Berlin', '{remote}', '{full_time}', '09:00', '18:00', '{1,2,3,4,5}', '{Engineer}', 0)
+    insert into public.candidate_profiles (user_id, headline, work_formats, employment_types, work_hours_start, work_hours_end, work_days, desired_titles, min_overlap_hours)
+    values (${candidateId}, 'Backend', '{remote}', '{full_time}', '09:00', '18:00', '{1,2,3,4,5}', '{Engineer}', 0)
+  `);
+  // Name and time zone live in the shared profile (D509).
+  await db.execute(sql`
+    insert into public.user_profiles (user_id, display_name, timezone)
+    values (${candidateId}, 'Ada Privacy', 'Europe/Berlin')
   `);
   await db.execute(sql`
     insert into public.candidate_contacts (candidate_id, email, phone)

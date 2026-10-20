@@ -170,7 +170,7 @@ async function readSubscriptions(
     email: boolean;
   }>(sql`
     with people as (
-      select cp.user_id, coalesce(up.timezone, cp.timezone) as timezone,
+      select cp.user_id, up.timezone,
         'matches.digest' as type
       from public.candidate_profiles cp
       join public.users u on u.id = cp.user_id and u.status = 'active'

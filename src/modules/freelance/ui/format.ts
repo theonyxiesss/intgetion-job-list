@@ -8,7 +8,12 @@ export function formatUsd(minor: bigint, locale: string): string {
 }
 
 /** "UTC+3", "UTC−5", "UTC+5:30" for the zone right now. */
-export function utcLabel(timeZone: string, now: Date = new Date()): string {
+export function utcLabel(
+  timeZone: string | null,
+  now: Date = new Date(),
+): string {
+  // No zone in the shared profile yet (D509): a dash, not a guess.
+  if (!timeZone) return "—";
   if (!isValidTimeZone(timeZone)) return timeZone;
   const minutes = timeZoneOffsetMinutes(now, timeZone);
   if (minutes === 0) return "UTC";

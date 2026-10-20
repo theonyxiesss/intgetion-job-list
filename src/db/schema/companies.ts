@@ -87,7 +87,6 @@ export const employerProfiles = pgTable("employer_profiles", {
   userId: uuid("user_id")
     .primaryKey()
     .references(() => users.id, { onDelete: "cascade" }),
-  fullName: text("full_name"),
   title: text("title"),
   linkedinUrl: text("linkedin_url"),
   createdAt: timestamp("created_at", { withTimezone: true })

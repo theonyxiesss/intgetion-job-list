@@ -157,7 +157,7 @@ export async function runSlot(input: {
   let error: string | null = null;
   try {
     const candidates = await db.execute<CandidateRow>(sql`
-      select cp.user_id, coalesce(up.timezone, cp.timezone) as timezone,
+      select cp.user_id, up.timezone,
         u.locale, cp.last_digest_at
       from public.candidate_profiles cp
       join public.users u on u.id = cp.user_id

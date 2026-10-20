@@ -10,10 +10,8 @@ import {
   userProfiles,
 } from "@/db/schema";
 
-/** The name from the shared profile, the candidate row as fallback (D508). */
-const sharedName = sql<
-  string | null
->`coalesce(${userProfiles.displayName}, ${candidateProfiles.fullName})`;
+/** The candidate's name lives in the shared profile (D509). */
+const sharedName = userProfiles.displayName;
 import type { ApplicationStatus } from "../service/transitions";
 
 type Database = ReturnType<typeof getDb>;

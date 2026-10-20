@@ -162,34 +162,19 @@ export async function updateSharedProfile(
 }
 
 /**
- * The shared profile reaches the roles that already exist (D504): name and
- * place to the candidate, country and languages to the creator, whose name stays a nickname. A role that is not started yet
- * takes it from its prefilled form. Imported lazily: those modules note
- * their own saves back here.
+ * A role form's facts, written in the caller's transaction (D509): since
+ * 0066 the shared profile is the only place for name, place and languages,
+ * so a failure fails the save instead of being logged and skipped.
  */
-export async function applySharedToRoles(
+export async function writeSharedFacts(
   userId: string,
-  profile: SharedProfile,
+  facts: SharedFacts,
+  mode: NoteMode,
+  conn?: Parameters<typeof repo.saveSharedProfile>[2],
 ): Promise<void> {
-  const [candidates, ugc] = await Promise.all([
-    import("@/modules/candidates/service"),
-    import("@/modules/ugc/service"),
-  ]);
-  const steps: Promise<unknown>[] = [
-    candidates.applySharedBasics(userId, {
-      fullName: profile.displayName,
-      country: profile.country,
-      city: profile.city,
-      timezone: profile.timezone,
-    }),
-    ugc.applySharedToCreator(userId, {
-      country: profile.country,
-      languages: profile.languages.map((item) => item.code),
-    }),
-  ];
-  for (const result of await Promise.allSettled(steps))
-    if (result.status === "rejected")
-      logger.warn({ err: result.reason }, "users: role not updated");
+  const current = await repo.findSharedProfile(userId, conn);
+  const next = mergeSharedFacts(current, facts, mode);
+  if (next) await repo.saveSharedProfile(userId, next, conn);
 }
 
 /** A change Spoki proposes: only the named fields, languages added or removed. */
@@ -238,14 +223,13 @@ export function applySharedPatch(
   return { ...base, languages };
 }
 
-/** Spoki's confirmed change: save, then carry it into the roles (D505). */
+/** Spoki's confirmed change (D505): every role reads it from here (D509). */
 export async function patchSharedProfile(
   userId: string,
   patch: SharedPatch,
 ): Promise<SharedProfile> {
   const next = applySharedPatch(await repo.findSharedProfile(userId), patch);
   await repo.saveSharedProfile(userId, next);
-  await applySharedToRoles(userId, next);
   return next;
 }
 

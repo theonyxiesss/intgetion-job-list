@@ -9,12 +9,8 @@ function loaded(shared: Loaded["shared"]): Loaded {
   return {
     profile: {
       userId: "u1",
-      fullName: "Old Name",
       headline: null,
       desiredTitles: [],
-      country: "PL",
-      city: "Warsaw",
-      timezone: "Europe/Warsaw",
       workHoursStart: "09:00:00",
       workHoursEnd: "18:00:00",
       workDays: [1, 2, 3, 4, 5],
@@ -35,21 +31,19 @@ function loaded(shared: Loaded["shared"]): Loaded {
     },
     skills: [],
     experience: [],
-    languages: [{ candidateId: "u1", lang: "en", level: "C1" }],
     preferences: null,
     shared,
   } as unknown as Loaded;
 }
 
-describe("the candidate profile shows the shared profile (D508)", () => {
-  it("keeps the candidate row while there is no shared profile", () => {
-    const view = presentProfile(loaded(null));
-    expect(view).toMatchObject({
-      fullName: "Old Name",
-      country: "PL",
-      city: "Warsaw",
-      timezone: "Europe/Warsaw",
-      languages: [{ lang: "en", level: "C1" }],
+describe("the candidate profile reads only the shared profile (D508, D509)", () => {
+  it("has no name, place or languages without a shared profile", () => {
+    expect(presentProfile(loaded(null))).toMatchObject({
+      fullName: null,
+      country: null,
+      city: null,
+      timezone: null,
+      languages: [],
     });
   });
 
@@ -77,7 +71,7 @@ describe("the candidate profile shows the shared profile (D508)", () => {
       timezone: "Europe/Berlin",
       languages: [
         { lang: "de", level: "B2" },
-        { lang: "en", level: "C1" },
+        { lang: "en", level: "B1" },
       ],
     });
   });
@@ -86,21 +80,23 @@ describe("the candidate profile shows the shared profile (D508)", () => {
     const read = (path: string) =>
       readFileSync(join(process.cwd(), path), "utf8");
     expect(read("src/modules/applications/repo/applications.ts")).toContain(
-      "coalesce(${userProfiles.displayName}, ${candidateProfiles.fullName})",
+      "const sharedName = userProfiles.displayName;",
     );
     expect(read("src/modules/candidates/repo/storefront.ts")).toContain(
-      "coalesce(${userProfiles.timezone}, ${candidateProfiles.timezone})",
+      "timezone: userProfiles.timezone,",
     );
-    expect(read("src/modules/admin-console/people-repo.ts")).not.toMatch(
-      /[^(]p\.full_name,/,
+    expect(read("src/modules/admin-console/people-repo.ts")).not.toContain(
+      "p.full_name",
     );
     expect(read("src/modules/companies/repo/company-repo.ts")).toContain(
-      "coalesce(up.display_name, ep.full_name) as full_name",
+      "up.display_name as full_name",
     );
     for (const path of [
       "src/modules/notifications/service/morning-briefs.ts",
       "src/modules/notifications/service/briefs-admin.ts",
-    ])
-      expect(read(path)).toContain("coalesce(up.timezone, cp.timezone)");
+    ]) {
+      expect(read(path)).toContain("up.timezone");
+      expect(read(path)).not.toContain("cp.timezone");
+    }
   });
 });

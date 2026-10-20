@@ -7,7 +7,7 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { accountType, platformRole, userStatus } from "./enums";
+import { platformRole, userStatus } from "./enums";
 
 export const users = pgTable(
   "users",
@@ -16,7 +16,6 @@ export const users = pgTable(
     authUid: uuid("auth_uid").notNull().unique(),
     platformRole: platformRole("platform_role").notNull().default("user"),
     status: userStatus("status").notNull().default("active"),
-    accountType: accountType("account_type").notNull().default("candidate"),
     locale: text("locale").notNull().default("en"),
     termsAcceptedAt: timestamp("terms_accepted_at", {
       withTimezone: true,

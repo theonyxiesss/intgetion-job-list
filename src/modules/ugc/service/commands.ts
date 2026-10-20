@@ -337,33 +337,6 @@ export async function getOwnCreatorProfile(
   return (await db()).getProfile(id);
 }
 
-/**
- * The shared profile's country and languages reach an existing creator
- * profile (D504). The name stays: a creator may use a nickname. An empty
- * shared value keeps the creator's own.
- */
-export async function applySharedToCreator(
-  userId: string,
-  shared: { country: string | null; languages: readonly string[] },
-): Promise<boolean> {
-  const store = await db();
-  const profile = await store.getProfile(userId);
-  if (!profile) return false;
-  const languages = [...new Set(shared.languages)].filter((code) =>
-    LANG.test(code),
-  );
-  const country =
-    shared.country && COUNTRY.test(shared.country)
-      ? shared.country
-      : profile.country;
-  await store.saveProfile({
-    ...profile,
-    country,
-    languages: languages.length ? languages : profile.languages,
-  });
-  return true;
-}
-
 export async function getMyCreatorProfile(userId: string | null) {
   const id = requireUser(userId);
   const store = await db();

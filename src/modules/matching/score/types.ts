@@ -48,13 +48,14 @@ export interface CandidateLanguageForScoring {
 }
 
 /** Fields of candidate_profiles + candidate_preferences + candidate_skills
- * + candidate_languages (4.1) that scoring needs. */
+ * + the shared profile's place and languages that scoring needs (D509). */
 export interface CandidateForScoring {
   userId: string;
   /** ISO 3166-1 alpha-2; null = not filled in */
   country: string | null;
   /** IANA */
-  timezone: string;
+  /** IANA from the shared profile; null = unknown, no work-hours check (D509). */
+  timezone: string | null;
   workHoursStart: string;
   workHoursEnd: string;
   /** ISO weekdays 1..7 */

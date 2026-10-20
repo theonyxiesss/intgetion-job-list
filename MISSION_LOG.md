@@ -2808,3 +2808,11 @@
 - Миграции: нет.
 - Проверки D508: `pnpm typecheck` → 0 (после исправления типа `shared` в `loadProfile`); `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1441 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.
 - D508 выкладка: коммит `5394fcb`, Vercel `dpl_aeLdUcPF68tkteAhRLfZczYVVYe1` success; `/ru`, `/ru/jobs`, `/ru/freelance` → 200, `/ru/profile` → 307 на вход (`/ru/employer/applications` → 404 и до этого: у раздела нет общей страницы).
+
+## [2026-10-21] — D509 — этап 6.4г: удаление старых копий
+
+- Founder: «да, удаляй» на точный список 6.4г.
+- Облако (чтение): данных только в старых полях нет; зависимых представлений, индексов, функций и внешних ключей нет; тип `account_type` используется только `users.account_type`.
+- Шаг 1: `0065_old_profile_fields_optional.sql` применена путём D438: журнал 61 → 62, три столбца nullable, членство `postgres` в `migrator` вернулось к `set=false, admin=true` от `supabase_admin`.
+- Шаг 2 (код): схема без старых полей (`db/schema/candidates.ts`, `ugc.ts`, `companies.ts`, `users.ts`, `enums.ts`); `candidates/repo/profiles.ts`, `candidate-service.ts` (`writeSharedFacts` в транзакции, убран `applySharedBasics`); `users` (`writeSharedFacts`, соединение в repo, убран `applySharedToRoles`); `/api/me/profile`; `matching` (`factsForMatching` только общая анкета, пустой пояс — нейтрально в `hard-filter.ts` и `components.ts`, предотбор `up.country`); `ugc-repo.ts` (профиль креатора и его форма на общей анкете, убраны `applySharedToCreator`, `withSharedPlace` и `shared-place.test.ts`); `applications.ts`, `storefront.ts` (+ `freelance/ui/format.ts` «—» без пояса), `people-repo.ts`, `company-repo.ts`, сводки, выгрузка; типы `CandidateDto.timezone`, `ProfileFacts.timezone` nullable; тестовые фикстуры без `accountType`; 7 интеграционных тестов кладут имя, место и пояс в `user_profiles`. Миграция `0066_drop_old_profile_fields.sql` написана, применяется после выкладки.
+- Проверки шага 2: `pnpm typecheck` → 0; `pnpm lint` → 0 (после удаления неиспользуемого `cefrLevel`); `pnpm eval` → 0 (7); `pnpm test` → 1: 1438 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Интеграционные тесты — в CI.

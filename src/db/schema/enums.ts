@@ -1,5 +1,4 @@
 import { pgEnum } from "drizzle-orm/pg-core";
-import { ACCOUNT_TYPES } from "../../config/account";
 
 export const userStatus = pgEnum("user_status", [
   "active",
@@ -9,8 +8,6 @@ export const userStatus = pgEnum("user_status", [
 ]);
 
 export const platformRole = pgEnum("platform_role", ["user", "admin"]);
-
-export const accountType = pgEnum("account_type", ACCOUNT_TYPES);
 
 export const workFormat = pgEnum("work_format", ["remote", "hybrid", "onsite"]);
 

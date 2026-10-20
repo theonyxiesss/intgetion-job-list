@@ -6,7 +6,7 @@ export type SellerStorefront = {
   /** "Ada L.": first name and the initial of the last word, or null. */
   displayName: string | null;
   headline: string | null;
-  timezone: string;
+  timezone: string | null;
 };
 
 /** "Ada Lovelace" → "Ada L.", "Ada" → "Ada", blank → null. */

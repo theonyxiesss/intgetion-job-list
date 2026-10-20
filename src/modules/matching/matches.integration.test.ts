@@ -99,15 +99,20 @@ beforeAll(async () => {
   for (const id of [userId, perfUser]) {
     await db.execute(sql`
       insert into public.candidate_profiles(
-        user_id, timezone, country, work_formats, employment_types,
+        user_id, work_formats, employment_types,
         work_hours_start, work_hours_end, work_days, experience_years,
         salary_min, salary_currency, salary_period, salary_basis,
         desired_titles, min_overlap_hours
       ) values (
-        ${id}, 'Europe/Berlin', 'DE', '{remote}', '{full_time}',
+        ${id}, '{remote}', '{full_time}',
         '09:00', '18:00', '{1,2,3,4,5}', 5,
         400000, 'EUR', 'month', 'gross', '{Backend Developer}', 0
       )
+    `);
+    // Place and time zone live in the shared profile (D509).
+    await db.execute(sql`
+      insert into public.user_profiles(user_id, country, timezone)
+      values (${id}, 'DE', 'Europe/Berlin')
     `);
     await db.execute(sql`
       insert into public.candidate_skills(candidate_id, skill_id, level)

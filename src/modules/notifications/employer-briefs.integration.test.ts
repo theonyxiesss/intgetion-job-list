@@ -65,11 +65,15 @@ beforeAll(async () => {
   for (const [index, id] of candidates.entries()) {
     await db.execute(sql`
       insert into public.candidate_profiles
-        (user_id, timezone, full_name, desired_titles, experience_years,
+        (user_id, desired_titles, experience_years,
          is_hidden, agent_briefs_enabled, created_at, updated_at)
-      values (${id}, 'Asia/Tokyo', ${`Secret Name ${index}`},
-              array['Backend engineer'], 5, ${id === hiddenId}, false,
+      values (${id}, array['Backend engineer'], 5, ${id === hiddenId}, false,
               '2032-03-01T00:00:00Z', '2032-03-01T00:00:00Z')
+    `);
+    // Name and time zone live in the shared profile (D509).
+    await db.execute(sql`
+      insert into public.user_profiles (user_id, display_name, timezone)
+      values (${id}, ${`Secret Name ${index}`}, 'Asia/Tokyo')
     `);
     await db.execute(sql`
       insert into public.matching_results

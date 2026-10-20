@@ -5,7 +5,6 @@ import { and, eq, gte, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   applications,
-  candidateLanguages,
   candidatePreferences,
   candidateProfiles,
   candidateSkills,
@@ -23,7 +22,6 @@ import { factsForMatching } from "../service/shared-facts";
 import type { ExplainEntry } from "../score/types";
 import type {
   CandidateForScoring,
-  CandidateLanguageForScoring,
   CandidateSkillForScoring,
   FeedbackForScoring,
   JobForScoring,
@@ -85,13 +83,6 @@ export async function readProfile(
     })
     .from(candidateSkills)
     .where(eq(candidateSkills.candidateId, userId));
-  const languages = await db
-    .select({
-      lang: candidateLanguages.lang,
-      level: candidateLanguages.level,
-    })
-    .from(candidateLanguages)
-    .where(eq(candidateLanguages.candidateId, userId));
   const [shared] = await db
     .select({
       country: userProfiles.country,
@@ -114,18 +105,8 @@ export async function readProfile(
   const candidateSkillsForScoring: CandidateSkillForScoring[] = skills.map(
     (skill) => ({ skillId: skill.skillId, level: skill.level }),
   );
-  const candidateLanguagesForScoring: CandidateLanguageForScoring[] =
-    languages.map((language) => ({
-      lang: language.lang.trim(),
-      level: language.level,
-    }));
-  // The shared profile first, the candidate row as fallback (D507).
+  // Country, time zone and languages live in the shared profile (D509).
   const facts = factsForMatching(
-    {
-      country: trimCode(profile.country),
-      timezone: profile.timezone,
-      languages: candidateLanguagesForScoring,
-    },
     shared
       ? {
           country: trimCode(shared.country),
@@ -350,17 +331,11 @@ export async function prefilterCandidateIds(
       and j.employment_type = any(p.employment_types)
       and (
         j.country_restrictions is null
-        or (
-          coalesce(up.country, p.country) is not null
-          and coalesce(up.country, p.country) = any(j.country_restrictions)
-        )
+        or (up.country is not null and up.country = any(j.country_restrictions))
       )
       and (
         j.work_format = 'remote'
-        or (
-          coalesce(up.country, p.country) is not null
-          and j.location_country = coalesce(up.country, p.country)
-        )
+        or (up.country is not null and j.location_country = up.country)
       )
       and (
         exists (

@@ -11,8 +11,7 @@ import {
   userProfiles,
 } from "@/db/schema";
 import { recordAudit } from "@/lib/audit";
-import { noteSharedProfile } from "@/modules/users/service";
-import { withSharedPlace } from "../service/rules";
+import { writeSharedFacts } from "@/modules/users/service";
 import {
   findMemberRole,
   getCompaniesForUser,
@@ -70,26 +69,22 @@ type SharedPlace = {
   languages: { code: string; level: string | null }[] | null;
 } | null;
 
+/** Country and languages live in the shared profile (D509); null = any. */
 function profileOf(
   row: ProfileRow,
   shared: SharedPlace = null,
 ): CreatorProfile {
-  return withSharedPlace(
-    {
-      userId: row.userId,
-      displayName: row.displayName,
-      languages: row.languages,
-      platforms: row.platforms,
-      niches: row.niches,
-      country: row.country,
-      exampleUrls: row.exampleUrls,
-      inviteOptIn: row.inviteOptIn,
-      status: row.status,
-    },
-    shared && shared.languages !== null
-      ? { country: shared.country, languages: shared.languages }
-      : null,
-  );
+  return {
+    userId: row.userId,
+    displayName: row.displayName,
+    languages: (shared?.languages ?? []).map((item) => item.code),
+    platforms: row.platforms,
+    niches: row.niches,
+    country: shared?.country ?? null,
+    exampleUrls: row.exampleUrls,
+    inviteOptIn: row.inviteOptIn,
+    status: row.status,
+  };
 }
 
 function inviteOf(row: InviteRow): Invite {
@@ -181,29 +176,30 @@ export function productionUgcStore(): UgcStore {
         : null;
     },
     async saveProfile(profile) {
-      await db
-        .insert(creatorProfiles)
-        .values(profile)
-        .onConflictDoUpdate({
-          target: creatorProfiles.userId,
-          set: { ...profile, updatedAt: new Date() },
-        });
-      // A creator name may be a nickname: it only fills an empty profile
-      // (D503). Country and languages typed here are the person's own and
-      // replace the shared ones, which matching reads (D507).
-      await noteSharedProfile(
-        profile.userId,
-        { displayName: profile.displayName },
-        "fill",
-      );
-      await noteSharedProfile(
-        profile.userId,
-        {
-          country: profile.country,
-          languages: profile.languages.map((code) => ({ code })),
-        },
-        "replace",
-      );
+      const { languages, country, ...own } = profile;
+      await db.transaction(async (tx) => {
+        await tx
+          .insert(creatorProfiles)
+          .values(own)
+          .onConflictDoUpdate({
+            target: creatorProfiles.userId,
+            set: { ...own, updatedAt: new Date() },
+          });
+        // Country and languages are the person's own and live in the shared
+        // profile (D509); the name may be a nickname and only fills it.
+        await writeSharedFacts(
+          profile.userId,
+          { displayName: own.displayName },
+          "fill",
+          tx,
+        );
+        await writeSharedFacts(
+          profile.userId,
+          { country, languages: languages.map((code) => ({ code })) },
+          "replace",
+          tx,
+        );
+      });
     },
     async listOptInProfiles() {
       const rows = await db

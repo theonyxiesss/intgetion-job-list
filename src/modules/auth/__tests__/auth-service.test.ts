@@ -49,7 +49,6 @@ const row: CurrentUser = {
   id: "11111111-1111-4111-8111-111111111111",
   authUid: "22222222-2222-4222-8222-222222222222",
   platformRole: "user",
-  accountType: "candidate",
   status: "active",
   locale: "en",
   termsAcceptedAt: new Date("2026-10-03T00:00:00Z"),
@@ -135,7 +134,6 @@ describe("register", () => {
           password: "orbit-lantern-42",
           locale: "ru",
           acceptTerms: true,
-          accountType: "candidate",
         },
         now,
       ),
@@ -191,7 +189,6 @@ describe("register", () => {
           email: "ana@example.com",
           locale: "en",
           acceptTerms: true,
-          accountType: "candidate",
         },
         now,
       ),
@@ -218,7 +215,6 @@ describe("register", () => {
         password: "orbit-lantern-42",
         locale: "en",
         acceptTerms: true,
-        accountType: "candidate",
       }),
     ).resolves.toEqual({ status: "resent" });
     expect(auth.resend).toHaveBeenCalledWith({
@@ -268,7 +264,6 @@ describe("register", () => {
         password: "orbit-lantern-42",
         locale: "en",
         acceptTerms: true,
-        accountType: "candidate",
       }),
     ).rejects.toMatchObject({
       status: 409,

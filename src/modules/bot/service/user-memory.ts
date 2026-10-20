@@ -197,7 +197,7 @@ export type ProfileFacts = {
   desiredTitles: string[];
   country: string | null;
   city: string | null;
-  timezone: string;
+  timezone: string | null;
   workFormats: string[];
   employmentTypes: string[];
   experienceYears: number | null;
