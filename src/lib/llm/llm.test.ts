@@ -13,6 +13,8 @@ import {
   JOB_LLM_FIELDS,
   LLMOutputError,
   MAX_HISTORY_MESSAGES,
+  MESSAGE_OVERHEAD_TOKENS,
+  MIN_HISTORY_TOKENS,
   medianMicroUsd,
   modelsFromEnv,
   parseUsdToMicro,
@@ -247,6 +249,26 @@ describe("budget", () => {
     expect(trimmed.estimatedTokens).toBeLessThanOrEqual(6000);
     expect(trimmed.messages).toHaveLength(2);
     expect(trimmed.dropped).toHaveLength(3);
+  });
+
+  it("keeps the newest message when the system prompt alone is over budget (D497)", () => {
+    const system = "x".repeat(3 * 6400);
+    const last = "Название продукта LUMINA Glow Serum. "
+      .repeat(50)
+      .slice(0, 2000);
+    const trimmed = trimContext({
+      system,
+      summary: "s",
+      messages: [
+        { role: "assistant", content: "y".repeat(3 * 1500) },
+        { role: "user", content: last },
+      ],
+    });
+    expect(trimmed.messages.map((m) => m.content)).toEqual([last]);
+    expect(trimmed.dropped).toHaveLength(1);
+    expect(trimmed.estimatedTokens).toBeLessThanOrEqual(
+      6400 + estimateTokens("s") + MESSAGE_OVERHEAD_TOKENS + MIN_HISTORY_TOKENS,
+    );
   });
 
   it("opens the circuit breaker only above the daily budget", () => {

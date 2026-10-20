@@ -6,6 +6,12 @@
 export const MAX_OUTPUT_TOKENS = 800;
 export const MAX_INPUT_TOKENS = 6000;
 export const MAX_HISTORY_MESSAGES = 12;
+/**
+ * History room kept on top of the system prompt and summary (D497). A user
+ * message is at most 2000 characters (≤ 1334 estimated tokens), so the newest
+ * one always fits however long the system prompt grows.
+ */
+export const MIN_HISTORY_TOKENS = 2000;
 /** Per-message framing (role markers, separators) in the estimate. */
 export const MESSAGE_OVERHEAD_TOKENS = 4;
 
@@ -62,8 +68,10 @@ export type ContextMessage = { role: string; content: string };
 
 /**
  * Keeps the newest messages that fit: at most 12, and at most 6 000
- * estimated input tokens together with the system prompt and summary. The
- * dropped ones go into the conversation summary (caller).
+ * estimated input tokens together with the system prompt and summary. A
+ * long system prompt widens the limit so history still gets
+ * MIN_HISTORY_TOKENS (D497). The dropped ones go into the conversation
+ * summary (caller).
  */
 export function trimContext<T extends ContextMessage>(input: {
   system: string;
@@ -71,15 +79,15 @@ export function trimContext<T extends ContextMessage>(input: {
   messages: readonly T[];
   maxInputTokens?: number;
 }): { messages: T[]; dropped: T[]; estimatedTokens: number } {
-  const limit = input.maxInputTokens ?? MAX_INPUT_TOKENS;
   let used =
     estimateTokens(input.system) +
     (input.summary
       ? estimateTokens(input.summary) + MESSAGE_OVERHEAD_TOKENS
       : 0);
-  if (used > limit) {
-    throw new RangeError("System prompt and summary exceed the input budget");
-  }
+  const limit = Math.max(
+    input.maxInputTokens ?? MAX_INPUT_TOKENS,
+    used + MIN_HISTORY_TOKENS,
+  );
   const recent = input.messages.slice(-MAX_HISTORY_MESSAGES);
   const kept: T[] = [];
   for (let i = recent.length - 1; i >= 0; i -= 1) {

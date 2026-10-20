@@ -2691,3 +2691,12 @@
 - Сделано: `src/lib/llm/openrouter.ts` — `models` с двумя запасными бесплатными моделями для `:free`; тест в `openrouter.test.ts`. D496.
 - Проверки: vitest `src/lib/llm` + `src/modules/bot` 186 passed → 0; `pnpm eval` 7/7 → 0; eslint → 0; prettier → 0; typecheck → только 3 известные ошибки MCP-пакета (локально не установлен).
 - Миграции: нет.
+
+## [2026-10-20] — D497 — UGC-чат «Что-то пошло не так» на заполненном брифе — локально, ждёт выкладки
+
+- Founder: вставил готовый бриф LUMINA Glow Serum в UGC-чат, получил «Что-то пошло не так. Попробуйте ещё раз.»
+- Причина (лог Vercel CLI, 09:57 UTC, `dpl_DLvsp…`, дважды): `RangeError: System prompt and summary exceed the input budget` → `INTERNAL` → `chat.errors.generic`. Замер: системный промпт 5297 оценочных токенов, с UGC-блоками 5910 из 6000; блок черновика +~480.
+- Сделано: `src/lib/llm/budget.ts` — `trimContext` не бросает, предел `max(6000, system+summary+MIN_HISTORY_TOKENS=2000)`; тест в `src/lib/llm/llm.test.ts`. D497.
+- Проверки: `pnpm typecheck` → 0 (после `pnpm install --frozen-lockfile`: локально не было `@modelcontextprotocol/server`); `pnpm lint` → 0; `pnpm test` → 1, 1378 passed, 1 failed — `src/content/legal/legal.test.ts` (D241): тексты в `src/content/legal` разошлись с `docs/content/legal-*.md` (строка «Почтовый адрес»), файлы не трогались, к D497 не относится; vitest `src/lib/llm` 45/45 → 0. `pnpm build` → 0. Founder 2026-10-20: «Сначала выкатить D497» — да на коммит, push и production.
+- Миграции: нет.
+- OPEN QUESTION: нет. Хвост: синхронизировать юридические тексты (`pnpm legal:sync`) — отдельная задача.
