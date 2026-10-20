@@ -127,6 +127,29 @@ export function fitReasons(
   };
 }
 
+/**
+ * Country and languages for creator matching come from the shared "about
+ * me" profile (D507, 29.8); the creator row is the fallback until stage
+ * 6.4d drops it. No shared country keeps the creator's own, null = any.
+ */
+export function withSharedPlace<
+  T extends { languages: string[]; country: string | null },
+>(
+  profile: T,
+  shared: {
+    country: string | null;
+    languages: readonly { code: string }[];
+  } | null,
+): T {
+  if (!shared) return profile;
+  const languages = shared.languages.map((item) => item.code);
+  return {
+    ...profile,
+    languages: languages.length ? languages : profile.languages,
+    country: shared.country ?? profile.country,
+  };
+}
+
 export function bountyAllowed(minor: bigint): boolean {
   return minor >= BigInt(L.bountyMinMinor) && minor <= BigInt(L.bountyMaxMinor);
 }

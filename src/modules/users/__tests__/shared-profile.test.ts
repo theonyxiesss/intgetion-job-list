@@ -123,3 +123,18 @@ describe("shared profile (D503)", () => {
     expect(sql).toContain("ON CONFLICT (user_id) DO NOTHING");
   });
 });
+
+describe("a list without levels keeps the known ones (D507)", () => {
+  it("replaces the languages and keeps the level of a language already known", () => {
+    expect(
+      mergeSharedFacts(
+        anna,
+        { languages: [{ code: "en" }, { code: "de" }] },
+        "replace",
+      )?.languages,
+    ).toEqual([
+      { code: "en", level: "C1" },
+      { code: "de", level: null },
+    ]);
+  });
+});

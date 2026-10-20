@@ -16,8 +16,10 @@ import {
   jobs,
   matchingResults,
   userJobFeedback,
+  userProfiles,
 } from "@/db/schema";
 import type { FxRate } from "@/lib/money";
+import { factsForMatching } from "../service/shared-facts";
 import type { ExplainEntry } from "../score/types";
 import type {
   CandidateForScoring,
@@ -90,6 +92,15 @@ export async function readProfile(
     })
     .from(candidateLanguages)
     .where(eq(candidateLanguages.candidateId, userId));
+  const [shared] = await db
+    .select({
+      country: userProfiles.country,
+      timezone: userProfiles.timezone,
+      languages: userProfiles.languages,
+    })
+    .from(userProfiles)
+    .where(eq(userProfiles.userId, userId))
+    .limit(1);
   const preferences = await db
     .select({
       categories: candidatePreferences.categories,
@@ -108,13 +119,28 @@ export async function readProfile(
       lang: language.lang.trim(),
       level: language.level,
     }));
+  // The shared profile first, the candidate row as fallback (D507).
+  const facts = factsForMatching(
+    {
+      country: trimCode(profile.country),
+      timezone: profile.timezone,
+      languages: candidateLanguagesForScoring,
+    },
+    shared
+      ? {
+          country: trimCode(shared.country),
+          timezone: shared.timezone,
+          languages: shared.languages ?? [],
+        }
+      : null,
+  );
 
   return {
     updatedAt: profile.updatedAt,
     candidate: {
       userId,
-      country: trimCode(profile.country),
-      timezone: profile.timezone,
+      country: facts.country,
+      timezone: facts.timezone,
       workHoursStart: hhmm(profile.workHoursStart),
       workHoursEnd: hhmm(profile.workHoursEnd),
       workDays: profile.workDays.map(Number),
@@ -132,7 +158,7 @@ export async function readProfile(
       salaryBasis: profile.salaryBasis,
       minOverlapHours: profile.minOverlapHours,
       skills: candidateSkillsForScoring,
-      languages: candidateLanguagesForScoring,
+      languages: facts.languages,
     },
   };
 }
@@ -317,17 +343,24 @@ export async function prefilterCandidateIds(
     join public.jobs j on j.id = ${jobId}
     join public.companies c on c.id = j.company_id
     left join public.candidate_preferences pref on pref.user_id = p.user_id
+    left join public.user_profiles up on up.user_id = p.user_id
     where j.status = 'published'
       and c.status not in ('suspended', 'rejected')
       and j.work_format = any(p.work_formats)
       and j.employment_type = any(p.employment_types)
       and (
         j.country_restrictions is null
-        or (p.country is not null and p.country = any(j.country_restrictions))
+        or (
+          coalesce(up.country, p.country) is not null
+          and coalesce(up.country, p.country) = any(j.country_restrictions)
+        )
       )
       and (
         j.work_format = 'remote'
-        or (p.country is not null and j.location_country = p.country)
+        or (
+          coalesce(up.country, p.country) is not null
+          and j.location_country = coalesce(up.country, p.country)
+        )
       )
       and (
         exists (

@@ -2790,3 +2790,11 @@
 - Шапка: ссылки соискателя видны и члену компании (`header.tsx`, `nav-icons.tsx`, `nav-icons.test.ts` — порядок меню работодателя с профилем). База (чтение): отметку «работодатель» не имел никто, 3 члена компании были «соискателями».
 - Проверки D506: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1: 1429 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.
 - D506 выкладка: коммит `74ad4a0`, Vercel `dpl_7FxMF1qGbzbvPtccsr8MmjwRwjwQ` success; `/ru`, `/ru/jobs`, `/ru/pricing` → 200; `/ru/settings/account`, `/ru/account` → 307 на вход.
+
+## [2026-10-20] — D507 — этап 6.4б: подбор на общей анкете
+
+- Founder: «да» на 6.4б.
+- Сделано: `src/modules/matching/service/shared-facts.ts` (`factsForMatching`); `matching-repo.ts` — `readProfile` читает `user_profiles`, предотбор `coalesce(up.country, p.country)`; `src/modules/ugc/service/rules.ts` (`withSharedPlace`); `ugc-repo.ts` — `getProfile`, `listOptInProfiles` с общей анкетой, форма креатора кладёт страну и языки с заменой; `users/service/shared-profile.ts` — замена языков сохраняет известные уровни. Тесты: `matching/__tests__/shared-facts.test.ts` (4), `ugc/__tests__/shared-place.test.ts` (3), `users/__tests__/shared-profile.test.ts` (+1). Документы: D507, `docs/tz/29-spoki-cards.md`, CURRENT.
+- Найдено для 6.4в: имя кандидата читают отклики (`applications.ts`), админка людей (`people-repo.ts`), витрина (`storefront.ts`); `employer_profiles.full_name` читает состав команды (`company-repo.ts`, вопреки D506 «не читается» — столбец ещё есть, ничего не сломано); пояс — утренние сводки (`morning-briefs.ts`, `briefs-admin.ts`).
+- Миграции: нет.
+- Проверки D507: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1437 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Фрагмент предотбора выполнен на облаке только чтением (счёт строк) — синтаксис и типы `char`/`text` верны.

@@ -97,8 +97,16 @@ export function mergeSharedFacts(
   }
   const langs = languages(facts.languages);
   if (langs) {
-    if (mode === "replace") next.languages = langs;
-    else {
+    if (mode === "replace") {
+      // A list without levels (a creator form) keeps the levels already known.
+      const known = new Map(
+        next.languages.map((item) => [item.code, item.level]),
+      );
+      next.languages = langs.map((item) => ({
+        code: item.code,
+        level: item.level ?? known.get(item.code) ?? null,
+      }));
+    } else {
       const known = new Set(next.languages.map((item) => item.code));
       for (const item of langs)
         if (!known.has(item.code)) next.languages.push(item);

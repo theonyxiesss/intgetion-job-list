@@ -8,9 +8,11 @@ import {
   ugcPayouts,
   ugcSubmissions,
   users,
+  userProfiles,
 } from "@/db/schema";
 import { recordAudit } from "@/lib/audit";
 import { noteSharedProfile } from "@/modules/users/service";
+import { withSharedPlace } from "../service/rules";
 import {
   findMemberRole,
   getCompaniesForUser,
@@ -63,18 +65,31 @@ function campaignOf(row: CampaignRow): Campaign {
   };
 }
 
-function profileOf(row: ProfileRow): CreatorProfile {
-  return {
-    userId: row.userId,
-    displayName: row.displayName,
-    languages: row.languages,
-    platforms: row.platforms,
-    niches: row.niches,
-    country: row.country,
-    exampleUrls: row.exampleUrls,
-    inviteOptIn: row.inviteOptIn,
-    status: row.status,
-  };
+type SharedPlace = {
+  country: string | null;
+  languages: { code: string; level: string | null }[] | null;
+} | null;
+
+function profileOf(
+  row: ProfileRow,
+  shared: SharedPlace = null,
+): CreatorProfile {
+  return withSharedPlace(
+    {
+      userId: row.userId,
+      displayName: row.displayName,
+      languages: row.languages,
+      platforms: row.platforms,
+      niches: row.niches,
+      country: row.country,
+      exampleUrls: row.exampleUrls,
+      inviteOptIn: row.inviteOptIn,
+      status: row.status,
+    },
+    shared && shared.languages !== null
+      ? { country: shared.country, languages: shared.languages }
+      : null,
+  );
 }
 
 function inviteOf(row: InviteRow): Invite {
@@ -149,11 +164,21 @@ export function productionUgcStore(): UgcStore {
     },
     async getProfile(userId) {
       const [row] = await db
-        .select()
+        .select({
+          profile: creatorProfiles,
+          country: userProfiles.country,
+          languages: userProfiles.languages,
+        })
         .from(creatorProfiles)
+        .leftJoin(userProfiles, eq(userProfiles.userId, creatorProfiles.userId))
         .where(eq(creatorProfiles.userId, userId))
         .limit(1);
-      return row ? profileOf(row) : null;
+      return row
+        ? profileOf(row.profile, {
+            country: row.country,
+            languages: row.languages,
+          })
+        : null;
     },
     async saveProfile(profile) {
       await db
@@ -163,23 +188,39 @@ export function productionUgcStore(): UgcStore {
           target: creatorProfiles.userId,
           set: { ...profile, updatedAt: new Date() },
         });
-      // A creator name may be a nickname: it only fills an empty profile (D503).
+      // A creator name may be a nickname: it only fills an empty profile
+      // (D503). Country and languages typed here are the person's own and
+      // replace the shared ones, which matching reads (D507).
+      await noteSharedProfile(
+        profile.userId,
+        { displayName: profile.displayName },
+        "fill",
+      );
       await noteSharedProfile(
         profile.userId,
         {
-          displayName: profile.displayName,
           country: profile.country,
           languages: profile.languages.map((code) => ({ code })),
         },
-        "fill",
+        "replace",
       );
     },
     async listOptInProfiles() {
       const rows = await db
-        .select()
+        .select({
+          profile: creatorProfiles,
+          country: userProfiles.country,
+          languages: userProfiles.languages,
+        })
         .from(creatorProfiles)
+        .leftJoin(userProfiles, eq(userProfiles.userId, creatorProfiles.userId))
         .where(eq(creatorProfiles.inviteOptIn, true));
-      return rows.map(profileOf);
+      return rows.map((row) =>
+        profileOf(row.profile, {
+          country: row.country,
+          languages: row.languages,
+        }),
+      );
     },
     async insertCampaign(row) {
       await db.insert(ugcCampaigns).values(row);
