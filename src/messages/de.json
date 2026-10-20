@@ -1822,7 +1822,8 @@
         "salaryCurrency": "Währung",
         "salaryPeriod": "Zahlungszeitraum",
         "salaryBasis": "Brutto oder netto"
-      }
+      },
+      "set_service_status": "{action, select, resume {Die Leistung „{name}“ wieder in den Katalog stellen.} other {Die Leistung „{name}“ pausieren. Sie verschwindet aus dem Katalog; laufende Aufträge gehen weiter.}}"
     },
     "confirm": {
       "applyTitle": "Auf diesen Job bewerben?",

@@ -17,6 +17,7 @@ import {
   listOwnServices,
   searchServices,
   setAcceptingOrders,
+  setServicePaused,
   submitService,
   updateService,
   type PublicService,
@@ -610,7 +611,7 @@ export const freelanceTools = [
   {
     name: "get_my_services",
     description:
-      "List this person's own freelance services: id, title, status, packages and the moderator's note.",
+      "List this person's own freelance services: id, title, status, packages and the moderator's note. For one in full call get_my_service.",
     input: z.object({}).strict(),
     access: "user" as const,
     confirm: read,
@@ -620,6 +621,70 @@ export const freelanceTools = [
         llm: rows.length
           ? rows.map(ownServiceForModel).join("\n")
           : "No services yet.",
+      };
+    },
+  },
+  {
+    name: "get_my_service",
+    description:
+      "One of the person's own services in full, by id from get_my_services: text, packages, status, the moderator's note and their orders on it by status. Read it before propose_service_update.",
+    input: z.object({ serviceId: id }).strict(),
+    access: "user" as const,
+    confirm: read,
+    async run(ctx: Ctx, input: { serviceId: string }) {
+      const service = await getOwnService(ctx.userId!, input.serviceId);
+      const orders: Record<string, number> = {};
+      for (const order of await listOrders(ctx.userId!, "seller"))
+        if (order.serviceId === service.id)
+          orders[order.status] = (orders[order.status] ?? 0) + 1;
+      return {
+        llm: wrapUntrusted(
+          `service:${service.id}`,
+          JSON.stringify({
+            id: service.id,
+            title: cleanForModel(service.title),
+            status: service.status,
+            direction: service.category,
+            description: cleanForModel(service.description),
+            packages: packagesForModel(service.packages, true),
+            moderatorNote: service.moderationNote
+              ? cleanForModel(service.moderationNote)
+              : null,
+            orders,
+            link: "/profile/freelance",
+          }),
+        ),
+      };
+    },
+  },
+  {
+    name: "set_service_status",
+    description:
+      "Pause one of the person's own published services, or put a paused one back in the catalog, by id from get_my_services. A request to delete or remove a service is pause: only a moderator removes one. Orders already in work go on. Confirmed on a card.",
+    input: z
+      .object({ serviceId: id, action: z.enum(["pause", "resume"]) })
+      .strict(),
+    access: "user" as const,
+    confirm: write,
+    async preview(ctx: Ctx, input: { serviceId: string }) {
+      return cleanForModel(
+        (await getOwnService(ctx.userId!, input.serviceId)).title,
+      );
+    },
+    async run(
+      ctx: Ctx,
+      input: { serviceId: string; action: "pause" | "resume" },
+    ) {
+      const service = await setServicePaused(
+        ctx.userId!,
+        input.serviceId,
+        input.action === "pause",
+      );
+      return {
+        llm:
+          service.status === "paused"
+            ? "The service is paused and hidden from the catalog. Orders in work go on."
+            : "The service is back in the catalog.",
       };
     },
   },
@@ -710,7 +775,7 @@ export const freelanceTools = [
   {
     name: "propose_service_update",
     description:
-      "Change one of the person's own services: the full new text and packages. A published service goes back to moderation. Links are typed into the card; an empty card field keeps the current links.",
+      "Change one of the person's own services: call get_my_service first, then send the full current text and packages with only the change they asked for. A published service goes back to moderation. Links are typed into the card; an empty card field keeps the current links.",
     input: serviceArgs.extend({ serviceId: id }).strict(),
     access: "user" as const,
     confirm: write,

@@ -1822,7 +1822,8 @@
         "salaryCurrency": "Валюта",
         "salaryPeriod": "Период оплаты",
         "salaryBasis": "До или после налогов"
-      }
+      },
+      "set_service_status": "{action, select, resume {Вернуть услугу «{name}» в каталог.} other {Поставить услугу «{name}» на паузу. Она скроется из каталога, заказы в работе продолжатся.}}"
     },
     "confirm": {
       "applyTitle": "Откликнуться на эту вакансию?",

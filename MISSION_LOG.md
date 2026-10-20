@@ -2735,3 +2735,10 @@
 - Миграции: нет. Замечено: в нишах UGC нет «красота / уход», косметика уходит в `other`.
 - OPEN QUESTION: вопрос 1 из 29.10 (отклик из общей беседы) — взят консервативный вариант.
 - Founder 2026-10-20: «Выкладывай каждый этап сам» — коммит, push и production для этапов ТЗ 29 после зелёных проверок; спросить перед миграцией и 2Б.
+
+## [2026-10-20] — D499 выкладка; D500 — этап 3: своя услуга в Spoki
+
+- D499: коммит `a76dfff`, Vercel `dpl_js915EFifpAoBasYmUa4SQBpAFtN` success, `/ru/chat` → 200.
+- D500 сделано: `get_my_service`, `set_service_status` в `src/modules/freelance/service/bot-tools.ts`; карточка в `src/components/bot/account-card.tsx`, тексты `chat.account.set_service_status` в 7 локалях; промпт 35 (`memory.test.ts`); тест `src/modules/bot/__tests__/freelance-status.test.ts` (5), `account-tools.test.ts` учитывает новую карточку. Документы: D500, `docs/tz/28-freelance.md` (28.8), `docs/tz/29-spoki-cards.md` (29.5 исправлен: переключатель «Беру заказы» у Spoki уже был), CURRENT.
+- Миграции: нет.
+- Проверки D500: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1398 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Выкладка по постоянному «да» основателя.

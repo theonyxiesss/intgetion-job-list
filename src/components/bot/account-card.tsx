@@ -18,6 +18,7 @@ export const ACCOUNT_CARD_TOOLS = [
   "cancel_reminder",
   "propose_job_update",
   "set_job_status",
+  "set_service_status",
 ] as const;
 
 export function isAccountCardTool(tool: string): boolean {
@@ -85,6 +86,12 @@ export function AccountCardText({
     const action = typeof a.action === "string" ? a.action : "";
     return t("set_job_status", {
       action: JOB_STATUS_ACTIONS.has(action) ? action : "other",
+      name,
+    });
+  }
+  if (tool === "set_service_status") {
+    return t("set_service_status", {
+      action: a.action === "resume" ? "resume" : "pause",
       name,
     });
   }

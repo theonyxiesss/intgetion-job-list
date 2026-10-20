@@ -1822,7 +1822,8 @@
         "salaryCurrency": "Valuta",
         "salaryPeriod": "Periodo di pagamento",
         "salaryBasis": "Lordo o netto"
-      }
+      },
+      "set_service_status": "{action, select, resume {Rimettere il servizio «{name}» nel catalogo.} other {Mettere in pausa il servizio «{name}». Esce dal catalogo; gli ordini in corso continuano.}}"
     },
     "confirm": {
       "applyTitle": "Candidarti a questa offerta?",

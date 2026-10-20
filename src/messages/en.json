@@ -1822,7 +1822,8 @@
         "salaryCurrency": "Currency",
         "salaryPeriod": "Pay period",
         "salaryBasis": "Before or after tax"
-      }
+      },
+      "set_service_status": "{action, select, resume {Put the service “{name}” back in the catalog.} other {Pause the service “{name}”. It leaves the catalog; orders in work go on.}}"
     },
     "confirm": {
       "applyTitle": "Apply to this job?",

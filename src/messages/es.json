@@ -1822,7 +1822,8 @@
         "salaryCurrency": "Moneda",
         "salaryPeriod": "Periodo de pago",
         "salaryBasis": "Bruto o neto"
-      }
+      },
+      "set_service_status": "{action, select, resume {Volver a mostrar el servicio «{name}» en el catálogo.} other {Pausar el servicio «{name}». Saldrá del catálogo; los pedidos en curso continúan.}}"
     },
     "confirm": {
       "applyTitle": "¿Postularte a este empleo?",

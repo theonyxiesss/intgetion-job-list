@@ -78,8 +78,8 @@
 
 Весь путь обеих сторон проходит в разговоре на сайте и в Telegram, в рамках [12-bot.md](12-bot.md).
 
-- Сам, только чтение: `find_services`, `get_service`, `freelance_price_range` (минимум, середина, максимум по опубликованным пакетам направления), `get_my_services`, `get_my_orders`, `get_order` (без контактов).
-- Карточка подтверждения, запись после кнопки: `propose_freelancer_mode`, `propose_service`, `propose_service_update`, `send_service_request`, `cancel_request`, `respond_to_request`, `mark_delivered`, `review_delivery`, `propose_review`, `report_freelance`. Ссылки на работы и на результат человек вводит в поле карточки, мимо модели.
+- Сам, только чтение: `find_services`, `get_service`, `freelance_price_range` (минимум, середина, максимум по опубликованным пакетам направления), `get_my_services`, `get_my_service` (своя услуга целиком и её заказы по статусам, D500), `get_my_orders`, `get_order` (без контактов).
+- Карточка подтверждения, запись после кнопки: `propose_freelancer_mode`, `propose_service`, `propose_service_update`, `send_service_request`, `cancel_request`, `respond_to_request`, `mark_delivered`, `review_delivery`, `propose_review`, `report_freelance`, `set_service_status` (пауза или возврат одной своей услуги; «удалить» = пауза, снимает только модератор, D500). Ссылки на работы и на результат человек вводит в поле карточки, мимо модели.
 - Ссылка на сайт (`offer_step`): оплата заказа, подтверждение кошелька, страница заказа с контактами, вход для гостя.
 - Шаблоны без модели: новый запрос, ответ, оплата, сдача, завершение, решение модератора. В Telegram «Принять» и «Отказать» — подписанные кнопки со вторым нажатием.
 - Цену Spoki берёт только из пакетов или из `freelance_price_range`. Свою цену исполнитель называет сам.

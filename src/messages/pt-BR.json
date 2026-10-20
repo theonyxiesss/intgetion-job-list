@@ -1822,7 +1822,8 @@
         "salaryCurrency": "Moeda",
         "salaryPeriod": "Período de pagamento",
         "salaryBasis": "Bruto ou líquido"
-      }
+      },
+      "set_service_status": "{action, select, resume {Colocar o serviço “{name}” de volta no catálogo.} other {Pausar o serviço “{name}”. Ele sai do catálogo; pedidos em andamento continuam.}}"
     },
     "confirm": {
       "applyTitle": "Candidatar-se a esta vaga?",

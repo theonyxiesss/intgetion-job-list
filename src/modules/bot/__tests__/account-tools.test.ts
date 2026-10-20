@@ -5,7 +5,13 @@ import { systemPrompt } from "../prompts/system";
 import { accountTools } from "../service/account-tools";
 import { employerJobTools } from "../service/employer-job-tools";
 import { reminderTools } from "../service/reminders";
-import { hashArgs, runTool, toolPreview, toolsFor } from "../service/tools";
+import {
+  findTool,
+  hashArgs,
+  runTool,
+  toolPreview,
+  toolsFor,
+} from "../service/tools";
 
 const ctx = { userId: "u1", conversationId: "c1", locale: "en", state: {} };
 const writes = accountTools.filter((tool) => tool.confirm(ctx));
@@ -27,9 +33,12 @@ describe("account tools (D472)", () => {
   });
 
   it("confirm every write on a card that names its target", () => {
-    const cardTools = [...writes, ...reminderTools, ...employerJobTools].filter(
-      (tool) => tool.confirm(ctx),
-    );
+    const cardTools = [
+      ...writes,
+      ...reminderTools,
+      ...employerJobTools,
+      findTool("set_service_status")!,
+    ].filter((tool) => tool.confirm(ctx));
     expect(cardTools.map((tool) => tool.name).sort()).toEqual(
       [...ACCOUNT_CARD_TOOLS].sort(),
     );
