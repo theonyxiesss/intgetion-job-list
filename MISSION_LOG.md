@@ -2742,3 +2742,10 @@
 - D500 сделано: `get_my_service`, `set_service_status` в `src/modules/freelance/service/bot-tools.ts`; карточка в `src/components/bot/account-card.tsx`, тексты `chat.account.set_service_status` в 7 локалях; промпт 35 (`memory.test.ts`); тест `src/modules/bot/__tests__/freelance-status.test.ts` (5), `account-tools.test.ts` учитывает новую карточку. Документы: D500, `docs/tz/28-freelance.md` (28.8), `docs/tz/29-spoki-cards.md` (29.5 исправлен: переключатель «Беру заказы» у Spoki уже был), CURRENT.
 - Миграции: нет.
 - Проверки D500: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1398 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Выкладка по постоянному «да» основателя.
+
+## [2026-10-20] — D500 выкладка; D501 — этап 5: события в Spoki
+
+- D500: коммит `5a40940`, Vercel `dpl_F9RdCm5QGz5Kkzoay9bZkKNcrBAs` success, `/ru/chat` → 200.
+- D501 сделано: `src/modules/bot/service/tools.ts` — `slug` в `find_events`, новый `get_event` (время в поясе человека); описание `create_reminder` в `reminders.ts`; промпт 36 (`memory.test.ts`); тест `events-tool.test.ts` (5); `tools.test.ts` (P11) — `get_event` в списке гостя, это чтение. Документы: D501, `docs/tz/26-events.md`, `docs/tz/29-spoki-cards.md`, CURRENT.
+- Миграции: нет.
+- Проверки D501: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1403 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Выкладка по постоянному «да» основателя.

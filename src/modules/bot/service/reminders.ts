@@ -132,7 +132,7 @@ export const reminderTools: BotTool[] = [
   tool({
     name: "create_reminder",
     description:
-      "Set a reminder the person gets in their Telegram, e.g. an interview. `at` is their local date and time as YYYY-MM-DDTHH:mm; pass timeZone (IANA) only when they named a city or zone different from their profile. Text in their words, short. Confirmed on a card.",
+      "Set a reminder the person gets in their Telegram, e.g. an interview or an event (for an event: the day before it starts, or before its call-for-papers deadline, with the event title as text). `at` is their local date and time as YYYY-MM-DDTHH:mm; pass timeZone (IANA) only when they named a city or zone different from their profile. Text in their words, short. Confirmed on a card.",
     input: reminderInput,
     access: "user",
     confirm: () => true,

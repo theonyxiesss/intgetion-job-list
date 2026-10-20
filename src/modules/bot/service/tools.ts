@@ -21,7 +21,8 @@ import {
   getOwnCandidate,
   patchCandidateProfile,
 } from "@/modules/candidates/service";
-import { findEventsForPerson } from "@/modules/events/service";
+import { findEventsForPerson, getEventBySlug } from "@/modules/events/service";
+import { isValidTimeZone } from "@/lib/tz";
 import { hideJobInput } from "@/modules/feedback/schemas";
 import {
   getHiddenSetsForViewer,
@@ -173,6 +174,25 @@ export type BotTool<T extends z.ZodType = z.ZodType> = {
 
 const id = z.uuid();
 const MAX_JOBS = 5;
+const EVENT_DESCRIPTION_CHARS = 1000;
+
+/** "2026-11-03 09:00" in the given IANA zone. */
+function localTime(at: Date, timeZone: string): string {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    })
+      .formatToParts(at)
+      .map((part) => [part.type, part.value]),
+  );
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}`;
+}
 
 function tool<T extends z.ZodType>(definition: BotTool<T>): BotTool {
   return definition as unknown as BotTool;
@@ -294,7 +314,7 @@ export const TOOLS: readonly BotTool[] = [
   tool({
     name: "find_events",
     description:
-      "Find upcoming Web3 and tech events (summits, conferences, meetups, hackathons, business and career meetups) for networking. Read-only. Topics, kind, country (ISO 3166-1 alpha-2) and remote are optional; without them the person's known country and remote preference are used. Returns up to 5 events. Then call offer_step with events instead of writing a URL.",
+      "Find upcoming Web3 and tech events (summits, conferences, meetups, hackathons, business and career meetups) for networking. Read-only. Topics, kind, country (ISO 3166-1 alpha-2) and remote are optional; without them the person's known country and remote preference are used. Returns up to 5 events with their slug; for one in full call get_event. Then call offer_step with events instead of writing a URL.",
     input: eventsInput,
     access: "guest",
     confirm: never,
@@ -316,6 +336,7 @@ export const TOOLS: readonly BotTool[] = [
             wrapUntrusted(
               `event:${event.slug}`,
               JSON.stringify({
+                slug: event.slug,
                 title: event.title,
                 kind: event.kind,
                 format: event.format,
@@ -328,6 +349,50 @@ export const TOOLS: readonly BotTool[] = [
             ),
           )
           .join("\n"),
+      };
+    },
+  }),
+  tool({
+    name: "get_event",
+    description:
+      "One event in full by its slug from find_events: what it is about, when (also in the person's own time zone when known), where, format, topics and the call-for-papers deadline. Read-only. There is no sign-up on this site.",
+    input: z.object({ slug: z.string().regex(/^[a-z0-9-]{1,120}$/) }).strict(),
+    access: "guest",
+    confirm: never,
+    async run(ctx, input) {
+      const event = await getEventBySlug(input.slug);
+      if (!event || event.status !== "published")
+        return {
+          llm: "This event is not on the site: it has passed or was removed.",
+        };
+      const zone = ctx.state.draft?.timezone;
+      const own =
+        typeof zone === "string" && isValidTimeZone(zone) ? zone : null;
+      return {
+        llm: wrapUntrusted(
+          `event:${event.slug}`,
+          JSON.stringify({
+            slug: event.slug,
+            title: event.title,
+            kind: event.kind,
+            format: event.format,
+            description: event.description.slice(0, EVENT_DESCRIPTION_CHARS),
+            starts: event.startsAt.toISOString(),
+            ends: event.endsAt.toISOString(),
+            allDay: event.allDay,
+            eventTimeZone: event.timeZone,
+            startsInYourTime:
+              own && !event.allDay ? localTime(event.startsAt, own) : null,
+            yourTimeZone: own,
+            city: event.city,
+            country: event.country,
+            topics: event.topics,
+            callForPapersUntil: event.cfpEndsAt
+              ? event.cfpEndsAt.toISOString().slice(0, 10)
+              : null,
+            source: event.source.name,
+          }),
+        ),
       };
     },
   }),
