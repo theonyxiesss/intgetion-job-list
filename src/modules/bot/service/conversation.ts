@@ -1327,6 +1327,10 @@ export async function handleMessage(
   let roundSystem = system;
   let greetingRetried = false;
   let greetingNudge = false;
+  // One second try when the model calls a tool this thread does not offer or
+  // sends arguments its schema refuses; nothing invalid ever runs (D502).
+  let invalidCall: string | null = null;
+  let invalidRetried = false;
   const ugcDraftTurn = state.ugcDraftMode === true;
   const freelanceDraftTurn = state.freelanceDraftMode === true;
   const jobDraftTurn = state.jobDraftMode === true;
@@ -1390,6 +1394,8 @@ export async function handleMessage(
       roundSystem = system;
     }
     if (greetingNudge) roundSystem += `\n${ANSWER_THE_QUESTION}`;
+    if (invalidCall)
+      roundSystem += `\nYour previous reply called a tool this conversation does not offer, or with arguments its schema refuses (${invalidCall}). Do not repeat it. Use only the tools you are given, with valid arguments, or answer in words; if they ask for something you have no tool for here, say so in one sentence.`;
     const rows = await repo.listMessages(conversation.id, HISTORY_READ);
     const { messages } = trimContext({
       system: roundSystem,
@@ -1416,6 +1422,12 @@ export async function handleMessage(
         { err: error, invalidOutput: error instanceof LLMOutputError },
         "bot: model call failed",
       );
+      if (error instanceof LLMOutputError && !invalidRetried) {
+        invalidRetried = true;
+        invalidCall = error.message;
+        round -= 1;
+        continue;
+      }
       emit({ type: "error", code: "BOT_TRY_LATER" });
       return finish(input, state, emit, now);
     }

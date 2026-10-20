@@ -333,4 +333,54 @@ describe("Spoki search loop", () => {
       "apply_to_job",
     );
   });
+
+  it("gives the model one more try after a tool this thread does not offer (D502)", async () => {
+    const provider = new FakeLLMProvider([
+      reply("", "patch_brief", { productName: "North" }),
+      reply("Ask me about events or jobs."),
+    ]);
+    setBotLLMForTests({ provider, model: "fake-model", prices });
+    const events: BotEvent[] = [];
+    await handleMessage(
+      {
+        userId: null,
+        conversation: conversation({}),
+        text: "what conferences are there?",
+        ip: "203.0.113.21",
+        locale: "en",
+      },
+      (event) => events.push(event),
+    );
+    expect(events).not.toContainEqual({ type: "error", code: "BOT_TRY_LATER" });
+    expect(visibleText(events)).toContain("Ask me about events or jobs.");
+    const retry = provider.requests
+      .filter((r) => r.toolChoice !== "record_result")
+      .at(-1)!;
+    expect(retry.system).toContain("Unknown tool patch_brief");
+    expect(runToolMock).not.toHaveBeenCalled();
+  });
+
+  it("stops after a second invalid call instead of looping", async () => {
+    setBotLLMForTests({
+      provider: new FakeLLMProvider([
+        reply("", "patch_brief", {}),
+        reply("", "patch_brief", {}),
+      ]),
+      model: "fake-model",
+      prices,
+    });
+    const events: BotEvent[] = [];
+    await handleMessage(
+      {
+        userId: null,
+        conversation: conversation({}),
+        text: "what conferences are there?",
+        ip: "203.0.113.22",
+        locale: "en",
+      },
+      (event) => events.push(event),
+    );
+    expect(events).toContainEqual({ type: "error", code: "BOT_TRY_LATER" });
+    expect(runToolMock).not.toHaveBeenCalled();
+  });
 });

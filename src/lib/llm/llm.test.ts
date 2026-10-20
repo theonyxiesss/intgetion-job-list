@@ -251,6 +251,17 @@ describe("budget", () => {
     expect(trimmed.dropped).toHaveLength(3);
   });
 
+  it("drops a tool call the request did not offer tools for (D502)", async () => {
+    const provider = new FakeLLMProvider([fakeToolCall("get_event", {})]);
+    const response = await chat(provider, {
+      model: "m",
+      system: "s",
+      messages: [{ role: "user", content: "hi" }],
+      maxTokens: 10,
+    });
+    expect(response.toolCalls).toEqual([]);
+  });
+
   it("keeps the newest message when the system prompt alone is over budget (D497)", () => {
     const system = "x".repeat(3 * 6400);
     const last = "Название продукта LUMINA Glow Serum. "

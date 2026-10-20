@@ -106,9 +106,12 @@ export async function chat(
 ): Promise<LLMResponse> {
   assertRequest(request);
   const response = await provider.complete(request);
+  // No tools offered: a call the model makes anyway runs nothing, so it is
+  // dropped rather than failing the whole reply (D502).
+  if (!request.tools?.length) return { ...response, toolCalls: [] };
   return {
     ...response,
-    toolCalls: parseToolCalls(response.toolCalls, request.tools ?? []),
+    toolCalls: parseToolCalls(response.toolCalls, request.tools),
   };
 }
 

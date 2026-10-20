@@ -2749,3 +2749,10 @@
 - D501 сделано: `src/modules/bot/service/tools.ts` — `slug` в `find_events`, новый `get_event` (время в поясе человека); описание `create_reminder` в `reminders.ts`; промпт 36 (`memory.test.ts`); тест `events-tool.test.ts` (5); `tools.test.ts` (P11) — `get_event` в списке гостя, это чтение. Документы: D501, `docs/tz/26-events.md`, `docs/tz/29-spoki-cards.md`, CURRENT.
 - Миграции: нет.
 - Проверки D501: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1403 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Выкладка по постоянному «да» основателя.
+
+## [2026-10-20] — D501 выкладка; D502 — неверный вызов навыка не валит ответ
+
+- D501: коммит `7caedb1`, Vercel `dpl_9NLHUriCRHtB1WUFSvuR8aGKYhR2` success. На сайте гость «какие ближайшие конференции по web3?» → «Агент не смог ответить» дважды; «сколько стоит Pro?» — отвечает. Лог Vercel 12:39 UTC: `LLMOutputError: Unknown tool get_event`.
+- D502 сделано: `src/lib/llm/provider.ts` (`chat()` отбрасывает вызовы, если навыки не переданы); `src/modules/bot/service/conversation.ts` (один повтор раунда с пометкой при `LLMOutputError`). Тесты: `llm.test.ts` (1), `search-loop.test.ts` (2). Документы: D502, `docs/how-it-works/bot.md`, CURRENT.
+- Миграции: нет.
+- Проверки D502: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1406 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Выкладка по постоянному «да» основателя (часть этапа 5).
