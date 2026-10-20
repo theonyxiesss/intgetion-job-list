@@ -1823,7 +1823,17 @@
         "salaryPeriod": "Zahlungszeitraum",
         "salaryBasis": "Brutto oder netto"
       },
-      "set_service_status": "{action, select, resume {Die Leistung „{name}“ wieder in den Katalog stellen.} other {Die Leistung „{name}“ pausieren. Sie verschwindet aus dem Katalog; laufende Aufträge gehen weiter.}}"
+      "set_service_status": "{action, select, resume {Die Leistung „{name}“ wieder in den Katalog stellen.} other {Die Leistung „{name}“ pausieren. Sie verschwindet aus dem Katalog; laufende Aufträge gehen weiter.}}",
+      "propose_account_update": "„Über mich“ aktualisieren: {changes}. Das ändert sich in allen Ihren Rollen.",
+      "accountFields": {
+        "displayName": "Name",
+        "country": "Land",
+        "city": "Stadt",
+        "timezone": "Zeitzone",
+        "about": "Über mich",
+        "addLanguages": "Sprachen hinzufügen",
+        "removeLanguages": "Sprachen entfernen"
+      }
     },
     "confirm": {
       "applyTitle": "Auf diesen Job bewerben?",

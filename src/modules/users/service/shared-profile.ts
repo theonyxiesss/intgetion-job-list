@@ -151,6 +151,98 @@ export async function updateSharedProfile(
   return profile;
 }
 
+/**
+ * The shared profile reaches the roles that already exist (D504): name and
+ * place to the candidate, name to the employer, country and languages to
+ * the creator, whose name stays a nickname. A role that is not started yet
+ * takes it from its prefilled form. Imported lazily: those modules note
+ * their own saves back here.
+ */
+export async function applySharedToRoles(
+  userId: string,
+  profile: SharedProfile,
+): Promise<void> {
+  const [candidates, companies, ugc] = await Promise.all([
+    import("@/modules/candidates/service"),
+    import("@/modules/companies/service"),
+    import("@/modules/ugc/service"),
+  ]);
+  const steps: Promise<unknown>[] = [
+    candidates.applySharedBasics(userId, {
+      fullName: profile.displayName,
+      country: profile.country,
+      city: profile.city,
+      timezone: profile.timezone,
+    }),
+    ugc.applySharedToCreator(userId, {
+      country: profile.country,
+      languages: profile.languages.map((item) => item.code),
+    }),
+  ];
+  if (profile.displayName)
+    steps.push(companies.applySharedEmployerName(userId, profile.displayName));
+  for (const result of await Promise.allSettled(steps))
+    if (result.status === "rejected")
+      logger.warn({ err: result.reason }, "users: role not updated");
+}
+
+/** A change Spoki proposes: only the named fields, languages added or removed. */
+export type SharedPatch = {
+  displayName?: string;
+  country?: string;
+  city?: string;
+  timezone?: string;
+  about?: string;
+  addLanguages?: readonly { code: string; level?: string | null }[];
+  removeLanguages?: readonly string[];
+};
+
+/** The profile after the patch; invalid values are dropped, never stored. */
+export function applySharedPatch(
+  current: SharedProfile | null,
+  patch: SharedPatch,
+): SharedProfile {
+  const base = mergeSharedFacts(
+    current,
+    {
+      displayName: patch.displayName,
+      country: patch.country,
+      city: patch.city,
+      timezone: patch.timezone,
+    },
+    "replace",
+  ) ?? { ...(current ?? EMPTY_PROFILE) };
+  const about = patch.about?.trim();
+  if (about) base.about = about.slice(0, 1000);
+  const removed = new Set(
+    (patch.removeLanguages ?? []).map((code) => code.trim().toLowerCase()),
+  );
+  let languages = base.languages.filter((item) => !removed.has(item.code));
+  if (patch.addLanguages?.length) {
+    const added =
+      mergeSharedFacts(
+        { ...EMPTY_PROFILE, languages },
+        { languages: patch.addLanguages },
+        "replace",
+      )?.languages ?? [];
+    const byCode = new Map(languages.map((item) => [item.code, item]));
+    for (const item of added) byCode.set(item.code, item);
+    languages = [...byCode.values()];
+  }
+  return { ...base, languages };
+}
+
+/** Spoki's confirmed change: save, then carry it into the roles (D505). */
+export async function patchSharedProfile(
+  userId: string,
+  patch: SharedPatch,
+): Promise<SharedProfile> {
+  const next = applySharedPatch(await repo.findSharedProfile(userId), patch);
+  await repo.saveSharedProfile(userId, next);
+  await applySharedToRoles(userId, next);
+  return next;
+}
+
 /** Export of personal data (17-gdpr). */
 export async function exportSharedProfile(userId: string) {
   return repo.findSharedProfile(userId);

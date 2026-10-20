@@ -19,6 +19,7 @@ export const ACCOUNT_CARD_TOOLS = [
   "propose_job_update",
   "set_job_status",
   "set_service_status",
+  "propose_account_update",
 ] as const;
 
 export function isAccountCardTool(tool: string): boolean {
@@ -88,6 +89,42 @@ export function AccountCardText({
       action: JOB_STATUS_ACTIONS.has(action) ? action : "other",
       name,
     });
+  }
+  if (tool === "propose_account_update") {
+    const plain = (
+      ["displayName", "country", "city", "timezone", "about"] as const
+    )
+      .filter((key) => typeof a[key] === "string" && String(a[key]).trim())
+      .map((key) => {
+        const raw = String(a[key]).trim();
+        const value =
+          key === "about" && raw.length > 80 ? `${raw.slice(0, 80)}…` : raw;
+        return `${t(`accountFields.${key}`)}: ${value}`;
+      });
+    const codes = (key: "addLanguages" | "removeLanguages") =>
+      Array.isArray(a[key])
+        ? (a[key] as unknown[])
+            .map((item) =>
+              typeof item === "string"
+                ? item
+                : item && typeof item === "object"
+                  ? [
+                      String((item as Record<string, unknown>).code ?? ""),
+                      String((item as Record<string, unknown>).level ?? ""),
+                    ]
+                      .join(" ")
+                      .trim()
+                  : "",
+            )
+            .filter(Boolean)
+            .join(", ")
+        : "";
+    const added = codes("addLanguages");
+    const removed = codes("removeLanguages");
+    if (added) plain.push(`${t("accountFields.addLanguages")}: ${added}`);
+    if (removed)
+      plain.push(`${t("accountFields.removeLanguages")}: ${removed}`);
+    return t("propose_account_update", { changes: plain.join("; ") });
   }
   if (tool === "set_service_status") {
     return t("set_service_status", {

@@ -1,3 +1,4 @@
+import { readSharedProfile } from "@/modules/users/service";
 import { createHash, randomBytes } from "node:crypto";
 import { HttpError } from "@/lib/http";
 import {
@@ -98,7 +99,12 @@ import {
   spokiFillIntro,
 } from "./memory";
 import * as repo from "../repo/bot-repo";
-import { listMemory, memoryBlock, profileDraft } from "./user-memory";
+import {
+  listMemory,
+  memoryBlock,
+  profileDraft,
+  sharedDraft,
+} from "./user-memory";
 import { readBriefDraft } from "@/modules/ugc/service";
 import {
   jobDraftForModel,
@@ -1627,11 +1633,17 @@ async function readRemembered(
 ): Promise<{ draft: Record<string, unknown>; memory: string } | null> {
   if (!userId) return null;
   try {
-    const [profile, facts] = await Promise.all([
+    const [profile, facts, shared] = await Promise.all([
       getOwnCandidate(userId),
       listMemory(userId),
+      readSharedProfile(userId).catch(() => null),
     ]);
-    return { draft: profileDraft(profile), memory: memoryBlock(facts) };
+    // The shared profile first, the candidate profile's own detail over it
+    // (D505): a creator or an employer is known too, not only a candidate.
+    return {
+      draft: { ...sharedDraft(shared), ...profileDraft(profile) },
+      memory: memoryBlock(facts),
+    };
   } catch (error) {
     logger.warn({ err: error }, "bot: memory read failed");
     return null;

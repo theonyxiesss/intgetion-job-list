@@ -1823,7 +1823,17 @@
         "salaryPeriod": "Periodo de pago",
         "salaryBasis": "Bruto o neto"
       },
-      "set_service_status": "{action, select, resume {Volver a mostrar el servicio «{name}» en el catálogo.} other {Pausar el servicio «{name}». Saldrá del catálogo; los pedidos en curso continúan.}}"
+      "set_service_status": "{action, select, resume {Volver a mostrar el servicio «{name}» en el catálogo.} other {Pausar el servicio «{name}». Saldrá del catálogo; los pedidos en curso continúan.}}",
+      "propose_account_update": "Actualizar «Sobre mí»: {changes}. Cambiará en todos tus roles.",
+      "accountFields": {
+        "displayName": "Nombre",
+        "country": "País",
+        "city": "Ciudad",
+        "timezone": "Zona horaria",
+        "about": "Sobre mí",
+        "addLanguages": "Añadir idiomas",
+        "removeLanguages": "Quitar idiomas"
+      }
     },
     "confirm": {
       "applyTitle": "¿Postularte a este empleo?",

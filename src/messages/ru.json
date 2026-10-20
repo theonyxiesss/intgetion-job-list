@@ -1823,7 +1823,17 @@
         "salaryPeriod": "Период оплаты",
         "salaryBasis": "До или после налогов"
       },
-      "set_service_status": "{action, select, resume {Вернуть услугу «{name}» в каталог.} other {Поставить услугу «{name}» на паузу. Она скроется из каталога, заказы в работе продолжатся.}}"
+      "set_service_status": "{action, select, resume {Вернуть услугу «{name}» в каталог.} other {Поставить услугу «{name}» на паузу. Она скроется из каталога, заказы в работе продолжатся.}}",
+      "propose_account_update": "Обновить «Обо мне»: {changes}. Это изменится во всех ваших ролях.",
+      "accountFields": {
+        "displayName": "Имя",
+        "country": "Страна",
+        "city": "Город",
+        "timezone": "Часовой пояс",
+        "about": "О себе",
+        "addLanguages": "Добавить языки",
+        "removeLanguages": "Убрать языки"
+      }
     },
     "confirm": {
       "applyTitle": "Откликнуться на эту вакансию?",

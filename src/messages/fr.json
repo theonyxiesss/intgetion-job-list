@@ -1823,7 +1823,17 @@
         "salaryPeriod": "Période de paie",
         "salaryBasis": "Brut ou net"
       },
-      "set_service_status": "{action, select, resume {Remettre le service « {name} » dans le catalogue.} other {Mettre le service « {name} » en pause. Il quitte le catalogue ; les commandes en cours continuent.}}"
+      "set_service_status": "{action, select, resume {Remettre le service « {name} » dans le catalogue.} other {Mettre le service « {name} » en pause. Il quitte le catalogue ; les commandes en cours continuent.}}",
+      "propose_account_update": "Mettre à jour « À propos de moi » : {changes}. Cela change dans tous vos rôles.",
+      "accountFields": {
+        "displayName": "Nom",
+        "country": "Pays",
+        "city": "Ville",
+        "timezone": "Fuseau horaire",
+        "about": "À propos de moi",
+        "addLanguages": "Ajouter des langues",
+        "removeLanguages": "Retirer des langues"
+      }
     },
     "confirm": {
       "applyTitle": "Postuler à cette offre ?",

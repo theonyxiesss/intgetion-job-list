@@ -2773,3 +2773,10 @@
 - Миграции: нет.
 - Проверки D504: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1: 1419 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0 (`/[locale]/account` в сборке). Страница под входом вживую не проверена: нет тестового аккаунта.
 - D504 выкладка: коммит `b1e2393`, Vercel `dpl_J6RuGu6k7dS1vo3S1wPqbwTkNCvH` success; гость `/ru/account` → 307 на вход, `robots.txt` закрывает `/account` и `/*/account`, `GET /api/me/profile` гостем → 401.
+
+## [2026-10-20] — D505 — этап 6.3: Spoki и «Обо мне»
+
+- Founder: «да, начинай 6.3».
+- Сделано: `src/modules/users/service/shared-profile.ts` (`applySharedToRoles`, `applySharedPatch`, `patchSharedProfile`), маршрут `/api/me/profile` на общем переносе; `src/modules/bot/service/user-memory.ts` (`sharedDraft`), `conversation.ts` (`readRemembered` читает общую анкету); навык `src/modules/bot/service/account-profile-tool.ts` и регистрация в `tools.ts`; карточка в `account-card.tsx`, тексты `chat.account.propose_account_update` и `accountFields` в 7 локалях; промпт 37. Тесты: `account-profile-tool.test.ts` (5), `users/__tests__/shared-patch.test.ts` (4); обновлены `account-tools.test.ts`, `account-form.test.ts`, `memory.test.ts`. Документы: D505, `docs/how-it-works/bot.md`, `docs/tz/29-spoki-cards.md`, CURRENT.
+- Миграции: нет.
+- Проверки D505: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1428 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.

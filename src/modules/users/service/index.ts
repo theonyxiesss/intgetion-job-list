@@ -9,6 +9,9 @@ export {
   noteSharedProfile,
   readSharedProfile,
   updateSharedProfile,
+  applySharedToRoles,
+  applySharedPatch,
+  patchSharedProfile,
 } from "./shared-profile";
 export {
   SHARED_LANGUAGE_LEVELS,
@@ -20,4 +23,5 @@ export type {
   SharedFacts,
   SharedLanguage,
   SharedProfile,
+  SharedPatch,
 } from "./shared-profile";

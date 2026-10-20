@@ -1823,7 +1823,17 @@
         "salaryPeriod": "Período de pagamento",
         "salaryBasis": "Bruto ou líquido"
       },
-      "set_service_status": "{action, select, resume {Colocar o serviço “{name}” de volta no catálogo.} other {Pausar o serviço “{name}”. Ele sai do catálogo; pedidos em andamento continuam.}}"
+      "set_service_status": "{action, select, resume {Colocar o serviço “{name}” de volta no catálogo.} other {Pausar o serviço “{name}”. Ele sai do catálogo; pedidos em andamento continuam.}}",
+      "propose_account_update": "Atualizar “Sobre mim”: {changes}. Muda em todos os seus papéis.",
+      "accountFields": {
+        "displayName": "Nome",
+        "country": "País",
+        "city": "Cidade",
+        "timezone": "Fuso horário",
+        "about": "Sobre mim",
+        "addLanguages": "Adicionar idiomas",
+        "removeLanguages": "Remover idiomas"
+      }
     },
     "confirm": {
       "applyTitle": "Candidatar-se a esta vaga?",

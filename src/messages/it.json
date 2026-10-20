@@ -1823,7 +1823,17 @@
         "salaryPeriod": "Periodo di pagamento",
         "salaryBasis": "Lordo o netto"
       },
-      "set_service_status": "{action, select, resume {Rimettere il servizio «{name}» nel catalogo.} other {Mettere in pausa il servizio «{name}». Esce dal catalogo; gli ordini in corso continuano.}}"
+      "set_service_status": "{action, select, resume {Rimettere il servizio «{name}» nel catalogo.} other {Mettere in pausa il servizio «{name}». Esce dal catalogo; gli ordini in corso continuano.}}",
+      "propose_account_update": "Aggiornare «Su di me»: {changes}. Cambia in tutti i tuoi ruoli.",
+      "accountFields": {
+        "displayName": "Nome",
+        "country": "Paese",
+        "city": "Città",
+        "timezone": "Fuso orario",
+        "about": "Su di me",
+        "addLanguages": "Aggiungi lingue",
+        "removeLanguages": "Rimuovi lingue"
+      }
     },
     "confirm": {
       "applyTitle": "Candidarti a questa offerta?",

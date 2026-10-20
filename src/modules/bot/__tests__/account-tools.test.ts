@@ -38,6 +38,7 @@ describe("account tools (D472)", () => {
       ...reminderTools,
       ...employerJobTools,
       findTool("set_service_status")!,
+      findTool("propose_account_update")!,
     ].filter((tool) => tool.confirm(ctx));
     expect(cardTools.map((tool) => tool.name).sort()).toEqual(
       [...ACCOUNT_CARD_TOOLS].sort(),
@@ -110,7 +111,13 @@ describe("account card copy (D472)", () => {
           } as never,
         );
         expect(text).not.toContain("{");
-        if (!["set_profile_hidden", "set_morning_briefs"].includes(name)) {
+        if (
+          ![
+            "set_profile_hidden",
+            "set_morning_briefs",
+            "propose_account_update",
+          ].includes(name)
+        ) {
           expect(text).toContain("Acme");
         }
       }

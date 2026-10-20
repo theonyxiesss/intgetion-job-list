@@ -84,10 +84,12 @@ describe("account page form (D504)", () => {
 
   it("does not overwrite a creator nickname from the account page", () => {
     const route = readFileSync(
-      join(process.cwd(), "src/app/api/me/profile/route.ts"),
+      join(process.cwd(), "src/modules/users/service/shared-profile.ts"),
       "utf8",
     );
-    const creator = route.slice(route.indexOf("applySharedToCreator(userId"));
+    const creator = route.slice(
+      route.indexOf("ugc.applySharedToCreator(userId"),
+    );
     expect(creator.slice(0, creator.indexOf("}),"))).not.toContain(
       "displayName",
     );

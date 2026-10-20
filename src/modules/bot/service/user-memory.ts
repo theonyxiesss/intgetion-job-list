@@ -210,6 +210,30 @@ export type ProfileFacts = {
  * The saved profile as a search draft, so a new thread (a vacancy, UGC,
  * freelance, Telegram) does not ask again what the profile already says.
  */
+/** The shared "about me" profile as KNOWN PROFILE facts (D505). */
+export function sharedDraft(
+  shared: {
+    displayName: string | null;
+    country: string | null;
+    city: string | null;
+    timezone: string | null;
+    languages: readonly { code: string; level: string | null }[];
+  } | null,
+): Draft {
+  if (!shared) return {};
+  const draft: Draft = {};
+  if (shared.displayName) draft.displayName = shared.displayName;
+  if (shared.country) draft.country = shared.country;
+  if (shared.city) draft.city = shared.city;
+  if (shared.timezone) draft.timezone = shared.timezone;
+  if (shared.languages.length)
+    draft.languages = shared.languages.map(({ code, level }) => ({
+      lang: code,
+      level,
+    }));
+  return draft;
+}
+
 export function profileDraft(profile: ProfileFacts | null): Draft {
   if (!profile) return {};
   const draft: Draft = {};
