@@ -80,6 +80,53 @@ export function creatorMatches(
   );
 }
 
+/** What a brief and a creator share (27.7, D499): the reason a brief fits. */
+export type FitReasons = {
+  platforms: UgcPlatform[];
+  languages: string[];
+  niches: UgcNiche[];
+  /** The creator's country the brief takes, or "any" when either side is open. */
+  country: string;
+};
+
+function shared<T>(left: readonly T[], right: readonly T[]): T[] {
+  const set = new Set(right);
+  return left.filter((item) => set.has(item));
+}
+
+/**
+ * The same platform, language, niche and country rule as creatorMatches,
+ * seen from the creator, with what matched. Null when the brief does not fit.
+ */
+export function fitReasons(
+  campaign: MatchSide,
+  creator: MatchSide,
+): FitReasons | null {
+  const platforms = shared(campaign.platforms, creator.platforms);
+  const languages = shared(campaign.languages, creator.languages);
+  const niches = shared(campaign.niches, creator.niches);
+  const countries = campaign.countries?.length
+    ? campaign.countries
+    : campaign.country;
+  if (
+    !platforms.length ||
+    !languages.length ||
+    !niches.length ||
+    !countryMatches(countries, creator.country)
+  )
+    return null;
+  const open =
+    creator.country === null ||
+    countries === null ||
+    (Array.isArray(countries) && countries.length === 0);
+  return {
+    platforms,
+    languages,
+    niches,
+    country: open ? "any" : creator.country!,
+  };
+}
+
 export function bountyAllowed(minor: bigint): boolean {
   return minor >= BigInt(L.bountyMinMinor) && minor <= BigInt(L.bountyMaxMinor);
 }

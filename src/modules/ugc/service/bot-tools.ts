@@ -17,7 +17,7 @@ import {
   listMyCampaignSummaries,
   ugcPriceGuide,
   listMyInvites,
-  listOpenCampaigns,
+  matchOpenCampaigns,
   offerHire,
   listWinners,
   previewMatches,
@@ -307,7 +307,7 @@ export const ugcTools = [
   {
     name: "get_ugc_campaign",
     description:
-      "Read one UGC brief the caller can already see. For the company also budgetRequired and budgetPaidIn. No contacts.",
+      "Read one UGC brief the caller can already see: product, task, platforms, videos wanted, reward, rights, deadline and, for the company, the counts. Use when they ask about one brief. For the company also budgetRequired and budgetPaidIn. No contacts.",
     input: z.object({ campaignId: id }).strict(),
     access: "user" as const,
     confirm: read,
@@ -328,12 +328,21 @@ export const ugcTools = [
   {
     name: "list_open_ugc_campaigns",
     description:
-      "Open briefs for a creator with a profile. Product, niches, platforms, reward, rights, deadline.",
-    input: z.object({}).strict(),
+      "Open briefs that fit this creator's profile (platform, language, niche, country), best first, up to 10, each with why it fits. Use when a creator asks for paid video work or tasks. Set all only when they ask to see every open brief.",
+    input: z.object({ all: z.boolean().optional() }).strict(),
     access: "user" as const,
     confirm: read,
-    async run(ctx: Ctx) {
-      return { llm: model(await listOpenCampaigns(ctx.userId)) };
+    async run(ctx: Ctx, input: { all?: boolean }) {
+      const result = await matchOpenCampaigns(ctx.userId, input);
+      if (!result.profileReady)
+        return {
+          llm: "No complete creator profile yet: name, a language, a platform and a niche are needed. Offer propose_creator_profile.",
+        };
+      if (!result.briefs.length)
+        return {
+          llm: `No open brief fits the profile now (${result.openTotal} open in total). Say so, and name what they could widen: platforms, niches, languages or country. Do not invent briefs.`,
+        };
+      return { llm: model(result) };
     },
   },
   {

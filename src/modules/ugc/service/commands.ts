@@ -30,6 +30,7 @@ import {
   assertSubmissionUrl,
   assertWinnerRights,
   creatorMatches,
+  fitReasons,
   hashJoinToken,
   joinExpiresAt,
   offerExpiresAt,
@@ -523,6 +524,80 @@ export async function listOpenCampaigns(userId: string | null) {
       rights: row.rights,
       deadline: row.deadline,
     }));
+}
+
+const MATCH_LIMIT = 10;
+
+/**
+ * Open briefs that fit this creator (D499): the 27.7 rule seen from the
+ * creator, without briefs they already joined and past the deadline. More
+ * shared niches first, then the nearer deadline, then the higher reward.
+ * `all` lists every open brief instead, for "show me everything".
+ */
+export async function matchOpenCampaigns(
+  userId: string | null,
+  options: { all?: boolean } = {},
+) {
+  const id = requireUser(userId);
+  const store = await db();
+  const profile = await store.getProfile(id);
+  if (!profile || !profileReady(profile))
+    return { profileReady: false as const, openTotal: 0, briefs: [] };
+  const today = day(store.now());
+  const joined = new Set(
+    (await store.listInvitesForCreator(id)).map((row) => row.campaignId),
+  );
+  const open = (await store.listOpen()).filter(
+    (row) =>
+      row.status === "open" && row.deadline >= today && !joined.has(row.id),
+  );
+  const fitted = open
+    .map((row) => ({
+      row,
+      why: fitReasons(
+        {
+          platforms: row.platforms,
+          languages: row.languages,
+          niches: row.niches,
+          country: row.country,
+          countries: row.countries,
+        },
+        {
+          platforms: profile.platforms,
+          languages: profile.languages,
+          niches: profile.niches,
+          country: profile.country,
+        },
+      ),
+    }))
+    .filter((item) => options.all || item.why !== null)
+    .sort(
+      (a, b) =>
+        (b.why?.niches.length ?? -1) - (a.why?.niches.length ?? -1) ||
+        a.row.deadline.localeCompare(b.row.deadline) ||
+        (b.row.bountyMinor > a.row.bountyMinor
+          ? 1
+          : b.row.bountyMinor < a.row.bountyMinor
+            ? -1
+            : 0),
+    )
+    .slice(0, options.all ? undefined : MATCH_LIMIT);
+  return {
+    profileReady: true as const,
+    openTotal: open.length,
+    briefs: fitted.map(({ row, why }) => ({
+      id: row.id,
+      productName: row.productName,
+      niches: row.niches,
+      platforms: row.platforms,
+      languages: row.languages,
+      countries: row.countries ?? (row.country ? [row.country] : []),
+      bountyMinor: row.bountyMinor.toString(),
+      rights: row.rights,
+      deadline: row.deadline,
+      why,
+    })),
+  };
 }
 
 export async function listMyInvites(userId: string | null) {
