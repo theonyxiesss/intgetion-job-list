@@ -21,6 +21,8 @@ export const OFFER_ACTIONS = [
   "freelance_payout",
   "memory",
   "link_telegram",
+  "account_settings",
+  "my_account",
 ] as const;
 
 export type OfferAction = (typeof OFFER_ACTIONS)[number];
@@ -63,6 +65,11 @@ export function offerPath(
   if (action === "link_telegram") {
     return signedIn ? "/settings/account" : null;
   }
+  // Password, email and deleting the account stay on the site (D472, D510).
+  if (action === "account_settings") {
+    return signedIn ? "/settings/account" : null;
+  }
+  if (action === "my_account") return signedIn ? "/account" : null;
   if (action === "memory") {
     return signedIn ? "/settings/privacy#memory" : null;
   }

@@ -1,5 +1,11 @@
 import { z } from "zod";
 import { wrapUntrusted } from "@/lib/llm";
+import { routing } from "@/i18n/routing";
+import {
+  requireActiveUserById,
+  telegramLinkOf,
+  updateMe,
+} from "@/modules/auth/service";
 import {
   getOwnApplication,
   withdrawOwnApplication,
@@ -305,16 +311,19 @@ export const accountTools: BotTool[] = [
   tool({
     name: "get_my_settings",
     description:
-      "Read this person's account settings: whether the profile is hidden from employers, whether morning briefs are on, and which notifications are on per channel (inapp, email, telegram).",
+      "Read this person's account settings: whether the profile is hidden from employers, whether morning briefs are on, which notifications are on per channel (inapp, email, telegram), the email language and whether Telegram is linked.",
     input: z.object({}).strict(),
     access: "user",
     confirm: read,
     async run(ctx) {
-      const [profile, briefs, preferences] = await Promise.all([
+      const [profile, briefs, preferences, account] = await Promise.all([
         getOwnCandidate(user(ctx)),
         ownAgentBriefsEnabled(user(ctx)),
         readPreferences(user(ctx)),
+        requireActiveUserById(user(ctx)),
       ]);
+      // Whether Telegram is linked, read only (D510): linking stays on the site.
+      const telegram = account ? await telegramLinkOf(account) : null;
       const off = preferences
         .filter((item) => !item.enabled)
         .map((item) => `${item.type}/${item.channel}`);
@@ -324,8 +333,32 @@ export const accountTools: BotTool[] = [
           profileHidden: profile?.isHidden ?? null,
           morningBriefs: briefs,
           notificationsOff: off,
+          emailLanguage: account?.locale ?? null,
+          telegramLinked: telegram !== null && telegram !== undefined,
         }),
       };
+    },
+  }),
+  tool({
+    name: "set_email_language",
+    description:
+      "Change the language of the emails the site sends this person (D510). One of the site languages. Confirmed on a card.",
+    input: z.object({ locale: z.enum(routing.locales) }).strict(),
+    access: "user",
+    confirm: write,
+    async preview(ctx, input) {
+      // The language named in the chat's own language for the card.
+      return (
+        new Intl.DisplayNames([ctx.locale], { type: "language" }).of(
+          input.locale,
+        ) ?? input.locale
+      );
+    },
+    async run(ctx, input) {
+      const account = await requireActiveUserById(user(ctx));
+      if (!account) throw new HttpError(401, "UNAUTHENTICATED", "Sign in");
+      await updateMe(account, { locale: input.locale });
+      return { llm: `Emails now come in ${input.locale}.` };
     },
   }),
   tool({

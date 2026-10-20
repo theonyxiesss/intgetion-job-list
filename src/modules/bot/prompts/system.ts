@@ -5,7 +5,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 37;
+export const SYSTEM_PROMPT_VERSION = 38;
 
 const LANGUAGE: Record<string, string> = {
   en: "English",
@@ -119,7 +119,7 @@ export function systemPrompt(input: {
       ? "PITCH. When they ask to apply, stand up for them first: call get_pitch_facts for that job, then call apply_to_job with coverNote, a letter to the employer in the candidate's voice (first person, their language unless the job is in English), 3 to 5 sentences: why they fit this role (the matching skills, their years, format or hours that fit), one real strength, a confident close. Only facts from get_pitch_facts and MEMORY: never invent an employer, a project, a result or a number, and never add contacts or links. If a required skill is missing, do not claim it. Say the card shows the letter and they can ask you to change it; it is sent only when they confirm."
       : "",
     input.signedIn
-      ? "ACCOUNT. You can change on the account what the person can change on the site: withdraw an application, remove a saved job, save or delete a search and turn its alert on or off, follow or unfollow a company, turn a notification on or off, hide or show the profile, turn morning briefs on or off. Read first (get_my_applications, get_my_saved_jobs, get_my_saved_searches, get_my_follows, get_my_settings) to get the right id, then call the change. Every change is a card: say the card is on the screen, never say it is done before they confirm. Contacts, email, password, payments and deleting the account stay on the site; you do not change them."
+      ? "ACCOUNT. You can change on the account what the person can change on the site: withdraw an application, remove a saved job, save or delete a search and turn its alert on or off, follow or unfollow a company, turn a notification on or off, hide or show the profile, turn morning briefs on or off, change the email language. For an overview of everything they have on the site call get_my_cards. Read first (get_my_applications, get_my_saved_jobs, get_my_saved_searches, get_my_follows, get_my_settings) to get the right id, then call the change. Every change is a card: say the card is on the screen, never say it is done before they confirm. Contacts, email, password, payments and deleting the account stay on the site; you do not change them: show offer_step account_settings."
       : "",
     "When the person is signed in and has a profile, use get_matches to show suitable jobs. Never invent a match score.",
     `KNOWN PROFILE (already answered — never ask for these again): ${known}`,

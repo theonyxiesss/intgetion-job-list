@@ -2818,3 +2818,10 @@
 - Проверки шага 2: `pnpm typecheck` → 0; `pnpm lint` → 0 (после удаления неиспользуемого `cefrLevel`); `pnpm eval` → 0 (7); `pnpm test` → 1: 1438 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Интеграционные тесты — в CI.
 - Шаг 2 выкладка: коммит `17820ef`, Vercel `dpl_8zAY1uprDPBBEBhp3SEGCGrfLzms` success; `/ru`, `/ru/jobs`, `/ru/freelance`, `/ru/campaigns`, `/ru/chat` → 200.
 - Шаг 3: `0066_drop_old_profile_fields.sql` применена путём D438: журнал 62 → 63; старых столбцов 0, `candidate_languages` и тип `account_type` удалены, `user_profiles` 3 строки, членство `postgres` в `migrator` — `set=false, admin=true` от `supabase_admin`. Советники security: только прежние. После удаления `/ru`, `/ru/jobs`, `/ru/freelance`, `/ru/campaigns`, `/ru/chat`, `/ru/events` → 200; `/ru/account`, `/ru/profile` → 307; `/api/me` гостем → 401.
+
+## [2026-10-21] — D510 — этап 4а: сводка «мои карточки»
+
+- Founder: «да» на этап 4. Разбит на 4а (сводка, аккаунт) и 4б (компания).
+- Сделано: `src/modules/bot/service/my-cards-tool.ts` (`get_my_cards`) и регистрация в `tools.ts`; `account-tools.ts` — `set_email_language`, `get_my_settings` с языком писем и Telegram; `offers.ts` — `account_settings`, `my_account`, подписи кнопок в `telegram-agent.ts`; карточка в `account-card.tsx`; тексты `chat.account.set_email_language`, `chat.offer.account_settings`, `chat.offer.my_account` в 7 локалях; промпт 38 (`memory.test.ts`), описание `offer_step`. Тест `my-cards-tool.test.ts` (5). Документы: D510, `docs/tz/29-spoki-cards.md`, CURRENT.
+- Миграции: нет.
+- Проверки D510: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1443 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.

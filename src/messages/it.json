@@ -1833,7 +1833,8 @@
         "about": "Su di me",
         "addLanguages": "Aggiungi lingue",
         "removeLanguages": "Rimuovi lingue"
-      }
+      },
+      "set_email_language": "Le email del sito arriveranno in {name}."
     },
     "confirm": {
       "applyTitle": "Candidarti a questa offerta?",
@@ -1928,6 +1929,16 @@
         "title": "Collega Telegram",
         "text": "I promemoria arrivano sul tuo Telegram. Collegalo nelle impostazioni dell’account.",
         "action": "Collega Telegram"
+      },
+      "account_settings": {
+        "title": "Impostazioni account",
+        "text": "Email, password, metodi di accesso ed eliminazione dell’account si cambiano qui.",
+        "action": "Apri impostazioni"
+      },
+      "my_account": {
+        "title": "Il mio account",
+        "text": "«Su di me» e tutti i tuoi ruoli in una pagina.",
+        "action": "Apri"
       }
     }
   },

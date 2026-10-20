@@ -1833,7 +1833,8 @@
         "about": "Über mich",
         "addLanguages": "Sprachen hinzufügen",
         "removeLanguages": "Sprachen entfernen"
-      }
+      },
+      "set_email_language": "E-Mails der Website kommen auf {name}."
     },
     "confirm": {
       "applyTitle": "Auf diesen Job bewerben?",
@@ -1928,6 +1929,16 @@
         "title": "Telegram verknüpfen",
         "text": "Erinnerungen kommen in dein Telegram. Verknüpfe es in den Kontoeinstellungen.",
         "action": "Telegram verknüpfen"
+      },
+      "account_settings": {
+        "title": "Kontoeinstellungen",
+        "text": "E-Mail, Passwort, Anmeldewege und das Löschen des Kontos werden hier geändert.",
+        "action": "Einstellungen öffnen"
+      },
+      "my_account": {
+        "title": "Mein Konto",
+        "text": "„Über mich“ und alle Ihre Rollen auf einer Seite.",
+        "action": "Öffnen"
       }
     }
   },

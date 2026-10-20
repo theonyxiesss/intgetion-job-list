@@ -1833,7 +1833,8 @@
         "about": "À propos de moi",
         "addLanguages": "Ajouter des langues",
         "removeLanguages": "Retirer des langues"
-      }
+      },
+      "set_email_language": "Les e-mails du site arriveront en {name}."
     },
     "confirm": {
       "applyTitle": "Postuler à cette offre ?",
@@ -1928,6 +1929,16 @@
         "title": "Lier Telegram",
         "text": "Les rappels arrivent dans votre Telegram. Liez-le dans les paramètres du compte.",
         "action": "Lier Telegram"
+      },
+      "account_settings": {
+        "title": "Paramètres du compte",
+        "text": "L’e-mail, le mot de passe, les modes de connexion et la suppression du compte se changent ici.",
+        "action": "Ouvrir les paramètres"
+      },
+      "my_account": {
+        "title": "Mon compte",
+        "text": "« À propos de moi » et tous vos rôles sur une page.",
+        "action": "Ouvrir"
       }
     }
   },

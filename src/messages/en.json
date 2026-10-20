@@ -1833,7 +1833,8 @@
         "about": "About me",
         "addLanguages": "Add languages",
         "removeLanguages": "Remove languages"
-      }
+      },
+      "set_email_language": "Emails from the site will come in {name}."
     },
     "confirm": {
       "applyTitle": "Apply to this job?",
@@ -1928,6 +1929,16 @@
         "title": "Link Telegram",
         "text": "Reminders come to your Telegram. Link it in account settings.",
         "action": "Link Telegram"
+      },
+      "account_settings": {
+        "title": "Account settings",
+        "text": "Email, password, sign-in methods and deleting the account are changed here.",
+        "action": "Open settings"
+      },
+      "my_account": {
+        "title": "My account",
+        "text": "“About me” and all your roles on one page.",
+        "action": "Open"
       }
     }
   },

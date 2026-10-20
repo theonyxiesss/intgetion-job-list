@@ -1833,7 +1833,8 @@
         "about": "Sobre mim",
         "addLanguages": "Adicionar idiomas",
         "removeLanguages": "Remover idiomas"
-      }
+      },
+      "set_email_language": "Os e-mails do site chegarão em {name}."
     },
     "confirm": {
       "applyTitle": "Candidatar-se a esta vaga?",
@@ -1928,6 +1929,16 @@
         "title": "Vincular Telegram",
         "text": "Os lembretes chegam no seu Telegram. Vincule nas configurações da conta.",
         "action": "Vincular Telegram"
+      },
+      "account_settings": {
+        "title": "Configurações da conta",
+        "text": "E-mail, senha, formas de entrar e exclusão da conta são alterados aqui.",
+        "action": "Abrir configurações"
+      },
+      "my_account": {
+        "title": "Minha conta",
+        "text": "“Sobre mim” e todos os seus papéis em uma página.",
+        "action": "Abrir"
       }
     }
   },

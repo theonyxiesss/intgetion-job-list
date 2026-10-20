@@ -20,6 +20,7 @@ export const ACCOUNT_CARD_TOOLS = [
   "set_job_status",
   "set_service_status",
   "propose_account_update",
+  "set_email_language",
 ] as const;
 
 export function isAccountCardTool(tool: string): boolean {
