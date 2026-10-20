@@ -2789,3 +2789,4 @@
 - Миграции: нет (столбцы остаются до 6.4г).
 - Шапка: ссылки соискателя видны и члену компании (`header.tsx`, `nav-icons.tsx`, `nav-icons.test.ts` — порядок меню работодателя с профилем). База (чтение): отметку «работодатель» не имел никто, 3 члена компании были «соискателями».
 - Проверки D506: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1: 1429 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.
+- D506 выкладка: коммит `74ad4a0`, Vercel `dpl_7FxMF1qGbzbvPtccsr8MmjwRwjwQ` success; `/ru`, `/ru/jobs`, `/ru/pricing` → 200; `/ru/settings/account`, `/ru/account` → 307 на вход.
