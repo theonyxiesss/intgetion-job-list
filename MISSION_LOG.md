@@ -2678,3 +2678,9 @@
 - Проверки: vitest ugc-focus + ugc drafts 10/10 → 0; eslint изменённых TS → 0; prettier изменённых файлов → 0 (docs были с CRLF/LF-смесью, исправлено); typecheck → 3 ошибки только в `src/modules/mcp/service/server.ts` (локально нет `@modelcontextprotocol/server`), CI проверит.
 - Найдено: миграции `0061`–`0063` не применены к облачной БД, а код D494 на сайте с `6702c16`. Нужен `pnpm db:migrate` по команде основателя.
 - CI `check` на master красный с `ca98b3b` из-за `format:check` (14 файлов, не D495).
+
+## [2026-10-20] — 0061–0063 на облако
+
+- Founder: «да запусти миграцию». `pnpm db:migrate` отказал (защита `scripts/db-url.mjs`, хост Supabase — production); применено путём D438 через MCP `execute_sql` одной транзакцией: `0061_ugc_brief_drafts.sql`, `0062_freelance_service_drafts.sql`, `0063_job_drafts.sql`.
+- Сверка до: журнал 57; отличия от папки — известные `0020_telegram_login` (только в журнале) и `0048_engagement_briefs` (не применялась, D438), плюс 0061–0063.
+- Проверка после: три таблицы — владелец `migrator`, RLS включён и принудителен, 3 политики, `app_rw` DML; `ugc_campaigns.countries` есть; журнал 60; членство `postgres` в `migrator` вернулось к `set=false, admin=true` от `supabase_admin`. Советники security: только прежние (search_path у 4 функций, leaked password protection).
