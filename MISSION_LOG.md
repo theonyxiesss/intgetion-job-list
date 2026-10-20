@@ -2807,3 +2807,4 @@
 - Отклонение от плана 6.4в: старые поля пока пишутся (копия) — `candidate_profiles.timezone` NOT NULL. Порядок 6.4г записан в D508.
 - Миграции: нет.
 - Проверки D508: `pnpm typecheck` → 0 (после исправления типа `shared` в `loadProfile`); `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1441 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.
+- D508 выкладка: коммит `5394fcb`, Vercel `dpl_aeLdUcPF68tkteAhRLfZczYVVYe1` success; `/ru`, `/ru/jobs`, `/ru/freelance` → 200, `/ru/profile` → 307 на вход (`/ru/employer/applications` → 404 и до этого: у раздела нет общей страницы).
