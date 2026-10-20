@@ -2799,3 +2799,11 @@
 - Миграции: нет.
 - Проверки D507: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1437 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Фрагмент предотбора выполнен на облаке только чтением (счёт строк) — синтаксис и типы `char`/`text` верны.
 - D507 выкладка: коммит `560826d`, Vercel `dpl_F4Vf2ffrDujokUAMpZ9FdZpGasyh` success; `/ru`, `/ru/jobs`, `/ru/campaigns` → 200; `/ru/matches`, `/ru/creator` → 307 на вход.
+
+## [2026-10-20] — D508 — этап 6.4в: читатели на общей анкете
+
+- Founder: «да, начинай 6.4в».
+- Сделано: `candidates/repo/profiles.ts` (`loadProfile` читает `user_profiles`, `presentProfile` показывает общие поля), `applications/repo/applications.ts` (имя), `admin-console/people-repo.ts` (имя, поиск, сортировка), `candidates/repo/storefront.ts` (имя, пояс), `companies/repo/company-repo.ts` (состав команды), `notifications/service/morning-briefs.ts` и `briefs-admin.ts` (пояс); `users/service/shared-profile.ts` — формы ролей добавляют языки, не удаляя. Тесты: `candidates/__tests__/shared-profile-view.test.ts` (3), `users/__tests__/shared-profile.test.ts` (правило языков). Изменённые запросы выполнены на облаке только чтением (счёт строк).
+- Отклонение от плана 6.4в: старые поля пока пишутся (копия) — `candidate_profiles.timezone` NOT NULL. Порядок 6.4г записан в D508.
+- Миграции: нет.
+- Проверки D508: `pnpm typecheck` → 0 (после исправления типа `shared` в `loadProfile`); `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1441 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0.

@@ -157,9 +157,11 @@ export async function runSlot(input: {
   let error: string | null = null;
   try {
     const candidates = await db.execute<CandidateRow>(sql`
-      select cp.user_id, cp.timezone, u.locale, cp.last_digest_at
+      select cp.user_id, coalesce(up.timezone, cp.timezone) as timezone,
+        u.locale, cp.last_digest_at
       from public.candidate_profiles cp
       join public.users u on u.id = cp.user_id
+      left join public.user_profiles up on up.user_id = cp.user_id
       where u.status = 'active' and cp.agent_briefs_enabled
         and not exists (
           select 1 from public.brief_deliveries d

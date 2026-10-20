@@ -7,7 +7,13 @@ import {
   companies,
   companyMembers,
   jobs,
+  userProfiles,
 } from "@/db/schema";
+
+/** The name from the shared profile, the candidate row as fallback (D508). */
+const sharedName = sql<
+  string | null
+>`coalesce(${userProfiles.displayName}, ${candidateProfiles.fullName})`;
 import type { ApplicationStatus } from "../service/transitions";
 
 type Database = ReturnType<typeof getDb>;
@@ -117,7 +123,7 @@ export async function findApplication(
       application: applications,
       companyId: jobs.companyId,
       jobTitle: jobs.title,
-      candidateName: candidateProfiles.fullName,
+      candidateName: sharedName,
     })
     .from(applications)
     .innerJoin(jobs, eq(jobs.id, applications.jobId))
@@ -125,6 +131,7 @@ export async function findApplication(
       candidateProfiles,
       eq(candidateProfiles.userId, applications.candidateId),
     )
+    .leftJoin(userProfiles, eq(userProfiles.userId, applications.candidateId))
     .where(eq(applications.id, applicationId))
     .limit(1);
   if (!row) return null;
@@ -163,7 +170,7 @@ export async function listForJob(
       reapplyCount: applications.reapplyCount,
       createdAt: applications.createdAt,
       candidateId: applications.candidateId,
-      candidateName: candidateProfiles.fullName,
+      candidateName: sharedName,
     })
     .from(applications)
     .innerJoin(jobs, eq(jobs.id, applications.jobId))
@@ -171,6 +178,7 @@ export async function listForJob(
       candidateProfiles,
       eq(candidateProfiles.userId, applications.candidateId),
     )
+    .leftJoin(userProfiles, eq(userProfiles.userId, applications.candidateId))
     .where(
       older
         ? and(eq(applications.jobId, jobId), older)
@@ -223,7 +231,7 @@ export async function listOpenContactApplications(userId: string) {
   return getDb()
     .select({
       applicationId: applications.id,
-      candidateName: candidateProfiles.fullName,
+      candidateName: sharedName,
       jobTitle: jobs.title,
       status: applications.status,
     })
@@ -244,6 +252,7 @@ export async function listOpenContactApplications(userId: string) {
       candidateProfiles,
       eq(candidateProfiles.userId, applications.candidateId),
     )
+    .leftJoin(userProfiles, eq(userProfiles.userId, applications.candidateId))
     .where(inArray(applications.status, [...OPEN_CONTACT_STATUSES]))
     .orderBy(desc(applications.updatedAt));
 }

@@ -170,9 +170,11 @@ async function readSubscriptions(
     email: boolean;
   }>(sql`
     with people as (
-      select cp.user_id, cp.timezone, 'matches.digest' as type
+      select cp.user_id, coalesce(up.timezone, cp.timezone) as timezone,
+        'matches.digest' as type
       from public.candidate_profiles cp
       join public.users u on u.id = cp.user_id and u.status = 'active'
+      left join public.user_profiles up on up.user_id = cp.user_id
       where cp.agent_briefs_enabled
       union
       select distinct cm.user_id, null::text, 'company.candidates_digest'

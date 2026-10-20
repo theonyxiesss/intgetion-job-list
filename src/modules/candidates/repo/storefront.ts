@@ -1,6 +1,6 @@
-import { inArray } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { candidateProfiles } from "@/db/schema";
+import { candidateProfiles, userProfiles } from "@/db/schema";
 
 export type StorefrontRow = {
   userId: string;
@@ -17,10 +17,14 @@ export async function loadStorefrontRows(
   return getDb()
     .select({
       userId: candidateProfiles.userId,
-      fullName: candidateProfiles.fullName,
+      // Name and zone from the shared profile, the candidate row as fallback (D508).
+      fullName: sql<
+        string | null
+      >`coalesce(${userProfiles.displayName}, ${candidateProfiles.fullName})`,
       headline: candidateProfiles.headline,
-      timezone: candidateProfiles.timezone,
+      timezone: sql<string>`coalesce(${userProfiles.timezone}, ${candidateProfiles.timezone})`,
     })
     .from(candidateProfiles)
+    .leftJoin(userProfiles, eq(userProfiles.userId, candidateProfiles.userId))
     .where(inArray(candidateProfiles.userId, [...userIds]));
 }

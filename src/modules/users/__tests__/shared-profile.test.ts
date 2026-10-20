@@ -124,8 +124,8 @@ describe("shared profile (D503)", () => {
   });
 });
 
-describe("a list without levels keeps the known ones (D507)", () => {
-  it("replaces the languages and keeps the level of a language already known", () => {
+describe("a role form adds languages and never removes them (D507, D508)", () => {
+  it("keeps known levels and the languages it does not name", () => {
     expect(
       mergeSharedFacts(
         anna,
@@ -133,8 +133,22 @@ describe("a list without levels keeps the known ones (D507)", () => {
         "replace",
       )?.languages,
     ).toEqual([
+      { code: "pl", level: "native" },
       { code: "en", level: "C1" },
       { code: "de", level: null },
+    ]);
+  });
+
+  it("updates the level of a language the form names", () => {
+    expect(
+      mergeSharedFacts(
+        anna,
+        { languages: [{ code: "en", level: "C2" }] },
+        "replace",
+      )?.languages,
+    ).toEqual([
+      { code: "pl", level: "native" },
+      { code: "en", level: "C2" },
     ]);
   });
 });

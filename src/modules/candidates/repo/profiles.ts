@@ -7,6 +7,7 @@ import {
   candidateProfiles,
   candidateSkills,
   skills,
+  userProfiles,
 } from "@/db/schema";
 import type { UpdateCandidateInput } from "../schemas";
 
@@ -58,7 +59,7 @@ export async function loadProfile(userId: string, conn: Conn = getDb()) {
     .limit(1);
   if (!profile) return null;
 
-  const [skillRows, experienceRows, languageRows, preferenceRows] =
+  const [skillRows, experienceRows, languageRows, preferenceRows, sharedRows] =
     await Promise.all([
       conn
         .select({
@@ -88,6 +89,11 @@ export async function loadProfile(userId: string, conn: Conn = getDb()) {
         .from(candidatePreferences)
         .where(eq(candidatePreferences.userId, userId))
         .limit(1),
+      conn
+        .select()
+        .from(userProfiles)
+        .where(eq(userProfiles.userId, userId))
+        .limit(1),
     ]);
 
   return {
@@ -96,7 +102,32 @@ export async function loadProfile(userId: string, conn: Conn = getDb()) {
     experience: experienceRows,
     languages: languageRows,
     preferences: preferenceRows[0] ?? null,
+    shared: sharedRows.at(0) ?? null,
   };
+}
+
+const LEVELS = new Set(["A1", "A2", "B1", "B2", "C1", "C2", "native"]);
+
+/**
+ * Languages shown and edited: the shared profile's (D508), a level from
+ * the candidate row for the same language, else B1 as in matching (D507).
+ */
+function sharedLanguages(
+  loaded: NonNullable<Awaited<ReturnType<typeof loadProfile>>>,
+) {
+  const own = loaded.languages.map((item) => ({
+    lang: item.lang.trim(),
+    level: item.level,
+  }));
+  const shared = loaded.shared?.languages ?? [];
+  if (!shared.length) return own;
+  const levels = new Map(own.map((item) => [item.lang, item.level]));
+  return shared.map((item) => ({
+    lang: item.code,
+    level: (item.level && LEVELS.has(item.level)
+      ? item.level
+      : (levels.get(item.code) ?? "B1")) as (typeof own)[number]["level"],
+  }));
 }
 
 export async function saveProfile(
@@ -281,12 +312,13 @@ export function presentProfile(
 
   return {
     id: profile.userId,
-    fullName: profile.fullName,
+    // Name and place from the shared profile, the row as fallback (D508).
+    fullName: loaded.shared?.displayName ?? profile.fullName,
     headline: profile.headline,
     desiredTitles: profile.desiredTitles,
-    country: trimChar(profile.country),
-    city: profile.city,
-    timezone: profile.timezone,
+    country: loaded.shared?.country ?? trimChar(profile.country),
+    city: loaded.shared?.city ?? profile.city,
+    timezone: loaded.shared?.timezone ?? profile.timezone,
     workHoursStart: hourMinute(profile.workHoursStart),
     workHoursEnd: hourMinute(profile.workHoursEnd),
     workDays: profile.workDays,
@@ -311,10 +343,7 @@ export function presentProfile(
       description: item.description,
       sort: item.sort,
     })),
-    languages: loaded.languages.map((item) => ({
-      lang: item.lang.trim(),
-      level: item.level,
-    })),
+    languages: sharedLanguages(loaded),
     preferences: {
       categories: loaded.preferences?.categories ?? [],
       sectors: loaded.preferences?.sectors ?? [],

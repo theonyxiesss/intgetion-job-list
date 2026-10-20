@@ -98,14 +98,16 @@ export function mergeSharedFacts(
   const langs = languages(facts.languages);
   if (langs) {
     if (mode === "replace") {
-      // A list without levels (a creator form) keeps the levels already known.
-      const known = new Map(
-        next.languages.map((item) => [item.code, item.level]),
-      );
-      next.languages = langs.map((item) => ({
-        code: item.code,
-        level: item.level ?? known.get(item.code) ?? null,
-      }));
+      // A role form names some languages (the candidate form names one): it
+      // adds them and sets their level when given, and never removes the
+      // others. Removing is for the account page and Spoki (D508).
+      const byCode = new Map(next.languages.map((item) => [item.code, item]));
+      for (const item of langs)
+        byCode.set(item.code, {
+          code: item.code,
+          level: item.level ?? byCode.get(item.code)?.level ?? null,
+        });
+      next.languages = [...byCode.values()];
     } else {
       const known = new Set(next.languages.map((item) => item.code));
       for (const item of langs)

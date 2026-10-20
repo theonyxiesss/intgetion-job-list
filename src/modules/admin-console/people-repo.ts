@@ -21,7 +21,7 @@ export async function listPeople(input: {
   const cursorId = input.cursor?.id ?? null;
   return rows(sql`
     select u.id, u.auth_uid, u.status, u.locale, u.created_at, u.last_active_at,
-           p.full_name, p.completeness,
+           coalesce(up.display_name, p.full_name) as full_name, p.completeness,
            (p.user_id is not null) as candidate,
            exists (
              select 1 from public.company_members m where m.user_id = u.id
@@ -29,13 +29,14 @@ export async function listPeople(input: {
            ta.username as telegram_username
     from public.users u
     left join public.candidate_profiles p on p.user_id = u.id
+    left join public.user_profiles up on up.user_id = u.id
     left join public.telegram_accounts ta on ta.user_id = u.id
     where (${input.status ?? null}::text is null or u.status::text = ${input.status ?? null})
       and (${input.locale ?? null}::text is null or u.locale = ${input.locale ?? null})
       and (${input.id ?? null}::uuid is null or u.id = ${input.id ?? null}::uuid)
       and (
         ${input.name ?? null}::text is null
-        or p.full_name ilike ${"%" + (input.name ?? "") + "%"}
+        or coalesce(up.display_name, p.full_name) ilike ${"%" + (input.name ?? "") + "%"}
         or ta.username ilike ${"%" + (input.name ?? "") + "%"}
       )
       and (
@@ -63,11 +64,12 @@ export async function findPerson(id: string): Promise<Rows> {
   return rows(sql`
     select u.id, u.auth_uid, u.status, u.locale, u.platform_role,
            u.created_at, u.last_active_at, u.terms_version, u.marketing_opt_in,
-           p.full_name, p.headline, p.completeness, p.is_hidden,
+           coalesce(up.display_name, p.full_name) as full_name, p.headline, p.completeness, p.is_hidden,
            c.phone, c.telegram as contact_telegram,
            ta.telegram_id::text as telegram_id, ta.username as telegram_username
     from public.users u
     left join public.candidate_profiles p on p.user_id = u.id
+    left join public.user_profiles up on up.user_id = u.id
     left join public.candidate_contacts c on c.candidate_id = u.id
     left join public.telegram_accounts ta on ta.user_id = u.id
     where u.id = ${id}::uuid
@@ -142,9 +144,10 @@ export async function notesOf(
   entityId: string,
 ): Promise<Rows> {
   return rows(sql`
-    select n.id, n.body, n.created_at, n.author_id, p.full_name
+    select n.id, n.body, n.created_at, n.author_id, coalesce(up.display_name, p.full_name) as full_name
     from public.admin_notes n
     left join public.candidate_profiles p on p.user_id = n.author_id
+    left join public.user_profiles up on up.user_id = n.author_id
     where n.entity_type = ${entityType} and n.entity_id = ${entityId}::uuid
     order by n.created_at
   `);
@@ -219,12 +222,13 @@ export async function companyCard(id: string): Promise<Rows> {
 
 export async function companyMembers(id: string): Promise<Rows> {
   return rows(sql`
-    select u.id, m.role, p.full_name
+    select u.id, m.role, coalesce(up.display_name, p.full_name) as full_name
     from public.company_members m
     join public.users u on u.id = m.user_id
     left join public.candidate_profiles p on p.user_id = u.id
+    left join public.user_profiles up on up.user_id = u.id
     where m.company_id = ${id}::uuid
-    order by m.role, p.full_name
+    order by m.role, coalesce(up.display_name, p.full_name)
   `);
 }
 
