@@ -32,15 +32,30 @@ export const ugcBriefDrafts = pgTable(
   "ugc_brief_drafts",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id").notNull().unique().references(() => users.id, { onDelete: "cascade" }),
-    companyId: uuid("company_id").references(() => companies.id, { onDelete: "cascade" }),
-    draft: jsonb("draft").$type<Record<string, unknown>>().notNull().default({}),
+    userId: uuid("user_id")
+      .notNull()
+      .unique()
+      .references(() => users.id, { onDelete: "cascade" }),
+    companyId: uuid("company_id").references(() => companies.id, {
+      onDelete: "cascade",
+    }),
+    draft: jsonb("draft")
+      .$type<Record<string, unknown>>()
+      .notNull()
+      .default({}),
     assumptions: jsonb("assumptions").$type<string[]>().notNull().default([]),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
   },
   (table) => [
-    index("ugc_brief_drafts_user_updated_idx").on(table.userId, table.updatedAt),
+    index("ugc_brief_drafts_user_updated_idx").on(
+      table.userId,
+      table.updatedAt,
+    ),
   ],
 );
 

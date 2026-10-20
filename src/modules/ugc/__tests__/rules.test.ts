@@ -67,7 +67,9 @@ describe("creator match (27.7)", () => {
     const multiCountry = { ...campaign, countries: ["IT", "ES", "DE"] };
     expect(creatorMatches(multiCountry, creator({ country: "IT" }))).toBe(true);
     expect(creatorMatches(multiCountry, creator({ country: "ES" }))).toBe(true);
-    expect(creatorMatches(multiCountry, creator({ country: "JP" }))).toBe(false);
+    expect(creatorMatches(multiCountry, creator({ country: "JP" }))).toBe(
+      false,
+    );
   });
 
   it("skips a paused or blocked creator", () => {

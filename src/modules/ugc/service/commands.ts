@@ -183,7 +183,8 @@ function briefForReaders(campaign: Campaign) {
     niches: campaign.niches,
     audience: campaign.audience,
     country: campaign.country,
-    countries: campaign.countries ?? (campaign.country ? [campaign.country] : []),
+    countries:
+      campaign.countries ?? (campaign.country ? [campaign.country] : []),
     languages: campaign.languages,
     mustSay: campaign.mustSay,
     mustNot: campaign.mustNot,
@@ -245,7 +246,9 @@ function validateBrief(input: BriefInput, today: string): BriefInput {
   if (input.country !== null && !COUNTRY.test(input.country)) {
     throw validationError([{ path: "country", problem: "invalid" }]);
   }
-  const countries = [...new Set(input.countries ?? (input.country ? [input.country] : []))];
+  const countries = [
+    ...new Set(input.countries ?? (input.country ? [input.country] : [])),
+  ];
   if (countries.length > 20 || countries.some((code) => !COUNTRY.test(code))) {
     throw validationError([{ path: "countries", problem: "invalid" }]);
   }

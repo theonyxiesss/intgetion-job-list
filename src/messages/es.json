@@ -1633,7 +1633,25 @@
     }
   },
   "chat": {
-      "jobDraft": {"title":"Borrador compartido de la oferta","missing":"Faltan {count} datos obligatorios de la oferta.","edit":"Revisar y enviar oferta","fields":{"companyName":"Empresa","title":"Puesto","description":"Descripción","category":"Categoría","employmentType":"Tipo de empleo","location":"Ubicación","salaryMin":"Salario mínimo","salaryMax":"Salario máximo","salaryCurrency":"Moneda","salaryPeriod":"Periodo salarial","applicationMethod":"Cómo postularse","countries":"Países elegibles"}},
+    "jobDraft": {
+      "title": "Borrador compartido de la oferta",
+      "missing": "Faltan {count} datos obligatorios de la oferta.",
+      "edit": "Revisar y enviar oferta",
+      "fields": {
+        "companyName": "Empresa",
+        "title": "Puesto",
+        "description": "Descripción",
+        "category": "Categoría",
+        "employmentType": "Tipo de empleo",
+        "location": "Ubicación",
+        "salaryMin": "Salario mínimo",
+        "salaryMax": "Salario máximo",
+        "salaryCurrency": "Moneda",
+        "salaryPeriod": "Periodo salarial",
+        "applicationMethod": "Cómo postularse",
+        "countries": "Países elegibles"
+      }
+    },
     "title": "Agente de carrera",
     "welcome": "¿Por dónde empezamos?",
     "disclaimer": "Spoki puede equivocarse. Comprueba lo importante. También en Telegram:",
@@ -1654,13 +1672,43 @@
       "title": "Enlace para el blogger",
       "action": "Abrir en Telegram"
     },
-    "freelanceDraft": { "title": "Borrador compartido del servicio", "missing": "Quedan {count} campos obligatorios por completar.", "edit": "Revisar y editar anuncio", "fields": { "title": "Título", "category": "Categoría", "description": "Descripción", "buyerNeeds": "Necesidades del comprador", "languages": "Idiomas", "skills": "Habilidades", "packages": "Paquetes" } },
+    "freelanceDraft": {
+      "title": "Borrador compartido del servicio",
+      "missing": "Quedan {count} campos obligatorios por completar.",
+      "edit": "Revisar y editar anuncio",
+      "fields": {
+        "title": "Título",
+        "category": "Categoría",
+        "description": "Descripción",
+        "buyerNeeds": "Necesidades del comprador",
+        "languages": "Idiomas",
+        "skills": "Habilidades",
+        "packages": "Paquetes"
+      }
+    },
     "ugcDraft": {
       "title": "Borrador compartido del brief UGC",
       "missing": "Quedan {count} campos obligatorios por completar.",
       "edit": "Revisar y editar borrador",
       "assumptions": "Suposiciones de Spoki",
-      "fields": { "productName": "Producto", "description": "Descripción", "goal": "Objetivo", "audience": "Público", "countries": "Países", "languages": "Idiomas", "platform": "Plataforma", "niche": "Nicho", "videoCount": "Vídeos", "rewardCents": "Pago por vídeo", "deadline": "Fecha límite", "rights": "Derechos", "mustSay": "Debe decir", "mustNot": "Debe evitar", "pitch": "Mensaje", "links": "Enlaces" }
+      "fields": {
+        "productName": "Producto",
+        "description": "Descripción",
+        "goal": "Objetivo",
+        "audience": "Público",
+        "countries": "Países",
+        "languages": "Idiomas",
+        "platform": "Plataforma",
+        "niche": "Nicho",
+        "videoCount": "Vídeos",
+        "rewardCents": "Pago por vídeo",
+        "deadline": "Fecha límite",
+        "rights": "Derechos",
+        "mustSay": "Debe decir",
+        "mustNot": "Debe evitar",
+        "pitch": "Mensaje",
+        "links": "Enlaces"
+      }
     },
     "intro": "Dile al agente qué trabajo buscas. Encuentra empleos, mantiene tu perfil al día y te pregunta antes de cambiar algo.",
     "log": "Conversación",
@@ -2754,14 +2802,14 @@
     }
   },
   "postJob": {
-      "assistantDraft": "Preparar la oferta con el asistente",
+    "assistantDraft": "Preparar la oferta con el asistente",
     "title": "Publicar empleo",
     "guest": "Para publicar un empleo, inicia sesión o crea una cuenta.",
     "register": "Registrarse",
     "form": {
-        "completePrivate": "Completa en este formulario los datos de contacto y solicitud que faltan antes de enviar.",
-        "alreadySubmitted": "Este borrador ya se ha enviado.",
-        "chooseOption": "Elige una opción",
+      "completePrivate": "Completa en este formulario los datos de contacto y solicitud que faltan antes de enviar.",
+      "alreadySubmitted": "Este borrador ya se ha enviado.",
+      "chooseOption": "Elige una opción",
       "intro": "Indica el puesto, el sueldo y cómo deben postularse. Un administrador lo revisa antes de que aparezca en la lista.",
       "introLive": "Indica el puesto, el sueldo y cómo deben postularse. Al enviarlo, el empleo entra en la lista.",
       "company": "Nombre de la empresa",

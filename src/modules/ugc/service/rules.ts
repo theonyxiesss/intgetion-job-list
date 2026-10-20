@@ -73,7 +73,10 @@ export function creatorMatches(
     overlap(campaign.platforms, creator.platforms) &&
     overlap(campaign.languages, creator.languages) &&
     overlap(campaign.niches, creator.niches) &&
-    countryMatches(campaign.countries?.length ? campaign.countries : campaign.country, creator.country)
+    countryMatches(
+      campaign.countries?.length ? campaign.countries : campaign.country,
+      creator.country,
+    )
   );
 }
 

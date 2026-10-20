@@ -1633,7 +1633,25 @@
     }
   },
   "chat": {
-      "jobDraft": {"title":"Bozza condivisa dell’offerta","missing":"Mancano ancora {count} dati obbligatori.","edit":"Controlla e invia l’offerta","fields":{"companyName":"Azienda","title":"Ruolo","description":"Descrizione","category":"Categoria","employmentType":"Tipo di impiego","location":"Luogo","salaryMin":"Retribuzione minima","salaryMax":"Retribuzione massima","salaryCurrency":"Valuta","salaryPeriod":"Periodo della retribuzione","applicationMethod":"Come candidarsi","countries":"Paesi idonei"}},
+    "jobDraft": {
+      "title": "Bozza condivisa dell’offerta",
+      "missing": "Mancano ancora {count} dati obbligatori.",
+      "edit": "Controlla e invia l’offerta",
+      "fields": {
+        "companyName": "Azienda",
+        "title": "Ruolo",
+        "description": "Descrizione",
+        "category": "Categoria",
+        "employmentType": "Tipo di impiego",
+        "location": "Luogo",
+        "salaryMin": "Retribuzione minima",
+        "salaryMax": "Retribuzione massima",
+        "salaryCurrency": "Valuta",
+        "salaryPeriod": "Periodo della retribuzione",
+        "applicationMethod": "Come candidarsi",
+        "countries": "Paesi idonei"
+      }
+    },
     "title": "Spoki Assistant",
     "welcome": "Da dove iniziamo?",
     "disclaimer": "Spoki può sbagliare. Controlla ciò che conta. Anche su Telegram:",
@@ -1654,13 +1672,43 @@
       "title": "Link per il blogger",
       "action": "Apri in Telegram"
     },
-        "freelanceDraft": { "title": "Bozza condivisa del servizio freelance", "missing": "Restano {count} campi obbligatori da compilare.", "edit": "Controlla e modifica l’annuncio", "fields": { "title": "Titolo", "category": "Categoria", "description": "Descrizione", "buyerNeeds": "Esigenze dell’acquirente", "languages": "Lingue", "skills": "Competenze", "packages": "Pacchetti" } },
+    "freelanceDraft": {
+      "title": "Bozza condivisa del servizio freelance",
+      "missing": "Restano {count} campi obbligatori da compilare.",
+      "edit": "Controlla e modifica l’annuncio",
+      "fields": {
+        "title": "Titolo",
+        "category": "Categoria",
+        "description": "Descrizione",
+        "buyerNeeds": "Esigenze dell’acquirente",
+        "languages": "Lingue",
+        "skills": "Competenze",
+        "packages": "Pacchetti"
+      }
+    },
     "ugcDraft": {
       "title": "Bozza UGC condivisa",
       "missing": "Restano {count} campi obbligatori da compilare.",
       "edit": "Controlla e modifica la bozza",
       "assumptions": "Ipotesi di Spoki",
-      "fields": { "productName": "Prodotto", "description": "Descrizione", "goal": "Obiettivo", "audience": "Pubblico", "countries": "Paesi", "languages": "Lingue", "platform": "Piattaforma", "niche": "Settore", "videoCount": "Video", "rewardCents": "Compenso per video", "deadline": "Scadenza", "rights": "Diritti", "mustSay": "Da dire", "mustNot": "Da evitare", "pitch": "Messaggio", "links": "Link" }
+      "fields": {
+        "productName": "Prodotto",
+        "description": "Descrizione",
+        "goal": "Obiettivo",
+        "audience": "Pubblico",
+        "countries": "Paesi",
+        "languages": "Lingue",
+        "platform": "Piattaforma",
+        "niche": "Settore",
+        "videoCount": "Video",
+        "rewardCents": "Compenso per video",
+        "deadline": "Scadenza",
+        "rights": "Diritti",
+        "mustSay": "Da dire",
+        "mustNot": "Da evitare",
+        "pitch": "Messaggio",
+        "links": "Link"
+      }
     },
     "intro": "Una conversazione che impara che lavoro cerchi e continua a cercare.",
     "log": "Conversazione",
@@ -2754,14 +2802,14 @@
     }
   },
   "postJob": {
-      "assistantDraft": "Prepara l’offerta con l’assistente",
+    "assistantDraft": "Prepara l’offerta con l’assistente",
     "title": "Pubblica un’offerta",
     "guest": "Per pubblicare un’offerta, accedi o crea un account.",
     "register": "Registrati",
     "form": {
-        "completePrivate": "Prima di inviare, completa in questo modulo i contatti e le modalità di candidatura mancanti.",
-        "alreadySubmitted": "Questa bozza è già stata inviata.",
-        "chooseOption": "Scegli un’opzione",
+      "completePrivate": "Prima di inviare, completa in questo modulo i contatti e le modalità di candidatura mancanti.",
+      "alreadySubmitted": "Questa bozza è già stata inviata.",
+      "chooseOption": "Scegli un’opzione",
       "intro": "Indica il ruolo, la retribuzione e come candidarsi. Un admin controlla l’offerta prima che compaia nell’elenco.",
       "introLive": "Indica il ruolo, la retribuzione e come candidarsi. L’invio mette l’offerta nell’elenco.",
       "company": "Nome dell’azienda",

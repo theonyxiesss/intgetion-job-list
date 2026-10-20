@@ -36,8 +36,12 @@ export function BriefForm({
   const [dollars, setDollars] = useState(
     typeof d.rewardCents === "number" ? String(d.rewardCents / 100) : "",
   );
-  const [videos, setVideos] = useState(typeof d.videoCount === "number" ? String(d.videoCount) : "");
-  const [rights, setRights] = useState(typeof d.rights === "string" ? d.rights : "");
+  const [videos, setVideos] = useState(
+    typeof d.videoCount === "number" ? String(d.videoCount) : "",
+  );
+  const [rights, setRights] = useState(
+    typeof d.rights === "string" ? d.rights : "",
+  );
   const rewardMinor = /^\d+$/.test(dollars) ? Number(dollars) * 100 : 0;
   const videoCount = Number.parseInt(videos, 10) || 0;
   const budget = ugcBudgetMinor(videoCount, rewardMinor);
@@ -52,10 +56,17 @@ export function BriefForm({
       setError(t("error"));
       return;
     }
-    const countries = String(form.get("country") ?? "").split(/[;,\s]+/).map((item) => item.trim().toUpperCase()).filter(Boolean);
+    const countries = String(form.get("country") ?? "")
+      .split(/[;,\s]+/)
+      .map((item) => item.trim().toUpperCase())
+      .filter(Boolean);
     const platforms = form.getAll("platforms").map(String);
     const niches = form.getAll("niches").map(String);
-    const list = (key: string) => String(form.get(key) ?? "").split(/[;,\n]+/).map((item) => item.trim()).filter(Boolean);
+    const list = (key: string) =>
+      String(form.get(key) ?? "")
+        .split(/[;,\n]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
     const patch = {
       productName: String(form.get("productName") ?? ""),
       description: String(form.get("productSummary") ?? ""),
@@ -75,17 +86,27 @@ export function BriefForm({
       deadline: String(form.get("deadline") ?? ""),
       rights: String(form.get("rights") ?? ""),
       pitch: String(form.get("pitch") ?? ""),
-      links: String(form.get("exampleUrls") ?? "").split(/\s+/).map((item) => item.trim()).filter(Boolean),
+      links: String(form.get("exampleUrls") ?? "")
+        .split(/\s+/)
+        .map((item) => item.trim())
+        .filter(Boolean),
     };
     const saved = await fetch("/api/ugc/brief-draft", {
       method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ draftId: draft.id, companyId: String(form.get("companyId") ?? ""), patch }),
+      body: JSON.stringify({
+        draftId: draft.id,
+        companyId: String(form.get("companyId") ?? ""),
+        patch,
+      }),
     });
-    const response = saved.ok ? await fetch("/api/ugc/brief-draft", {
-      method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ action: "confirm", draftId: draft.id }),
-    }) : saved;
+    const response = saved.ok
+      ? await fetch("/api/ugc/brief-draft", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ action: "confirm", draftId: draft.id }),
+        })
+      : saved;
     setBusy(false);
     if (!response.ok) {
       setError(t("error"));
@@ -100,7 +121,11 @@ export function BriefForm({
   return (
     <form className="flex max-w-xl flex-col gap-4" onSubmit={onSubmit}>
       <Field label={t("fields.company")}>
-        <Select name="companyId" required defaultValue={draft.companyId ?? companies[0]?.id ?? ""}>
+        <Select
+          name="companyId"
+          required
+          defaultValue={draft.companyId ?? companies[0]?.id ?? ""}
+        >
           {companies.map((company) => (
             <option key={company.id} value={company.id}>
               {company.name}
@@ -109,10 +134,20 @@ export function BriefForm({
         </Select>
       </Field>
       <Field label={t("fields.productName")}>
-        <Input name="productName" required maxLength={120} defaultValue={String(d.productName ?? "")} />
+        <Input
+          name="productName"
+          required
+          maxLength={120}
+          defaultValue={String(d.productName ?? "")}
+        />
       </Field>
       <Field label={t("fields.productSummary")}>
-        <Input name="productSummary" required maxLength={400} defaultValue={String(d.description ?? "")} />
+        <Input
+          name="productSummary"
+          required
+          maxLength={400}
+          defaultValue={String(d.description ?? "")}
+        />
       </Field>
       <Field label={t("fields.goal")}>
         <Select name="goal" required defaultValue={String(d.goal ?? "")}>
@@ -128,7 +163,12 @@ export function BriefForm({
         <legend className="t-label text-fg-muted">{t("fields.niches")}</legend>
         {UGC_NICHES.map((niche) => (
           <label key={niche} className="flex min-h-11 items-center gap-2">
-            <input type="checkbox" name="niches" value={niche} defaultChecked={d.niche === niche} />
+            <input
+              type="checkbox"
+              name="niches"
+              value={niche}
+              defaultChecked={d.niche === niche}
+            />
             {t(`niches.${niche}`)}
           </label>
         ))}
@@ -139,25 +179,54 @@ export function BriefForm({
         </legend>
         {UGC_PLATFORMS.map((platform) => (
           <label key={platform} className="flex min-h-11 items-center gap-2">
-            <input type="checkbox" name="platforms" value={platform} defaultChecked={d.platform === platform} />
+            <input
+              type="checkbox"
+              name="platforms"
+              value={platform}
+              defaultChecked={d.platform === platform}
+            />
             {t(`platforms.${platform}`)}
           </label>
         ))}
       </fieldset>
       <Field label={t("fields.audience")}>
-        <Input name="audience" maxLength={300} defaultValue={String(d.audience ?? "")} />
+        <Input
+          name="audience"
+          maxLength={300}
+          defaultValue={String(d.audience ?? "")}
+        />
       </Field>
       <Field label={t("fields.country")}>
-        <Input name="country" maxLength={60} autoComplete="country" defaultValue={Array.isArray(d.countries) ? d.countries.join("; ") : ""} />
+        <Input
+          name="country"
+          maxLength={60}
+          autoComplete="country"
+          defaultValue={
+            Array.isArray(d.countries) ? d.countries.join("; ") : ""
+          }
+        />
       </Field>
       <Field label={t("fields.languages")}>
-        <Input name="languages" defaultValue={Array.isArray(d.languages) ? d.languages.join(", ") : ""} />
+        <Input
+          name="languages"
+          defaultValue={
+            Array.isArray(d.languages) ? d.languages.join(", ") : ""
+          }
+        />
       </Field>
       <Field label={t("fields.mustSay")}>
-        <Input name="mustSay" maxLength={1000} defaultValue={Array.isArray(d.mustSay) ? d.mustSay.join("; ") : ""} />
+        <Input
+          name="mustSay"
+          maxLength={1000}
+          defaultValue={Array.isArray(d.mustSay) ? d.mustSay.join("; ") : ""}
+        />
       </Field>
       <Field label={t("fields.mustNot")}>
-        <Input name="mustNot" maxLength={1000} defaultValue={Array.isArray(d.mustNot) ? d.mustNot.join("; ") : ""} />
+        <Input
+          name="mustNot"
+          maxLength={1000}
+          defaultValue={Array.isArray(d.mustNot) ? d.mustNot.join("; ") : ""}
+        />
       </Field>
       <Field label={t("fields.videos")}>
         <Input
@@ -218,7 +287,12 @@ export function BriefForm({
         ) : null}
       </div>
       <Field label={t("fields.deadline")}>
-        <Input name="deadline" type="date" required defaultValue={String(d.deadline ?? "")} />
+        <Input
+          name="deadline"
+          type="date"
+          required
+          defaultValue={String(d.deadline ?? "")}
+        />
       </Field>
       <Field label={t("fields.rights")}>
         <Select
@@ -239,10 +313,17 @@ export function BriefForm({
         <p className="t-body-s text-fg-muted">{t("rightsHint")}</p>
       ) : null}
       <Field label={t("fields.pitch")}>
-        <Input name="pitch" maxLength={300} defaultValue={String(d.pitch ?? "")} />
+        <Input
+          name="pitch"
+          maxLength={300}
+          defaultValue={String(d.pitch ?? "")}
+        />
       </Field>
       <Field label={t("fields.examples")}>
-        <Input name="exampleUrls" defaultValue={Array.isArray(d.links) ? d.links.join(" ") : ""} />
+        <Input
+          name="exampleUrls"
+          defaultValue={Array.isArray(d.links) ? d.links.join(" ") : ""}
+        />
       </Field>
       {error ? (
         <p className="t-body-s text-fg" role="alert">
