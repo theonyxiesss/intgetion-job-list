@@ -8,7 +8,7 @@
 
 - In brief-draft mode, the system prompt now treats the live server draft and `missingRequired` as the only authority for whether product name is missing. Legacy `state.ugcProduct` can no longer cause a contradictory “no product named” instruction.
 - Regression coverage added for a saved product name, remaining required fields, and the non-draft entry prompt.
-- Fix is local and not deployed. The broader UGC draft flow still requires migration `0061` before production.
+- Live: commit `1bb0e91`, `dpl_3c3joa81zSZ7Vj12HD1xGbZV2C1m`. Migrations `0061`–`0063` are still NOT applied to the cloud DB although D494 code is live (checked 2026-10-20: tables `ugc_brief_drafts`, `freelance_service_drafts`, `job_drafts` absent).
 
 ### Job listing draft (D494) — local implementation
 

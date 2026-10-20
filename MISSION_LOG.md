@@ -2671,3 +2671,10 @@
 - Отклонения от ТЗ: подфаза не закрыта, потому что обязательный typecheck не прошёл из-за отсутствующей зависимости; пакет не устанавливался.
 - OPEN QUESTION: нет.
 - Следующая подфаза: повторить typecheck после восстановления локального пакета `@modelcontextprotocol/server`, затем согласовать публикацию отдельно.
+
+## [2026-10-20] — D495 — выкладка
+
+- Founder: «выкати все правки в мастер». Коммит `1bb0e91` в master, Vercel `dpl_3c3joa81zSZ7Vj12HD1xGbZV2C1m` success; `/en` и `/ru/chat` → 200.
+- Проверки: vitest ugc-focus + ugc drafts 10/10 → 0; eslint изменённых TS → 0; prettier изменённых файлов → 0 (docs были с CRLF/LF-смесью, исправлено); typecheck → 3 ошибки только в `src/modules/mcp/service/server.ts` (локально нет `@modelcontextprotocol/server`), CI проверит.
+- Найдено: миграции `0061`–`0063` не применены к облачной БД, а код D494 на сайте с `6702c16`. Нужен `pnpm db:migrate` по команде основателя.
+- CI `check` на master красный с `ca98b3b` из-за `format:check` (14 файлов, не D495).
