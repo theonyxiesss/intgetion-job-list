@@ -2700,3 +2700,8 @@
 - Проверки: `pnpm typecheck` → 0 (после `pnpm install --frozen-lockfile`: локально не было `@modelcontextprotocol/server`); `pnpm lint` → 0; `pnpm test` → 1, 1378 passed, 1 failed — `src/content/legal/legal.test.ts` (D241): тексты в `src/content/legal` разошлись с `docs/content/legal-*.md` (строка «Почтовый адрес»), файлы не трогались, к D497 не относится; vitest `src/lib/llm` 45/45 → 0. `pnpm build` → 0. Founder 2026-10-20: «Сначала выкатить D497» — да на коммит, push и production.
 - Миграции: нет.
 - OPEN QUESTION: нет. Хвост: синхронизировать юридические тексты (`pnpm legal:sync`) — отдельная задача.
+
+## [2026-10-20] — D497 — выкладка
+
+- Коммит `75b8994` в master, Vercel `dpl_61WW4XFRmdvXNE45X6zfwQinYQka` success; `/ru/chat` → 200; гость на сайте получил ответ Spoki (карточка UGC-видео). Вход и UGC-черновик на сайте не проверены: нет тестового аккаунта, проверяет основатель.
+- Локальный прогон разговоров не состоялся: `OPENROUTER_API_KEY` в Vercel помечен sensitive, `vercel env pull` отдаёт заглушку. Файл с переменными удалён, тестовые записи (8 бесед, пользователь, черновики) удалены.
