@@ -2,6 +2,7 @@ import { getDb } from "@/db/client";
 import { notFound } from "@/lib/http";
 import { normalizeSkill } from "@/modules/taxonomy/service";
 import { findContactEmail } from "@/modules/contacts/service";
+import { noteSharedProfile } from "@/modules/users/service";
 import type { CandidateDto } from "../api/dto";
 import * as profiles from "../repo/profiles";
 import type { UpdateCandidateInput } from "../schemas";
@@ -152,6 +153,21 @@ export async function saveCandidateProfile(
   await getDb().transaction(async (tx) => {
     await profiles.saveProfile(userId, input, resolved, score, tx);
   });
+  // The person's own name and place: the shared profile follows (D503).
+  await noteSharedProfile(
+    userId,
+    {
+      displayName: input.fullName,
+      country: input.country,
+      city: input.city,
+      timezone: input.timezone,
+      languages: input.languages.map((item) => ({
+        code: item.lang,
+        level: item.level,
+      })),
+    },
+    "replace",
+  );
 
   const dto = await toDto(userId, unrecognized);
   return {

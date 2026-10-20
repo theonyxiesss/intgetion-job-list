@@ -9,9 +9,10 @@
   маркетинг — отдельный opt-in, по умолчанию выключен. Cookie-баннер — только
   если появятся неnecessary cookies (в MVP аналитика без cookies).
 - Экспорт: `GET /api/me/export` — JSON (профиль, навыки, опыт, языки,
-  контакты, отклики, сохранённые, уведомления, сообщения бота).
+  контакты, отклики, сохранённые, уведомления, сообщения бота, общий профиль
+  `user_profiles`, D503).
 - Удаление (D28): статус `deleted`; ФИО → «Deleted user»; `candidate_contacts`,
-  `employer_profiles`, `bot_messages`, `saved_jobs`, `notifications` —
+  `employer_profiles`, `user_profiles` (D503), `bot_messages`, `saved_jobs`, `notifications` —
   удаляются; `applications` остаются с анонимным кандидатом, контакты
   недоступны (D23); Supabase auth-пользователь удаляется; компании, где
   пользователь единственный owner, — `suspended`, вакансии `closed`.

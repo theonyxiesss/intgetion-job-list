@@ -23,3 +23,4 @@ export * from "./engagement";
 export * from "./events";
 export * from "./freelance";
 export * from "./ugc";
+export * from "./user-profiles";

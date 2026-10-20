@@ -2756,3 +2756,11 @@
 - D502 сделано: `src/lib/llm/provider.ts` (`chat()` отбрасывает вызовы, если навыки не переданы); `src/modules/bot/service/conversation.ts` (один повтор раунда с пометкой при `LLMOutputError`). Тесты: `llm.test.ts` (1), `search-loop.test.ts` (2). Документы: D502, `docs/how-it-works/bot.md`, CURRENT.
 - Миграции: нет.
 - Проверки D502: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0 (7); `pnpm test` → 1: 1406 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Выкладка по постоянному «да» основателя (часть этапа 5).
+
+## [2026-10-20] — D502 выкладка; D503 — этап 6.1: общая анкета
+
+- D502: коммит `f328d16`, Vercel `dpl_E9F81r86ieBSbadSe7Sa7NtU7SGk` success. Повторная проверка вопросом про конференции на сайте не прошла: у гостя кончился дневной лимит (5); сбой из лога повторён тестом.
+- Founder: «да, как советуешь» на 4 вопроса этапа 6 (общая анкета с переносом, имя и псевдоним, без выбора типа, allowlist по ролям).
+- D503 сделано: миграция `src/db/migrations/0064_user_profiles.sql`; схема `src/db/schema/user-profiles.ts` (+ строка в `index.ts`); модуль `src/modules/users` (`service/shared-profile.ts`, `repo/shared-profile-repo.ts`, `service/index.ts`); синхронизация в `candidates/service/candidate-service.ts`, `companies/service/company-service.ts`, `ugc/repo/ugc-repo.ts`; экспорт и удаление в `privacy/repo/privacy-repo.ts`; тест `src/modules/users/__tests__/shared-profile.test.ts` (8). Документы: D503, `docs/ERD.md`, `docs/tz/17-gdpr.md`, `docs/tz/29-spoki-cards.md`, CURRENT.
+- Облако: `0064_user_profiles.sql` применена путём D438 (журнал 60 → 61; до этого сверка: последняя `0063`, таблицы не было). Проверка: владелец `migrator`, RLS включён и принудителен, 3 политики, `app_rw` SELECT/INSERT/UPDATE/DELETE, членство вернулось к `supabase_admin:set=false`. Перенос под `migrator` дал 0 строк (нет BYPASSRLS при принудительном RLS) — тот же `INSERT … SELECT` повторён под `postgres`: 3 из 3. Советники security: только прежние (search_path у 4 функций, leaked password protection).
+- Проверки D503: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 1: 1414 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. Ловушка записана в `.claude/skills/intgetion-supabase/SKILL.md`.

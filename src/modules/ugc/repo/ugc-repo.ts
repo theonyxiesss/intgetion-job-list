@@ -10,6 +10,7 @@ import {
   users,
 } from "@/db/schema";
 import { recordAudit } from "@/lib/audit";
+import { noteSharedProfile } from "@/modules/users/service";
 import {
   findMemberRole,
   getCompaniesForUser,
@@ -162,6 +163,16 @@ export function productionUgcStore(): UgcStore {
           target: creatorProfiles.userId,
           set: { ...profile, updatedAt: new Date() },
         });
+      // A creator name may be a nickname: it only fills an empty profile (D503).
+      await noteSharedProfile(
+        profile.userId,
+        {
+          displayName: profile.displayName,
+          country: profile.country,
+          languages: profile.languages.map((code) => ({ code })),
+        },
+        "fill",
+      );
     },
     async listOptInProfiles() {
       const rows = await db

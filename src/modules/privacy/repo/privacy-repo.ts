@@ -21,6 +21,7 @@ export async function readUserData(userId: string) {
     languages,
     preferences,
     employerProfile,
+    sharedProfile,
     memberships,
     applications,
     savedJobs,
@@ -56,6 +57,9 @@ export async function readUserData(userId: string) {
     ),
     rows(
       sql`select full_name, title, linkedin_url, created_at from public.employer_profiles where user_id = ${userId}`,
+    ),
+    rows(
+      sql`select display_name, country, city, timezone, languages, about, created_at, updated_at from public.user_profiles where user_id = ${userId}`,
     ),
     rows(
       sql`select c.name as company, m.role, m.created_at from public.company_members m join public.companies c on c.id = m.company_id where m.user_id = ${userId}`,
@@ -100,6 +104,7 @@ export async function readUserData(userId: string) {
     languages,
     preferences: preferences[0] ?? null,
     employerProfile: employerProfile[0] ?? null,
+    sharedProfile: sharedProfile[0] ?? null,
     companyMemberships: memberships,
     applications,
     savedJobs,
@@ -194,6 +199,9 @@ export async function anonymizeUser(userId: string, now: Date) {
     );
     await tx.execute(
       sql`delete from public.employer_profiles where user_id = ${userId}`,
+    );
+    await tx.execute(
+      sql`delete from public.user_profiles where user_id = ${userId}`,
     );
     await tx.execute(
       sql`delete from public.saved_jobs where user_id = ${userId}`,

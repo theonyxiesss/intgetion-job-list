@@ -1,4 +1,5 @@
 import { forbidden, HttpError, notFound } from "@/lib/http";
+import { noteSharedProfile } from "@/modules/users/service";
 import { recordAudit } from "@/lib/audit";
 import type { CurrentUser } from "@/modules/auth/service";
 import * as repo from "../repo/company-repo";
@@ -25,6 +26,7 @@ export function assertCompanyEditable(
 
 export async function setEmployerFullName(userId: string, fullName: string) {
   await repo.setEmployerFullName(userId, fullName);
+  await noteSharedProfile(userId, { displayName: fullName }, "replace");
 }
 
 export async function createCompany(

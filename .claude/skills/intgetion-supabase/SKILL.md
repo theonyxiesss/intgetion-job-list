@@ -49,6 +49,7 @@ description: >-
 - Safe order: additive change first (new nullable column or column with a default, new table), code that uses it after. Code that reads a column before the migration is on the cloud breaks production and localhost together (the `0031` incident: the auth callback failed).
 - Drop, rename, `NOT NULL` on an existing column, or anything that deletes data: two steps, and ask again even after a yes.
 - Note the migration number in the D entry, MISSION_LOG and the report.
+- A data backfill (`INSERT … SELECT` from other tables) reads nothing when it runs as `migrator`: RLS is forced for the owner too and `migrator` has no BYPASSRLS, so the `SELECT` is silently empty. On the cloud, run the same statement once more as `postgres` (BYPASSRLS) after the D438 transaction and check the counts (D503).
 
 ## Applying migrations
 
