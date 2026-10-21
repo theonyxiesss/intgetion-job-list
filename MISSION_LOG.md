@@ -3004,4 +3004,4 @@
 - Founder: показать правила, затем «Да, включай защиту master с этими правилами и поправь правила выкладки про [skip ci]».
 - Включено (`PUT …/branches/master/protection`): проверки `check` и `database` (app 15368), `strict` выкл., `enforce_admins` вкл., force-push и удаление запрещены, PR не требуется. GitHub вернул те же правила.
 - Правила выкладки: навык `intgetion-vercel` (ветка → зелёный CI → `git push origin <ветка>:master`, `git ls-remote` перед шагом, без `[skip ci]`, перезапуск нестабильного CI), RUNBOOK §5, D526.
-- Проверка защиты — пуш непроверенного коммита в master и пуш после зелёного CI — в отчёте сессии.
+- Проверка защиты: пуш `72039fd` в master до CI → `protected branch hook declined` («2 of 2 required status checks are expected»), master остался `e4df34c`. CI на `72039fd` не запустился: в сообщении коммита была строка про метку пропуска CI, а GitHub ищет её в любом месте сообщения. Урок: не писать эту метку даже в тексте сообщения. В master идёт следующий коммит после зелёного CI.
