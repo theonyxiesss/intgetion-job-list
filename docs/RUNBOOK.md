@@ -139,7 +139,8 @@ curl -X GET "https://<домен>/api/cron/expire-jobs" \
    - `EMAIL_FROM` = `noreply@<ваш-домен>` (или другой verified sender).
 
 6. **Деплой**
-   - Push в `master` → автоматический деплой (GitHub Integration).
+   - Push в `master` → автоматический деплой (GitHub Integration). `master` защищён (D526): GitHub принимает коммит, только если CI `check` и `database` уже зелёные на этом коммите (и для владельца); force-push и удаление запрещены. Порядок: пуш ветки → зелёный CI → `git push origin <ветка>:master`. Коммиты с `[skip ci]` в `master` не попадут.
+   - Снять защиту в экстренном случае может только основатель: GitHub → Settings → Branches.
    - Проверить `/api/health` → 200.
    - Проверить cron в Vercel Dashboard → Functions → Cron Jobs.
 
