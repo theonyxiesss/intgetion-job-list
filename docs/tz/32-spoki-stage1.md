@@ -239,7 +239,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.bot_actions TO app_rw;
 ### 11.3 Что важно знать перед выкладкой
 
 - **Порядок жёсткий: `0070` до кода.** Выгрузка данных и удаление аккаунта (`privacy-repo.ts`) обращаются к `bot_actions` без перехвата ошибок: без таблицы они упадут. Журнал хода и крон перехватывают ошибки и без таблицы работают.
-- **Пуш ветки создаёт preview-выкладку Vercel с рабочими переменными** (`DATABASE_URL`, `OPENROUTER_API_KEY` и др. стоят на Production и Preview). Пользователи её не видят; войти и пользоваться чатом там скорее всего нельзя (адрес сайта и проверка Origin — intgetion.com); кроны на preview не работают. Если preview с рабочей базой нежелателен — до пуша добавить в `vercel.json` запрет сборки для веток `claude/*` (отдельное решение).
+- **Preview-сборки отключены (D524).** Переменные Vercel `DATABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `OPENROUTER_API_KEY`, `CRON_SECRET` и др. стоят на Production и Preview, поэтому до пуша в `vercel.json` добавлен `ignoreCommand`: при `VERCEL_ENV=preview` сборка пропускается. CI изолирован: секретов нет, база своя (`supabase start`), `db:migrate` пускает только 127.0.0.1. Рекомендация (нужно «да»): убрать рабочие секреты из Preview в Vercel.
 - Слияние — fast-forward: master не менялся с `094707f`.
 
 ### 11.4 Порядок развёртывания
