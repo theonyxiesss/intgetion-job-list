@@ -35,7 +35,8 @@ import {
 } from "@/modules/jobs/ui/recent-jobs";
 import { RecentlyViewed } from "@/modules/jobs/ui/recently-viewed";
 import { SaveSearchButton } from "@/modules/saved-searches/ui/save-search-button";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { spokiDockOn } from "@/components/bot/spoki-dock-on";
 import { CONSENT_COOKIE, consentAllows, consentInForce } from "@/lib/consent";
 import { localePrefix } from "@/i18n/paths";
 import { RouteMessages } from "@/components/shell/route-messages";
@@ -209,7 +210,14 @@ export default async function JobsPage({
     <RouteMessages namespaces={["savedSearches"]}>
       <main className="py-10 md:py-16">
         <Container>
-          <WithAside aside={<JobsAside viewer={railViewer} />}>
+          <WithAside
+            aside={
+              <JobsAside
+                viewer={railViewer}
+                spokiCard={!spokiDockOn(await headers())}
+              />
+            }
+          >
             <PageHeader
               title={t("title")}
               intro={t("subtitle")}

@@ -6,6 +6,7 @@ import { cn } from "@/components/ui/cn";
 import { Link, usePathname } from "@/i18n/navigation";
 import { iconForNav, type NavMark } from "./nav-icons";
 import { railActive, railHidden } from "./rail-items";
+import { SpokiLink } from "@/components/bot/spoki-link";
 
 export type SiteRailLink = { href: string; label: string };
 export type SiteRailData = {
@@ -44,16 +45,32 @@ function RailItem({
   active,
   mark: Mark,
 }: SiteRailLink & { active: boolean; mark?: NavMark }) {
+  const body = (
+    <>
+      {Mark ? <Mark size={20} className="shrink-0" /> : null}
+      <span className="truncate">{label}</span>
+    </>
+  );
+  const className = cn(item, active ? "bg-surface text-fg" : "text-fg-muted");
   return (
     <li>
-      <Link
-        href={href}
-        aria-current={active ? "page" : undefined}
-        className={cn(item, active ? "bg-surface text-fg" : "text-fg-muted")}
-      >
-        {Mark ? <Mark size={20} className="shrink-0" /> : null}
-        <span className="truncate">{label}</span>
-      </Link>
+      {/* Spoki opens beside the page when the panel is on (D525). */}
+      {href === "/chat" ? (
+        <SpokiLink
+          aria-current={active ? "page" : undefined}
+          className={className}
+        >
+          {body}
+        </SpokiLink>
+      ) : (
+        <Link
+          href={href}
+          aria-current={active ? "page" : undefined}
+          className={className}
+        >
+          {body}
+        </Link>
+      )}
     </li>
   );
 }

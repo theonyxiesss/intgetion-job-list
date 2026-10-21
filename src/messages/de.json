@@ -155,7 +155,12 @@
     "more": "Mehr",
     "rail": "Bereiche der Website",
     "railSections": "Bereiche",
-    "railCategories": "Kategorien"
+    "railCategories": "Kategorien",
+    "spokiPanel": "Spoki-Bereich",
+    "spokiExpand": "Spoki im Vollbild öffnen",
+    "spokiCollapse": "Zurück zur Seite",
+    "spokiClose": "Spoki schließen",
+    "spokiLoading": "Spoki wird geladen…"
   },
   "locale": {
     "en": "Englisch",

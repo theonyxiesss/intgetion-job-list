@@ -19,6 +19,7 @@ import {
   type PriceTable,
 } from "@/lib/llm";
 import { logger } from "@/lib/logger";
+import type { PageSection } from "@/config/page-sections";
 import { isValidTimeZone } from "@/lib/tz";
 import { botMessageBucket, enforceRateLimit } from "@/lib/rate-limit";
 import { billingMe } from "@/modules/billing/service";
@@ -1195,6 +1196,8 @@ export type MessageInput = {
   afterCard?: boolean;
   /** Telegram turns are marked in the action journal (D521). */
   channel?: Channel;
+  /** The part of the site open beside the Spoki panel (D525). */
+  page?: PageSection;
 };
 
 /** How long after a card is answered Spoki may still take its turn (D515). */
@@ -1334,6 +1337,7 @@ export async function handleMessage(
         : freelanceFocusBlock(state, userId !== null),
     memory: remembered?.memory,
     now: userId ? localNow(now, known?.timezone) : undefined,
+    page: input.page,
   });
   // D522: hybrid routing. A signed-in person outside a draft gets the core
   // and the services of this turn; `use_tools` loads one more set per turn;
@@ -1352,6 +1356,7 @@ export async function handleMessage(
           topic: state.topic,
           jobThread: Boolean(current.jobId),
           previous: state.domains,
+          page: input.page,
         })
       : [],
   );

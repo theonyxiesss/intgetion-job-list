@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { routing } from "@/i18n/routing";
+import { PAGE_SECTIONS } from "@/config/page-sections";
 
 const locale = z.enum(routing.locales);
 
@@ -19,6 +20,8 @@ export const botMessageInput = z
       .optional(),
     campaignId: z.uuid().optional(),
     inviteId: z.uuid().optional(),
+    /** The part of the site open beside the Spoki panel (D525); a name only. */
+    section: z.enum(PAGE_SECTIONS).optional(),
   })
   .strict();
 

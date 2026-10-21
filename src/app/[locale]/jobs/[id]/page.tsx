@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { formatMoneyDto } from "@/lib/money";
 import { Badge } from "@/components/ui/badge";
-import { ButtonLink } from "@/components/ui/button";
+import { SpokiButtonLink } from "@/components/bot/spoki-link";
 import { CompanyLinks, CompanyMarkFor } from "@/components/ui/company-mark";
 import { Container } from "@/components/ui/container";
 import { Morph, navBack, navForward } from "@/components/ui/page-transition";
@@ -98,9 +98,10 @@ export default async function JobPage({
   const aside = (
     <aside className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg p-4 lg:sticky lg:top-24 lg:border lg:p-5">
       <div className="flex flex-col gap-3">
-        <ButtonLink href={`/chat?job=${job.id}`} variant="secondary">
+        {/* This vacancy's thread in the Spoki panel; `/chat?job=` without it (D525). */}
+        <SpokiButtonLink thread={{ job: job.id }} variant="secondary">
           {t("talkToAssistant")}
-        </ButtonLink>
+        </SpokiButtonLink>
         {applyHref && job.applicationMethod === "external_url" ? (
           <ExternalApplyLink
             jobId={job.id}

@@ -1,4 +1,10 @@
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
+import { headers } from "next/headers";
+import {
+  getMessages,
+  getTranslations,
+  setRequestLocale,
+} from "next-intl/server";
 import { Chat } from "@/components/bot/chat";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
@@ -7,6 +13,8 @@ import { getJobForPublic } from "@/modules/jobs/service";
 import { listMyInvites, readCampaign } from "@/modules/ugc/service";
 import { HttpError } from "@/lib/http";
 import { RouteMessages } from "@/components/shell/route-messages";
+import { SpokiChatAddress } from "@/components/bot/spoki-chat-address";
+import { spokiDockOn } from "@/components/bot/spoki-dock-on";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +37,22 @@ export default async function ChatPage({
   }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
+  // With the panel on, `/chat` is the panel over the whole page: the same
+  // chat, never a second one (D525). The address only names the thread.
+  if (spokiDockOn(await headers())) {
+    const t = await getTranslations({ locale, namespace: "chat" });
+    return (
+      <main className="flex min-h-0 flex-1 flex-col">
+        <h1 className="sr-only">{t("title")}</h1>
+        <Suspense>
+          <SpokiChatAddress />
+        </Suspense>
+      </main>
+    );
+  }
   const { job, from, campaign, invite, service, order, confirm } =
     await searchParams;
-  setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
   const jobId = job && JOB_ID.test(job) ? job : undefined;

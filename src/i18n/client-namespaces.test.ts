@@ -70,11 +70,25 @@ const adminShell = arrayLiteral(
   /CLIENT_NAMESPACES\s*=\s*\[([^\]]*)\]/g,
 );
 
+/**
+ * A client part of the layout that loads its own namespaces in the browser
+ * (`FetchedMessages`, D525) provides them to what it renders, like a page's
+ * RouteMessages: the walk up stops there.
+ */
+const FETCHED = /<FetchedMessages\s+namespaces=\{\[([^\]]*)\]\}/g;
+
+function isBoundary(file: string): boolean {
+  return arrayLiteral(text.get(file) ?? "", FETCHED).length > 0;
+}
+
 function provided(entry: string): Set<string> {
-  const own = arrayLiteral(
-    text.get(entry) ?? "",
-    /<RouteMessages\s+namespaces=\{\[([^\]]*)\]\}/g,
-  );
+  const own = [
+    ...arrayLiteral(
+      text.get(entry) ?? "",
+      /<RouteMessages\s+namespaces=\{\[([^\]]*)\]\}/g,
+    ),
+    ...arrayLiteral(text.get(entry) ?? "", FETCHED),
+  ];
   const shell = entry.includes(`${path.sep}(admin)${path.sep}`)
     ? adminShell
     : SHELL_NAMESPACES;
@@ -88,6 +102,10 @@ function entriesReaching(file: string): string[] {
   while (stack.length > 0) {
     const current = stack.pop()!;
     if (ENTRY.test(current)) entries.push(current);
+    if (current !== file && isBoundary(current)) {
+      entries.push(current);
+      continue;
+    }
     for (const next of importers.get(current) ?? []) {
       if (!seen.has(next)) {
         seen.add(next);

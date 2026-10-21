@@ -62,6 +62,7 @@ const ALL_KNOWN = new Set([
   "LLM_DAILY_BUDGET_USD",
   "BOT_ACTIONS_RETENTION_DAYS",
   "SPOKI_TOOL_ROUTING",
+  "SPOKI_DOCK",
   "EMBEDDINGS_ENABLED",
   "IMPORT_LIVE_ENABLED",
   "EVENTS_IMPORT_SOURCES",
@@ -269,6 +270,7 @@ function validateVar(name, value, mode) {
       break;
 
     case "SPOKI_TOOL_ROUTING":
+    case "SPOKI_DOCK":
     case "EMBEDDINGS_ENABLED":
     case "IMPORT_LIVE_ENABLED":
       if (!isBooleanString(trimmed)) {

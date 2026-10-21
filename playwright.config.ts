@@ -22,6 +22,13 @@ export default defineConfig({
           reuseExistingServer: false,
           env: { ...process.env, ADMIN_HOST_ONLY: "1", PORT: "3100" },
         },
+        {
+          // The persistent Spoki panel (D525): tests/e2e/spoki-dock.spec.ts.
+          command: "pnpm start --port 3200",
+          url: "http://127.0.0.1:3200",
+          reuseExistingServer: false,
+          env: { ...process.env, SPOKI_DOCK: "true", PORT: "3200" },
+        },
       ]
     : {
         command: "pnpm dev",

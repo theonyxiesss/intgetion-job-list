@@ -53,7 +53,14 @@ data: ${JSON.stringify(event)}
           );
         try {
           await handleMessage(
-            { userId, conversation, text: input.text, ip, locale },
+            {
+              userId,
+              conversation,
+              text: input.text,
+              ip,
+              locale,
+              page: input.section,
+            },
             emit,
           );
         } catch (error) {

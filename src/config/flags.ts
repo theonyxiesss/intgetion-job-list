@@ -18,4 +18,10 @@ export const flags = {
    * the Mini App is actually set up in BotFather.
    */
   telegramMiniAppEnabled: envFlag("TELEGRAM_MINI_APP_ENABLED"),
+  /**
+   * The persistent Spoki panel in the layout (D525). Off until tested: with
+   * SPOKI_DOCK=true the chat lives beside every page and `/chat` is its
+   * full screen.
+   */
+  spokiDockEnabled: envFlag("SPOKI_DOCK"),
 } as const;

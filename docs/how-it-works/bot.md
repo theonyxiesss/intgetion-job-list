@@ -31,6 +31,10 @@
 - **Подтверждения** (`src/lib/explicit-yes.ts`): отправка черновика вакансии, брифа и услуги — только после ясного «да» человека (без отрицания и без просьбы что-то поменять) и карточки; поле `requiresExplicitYes` проверяется до карточки. Черновики брифа и услуги забираются одним `DELETE … RETURNING`: два вызова создают один объект.
 - **Журнал** (`journal.ts`, таблица `bot_actions`, миграция 0070): карточка — `awaiting_confirmation` → `executing` → `completed` / `failed`, `cancelled`, `expired`, `interrupted`; прямые записи (`journal: true`) — `completed` / `failed`. Без аргументов и текстов; ссылка на объект (`ToolOutcome.audit`). Срок — `BOT_ACTIONS_RETENTION_DAYS` (180). Сбой журнала не ломает действие.
 
+## Постоянная панель Spoki (D525)
+
+`SPOKI_DOCK=true` — Spoki живёт в layout рядом с каждой страницей: `src/components/bot/spoki-provider.tsx` (состояние, режимы, cookie `spoki_dock`), `spoki-dock.tsx` (один `<aside id="spoki-panel">`, режимы — классы), `spoki-chat-lazy.tsx` (ленивый `Chat` + тексты из `GET /api/bot/messages`), `spoki-link.tsx` (входы), `spoki-chat-address.tsx` (`/chat?…` → нить). `/chat` — режим «во весь экран» того же чата. С сообщением идёт `section` (имя раздела) → строка `PAGE` промпта 46 и сервис раздела в маршрутизации. Подробно — `docs/tz/34-spoki-dock.md` §9.
+
 ## Статус
 
 Web chat — OK при валидном LLM-ключе. Phone Mini App — OPEN ([../OPEN_TASKS.md](../OPEN_TASKS.md)).

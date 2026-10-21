@@ -172,6 +172,17 @@ function topicDomain(input: {
   return null;
 }
 
+/** The service of the page open beside the panel (D525), if it has one. */
+const PAGE_DOMAIN: Partial<Record<string, LoadableDomain>> = {
+  jobs: "jobs",
+  job: "jobs",
+  employer: "employer",
+  ugc: "ugc",
+  freelance: "freelance",
+  events: "events",
+  account: "account",
+};
+
 /** Services named by the thread and the message itself (no defaults). */
 export function matchedDomains(input: {
   text: string;
@@ -198,8 +209,12 @@ export function routeDomains(input: {
   topic?: string;
   jobThread?: boolean;
   previous?: readonly string[];
+  /** The page beside the panel adds its service, never removes one (D525). */
+  page?: string;
 }): LoadableDomain[] {
   const picked = new Set<LoadableDomain>(matchedDomains(input));
+  const pageDomain = input.page ? PAGE_DOMAIN[input.page] : undefined;
+  if (pageDomain) picked.add(pageDomain);
   for (const domain of input.previous ?? [])
     if ((LOADABLE_DOMAINS as readonly string[]).includes(domain))
       picked.add(domain as LoadableDomain);

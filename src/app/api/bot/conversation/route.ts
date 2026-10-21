@@ -19,7 +19,7 @@ import {
 import { routing } from "@/i18n/routing";
 import { readBriefDraft } from "@/modules/ugc/service";
 import { readServiceBriefDraft } from "@/modules/freelance/service";
-import { readJobDraft } from "@/modules/jobs/service";
+import { getJobForPublic, readJobDraft } from "@/modules/jobs/service";
 import { sessionCookie, sessionToken } from "../session-cookie";
 
 const JOB_ID = /^[0-9a-f-]{36}$/i;
@@ -112,6 +112,27 @@ export async function GET(request: Request) {
             step: await ugcNextStep(userId, { campaignId, inviteId }),
           })
         : null;
+    // What the thread is about, so the Spoki panel can say it without the
+    // `/chat` page's own lookups (D525): the vacancy of the thread itself.
+    const focusJobId = conversation?.jobId ?? jobId;
+    const focusJob = focusJobId
+      ? await getJobForPublic(focusJobId, {
+          locale: conversation?.locale ?? "en",
+        }).catch(() => null)
+      : null;
+    const focus = {
+      ...(focusJob
+        ? {
+            job: {
+              id: focusJob.id,
+              title: focusJob.title,
+              company: focusJob.company.name,
+            },
+          }
+        : {}),
+      ...(productName ? { ugcProduct: productName } : {}),
+      ...(freelance?.title ? { freelanceTitle: freelance.title } : {}),
+    };
     const headers = new Headers({ "cache-control": "no-store" });
     if (token) headers.set("set-cookie", sessionCookie(token));
     return Response.json(
@@ -125,6 +146,7 @@ export async function GET(request: Request) {
           ? await pendingConfirmations(conversation.id, userId)
           : [],
         actions,
+        focus,
         next,
         briefDraft,
         freelanceDraft,

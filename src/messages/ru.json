@@ -155,7 +155,12 @@
     "more": "Ещё",
     "rail": "Разделы сайта",
     "railSections": "Разделы",
-    "railCategories": "Категории"
+    "railCategories": "Категории",
+    "spokiPanel": "Панель Spoki",
+    "spokiExpand": "Развернуть Spoki на весь экран",
+    "spokiCollapse": "Вернуться к странице",
+    "spokiClose": "Закрыть Spoki",
+    "spokiLoading": "Загружаем Spoki…"
   },
   "locale": {
     "en": "Английский",

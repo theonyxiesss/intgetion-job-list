@@ -42,6 +42,7 @@ import { Icon } from "@/components/ui/icon";
 import { TELEGRAM_BOT_URL } from "@/config/telegram";
 import { localePath } from "@/i18n/paths";
 import { Link, useRouter } from "@/i18n/navigation";
+import type { PageSection } from "@/config/page-sections";
 import {
   appliedStatusFromConfirm,
   teamJobFromConfirm,
@@ -210,6 +211,13 @@ function freelanceEntry(kind: unknown, data: unknown): Entry | null {
 
 type HistoryMessage = { id: string; role: string; content: string };
 
+/** What the thread is about, from `GET /api/bot/conversation` (D525). */
+type ServerFocus = {
+  job?: { id: string; title: string; company: string };
+  ugcProduct?: string;
+  freelanceTitle?: string;
+};
+
 const ERROR_CODES = new Set([
   "BOT_UNAVAILABLE",
   "BOT_BUDGET_EXCEEDED",
@@ -273,8 +281,17 @@ export function Chat({
   confirmId,
   freelanceTitle,
   freelanceCopy = {},
+  variant = "page",
+  section,
 }: {
   signedIn: boolean;
+  /**
+   * `page` is the `/chat` page; `panel` lives in the Spoki panel of the
+   * layout (D525), which owns the title, the position and the phone screen.
+   */
+  variant?: "page" | "panel";
+  /** The part of the site the person has open, sent with each message (D525). */
+  section?: PageSection;
   jobId?: string;
   /** `/chat?service=`, `/chat?order=` and `/chat?confirm=` (D460). */
   serviceId?: string;
@@ -310,6 +327,8 @@ export function Chat({
   const [thinking, setThinking] = useState(false);
   /** The tool Spoki runs right now, named in the status line (D490). */
   const [activity, setActivity] = useState<string | null>(null);
+  /** The thread's subject from the server, when the address named none (D525). */
+  const [serverFocus, setServerFocus] = useState<ServerFocus | null>(null);
   const [actions, setActions] = useState<ChatActions>({
     signup: false,
     fillChoice: false,
@@ -377,6 +396,7 @@ export function Chat({
             } | null;
             pending?: PendingCard[];
             actions?: ChatActions;
+            focus?: ServerFocus;
             /** The page of the next UGC step (D467). */
             next?: { href: string; link: string } | null;
             briefDraft?: {
@@ -400,6 +420,7 @@ export function Chat({
         ) => {
           if (!body) return;
           if (body.actions) setActions(body.actions);
+          if (body.focus) setServerFocus(body.focus);
           const history: Entry[] = body.messages.map((message) =>
             message.role === "assistant"
               ? {
@@ -610,6 +631,7 @@ export function Chat({
     await streamTurn("/api/bot/message", {
       text: message,
       locale,
+      ...(section ? { section } : {}),
       ...(fromServices ? { from: "services" as const } : {}),
       ...(fromCampaigns ? { from: "campaigns" as const } : {}),
       ...(fromFreelanceSell ? { from: "freelance_sell" as const } : {}),
@@ -982,31 +1004,55 @@ export function Chat({
     setActions((current) => ({ ...current, profileReview: true }));
   }
 
+  const jobFocus =
+    focus && jobId ? { id: jobId, ...focus } : (serverFocus?.job ?? null);
+  const shownUgcProduct = ugcProduct ?? serverFocus?.ugcProduct;
+  const shownFreelanceTitle = freelanceTitle ?? serverFocus?.freelanceTitle;
+  const hasFocusLine = Boolean(
+    jobFocus ||
+    shownUgcProduct ||
+    fromCampaigns ||
+    shownFreelanceTitle ||
+    fromServices,
+  );
+
   return (
     <FreelanceCopyContext.Provider value={freelanceCopy}>
-      <div className="chat-shell flex min-h-0 w-full flex-1 flex-col max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:bg-bg">
+      <div
+        className={
+          variant === "page"
+            ? "chat-shell flex min-h-0 w-full flex-1 flex-col max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:bg-bg"
+            : "flex min-h-0 w-full flex-1 flex-col"
+        }
+      >
         <div
           data-chat-meta
-          className="mx-auto w-full max-w-3xl shrink-0 px-4 py-3 md:px-6"
+          className={
+            variant === "page" || hasFocusLine
+              ? "mx-auto w-full max-w-3xl shrink-0 px-4 py-3 md:px-6"
+              : "hidden"
+          }
         >
-          <h1 className="text-sm font-medium">{t("title")}</h1>
-          {focus && jobId ? (
-            <p className="t-body-s mt-2 text-fg">
+          {variant === "page" ? (
+            <h1 className="text-sm font-medium">{t("title")}</h1>
+          ) : null}
+          {jobFocus ? (
+            <p className="t-body-s mt-2 text-fg first:mt-0">
               {t("jobFocus.discussing", {
-                title: focus.title,
-                company: focus.company,
+                title: jobFocus.title,
+                company: jobFocus.company,
               })}{" "}
               <Link
-                href={`/jobs/${jobId}`}
+                href={`/jobs/${jobFocus.id}`}
                 className="underline underline-offset-4"
               >
                 {t("jobFocus.back")}
               </Link>
             </p>
           ) : null}
-          {ugcProduct ? (
-            <p className="t-body-s mt-2 text-fg">
-              {t("ugcFocus.line", { product: ugcProduct })}{" "}
+          {shownUgcProduct ? (
+            <p className="t-body-s mt-2 text-fg first:mt-0">
+              {t("ugcFocus.line", { product: shownUgcProduct })}{" "}
               <Link
                 href={campaignId ? `/campaigns/${campaignId}` : "/campaigns"}
                 className="underline underline-offset-4"
@@ -1016,16 +1062,16 @@ export function Chat({
             </p>
           ) : null}
           {fromCampaigns ? (
-            <p className="t-body-s mt-2 text-fg">
+            <p className="t-body-s mt-2 text-fg first:mt-0">
               {t("ugcFocus.home")}{" "}
               <Link href="/campaigns" className="underline underline-offset-4">
                 {t("ugcFocus.back")}
               </Link>
             </p>
           ) : null}
-          {freelanceTitle ? (
-            <p className="t-body-s mt-2 text-fg">
-              {cardText(freelanceCopy, "focus", { title: freelanceTitle })}{" "}
+          {shownFreelanceTitle ? (
+            <p className="t-body-s mt-2 text-fg first:mt-0">
+              {cardText(freelanceCopy, "focus", { title: shownFreelanceTitle })}{" "}
               <Link
                 href={orderId ? `/freelance/orders/${orderId}` : "/freelance"}
                 className="underline underline-offset-4"
@@ -1035,7 +1081,7 @@ export function Chat({
             </p>
           ) : null}
           {fromServices ? (
-            <p className="t-body-s mt-2 text-fg">
+            <p className="t-body-s mt-2 text-fg first:mt-0">
               {t("serviceFocus.line")}{" "}
               <Link href="/services" className="underline underline-offset-4">
                 {t("serviceFocus.back")}

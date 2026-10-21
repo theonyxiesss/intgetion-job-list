@@ -11,6 +11,7 @@ import {
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/components/ui/cn";
 import { Link, usePathname } from "@/i18n/navigation";
+import { SpokiLink } from "@/components/bot/spoki-link";
 
 export type BottomNavItem = { href: string; label: string };
 
@@ -57,14 +58,25 @@ export function BottomNav({
             pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <li key={item.href}>
-              <Link
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={cn(tab, active ? "text-fg" : "text-fg-muted")}
-              >
-                <Icon icon={ICONS[item.href] ?? Briefcase} size={20} />
-                <span className="max-w-full truncate">{item.label}</span>
-              </Link>
+              {/* Spoki opens over the page when the panel is on (D525). */}
+              {item.href === "/chat" ? (
+                <SpokiLink
+                  aria-current={active ? "page" : undefined}
+                  className={cn(tab, active ? "text-fg" : "text-fg-muted")}
+                >
+                  <Icon icon={Bot} size={20} />
+                  <span className="max-w-full truncate">{item.label}</span>
+                </SpokiLink>
+              ) : (
+                <Link
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(tab, active ? "text-fg" : "text-fg-muted")}
+                >
+                  <Icon icon={ICONS[item.href] ?? Briefcase} size={20} />
+                  <span className="max-w-full truncate">{item.label}</span>
+                </Link>
+              )}
             </li>
           );
         })}

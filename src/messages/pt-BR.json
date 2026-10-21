@@ -155,7 +155,12 @@
     "more": "Mais",
     "rail": "Seções do site",
     "railSections": "Seções",
-    "railCategories": "Categorias"
+    "railCategories": "Categorias",
+    "spokiPanel": "Painel do Spoki",
+    "spokiExpand": "Abrir o Spoki em tela cheia",
+    "spokiCollapse": "Voltar para a página",
+    "spokiClose": "Fechar o Spoki",
+    "spokiLoading": "Carregando o Spoki…"
   },
   "locale": {
     "en": "Inglês",

@@ -1,3 +1,4 @@
+import type { PageSection } from "@/config/page-sections";
 import { directedSlot, readyToSearch } from "../service/memory";
 
 /**
@@ -5,7 +6,21 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 45;
+export const SYSTEM_PROMPT_VERSION = 46;
+
+/** How the PAGE line names each part of the site (D525). */
+const PAGE_NAMES: Record<PageSection, string> = {
+  jobs: "job search",
+  job: "one job listing",
+  employer: "employer (their jobs and company)",
+  ugc: "UGC videos",
+  freelance: "freelance services",
+  events: "events",
+  services: "company services",
+  account: "account and settings",
+  pricing: "plans and billing",
+  other: "home",
+};
 
 const LANGUAGE: Record<string, string> = {
   en: "English",
@@ -36,6 +51,8 @@ export function systemPrompt(input: {
   memory?: string;
   /** Local date and time of the person, for reminders (D473). */
   now?: string;
+  /** The part of the site open beside the Spoki panel (D525). */
+  page?: PageSection;
 }): string {
   const language = LANGUAGE[input.locale] ?? "English";
   const slot = directedSlot(input.draft, input.profileFill === true);
@@ -144,6 +161,9 @@ export function systemPrompt(input: {
       ? "The person is signed in."
       : "The person is a guest. Profile changes stay in a draft until they sign up; saving, hiding and applying need an account.",
     input.jobFocus ?? "",
+    input.page && input.page !== "other"
+      ? `PAGE: the person has the ${PAGE_NAMES[input.page]} part of the site open next to this chat. Use it only to understand words such as "this", "here" or "these" when the message itself does not say; never change the subject of the conversation because of the page.`
+      : "",
     input.serviceFocus ?? "",
     input.ugcFocus ?? "",
     input.freelanceFocus ?? "",

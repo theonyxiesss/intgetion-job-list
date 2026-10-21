@@ -15,6 +15,8 @@ import { sessionCard } from "@/modules/auth/service";
 import { isEmployer } from "@/modules/companies/service";
 import { countUnread } from "@/modules/notifications/service";
 import { BottomNav } from "./bottom-nav";
+import { SpokiButtonLink } from "@/components/bot/spoki-link";
+import { flags } from "@/config/flags";
 import { MobileNav, type NavItem } from "./mobile-nav";
 import { orderPhoneNav } from "./nav-icons";
 import { ThemeToggle } from "./theme-toggle";
@@ -154,16 +156,28 @@ export async function Header() {
 
         <div className="ml-auto flex shrink-0 items-center gap-1 max-md:ml-0 max-md:w-full">
           <span data-header-chat className="mr-1 inline-flex sm:mr-2">
-            <ButtonLink
-              {...navFade}
-              href="/chat"
-              variant="secondary"
-              size="icon"
-              icon={<Icon icon={Bot} size={16} />}
-              className="size-11! p-0!"
-              title={t("nav.chatWithAgent")}
-              aria-label={t("nav.chatWithAgent")}
-            />
+            {flags.spokiDockEnabled ? (
+              // Opens and closes the one Spoki panel (D525); a link without JS.
+              <SpokiButtonLink
+                variant="secondary"
+                size="icon"
+                icon={<Icon icon={Bot} size={16} />}
+                className="size-11! p-0!"
+                title={t("nav.chatWithAgent")}
+                aria-label={t("nav.chatWithAgent")}
+              />
+            ) : (
+              <ButtonLink
+                {...navFade}
+                href="/chat"
+                variant="secondary"
+                size="icon"
+                icon={<Icon icon={Bot} size={16} />}
+                className="size-11! p-0!"
+                title={t("nav.chatWithAgent")}
+                aria-label={t("nav.chatWithAgent")}
+              />
+            )}
           </span>
           <span className="mr-1 inline-flex max-md:mr-auto">
             <ButtonLink

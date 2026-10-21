@@ -5,7 +5,7 @@ import {
   getTranslations,
   setRequestLocale,
 } from "next-intl/server";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
@@ -14,6 +14,13 @@ import { AnalyticsTracker } from "@/components/shell/analytics-tracker";
 import { ServiceWorker } from "@/components/shell/service-worker";
 import { CookieBanner } from "@/components/shell/cookie-banner";
 import { Header } from "@/components/shell/header";
+import { SpokiDock } from "@/components/bot/spoki-dock";
+import { spokiDockOn } from "@/components/bot/spoki-dock-on";
+import {
+  SPOKI_DOCK_COOKIE,
+  readDockPreference,
+} from "@/components/bot/spoki-dock-model";
+import { SpokiProvider } from "@/components/bot/spoki-provider";
 import { SiteRail, type SiteRailData } from "@/components/shell/site-rail";
 import { railServices } from "@/components/shell/rail-items";
 import { JOB_CATEGORIES } from "@/config/markers";
@@ -94,6 +101,11 @@ export default async function LocaleLayout({
   // Inside Telegram's frame the session cannot follow the person out (D316).
   const framed = isFramedRequest(requestHeaders);
   const inMiniApp = framed || hasMiniAppMarker(requestHeaders);
+  // One Spoki beside every page, when SPOKI_DOCK is on (D525).
+  const dock = spokiDockOn(requestHeaders);
+  const dockPreference = dock
+    ? readDockPreference((await cookies()).get(SPOKI_DOCK_COOKIE)?.value)
+    : null;
   const t = await getTranslations();
   // Labels only: the client part of the rail keeps no message namespace (D476, D477).
   const rail: SiteRailData = {
@@ -148,18 +160,36 @@ export default async function LocaleLayout({
         </a>
         <NextIntlClientProvider messages={clientMessages}>
           <ToastProvider closeLabel={t("ui.close")}>
-            <Header />
-            <div id="content" tabIndex={-1} className="flex flex-1 flex-col">
-              {/* Left rail from 1280 px, kept across navigations (D477, D489).
-                  min-h-0 on both wrappers: the chat keeps the window height and
-                  scrolls its thread instead of pushing the field down (D491). */}
-              <div className="flex min-h-0 w-full flex-1 flex-col xl:has-[>[data-rail]]:mx-auto xl:has-[>[data-rail]]:grid xl:has-[>[data-rail]]:max-w-[1376px] xl:has-[>[data-rail]]:grid-cols-[300px_minmax(0,1fr)]">
-                <SiteRail data={rail} />
-                <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                  {children}
-                </div>
+            <SpokiShell
+              dock={dock}
+              signedIn={signedIn}
+              preference={dockPreference}
+            >
+              <Header />
+              <div id="content" tabIndex={-1} className="flex flex-1 flex-col">
+                <DockRow
+                  dock={dock}
+                  labels={{
+                    panel: t("nav.spokiPanel"),
+                    title: t("chat.title"),
+                    expand: t("nav.spokiExpand"),
+                    collapse: t("nav.spokiCollapse"),
+                    close: t("nav.spokiClose"),
+                    loading: t("nav.spokiLoading"),
+                  }}
+                >
+                  {/* Left rail from 1280 px, kept across navigations (D477, D489).
+                      min-h-0 on both wrappers: the chat keeps the window height and
+                      scrolls its thread instead of pushing the field down (D491). */}
+                  <div className="flex min-h-0 w-full flex-1 flex-col xl:has-[>[data-rail]]:mx-auto xl:has-[>[data-rail]]:grid xl:has-[>[data-rail]]:max-w-[1376px] xl:has-[>[data-rail]]:grid-cols-[300px_minmax(0,1fr)]">
+                    <SiteRail data={rail} />
+                    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+                      {children}
+                    </div>
+                  </div>
+                </DockRow>
               </div>
-            </div>
+            </SpokiShell>
             <Footer />
             <AnalyticsTracker />
             <TelegramLoginResume />
@@ -190,5 +220,47 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
       </body>
     </html>
+  );
+}
+
+/** The Spoki state around the header and the page, when the panel is on. */
+function SpokiShell({
+  dock,
+  signedIn,
+  preference,
+  children,
+}: {
+  dock: boolean;
+  signedIn: boolean;
+  preference: ReturnType<typeof readDockPreference>;
+  children: React.ReactNode;
+}) {
+  if (!dock) return children;
+  return (
+    <SpokiProvider signedIn={signedIn} preference={preference}>
+      {children}
+    </SpokiProvider>
+  );
+}
+
+/**
+ * The page and, at its right, the one Spoki panel (D525). It sits outside
+ * the template, so navigation never remounts it.
+ */
+function DockRow({
+  dock,
+  labels,
+  children,
+}: {
+  dock: boolean;
+  labels: React.ComponentProps<typeof SpokiDock>["labels"];
+  children: React.ReactNode;
+}) {
+  if (!dock) return children;
+  return (
+    <div className="flex min-h-0 w-full flex-1">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
+      <SpokiDock labels={labels} />
+    </div>
   );
 }

@@ -10,23 +10,32 @@ const textLink =
 /**
  * Right column of the catalog (D477): Spoki, saved-search alerts for a
  * candidate or guest, and posting a job for an employer or guest. All
- * secondary: the page's main action is the search.
+ * secondary: the page's main action is the search. With the Spoki panel on
+ * (D525) its card would repeat the panel, so only the actions stay.
  */
-export async function JobsAside({ viewer }: { viewer: RailViewer }) {
+export async function JobsAside({
+  viewer,
+  spokiCard = true,
+}: {
+  viewer: RailViewer;
+  spokiCard?: boolean;
+}) {
   const t = await getTranslations("jobs.aside");
   const nav = await getTranslations("nav");
   return (
     <aside className="flex flex-col gap-4 self-stretch">
       <div className="flex flex-col gap-4 lg:sticky lg:top-24">
-        <section aria-labelledby="aside-spoki" className={card}>
-          <h2 id="aside-spoki" className="t-h3">
-            {t("spokiTitle")}
-          </h2>
-          <p className="t-body-s text-fg-muted">{t("spokiText")}</p>
-          <ButtonLink href="/chat" variant="secondary" className="self-start">
-            {t("spokiAction")}
-          </ButtonLink>
-        </section>
+        {spokiCard ? (
+          <section aria-labelledby="aside-spoki" className={card}>
+            <h2 id="aside-spoki" className="t-h3">
+              {t("spokiTitle")}
+            </h2>
+            <p className="t-body-s text-fg-muted">{t("spokiText")}</p>
+            <ButtonLink href="/chat" variant="secondary" className="self-start">
+              {t("spokiAction")}
+            </ButtonLink>
+          </section>
+        ) : null}
         {viewer !== "employer" ? (
           <section aria-labelledby="aside-alerts" className={card}>
             <h2 id="aside-alerts" className="t-h3">
