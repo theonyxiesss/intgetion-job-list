@@ -199,6 +199,13 @@ export function followUp(
   return `${knownLine(locale, draft)} ${question}`;
 }
 
+/** Said in a brief, service or job thread when the model gave no answer. */
+export function noAnswerLine(locale: string): string {
+  return isRu(locale)
+    ? "Не получилось ответить на это сообщение. Отправьте его ещё раз, пожалуйста."
+    : "I could not answer that message. Please send it again.";
+}
+
 export function resumeAck(locale: string, draft: Draft | undefined): string {
   const code = draftOf(draft).country;
   const country =

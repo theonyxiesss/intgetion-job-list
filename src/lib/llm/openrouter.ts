@@ -27,6 +27,15 @@ export const OPENROUTER_FREE_FALLBACKS = [
   "thinkingmachines/inkling:free",
 ] as const;
 
+/**
+ * Hotfix 2026-10-21: every free chat model is a reasoning model, and its
+ * hidden reasoning counts against `max_tokens`. With our 800-token answer
+ * budget it used it all up and returned neither text nor a tool call. The
+ * request asks for short reasoning, and a free model (price zero) gets this
+ * much room on top of the answer budget.
+ */
+export const FREE_REASONING_HEADROOM = 3000;
+
 function fallbackModels(model: string): string[] | undefined {
   if (!isFreeModel(model)) return undefined;
   return [model, ...OPENROUTER_FREE_FALLBACKS.filter((m) => m !== model)];
@@ -85,7 +94,10 @@ export function toOpenRouterRequest(request: LLMRequest) {
   return {
     model: request.model,
     ...(models ? { models } : {}),
-    max_tokens: request.maxTokens,
+    max_tokens: isFreeModel(request.model)
+      ? request.maxTokens + FREE_REASONING_HEADROOM
+      : request.maxTokens,
+    reasoning: { effort: "low" as const, exclude: true },
     messages: toOpenRouterMessages(request.system, request.messages),
     ...(request.tools?.length
       ? {

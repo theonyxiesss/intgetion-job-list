@@ -88,6 +88,7 @@ import {
 import { stripLeakedToolMarkup } from "./leaked-tool";
 import {
   followUp,
+  noAnswerLine,
   hasSearchFact,
   mergeDraft,
   mergeNotes,
@@ -1337,6 +1338,9 @@ export async function handleMessage(
   // sends arguments its schema refuses; nothing invalid ever runs (D502).
   let invalidCall: string | null = null;
   let invalidRetried = false;
+  // One more try when the answer budget ran out before any text or tool
+  // call (hotfix D513: reasoning models spent it all on hidden reasoning).
+  let cutRetried = false;
   const ugcDraftTurn = state.ugcDraftMode === true;
   const freelanceDraftTurn = state.freelanceDraftMode === true;
   const jobDraftTurn = state.jobDraftMode === true;
@@ -1495,6 +1499,30 @@ export async function handleMessage(
       : hadOffGoal(response.text)
         ? ""
         : stripped;
+    if (
+      !cutRetried &&
+      !lastRound &&
+      calls.length === 0 &&
+      !response.text.trim() &&
+      response.stopReason === "max_tokens"
+    ) {
+      cutRetried = true;
+      logger.warn(
+        { tokensOut: response.usage.tokensOut },
+        "bot: answer budget ran out before any text",
+      );
+      await repo.insertMessage({
+        conversationId: conversation.id,
+        role: "assistant",
+        content: "",
+        toolCall: { promptVersion: SYSTEM_PROMPT_VERSION, retried: "length" },
+        tokensIn: response.usage.tokensIn,
+        tokensOut: response.usage.tokensOut,
+        costMicroUsd: cost,
+      });
+      round -= 1;
+      continue;
+    }
     // A question answered with a bare greeting: keep the cost, hide the text
     // and ask once more with a nudge (hotfix 2026-10-17).
     if (
@@ -1590,11 +1618,19 @@ export async function handleMessage(
     if (calls.every((call) => call.id === "call_server_search")) break;
   }
   if (!spoke && !waiting && !showedJobs) {
-    const text = followUp(
-      input.locale,
-      mergeDraft(known, state.draft ?? {}),
-      state.fillMode === "spoki",
-    );
+    // In a brief, service or job thread the job-search follow-up is off topic
+    // (D513): ask the person to send the message again instead.
+    const text =
+      state.topic === "ugc" ||
+      state.ugcDraftMode ||
+      state.freelanceDraftMode ||
+      state.jobDraftMode
+        ? noAnswerLine(input.locale)
+        : followUp(
+            input.locale,
+            mergeDraft(known, state.draft ?? {}),
+            state.fillMode === "spoki",
+          );
     await repo.insertMessage({
       conversationId: conversation.id,
       role: "assistant",

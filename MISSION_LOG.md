@@ -2842,3 +2842,11 @@
 - Миграция `0067_ugc_campaign_paused.sql` применена путём D438 до выкладки: журнал 63 → 64, проверка статуса с `paused`, владелец `migrator`, RLS принудителен, членство `postgres` в `migrator` — `set=false`. Советники security: только прежние.
 - Проверки D512: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0; `pnpm test` → 1: 1456 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0 (с `SWC_NATIVE_BINDING_CACHE`, без него SWC не грузится на этой машине). Тестов маршрута `/api/ugc` в проекте нет; действия идут через покрытые функции сервиса.
 - D512 выкладка: коммит `a7ae075`, Vercel `dpl_GtSTEe7intPjvnaniYEMuNBgKoQP` success; `/ru`, `/ru/chat`, `/ru/campaigns` → 200, `/ru/campaigns/new` → 307 на вход, `POST /api/ugc` `pause` гостем → 401.
+
+## [2026-10-21] — D513 — hotfix: Spoki отвечал одной фразой
+
+- Founder прислал беседу: на каждое сообщение «Понял. Италия. Могу подбирать вакансии по тому, что уже известно.».
+- Причина (база, только служебные поля): каждый ход модели — 800 токенов ответа, пустой текст, без навыков; гостевой запрос на проде — то же. Модели OpenRouter `:free` рассуждающие, рассуждения съедают `max_tokens`.
+- Сделано: `src/lib/llm/openrouter.ts` (`reasoning` low + `FREE_REASONING_HEADROOM` для `:free`), `src/modules/bot/service/conversation.ts` (один повтор при пустом ответе по лимиту, `noAnswerLine` в нитях UGC/черновиков), `memory.ts` (`noAnswerLine`). Тест `src/modules/bot/__tests__/answer-budget.test.ts` (3). Документы: D513, CURRENT.
+- Миграции: нет.
+- Проверки D513: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0; `pnpm test` → 1: 1459 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. На настоящей модели локально не проверить (ключ только в Vercel).
