@@ -53,3 +53,4 @@ supabase/.branches/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+routing-live.txt
