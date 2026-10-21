@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isExplicitYes } from "@/lib/explicit-yes";
 import { EMPLOYMENT_TYPES } from "@/config/markers";
 import { HttpError } from "@/lib/http";
 import { cleanForModel } from "@/modules/freelance/service";
@@ -44,17 +45,9 @@ function model(value: unknown) {
   return cleanForModel(JSON.stringify(value));
 }
 
+/** A clear yes to submitting the job, before its card (D520). */
 export function isExplicitJobDraftConfirmation(text: string): boolean {
-  const value = text.trim().toLocaleLowerCase();
-  if (
-    /(?:не|нет|no|not|don't|dont|не надо|пока нет|не отправляй|не подавай)/i.test(
-      value,
-    )
-  )
-    return false;
-  return /^(?:да|давай|подтверждаю|отправляй|подавай|запускай|ок|okay|yes|yep|confirm|submit)(?:$|[\s,.!?])/i.test(
-    value,
-  );
+  return isExplicitYes(text, ["отправляй", "подавай", "запускай", "submit"]);
 }
 
 function explicitReset(text: string) {
@@ -112,6 +105,7 @@ export const jobDraftTools = [
     input: z.object({}).strict(),
     access: "user",
     confirm: write,
+    requiresExplicitYes: isExplicitJobDraftConfirmation,
     async run(ctx: Context) {
       assertDraftMode(ctx);
       if (

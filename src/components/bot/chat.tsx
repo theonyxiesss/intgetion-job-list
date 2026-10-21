@@ -1551,14 +1551,18 @@ export function Chat({
                         ? cardText(freelanceCopy, `${entry.tool}.title`)
                         : isAccountCardTool(entry.tool)
                           ? t("account.title")
-                          : entry.tool === "apply_to_job"
-                            ? t("confirm.applyTitle")
-                            : entry.tool === "propose_team_job"
-                              ? t("confirm.jobTitle")
-                              : entry.tool.includes("ugc") ||
-                                  entry.tool === "propose_creator_profile"
-                                ? t("confirm.ugcTitle")
-                                : t("confirm.profileTitle")
+                          : entry.tool === "confirm_brief"
+                            ? t("confirm.briefTitle")
+                            : entry.tool === "confirm_service_draft"
+                              ? t("confirm.serviceTitle")
+                              : entry.tool === "apply_to_job"
+                                ? t("confirm.applyTitle")
+                                : entry.tool === "propose_team_job"
+                                  ? t("confirm.jobTitle")
+                                  : entry.tool.includes("ugc") ||
+                                      entry.tool === "propose_creator_profile"
+                                    ? t("confirm.ugcTitle")
+                                    : t("confirm.profileTitle")
                     }
                     confirmLabel={t("confirm.accept")}
                     cancelLabel={t("confirm.decline")}
@@ -1607,6 +1611,15 @@ export function Chat({
                       />
                     ) : entry.tool === "propose_ugc_campaign" ? (
                       <UgcBudgetLine args={entry.args} text={ugcText} />
+                    ) : (entry.tool === "confirm_brief" ||
+                        entry.tool === "confirm_service_draft") &&
+                      entry.preview ? (
+                      <span className="flex flex-col gap-1">
+                        <span className="font-medium text-fg">
+                          {entry.preview}
+                        </span>
+                        <span>{t("confirm.sendText")}</span>
+                      </span>
                     ) : (
                       t("confirm.text")
                     )}

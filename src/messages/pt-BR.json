@@ -1877,6 +1877,9 @@
       }
     },
     "confirm": {
+      "briefTitle": "Enviar o briefing para revisão?",
+      "serviceTitle": "Enviar o serviço para revisão?",
+      "sendText": "Fica visível depois que um moderador revisar. Nada é enviado até você confirmar.",
       "applyTitle": "Candidatar-se a esta vaga?",
       "applyNote": "Carta para a empresa",
       "profileTitle": "Salvar estas alterações no perfil?",

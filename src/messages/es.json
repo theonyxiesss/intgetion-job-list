@@ -1877,6 +1877,9 @@
       }
     },
     "confirm": {
+      "briefTitle": "¿Enviar el brief a revisión?",
+      "serviceTitle": "¿Enviar el servicio a revisión?",
+      "sendText": "Se publica cuando un moderador lo revisa. No se envía nada hasta que confirmes.",
       "applyTitle": "¿Postularte a este empleo?",
       "applyNote": "Carta para la empresa",
       "profileTitle": "¿Guardar estos cambios del perfil?",

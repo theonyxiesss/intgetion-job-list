@@ -1,5 +1,6 @@
 import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { isExplicitYes } from "@/lib/explicit-yes";
 import { freelanceServiceDrafts } from "@/db/schema";
 import {
   HttpError,
@@ -143,17 +144,15 @@ export function missingServiceDraftFields(draft: ServiceBriefDraft): string[] {
   });
 }
 
+/** A clear yes to sending the service, before its card (D520). */
 export function isExplicitServiceDraftConfirmation(value: string): boolean {
-  const normalized = value.trim().toLocaleLowerCase();
-  if (
-    /(?:не|нет|no|not|don't|dont|не надо|пока нет|не отправляй|не публикуй)/i.test(
-      normalized,
-    )
-  )
-    return false;
-  return /^(?:да|давай|подтверждаю|отправляй|публикуй|запускай|ок|okay|yes|yep|confirm|submit)(?:$|[\s,.!?])/i.test(
-    normalized,
-  );
+  return isExplicitYes(value, [
+    "отправляй",
+    "публикуй",
+    "запускай",
+    "submit",
+    "publish",
+  ]);
 }
 
 export function unconfirmedServiceRanges(
@@ -393,25 +392,39 @@ export async function confirmServiceBriefDraft(
     throw validationError([
       { path: current.missingRequired[0]!, problem: "required" },
     ]);
-  const d = current.draft;
-  const service = await createService(userId, {
-    title: d.title,
-    category: d.category,
-    description: d.description,
-    buyerNeeds: d.buyerNeeds ?? "",
-    languages: d.languages,
-    skills: d.skills ?? [],
-    links: d.links ?? [],
-    packages: d.packages,
-  });
-  const pending = await submitService(userId, service.id);
-  await getDb()
+  // One sender wins (D520): the draft row is taken in one statement; a
+  // second call finds nothing and creates nothing. On failure it goes back.
+  const [claimed] = await getDb()
     .delete(freelanceServiceDrafts)
     .where(
       and(
         eq(freelanceServiceDrafts.id, current.id),
         eq(freelanceServiceDrafts.userId, userId),
       ),
-    );
+    )
+    .returning();
+  if (!claimed)
+    throw new HttpError(409, "CONFLICT", "This service is already being sent");
+  const d = current.draft;
+  let pending: Awaited<ReturnType<typeof submitService>>;
+  try {
+    const service = await createService(userId, {
+      title: d.title,
+      category: d.category,
+      description: d.description,
+      buyerNeeds: d.buyerNeeds ?? "",
+      languages: d.languages,
+      skills: d.skills ?? [],
+      links: d.links ?? [],
+      packages: d.packages,
+    });
+    pending = await submitService(userId, service.id);
+  } catch (error) {
+    await getDb()
+      .insert(freelanceServiceDrafts)
+      .values(claimed)
+      .onConflictDoNothing();
+    throw error;
+  }
   return { id: pending.id, title: pending.title, status: pending.status };
 }

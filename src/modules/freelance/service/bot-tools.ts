@@ -39,6 +39,7 @@ import {
   confirmServiceBriefDraft,
   isExplicitServiceDraftConfirmation,
   patchServiceBriefDraft,
+  readServiceBriefDraft,
   resetServiceBriefDraft,
   unconfirmedServiceRanges,
   withoutUnconfirmedServiceRanges,
@@ -414,15 +415,28 @@ export const freelanceTools = [
   {
     name: "confirm_service_draft",
     description:
-      "Create and submit the freelance service for moderation only after the person explicitly confirms the complete listing summary.",
+      "Request the confirmation card that sends the complete freelance service to moderation. Call only after the person's latest message clearly confirms the listing summary; the card does the sending.",
     input: z.object({}).strict(),
     access: "user" as const,
-    confirm: read,
+    confirm: write,
+    requiresExplicitYes: isExplicitServiceDraftConfirmation,
+    async preview(ctx: Ctx) {
+      if (!ctx.state?.freelanceDraftMode)
+        throw new HttpError(409, "CONFLICT", "No service draft in this thread");
+      const draft = await readServiceBriefDraft(
+        ctx.userId,
+        ctx.state.freelanceDraftId,
+      );
+      if (draft.missingRequired.length)
+        throw new HttpError(
+          409,
+          "CONFLICT",
+          "The service is not complete yet: ask for what is missing",
+        );
+      return String(draft.draft.title ?? "");
+    },
     async run(ctx: Ctx) {
-      if (
-        !ctx.state?.freelanceDraftMode ||
-        !isExplicitServiceDraftConfirmation(ctx.state.lastUserText ?? "")
-      )
+      if (!ctx.state?.freelanceDraftMode)
         throw new HttpError(
           409,
           "FREELANCE_EXPLICIT_CONFIRMATION_REQUIRED",

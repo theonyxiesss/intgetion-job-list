@@ -1877,6 +1877,9 @@
       }
     },
     "confirm": {
+      "briefTitle": "Briefing zur Prüfung senden?",
+      "serviceTitle": "Leistung zur Prüfung senden?",
+      "sendText": "Nach der Prüfung durch die Moderation ist es auf der Website sichtbar. Nichts wird gesendet, bevor du bestätigst.",
       "applyTitle": "Auf diesen Job bewerben?",
       "applyNote": "Anschreiben an das Unternehmen",
       "profileTitle": "Diese Profiländerungen speichern?",

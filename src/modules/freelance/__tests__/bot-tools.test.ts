@@ -37,12 +37,14 @@ describe("freelance Spoki tools (28.8, D460)", () => {
 
   it("reads run by themselves and writes are cards", () => {
     // D493: the seller's own draft is edited without a card; the server
-    // checks the person's explicit words before confirm or reset.
-    const draftTools = [
-      "patch_service_draft",
-      "confirm_service_draft",
-      "reset_service_draft",
-    ];
+    // checks the person's explicit words before reset. Sending it to
+    // moderation is a card after a clear yes (D520).
+    const draftTools = ["patch_service_draft", "reset_service_draft"];
+    expect(
+      freelanceTools
+        .find((tool) => tool.name === "confirm_service_draft")!
+        .confirm(),
+    ).toBe(true);
     const names = freelanceTools.map((tool) => tool.name);
     for (const name of draftTools) expect(names).toContain(name);
     for (const tool of freelanceTools) {

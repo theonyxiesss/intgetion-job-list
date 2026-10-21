@@ -68,7 +68,6 @@ import {
 import { jobFocusBlock, jobFocusOpener, readJobFocus } from "./job-focus";
 import { jobDraftFocusBlock, jobDraftOpener } from "./job-draft-focus";
 import { fillQuestion, fillRequestOf } from "./fill-choice";
-import { isExplicitJobDraftConfirmation } from "./job-tools";
 import {
   isServiceFrom,
   serviceFocusBlock,
@@ -120,6 +119,7 @@ import {
 } from "./greeting";
 import { draftFromExtraction, extractDraft } from "./extract";
 import {
+  findTool,
   hashArgs,
   runTool,
   toolCardFields,
@@ -1835,12 +1835,12 @@ async function callTool(
 }> {
   // The web chat names the step while it runs (D490). Name only, no input.
   emit({ type: "tool_start", name: call.name });
-  if (
-    call.name === "confirm_job_draft" &&
-    !isExplicitJobDraftConfirmation(ctx.state.lastUserText ?? "")
-  ) {
+  // A draft is sent only after the person's own clear yes; the card then
+  // asks once more (D520). A yes that asks for a change is not a yes.
+  const yesCheck = findTool(call.name)?.requiresExplicitYes;
+  if (yesCheck && !yesCheck(ctx.state.lastUserText ?? "")) {
     return {
-      llm: "No confirmation card was shown. Wait until the user clearly says yes to submitting this vacancy.",
+      llm: "No confirmation card was shown. Wait until the person's own message clearly says yes to sending it, with no change asked. If they asked for a change, make it first.",
     };
   }
   if (ctx.userId && toolNeedsConfirmation(ctx, call.name)) {
@@ -2060,6 +2060,14 @@ export async function confirmAction(
       role: "system_event",
       content: `The user confirmed ${row.tool}. ${outcome.llm}`,
     });
+    // A confirmed draft leaves draft mode, as the same tool does in a turn.
+    if (outcome.state) {
+      await repo.updateConversation(
+        input.conversation.id,
+        { state: outcome.state },
+        now,
+      );
+    }
     return { accepted: true as const, result: outcome.client ?? null };
   } catch (error) {
     // Spoki explains the failure on its next turn (D515), so it hears of

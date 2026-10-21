@@ -1,5 +1,6 @@
 import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { isExplicitYes } from "@/lib/explicit-yes";
 import { ugcBriefDrafts } from "@/db/schema";
 import {
   HttpError,
@@ -96,15 +97,15 @@ export function normalizedLanguages(values: readonly string[]): string[] {
   ];
 }
 
+/** A clear yes to sending the brief, before its card (D520). */
 export function isExplicitBriefConfirmation(value: string): boolean {
-  const text = value.trim().toLocaleLowerCase();
-  if (
-    /\b(?:не|нет|no|not|don't|dont|не надо|пока нет|не запускай)\b/.test(text)
-  )
-    return false;
-  return /^(?:да|давай|подтверждаю|запускай|запустить|ок|okay|yes|yep|launch|confirm)(?:$|[\s,.!])/i.test(
-    text,
-  );
+  return isExplicitYes(value, [
+    "запускай",
+    "запустить",
+    "отправляй",
+    "launch",
+    "submit",
+  ]);
 }
 
 export function isExplicitDraftReset(value: string): boolean {
@@ -478,37 +479,48 @@ export async function confirmBriefDraft(
     throw validationError([
       { path: missing[0] ?? "companyId", problem: "required" },
     ]);
+  // One sender wins (D520): the draft row is taken in one statement; a
+  // second call finds nothing and creates nothing. On failure it goes back.
+  const [claimed] = await getDb()
+    .delete(ugcBriefDrafts)
+    .where(
+      and(eq(ugcBriefDrafts.id, current.id), eq(ugcBriefDrafts.userId, userId)),
+    )
+    .returning();
+  if (!claimed)
+    throw new HttpError(409, "CONFLICT", "This brief is already being sent");
   const d = current.draft;
   const countries = Array.isArray(d.countries) ? (d.countries as string[]) : [];
   const languages = Array.isArray(d.languages) ? (d.languages as string[]) : [];
   const mustSay = Array.isArray(d.mustSay) ? (d.mustSay as string[]) : [];
   const mustNot = Array.isArray(d.mustNot) ? (d.mustNot as string[]) : [];
   const links = Array.isArray(d.links) ? (d.links as string[]) : [];
-  const result = await createCampaign(userId, {
-    companyId: current.companyId,
-    productName: String(d.productName),
-    productSummary: String(d.description),
-    goal: d.goal as never,
-    niches: [d.niche as never],
-    audience: text(d.audience, 1, 300) ? String(d.audience) : "Any audience",
-    country: countries[0] ?? null,
-    countries,
-    languages: languages.length ? languages : ["en"],
-    mustSay: mustSay.join("; ") || String(d.productName),
-    mustNot: mustNot.join("; ") || "No unsupported or misleading claims.",
-    platforms: [d.platform as never],
-    videosWanted: Number(d.videoCount),
-    bountyMinor: BigInt(Number(d.rewardCents)),
-    deadline: String(d.deadline),
-    rights: d.rights as never,
-    pitch: typeof d.pitch === "string" ? d.pitch : "",
-    exampleUrls: links,
-  });
-  await getDb()
-    .delete(ugcBriefDrafts)
-    .where(
-      and(eq(ugcBriefDrafts.id, current.id), eq(ugcBriefDrafts.userId, userId)),
-    );
+  let result: Awaited<ReturnType<typeof createCampaign>>;
+  try {
+    result = await createCampaign(userId, {
+      companyId: current.companyId,
+      productName: String(d.productName),
+      productSummary: String(d.description),
+      goal: d.goal as never,
+      niches: [d.niche as never],
+      audience: text(d.audience, 1, 300) ? String(d.audience) : "Any audience",
+      country: countries[0] ?? null,
+      countries,
+      languages: languages.length ? languages : ["en"],
+      mustSay: mustSay.join("; ") || String(d.productName),
+      mustNot: mustNot.join("; ") || "No unsupported or misleading claims.",
+      platforms: [d.platform as never],
+      videosWanted: Number(d.videoCount),
+      bountyMinor: BigInt(Number(d.rewardCents)),
+      deadline: String(d.deadline),
+      rights: d.rights as never,
+      pitch: typeof d.pitch === "string" ? d.pitch : "",
+      exampleUrls: links,
+    });
+  } catch (error) {
+    await getDb().insert(ugcBriefDrafts).values(claimed).onConflictDoNothing();
+    throw error;
+  }
   return { ...result, productName: String(d.productName) };
 }
 

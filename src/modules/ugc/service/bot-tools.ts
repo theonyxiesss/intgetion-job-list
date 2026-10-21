@@ -40,6 +40,7 @@ import {
   isExplicitBriefConfirmation,
   isExplicitDraftReset,
   patchBriefDraft,
+  readBriefDraft,
   resetBriefDraft,
   unconfirmedBriefRanges,
   withdrawToDraft,
@@ -215,15 +216,25 @@ export const ugcTools = [
   {
     name: "confirm_brief",
     description:
-      "Create the UGC campaign only after the user explicitly says yes, launch it, or confirms the displayed complete brief.",
+      "Request the confirmation card that sends the complete UGC brief to moderation. Call only after the user's latest message clearly says yes to sending it; the card does the sending.",
     input: z.object({}).strict(),
     access: "user" as const,
-    confirm: read,
+    confirm: write,
+    requiresExplicitYes: isExplicitBriefConfirmation,
+    async preview(ctx: Ctx) {
+      if (!ctx.state.ugcDraftMode)
+        throw new HttpError(409, "CONFLICT", "No brief draft in this thread");
+      const brief = await readBriefDraft(ctx.userId, ctx.state.ugcDraftId);
+      if (brief.missingRequired.length || !brief.companyId)
+        throw new HttpError(
+          409,
+          "CONFLICT",
+          "The brief is not complete yet: ask for what is missing",
+        );
+      return String(brief.draft.productName ?? "");
+    },
     async run(ctx: Ctx) {
-      if (
-        !ctx.state.ugcDraftMode ||
-        !isExplicitBriefConfirmation(ctx.state.lastUserText ?? "")
-      )
+      if (!ctx.state.ugcDraftMode)
         throw new HttpError(
           409,
           "UGC_EXPLICIT_CONFIRMATION_REQUIRED",

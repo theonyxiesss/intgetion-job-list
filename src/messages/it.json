@@ -1877,6 +1877,9 @@
       }
     },
     "confirm": {
+      "briefTitle": "Inviare il brief in revisione?",
+      "serviceTitle": "Inviare il servizio in revisione?",
+      "sendText": "Sarà visibile dopo il controllo di un moderatore. Nulla viene inviato finché non confermi.",
       "applyTitle": "Candidarti a questa offerta?",
       "applyNote": "Lettera all’azienda",
       "profileTitle": "Salvare queste modifiche al profilo?",

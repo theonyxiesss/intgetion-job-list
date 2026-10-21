@@ -166,6 +166,11 @@ export type BotTool<T extends z.ZodType = z.ZodType> = {
    * name). Throws 404 when it is not this person's, so no card is shown.
    */
   preview?: (ctx: ToolContext, input: z.infer<T>) => Promise<string>;
+  /**
+   * Draft submits (job, UGC brief, freelance service): the person's own
+   * last message must clearly say yes before a card is shown (D520).
+   */
+  requiresExplicitYes?: (text: string) => boolean;
   run: (
     ctx: ToolContext,
     input: z.infer<T>,

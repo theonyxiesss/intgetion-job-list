@@ -1877,6 +1877,9 @@
       }
     },
     "confirm": {
+      "briefTitle": "Send the brief for review?",
+      "serviceTitle": "Send the service for review?",
+      "sendText": "It goes live after a moderator checks it. Nothing is sent until you confirm.",
       "applyTitle": "Apply to this job?",
       "applyNote": "Letter to the employer",
       "profileTitle": "Save these profile changes?",

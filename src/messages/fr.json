@@ -1877,6 +1877,9 @@
       }
     },
     "confirm": {
+      "briefTitle": "Envoyer le brief en modération ?",
+      "serviceTitle": "Envoyer le service en modération ?",
+      "sendText": "Il sera visible après la vérification d’un modérateur. Rien n’est envoyé avant ta confirmation.",
       "applyTitle": "Postuler à cette offre ?",
       "applyNote": "Lettre à l’employeur",
       "profileTitle": "Enregistrer ces modifications du profil ?",
