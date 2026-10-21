@@ -1168,7 +1168,15 @@ export type MessageInput = {
   text: string;
   ip: string;
   locale: string;
+  /** Spoki's own turn right after a card was answered (D515): no user text. */
+  afterCard?: boolean;
 };
+
+/** How long after a card is answered Spoki may still take its turn (D515). */
+const AFTER_CARD_MS = 2 * 60 * 1000;
+
+const AFTER_CARD =
+  "The last [event] is the person's answer on a confirmation card; they typed nothing new. Reply now, in the language of the conversation, in one or two short sentences: what is done; if it failed, why in plain words and what can be done instead; if they declined, that nothing changed. Then offer the one next step that follows, with a tool when one fits. Do not show the same card again.";
 
 /**
  * Handles one user message and emits SSE events. Order: limits → store the
@@ -1181,25 +1189,34 @@ export async function handleMessage(
   now = new Date(),
 ): Promise<void> {
   const { conversation, userId } = input;
-  await enforceMessageLimits(
-    userId,
-    input.ip,
-    conversation.sessionTokenHash,
-    now,
-  );
-  const acked = await acknowledgeResume(conversation, input.locale, emit);
+  const afterCard = input.afterCard === true;
+  // The turn after a card is metered once per card in continueAfterCard.
+  if (!afterCard)
+    await enforceMessageLimits(
+      userId,
+      input.ip,
+      conversation.sessionTokenHash,
+      now,
+    );
+  const acked = afterCard
+    ? undefined
+    : await acknowledgeResume(conversation, input.locale, emit);
   let current = acked ?? conversation;
-  await repo.insertMessage({
-    conversationId: current.id,
-    role: "user",
-    content: redactPii(input.text),
-  });
+  if (!afterCard)
+    await repo.insertMessage({
+      conversationId: current.id,
+      role: "user",
+      content: redactPii(input.text),
+    });
 
-  let state: BotState = {
-    ...(current.state as BotState),
-    draft: rememberUtterance((current.state as BotState).draft, input.text),
-  };
+  let state: BotState = afterCard
+    ? { ...(current.state as BotState) }
+    : {
+        ...(current.state as BotState),
+        draft: rememberUtterance((current.state as BotState).draft, input.text),
+      };
   if (
+    !afterCard &&
     userId &&
     !current.jobId &&
     !state.jobDraftMode &&
@@ -1225,7 +1242,7 @@ export async function handleMessage(
   }
   let ugcDraftContext: Record<string, unknown> | undefined;
   let freelanceDraftContext: Record<string, unknown> | undefined;
-  const offer = await takeDraftOffer(current, userId, now);
+  const offer = afterCard ? null : await takeDraftOffer(current, userId, now);
   if (offer) {
     emit(offer);
     state = { ...state, needsDraftOffer: false };
@@ -1241,7 +1258,7 @@ export async function handleMessage(
     return finish(input, state, emit, now);
   }
 
-  if (!state.jobDraftMode)
+  if (!state.jobDraftMode && !afterCard)
     state = await absorbExtraction(input, llm, state, emit);
   const remembered = await readRemembered(userId);
   // The saved profile answers what this thread has not heard yet (D469).
@@ -1282,7 +1299,7 @@ export async function handleMessage(
   const lang = replyLanguage(input.text, input.locale);
   const focusedId = current.jobId;
   const knownJobId = state.presentedJobId ?? focusedId ?? null;
-  if (isPoliteYes(input.text) && knownJobId) {
+  if (!afterCard && isPoliteYes(input.text) && knownJobId) {
     state = { ...state, presentedJobId: knownJobId, verdict: "suits" };
     const text = suitsAck(lang);
     const said = await repo.insertMessage({
@@ -1293,7 +1310,7 @@ export async function handleMessage(
     emit({ type: "token", text, messageId: said.id });
     return finish(input, state, emit, now);
   }
-  if (isPoliteNo(input.text) && knownJobId) {
+  if (!afterCard && isPoliteNo(input.text) && knownJobId) {
     const passed = rememberPass(passedIdsOf(state), knownJobId);
     state = {
       ...state,
@@ -1424,6 +1441,7 @@ export async function handleMessage(
       roundSystem = system;
     }
     if (greetingNudge) roundSystem += `\n${ANSWER_THE_QUESTION}`;
+    if (afterCard) roundSystem += `\n${AFTER_CARD}`;
     if (invalidCall)
       roundSystem += `\nYour previous reply called a tool this conversation does not offer, or with arguments its schema refuses (${invalidCall}). Do not repeat it. Use only the tools you are given, with valid arguments, or answer in words; if they ask for something you have no tool for here, say so in one sentence.`;
     const rows = await repo.listMessages(conversation.id, HISTORY_READ);
@@ -1546,6 +1564,7 @@ export async function handleMessage(
     // A question answered with a bare greeting: keep the cost, hide the text
     // and ask once more with a nudge (hotfix 2026-10-17).
     if (
+      !afterCard &&
       !greetingRetried &&
       !lastRound &&
       calls.length === 0 &&
@@ -1606,7 +1625,7 @@ export async function handleMessage(
         });
       }
     }
-    if (!waiting && !fitSpoken) {
+    if (!waiting && !fitSpoken && !afterCard) {
       const line = await fitLineForTurn({
         locale: input.locale,
         lang,
@@ -1637,7 +1656,8 @@ export async function handleMessage(
     // The server search is the reply. Do not take another model round.
     if (calls.every((call) => call.id === "call_server_search")) break;
   }
-  if (!spoke && !waiting && !showedJobs) {
+  // After a card the card's own line already says what happened.
+  if (!spoke && !waiting && !showedJobs && !afterCard) {
     // In a brief, service or job thread the job-search follow-up is off topic
     // (D513): ask the person to send the message again instead.
     const text =
@@ -2018,17 +2038,62 @@ export async function confirmAction(
     });
     return { accepted: true as const, result: outcome.client ?? null };
   } catch (error) {
-    if (error instanceof HttpError) {
-      await repo.insertMessage({
-        conversationId: input.conversation.id,
-        role: "system_event",
-        content: `The user confirmed ${row.tool}, but it failed: ${error.code}${
-          error.details === undefined ? "" : ` ${JSON.stringify(error.details)}`
-        }.`,
-      });
-    }
+    // Spoki explains the failure on its next turn (D515), so it hears of
+    // every failure, not only the expected ones.
+    await repo.insertMessage({
+      conversationId: input.conversation.id,
+      role: "system_event",
+      content:
+        error instanceof HttpError
+          ? `The user confirmed ${row.tool}, but it failed: ${error.code} (${error.message})${
+              error.details === undefined
+                ? ""
+                : ` ${JSON.stringify(error.details)}`
+            }.`
+          : `The user confirmed ${row.tool}, but it failed on the server; nothing was changed.`,
+    });
     throw error;
   }
+}
+
+/**
+ * Spoki's own turn right after the person answered a card (D515), so the
+ * chat does not stop at "Confirmed.": what happened and the next step.
+ * Only the card's owner, only within AFTER_CARD_MS of the answer, and once
+ * per card; it does not count against the daily message limit.
+ */
+export async function continueAfterCard(
+  input: { userId: string; confirmationId: string; ip: string },
+  emit: Emit,
+  now = new Date(),
+): Promise<void> {
+  const found = await repo.findConfirmationWithConversation(
+    input.confirmationId,
+    input.userId,
+  );
+  if (!found) throw notFound();
+  const { confirmation, conversation } = found;
+  const decidedAt = confirmation.decidedAt?.getTime();
+  if (decidedAt === undefined || now.getTime() - decidedAt > AFTER_CARD_MS) {
+    throw new HttpError(
+      409,
+      "CONFIRMATION_OPEN",
+      "The card is not answered, or was answered too long ago",
+    );
+  }
+  await enforceRateLimit("botAfterCard", confirmation.id, now);
+  await handleMessage(
+    {
+      userId: input.userId,
+      conversation,
+      text: "",
+      ip: input.ip,
+      locale: conversation.locale ?? "en",
+      afterCard: true,
+    },
+    emit,
+    now,
+  );
 }
 
 /** `GET /api/bot/conversation`: the last 50 visible messages. */

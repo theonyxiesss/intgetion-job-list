@@ -1865,7 +1865,9 @@
       "decline": "Annulla",
       "accepted": "Confermato.",
       "declined": "Annullato.",
-      "failed": "Impossibile completare. La scheda potrebbe essere scaduta; chiedi di nuovo.",
+      "failed": "Impossibile completare. Spoki spiegherà cosa è successo.",
+      "expired": "La scheda è scaduta o è già stata usata. Chiedi di nuovo.",
+      "notAllowed": "Con lo stato attuale non si può. Spoki suggerirà cosa si può fare.",
       "missing": "Al profilo manca ancora: {fields}"
     },
     "createAccount": "Crea un account",

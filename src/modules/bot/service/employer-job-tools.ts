@@ -8,11 +8,13 @@ import { requireActiveUserById } from "@/modules/auth/service";
 import {
   findMemberRole,
   findOwnedJob,
+  JOB_TRANSITIONS,
   listJobsForUser,
   transitionOwnedJob,
   updateJob,
 } from "@/modules/jobs/service";
 import { patchJobInput } from "@/modules/jobs/schemas";
+import type { JobStatus } from "@/modules/jobs/service";
 import type { BotTool, ToolContext } from "./tools";
 
 /**
@@ -203,6 +205,12 @@ export const employerJobTools: BotTool[] = [
       if (!Object.keys(fields).length)
         throw new HttpError(422, "VALIDATION_ERROR", "Name what to change");
       const job = await managedJob(ctx, jobId);
+      if (!EDITABLE.has(job.status))
+        throw new HttpError(
+          409,
+          "INVALID_TRANSITION",
+          `The vacancy is ${job.status}; it cannot be edited`,
+        );
       namedJobPatch(fields, job);
       return job.title;
     },
@@ -241,7 +249,16 @@ export const employerJobTools: BotTool[] = [
     access: "user",
     confirm: write,
     async preview(ctx, input) {
-      return (await managedJob(ctx, input.jobId)).title;
+      const job = await managedJob(ctx, input.jobId);
+      // A change the status refuses gets no card (D515).
+      const action = STATUS_ACTIONS[input.action];
+      if (!JOB_TRANSITIONS[action][job.status as JobStatus])
+        throw new HttpError(
+          409,
+          "INVALID_TRANSITION",
+          `The vacancy is ${job.status}; ${input.action} is not possible`,
+        );
+      return job.title;
     },
     async run(ctx, input) {
       await managedJob(ctx, input.jobId);

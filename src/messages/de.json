@@ -1865,7 +1865,9 @@
       "decline": "Abbrechen",
       "accepted": "Bestätigt.",
       "declined": "Abgebrochen.",
-      "failed": "Das konnte nicht abgeschlossen werden. Die Karte ist möglicherweise abgelaufen; fragen Sie erneut.",
+      "failed": "Das hat nicht geklappt. Spoki erklärt, was passiert ist.",
+      "expired": "Diese Karte ist abgelaufen oder wurde schon verwendet. Fragen Sie erneut.",
+      "notAllowed": "Im aktuellen Status geht das nicht. Spoki schlägt vor, was möglich ist.",
       "missing": "Im Profil fehlt noch: {fields}"
     },
     "createAccount": "Konto erstellen",

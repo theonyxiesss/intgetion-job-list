@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { UGC_GOALS, UGC_NICHES, UGC_PLATFORMS, UGC_RIGHTS } from "@/config/ugc";
+import {
+  UGC_GOALS,
+  UGC_NICHES,
+  UGC_PLATFORMS,
+  UGC_RIGHTS,
+  type UgcCampaignStatus,
+} from "@/config/ugc";
 import { HttpError } from "@/lib/http";
 import { wrapUntrusted } from "@/lib/llm";
 import {
@@ -66,13 +72,40 @@ function assertUgcTopic(ctx: Ctx) {
   }
 }
 
-/** The product name of a brief the caller's company owns; else 404. */
-async function ownBriefName(ctx: Ctx, campaignId: string) {
+/** A brief the caller's company owns; else 404. */
+async function ownBrief(ctx: Ctx, campaignId: string) {
   const view = await readCampaign(ctx.userId, campaignId);
   if (view.role !== "company")
     throw new HttpError(404, "NOT_FOUND", "Not found");
-  return view.brief.productName;
+  return view.brief;
 }
+
+/**
+ * The brief's name for the card, or 409 before any card when its status
+ * refuses the change (D515): a card that can only fail is not shown.
+ */
+async function briefFor(
+  ctx: Ctx,
+  campaignId: string,
+  allowed: readonly UgcCampaignStatus[],
+  what: string,
+) {
+  const brief = await ownBrief(ctx, campaignId);
+  if (allowed.includes(brief.status)) return brief.productName;
+  throw new HttpError(
+    409,
+    "INVALID_TRANSITION",
+    brief.status === "pending_review"
+      ? `The brief is in review, so ${what} is not possible. withdraw_ugc_campaign takes it back to the draft, where every field can change before it is sent again.`
+      : `The brief is ${brief.status}, so ${what} is not possible.`,
+  );
+}
+
+const STATUS_FROM = {
+  pause: ["open"],
+  resume: ["paused"],
+  close: ["open", "paused"],
+} as const satisfies Record<string, readonly UgcCampaignStatus[]>;
 
 function model(value: unknown) {
   return wrapUntrusted("ugc:brief", JSON.stringify(value));
@@ -662,7 +695,7 @@ export const ugcTools = [
   {
     name: "set_ugc_status",
     description:
-      "Pause an open brief, resume a paused one, or close an open or paused one, by campaignId from get_my_ugc_campaigns. Paused: no new applications or hires; hired creators still hand in videos and the company decides them. Closed: new applications and videos stop for good. A request to delete or remove an open brief is close. Only a member of the brief's company. Confirmed on a card.",
+      "Pause an open brief, resume a paused one, or close an open or paused one, by campaignId from get_my_ugc_campaigns. Paused: no new applications or hires; hired creators still hand in videos and the company decides them. Closed: new applications and videos stop for good. A request to delete or remove an open brief is close. A brief in review cannot be paused or closed: withdraw_ugc_campaign takes it back to the draft. Only a member of the brief's company. Confirmed on a card.",
     input: z
       .object({
         campaignId: id,
@@ -671,8 +704,16 @@ export const ugcTools = [
       .strict(),
     access: "user" as const,
     confirm: write,
-    async preview(ctx: Ctx, input: { campaignId: string }) {
-      return ownBriefName(ctx, input.campaignId);
+    async preview(
+      ctx: Ctx,
+      input: { campaignId: string; action: "pause" | "resume" | "close" },
+    ) {
+      return briefFor(
+        ctx,
+        input.campaignId,
+        STATUS_FROM[input.action],
+        input.action,
+      );
     },
     async run(
       ctx: Ctx,
@@ -696,7 +737,7 @@ export const ugcTools = [
   {
     name: "propose_ugc_update",
     description:
-      "Change the text of an open or paused brief, by campaignId from get_my_ugc_campaigns: productSummary (what it is, up to 400), pitch (up to 300, no contacts), mustSay and mustNot (up to 1000 each), exampleUrls (https, up to 5; replaces the list). Send only what they asked to change. Reward, rights, the number of videos, platforms and the deadline do not change: hired creators agreed to them; for those, close the brief and collect a new one. Confirmed on a card.",
+      "Change the text of an open or paused brief, by campaignId from get_my_ugc_campaigns: productSummary (what it is, up to 400), pitch (up to 300, no contacts), mustSay and mustNot (up to 1000 each), exampleUrls (https, up to 5; replaces the list). Send only what they asked to change. Reward, rights, the number of videos, platforms and the deadline do not change: hired creators agreed to them; for those, close an open or paused brief and collect a new one. A brief in review takes no edits here: withdraw_ugc_campaign takes it back to the draft, where every field, those too, can change. Confirmed on a card.",
     input: z
       .object({
         campaignId: id,
@@ -710,7 +751,7 @@ export const ugcTools = [
     access: "user" as const,
     confirm: write,
     async preview(ctx: Ctx, input: { campaignId: string }) {
-      return ownBriefName(ctx, input.campaignId);
+      return briefFor(ctx, input.campaignId, ["open", "paused"], "a text edit");
     },
     async run(
       ctx: Ctx,
@@ -732,12 +773,17 @@ export const ugcTools = [
   {
     name: "withdraw_ugc_campaign",
     description:
-      "Take a brief that is still in review back to the draft, by campaignId from get_my_ugc_campaigns. Creators have not seen it. All fields go back to the brief draft; the person edits it on the new brief page and sends it again. Refused when they already have an unsent draft. Confirmed on a card.",
+      "Take a brief that is still in review back to the draft, by campaignId from get_my_ugc_campaigns. Creators have not seen it. All fields go back to the brief draft, reward, number of videos, platforms and deadline too; the person edits it on the new brief page and sends it again. Refused when they already have an unsent draft. Confirmed on a card.",
     input: z.object({ campaignId: id }).strict(),
     access: "user" as const,
     confirm: write,
     async preview(ctx: Ctx, input: { campaignId: string }) {
-      return ownBriefName(ctx, input.campaignId);
+      return briefFor(
+        ctx,
+        input.campaignId,
+        ["pending_review"],
+        "taking it back to the draft",
+      );
     },
     async run(ctx: Ctx, input: { campaignId: string }) {
       const result = await withdrawToDraft(ctx.userId, input.campaignId);

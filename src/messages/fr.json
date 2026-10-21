@@ -1865,7 +1865,9 @@
       "decline": "Annuler",
       "accepted": "Confirmé.",
       "declined": "Annulé.",
-      "failed": "Impossible de terminer. La fiche a peut-être expiré ; redemandez.",
+      "failed": "Impossible de terminer. Spoki va expliquer ce qui s’est passé.",
+      "expired": "Cette fiche a expiré ou a déjà servi. Redemandez.",
+      "notAllowed": "Ce n’est pas possible dans le statut actuel. Spoki va proposer ce qui l’est.",
       "missing": "Il manque encore au profil : {fields}"
     },
     "createAccount": "Créer un compte",

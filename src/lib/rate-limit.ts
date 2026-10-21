@@ -47,6 +47,8 @@ export const rateRules = {
   botPro: { limit: 300, windowSeconds: 24 * 60 * 60 },
   /** cookie choices sent to the consent journal, keyed by IP (D220) */
   consent: { limit: 30, windowSeconds: 60 * 60 },
+  /** Spoki's own turn after a card, keyed by the card: once (D515). */
+  botAfterCard: { limit: 1, windowSeconds: 24 * 60 * 60 },
   /** 👍/👎 on Spoki's answers (D514). */
   botFeedback: { limit: 120, windowSeconds: 60 * 60 },
   /** analytics beacons, keyed by IP; over the limit they are dropped (D225) */

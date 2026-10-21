@@ -136,6 +136,26 @@ describe("employer job tools (D498)", () => {
     ).resolves.toBe("Senior Python developer");
   });
 
+  it("shows no card for a status change the vacancy refuses (D515)", async () => {
+    await expect(
+      toolPreview(ctx, "set_job_status", { jobId: JOB, action: "resume" }),
+    ).rejects.toMatchObject({ status: 409, code: "INVALID_TRANSITION" });
+    await expect(
+      toolPreview(ctx, "set_job_status", { jobId: JOB, action: "publish" }),
+    ).rejects.toMatchObject({ status: 409 });
+    jobs.findOwnedJob.mockResolvedValue({ ...ownJob, status: "closed" });
+    await expect(
+      toolPreview(ctx, "set_job_status", { jobId: JOB, action: "close" }),
+    ).rejects.toMatchObject({ status: 409 });
+    await expect(
+      toolPreview(ctx, "propose_job_update", { jobId: JOB, title: "Lead" }),
+    ).rejects.toMatchObject({ status: 409 });
+    jobs.findOwnedJob.mockResolvedValue({ ...ownJob, status: "paused" });
+    await expect(
+      toolPreview(ctx, "set_job_status", { jobId: JOB, action: "resume" }),
+    ).resolves.toBe("Senior Python developer");
+  });
+
   it("changes only the fields the person named", async () => {
     const patch = namedJobPatch({
       salaryMin: "400000",

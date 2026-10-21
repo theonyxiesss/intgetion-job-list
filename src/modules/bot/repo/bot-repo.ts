@@ -388,6 +388,31 @@ export async function findConversationOfConfirmation(
   return row?.conversation;
 }
 
+/** A card of this user with its thread, decided or not (D515). */
+export async function findConfirmationWithConversation(
+  confirmationId: string,
+  userId: string,
+): Promise<
+  { confirmation: ConfirmationRow; conversation: ConversationRow } | undefined
+> {
+  const [row] = await getDb()
+    .select({ confirmation: botConfirmations, conversation: botConversations })
+    .from(botConfirmations)
+    .innerJoin(
+      botConversations,
+      eq(botConversations.id, botConfirmations.conversationId),
+    )
+    .where(
+      and(
+        eq(botConfirmations.id, confirmationId),
+        eq(botConfirmations.userId, userId),
+        eq(botConversations.userId, userId),
+      ),
+    )
+    .limit(1);
+  return row;
+}
+
 /**
  * The person's 👍 or 👎 on one of Spoki's answers (D514), kept in that
  * message's `tool_call` as `rating`; null takes it back. Only an answer in

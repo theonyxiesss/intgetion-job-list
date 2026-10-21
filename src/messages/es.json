@@ -1865,7 +1865,9 @@
       "decline": "Cancelar",
       "accepted": "Confirmado.",
       "declined": "Cancelado.",
-      "failed": "No se ha podido completar. Puede que la tarjeta haya caducado; vuelve a pedirlo.",
+      "failed": "No se ha podido completar. Spoki te explicará qué ha pasado.",
+      "expired": "La tarjeta ha caducado o ya se usó. Vuelve a pedirlo.",
+      "notAllowed": "Con el estado actual no se puede. Spoki te dirá qué se puede hacer.",
       "missing": "Al perfil aún le falta: {fields}"
     },
     "createAccount": "Crear cuenta",

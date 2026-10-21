@@ -131,7 +131,14 @@ type Entry =
       values?: Record<string, string>;
       /** The target named by the server (D472). */
       preview?: string;
-      state: "open" | "busy" | "accepted" | "declined" | "failed";
+      state:
+        | "open"
+        | "busy"
+        | "accepted"
+        | "declined"
+        | "failed"
+        | "expired"
+        | "notAllowed";
     };
 
 type PendingCard = {
@@ -593,36 +600,50 @@ export function Chat({
     if (!message || sending) return;
     setText("");
     fieldRef.current?.focus();
+    add({ key: nextKey(), kind: "user", text: message });
+    await streamTurn("/api/bot/message", {
+      text: message,
+      locale,
+      ...(fromServices ? { from: "services" as const } : {}),
+      ...(fromCampaigns ? { from: "campaigns" as const } : {}),
+      ...(fromFreelanceSell ? { from: "freelance_sell" as const } : {}),
+      ...(fromPostJob ? { from: "post_job" as const } : {}),
+      ...(campaignId ? { campaignId } : {}),
+      ...(inviteId ? { inviteId } : {}),
+    });
+  }
+
+  /**
+   * Spoki's own turn after a card is answered (D515): what happened and
+   * the next step. Silent when the server refuses it; the card line stays.
+   */
+  function continueAfterCard(confirmationId: string) {
+    return streamTurn("/api/bot/continue", { confirmationId }, true);
+  }
+
+  /** Streams one Spoki turn into the chat. */
+  async function streamTurn(url: string, payload: object, quiet = false) {
     void scrollToBottom();
     const controller = new AbortController();
     abortRef.current = controller;
     setSending(true);
     setThinking(true);
     setActivity(null);
-    add({ key: nextKey(), kind: "user", text: message });
     const answerKey = nextKey();
     try {
-      const response = await fetch("/api/bot/message", {
+      const response = await fetch(url, {
         method: "POST",
         signal: controller.signal,
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          text: message,
-          locale,
-          ...(fromServices ? { from: "services" as const } : {}),
-          ...(fromCampaigns ? { from: "campaigns" as const } : {}),
-          ...(fromFreelanceSell ? { from: "freelance_sell" as const } : {}),
-          ...(fromPostJob ? { from: "post_job" as const } : {}),
-          ...(campaignId ? { campaignId } : {}),
-          ...(inviteId ? { inviteId } : {}),
-        }),
+        body: JSON.stringify(payload),
       });
       if (!response.ok || !response.body) {
-        add({
-          key: nextKey(),
-          kind: "notice",
-          code: response.status === 429 ? "RATE_LIMITED" : "BOT_TRY_LATER",
-        });
+        if (!quiet)
+          add({
+            key: nextKey(),
+            kind: "notice",
+            code: response.status === 429 ? "RATE_LIMITED" : "BOT_TRY_LATER",
+          });
         return;
       }
       for await (const data of readEvents(response.body)) {
@@ -713,7 +734,8 @@ export function Chat({
           });
         } else if (data.type === "error") {
           setThinking(false);
-          add({ key: nextKey(), kind: "notice", code: String(data.code) });
+          if (!quiet)
+            add({ key: nextKey(), kind: "notice", code: String(data.code) });
         } else if (
           data.type === "resume_ack" ||
           data.type === "signup_hint" ||
@@ -803,11 +825,10 @@ export function Chat({
         }
       }
     } catch {
-      add(
-        controller.signal.aborted
-          ? { key: nextKey(), kind: "event", text: t("answer.stopped") }
-          : { key: nextKey(), kind: "notice", code: "BOT_TRY_LATER" },
-      );
+      if (controller.signal.aborted)
+        add({ key: nextKey(), kind: "event", text: t("answer.stopped") });
+      else if (!quiet)
+        add({ key: nextKey(), kind: "notice", code: "BOT_TRY_LATER" });
     } finally {
       abortRef.current = null;
       setThinking(false);
@@ -864,7 +885,7 @@ export function Chat({
     if (!response?.ok) {
       const body = response
         ? ((await response.json().catch(() => null)) as {
-            error?: { details?: { missing?: string[] } };
+            error?: { code?: string; details?: { missing?: string[] } };
           } | null)
         : null;
       const missing = body?.error?.details?.missing;
@@ -875,7 +896,13 @@ export function Chat({
           code: `missing:${missing.join(", ")}`,
         });
       }
-      return setState("failed");
+      // The real reason, not always "expired" (D515).
+      const code = body?.error?.code;
+      if (code === "CONFIRMATION_EXPIRED") return setState("expired");
+      setState(code === "INVALID_TRANSITION" ? "notAllowed" : "failed");
+      // A card that was taken and failed: Spoki says why and what instead.
+      if (response) void continueAfterCard(confirmationId);
+      return;
     }
     const body = await response.json().catch(() => null);
     setState(accept ? "accepted" : "declined");
@@ -910,6 +937,7 @@ export function Chat({
         code: queued.reason === "plan" ? "JOB_NEEDS_TEAM" : "JOB_NEEDS_COMPANY",
       });
     }
+    void continueAfterCard(confirmationId);
   }
 
   async function chooseFill(mode: "self" | "spoki") {

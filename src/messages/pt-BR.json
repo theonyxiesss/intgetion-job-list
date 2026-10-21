@@ -1865,7 +1865,9 @@
       "decline": "Cancelar",
       "accepted": "Confirmado.",
       "declined": "Cancelado.",
-      "failed": "Não foi possível concluir. O cartão pode ter expirado; peça de novo.",
+      "failed": "Não foi possível concluir. O Spoki vai explicar o que aconteceu.",
+      "expired": "O cartão expirou ou já foi usado. Peça de novo.",
+      "notAllowed": "No status atual isso não é possível. O Spoki vai sugerir o que dá para fazer.",
       "missing": "Ainda falta no perfil: {fields}"
     },
     "createAccount": "Criar conta",

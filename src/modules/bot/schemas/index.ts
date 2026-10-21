@@ -22,6 +22,9 @@ export const botMessageInput = z
   })
   .strict();
 
+/** `POST /api/bot/continue` — Spoki's turn after a card (D515). */
+export const botContinueInput = z.object({ confirmationId: z.uuid() }).strict();
+
 /** `POST /api/bot/fill` — how to fill the profile after sign-up (D324). */
 export const botFillModeInput = z
   .object({

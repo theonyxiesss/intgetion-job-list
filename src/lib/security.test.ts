@@ -37,6 +37,7 @@ describe("needsOriginCheck (D313)", () => {
       "/api/mcp/extra",
       "/api/mcpx",
       "/api/bot/confirm",
+      "/api/bot/continue",
     ]) {
       expect(needsOriginCheck(path), path).toBe(true);
     }

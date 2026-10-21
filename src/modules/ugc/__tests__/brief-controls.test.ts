@@ -201,24 +201,61 @@ describe("brief pause, text edit and withdraw (D512)", () => {
 
   it("Spoki: each new skill is a card with the product name; a creator gets 404", async () => {
     const id = await opened();
-    for (const name of [
-      "set_ugc_status",
-      "propose_ugc_update",
-      "withdraw_ugc_campaign",
-    ]) {
+    const inReview = (await createCampaign(MEMBER, brief())).id;
+    for (const [name, campaignId, extra] of [
+      ["set_ugc_status", id, { action: "pause" }],
+      ["propose_ugc_update", id, {}],
+      ["withdraw_ugc_campaign", inReview, {}],
+    ] as const) {
       expect(tool(name).confirm()).toBe(true);
       await expect(
-        tool(name).preview(ctx(MEMBER), { campaignId: id }),
+        tool(name).preview(ctx(MEMBER), { campaignId, ...extra }),
       ).resolves.toBe("North");
     }
     await saveCreatorProfile(CREATOR, profile());
     await applyToCampaign(CREATOR, id);
     await expect(
-      tool("set_ugc_status").preview(ctx(CREATOR), { campaignId: id }),
+      tool("set_ugc_status").preview(ctx(CREATOR), {
+        campaignId: id,
+        action: "pause",
+      }),
     ).rejects.toMatchObject({ status: 404 });
     expect(ugcTools.some((row) => row.name === "close_ugc_campaign")).toBe(
       false,
     );
+  });
+
+  it("Spoki: no card for a change the brief's status refuses (D515)", async () => {
+    const inReview = (await createCampaign(MEMBER, brief())).id;
+    const preview = (name: string, input: object) =>
+      tool(name).preview(ctx(MEMBER), { campaignId: inReview, ...input });
+    for (const action of ["pause", "resume", "close"]) {
+      const error = await preview("set_ugc_status", { action }).catch(
+        (thrown: unknown) => thrown,
+      );
+      expect(error).toBeInstanceOf(HttpError);
+      expect(error).toMatchObject({ status: 409, code: "INVALID_TRANSITION" });
+      expect((error as HttpError).message).toContain("withdraw_ugc_campaign");
+    }
+    await expect(preview("propose_ugc_update", {})).rejects.toMatchObject({
+      status: 409,
+    });
+    const id = await opened();
+    await expect(
+      tool("withdraw_ugc_campaign").preview(ctx(MEMBER), { campaignId: id }),
+    ).rejects.toMatchObject({ status: 409 });
+    await expect(
+      tool("set_ugc_status").preview(ctx(MEMBER), {
+        campaignId: id,
+        action: "resume",
+      }),
+    ).rejects.toMatchObject({ status: 409 });
+    await expect(
+      tool("set_ugc_status").preview(ctx(MEMBER), {
+        campaignId: id,
+        action: "close",
+      }),
+    ).resolves.toBe("North");
   });
 
   it("Spoki: pause, resume and close go through the same service rules", async () => {

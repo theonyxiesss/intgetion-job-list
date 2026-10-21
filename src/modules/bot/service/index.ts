@@ -8,6 +8,7 @@ export {
   MAX_TOOL_ROUNDS,
   botLLM,
   confirmAction,
+  continueAfterCard,
   conversationHistory,
   chatActions,
   findConfirmationConversation,
