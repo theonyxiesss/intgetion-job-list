@@ -342,7 +342,7 @@ export const freelanceTools = [
   {
     name: "patch_service_draft",
     description:
-      "In the service-listing thread, save only listing facts stated or corrected in the latest user message. Omit unknown fields. Do not invent package prices, delivery times, or promises. Never collect portfolio links in chat; the owner enters those in the form. This immediately updates the shared draft shown in the form.",
+      "In the service-listing thread, save only listing facts stated or corrected in the latest user message. Omit unknown fields. Do not invent package prices, delivery times, or promises. Never collect portfolio links in chat; the owner enters those in the form. This immediately updates the shared draft shown in the form. The card with the link to the form shows by itself once the listing is complete; set showCard=true (an empty patch is fine) only when the person asks for the link or the card.",
     input: z
       .object({
         patch: z
@@ -368,11 +368,15 @@ export const freelanceTools = [
               .optional(),
           })
           .strict(),
+        showCard: z.boolean().optional(),
       })
       .strict(),
     access: "user" as const,
     confirm: read,
-    async run(ctx: Ctx, input: { patch: Record<string, unknown> }) {
+    async run(
+      ctx: Ctx,
+      input: { patch: Record<string, unknown>; showCard?: boolean },
+    ) {
       if (!ctx.state?.freelanceDraftMode)
         throw new HttpError(
           409,
@@ -400,7 +404,10 @@ export const freelanceTools = [
           ),
         ),
         state: { ...ctx.state, freelanceDraftId: result.id },
-        client: { kind: "freelance_service_draft", data: result },
+        client: {
+          kind: "freelance_service_draft",
+          data: { ...result, showCard: input.showCard === true },
+        },
       };
     },
   },

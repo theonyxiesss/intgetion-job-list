@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, RotateCcw, Square } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { useStickToBottom } from "use-stick-to-bottom";
 import {
   useEffect,
   useLayoutEffect,
@@ -31,6 +32,8 @@ import {
   ApplyCardText,
   isAccountCardTool,
 } from "@/components/bot/account-card";
+import { AssistantAnswer } from "@/components/bot/chat-markdown";
+import { draftCardDue } from "@/components/bot/draft-card";
 import { ThinkingStatusLine } from "@/components/bot/thinking-status-line";
 import { ConfirmCard } from "@/components/ui/dialog";
 import { ugcBudgetMinor, usdLabel } from "@/modules/ugc/service/pricing";
@@ -70,7 +73,16 @@ type JobCard = {
 };
 
 type Entry =
-  | { key: string; kind: "user" | "assistant" | "event"; text: string }
+  | { key: string; kind: "user" | "event"; text: string }
+  /** `live`: arrived in this visit, so it types itself out (D514). */
+  | {
+      key: string;
+      kind: "assistant";
+      text: string;
+      live?: boolean;
+      /** The stored answer, for 👍 / 👎 (D514). */
+      messageId?: string;
+    }
   | { key: string; kind: "jobs" | "matches"; jobs: JobCard[] }
   | { key: string; kind: "offer"; action: OfferAction }
   | { key: string; kind: "ugc_join"; payload: string }
@@ -375,16 +387,20 @@ export function Chat({
         ) => {
           if (!body) return;
           if (body.actions) setActions(body.actions);
-          const history: Entry[] = body.messages.map((message) => ({
-            key: message.id,
-            kind:
-              message.role === "user"
-                ? "user"
-                : message.role === "assistant"
-                  ? "assistant"
-                  : "event",
-            text: message.content,
-          }));
+          const history: Entry[] = body.messages.map((message) =>
+            message.role === "assistant"
+              ? {
+                  key: message.id,
+                  kind: "assistant",
+                  text: message.content,
+                  messageId: message.id,
+                }
+              : {
+                  key: message.id,
+                  kind: message.role === "user" ? "user" : "event",
+                  text: message.content,
+                },
+          );
           if (body.draftOffer) {
             history.push({
               key: body.draftOffer.confirmationId,
@@ -414,7 +430,9 @@ export function Chat({
               link: next.link,
             });
           }
-          if (body.briefDraft)
+          // A draft card carries the link to the form: in the history only
+          // once the draft is complete (D514); Spoki's text shows progress.
+          if (body.briefDraft && body.briefDraft.missingRequired.length === 0)
             history.push({
               key: `ugc-draft-${body.briefDraft.id}`,
               kind: "ugc_brief_draft",
@@ -423,7 +441,10 @@ export function Chat({
               draft: body.briefDraft.draft,
               assumptions: body.briefDraft.assumptions,
             });
-          if (body.freelanceDraft)
+          if (
+            body.freelanceDraft &&
+            body.freelanceDraft.missingRequired.length === 0
+          )
             history.push({
               key: `freelance-draft-${body.freelanceDraft.id}`,
               kind: "freelance_service_draft",
@@ -431,7 +452,7 @@ export function Chat({
               missing: body.freelanceDraft.missingRequired.length,
               draft: body.freelanceDraft.draft,
             });
-          if (body.jobDraft)
+          if (body.jobDraft && body.jobDraft.missingRequired.length === 0)
             history.push({
               key: `job-draft-${body.jobDraft.id}`,
               kind: "job_draft",
@@ -463,9 +484,28 @@ export function Chat({
     locale,
   ]);
 
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ block: "end" });
-  }, [entries, thinking]);
+  // D514: the log follows new text only while the person is at the end;
+  // reading higher up is not interrupted, a button brings them back.
+  const [reducedMotion] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true,
+  );
+  const { scrollRef, contentRef, isAtBottom, scrollToBottom } =
+    useStickToBottom({
+      initial: "instant",
+      resize: reducedMotion ? "instant" : "smooth",
+    });
+  const abortRef = useRef<AbortController | null>(null);
+  const [answerTyping, setAnswerTyping] = useState(false);
+  const lastKey = entries[entries.length - 1]?.key;
+  // "Retry" asks the person's last question once more (D514).
+  const retryText = sending
+    ? null
+    : ((
+        entries.findLast((entry) => entry.kind === "user") as
+          { text: string } | undefined
+      )?.text ?? null);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -521,15 +561,31 @@ export function Chat({
   }, []);
 
   const add = (entry: Entry) => setEntries((current) => [...current, entry]);
+  /** A draft card has one place: a newer one replaces it at the end. */
+  const put = (entry: Entry) =>
+    setEntries((current) => [
+      ...current.filter((row) => row.key !== entry.key),
+      entry,
+    ]);
 
   /** Appends streamed text to the answer in progress, or starts one. */
-  function appendAnswer(key: string, chunk: string) {
+  function appendAnswer(key: string, chunk: string, messageId?: string) {
     setEntries((current) => {
       const last = current[current.length - 1];
       if (last && last.kind === "assistant" && last.key === key) {
-        return [...current.slice(0, -1), { ...last, text: last.text + chunk }];
+        return [
+          ...current.slice(0, -1),
+          {
+            ...last,
+            text: last.text + chunk,
+            messageId: messageId ?? last.messageId,
+          },
+        ];
       }
-      return [...current, { key, kind: "assistant", text: chunk }];
+      return [
+        ...current,
+        { key, kind: "assistant", text: chunk, live: true, messageId },
+      ];
     });
   }
 
@@ -537,6 +593,9 @@ export function Chat({
     if (!message || sending) return;
     setText("");
     fieldRef.current?.focus();
+    void scrollToBottom();
+    const controller = new AbortController();
+    abortRef.current = controller;
     setSending(true);
     setThinking(true);
     setActivity(null);
@@ -545,6 +604,7 @@ export function Chat({
     try {
       const response = await fetch("/api/bot/message", {
         method: "POST",
+        signal: controller.signal,
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           text: message,
@@ -568,7 +628,13 @@ export function Chat({
       for await (const data of readEvents(response.body)) {
         if (data.type === "token") {
           setThinking(false);
-          appendAnswer(answerKey, String(data.text));
+          appendAnswer(
+            answerKey,
+            String(data.text),
+            typeof data.messageId === "string" && UUID.test(data.messageId)
+              ? data.messageId
+              : undefined,
+          );
         } else if (data.type === "tool_start") {
           setActivity(String(data.name));
           setThinking(true);
@@ -600,10 +666,15 @@ export function Chat({
             missingRequired?: unknown;
             draft?: Record<string, unknown>;
             assumptions?: unknown;
+            showCard?: unknown;
           };
-          if (typeof draft.id === "string" && UUID.test(draft.id)) {
+          if (
+            typeof draft.id === "string" &&
+            UUID.test(draft.id) &&
+            draftCardDue(draft.missingRequired, draft.showCard)
+          ) {
             setThinking(false);
-            add({
+            put({
               key: `ugc-draft-${draft.id}`,
               kind: "ugc_brief_draft",
               draftId: draft.id,
@@ -669,16 +740,49 @@ export function Chat({
             id?: unknown;
             missingRequired?: unknown;
             draft?: Record<string, unknown>;
+            showCard?: unknown;
           };
-          if (typeof draft.id === "string" && UUID.test(draft.id)) {
+          if (
+            typeof draft.id === "string" &&
+            UUID.test(draft.id) &&
+            draftCardDue(draft.missingRequired, draft.showCard)
+          ) {
             setThinking(false);
-            add({
+            put({
               key: `freelance-draft-${draft.id}`,
               kind: "freelance_service_draft",
               draftId: draft.id,
               missing: Array.isArray(draft.missingRequired)
                 ? draft.missingRequired.length
                 : 0,
+              draft: draft.draft ?? {},
+            });
+          }
+        } else if (data.type === "tool_result" && data.kind === "job_draft") {
+          const draft = data.data as {
+            id?: unknown;
+            missingRequired?: unknown;
+            formMissingRequired?: unknown;
+            draft?: Record<string, unknown>;
+            showCard?: unknown;
+          };
+          if (
+            typeof draft.id === "string" &&
+            UUID.test(draft.id) &&
+            draftCardDue(draft.missingRequired, draft.showCard)
+          ) {
+            setThinking(false);
+            put({
+              key: `job-draft-${draft.id}`,
+              kind: "job_draft",
+              draftId: draft.id,
+              missing:
+                (Array.isArray(draft.missingRequired)
+                  ? draft.missingRequired.length
+                  : 0) +
+                (Array.isArray(draft.formMissingRequired)
+                  ? draft.formMissingRequired.length
+                  : 0),
               draft: draft.draft ?? {},
             });
           }
@@ -699,8 +803,13 @@ export function Chat({
         }
       }
     } catch {
-      add({ key: nextKey(), kind: "notice", code: "BOT_TRY_LATER" });
+      add(
+        controller.signal.aborted
+          ? { key: nextKey(), kind: "event", text: t("answer.stopped") }
+          : { key: nextKey(), kind: "notice", code: "BOT_TRY_LATER" },
+      );
     } finally {
+      abortRef.current = null;
       setThinking(false);
       setActivity(null);
       setSending(false);
@@ -891,12 +1000,19 @@ export function Chat({
           ) : null}
         </div>
         <div
+          ref={scrollRef}
           role="log"
           aria-live="polite"
+          aria-busy={answerTyping || undefined}
           aria-label={t("log")}
-          className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto"
+          className="min-h-0 flex-1 overflow-auto"
         >
-          <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col gap-6 px-4 md:px-6">
+          {/* The log itself is plain `overflow: auto` so the scroll-lock
+              library sees wheel scrolling; sideways overflow is clipped here. */}
+          <div
+            ref={contentRef}
+            className="mx-auto flex min-h-full w-full max-w-3xl flex-col gap-6 overflow-x-hidden px-4 md:px-6"
+          >
             {welcome && (
               <div className="mt-auto flex w-full flex-col items-center gap-4 pb-2 text-center">
                 <h2 className="text-2xl font-medium md:text-3xl">
@@ -982,17 +1098,39 @@ export function Chat({
                 return (
                   <div key={entry.key} className="min-w-0">
                     <span className="sr-only">{t("agent")}</span>
-                    <p className="max-w-full whitespace-pre-wrap break-words leading-7">
-                      {entry.text}
-                    </p>
+                    <AssistantAnswer
+                      text={entry.text}
+                      live={entry.live === true}
+                      messageId={entry.messageId}
+                      onRetry={
+                        retryText && entry.key === lastKey
+                          ? () => void ask(retryText)
+                          : undefined
+                      }
+                      onTyping={setAnswerTyping}
+                    />
                   </div>
                 );
               }
               if (entry.kind === "event") {
+                const stopped =
+                  retryText &&
+                  entry.key === lastKey &&
+                  entry.text === t("answer.stopped");
                 return (
-                  <p key={entry.key} className="t-body-s text-fg-muted">
-                    {entry.text}
-                  </p>
+                  <div key={entry.key} className="flex flex-col items-start">
+                    <p className="t-body-s text-fg-muted">{entry.text}</p>
+                    {stopped ? (
+                      <button
+                        type="button"
+                        onClick={() => void ask(retryText)}
+                        className="mt-1 -ml-3 inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-fg-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg"
+                      >
+                        <Icon icon={RotateCcw} size={16} />
+                        {t("answer.retry")}
+                      </button>
+                    ) : null}
+                  </div>
                 );
               }
               if (entry.kind === "jobs" || entry.kind === "matches") {
@@ -1283,13 +1421,28 @@ export function Chat({
               }
               if (entry.kind === "notice") {
                 return (
-                  <Alert key={entry.key} tone="warning">
-                    {entry.code.startsWith("missing:")
-                      ? t("confirm.missing", { fields: entry.code.slice(8) })
-                      : ERROR_CODES.has(entry.code)
-                        ? t(`errors.${entry.code}`)
-                        : t("errors.generic")}
-                  </Alert>
+                  <div key={entry.key} className="flex flex-col items-start">
+                    <Alert tone="warning">
+                      {entry.code.startsWith("missing:")
+                        ? t("confirm.missing", { fields: entry.code.slice(8) })
+                        : ERROR_CODES.has(entry.code)
+                          ? t(`errors.${entry.code}`)
+                          : t("errors.generic")}
+                    </Alert>
+                    {retryText &&
+                    entry.key === lastKey &&
+                    !entry.code.startsWith("missing:") &&
+                    entry.code !== "RATE_LIMITED" ? (
+                      <button
+                        type="button"
+                        onClick={() => void ask(retryText)}
+                        className="mt-1 inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-fg-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg"
+                      >
+                        <Icon icon={RotateCcw} size={16} />
+                        {t("answer.retry")}
+                      </button>
+                    ) : null}
+                  </div>
                 );
               }
               if (entry.kind !== "confirm") return null;
@@ -1373,6 +1526,18 @@ export function Chat({
             {thinking && <ThinkingStatusLine tool={activity} />}
             <div ref={endRef} />
           </div>
+          {isAtBottom ? null : (
+            <div className="pointer-events-none sticky bottom-0 flex h-0 justify-center">
+              <button
+                type="button"
+                onClick={() => void scrollToBottom()}
+                className="pointer-events-auto flex size-11 -translate-y-14 items-center justify-center rounded-full border border-line bg-surface text-fg transition-colors duration-150 hover:bg-surface-2"
+              >
+                <Icon icon={ArrowDown} size={20} />
+                <span className="sr-only">{t("answer.toBottom")}</span>
+              </button>
+            </div>
+          )}
         </div>
         <div className="mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-3 px-4 md:px-6">
           {actions.signup && !signedIn && (
@@ -1438,15 +1603,25 @@ export function Chat({
                 }}
                 className="max-h-[min(10rem,30dvh)] min-h-11 flex-1 resize-none overflow-x-hidden bg-transparent py-3 leading-5 text-fg placeholder:text-fg-subtle focus-visible:outline-none"
               />
-              <button
-                type="submit"
-                disabled={!text.trim() || sending}
-                aria-busy={sending || undefined}
-                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-signal text-signal-fg transition-opacity disabled:opacity-40"
-              >
-                <Icon icon={ArrowUp} size={20} />
-                <span className="sr-only">{t("send")}</span>
-              </button>
+              {sending ? (
+                <button
+                  type="button"
+                  onClick={() => abortRef.current?.abort()}
+                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-fg text-bg"
+                >
+                  <Icon icon={Square} size={16} fill="currentColor" />
+                  <span className="sr-only">{t("answer.stop")}</span>
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={!text.trim()}
+                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-signal text-signal-fg transition-opacity disabled:opacity-40"
+                >
+                  <Icon icon={ArrowUp} size={20} />
+                  <span className="sr-only">{t("send")}</span>
+                </button>
+              )}
             </div>
             <p data-chat-note className="t-body-s text-center text-fg-subtle">
               {t("disclaimer")}{" "}

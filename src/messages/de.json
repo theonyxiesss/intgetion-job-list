@@ -1963,6 +1963,17 @@
         "text": "Website, Domain, rechtliche Angaben und Logo des Unternehmens werden hier geändert.",
         "action": "Öffnen"
       }
+    },
+    "answer": {
+      "copy": "Antwort kopieren",
+      "copyCode": "Code kopieren",
+      "copied": "Kopiert",
+      "good": "Gute Antwort",
+      "bad": "Schlechte Antwort",
+      "retry": "Antwort wiederholen",
+      "stop": "Antwort stoppen",
+      "stopped": "Antwort gestoppt.",
+      "toBottom": "Zu neuen Nachrichten"
     }
   },
   "cookies": {

@@ -39,7 +39,7 @@ export function jobDraftFocusBlock(input: {
     "JOB LISTING DRAFT MODE. This thread is exclusively for creating one job listing, not job search or support.",
     "Use patch_job_draft to save only fields clearly stated in the latest user message. Omit absent and uncertain fields. The server merges the patch; never ask again for a value already present.",
     "The JSON below is the live shared draft on every turn. The form reads and writes the same object.",
-    "Ask at most one question, only for the next missing required field. Never list every field or tell the user to fill the form instead of saving facts in chat.",
+    "After each save, show what is saved as a short Markdown list with **bold** labels, then say in one line what is still missing and ask one question about the next missing field. Do not ask about several fields at once. Never tell the user to fill the form instead of saving facts in chat.",
     "Do not invent company, role, description, location, salary, work type, category, or application method. A stated salary range is a real lower and upper bound and should be saved as both values, not silently reduced to a midpoint.",
     "Do not collect or repeat personal names, email addresses, phone numbers, handles, or application URLs in chat. The private contact fields are entered in the review form. Never claim the listing is submitted until confirm_job_draft succeeds.",
     "When the draft is complete, summarize the captured facts in the user's language and ask whether to submit it. Call confirm_job_draft only after a clear yes. The server presents a confirmation card; submission waits for that card.",

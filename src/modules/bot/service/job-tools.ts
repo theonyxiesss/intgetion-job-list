@@ -76,11 +76,16 @@ export const jobDraftTools = [
   {
     name: "patch_job_draft",
     description:
-      "Save only job listing fields clearly present in the latest user message. Omit absent values. A salary range is an explicit lower and upper value. Do not collect personal contacts or names; these are entered in the review form.",
-    input: z.object({ patch: draftFields }).strict(),
+      "Save only job listing fields clearly present in the latest user message. Omit absent values. A salary range is an explicit lower and upper value. Do not collect personal contacts or names; these are entered in the review form. The card with the link to the review form shows by itself once the chat fields are complete; set showCard=true (an empty patch is fine) only when the person asks for the link or the card.",
+    input: z
+      .object({ patch: draftFields, showCard: z.boolean().optional() })
+      .strict(),
     access: "user",
     confirm: read,
-    async run(ctx: Context, input: { patch: Record<string, unknown> }) {
+    async run(
+      ctx: Context,
+      input: { patch: Record<string, unknown>; showCard?: boolean },
+    ) {
       assertDraftMode(ctx);
       const result = await patchJobDraft(ctx.userId, {
         draftId: ctx.state.jobDraftId,
@@ -93,7 +98,10 @@ export const jobDraftTools = [
           formMissingRequired: result.formMissingRequired,
         }),
         state: { ...ctx.state, jobDraftId: result.id },
-        client: { kind: "job_draft", data: result },
+        client: {
+          kind: "job_draft",
+          data: { ...result, showCard: input.showCard === true },
+        },
       };
     },
   },
@@ -122,7 +130,7 @@ export const jobDraftTools = [
       if (!result.submitted)
         return {
           llm: "The job is not submitted. The private company contact and application details still need to be completed in the review form. Open the job draft card and finish those fields.",
-          client: { kind: "job_draft", data: result },
+          client: { kind: "job_draft", data: { ...result, showCard: true } },
         };
       return {
         llm: model({

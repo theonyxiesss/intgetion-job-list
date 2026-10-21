@@ -82,10 +82,12 @@ export async function sendTelegramMessage(
   chatId: number,
   text: string,
   button?: { label: string; data: string },
+  parseMode?: "HTML",
 ): Promise<void> {
   await telegramApi(token, "sendMessage", {
     chat_id: chatId,
     text,
+    ...(parseMode ? { parse_mode: parseMode } : {}),
     ...(button
       ? {
           reply_markup: {

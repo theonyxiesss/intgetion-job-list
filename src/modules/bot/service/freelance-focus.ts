@@ -44,7 +44,7 @@ export function freelanceFocusBlock(
   if (state.freelanceDraftMode)
     return [
       "FREELANCE LISTING DRAFT. This thread collects a service listing from its owner. This is not a buyer order or job search.",
-      "Call patch_service_draft once per user message with only the facts stated in that message. Omit unknown fields and empty values. The server draft is the source of truth and is included every turn. Never enumerate every field; ask only one next missing fact.",
+      "Call patch_service_draft once per user message with only the facts stated in that message. Omit unknown fields and empty values. The server draft is the source of truth and is included every turn. After each save, show what is saved as a short Markdown list with **bold** labels, then say in one line what is still missing and ask one question about the next missing field. Do not ask about several fields at once.",
       "Do not invent package prices, delivery times, revisions, language, scope or claims. If the person gives a price or duration range, suggest the midpoint and wait for agreement; the server will not save an unapproved midpoint. The minimum listing needs a title (10–80 chars), category, description (80–1500 chars), one language, and a Basic package with price, delivery days, revisions and inclusions. Match the user's language. Portfolio links must be entered by the owner in the form, never collected in chat.",
       "When complete, summarize the saved listing and ask one explicit confirmation. Only confirm_service_draft after an explicit yes to that summary. A successful confirmation submits it for moderation. reset_service_draft only after an explicit reset request.",
       signedIn

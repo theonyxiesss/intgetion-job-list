@@ -387,3 +387,37 @@ export async function findConversationOfConfirmation(
     .limit(1);
   return row?.conversation;
 }
+
+/**
+ * The person's 👍 or 👎 on one of Spoki's answers (D514), kept in that
+ * message's `tool_call` as `rating`; null takes it back. Only an answer in
+ * the caller's own conversation: by account, or by the guest session.
+ */
+export async function rateAnswer(input: {
+  messageId: string;
+  rating: "up" | "down" | null;
+  userId: string | null;
+  tokenHash: string | null;
+}): Promise<boolean> {
+  if (!input.userId && !input.tokenHash) return false;
+  const owner = input.userId
+    ? eq(botConversations.userId, input.userId)
+    : eq(botConversations.sessionTokenHash, input.tokenHash!);
+  const rows = await getDb()
+    .update(botMessages)
+    .set({
+      toolCall:
+        input.rating === null
+          ? sql`coalesce(${botMessages.toolCall}, '{}'::jsonb) - 'rating'`
+          : sql`coalesce(${botMessages.toolCall}, '{}'::jsonb) || jsonb_build_object('rating', ${input.rating}::text)`,
+    })
+    .where(
+      and(
+        eq(botMessages.id, input.messageId),
+        eq(botMessages.role, "assistant"),
+        sql`exists (select 1 from ${botConversations} where ${botConversations.id} = ${botMessages.conversationId} and ${owner})`,
+      ),
+    )
+    .returning({ id: botMessages.id });
+  return rows.length > 0;
+}

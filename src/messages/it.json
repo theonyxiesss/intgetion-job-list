@@ -1963,6 +1963,17 @@
         "text": "Sito, dominio, dati legali e logo dell’azienda si cambiano qui.",
         "action": "Apri"
       }
+    },
+    "answer": {
+      "copy": "Copia risposta",
+      "copyCode": "Copia codice",
+      "copied": "Copiato",
+      "good": "Buona risposta",
+      "bad": "Risposta sbagliata",
+      "retry": "Ripeti risposta",
+      "stop": "Interrompi risposta",
+      "stopped": "Risposta interrotta.",
+      "toBottom": "Vai ai nuovi messaggi"
     }
   },
   "cookies": {

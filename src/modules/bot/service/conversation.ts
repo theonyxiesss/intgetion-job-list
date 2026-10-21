@@ -1,6 +1,6 @@
 import { readSharedProfile } from "@/modules/users/service";
 import { createHash, randomBytes } from "node:crypto";
-import { HttpError } from "@/lib/http";
+import { HttpError, notFound } from "@/lib/http";
 import {
   chat,
   circuitBreakerOpen,
@@ -145,7 +145,8 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 const ANOMALY_DAYS = 14;
 
 export type BotEvent =
-  | { type: "token"; text: string }
+  /** `messageId`: the stored answer, so the person can rate it (D514). */
+  | { type: "token"; text: string; messageId?: string }
   /** A tool is about to run; the web chat shows what Spoki is doing (D490). */
   | { type: "tool_start"; name: string }
   | { type: "tool_result"; name: string; kind: string; data: unknown }
@@ -207,6 +208,25 @@ export function botLLM(env = process.env): BotLLM | null {
 
 export function newSessionToken(): string {
   return randomBytes(32).toString("base64url");
+}
+
+/**
+ * The person's 👍 or 👎 on one answer (D514). Only an answer in their own
+ * conversation; anything else is "not found".
+ */
+export async function rateAnswer(input: {
+  userId: string | null;
+  token: string | undefined;
+  messageId: string;
+  rating: "up" | "down" | null;
+}): Promise<void> {
+  const rated = await repo.rateAnswer({
+    messageId: input.messageId,
+    rating: input.rating,
+    userId: input.userId,
+    tokenHash: input.token ? hashSessionToken(input.token) : null,
+  });
+  if (!rated) throw notFound();
 }
 
 export function hashSessionToken(token: string): string {
@@ -1265,12 +1285,12 @@ export async function handleMessage(
   if (isPoliteYes(input.text) && knownJobId) {
     state = { ...state, presentedJobId: knownJobId, verdict: "suits" };
     const text = suitsAck(lang);
-    await repo.insertMessage({
+    const said = await repo.insertMessage({
       conversationId: current.id,
       role: "assistant",
       content: text,
     });
-    emit({ type: "token", text });
+    emit({ type: "token", text, messageId: said.id });
     return finish(input, state, emit, now);
   }
   if (isPoliteNo(input.text) && knownJobId) {
@@ -1317,12 +1337,12 @@ export async function handleMessage(
         : askWhy(lang);
     if (choice.kind === "show")
       state = { ...state, presentedJobId: choice.job.id };
-    await repo.insertMessage({
+    const said = await repo.insertMessage({
       conversationId: current.id,
       role: "assistant",
       content: text,
     });
-    emit({ type: "token", text });
+    emit({ type: "token", text, messageId: said.id });
     return finish(input, state, emit, now);
   }
 
@@ -1546,7 +1566,7 @@ export async function handleMessage(
       });
       continue;
     }
-    await repo.insertMessage({
+    const roundRow = await repo.insertMessage({
       conversationId: conversation.id,
       role: "assistant",
       content: visible,
@@ -1559,7 +1579,7 @@ export async function handleMessage(
     });
     if (visible) {
       spoke = true;
-      emit({ type: "token", text: visible });
+      emit({ type: "token", text: visible, messageId: roundRow.id });
     }
 
     let roundCards: JobCardFacts[] = [];
@@ -1602,12 +1622,12 @@ export async function handleMessage(
             ? { presentedJobId: line.presentedJobId }
             : {}),
         };
-        await repo.insertMessage({
+        const said = await repo.insertMessage({
           conversationId: conversation.id,
           role: "assistant",
           content: line.text,
         });
-        emit({ type: "token", text: line.text });
+        emit({ type: "token", text: line.text, messageId: said.id });
         spoke = true;
         fitSpoken = true;
       }
@@ -1631,12 +1651,12 @@ export async function handleMessage(
             mergeDraft(known, state.draft ?? {}),
             state.fillMode === "spoki",
           );
-    await repo.insertMessage({
+    const said = await repo.insertMessage({
       conversationId: conversation.id,
       role: "assistant",
       content: text,
     });
-    emit({ type: "token", text });
+    emit({ type: "token", text, messageId: said.id });
   }
   return finish(input, state, emit, now);
 }

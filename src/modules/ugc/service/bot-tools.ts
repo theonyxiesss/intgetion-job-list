@@ -96,7 +96,7 @@ export const ugcTools = [
   {
     name: "patch_brief",
     description:
-      "In the new UGC brief thread, save only fields clearly stated or corrected in the latest user message. Omit unknown fields. Never guess numeric ranges. If the user explicitly says to choose defaults, set useDefaults=true. This updates the shared draft immediately.",
+      "In the new UGC brief thread, save only fields clearly stated or corrected in the latest user message. Omit unknown fields. Never guess numeric ranges. If the user explicitly says to choose defaults, set useDefaults=true. This updates the shared draft immediately. The card with the link to the brief form shows by itself once the brief is complete; set showCard=true (an empty patch is fine) only when the person asks for the link or the card.",
     input: z
       .object({
         companyId: z.uuid().optional(),
@@ -121,6 +121,7 @@ export const ugcTools = [
           })
           .strict(),
         useDefaults: z.boolean().optional(),
+        showCard: z.boolean().optional(),
       })
       .strict(),
     access: "user" as const,
@@ -131,6 +132,7 @@ export const ugcTools = [
         companyId?: string;
         patch: Record<string, unknown>;
         useDefaults?: boolean;
+        showCard?: boolean;
       },
     ) {
       if (!ctx.state.ugcDraftMode)
@@ -170,7 +172,10 @@ export const ugcTools = [
           suggestedRanges: pendingRanges,
         }),
         state: { ...ctx.state, ugcDraftId: result.id },
-        client: { kind: "ugc_brief_draft", data: result },
+        client: {
+          kind: "ugc_brief_draft",
+          data: { ...result, showCard: input.showCard === true },
+        },
       };
     },
   },

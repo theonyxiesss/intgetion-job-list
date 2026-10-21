@@ -1963,6 +1963,17 @@
         "text": "The company website, domain, legal details and logo are changed here.",
         "action": "Open"
       }
+    },
+    "answer": {
+      "copy": "Copy answer",
+      "copyCode": "Copy code",
+      "copied": "Copied",
+      "good": "Good answer",
+      "bad": "Bad answer",
+      "retry": "Retry answer",
+      "stop": "Stop answer",
+      "stopped": "Answer stopped.",
+      "toBottom": "Jump to new messages"
     }
   },
   "cookies": {

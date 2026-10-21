@@ -1,3 +1,4 @@
+import { markdownToTelegramHtml, stripMarkdown } from "@/lib/telegram-markdown";
 import { createHmac } from "node:crypto";
 import { logger } from "@/lib/logger";
 import { siteUrl } from "@/lib/supabase/env";
@@ -316,7 +317,8 @@ const ORDER_BUTTON: Record<string, string> = {
 };
 
 type LinkButton = { label: string; url: string };
-type Part = { text: string; links: LinkButton[] };
+/** `markdown`: Spoki's own words, sent as Telegram HTML (D514). */
+type Part = { text: string; links: LinkButton[]; markdown?: boolean };
 
 function buttonsFor(locale: string): Record<OfferAction, string> {
   return OFFER_BUTTON[locale] ?? OFFER_BUTTON.en;
@@ -389,7 +391,7 @@ function render(
   const said = stripLeakedToolMarkup(answer)
     .trim()
     .slice(0, TELEGRAM_TEXT_LIMIT);
-  if (said) out.push({ text: said, links: [] });
+  if (said) out.push({ text: said, links: [], markdown: true });
 
   for (const event of events) {
     if (event.type !== "tool_result") continue;
@@ -611,6 +613,17 @@ export async function handleTelegramAgentUpdate(
   for (const part of render(events, lines, locale, userId !== null)) {
     if (part.links.length) {
       await sendTelegramLinks(token, chatId, part.text, part.links);
+    } else if (part.markdown) {
+      // Telegram refuses markup it cannot parse: then the plain words go.
+      await sendTelegramMessage(
+        token,
+        chatId,
+        markdownToTelegramHtml(part.text),
+        undefined,
+        "HTML",
+      ).catch(() =>
+        sendTelegramMessage(token, chatId, stripMarkdown(part.text)),
+      );
     } else {
       await sendTelegramMessage(token, chatId, part.text);
     }

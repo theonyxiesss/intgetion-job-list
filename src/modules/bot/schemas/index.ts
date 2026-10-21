@@ -51,3 +51,11 @@ export const botMemoryFactInput = z
     fact: z.string().trim().min(1).max(200),
   })
   .strict();
+
+/** `POST /api/bot/feedback` — 👍, 👎 or take it back (D514). */
+export const botFeedbackInput = z
+  .object({
+    messageId: z.uuid(),
+    rating: z.enum(["up", "down"]).nullable(),
+  })
+  .strict();

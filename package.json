@@ -41,7 +41,10 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-hook-form": "^7.89.0",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1",
     "sharp": "^0.35.5",
+    "use-stick-to-bottom": "1.1.6",
     "viem": "^2.57.4",
     "zod": "^4.6.5"
   },
