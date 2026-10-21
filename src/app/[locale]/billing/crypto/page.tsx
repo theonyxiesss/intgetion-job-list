@@ -14,10 +14,7 @@ import { CryptoPay } from "@/modules/billing/ui/crypto-pay";
 import { InterestForm } from "@/modules/billing/ui/interest-form";
 import { FreelancePay } from "@/modules/billing/ui/freelance-pay";
 import { HttpError } from "@/lib/http";
-import {
-  getOrderForParty,
-  orderPayState,
-} from "@/modules/freelance/service";
+import { getOrderForParty, orderPayState } from "@/modules/freelance/service";
 import { formatUsd } from "@/modules/freelance/ui/format";
 import { campaignDepositState, readCampaign } from "@/modules/ugc/service";
 import { RouteMessages } from "@/components/shell/route-messages";
@@ -75,7 +72,8 @@ export default async function CryptoBillingPage({
   const ugcCampaign = query.ugc && UUID.test(query.ugc) ? query.ugc : "";
   const forUgc = query.for === "ugc" || Boolean(ugcCampaign);
   // The payout address is the account wallet now (D518).
-  if (query.payout === "1") redirect(`${localePrefix(locale)}/account#security`);
+  if (query.payout === "1")
+    redirect(`${localePrefix(locale)}/account#security`);
   if (freelanceOrder || ugcCampaign) {
     const f = await getTranslations("freelance");
     const base = f.raw("pay") as Record<string, string>;

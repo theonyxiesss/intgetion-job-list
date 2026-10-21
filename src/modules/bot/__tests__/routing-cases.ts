@@ -77,6 +77,11 @@ export const SCENARIOS: {
   { text: "How are my UGC briefs going?", tools: ["get_ugc_summary"] },
   { text: "Hide my profile from employers", tools: ["set_profile_hidden"] },
   {
+    text: "Show my profile to employers again",
+    tools: ["set_profile_hidden"],
+  },
+  { text: "Снова покажи мой профиль", tools: ["set_profile_hidden"] },
+  {
     text: "Remember that I want to move to Lisbon next year",
     tools: ["remember_fact"],
   },
