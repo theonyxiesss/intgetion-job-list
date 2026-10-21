@@ -68,6 +68,13 @@ import {
 import { jobFocusBlock, jobFocusOpener, readJobFocus } from "./job-focus";
 import { jobDraftFocusBlock, jobDraftOpener } from "./job-draft-focus";
 import { fillQuestion, fillRequestOf } from "./fill-choice";
+import { matchedDomains, routeDomains, toolRoutingOn } from "./routing";
+import {
+  LOADABLE_DOMAINS,
+  domainOf,
+  isLoadableDomain,
+  type LoadableDomain,
+} from "./tool-domains";
 import { CONFIRMATION_TTL_MS } from "./constants";
 import {
   journalCardDeclined,
@@ -1328,7 +1335,37 @@ export async function handleMessage(
     memory: remembered?.memory,
     now: userId ? localNow(now, known?.timezone) : undefined,
   });
-  const tools = toolsFor(userId, state);
+  // D522: hybrid routing. A signed-in person outside a draft gets the core
+  // and the services of this turn; `use_tools` loads one more set per turn;
+  // a call to another service's tool loads just that service. Never the
+  // whole registry by default; SPOKI_TOOL_ROUTING=false turns it off.
+  const routed =
+    toolRoutingOn() &&
+    userId !== null &&
+    !state.ugcDraftMode &&
+    !state.freelanceDraftMode &&
+    !state.jobDraftMode;
+  const domains = new Set<LoadableDomain>(
+    routed
+      ? routeDomains({
+          text: input.text,
+          topic: state.topic,
+          jobThread: Boolean(current.jobId),
+          previous: state.domains,
+        })
+      : [],
+  );
+  const loadedDomains = new Set<LoadableDomain>();
+  let loadUsed = false;
+  let loadRoundGiven = false;
+  const toolsNow = () =>
+    routed
+      ? toolsFor(
+          userId,
+          state,
+          LOADABLE_DOMAINS.filter((domain) => domains.has(domain)),
+        )
+      : toolsFor(userId, state);
   const lang = replyLanguage(input.text, input.locale);
   const focusedId = current.jobId;
   const knownJobId = state.presentedJobId ?? focusedId ?? null;
@@ -1487,6 +1524,7 @@ export async function handleMessage(
     });
     const context = startAtUser(messages);
     const lastRound = round === MAX_TOOL_ROUNDS;
+    const roundTools = toolsNow();
     let response;
     try {
       response = await chat(llm.provider, {
@@ -1497,7 +1535,7 @@ export async function handleMessage(
           lastRound ||
           ((ugcDraftTurn || freelanceDraftTurn || jobDraftTurn) && ugcToolUsed)
             ? undefined
-            : tools,
+            : roundTools,
         maxTokens: MAX_OUTPUT_TOKENS,
       });
     } catch (error) {
@@ -1505,6 +1543,24 @@ export async function handleMessage(
         { err: error, invalidOutput: error instanceof LLMOutputError },
         "bot: model call failed",
       );
+      // The model reached for another service's tool: load that service
+      // once (D522), not the whole registry.
+      const asked =
+        routed && !loadUsed && error instanceof LLMOutputError
+          ? /^Unknown tool (\S+)/.exec(error.message)?.[1]
+          : undefined;
+      const askedDomain =
+        asked &&
+        toolsFor(userId, state, LOADABLE_DOMAINS).some((t) => t.name === asked)
+          ? domainOf(asked)
+          : undefined;
+      if (isLoadableDomain(askedDomain) && !domains.has(askedDomain)) {
+        loadUsed = true;
+        domains.add(askedDomain);
+        loadedDomains.add(askedDomain);
+        round -= 1;
+        continue;
+      }
       if (error instanceof LLMOutputError && !invalidRetried) {
         invalidRetried = true;
         invalidCall = error.message;
@@ -1536,7 +1592,7 @@ export async function handleMessage(
             ].includes(call.name),
           )
           .slice(0, 1)
-      : state.topic === "ugc"
+      : state.topic === "ugc" && (state.ugcDraftMode || !routed)
         ? shapedCalls
             .filter((call) =>
               state.ugcDraftMode
@@ -1624,9 +1680,19 @@ export async function handleMessage(
       conversationId: conversation.id,
       role: "assistant",
       content: visible,
-      toolCall: calls.length
-        ? { calls, promptVersion: SYSTEM_PROMPT_VERSION }
-        : { promptVersion: SYSTEM_PROMPT_VERSION },
+      toolCall: {
+        ...(calls.length ? { calls } : {}),
+        promptVersion: SYSTEM_PROMPT_VERSION,
+        // What the model was offered this round (D522), for before/after.
+        ...(routed
+          ? {
+              routing: {
+                domains: LOADABLE_DOMAINS.filter((d) => domains.has(d)),
+                tools: roundTools.length,
+              },
+            }
+          : {}),
+      },
       tokensIn: response.usage.tokensIn,
       tokensOut: response.usage.tokensOut,
       costMicroUsd: cost,
@@ -1637,10 +1703,36 @@ export async function handleMessage(
     }
 
     let roundCards: JobCardFacts[] = [];
+    let loadedNow = false;
     if (calls.length) {
       if (ugcDraftTurn || freelanceDraftTurn || jobDraftTurn)
         ugcToolUsed = true;
       for (const call of calls) {
+        if (call.name === "use_tools") {
+          const wanted = (call.input as { domains?: unknown }).domains;
+          const fresh = (Array.isArray(wanted) ? wanted : [])
+            .filter(isLoadableDomain)
+            .filter((domain) => !domains.has(domain))
+            .slice(0, 3);
+          const ok = routed && !loadUsed && fresh.length > 0;
+          if (ok) {
+            loadUsed = true;
+            loadedNow = true;
+            for (const domain of fresh) {
+              domains.add(domain);
+              loadedDomains.add(domain);
+            }
+          }
+          await repo.insertMessage({
+            conversationId: conversation.id,
+            role: "tool",
+            content: ok
+              ? `Tools for ${fresh.join(", ")} are loaded. Continue with the person's task now.`
+              : "Nothing more can be loaded in this reply. Use the tools you have, or say in one sentence what you cannot do here.",
+            toolCall: { toolCallId: call.id, name: call.name },
+          });
+          continue;
+        }
         const ctx: ToolContext = {
           userId,
           conversationId: conversation.id,
@@ -1687,6 +1779,11 @@ export async function handleMessage(
         fitSpoken = true;
       }
     }
+    // Loading tools does not use up a round of the turn (once).
+    if (loadedNow && !loadRoundGiven) {
+      loadRoundGiven = true;
+      round -= 1;
+    }
     if (waiting) break;
     if (!calls.length) break;
     // The server search is the reply. Do not take another model round.
@@ -1713,6 +1810,24 @@ export async function handleMessage(
       content: text,
     });
     emit({ type: "token", text, messageId: said.id });
+  }
+  // A follow-up keeps the services this turn named or loaded; a reply that
+  // names none ("yes", "ok") keeps the last ones one more turn (D522).
+  if (routed) {
+    const named = new Set<LoadableDomain>([
+      ...matchedDomains({
+        text: input.text,
+        topic: state.topic,
+        jobThread: Boolean(current.jobId),
+      }),
+      ...loadedDomains,
+    ]);
+    state = {
+      ...state,
+      domains: named.size
+        ? LOADABLE_DOMAINS.filter((domain) => named.has(domain))
+        : (state.domains ?? []),
+    };
   }
   return finish(input, state, emit, now);
 }

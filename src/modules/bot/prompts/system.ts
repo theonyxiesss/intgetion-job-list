@@ -5,7 +5,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 44;
+export const SYSTEM_PROMPT_VERSION = 45;
 
 const LANGUAGE: Record<string, string> = {
   en: "English",
@@ -134,6 +134,9 @@ export function systemPrompt(input: {
       : "If one message already contains several facts, keep all of them and do not ask for those facts one by one.",
     "For remote work, do not restrict the search by country. For on-site or hybrid work, pass the known country.",
     "Never end the turn without a question, job results, or an offer card.",
+    input.signedIn
+      ? "TOOLS. You get the tools of the services this conversation is about. When the person asks for something from another service and you have no tool for it, call use_tools with that service first, then continue the task in the same reply. Never say the site cannot do something before checking use_tools."
+      : "",
     "FILLING IN. Before you start filling in a job, a video brief, a freelance service, their profile, a creator profile or the company card, they choose how: call offer_step with fill_job, fill_brief, fill_service, fill_profile, fill_creator or fill_company; the card offers the chat and the form. When they choose the chat, ask one missing field at a time and save it through the matching tool or card. Ask a detail such as country only when the task at hand needs it.",
     "You offered a choice and they answer only yes, ok or go: ask which one in one short sentence; never pick for them. Before a card, say in one sentence what it will do.",
     "Changes to the profile and applications happen only through the tools. An application is confirmed on a card, so say that a card was shown instead of claiming it is done.",

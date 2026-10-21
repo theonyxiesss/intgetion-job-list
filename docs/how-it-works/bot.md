@@ -25,6 +25,12 @@
 - Telegram: webhook routes + Mini App session helpers (D311–D322)
 - Канал Jobs Alert: cron `/api/cron/telegram` после личной рассылки, шаблон без LLM (D341)
 
+## Маршрутизация, подтверждения и журнал (D520–D522)
+
+- **Маршрутизация** (`routing.ts`, `tool-domains.ts`): у каждого инструмента сервис — `core`, `jobs`, `employer`, `ugc`, `freelance`, `events`, `reminders`, `account`, `draft`. Вошедший вне черновика получает ядро и сервисы хода: тема нити, слова сообщения (ru/en), сервисы прошлого хода. Модель догружает сервис инструментом `use_tools` (одна догрузка за ход, раунд не тратится); вызов инструмента чужого сервиса догружает только его. Полный набор — никогда по умолчанию; `SPOKI_TOOL_ROUTING=false` возвращает старое поведение. Гости и черновики — как раньше. Раунд пишет в `bot_messages.tool_call.routing` сервисы и число инструментов.
+- **Подтверждения** (`src/lib/explicit-yes.ts`): отправка черновика вакансии, брифа и услуги — только после ясного «да» человека (без отрицания и без просьбы что-то поменять) и карточки; поле `requiresExplicitYes` проверяется до карточки. Черновики брифа и услуги забираются одним `DELETE … RETURNING`: два вызова создают один объект.
+- **Журнал** (`journal.ts`, таблица `bot_actions`, миграция 0070): карточка — `awaiting_confirmation` → `executing` → `completed` / `failed`, `cancelled`, `expired`, `interrupted`; прямые записи (`journal: true`) — `completed` / `failed`. Без аргументов и текстов; ссылка на объект (`ToolOutcome.audit`). Срок — `BOT_ACTIONS_RETENTION_DAYS` (180). Сбой журнала не ломает действие.
+
 ## Статус
 
 Web chat — OK при валидном LLM-ключе. Phone Mini App — OPEN ([../OPEN_TASKS.md](../OPEN_TASKS.md)).

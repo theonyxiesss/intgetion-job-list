@@ -56,6 +56,13 @@ import { companyTools } from "./company-tools";
 import { pitchTools, screenCoverNote } from "./pitch";
 import { reminderTools } from "./reminders";
 import {
+  DOMAIN_CATALOG,
+  LOADABLE_DOMAINS,
+  TOOL_DOMAINS,
+  domainOf,
+  type LoadableDomain,
+} from "./tool-domains";
+import {
   findEventsFace,
   getCompanyFace,
   getJobFace,
@@ -92,6 +99,8 @@ export type BotState = {
   fillMode?: FillMode | null;
   /** Spoki asked "here or in the form?" about this (D516). */
   fillOffered?: FillKind;
+  /** Services of the last turn, kept for a follow-up (D522). */
+  domains?: string[];
   /** The guest has already been offered an account once. */
   signupHintShown?: boolean;
   /** Claimed guest thread still needs one continuation message. */
@@ -409,6 +418,20 @@ export const TOOLS: readonly BotTool[] = [
             source: event.source.name,
           }),
         ),
+      };
+    },
+  }),
+  tool({
+    name: "use_tools",
+    description: `Load the tools of another service of this site when the person asks for something you have no tool for, then continue the task in the same reply. Services: ${LOADABLE_DOMAINS.map((domain) => `${domain} — ${DOMAIN_CATALOG[domain]}`).join("; ")}.`,
+    input: z
+      .object({ domains: z.array(z.enum(LOADABLE_DOMAINS)).min(1).max(3) })
+      .strict(),
+    access: "user",
+    confirm: never,
+    async run(_ctx, input) {
+      return {
+        llm: `Tools for ${input.domains.join(", ")} are loaded. Continue with the person's task now.`,
       };
     },
   }),
@@ -785,12 +808,38 @@ export const TOOLS: readonly BotTool[] = [
 /** Tools Spoki has; MCP-only tools are not among them (D486). */
 const SPOKI_TOOLS = TOOLS.filter((t) => t.spoki !== false);
 
-/** Tools offered to the model: guests never even see user tools (P11). */
+/**
+ * Tools offered to the model: guests never even see user tools (P11). With
+ * `domains` (hybrid routing, D522) a signed-in person outside a draft gets
+ * the core and those services only, in a fixed order; without it the set
+ * is the same as before routing.
+ */
 export function toolsFor(
   userId: string | null,
   state?: BotState,
+  domains?: readonly LoadableDomain[],
 ): LLMToolDefinition[] {
-  return SPOKI_TOOLS.filter((t) => userId !== null || t.access === "guest")
+  const drafting =
+    state?.ugcDraftMode || state?.freelanceDraftMode || state?.jobDraftMode;
+  if (domains && userId !== null && !drafting) {
+    const wanted = new Set<string>(["core", ...domains]);
+    const rank = (name: string) =>
+      TOOL_DOMAINS.indexOf(domainOf(name) ?? "core");
+    return SPOKI_TOOLS.filter(
+      (t) =>
+        wanted.has(domainOf(t.name) ?? "") &&
+        // A brief starts from its card in a UGC thread (D457).
+        !(state?.topic === "ugc" && t.name === "propose_ugc_campaign"),
+    )
+      .sort((a, b) => rank(a.name) - rank(b.name))
+      .map((t) => ({
+        name: t.name,
+        description: t.description,
+        input: t.input,
+      }));
+  }
+  return SPOKI_TOOLS.filter((t) => t.name !== "use_tools")
+    .filter((t) => userId !== null || t.access === "guest")
     .filter((t) => {
       if (state?.ugcDraftMode)
         return userId === null
