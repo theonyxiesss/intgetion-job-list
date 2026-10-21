@@ -2850,3 +2850,4 @@
 - Сделано: `src/lib/llm/openrouter.ts` (`reasoning` low + `FREE_REASONING_HEADROOM` для `:free`), `src/modules/bot/service/conversation.ts` (один повтор при пустом ответе по лимиту, `noAnswerLine` в нитях UGC/черновиков), `memory.ts` (`noAnswerLine`). Тест `src/modules/bot/__tests__/answer-budget.test.ts` (3). Документы: D513, CURRENT.
 - Миграции: нет.
 - Проверки D513: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm eval` → 0; `pnpm test` → 1: 1459 passed, 1 failed — прежний `legal.test.ts` (D241); `pnpm build` → 0. На настоящей модели локально не проверить (ключ только в Vercel).
+- D513 выкладка (founder: «да»): коммит `8645868`, Vercel `dpl_7UNCfxFWYjJeDuRaSaWH8PmiGHsC` success. На сайте гостем: «Привет! Что ты умеешь?» → нормальный ответ; «Ищу удалённую работу UI/UX дизайнером…» → поиск и список вакансий. В базе по этим ходам `tokens_out` 48–173, повторов по лимиту нет.
