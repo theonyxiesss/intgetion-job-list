@@ -186,3 +186,47 @@ export const botConfirmations = pgTable(
     ),
   ],
 );
+
+/** What Spoki did for a person (D521); migration 0070. */
+export const botActions = pgTable(
+  "bot_actions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    conversationId: uuid("conversation_id").references(
+      () => botConversations.id,
+      { onDelete: "set null" },
+    ),
+    channel: text("channel").notNull().default("web"),
+    tool: text("tool").notNull(),
+    kind: text("kind").notNull(),
+    status: text("status").notNull(),
+    confirmationId: uuid("confirmation_id").unique(),
+    argsHash: text("args_hash"),
+    entityType: text("entity_type"),
+    entityId: text("entity_id"),
+    errorCode: text("error_code"),
+    confirmedAt: timestamp("confirmed_at", { withTimezone: true }),
+    finishedAt: timestamp("finished_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("bot_actions_user_idx").on(table.userId, table.createdAt),
+    check(
+      "bot_actions_channel_check",
+      sql`${table.channel} in ('web', 'telegram')`,
+    ),
+    check("bot_actions_kind_check", sql`${table.kind} in ('card', 'direct')`),
+    check(
+      "bot_actions_status_check",
+      sql`${table.status} in ('awaiting_confirmation', 'executing', 'completed', 'failed', 'cancelled', 'expired', 'interrupted')`,
+    ),
+  ],
+);

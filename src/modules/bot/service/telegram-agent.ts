@@ -693,6 +693,7 @@ export async function handleTelegramAgentUpdate(
         // Rate limits key guests by address; one chat is one caller here.
         ip: `tg:${chatId}`,
         locale,
+        channel: "telegram",
       },
       (event) => events.push(event),
       now,

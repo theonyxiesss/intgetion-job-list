@@ -22,6 +22,7 @@ export async function readUserData(userId: string) {
     preferences,
     employerProfile,
     sharedProfile,
+    spokiActions,
     wallet,
     memberships,
     applications,
@@ -62,6 +63,10 @@ export async function readUserData(userId: string) {
     ),
     rows(
       sql`select display_name, country, city, timezone, languages, about, created_at, updated_at from public.user_profiles where user_id = ${userId}`,
+    ),
+    // What Spoki did for the person (D521): no arguments are kept.
+    rows(
+      sql`select tool, kind, status, entity_type, entity_id, error_code, channel, created_at, finished_at from public.bot_actions where user_id = ${userId} order by created_at`,
     ),
     // The account wallet (D518): the address and when it was proven.
     rows(
@@ -112,6 +117,7 @@ export async function readUserData(userId: string) {
     employerProfile: employerProfile[0] ?? null,
     sharedProfile: sharedProfile[0] ?? null,
     wallet: wallet[0] ?? null,
+    spokiActions,
     companyMemberships: memberships,
     applications,
     savedJobs,
@@ -212,6 +218,9 @@ export async function anonymizeUser(userId: string, now: Date) {
     );
     await tx.execute(
       sql`delete from public.user_wallets where user_id = ${userId}`,
+    );
+    await tx.execute(
+      sql`delete from public.bot_actions where user_id = ${userId}`,
     );
     await tx.execute(
       sql`delete from public.saved_jobs where user_id = ${userId}`,

@@ -250,6 +250,7 @@ export const ugcTools = [
           ugcCampaignId: result.id,
         },
         client: { kind: "ugc_campaign", data: result },
+        audit: { entityType: "ugc_campaign", entityId: result.id },
       };
     },
   },
@@ -270,6 +271,7 @@ export const ugcTools = [
       .strict(),
     access: "user" as const,
     confirm: read,
+    journal: true,
     async run(ctx: Ctx, input: { patch?: Record<string, unknown> }) {
       if (!ctx.state.ugcDraftMode)
         throw new HttpError(

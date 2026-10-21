@@ -60,6 +60,8 @@ const ALL_KNOWN = new Set([
   "LLM_MODEL_CHAT",
   "LLM_MODEL_EXTRACT",
   "LLM_DAILY_BUDGET_USD",
+  "BOT_ACTIONS_RETENTION_DAYS",
+  "SPOKI_TOOL_ROUTING",
   "EMBEDDINGS_ENABLED",
   "IMPORT_LIVE_ENABLED",
   "EVENTS_IMPORT_SOURCES",
@@ -255,6 +257,18 @@ function validateVar(name, value, mode) {
       break;
     }
 
+    case "BOT_ACTIONS_RETENTION_DAYS":
+      // D521: whole days the Spoki action journal is kept (default 180).
+      if (
+        !/^\d+$/.test(trimmed) ||
+        Number(trimmed) < 1 ||
+        Number(trimmed) > 3650
+      ) {
+        return { name, status: "INVALID", reason: "must be whole days 1–3650" };
+      }
+      break;
+
+    case "SPOKI_TOOL_ROUTING":
     case "EMBEDDINGS_ENABLED":
     case "IMPORT_LIVE_ENABLED":
       if (!isBooleanString(trimmed)) {

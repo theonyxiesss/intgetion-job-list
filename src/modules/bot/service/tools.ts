@@ -137,6 +137,8 @@ export type ToolContext = {
   state: BotState;
   /** The matching site confirmation card was accepted. */
   confirmedAction?: boolean;
+  /** Where the turn came from, for the action journal (D521). */
+  channel?: "web" | "telegram";
 };
 
 /** What the model reads back, and an optional card for the chat UI. */
@@ -144,6 +146,8 @@ export type ToolOutcome = {
   llm: string;
   client?: { kind: string; data: unknown };
   state?: BotState;
+  /** The business item the write made or changed, for the journal (D521). */
+  audit?: { entityType: string; entityId: string };
 };
 
 type Access = "guest" | "user";
@@ -171,6 +175,8 @@ export type BotTool<T extends z.ZodType = z.ZodType> = {
    * last message must clearly say yes before a card is shown (D520).
    */
   requiresExplicitYes?: (text: string) => boolean;
+  /** A write without a card that the action journal records (D521). */
+  journal?: true;
   run: (
     ctx: ToolContext,
     input: z.infer<T>,
@@ -504,6 +510,7 @@ export const TOOLS: readonly BotTool[] = [
     input: z.object({ jobId: id }).strict(),
     access: "user",
     confirm: never,
+    journal: true,
     async run(ctx, input) {
       await saveJobForUser(ctx.userId!, input.jobId);
       return {
@@ -518,6 +525,7 @@ export const TOOLS: readonly BotTool[] = [
     input: z.object({ jobId: id }).extend(hideJobInput.shape).strict(),
     access: "user",
     confirm: never,
+    journal: true,
     async run(ctx, input) {
       await hideJobForUser(ctx.userId!, input.jobId, {
         scope: input.scope,
@@ -554,6 +562,7 @@ export const TOOLS: readonly BotTool[] = [
       });
       return {
         llm: `Applied. Application status: ${application.status}.`,
+        audit: { entityType: "application", entityId: application.id },
         client: {
           kind: "applied",
           data: { jobId: input.jobId, status: application.status },
@@ -685,6 +694,7 @@ export const TOOLS: readonly BotTool[] = [
       .strict(),
     access: "user",
     confirm: never,
+    journal: true,
     async run(ctx, input) {
       const result = await rememberFact(ctx.userId!, input.fact, "chat");
       if (!result.ok) {
@@ -719,6 +729,7 @@ export const TOOLS: readonly BotTool[] = [
       .strict(),
     access: "user",
     confirm: never,
+    journal: true,
     async run(ctx, input) {
       const gone = await forgetFactByRef(ctx.userId!, input.ref);
       return {

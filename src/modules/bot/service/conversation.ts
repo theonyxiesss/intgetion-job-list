@@ -68,6 +68,15 @@ import {
 import { jobFocusBlock, jobFocusOpener, readJobFocus } from "./job-focus";
 import { jobDraftFocusBlock, jobDraftOpener } from "./job-draft-focus";
 import { fillQuestion, fillRequestOf } from "./fill-choice";
+import { CONFIRMATION_TTL_MS } from "./constants";
+import {
+  journalCardDeclined,
+  journalCardExecuting,
+  journalCardFinished,
+  journalCardShown,
+  journalDirect,
+  type Channel,
+} from "./journal";
 import {
   isServiceFrom,
   serviceFocusBlock,
@@ -133,7 +142,7 @@ import {
 /** 12.1 ConversationManager for the web channel (D172–D176). */
 
 export const BOT_SESSION_COOKIE = "bot_session";
-export const CONFIRMATION_TTL_MS = 10 * 60 * 1000;
+export { CONFIRMATION_TTL_MS };
 /** Tool rounds per user message before the bot must answer in text. */
 export const MAX_TOOL_ROUNDS = 3;
 /** Messages read from the database to build the context (trimmed later). */
@@ -1177,6 +1186,8 @@ export type MessageInput = {
   locale: string;
   /** Spoki's own turn right after a card was answered (D515): no user text. */
   afterCard?: boolean;
+  /** Telegram turns are marked in the action journal (D521). */
+  channel?: Channel;
 };
 
 /** How long after a card is answered Spoki may still take its turn (D515). */
@@ -1635,6 +1646,7 @@ export async function handleMessage(
           conversationId: conversation.id,
           locale: input.locale,
           state: { ...state, lastUserText: input.text },
+          channel: input.channel ?? "web",
         };
         const content = await callTool(ctx, call, emit, now);
         if (content.state) state = content.state;
@@ -1858,13 +1870,23 @@ async function callTool(
               : "These arguments cannot be used. No card was shown.",
       };
     }
+    const argsHash = hashArgs(call.name, call.input);
     const confirmation = await repo.createConfirmation({
       conversationId: ctx.conversationId,
       userId: ctx.userId,
       tool: call.name,
       args: call.input,
-      argsHash: hashArgs(call.name, call.input),
+      argsHash,
       expiresAt: new Date(now.getTime() + CONFIRMATION_TTL_MS),
+    });
+    await journalCardShown({
+      userId: ctx.userId,
+      conversationId: ctx.conversationId,
+      channel: ctx.channel ?? "web",
+      tool: call.name,
+      confirmationId: confirmation.id,
+      argsHash,
+      now,
     });
     emit({
       type: "confirm_request",
@@ -1880,8 +1902,27 @@ async function callTool(
       waiting: true,
     };
   }
+  const journaled = Boolean(ctx.userId && findTool(call.name)?.journal);
+  const journal = (
+    ok: boolean,
+    extra: { entity?: unknown; error?: unknown },
+  ) =>
+    journaled
+      ? journalDirect({
+          userId: ctx.userId!,
+          conversationId: ctx.conversationId,
+          channel: ctx.channel ?? "web",
+          tool: call.name,
+          argsHash: hashArgs(call.name, call.input),
+          ok,
+          entity: extra.entity as never,
+          error: extra.error,
+          now,
+        })
+      : Promise.resolve();
   try {
     const outcome = await runTool(ctx, call.name, call.input);
+    await journal(true, { entity: outcome.audit });
     if (outcome.client) {
       emit({
         type: "tool_result",
@@ -1902,6 +1943,7 @@ async function callTool(
       jobCards: jobs ? cardsFrom(data) : [],
     };
   } catch (error) {
+    await journal(false, { error });
     if (error instanceof HttpError) {
       const details =
         error.details === undefined ? "" : ` ${JSON.stringify(error.details)}`;
@@ -2030,6 +2072,7 @@ export async function confirmAction(
     );
   }
   if (!input.accept) {
+    await journalCardDeclined(row.id, input.userId, now);
     await repo.insertMessage({
       conversationId: input.conversation.id,
       role: "system_event",
@@ -2043,6 +2086,7 @@ export async function confirmAction(
     locale: input.conversation.locale ?? "en",
     state: input.conversation.state as BotState,
   };
+  await journalCardExecuting(row.id, input.userId, now);
   try {
     const outcome = await runTool(
       ctx,
@@ -2055,6 +2099,13 @@ export async function confirmAction(
       },
       input.fields,
     );
+    await journalCardFinished({
+      confirmationId: row.id,
+      userId: input.userId,
+      ok: true,
+      entity: outcome.audit,
+      now: new Date(),
+    });
     await repo.insertMessage({
       conversationId: input.conversation.id,
       role: "system_event",
@@ -2070,6 +2121,13 @@ export async function confirmAction(
     }
     return { accepted: true as const, result: outcome.client ?? null };
   } catch (error) {
+    await journalCardFinished({
+      confirmationId: row.id,
+      userId: input.userId,
+      ok: false,
+      error,
+      now: new Date(),
+    });
     // Spoki explains the failure on its next turn (D515), so it hears of
     // every failure, not only the expected ones.
     await repo.insertMessage({

@@ -133,6 +133,7 @@ export const jobDraftTools = [
           status: result.status,
         }),
         state: { ...ctx.state, jobDraftMode: false, jobDraftId: undefined },
+        audit: { entityType: "job", entityId: String(result.jobId) },
         client: {
           kind: "job_draft_submitted",
           data: {
@@ -151,6 +152,7 @@ export const jobDraftTools = [
     input: z.object({}).strict(),
     access: "user",
     confirm: read,
+    journal: true,
     async run(ctx: Context) {
       assertDraftMode(ctx);
       if (!explicitReset(ctx.state.lastUserText ?? ""))

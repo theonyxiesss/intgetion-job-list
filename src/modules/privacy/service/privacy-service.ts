@@ -84,6 +84,9 @@ export const AUTH_DELETE_RETRY_DAYS = 7;
 export async function runRetention(now = new Date()) {
   const purged = await repo.purgeExpired(now);
   const analyticsEvents = await purgeAnalytics(now);
+  // D521: the Spoki action journal expires, cut-off actions are marked.
+  const { sweepBotActions } = await import("@/modules/bot/service");
+  const botActions = await sweepBotActions(now);
   const since = new Date(
     now.getTime() - AUTH_DELETE_RETRY_DAYS * 24 * 60 * 60 * 1000,
   );
@@ -95,5 +98,5 @@ export async function runRetention(now = new Date()) {
       logger.warn("retention: auth user delete still failing");
     }
   }
-  return { ...purged, analyticsEvents, authRetried };
+  return { ...purged, analyticsEvents, authRetried, botActions };
 }

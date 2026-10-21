@@ -1,7 +1,23 @@
-import { and, asc, desc, eq, gt, gte, isNull, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gt,
+  gte,
+  inArray,
+  isNull,
+  lt,
+  sql,
+} from "drizzle-orm";
 import { CHAT_TEXT_TTL_MS } from "@/config/retention";
 import { getDb } from "@/db/client";
-import { botConfirmations, botConversations, botMessages } from "@/db/schema";
+import {
+  botActions,
+  botConfirmations,
+  botConversations,
+  botMessages,
+} from "@/db/schema";
 
 export type ConversationRow = typeof botConversations.$inferSelect;
 export type MessageRow = typeof botMessages.$inferSelect;
@@ -445,4 +461,146 @@ export async function rateAnswer(input: {
     )
     .returning({ id: botMessages.id });
   return rows.length > 0;
+}
+
+// ---- journal of Spoki's actions (D521) ------------------------------------
+
+export type ActionStatus =
+  | "awaiting_confirmation"
+  | "executing"
+  | "completed"
+  | "failed"
+  | "cancelled"
+  | "expired"
+  | "interrupted";
+
+export type ActionRow = typeof botActions.$inferSelect;
+
+export async function insertAction(input: {
+  userId: string;
+  conversationId: string | null;
+  channel: "web" | "telegram";
+  tool: string;
+  kind: "card" | "direct";
+  status: ActionStatus;
+  confirmationId?: string;
+  argsHash?: string;
+  entityType?: string;
+  entityId?: string;
+  errorCode?: string;
+  now: Date;
+}): Promise<void> {
+  const finished =
+    input.status === "completed" || input.status === "failed"
+      ? input.now
+      : null;
+  await getDb()
+    .insert(botActions)
+    .values({
+      userId: input.userId,
+      conversationId: input.conversationId,
+      channel: input.channel,
+      tool: input.tool,
+      kind: input.kind,
+      status: input.status,
+      confirmationId: input.confirmationId ?? null,
+      argsHash: input.argsHash ?? null,
+      entityType: input.entityType ?? null,
+      entityId: input.entityId ?? null,
+      errorCode: input.errorCode ?? null,
+      finishedAt: finished,
+      createdAt: input.now,
+      updatedAt: input.now,
+    })
+    .onConflictDoNothing({ target: botActions.confirmationId });
+}
+
+/**
+ * Moves the row of one card on, only from the expected states, so a late or
+ * repeated step cannot rewrite a finished action. True when it moved.
+ */
+export async function moveCardAction(
+  confirmationId: string,
+  userId: string,
+  from: readonly ActionStatus[],
+  patch: {
+    status: ActionStatus;
+    confirmedAt?: Date;
+    finishedAt?: Date;
+    entityType?: string;
+    entityId?: string;
+    errorCode?: string;
+  },
+  now: Date,
+): Promise<boolean> {
+  const rows = await getDb()
+    .update(botActions)
+    .set({ ...patch, updatedAt: now })
+    .where(
+      and(
+        eq(botActions.confirmationId, confirmationId),
+        eq(botActions.userId, userId),
+        inArray(botActions.status, [...from]),
+      ),
+    )
+    .returning({ id: botActions.id });
+  return rows.length > 0;
+}
+
+/**
+ * Housekeeping for the retention cron: a card nobody answered is expired, an
+ * action stuck in `executing` is interrupted, old rows go.
+ */
+export async function sweepActions(input: {
+  awaitingBefore: Date;
+  executingBefore: Date;
+  deleteBefore: Date;
+  now: Date;
+}) {
+  const expired = await getDb()
+    .update(botActions)
+    .set({ status: "expired", finishedAt: input.now, updatedAt: input.now })
+    .where(
+      and(
+        eq(botActions.status, "awaiting_confirmation"),
+        lt(botActions.createdAt, input.awaitingBefore),
+      ),
+    )
+    .returning({ id: botActions.id });
+  const interrupted = await getDb()
+    .update(botActions)
+    .set({
+      status: "interrupted",
+      finishedAt: input.now,
+      updatedAt: input.now,
+    })
+    .where(
+      and(
+        eq(botActions.status, "executing"),
+        lt(botActions.updatedAt, input.executingBefore),
+      ),
+    )
+    .returning({ id: botActions.id });
+  const deleted = await getDb()
+    .delete(botActions)
+    .where(lt(botActions.createdAt, input.deleteBefore))
+    .returning({ id: botActions.id });
+  return {
+    expired: expired.length,
+    interrupted: interrupted.length,
+    deleted: deleted.length,
+  };
+}
+
+/** The person's own actions, newest first; never another person's. */
+export async function listActionsForUser(
+  userId: string,
+  limit: number,
+): Promise<ActionRow[]> {
+  return getDb()
+    .select()
+    .from(botActions)
+    .where(eq(botActions.userId, userId))
+    .orderBy(desc(botActions.createdAt))
+    .limit(limit);
 }

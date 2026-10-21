@@ -454,6 +454,7 @@ export const freelanceTools = [
           freelanceDraftId: undefined,
         },
         client: { kind: "freelance_service_saved", data: result },
+        audit: { entityType: "freelance_service", entityId: result.id },
       };
     },
   },
@@ -464,6 +465,7 @@ export const freelanceTools = [
     input: z.object({}).strict(),
     access: "user" as const,
     confirm: read,
+    journal: true,
     async run(ctx: Ctx) {
       if (
         !ctx.state?.freelanceDraftMode ||
