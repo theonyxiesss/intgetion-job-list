@@ -48,7 +48,8 @@ async function fillProfile(page: Page, contactEmail: string, title: string) {
   await page.getByLabel("Salary currency").fill("EUR");
   await page.getByLabel("Contact email").fill(contactEmail);
   await page.getByRole("button", { name: "Save profile" }).click();
-  await expect(page).toHaveURL(/:\d+\/profile$/);
+  // D517: the form returns to the one account page.
+  await expect(page).toHaveURL(/:\d+\/account$/);
 }
 
 async function insertMatchJob(userId: string, title: string) {

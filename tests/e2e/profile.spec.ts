@@ -41,12 +41,13 @@ test("profile completeness grows, and another candidate gets 404 without contact
   await registerWithPassword(page, email);
   await confirmEmail(page, email);
 
-  // D439: with no profile yet there is no completeness bar, only "Create".
+  // D517: /profile is the one account page; with no profile yet the job
+  // search service says so instead of showing a score.
   await page.goto("/en/profile");
+  await expect(page).toHaveURL(/:\d+\/account$/);
   await expect(
-    page.getByRole("link", { name: "Create profile" }).first(),
+    page.getByText("No candidate profile yet").first(),
   ).toBeVisible();
-  await expect(page.getByRole("progressbar")).toHaveCount(0);
 
   await page.goto("/en/profile/edit");
   await page.getByLabel("Full name").fill("Ada Lovelace");
@@ -64,11 +65,12 @@ test("profile completeness grows, and another candidate gets 404 without contact
   await page.getByLabel("Contact email").fill(contactEmail);
   await page.getByRole("button", { name: "Save profile" }).click();
 
-  await expect(page).toHaveURL(/:\d+\/profile$/);
-  const score = await page
-    .getByRole("progressbar")
-    .getAttribute("aria-valuenow");
-  expect(Number(score)).toBeGreaterThan(0);
+  await expect(page).toHaveURL(/:\d+\/account$/);
+  const status = await page
+    .getByText(/^Profile \d+% complete$/)
+    .first()
+    .textContent();
+  expect(Number(status?.match(/\d+/)?.[0])).toBeGreaterThan(0);
 
   const me = await page.request.get("/api/me");
   const meBody = (await me.json()) as {

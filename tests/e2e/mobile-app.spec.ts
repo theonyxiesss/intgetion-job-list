@@ -50,7 +50,8 @@ async function signUpCandidate(page: Page) {
   await page.getByLabel("Salary currency").fill("EUR");
   await page.getByLabel("Contact email").fill(email);
   await page.getByRole("button", { name: "Save profile" }).click();
-  await expect(page).toHaveURL(/:\d+\/profile$/);
+  // D517: the form returns to the one account page.
+  await expect(page).toHaveURL(/:\d+\/account$/);
 }
 
 test("everyone on a phone gets the tab bar with the main services (D468)", async ({
