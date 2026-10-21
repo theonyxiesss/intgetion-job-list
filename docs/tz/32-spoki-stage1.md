@@ -255,4 +255,85 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.bot_actions TO app_rw;
 | 7   | Откат                                                  | «да» основателя                                           | —                                                                                                                                                                                                                                              | маршрутизация: `SPOKI_TOOL_ROUTING=false` в Vercel + повторная выкладка; всё: `git revert` слитых коммитов + выкладка; `0070` можно оставить (таблицу старый код не читает) |
 | 8   | Наблюдение 24–48 ч                                     | —                                                         | SQL по `bot_messages.tool_call.routing`: токены на вызов, вызовов на ход, время (медиана / p90) против базы (медиана 11 с, p90 34 с, ~1,8 вызова, 21,4 тыс. токенов на ход); доля `use_tools` и догрузок; строки `bot_actions` по статусам     | решить, оставлять ли маршрутизацию включённой                                                                                                                               |
 
-D523 начинается только после шага 8.
+После шага 8 — D525 (постоянная боковая панель Spoki), затем D523 (интерактивные карточки); основатель 2026-10-21.
+
+### 11.5 Финальная готовность (2026-10-21)
+
+**Ветка:** `claude/spoki-core-stage1`, fast-forward от `origin/master` `094707f`, архитектура заморожена. **Сайт сейчас:** коммит `094707f`, выкладка `dpl_32Y4x25jiJucFkFYB2GPEA8ca6fD` — цель отката.
+
+| Проверка                               | Итог                                                                                                                                                                                                             |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CI на `4c4a7f2` (`check` + `database`) | зелёный: юнит 1518, интеграционные 182 (D520/D521 тоже), миграции с нуля с `0070`, e2e 86 (+1 нестабильный `auth.spec.ts:258`, нестабилен и на master)                                                           |
+| Локально на `0a81a1f`                  | `typecheck`, `lint`, `build`, `env:check` — 0; `test` — 1 падение `legal.test.ts` только на Windows (концы строк)                                                                                                |
+| Preview Vercel                         | не собирается (D524), «Canceled by Ignored Build Step» на всех коммитах ветки                                                                                                                                    |
+| Маршрутизация без модели               | нужный инструмент в наборе на всех 53 случаях                                                                                                                                                                    |
+| **Живой замер маршрутизации**          | **не проведён — ограничение релиза**: `OPENROUTER_API_KEY` нет в `.env.local`; платные модели не используются. Отдельная проверка; до неё — наблюдение на сайте (шаг 8) и выключатель `SPOKI_TOOL_ROUTING=false` |
+| Под входом                             | не проверено (вход за основателя запрещён) — шаг 6                                                                                                                                                               |
+
+**Миграция `0070` — готовность (облако, только чтение, 2026-10-21):**
+
+- Проект `hwcdscobnmxatmjbmect` совпадает с `NEXT_PUBLIC_SUPABASE_URL`; Postgres 17.11, основной узел.
+- Журнал 66 строк, последняя `0069`; отличия от папки только известные (`0020_telegram_login` без файла; `0048`, `0070` не применены). `bot_actions` в облаке нет.
+- Зависимости есть: `users.id` и `bot_conversations.id` — `uuid`; функция `enable_rls_deny_all`, роли `migrator` и `app_rw`; членство `postgres` в `migrator` — одна строка от `supabase_admin`, `set=false` (как требует D438).
+- **Совместимость со старым кодом:** код на сайте (`094707f`) не обращается к `bot_actions` ни разу — новая пустая таблица его не задевает. Миграция не меняет существующие таблицы и данные. Поэтому порядок: `0070` → код. Наоборот нельзя: новый код без таблицы ломает выгрузку данных и удаление аккаунта.
+- **Резервная копия:** тариф Supabase — Free, ежедневных копий для восстановления нет. Миграция только добавляет пустую таблицу в одной транзакции, поэтому копия — мера предосторожности, а не условие. Рекомендуется перед шагом 2: логический дамп локальным `pg_dump` 18.3 (`C:\Users\Admin\PostgreSQL\pgsql\bin`). Делает основатель: строка подключения с паролем `postgres` — секрет.
+
+**Команды релиза** (каждый шаг, кроме 1, 5 и 6 — после «да» основателя):
+
+1. Копия (основатель, PowerShell; строку взять в Supabase → Connect → Session pooler):
+
+   ```
+   & "C:\Users\Admin\PostgreSQL\pgsql\bin\pg_dump.exe" "<строка подключения>" --schema=public --format=custom --file "C:\Users\Admin\Backups\intgetion-pre-0070-2026-10-21.dump"
+   ```
+
+2. `0070` путём D438 — один вызов MCP `execute_sql`:
+
+   ```sql
+   begin;
+   grant migrator to postgres with set true, inherit false;
+   set local role migrator;
+   -- полный текст src/db/migrations/0070_bot_actions.sql без изменений
+   insert into public.schema_migrations (filename) values ('0070_bot_actions.sql');
+   reset role;
+   revoke migrator from postgres granted by postgres;
+   commit;
+   ```
+
+   Ошибка — транзакция откатывается целиком, база как до шага. Проверка:
+
+   ```sql
+   select pg_get_userbyid(c.relowner) as owner, c.relrowsecurity, c.relforcerowsecurity,
+     (select count(*) from pg_policies where schemaname = 'public' and tablename = 'bot_actions') as policies,
+     has_table_privilege('app_rw', 'public.bot_actions', 'select,insert,update,delete') as app_rw,
+     (select count(*) from public.schema_migrations) as ledger
+   from pg_class c where c.oid = 'public.bot_actions'::regclass;
+   ```
+
+   Ждём: `migrator`, `true`, `true`, 3, `true`, 67; членство `postgres` в `migrator` — снова одна строка `supabase_admin`, `set=false`; `get_advisors` (security, performance) — без новых предупреждений про `bot_actions`.
+
+3. Выкладка — fast-forward без переключения веток:
+
+   ```bash
+   git push origin claude/spoki-core-stage1:master
+   ```
+
+   Git сам откажет, если master ушёл вперёд (тогда стоп и сверка). Production собирается из master; `ignoreCommand` при `VERCEL_ENV=production` сборку пропускает дальше. Если статус всё же «Canceled by Ignored Build Step» — стоп, сообщить; запасной путь `npx vercel deploy --prod` из чистого дерева — только с отдельным «да».
+
+4. Проверка сайта (сразу после `success` в `gh api repos/theonyxiesss/intgetion-job-list/commits/<sha>/statuses`):
+
+   - новый `dpl_…` в статусе Vercel; `https://intgetion.com/api/health` → 200;
+   - `/`, `/en/jobs`, `/ru/jobs`, `/en/services`, `/en/pricing` → 200; `/account` без входа → вход (`/en/account` → 308 на `/account`);
+   - `POST /api/bot/confirm` без входа → 401; `GET /api/bot/conversation` без входа → 200 (гостевая нить, так и задумано; проверено на `094707f`);
+   - гостевой ход чата на сайте отвечает (один вопрос, бесплатная модель);
+   - `npx vercel logs <url>` / панель — нет новых ошибок `bot_actions`, `routing`, `use_tools`;
+   - чтение SQL: `select status, count(*) from public.bot_actions group by 1` — без ошибок.
+
+5. Под входом (основатель): бриф → «да» → карточка «Отправить бриф на модерацию?» → «Подтвердить» → бриф на модерации; «да, но исправь цену» → карточки нет; двойное нажатие → один бриф; то же для услуги; в нити UGC «выставь вакансию» → Spoki берёт инструменты найма; «скрой / снова покажи мой профиль» → карточка. После — строки в `bot_actions` (SQL, только чтение).
+
+6. Наблюдение 24–48 ч — как шаг 8 в §11.4.
+
+**Откат:**
+
+- Маршрутизация ведёт себя плохо: `SPOKI_TOOL_ROUTING=false` в Vercel production + повторная выкладка (env — «да» основателя).
+- Код: `npx vercel rollback dpl_32Y4x25jiJucFkFYB2GPEA8ca6fD` или `git revert` коммитов ветки (`094707f..` до слитой головы) + пуш (оба — «да»). После мгновенного отката Vercel перестаёт сам назначать домен новым выкладкам до promote.
+- `0070` после отката кода **оставить**: старый код таблицу не читает. Удаление таблицы — удаление данных, отдельное «да»: та же обёртка D438 с `drop table public.bot_actions;` и `delete from public.schema_migrations where filename = '0070_bot_actions.sql';`.
