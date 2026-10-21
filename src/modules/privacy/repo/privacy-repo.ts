@@ -22,6 +22,7 @@ export async function readUserData(userId: string) {
     preferences,
     employerProfile,
     sharedProfile,
+    wallet,
     memberships,
     applications,
     savedJobs,
@@ -61,6 +62,10 @@ export async function readUserData(userId: string) {
     ),
     rows(
       sql`select display_name, country, city, timezone, languages, about, created_at, updated_at from public.user_profiles where user_id = ${userId}`,
+    ),
+    // The account wallet (D518): the address and when it was proven.
+    rows(
+      sql`select address, chain_id, verified_at from public.user_wallets where user_id = ${userId} and address is not null`,
     ),
     rows(
       sql`select c.name as company, m.role, m.created_at from public.company_members m join public.companies c on c.id = m.company_id where m.user_id = ${userId}`,
@@ -106,6 +111,7 @@ export async function readUserData(userId: string) {
     preferences: preferences[0] ?? null,
     employerProfile: employerProfile[0] ?? null,
     sharedProfile: sharedProfile[0] ?? null,
+    wallet: wallet[0] ?? null,
     companyMemberships: memberships,
     applications,
     savedJobs,
@@ -203,6 +209,9 @@ export async function anonymizeUser(userId: string, now: Date) {
     );
     await tx.execute(
       sql`delete from public.user_profiles where user_id = ${userId}`,
+    );
+    await tx.execute(
+      sql`delete from public.user_wallets where user_id = ${userId}`,
     );
     await tx.execute(
       sql`delete from public.saved_jobs where user_id = ${userId}`,

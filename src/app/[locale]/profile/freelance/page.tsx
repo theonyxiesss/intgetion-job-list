@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { readAccountWallet } from "@/modules/users/service";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FREELANCE_LIMITS } from "@/config/freelance";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +10,6 @@ import { navForward } from "@/components/ui/page-transition";
 import { Link } from "@/i18n/navigation";
 import { hasCandidateProfile } from "@/modules/candidates/service";
 import {
-  getPayoutStatus,
   getSeller,
   listOrders,
   listOwnServices,
@@ -62,7 +62,9 @@ export default async function FreelanceCabinetPage({
       )
     : [];
   const copy = await freelanceClientCopy(locale);
-  const payout = seller ? await getPayoutStatus(user.id) : null;
+  const payout = seller
+    ? { address: (await readAccountWallet(user.id))?.address ?? null }
+    : null;
   const active = services.filter((service) =>
     ["pending", "published", "paused"].includes(service.status),
   ).length;
@@ -114,7 +116,7 @@ export default async function FreelanceCabinetPage({
                     </p>
                   )}
                   <Link
-                    href="/billing/crypto?payout=1"
+                    href="/account#security"
                     className={`${buttonClass("secondary")} self-start`}
                   >
                     {payout?.address

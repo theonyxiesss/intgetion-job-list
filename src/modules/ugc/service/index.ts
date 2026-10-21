@@ -133,6 +133,7 @@ export {
   createCampaignDeposit,
   listRefundsDue,
   listWalletPayouts,
+  owedWalletRewards,
   payRewardByTx,
   recheckCampaignDeposits,
   refreshCampaignDeposit,
@@ -155,3 +156,37 @@ export {
 } from "./escrow-rules";
 export { companyNextStep, creatorNextStep, ugcNextStep } from "./next-step";
 export type { UgcNextStep } from "./next-step";
+export { companyWorkspace, workspaceMatches } from "./workspace";
+export type {
+  WorkspaceCampaign,
+  WorkspaceMatch,
+  WorkspaceParticipant,
+} from "./workspace";
+export {
+  attentionItems,
+  CAMPAIGN_GROUPS,
+  campaignGroup,
+  creatorsFrom,
+  DESK_HREFS,
+  DESK_SECTIONS,
+  deskTotals,
+  linkLabel,
+  MATERIAL_GROUPS,
+  materialGroup,
+  monogram,
+  moneyTotals,
+  ORDER_GROUPS,
+  orderGroup,
+  pickGroup,
+  videoPlatform,
+} from "./workspace-view";
+export type {
+  AttentionItem,
+  CampaignGroup,
+  DeskSection,
+  DeskTotals,
+  MaterialGroup,
+  MoneyTotals,
+  OrderGroup,
+  VideoPlatform,
+} from "./workspace-view";

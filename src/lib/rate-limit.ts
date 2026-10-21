@@ -59,6 +59,8 @@ export const rateRules = {
   mcpGuest: { limit: 60, windowSeconds: 60 },
   /** admin host sign-in failures, keyed by account and by IP (D252) */
   adminLogin: { limit: 5, windowSeconds: 15 * 60 },
+  /** Linking, changing or disconnecting the account wallet (D518). */
+  accountWallet: { limit: 20, windowSeconds: 60 * 60 },
   /** Wallet sign-in before a crypto order (D353). */
   billingSiwe: { limit: 20, windowSeconds: 60 * 60 },
   /** Opening a Hire order, keyed by user id. */

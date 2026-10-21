@@ -16,7 +16,18 @@ import {
 } from "./conversation";
 import { localePrefix } from "@/i18n/paths";
 import { stripLeakedToolMarkup } from "./leaked-tool";
-import { isOfferAction, offerPath, type OfferAction } from "./offers";
+import {
+  fillKindOf,
+  fillPaths,
+  isFillKind,
+  isOfferAction,
+  offerPath,
+  type OfferAction,
+} from "./offers";
+
+function fillKindFromOffer(action: unknown) {
+  return isOfferAction(action) ? fillKindOf(action) : null;
+}
 
 /** One Telegram message is 4096 characters; leave room for the job list. */
 const TELEGRAM_TEXT_LIMIT = 3500;
@@ -46,6 +57,10 @@ const copy = {
     signIn: "To save a job or apply, sign in, then come back here.",
     signInButton: "Sign in",
     jobSignIn: "Sign in to prepare a job listing.",
+    fillChoice: "Or reply here and we fill it in together.",
+    fillChatButton: "Fill in with Spoki on the site",
+    jobChoice: "Or send /post_job and we fill it in here.",
+    jobFormButton: "Fill in the form",
     jobDraftButton: "Review job draft",
     startJob:
       "Let's prepare a job listing draft. Tell me who you need, and I'll save the details and ask only about the next important gap.",
@@ -68,6 +83,10 @@ const copy = {
       "Чтобы сохранить вакансию или откликнуться, войдите и возвращайтесь сюда.",
     signInButton: "Войти",
     jobSignIn: "Войдите, чтобы подготовить вакансию.",
+    fillChoice: "Или ответьте здесь — заполним вместе.",
+    fillChatButton: "Заполнить со Spoki на сайте",
+    jobChoice: "Или отправьте /post_job — заполним здесь.",
+    jobFormButton: "Заполнить форму",
     jobDraftButton: "Проверить черновик вакансии",
     startJob:
       "Давайте подготовим черновик вакансии. Напишите, кого ищете, а я сохраню детали и спрошу только о следующем важном пробеле.",
@@ -93,6 +112,10 @@ const copy = {
     signIn: "Para salvar uma vaga ou se candidatar, entre e depois volte aqui.",
     signInButton: "Entrar",
     jobSignIn: "Entre para preparar uma vaga.",
+    fillChoice: "Ou responda aqui e preenchemos juntos.",
+    fillChatButton: "Preencher com o Spoki no site",
+    jobChoice: "Ou envie /post_job e preenchemos aqui.",
+    jobFormButton: "Preencher o formulário",
     jobDraftButton: "Revisar rascunho da vaga",
     startJob:
       "Vamos preparar um rascunho da vaga. Diga quem você procura; vou salvar os detalhes e perguntar apenas sobre o próximo dado importante que faltar.",
@@ -121,6 +144,10 @@ const copy = {
       "Um einen Job zu speichern oder sich zu bewerben, melden Sie sich an und kommen Sie dann hierher zurück.",
     signInButton: "Anmelden",
     jobSignIn: "Melden Sie sich an, um eine Stellenanzeige vorzubereiten.",
+    fillChoice: "Oder antworte hier, dann füllen wir es zusammen aus.",
+    fillChatButton: "Mit Spoki auf der Website ausfüllen",
+    jobChoice: "Oder sende /post_job, dann füllen wir sie hier aus.",
+    jobFormButton: "Formular ausfüllen",
     jobDraftButton: "Stellenentwurf ansehen",
     startJob:
       "Lass uns einen Stellenentwurf erstellen. Beschreibe, wen du suchst; ich speichere die Angaben und frage nur nach der nächsten wichtigen Lücke.",
@@ -149,6 +176,10 @@ const copy = {
       "Pour enregistrer une offre ou postuler, connectez-vous, puis revenez ici.",
     signInButton: "Se connecter",
     jobSignIn: "Connectez-vous pour préparer une offre d’emploi.",
+    fillChoice: "Ou réponds ici et on le remplit ensemble.",
+    fillChatButton: "Remplir avec Spoki sur le site",
+    jobChoice: "Ou envoie /post_job et on la remplit ici.",
+    jobFormButton: "Remplir le formulaire",
     jobDraftButton: "Vérifier le brouillon d’offre",
     startJob:
       "Préparons un brouillon d’offre d’emploi. Décris le profil recherché ; j’enregistre les informations et ne demande que le prochain élément important manquant.",
@@ -172,6 +203,10 @@ const copy = {
     signIn: "Per salvare un’offerta o candidarti, accedi e poi torna qui.",
     signInButton: "Accedi",
     jobSignIn: "Accedi per preparare un’offerta di lavoro.",
+    fillChoice: "Oppure rispondi qui e lo compiliamo insieme.",
+    fillChatButton: "Compila con Spoki sul sito",
+    jobChoice: "Oppure invia /post_job e la compiliamo qui.",
+    jobFormButton: "Compila il modulo",
     jobDraftButton: "Rivedi la bozza dell’offerta",
     startJob:
       "Prepariamo una bozza dell’offerta. Dimmi chi cerchi; salverò i dettagli e chiederò solo il prossimo dato importante che manca.",
@@ -193,6 +228,12 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "See plans",
     register: "Create account",
     post_job: "Post a job",
+    fill_job: "Fill in the form",
+    fill_brief: "Fill in the form",
+    fill_service: "Fill in the form",
+    fill_profile: "Fill in the form",
+    fill_creator: "Fill in the form",
+    fill_company: "Fill in the form",
     order_service: "Describe the task",
     events: "See events",
     campaigns: "UGC videos",
@@ -213,6 +254,12 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "Открыть тарифы",
     register: "Создать аккаунт",
     post_job: "Разместить вакансию",
+    fill_job: "Заполнить форму",
+    fill_brief: "Заполнить форму",
+    fill_service: "Заполнить форму",
+    fill_profile: "Заполнить форму",
+    fill_creator: "Заполнить форму",
+    fill_company: "Заполнить форму",
     order_service: "Описать задачу",
     events: "Смотреть события",
     campaigns: "UGC-видео",
@@ -233,6 +280,12 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "Ver planos",
     register: "Criar conta",
     post_job: "Publicar uma vaga",
+    fill_job: "Preencher o formulário",
+    fill_brief: "Preencher o formulário",
+    fill_service: "Preencher o formulário",
+    fill_profile: "Preencher o formulário",
+    fill_creator: "Preencher o formulário",
+    fill_company: "Preencher o formulário",
     order_service: "Descrever a tarefa",
     events: "Ver eventos",
     campaigns: "Vídeos UGC",
@@ -253,6 +306,12 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "Tarife ansehen",
     register: "Konto erstellen",
     post_job: "Job ausschreiben",
+    fill_job: "Formular ausfüllen",
+    fill_brief: "Formular ausfüllen",
+    fill_service: "Formular ausfüllen",
+    fill_profile: "Formular ausfüllen",
+    fill_creator: "Formular ausfüllen",
+    fill_company: "Formular ausfüllen",
     order_service: "Aufgabe beschreiben",
     events: "Events ansehen",
     campaigns: "UGC-Videos",
@@ -273,6 +332,12 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "Voir les formules",
     register: "Créer un compte",
     post_job: "Publier une offre",
+    fill_job: "Remplir le formulaire",
+    fill_brief: "Remplir le formulaire",
+    fill_service: "Remplir le formulaire",
+    fill_profile: "Remplir le formulaire",
+    fill_creator: "Remplir le formulaire",
+    fill_company: "Remplir le formulaire",
     order_service: "Décrire la tâche",
     events: "Voir les événements",
     campaigns: "Vidéos UGC",
@@ -293,6 +358,12 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     pricing: "Vedi i piani",
     register: "Crea un account",
     post_job: "Pubblica un’offerta",
+    fill_job: "Compila il modulo",
+    fill_brief: "Compila il modulo",
+    fill_service: "Compila il modulo",
+    fill_profile: "Compila il modulo",
+    fill_creator: "Compila il modulo",
+    fill_company: "Compila il modulo",
     order_service: "Descrivi il compito",
     events: "Vedi eventi",
     campaigns: "Video UGC",
@@ -451,6 +522,31 @@ function render(
         });
       }
     }
+    // D516: "here or in the form?" A job is filled in here with /post_job,
+    // a brief or a service in the site chat, the rest right in this chat.
+    const fillKind =
+      event.kind === "fill_choice"
+        ? (event.data as { kind?: unknown } | null)?.kind
+        : event.kind === "offer"
+          ? fillKindFromOffer(
+              (event.data as { action?: unknown } | null)?.action,
+            )
+          : null;
+    if (isFillKind(fillKind)) {
+      const paths = fillPaths(fillKind, signedIn);
+      const links = [
+        { label: lines.jobFormButton, url: pageUrl(locale, paths.form) },
+      ];
+      if (paths.chat && fillKind !== "job")
+        links.unshift({
+          label: lines.fillChatButton,
+          url: pageUrl(locale, paths.chat),
+        });
+      out.push({
+        text: fill(fillKind === "job" ? lines.jobChoice : lines.fillChoice),
+        links,
+      });
+    }
     if (event.kind === "job_draft") {
       const draftId = (event.data as { id?: unknown } | null)?.id;
       if (typeof draftId === "string" && /^[0-9a-f-]{36}$/i.test(draftId)) {
@@ -469,7 +565,7 @@ function render(
   for (const event of events) {
     if (event.type !== "tool_result" || event.kind !== "offer") continue;
     const action = (event.data as { action?: unknown } | null)?.action;
-    if (!isOfferAction(action)) continue;
+    if (!isOfferAction(action) || fillKindOf(action)) continue;
     const path = offerPath(action, signedIn);
     if (!path) continue;
     const label = labels[action];

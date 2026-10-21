@@ -148,15 +148,6 @@ function SavedMark(props: NavMarkProps) {
   );
 }
 
-function ProfileMark(props: NavMarkProps) {
-  return (
-    <Frame {...props}>
-      <circle cx="12" cy="7.5" r="3.25" />
-      <path d="M4.5 20.5 V16 L9 13 H15 L19.5 16 V20.5" />
-    </Frame>
-  );
-}
-
 /** One account for every role (D504): a card with a person and lines. */
 function AccountMark(props: NavMarkProps) {
   return (
@@ -252,7 +243,6 @@ export const NAV_ICONS: Record<string, NavMark> = {
   "/applications": ApplicationsMark,
   "/saved-jobs": SavedMark,
   "/account": AccountMark,
-  "/profile": ProfileMark,
   "/settings/account": SettingsMark,
   "/admin": AdminMark,
   "/admin/metrics": MetricsMark,
@@ -266,19 +256,23 @@ export function iconForNav(href: string): NavMark | undefined {
 
 /** Phone sheet only. The wide bar keeps its own list. Missing hrefs are skipped. */
 const PHONE_NAV_ORDER = {
-  candidate: [
+  // One order for everyone signed in (D517); company pages appear only for
+  // a company member, the rest are the same for every account.
+  member: [
     "/jobs",
     "/events",
     "/applications",
     "/chat",
     "/saved-jobs",
     "/notifications",
-    "/profile",
+    "/account",
+    "/employer/jobs",
+    "/post-job",
+    "/employer/company",
+    "/employer/billing",
     "/freelance",
     "/campaigns",
     "/services",
-    "/post-job",
-    "/account",
     "/settings/account",
     "/admin",
     "/admin/metrics",
@@ -293,26 +287,6 @@ const PHONE_NAV_ORDER = {
     "/post-job",
     "/for-employers",
     "/login",
-  ],
-  employer: [
-    "/employer/jobs",
-    "/post-job",
-    "/employer/company",
-    "/employer/billing",
-    "/chat",
-    "/jobs",
-    "/events",
-    "/freelance",
-    "/campaigns",
-    "/services",
-    "/notifications",
-    "/profile",
-    "/applications",
-    "/saved-jobs",
-    "/account",
-    "/settings/account",
-    "/admin",
-    "/admin/metrics",
   ],
 } as const;
 

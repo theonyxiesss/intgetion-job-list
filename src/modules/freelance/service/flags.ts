@@ -1,7 +1,7 @@
 import type { FreelanceCategory } from "@/config/freelance";
 import { isSanctionedAddress } from "@/modules/billing/service";
 import * as repo from "../repo/freelance-repo";
-import { findPayoutWallet } from "../repo/payment-repo";
+import { readAccountWallet } from "@/modules/users/service";
 import { priceRange } from "./rules";
 
 /**
@@ -108,7 +108,9 @@ export async function serviceFlags(input: FlagInput): Promise<string[]> {
   ];
   if (texts.some(contactHint)) flags.push("contacts_in_text");
   if (input.links.some(contactLink)) flags.push("contact_link");
-  const payout = input.sellerId ? await findPayoutWallet(input.sellerId) : null;
+  const payout = input.sellerId
+    ? await readAccountWallet(input.sellerId)
+    : null;
   if (payout?.address && (await isSanctionedAddress(payout.address))) {
     flags.push("wallet_sanctioned");
   }

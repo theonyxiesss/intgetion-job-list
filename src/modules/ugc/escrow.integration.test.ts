@@ -11,9 +11,10 @@ import {
   verifyWalletSignature,
 } from "@/modules/billing/service";
 import {
-  issuePayoutNonce,
-  verifyPayoutSignature,
-} from "@/modules/freelance/service";
+  disconnectAccountWallet,
+  issueAccountWalletNonce,
+  verifyAccountWalletSignature,
+} from "@/modules/users/service";
 import {
   acceptInvite,
   campaignDepositState,
@@ -291,23 +292,27 @@ describe("UGC campaign wallet (D466)", () => {
       "PAYOUT_WALLET_REQUIRED",
     );
 
-    // The creator proves the payout address with the shared step.
-    await expectCode(
-      issuePayoutNonce(creatorId, {
-        address: creatorWallet.address,
-        chainId: 8453,
-      }),
-      409,
-    );
-    const { message } = await issuePayoutNonce(
-      creatorId,
-      { address: creatorWallet.address, chainId: 8453 },
-      new Date(),
-      "creator",
-    );
-    await verifyPayoutSignature(creatorId, {
+    // The creator links the account wallet (D518). A first wallet may be
+    // linked while a reward is owed; changing it may not, so the owed reward
+    // is never sent somewhere else.
+    const { message } = await issueAccountWalletNonce(creatorId, {
+      address: creatorWallet.address,
+      chainId: 8453,
+    });
+    await verifyAccountWalletSignature(creatorId, {
       signature: await creatorWallet.signMessage({ message }),
     });
+    await expectCode(
+      issueAccountWalletNonce(creatorId, {
+        address: privateKeyToAccount(generatePrivateKey()).address,
+        chainId: 8453,
+      }),
+      "WALLET_PAYOUTS_PENDING",
+    );
+    await expectCode(
+      disconnectAccountWallet(creatorId),
+      "WALLET_PAYOUTS_PENDING",
+    );
 
     // Only an admin, only the right sender, recipient and amount, confirmed.
     await expectCode(

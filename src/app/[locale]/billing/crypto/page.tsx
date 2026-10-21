@@ -13,11 +13,9 @@ import { payableCompanies, payableJobs } from "@/modules/billing/service";
 import { CryptoPay } from "@/modules/billing/ui/crypto-pay";
 import { InterestForm } from "@/modules/billing/ui/interest-form";
 import { FreelancePay } from "@/modules/billing/ui/freelance-pay";
-import { PayoutWallet } from "@/modules/billing/ui/payout-wallet";
 import { HttpError } from "@/lib/http";
 import {
   getOrderForParty,
-  getPayoutStatus,
   orderPayState,
 } from "@/modules/freelance/service";
 import { formatUsd } from "@/modules/freelance/ui/format";
@@ -76,7 +74,9 @@ export default async function CryptoBillingPage({
     query.freelance && UUID.test(query.freelance) ? query.freelance : "";
   const ugcCampaign = query.ugc && UUID.test(query.ugc) ? query.ugc : "";
   const forUgc = query.for === "ugc" || Boolean(ugcCampaign);
-  if (freelanceOrder || ugcCampaign || query.payout === "1") {
+  // The payout address is the account wallet now (D518).
+  if (query.payout === "1") redirect(`${localePrefix(locale)}/account#security`);
+  if (freelanceOrder || ugcCampaign) {
     const f = await getTranslations("freelance");
     const base = f.raw("pay") as Record<string, string>;
     const copy = forUgc
@@ -91,17 +91,7 @@ export default async function CryptoBillingPage({
     const panel =
       "mx-auto flex w-full max-w-md flex-col gap-4 border border-line bg-surface p-6";
     let body: React.ReactNode;
-    if (query.payout === "1") {
-      const status = await getPayoutStatus(user.id);
-      body = (
-        <PayoutWallet
-          address={status.address}
-          projectId={projectIdEarly}
-          copy={copy}
-          noncePath={forUgc ? "/api/ugc/payout/nonce" : undefined}
-        />
-      );
-    } else if (ugcCampaign) {
+    if (ugcCampaign) {
       let title = "";
       let state: Awaited<ReturnType<typeof campaignDepositState>> | null = null;
       try {

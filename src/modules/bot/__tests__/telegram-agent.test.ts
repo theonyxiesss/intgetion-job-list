@@ -293,6 +293,25 @@ describe("the agent inside the Telegram bot (D311)", () => {
     expect(lastInput).toBeNull();
   });
 
+  it("offers the form and the /post_job command when someone asks to post a job (D516)", async () => {
+    linkedUserId = "user-1";
+    turn = (emit) => {
+      emit({ type: "token", text: "Как удобнее?" });
+      emit({
+        type: "tool_result",
+        name: "offer_step",
+        kind: "fill_choice",
+        data: { kind: "job" },
+      });
+    };
+    await handleTelegramAgentUpdate(
+      "token",
+      update("можешь выставить вакансию", "ru"),
+    );
+    const choice = sent.find((row) => row.text.includes("/post_job"));
+    expect(choice?.links?.[0]?.url).toBe("https://example.test/ru/post-job");
+  });
+
   it("asks an unlinked Telegram user to sign in before creating a vacancy", async () => {
     await handleTelegramAgentUpdate("token", update("/post_job", "ru"));
     expect(sent[0].text).toContain("Войдите");

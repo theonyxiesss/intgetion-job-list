@@ -66,11 +66,8 @@ import {
   type FreelanceFocus,
 } from "./freelance-focus";
 import { jobFocusBlock, jobFocusOpener, readJobFocus } from "./job-focus";
-import {
-  isJobDraftRequest,
-  jobDraftFocusBlock,
-  jobDraftOpener,
-} from "./job-draft-focus";
+import { jobDraftFocusBlock, jobDraftOpener } from "./job-draft-focus";
+import { fillQuestion, fillRequestOf } from "./fill-choice";
 import { isExplicitJobDraftConfirmation } from "./job-tools";
 import {
   isServiceFrom,
@@ -428,8 +425,8 @@ export async function openServiceConversation(input: {
 }
 
 /**
- * The general thread for writing a creative-test brief (D457).
- * Inserts the opener only when that thread has no messages yet.
+ * The general thread for writing a creative-test brief (D457). The opener
+ * comes when the brief draft starts, not on a reload inside it (D516).
  */
 export async function openUgcHomeConversation(input: {
   userId: string | null;
@@ -448,7 +445,10 @@ export async function openUgcHomeConversation(input: {
     );
     conversation = { ...conversation, state, locale: input.locale };
   }
-  const existing = await repo.listMessages(conversation.id, 1);
+  // Also when the draft starts in a thread with history (D516).
+  const existing = previous.ugcDraftMode
+    ? await repo.listMessages(conversation.id, 1)
+    : [];
   if (existing.length === 0) {
     await repo.insertMessage({
       conversationId: conversation.id,
@@ -479,7 +479,10 @@ export async function openFreelanceDraftConversation(input: {
     new Date(),
   );
   const conversation = { ...opened.conversation, state, locale: input.locale };
-  const existing = await repo.listMessages(conversation.id, 1);
+  // Also when the draft starts in a thread with history (D516).
+  const existing = previous.freelanceDraftMode
+    ? await repo.listMessages(conversation.id, 1)
+    : [];
   if (existing.length === 0)
     await repo.insertMessage({
       conversationId: conversation.id,
@@ -526,7 +529,11 @@ export async function openJobDraftConversation(input: {
     new Date(),
   );
   const conversation = { ...opened.conversation, state, locale: input.locale };
-  const existing = await repo.listMessages(conversation.id, 1);
+  // Entering the draft says how it works, also in a thread with history
+  // (the "fill in the chat" choice, D516); a reload inside it does not.
+  const existing = previous.jobDraftMode
+    ? await repo.listMessages(conversation.id, 1)
+    : [];
   if (existing.length === 0)
     await repo.insertMessage({
       conversationId: conversation.id,
@@ -1201,7 +1208,7 @@ export async function handleMessage(
   const acked = afterCard
     ? undefined
     : await acknowledgeResume(conversation, input.locale, emit);
-  let current = acked ?? conversation;
+  const current = acked ?? conversation;
   if (!afterCard)
     await repo.insertMessage({
       conversationId: current.id,
@@ -1215,30 +1222,45 @@ export async function handleMessage(
         ...(current.state as BotState),
         draft: rememberUtterance((current.state as BotState).draft, input.text),
       };
-  if (
+  // D516: a request to fill something in (a job, a brief, a service, a
+  // profile, the company card) first asks how: together here or alone in
+  // the form. Not inside a draft, and not twice for a profile Spoki fills.
+  const fillKind =
     !afterCard &&
     userId &&
     !current.jobId &&
     !state.jobDraftMode &&
-    !state.topic &&
-    isJobDraftRequest(input.text)
+    !state.ugcDraftMode &&
+    !state.freelanceDraftMode
+      ? fillRequestOf(input.text)
+      : null;
+  // Asked already: the same request now means "here in the chat".
+  const fillHere =
+    fillKind !== null && state.fillOffered === fillKind ? fillKind : null;
+  if (state.fillOffered) state = { ...state, fillOffered: undefined };
+  if (
+    fillKind &&
+    !fillHere &&
+    !(fillKind === "profile" && state.fillMode === "spoki")
   ) {
-    let draft = await readJobDraft(userId);
-    if (draft.status === "submitted")
-      draft = await resetJobDraft(userId, draft.id);
-    state = {
-      ...state,
-      ugcDraftMode: false,
-      freelanceDraftMode: false,
-      jobDraftMode: true,
-      jobDraftId: draft.id,
-    };
-    await repo.updateConversation(
-      current.id,
-      { state, locale: input.locale },
-      now,
+    const text = fillQuestion(
+      fillKind,
+      replyLanguage(input.text, input.locale),
     );
-    current = { ...current, state, locale: input.locale };
+    const said = await repo.insertMessage({
+      conversationId: current.id,
+      role: "assistant",
+      content: text,
+    });
+    emit({ type: "token", text, messageId: said.id });
+    emit({
+      type: "tool_result",
+      name: "offer_step",
+      kind: "fill_choice",
+      data: { kind: fillKind },
+    });
+    state = { ...state, fillOffered: fillKind };
+    return finish(input, state, emit, now);
   }
   let ugcDraftContext: Record<string, unknown> | undefined;
   let freelanceDraftContext: Record<string, unknown> | undefined;
@@ -1442,6 +1464,8 @@ export async function handleMessage(
     }
     if (greetingNudge) roundSystem += `\n${ANSWER_THE_QUESTION}`;
     if (afterCard) roundSystem += `\n${AFTER_CARD}`;
+    if (fillHere)
+      roundSystem += `\nThey chose to fill in ${fillHere} together here in the chat. Start now: read what exists with the matching tool, then ask the first missing field.`;
     if (invalidCall)
       roundSystem += `\nYour previous reply called a tool this conversation does not offer, or with arguments its schema refuses (${invalidCall}). Do not repeat it. Use only the tools you are given, with valid arguments, or answer in words; if they ask for something you have no tool for here, say so in one sentence.`;
     const rows = await repo.listMessages(conversation.id, HISTORY_READ);

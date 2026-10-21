@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "./cn";
 
 export type ButtonVariant =
-  "primary" | "secondary" | "ghost" | "danger" | "plan";
+  "primary" | "secondary" | "ghost" | "danger" | "plan" | "strong";
 export type ButtonSize = "md" | "lg" | "icon";
 
 /** Pills in Geist, sentence case (D428). */
@@ -20,6 +20,8 @@ const variants: Record<ButtonVariant, string> = {
   danger:
     "border-danger bg-transparent text-danger hover:bg-danger hover:text-bg disabled:hover:bg-transparent disabled:hover:text-danger",
   plan: "border-warning bg-warning text-bg hover:brightness-110 disabled:hover:brightness-100",
+  /** Black on light, white on dark: the main action of a work screen (D519). */
+  strong: "border-fg bg-fg text-bg hover:opacity-90 disabled:hover:opacity-100",
 };
 
 const sizes: Record<ButtonSize, string> = {

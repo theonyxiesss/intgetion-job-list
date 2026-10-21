@@ -1854,6 +1854,28 @@
         "exampleUrls": "Exemples"
       }
     },
+    "fillChoice": {
+      "title": "Comment remplit-on {what} ?",
+      "text": "Dans le chat, je pose les questions une par une et j’enregistre tes réponses ; dans le formulaire, tu remplis tout toi-même.",
+      "chat": "Remplir avec Spoki dans le chat",
+      "form": "Remplir le formulaire moi-même",
+      "what": {
+        "job": "l’offre",
+        "brief": "le brief vidéo",
+        "service": "ton service",
+        "profile": "ton profil",
+        "creator": "ton profil de créateur",
+        "company": "la fiche de l’entreprise"
+      },
+      "reply": {
+        "job": "Remplissons l’offre ici dans le chat.",
+        "brief": "Remplissons le brief ici dans le chat.",
+        "service": "Remplissons mon service ici dans le chat.",
+        "profile": "Remplissons mon profil ici dans le chat.",
+        "creator": "Remplissons mon profil de créateur ici dans le chat.",
+        "company": "Remplissons la fiche de l’entreprise ici dans le chat."
+      }
+    },
     "confirm": {
       "applyTitle": "Postuler à cette offre ?",
       "applyNote": "Lettre à l’employeur",
@@ -4196,10 +4218,10 @@
   "account": {
     "nav": "Mon compte",
     "title": "Mon compte",
-    "intro": "Un compte pour l’emploi, le recrutement, les vidéos de créateurs et le freelance. Remplissez vos informations une fois, tous les rôles les utilisent.",
+    "intro": "Un seul compte pour tous les services du site : profil, offre, connexion et portefeuille sont ici.",
     "profile": {
       "title": "À propos de moi",
-      "text": "Les rôles n’affichent ces informations que là où c’est permis. Les contacts ne sont pas gardés ici.",
+      "text": "Les personnes avec qui tu travailles voient ton nom. Le reste est facultatif : Spoki le demande quand il le faut.",
       "displayName": "Nom",
       "displayNameHelp": "En tant que créateur, vous pouvez indiquer un pseudonyme dans ce profil.",
       "country": "Pays",
@@ -4214,23 +4236,36 @@
       "save": "Enregistrer",
       "saving": "Enregistrement…",
       "saved": "Enregistré. Vos rôles sont à jour.",
-      "failed": "Échec de l’enregistrement. Vérifiez les champs et réessayez."
+      "failed": "Échec de l’enregistrement. Vérifiez les champs et réessayez.",
+      "more": "Pays, ville, fuseau horaire et langues — facultatif",
+      "moreHelp": "Remplis-les maintenant ou réponds à Spoki quand il demande. Ces informations sont communes à tous les services."
     },
-    "roles": {
-      "title": "Rôles",
-      "text": "Un rôle s’active quand vous commencez à l’utiliser. Vous pouvez en avoir autant que vous voulez.",
-      "active": "Actif",
+    "plan": {
+      "title": "Offre",
+      "text": "Offres en cours et ce qu’elles comprennent.",
+      "change": "Changer d’offre",
+      "personal": "Offre personnelle : {name}",
+      "company": "Offre de l’entreprise : {name}",
+      "until": "jusqu’au {date}"
+    },
+    "services": {
+      "title": "Mes services",
+      "text": "Tout ce que tu peux utiliser avec ce compte. Rien à activer.",
       "open": "Ouvrir",
-      "start": "Commencer",
-      "candidate": {
-        "name": "Je cherche un emploi",
+      "jobs": {
+        "name": "Recherche d’emploi",
         "on": "Profil rempli à {score} %",
         "off": "Pas encore de profil candidat"
       },
-      "employer": {
-        "name": "Je recrute",
+      "hiring": {
+        "name": "Recrutement",
         "on": "{companies, plural, one {# entreprise} other {# entreprises}} · {jobs, plural, one {# offre} other {# offres}}",
         "off": "Pas encore d’entreprise"
+      },
+      "videos": {
+        "name": "Vidéos de créateurs",
+        "on": "{briefs, plural, one {# brief} other {# briefs}}",
+        "off": "Pas encore de briefs"
       },
       "creator": {
         "name": "Créateur vidéo",
@@ -4238,16 +4273,276 @@
         "paused": "Profil en pause",
         "off": "Pas encore de profil créateur"
       },
-      "freelancer": {
+      "freelance": {
         "name": "Freelance",
         "on": "{accepting, select, true {Vous acceptez des commandes} other {Pas de commandes}} · {services, plural, one {# service} other {# services}}",
         "off": "Pas encore de services"
-      },
-      "client": {
-        "name": "Je commande des vidéos",
-        "on": "{briefs, plural, one {# brief} other {# briefs}}",
-        "off": "Pas encore de briefs"
       }
+    },
+    "security": {
+      "title": "Connexion et sécurité",
+      "text": "Comment tu te connectes et où arrivent les paiements.",
+      "more": "Langue des e-mails et suppression du compte"
+    },
+    "wallet": {
+      "title": "Portefeuille crypto",
+      "text": "Les paiements des commandes freelance et les récompenses des vidéos arrivent ici. Tu lies le portefeuille en signant un message — ni phrase de récupération ni clés.",
+      "none": "Aucun portefeuille connecté.",
+      "connected": "Connecté :",
+      "connect": "Connecter un portefeuille",
+      "changeBrowser": "Connecter un autre portefeuille",
+      "qr": "Avec WalletConnect (QR)",
+      "change": "Changer de portefeuille",
+      "disconnect": "Déconnecter",
+      "changeTitle": "Changer de portefeuille ?",
+      "disconnectTitle": "Déconnecter le portefeuille ?",
+      "keepsHistory": "L’historique des paiements et les versements déjà envoyés ne changent pas.",
+      "openPayments": "Paiements déjà en route vers cette adresse : {count}. Ils y arriveront.",
+      "unpaidOrdersChange": "Commandes acceptées non payées : {count}. Elles seront payées sur le nouveau portefeuille.",
+      "unpaidOrdersDisconnect": "Commandes acceptées non payées : {count}. Sans portefeuille, les acheteurs ne pourront pas les payer sur le site.",
+      "blocked": "Récompenses à verser à cette adresse : {count}. Tu pourras changer ou déconnecter le portefeuille après le versement.",
+      "disconnectConfirm": "Déconnecter le portefeuille",
+      "cancel": "Annuler",
+      "linked": "Portefeuille connecté.",
+      "unlinked": "Portefeuille déconnecté.",
+      "error": {
+        "wallet": "Ouvre ton portefeuille et connecte-le.",
+        "cancel": "Tu as annulé la signature. Rien n’a changé.",
+        "network": "Ce réseau n’est pas pris en charge.",
+        "token": "Ce jeton n’est pas pris en charge.",
+        "failed": "Ça n’a pas marché. Réessaie.",
+        "taken": "Ce portefeuille est déjà lié à un autre compte.",
+        "review": "Cette adresse est en cours de vérification et n’a pas été enregistrée.",
+        "blocked": "Attends d’abord que les récompenses soient versées à l’adresse actuelle.",
+        "rate": "Trop de tentatives. Réessaie dans une heure."
+      }
+    }
+  },
+  "ugcDesk": {
+    "label": "Vidéos UGC · espace entreprise",
+    "navLabel": "Sections de l’espace",
+    "navCount": "En attente :",
+    "nav": {
+      "overview": "Vue d’ensemble",
+      "campaigns": "Campagnes",
+      "creators": "Créateurs",
+      "orders": "Commandes",
+      "materials": "Vidéos",
+      "payments": "Paiements"
+    },
+    "newBrief": "Nouveau brief",
+    "withSpoki": "Brief avec Spoki",
+    "fillWithSpoki": "Remplir avec Spoki dans le chat",
+    "fillForm": "Remplir le formulaire",
+    "loading": "Chargement de l’espace…",
+    "overviewTitle": "Vue d’ensemble",
+    "startText": "Décrivez le produit une fois. Les créateurs qui conviennent répondent, vous engagez ceux que vous choisissez et ne payez que les vidéos acceptées.",
+    "start1Title": "Brief",
+    "start1Text": "Produit, public, ce qu’il faut dire, combien de vidéos et la rémunération par vidéo. Un modérateur le vérifie avant que les créateurs le voient.",
+    "start2Title": "Réponses et embauche",
+    "start2Text": "Les créateurs avec un profil répondent. Vous regardez leurs exemples et envoyez une offre à des personnes précises.",
+    "start3Title": "Vidéos et décision",
+    "start3Text": "Un créateur engagé envoie un lien. Vous l’acceptez, demandez une retouche ou le refusez.",
+    "attentionTitle": "Vous attend",
+    "attentionEmpty": "Rien ne vous attend pour l’instant",
+    "attentionEmptyText": "Les nouvelles réponses et vidéos apparaissent ici dès que les créateurs les envoient.",
+    "attention": {
+      "decide": "{count, plural, one {# vidéo attend votre décision} other {# vidéos attendent votre décision}}",
+      "hire": "{count, plural, one {# réponse attend une décision d’embauche} other {# réponses attendent une décision d’embauche}}",
+      "deposit": "Versez le budget pour commencer à engager",
+      "remind": "{count, plural, =0 {Les créateurs engagés n’ont pas encore envoyé de vidéo} one {# créateur engagé n’a pas encore envoyé de vidéo} other {# créateurs engagés n’ont pas encore envoyé de vidéo}}"
+    },
+    "attentionAction": {
+      "decide": "Voir les vidéos",
+      "hire": "Choisir des créateurs",
+      "deposit": "Verser le budget",
+      "remind": "Ouvrir le brief"
+    },
+    "stat": {
+      "active": "Briefs en cours",
+      "applied": "Réponses",
+      "hired": "Engagés",
+      "waiting": "Vidéos à vérifier",
+      "accepted": "Vidéos acceptées"
+    },
+    "freshTitle": "Dernières vidéos",
+    "seeAll": "Tout voir",
+    "deadline": "Échéance {date}",
+    "creatorToo": "Vous tournez aussi des vidéos ?",
+    "needCompanyTitle": "D’abord une entreprise",
+    "needCompanyText": "Les briefs sont publiés au nom d’une entreprise. Créez-la dans votre compte, puis revenez ici.",
+    "createCompany": "Créer une entreprise",
+    "campaignsIntro": "Tous les briefs de vos entreprises et l’étape où en est chacun.",
+    "filterLabel": "Filtre",
+    "campaignGroup": {
+      "active": "En cours",
+      "review": "Brouillon et vérification",
+      "closed": "Fermés",
+      "all": "Tous"
+    },
+    "campaignsEmpty": "Aucun brief ici",
+    "campaignsEmptyText": "Choisissez un autre filtre ou rédigez un nouveau brief.",
+    "col": {
+      "brief": "Brief",
+      "status": "Statut",
+      "step": "Étape",
+      "deadline": "Échéance",
+      "hired": "Engagés / vidéos",
+      "budget": "Budget",
+      "next": "Étape suivante",
+      "creator": "Créateur",
+      "reward": "Rémunération",
+      "rights": "Droits",
+      "action": "Action",
+      "deposit": "Versement du budget"
+    },
+    "hiredOf": "{hired} / {wanted}",
+    "creatorsIntro": "Les personnes qui ont répondu à vos briefs ou reçu votre offre, avec leur fiche publique et leurs liens d’exemple. Aucun contact n’est affiché.",
+    "inBriefs": "Dans vos briefs",
+    "creatorsEmpty": "Pas encore de créateurs",
+    "creatorsEmptyText": "Quand un créateur répond à un brief ouvert, sa fiche apparaît ici.",
+    "participations": "Briefs",
+    "offerAfterDeposit": "L’offre d’embauche part après le versement du budget.",
+    "offerClosed": "Le brief n’accepte plus d’embauche.",
+    "matchesTitle": "Créateurs qui conviennent",
+    "matchesIntro": "Créateurs qui acceptent les invitations et dont la plateforme, la langue, la niche et le pays correspondent à un brief ouvert. La même règle que Spoki.",
+    "matchesNoOpen": "Pas encore de brief ouvert",
+    "matchesNoOpenText": "Les créateurs qui conviennent apparaissent quand un brief a passé la vérification.",
+    "matchesEmpty": "Personne ne convient encore à ce brief",
+    "matchesEmptyText": "Envoyez un lien à un créateur que vous connaissez : il répond, et vous décidez de l’engager ou non.",
+    "examplesCount": "{count, plural, =0 {Aucun lien d’exemple} one {# lien d’exemple} other {# liens d’exemple}}",
+    "portfolio": "Exemples",
+    "noPortfolio": "Pas encore de liens d’exemple.",
+    "anyCountry": "Tout pays",
+    "newTab": "(s’ouvre dans un nouvel onglet)",
+    "ordersIntro": "Réponses, offres et créateurs engagés sur tous les briefs.",
+    "orderGroup": {
+      "applied": "Réponses",
+      "offered": "Offres envoyées",
+      "active": "En cours",
+      "done": "Terminées"
+    },
+    "ordersEmpty": {
+      "applied": "Aucune réponse en attente",
+      "offered": "Aucune offre sans réponse",
+      "active": "Personne ne tourne de vidéo en ce moment",
+      "done": "Rien de terminé pour l’instant"
+    },
+    "ordersEmptyText": "Les commandes apparaissent quand des créateurs répondent à un brief ouvert ou acceptent votre offre.",
+    "toVideo": "Ouvrir la vidéo",
+    "materialsIntro": "Vidéos envoyées par les créateurs engagés. Une décision par vidéo ; une retouche est permise.",
+    "materialGroup": {
+      "waiting": "À vérifier",
+      "changes": "En retouche",
+      "accepted": "Acceptées",
+      "rejected": "Refusées"
+    },
+    "materialsEmpty": {
+      "waiting": "Aucune vidéo à vérifier",
+      "changes": "Aucune retouche en cours",
+      "accepted": "Pas encore de vidéo acceptée",
+      "rejected": "Aucune vidéo refusée"
+    },
+    "materialsEmptyText": "Un créateur engagé envoie un lien TikTok, Instagram ou YouTube, et il apparaît ici.",
+    "video": {
+      "submitted": "En attente de vérification",
+      "changes_requested": "En retouche",
+      "accepted": "Acceptée",
+      "winner": "Gagnante",
+      "rejected": "Refusée"
+    },
+    "platform": {
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "youtube": "YouTube",
+      "other": "Lien"
+    },
+    "openVideo": "Ouvrir la vidéo de {name} sur {platform} (nouvel onglet)",
+    "reportedLabel": "Selon le créateur",
+    "decideHint": "Regardez la vidéo, puis décidez. Une gagnante ne peut servir en publicité que si les droits le permettent.",
+    "revisionUsed": "La seule retouche a déjà été utilisée.",
+    "paymentsIntro": "Budgets des briefs et rémunérations enregistrées pour les vidéos acceptées. Seulement des montants enregistrés, aucune prévision.",
+    "paymentsEmpty": "Pas encore de briefs",
+    "walletOffTitle": "Les versements de budget sont désactivés",
+    "walletOffText": "Les rémunérations sont enregistrées pour les vidéos acceptées. Rien n’est prélevé ici et rien n’est envoyé aux créateurs.",
+    "money": {
+      "deposited": "Versé",
+      "awaiting": "En attente de versement",
+      "owed": "Enregistré, pas encore payé",
+      "paid": "Marqué comme payé"
+    },
+    "budgetsTitle": "Budgets des briefs",
+    "budgetFormula": "{videos} × {price}",
+    "deposit": {
+      "off": "Pas nécessaire",
+      "paid": "Versé",
+      "checking": "Virement en cours de vérification",
+      "awaiting": "En attente du virement",
+      "due": "Versez pour commencer à engager",
+      "later": "Après la vérification",
+      "closed": "Non versé"
+    },
+    "rewardsTitle": "Rémunérations des vidéos acceptées",
+    "rewardsEmpty": "Pas encore de rémunération",
+    "rewardsEmptyText": "Une rémunération est enregistrée quand vous acceptez une vidéo.",
+    "reward": {
+      "owed": "Enregistrée",
+      "paid": "Payée"
+    },
+    "rewardsNote": "Le fondateur envoie la rémunération à la main depuis le portefeuille de la plateforme ; le serveur vérifie le virement avant de la marquer payée.",
+    "nextTitle": "Étape suivante",
+    "nextText": {
+      "deposit": "Versez le budget : les offres ne partent qu’après.",
+      "hire": "Des créateurs ont répondu. Regardez leurs exemples et engagez.",
+      "decide": "Une vidéo attend votre décision.",
+      "remind": "Les créateurs engagés n’ont pas encore envoyé toutes les vidéos."
+    },
+    "fact": {
+      "reward": "Par vidéo",
+      "videos": "Engagés / vidéos",
+      "budget": "Budget",
+      "rights": "Droits"
+    },
+    "peopleTitle": "Créateurs et commandes",
+    "peopleEmpty": "Pas encore de réponse",
+    "peopleEmptyOpen": "Le brief est ouvert. Envoyez un lien à un créateur que vous connaissez ou attendez les réponses.",
+    "peopleEmptyOther": "Les créateurs pourront répondre quand le brief sera ouvert.",
+    "videosTitle": "Vidéos",
+    "videosEmpty": "Pas encore de vidéo",
+    "videosEmptyText": "Seul un créateur engagé envoie une vidéo.",
+    "briefTitle": "Brief",
+    "manageTitle": "Gérer le brief",
+    "joinHint": "Un lien pour un créateur hors du vivier. Vous le transmettez vous-même ; il donne une réponse, pas une embauche.",
+    "backToBrief": "Retour au brief",
+    "newIntro": "Les mêmes champs que Spoki demande dans le chat. Le brouillon est partagé : ce que vous enregistrez ici, Spoki le voit aussi.",
+    "form": {
+      "product": "Produit",
+      "audience": "Public",
+      "audienceHint": "À qui s’adresse la vidéo. Remplissez le public ou les pays.",
+      "video": "Vidéos",
+      "money": "Rémunération et conditions",
+      "extra": "Message et exemples",
+      "extraHint": "Facultatif. Le créateur voit le message avec votre offre.",
+      "summaryHelp": "Une ou deux phrases : ce que c’est et à quoi ça sert.",
+      "audienceHelp": "Par exemple : étudiants qui suivent leurs dépenses",
+      "countryHelp": "Codes à deux lettres séparés par une virgule, par exemple US, DE. Vide = tout pays.",
+      "languagesHelp": "Codes de langue séparés par une virgule, par exemple fr, en",
+      "videosHelp": "De 1 à 30",
+      "listHelp": "Points courts séparés par un point-virgule",
+      "bountyHelp": "Dollars entiers par vidéo acceptée, de $5 à $500",
+      "pitchHelp": "Jusqu’à 300 caractères",
+      "examplesHelp": "Jusqu’à cinq liens https, un par ligne",
+      "summary": "Résumé du brief",
+      "budget": "Budget",
+      "budgetEmpty": "Indiquez le nombre de vidéos et la rémunération.",
+      "after1": "Après l’envoi, un modérateur vérifie le brief.",
+      "after2": "Ensuite les créateurs le voient et répondent.",
+      "after3": "Vous engagez ceux que vous choisissez.",
+      "send": "Envoyer en vérification",
+      "saveDraft": "Enregistrer le brouillon",
+      "saved": "Brouillon enregistré.",
+      "draftNote": "Rien n’est prélevé à l’envoi d’un brief.",
+      "fieldProblem": "Vérifiez le champ « {field} »."
     }
   }
 }

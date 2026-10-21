@@ -267,3 +267,23 @@ export async function closedWithDeposit(): Promise<
     limit 100
   `);
 }
+
+/**
+ * Rewards still owed to this creator from a brief with a paid-in budget:
+ * they go out from the campaign wallet to the creator's account address at
+ * the moment they are paid, so that address must not change before (D518).
+ */
+export async function owedWalletRewards(creatorId: string): Promise<number> {
+  const rows = await getDb().execute<{ n: number }>(sql`
+    select count(*)::int as n
+    from public.ugc_payouts p
+    join public.ugc_invites i on i.id = p.invite_id
+    where i.creator_user_id = ${creatorId}
+      and p.status = 'owed'
+      and exists (
+        select 1 from public.ugc_deposits d
+        where d.campaign_id = i.campaign_id and d.status = 'confirmed'
+      )
+  `);
+  return rows[0]?.n ?? 0;
+}

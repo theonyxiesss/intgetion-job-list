@@ -25,7 +25,7 @@ import {
   isSanctionedAddress,
   verifiedPayerWallet,
 } from "@/modules/billing/service";
-import { getPayoutStatus } from "@/modules/freelance/service";
+import { readAccountWallet } from "@/modules/users/service";
 import * as repo from "../repo/escrow-repo";
 import { campaignForMember, db } from "./commands";
 import { campaignWalletAddress, escrowOn } from "./escrow-gate";
@@ -430,7 +430,9 @@ export async function payRewardByTx(input: {
       "This brief has no paid budget: mark the reward by hand",
     );
   }
-  const address = (await getPayoutStatus(payout.creator_user_id)).address;
+  // The account wallet at payout time (D518); a change waits for this.
+  const address =
+    (await readAccountWallet(payout.creator_user_id))?.address ?? null;
   if (!address) {
     throw walletError(
       "PAYOUT_WALLET_REQUIRED",
@@ -566,7 +568,7 @@ export async function listWalletPayouts(
       amountMinor: payout.amountMinor.toString(),
       fromWallet,
       payoutAddress: fromWallet
-        ? (await getPayoutStatus(invite.creatorUserId)).address
+        ? ((await readAccountWallet(invite.creatorUserId))?.address ?? null)
         : null,
     });
   }
@@ -608,4 +610,9 @@ export async function listRefundsDue(
     });
   }
   return rows;
+}
+
+/** Owed rewards that hold the creator's wallet in place (D518). */
+export async function owedWalletRewards(creatorId: string): Promise<number> {
+  return repo.owedWalletRewards(creatorId);
 }

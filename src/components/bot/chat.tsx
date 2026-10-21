@@ -47,8 +47,12 @@ import {
   teamJobFromConfirm,
 } from "@/modules/bot/service/application-status";
 import {
+  fillKindOf,
+  fillPaths,
+  isFillKind,
   isOfferAction,
   offerPath,
+  type FillKind,
   type OfferAction,
 } from "@/modules/bot/service/offers";
 import {
@@ -85,6 +89,8 @@ type Entry =
     }
   | { key: string; kind: "jobs" | "matches"; jobs: JobCard[] }
   | { key: string; kind: "offer"; action: OfferAction }
+  /** Fill something in with Spoki here or alone in the form (D516). */
+  | { key: string; kind: "fill_choice"; fill: FillKind }
   | { key: string; kind: "ugc_join"; payload: string }
   | {
       key: string;
@@ -708,9 +714,19 @@ export function Chat({
                 : [],
             });
           }
+        } else if (data.type === "tool_result" && data.kind === "fill_choice") {
+          const fill = (data.data as { kind?: unknown } | null)?.kind;
+          if (isFillKind(fill)) {
+            setThinking(false);
+            add({ key: nextKey(), kind: "fill_choice", fill });
+          }
         } else if (data.type === "tool_result" && data.kind === "offer") {
           const action = (data.data as { action?: unknown } | null)?.action;
-          if (isOfferAction(action) && offerPath(action, signedIn)) {
+          const fill = isOfferAction(action) ? fillKindOf(action) : null;
+          if (fill) {
+            setThinking(false);
+            add({ key: nextKey(), kind: "fill_choice", fill });
+          } else if (isOfferAction(action) && offerPath(action, signedIn)) {
             setThinking(false);
             add({ key: nextKey(), kind: "offer", action });
           }
@@ -960,7 +976,7 @@ export function Chat({
       add({ key: nextKey(), kind: "assistant", text: line });
     }
     if (mode === "self") {
-      router.push("/profile");
+      router.push("/profile/edit");
       return;
     }
     setActions((current) => ({ ...current, profileReview: true }));
@@ -1422,6 +1438,58 @@ export function Chat({
                   />
                 );
               }
+              if (entry.kind === "fill_choice") {
+                const paths = fillPaths(entry.fill, signedIn);
+                const chatLabel = t("fillChoice.chat");
+                const primary =
+                  "inline-flex min-h-11 items-center rounded-full bg-fg px-5 text-bg";
+                return (
+                  <div
+                    key={entry.key}
+                    className="flex max-w-md flex-col items-start gap-3 rounded-2xl border border-line bg-surface-2 px-4 py-3"
+                  >
+                    <div>
+                      <p className="font-medium">
+                        {t("fillChoice.title", {
+                          what: t(`fillChoice.what.${entry.fill}`),
+                        })}
+                      </p>
+                      <p className="t-body-s text-fg-muted">
+                        {t("fillChoice.text")}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {paths.chat ? (
+                        <a
+                          href={localePath(locale, paths.chat)}
+                          className={primary}
+                        >
+                          {chatLabel}
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={sending}
+                          className={primary}
+                          onClick={() =>
+                            entry.fill === "profile"
+                              ? void chooseFill("spoki")
+                              : void ask(t(`fillChoice.reply.${entry.fill}`))
+                          }
+                        >
+                          {chatLabel}
+                        </button>
+                      )}
+                      <a
+                        href={localePath(locale, paths.form)}
+                        className="inline-flex min-h-11 items-center rounded-full border border-line px-5"
+                      >
+                        {t("fillChoice.form")}
+                      </a>
+                    </div>
+                  </div>
+                );
+              }
               if (entry.kind === "offer") {
                 const path = offerPath(entry.action, signedIn);
                 if (!path) return null;
@@ -1598,7 +1666,7 @@ export function Chat({
           )}
           {actions.profileReview && signedIn && (
             <Link
-              href="/profile"
+              href="/profile/edit"
               className="t-body-s underline underline-offset-4"
             >
               {t("reviewProfile")}

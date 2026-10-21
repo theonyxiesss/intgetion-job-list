@@ -1,12 +1,6 @@
-import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { chainByChainId, chainById, tokenContract } from "@/lib/billing/chains";
 import { readChain, type ChainSnapshot } from "@/lib/billing/rpc";
-import {
-  recoverSiweAddress,
-  siweMessage,
-  validAddress,
-} from "@/lib/billing/siwe";
 import {
   clientStatus,
   formatTokenAmount,
@@ -14,13 +8,7 @@ import {
   type ClientBillingStatus,
 } from "@/lib/billing/status";
 import { tokenUnits, verifyTransfer } from "@/lib/billing/verify-transfer";
-import {
-  errorCodes,
-  forbidden,
-  HttpError,
-  notFound,
-  validationError,
-} from "@/lib/http";
+import { errorCodes, HttpError, notFound, validationError } from "@/lib/http";
 import { logger } from "@/lib/logger";
 import { notifyPlatformOwners } from "@/modules/admin-console/service";
 import {
@@ -28,10 +16,9 @@ import {
   isSanctionedAddress,
   verifiedPayerWallet,
 } from "@/modules/billing/service";
-import * as repo from "../repo/freelance-repo";
+import { readAccountWallet } from "@/modules/users/service";
 import * as pay from "../repo/payment-repo";
 import { getOrderForParty, transitionOrder } from "./order-service";
-import { FREELANCE_ERRORS } from "./rules";
 
 /**
  * Payment of a freelance order to the freelancer's own address (28.6, D463).
@@ -40,11 +27,6 @@ import { FREELANCE_ERRORS } from "./rules";
  * notices, only after every check of PAYMENTS §4.3 passes.
  */
 
-/** One address for freelance and UGC payouts alike (D463, D466). */
-export const PAYOUT_STATEMENT =
-  "Confirm this address for payouts on INTGETION JOB LIST.";
-
-const NONCE_MS = 10 * 60 * 1000;
 const PAYMENT_MS = 30 * 60 * 1000;
 const UNIQUE_VIOLATION = "23505";
 
@@ -63,113 +45,17 @@ function payError(code: string, message: string, status = 409): HttpError {
   return new HttpError(status, code, message);
 }
 
-export type PayoutStatus = {
-  address: string | null;
-  chainId: number | null;
-  verifiedAt: string | null;
-};
-
-/** The freelancer's payout address as the cabinet shows it. */
-export async function getPayoutStatus(userId: string): Promise<PayoutStatus> {
-  const row = await pay.findPayoutWallet(userId);
-  return {
-    address: row?.address ?? null,
-    chainId: row?.chain_id ?? null,
-    verifiedAt: row?.verified_at ?? null,
-  };
-}
-
 /**
- * Step one: the message the freelancer signs. Only a seller may ask, unless
- * the caller already proved another payee, a UGC creator (D466).
+ * What a wallet change touches on the freelance side (D518): payments a
+ * buyer opened to the current address keep it and still settle; accepted
+ * orders without payment will be paid to the new address.
  */
-export async function issuePayoutNonce(
-  userId: string,
-  raw: unknown,
-  now = new Date(),
-  payee: "seller" | "creator" = "seller",
-): Promise<{ message: string }> {
-  const parsed = z
-    .object({ address: z.string().max(64), chainId: z.number().int() })
-    .strict()
-    .safeParse(raw);
-  if (!parsed.success) throw validationError(parsed.error.issues);
-  if (payee === "seller" && !(await repo.findSeller(userId))) {
-    throw payError(
-      FREELANCE_ERRORS.candidateProfileRequired,
-      "Turn on taking orders first",
-    );
-  }
-  const checksum = validAddress(parsed.data.address);
-  const chain = chainByChainId(parsed.data.chainId);
-  if (!checksum || !chain) throw validationError("Unknown wallet or network");
-  const expires = new Date(now.getTime() + NONCE_MS);
-  const message = siweMessage({
-    address: checksum,
-    chainId: chain.chainId,
-    nonce: randomBytes(16).toString("hex"),
-    issuedAt: now.toISOString(),
-    expirationTime: expires.toISOString(),
-    statement: PAYOUT_STATEMENT,
-  });
-  await pay.savePendingPayout({
-    userId,
-    address: checksum.toLowerCase(),
-    chainId: chain.chainId,
-    message,
-    expiresAt: expires,
-  });
-  return { message };
-}
-
-/**
- * Step two: the signature proves the address. An address on the sanctions
- * list is not saved; the owners hear of it, the freelancer sees "on review".
- */
-export async function verifyPayoutSignature(
-  userId: string,
-  raw: unknown,
-  now = new Date(),
-): Promise<PayoutStatus> {
-  const parsed = z
-    .object({
-      signature: z
-        .string()
-        .regex(/^0x[0-9a-fA-F]+$/)
-        .max(400),
-    })
-    .strict()
-    .safeParse(raw);
-  if (!parsed.success) throw validationError("Missing signature");
-  const wallet = await pay.findPayoutWallet(userId);
-  if (
-    !wallet?.pending_message ||
-    !wallet.pending_address ||
-    !wallet.pending_expires_at ||
-    new Date(wallet.pending_expires_at) <= now
-  ) {
-    throw forbidden();
-  }
-  const recovered = await recoverSiweAddress(
-    wallet.pending_message,
-    parsed.data.signature as `0x${string}`,
-  );
-  if (recovered !== wallet.pending_address) throw forbidden();
-  if (await isSanctionedAddress(wallet.pending_address)) {
-    await alertOwners("Payout address refused for review", [
-      "A freelancer tried to confirm a payout address on the OFAC SDN list.",
-      `User: ${userId}`,
-      "The address was not saved.",
-    ]);
-    throw payError("PAYOUT_UNDER_REVIEW", "This address is under review");
-  }
-  const saved = await pay.confirmPayout({
-    userId,
-    message: wallet.pending_message,
-    signature: parsed.data.signature,
-  });
-  if (!saved) throw forbidden();
-  return getPayoutStatus(userId);
+export async function walletPaymentsInFlight(
+  sellerId: string,
+  address: string,
+): Promise<{ openPayments: number; unpaidOrders: number }> {
+  const row = await pay.paymentsInFlightTo(sellerId, address);
+  return { openPayments: row.open_payments, unpaidOrders: row.unpaid_orders };
 }
 
 export type OrderPaymentView = {
@@ -219,7 +105,7 @@ export async function orderPayState(
   const order = await getOrderForParty(userId, orderId);
   const latest = await pay.latestPayment(order.id);
   const payout = order.sellerId
-    ? await pay.findPayoutWallet(order.sellerId)
+    ? await readAccountWallet(order.sellerId)
     : null;
   const payoutReady = Boolean(payout?.address);
   return {
@@ -261,7 +147,7 @@ export async function createOrderPayment(
     throw payError("BILLING_UNAVAILABLE", "Crypto payments are not on");
   }
   const payout = order.sellerId
-    ? await pay.findPayoutWallet(order.sellerId)
+    ? await readAccountWallet(order.sellerId)
     : null;
   if (!payout?.address) {
     throw payError("PAYOUT_WALLET_REQUIRED", "The freelancer has no address");

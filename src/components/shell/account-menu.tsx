@@ -24,7 +24,6 @@ export type AccountLink = { href: string; label: string };
 
 const LINK_ICONS: Record<string, LucideIcon | undefined> = {
   "/account": UserRound,
-  "/profile": User,
   "/applications": Check,
   "/saved-jobs": Bookmark,
   "/notifications": Bell,

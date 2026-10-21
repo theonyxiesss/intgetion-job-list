@@ -19,7 +19,6 @@ const MENU_HREFS = [
   "/notifications",
   "/applications",
   "/saved-jobs",
-  "/profile",
   "/settings/account",
   "/admin",
   "/admin/metrics",
@@ -46,7 +45,7 @@ function menu(hrefs: string[]) {
 }
 
 describe("phone menu order", () => {
-  it("orders a signed-in candidate", () => {
+  it("gives every signed-in account one order, company pages by membership (D517)", () => {
     const items = menu([
       "/login",
       "/jobs",
@@ -59,27 +58,39 @@ describe("phone menu order", () => {
       "/notifications",
       "/applications",
       "/saved-jobs",
-      "/profile",
+      "/account",
       "/settings/account",
       "/admin",
       "/admin/metrics",
     ]);
-    expect(orderPhoneNav(items, "candidate").map((item) => item.href)).toEqual([
+    expect(orderPhoneNav(items, "member").map((item) => item.href)).toEqual([
       "/jobs",
       "/events",
       "/applications",
       "/chat",
       "/saved-jobs",
       "/notifications",
-      "/profile",
+      "/account",
+      "/post-job",
       "/freelance",
       "/campaigns",
       "/services",
-      "/post-job",
       "/settings/account",
       "/admin",
       "/admin/metrics",
     ]);
+    const member = orderPhoneNav(
+      menu([
+        ...items.map((item) => item.href),
+        "/employer/jobs",
+        "/employer/company",
+      ]),
+      "member",
+    ).map((item) => item.href);
+    expect(member.indexOf("/employer/jobs")).toBe(
+      member.indexOf("/account") + 1,
+    );
+    expect(member).not.toContain("/profile");
   });
 
   it("orders a guest and skips items they do not have", () => {
@@ -112,38 +123,5 @@ describe("phone menu order", () => {
         "guest",
       ).map((item) => item.href),
     ).not.toContain("/services");
-  });
-
-  it("orders an employer with admin last and keeps the job-seeker profile (D506)", () => {
-    const items = menu([
-      "/jobs",
-      "/events",
-      "/services",
-      "/employer/jobs",
-      "/employer/company",
-      "/employer/billing",
-      "/chat",
-      "/post-job",
-      "/notifications",
-      "/settings/account",
-      "/admin",
-      "/admin/metrics",
-      "/profile",
-    ]);
-    expect(orderPhoneNav(items, "employer").map((item) => item.href)).toEqual([
-      "/employer/jobs",
-      "/post-job",
-      "/employer/company",
-      "/employer/billing",
-      "/chat",
-      "/jobs",
-      "/events",
-      "/services",
-      "/notifications",
-      "/profile",
-      "/settings/account",
-      "/admin",
-      "/admin/metrics",
-    ]);
   });
 });

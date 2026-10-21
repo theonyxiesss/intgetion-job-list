@@ -22,7 +22,11 @@ export type SharedProfileValues = {
   about: string | null;
 };
 
-/** The "about me" block of the account page (D504). */
+/**
+ * The "about me" block of the account page (D504). Only the name and a few
+ * words show at once; place and languages are optional and folded, Spoki
+ * asks for them when a task needs them (D517).
+ */
 export function SharedProfileForm({
   initial,
 }: {
@@ -83,44 +87,6 @@ export function SharedProfileForm({
           autoComplete="name"
         />
       </Field>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field label={t("country")} help={t("countryHelp")}>
-          <Input
-            name="country"
-            defaultValue={initial.country ?? ""}
-            maxLength={2}
-            autoComplete="country"
-            className="font-mono uppercase"
-          />
-        </Field>
-        <Field label={t("city")}>
-          <Input
-            name="city"
-            defaultValue={initial.city ?? ""}
-            maxLength={120}
-            autoComplete="address-level2"
-          />
-        </Field>
-      </div>
-      <Field label={t("timezone")} help={t("timezoneHelp")}>
-        <Input
-          name="timezone"
-          defaultValue={initial.timezone ?? ""}
-          maxLength={64}
-          className="font-mono"
-        />
-      </Field>
-      <Field
-        label={t("languages")}
-        help={t("languagesHelp")}
-        error={languageError}
-      >
-        <Input
-          name="languages"
-          defaultValue={formatLanguages(initial.languages)}
-          className="font-mono"
-        />
-      </Field>
       <Field label={t("about")}>
         <Textarea
           name="about"
@@ -129,6 +95,55 @@ export function SharedProfileForm({
           rows={3}
         />
       </Field>
+      <details
+        className="group flex flex-col gap-4 rounded-md border border-line px-4 py-3"
+        open={Boolean(languageError)}
+      >
+        <summary className="t-body-s flex min-h-11 cursor-pointer items-center text-fg">
+          {t("more")}
+        </summary>
+        <p className="t-body-s pb-2 text-fg-muted">{t("moreHelp")}</p>
+        <div className="flex flex-col gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label={t("country")} help={t("countryHelp")}>
+              <Input
+                name="country"
+                defaultValue={initial.country ?? ""}
+                maxLength={2}
+                autoComplete="country"
+                className="font-mono uppercase"
+              />
+            </Field>
+            <Field label={t("city")}>
+              <Input
+                name="city"
+                defaultValue={initial.city ?? ""}
+                maxLength={120}
+                autoComplete="address-level2"
+              />
+            </Field>
+          </div>
+          <Field label={t("timezone")} help={t("timezoneHelp")}>
+            <Input
+              name="timezone"
+              defaultValue={initial.timezone ?? ""}
+              maxLength={64}
+              className="font-mono"
+            />
+          </Field>
+          <Field
+            label={t("languages")}
+            help={t("languagesHelp")}
+            error={languageError}
+          >
+            <Input
+              name="languages"
+              defaultValue={formatLanguages(initial.languages)}
+              className="font-mono"
+            />
+          </Field>
+        </div>
+      </details>
       {formError ? (
         <p role="alert" className="t-body-s text-danger">
           {formError}

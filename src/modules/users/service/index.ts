@@ -14,6 +14,17 @@ export {
   patchSharedProfile,
 } from "./shared-profile";
 export {
+  WALLET_ERRORS,
+  WALLET_STATEMENT,
+  disconnectAccountWallet,
+  issueAccountWalletNonce,
+  readAccountWallet,
+  verifyAccountWalletSignature,
+  walletChangeImpact,
+  type AccountWallet,
+  type WalletImpact,
+} from "./wallet";
+export {
   SHARED_LANGUAGE_LEVELS,
   sharedProfileInput,
   type SharedProfileInput,

@@ -205,7 +205,7 @@ export function ProfileForm({
       setError(await errorCode(contacts));
       return;
     }
-    router.push("/profile");
+    router.push("/account");
     router.refresh();
   }
 

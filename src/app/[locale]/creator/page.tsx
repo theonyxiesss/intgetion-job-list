@@ -5,7 +5,7 @@ import { Container, PageHeader } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
-import { getPayoutStatus } from "@/modules/freelance/service";
+import { readAccountWallet } from "@/modules/users/service";
 import {
   getMyCreatorProfile,
   getOwnCreatorProfile,
@@ -71,7 +71,9 @@ export default async function CreatorPage({
         }
       : undefined;
   const h = await getTranslations("ugcHub");
-  const payout = mine.profile ? await getPayoutStatus(user.id) : null;
+  const payout = mine.profile
+    ? { address: (await readAccountWallet(user.id))?.address ?? null }
+    : null;
   return (
     <RouteMessages namespaces={["ugc"]}>
       <main className="py-10 md:py-16">
@@ -94,7 +96,7 @@ export default async function CreatorPage({
                 {payout.address ?? h("payout.none")}
               </p>
               <ButtonLink
-                href="/billing/crypto?payout=1&for=ugc"
+                href="/account#security"
                 variant="secondary"
                 className="self-start"
               >

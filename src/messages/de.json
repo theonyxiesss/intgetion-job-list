@@ -1854,6 +1854,28 @@
         "exampleUrls": "Beispiele"
       }
     },
+    "fillChoice": {
+      "title": "Wie füllen wir {what} aus?",
+      "text": "Im Chat frage ich Schritt für Schritt und speichere deine Antworten; im Formular füllst du alles selbst aus.",
+      "chat": "Mit Spoki im Chat ausfüllen",
+      "form": "Formular selbst ausfüllen",
+      "what": {
+        "job": "die Stelle",
+        "brief": "das Video-Briefing",
+        "service": "deine Leistung",
+        "profile": "dein Profil",
+        "creator": "dein Creator-Profil",
+        "company": "die Firmenkarte"
+      },
+      "reply": {
+        "job": "Lass uns die Stelle hier im Chat ausfüllen.",
+        "brief": "Lass uns das Briefing hier im Chat ausfüllen.",
+        "service": "Lass uns meine Leistung hier im Chat ausfüllen.",
+        "profile": "Lass uns mein Profil hier im Chat ausfüllen.",
+        "creator": "Lass uns mein Creator-Profil hier im Chat ausfüllen.",
+        "company": "Lass uns die Firmenkarte hier im Chat ausfüllen."
+      }
+    },
     "confirm": {
       "applyTitle": "Auf diesen Job bewerben?",
       "applyNote": "Anschreiben an das Unternehmen",
@@ -4196,10 +4218,10 @@
   "account": {
     "nav": "Mein Konto",
     "title": "Mein Konto",
-    "intro": "Ein Konto für Jobs, Recruiting, Creator-Videos und Freelance. Einmal ausfüllen, alle Rollen nutzen es.",
+    "intro": "Ein Konto für alle Dienste der Website: Profil, Tarif, Anmeldung und Wallet findest du hier.",
     "profile": {
       "title": "Über mich",
-      "text": "Rollen zeigen diese Angaben nur dort, wo es erlaubt ist. Kontakte werden hier nicht gespeichert.",
+      "text": "Menschen, mit denen du arbeitest, sehen deinen Namen. Der Rest ist freiwillig: Spoki fragt, wenn es nötig ist.",
       "displayName": "Name",
       "displayNameHelp": "Als Creator können Sie dort ein eigenes Pseudonym angeben.",
       "country": "Land",
@@ -4214,23 +4236,36 @@
       "save": "Speichern",
       "saving": "Wird gespeichert…",
       "saved": "Gespeichert. Ihre Rollen sind aktualisiert.",
-      "failed": "Speichern fehlgeschlagen. Prüfen Sie die Felder und versuchen Sie es erneut."
+      "failed": "Speichern fehlgeschlagen. Prüfen Sie die Felder und versuchen Sie es erneut.",
+      "more": "Land, Stadt, Zeitzone und Sprachen — freiwillig",
+      "moreHelp": "Fülle sie jetzt aus oder antworte Spoki, wenn er fragt. Diese Angaben gelten für alle Dienste."
     },
-    "roles": {
-      "title": "Rollen",
-      "text": "Eine Rolle wird aktiv, sobald Sie sie nutzen. Sie können beliebig viele haben.",
-      "active": "Aktiv",
+    "plan": {
+      "title": "Tarif",
+      "text": "Aktive Tarife und was sie enthalten.",
+      "change": "Tarif ändern",
+      "personal": "Persönlicher Tarif: {name}",
+      "company": "Firmentarif: {name}",
+      "until": "bis {date}"
+    },
+    "services": {
+      "title": "Meine Dienste",
+      "text": "Alles, was du mit diesem Konto nutzen kannst. Nichts muss eingeschaltet werden.",
       "open": "Öffnen",
-      "start": "Starten",
-      "candidate": {
-        "name": "Ich suche Arbeit",
+      "jobs": {
+        "name": "Jobsuche",
         "on": "Profil zu {score}% ausgefüllt",
         "off": "Noch kein Kandidatenprofil"
       },
-      "employer": {
-        "name": "Ich stelle ein",
+      "hiring": {
+        "name": "Einstellen",
         "on": "{companies, plural, one {# Firma} other {# Firmen}} · {jobs, plural, one {# Stelle} other {# Stellen}}",
         "off": "Noch keine Firma"
+      },
+      "videos": {
+        "name": "Videos von Creators",
+        "on": "{briefs, plural, one {# Briefing} other {# Briefings}}",
+        "off": "Noch keine Briefings"
       },
       "creator": {
         "name": "Video-Creator",
@@ -4238,16 +4273,276 @@
         "paused": "Profil pausiert",
         "off": "Noch kein Creator-Profil"
       },
-      "freelancer": {
-        "name": "Freelancer",
+      "freelance": {
+        "name": "Freelance",
         "on": "{accepting, select, true {Nehmen Aufträge an} other {Keine Aufträge}} · {services, plural, one {# Leistung} other {# Leistungen}}",
         "off": "Noch keine Leistungen"
-      },
-      "client": {
-        "name": "Ich bestelle Videos",
-        "on": "{briefs, plural, one {# Briefing} other {# Briefings}}",
-        "off": "Noch keine Briefings"
       }
+    },
+    "security": {
+      "title": "Anmeldung und Sicherheit",
+      "text": "Wie du dich anmeldest und wohin Auszahlungen gehen.",
+      "more": "E-Mail-Sprache und Konto löschen"
+    },
+    "wallet": {
+      "title": "Krypto-Wallet",
+      "text": "Hierher gehen Zahlungen für Freelance-Aufträge und Belohnungen für Videos. Du verknüpfst die Wallet mit einer signierten Nachricht — Seed-Phrase und Schlüssel sind nicht nötig.",
+      "none": "Keine Wallet verbunden.",
+      "connected": "Verbunden:",
+      "connect": "Wallet verbinden",
+      "changeBrowser": "Andere Wallet verbinden",
+      "qr": "Über WalletConnect (QR)",
+      "change": "Wallet wechseln",
+      "disconnect": "Trennen",
+      "changeTitle": "Wallet wechseln?",
+      "disconnectTitle": "Wallet trennen?",
+      "keepsHistory": "Zahlungsverlauf und bereits gesendete Auszahlungen bleiben unverändert.",
+      "openPayments": "Zahlungen bereits unterwegs an diese Adresse: {count}. Sie kommen dort an.",
+      "unpaidOrdersChange": "Angenommene Aufträge ohne Zahlung: {count}. Sie werden an die neue Wallet bezahlt.",
+      "unpaidOrdersDisconnect": "Angenommene Aufträge ohne Zahlung: {count}. Ohne Wallet können Käufer sie auf der Website nicht bezahlen.",
+      "blocked": "Belohnungen, die an diese Adresse ausgezahlt werden: {count}. Wechseln oder trennen kannst du die Wallet nach der Auszahlung.",
+      "disconnectConfirm": "Wallet trennen",
+      "cancel": "Abbrechen",
+      "linked": "Wallet verbunden.",
+      "unlinked": "Wallet getrennt.",
+      "error": {
+        "wallet": "Öffne deine Wallet und verbinde sie.",
+        "cancel": "Du hast die Signatur abgebrochen. Nichts wurde geändert.",
+        "network": "Dieses Netzwerk wird nicht unterstützt.",
+        "token": "Dieser Token wird nicht unterstützt.",
+        "failed": "Das hat nicht geklappt. Versuche es erneut.",
+        "taken": "Diese Wallet ist bereits mit einem anderen Konto verknüpft.",
+        "review": "Diese Adresse wird geprüft und wurde nicht gespeichert.",
+        "blocked": "Warte zuerst, bis die Belohnungen an die aktuelle Adresse ausgezahlt sind.",
+        "rate": "Zu viele Versuche. Versuche es in einer Stunde erneut."
+      }
+    }
+  },
+  "ugcDesk": {
+    "label": "UGC-Videos · Firmenbereich",
+    "navLabel": "Bereiche",
+    "navCount": "Offen:",
+    "nav": {
+      "overview": "Übersicht",
+      "campaigns": "Kampagnen",
+      "creators": "Creator",
+      "orders": "Aufträge",
+      "materials": "Videos",
+      "payments": "Zahlungen"
+    },
+    "newBrief": "Neues Briefing",
+    "withSpoki": "Briefing mit Spoki",
+    "fillWithSpoki": "Mit Spoki im Chat ausfüllen",
+    "fillForm": "Formular ausfüllen",
+    "loading": "Bereich wird geladen…",
+    "overviewTitle": "Übersicht",
+    "startText": "Beschreiben Sie das Produkt einmal. Passende Creator melden sich, Sie stellen die ein, die Sie auswählen, und zahlen nur für angenommene Videos.",
+    "start1Title": "Briefing",
+    "start1Text": "Produkt, Zielgruppe, was gesagt werden soll, wie viele Videos und die Vergütung pro Video. Eine Moderation prüft es, bevor Creator es sehen.",
+    "start2Title": "Bewerbungen und Einstellung",
+    "start2Text": "Creator mit Profil bewerben sich. Sie sehen sich ihre Beispiele an und schicken bestimmten Personen ein Angebot.",
+    "start3Title": "Videos und Entscheidung",
+    "start3Text": "Ein eingestellter Creator schickt einen Link. Sie nehmen ihn an, bitten um eine Überarbeitung oder lehnen ab.",
+    "attentionTitle": "Wartet auf Sie",
+    "attentionEmpty": "Gerade wartet nichts auf Sie",
+    "attentionEmptyText": "Neue Bewerbungen und Videos erscheinen hier, sobald Creator sie schicken.",
+    "attention": {
+      "decide": "{count, plural, one {# Video wartet auf Ihre Entscheidung} other {# Videos warten auf Ihre Entscheidung}}",
+      "hire": "{count, plural, one {# Bewerbung wartet auf eine Entscheidung} other {# Bewerbungen warten auf eine Entscheidung}}",
+      "deposit": "Zahlen Sie das Budget ein, um einzustellen",
+      "remind": "{count, plural, =0 {Eingestellte Creator haben noch kein Video geschickt} one {# eingestellter Creator hat noch kein Video geschickt} other {# eingestellte Creator haben noch kein Video geschickt}}"
+    },
+    "attentionAction": {
+      "decide": "Videos ansehen",
+      "hire": "Creator auswählen",
+      "deposit": "Budget einzahlen",
+      "remind": "Briefing öffnen"
+    },
+    "stat": {
+      "active": "Laufende Briefings",
+      "applied": "Bewerbungen",
+      "hired": "Eingestellt",
+      "waiting": "Videos zu prüfen",
+      "accepted": "Angenommene Videos"
+    },
+    "freshTitle": "Neueste Videos",
+    "seeAll": "Alle ansehen",
+    "deadline": "Frist {date}",
+    "creatorToo": "Drehen Sie auch selbst Videos?",
+    "needCompanyTitle": "Zuerst eine Firma",
+    "needCompanyText": "Briefings werden im Namen einer Firma veröffentlicht. Legen Sie eine in Ihrem Konto an und kommen Sie zurück.",
+    "createCompany": "Firma anlegen",
+    "campaignsIntro": "Alle Briefings Ihrer Firmen und der Schritt, auf dem jedes steht.",
+    "filterLabel": "Filter",
+    "campaignGroup": {
+      "active": "Laufend",
+      "review": "Entwurf und Prüfung",
+      "closed": "Geschlossen",
+      "all": "Alle"
+    },
+    "campaignsEmpty": "Hier gibt es keine Briefings",
+    "campaignsEmptyText": "Wählen Sie einen anderen Filter oder schreiben Sie ein neues Briefing.",
+    "col": {
+      "brief": "Briefing",
+      "status": "Status",
+      "step": "Schritt",
+      "deadline": "Frist",
+      "hired": "Eingestellt / Videos",
+      "budget": "Budget",
+      "next": "Nächster Schritt",
+      "creator": "Creator",
+      "reward": "Vergütung",
+      "rights": "Rechte",
+      "action": "Aktion",
+      "deposit": "Budgetzahlung"
+    },
+    "hiredOf": "{hired} / {wanted}",
+    "creatorsIntro": "Personen, die sich auf Ihre Briefings beworben oder Ihr Angebot erhalten haben, mit öffentlicher Karte und Beispiel-Links. Kontakte werden nicht angezeigt.",
+    "inBriefs": "In Ihren Briefings",
+    "creatorsEmpty": "Noch keine Creator",
+    "creatorsEmptyText": "Sobald sich ein Creator auf ein offenes Briefing bewirbt, erscheint seine Karte hier.",
+    "participations": "Briefings",
+    "offerAfterDeposit": "Ein Angebot geht erst nach der Budgetzahlung raus.",
+    "offerClosed": "Das Briefing nimmt keine neuen Einstellungen an.",
+    "matchesTitle": "Passende Creator",
+    "matchesIntro": "Creator, die Einladungen annehmen und bei denen Plattform, Sprache, Nische und Land zu einem offenen Briefing passen. Dieselbe Regel wie bei Spoki.",
+    "matchesNoOpen": "Noch kein offenes Briefing",
+    "matchesNoOpenText": "Passende Creator erscheinen, sobald ein Briefing die Prüfung bestanden hat.",
+    "matchesEmpty": "Noch niemand passt zu diesem Briefing",
+    "matchesEmptyText": "Schicken Sie einem bekannten Creator einen Link: Er bewirbt sich, und Sie entscheiden über die Einstellung.",
+    "examplesCount": "{count, plural, =0 {Keine Beispiel-Links} one {# Beispiel-Link} other {# Beispiel-Links}}",
+    "portfolio": "Beispiele",
+    "noPortfolio": "Noch keine Beispiel-Links.",
+    "anyCountry": "Jedes Land",
+    "newTab": "(öffnet in neuem Tab)",
+    "ordersIntro": "Bewerbungen, Angebote und eingestellte Creator über alle Briefings.",
+    "orderGroup": {
+      "applied": "Bewerbungen",
+      "offered": "Angebote",
+      "active": "In Arbeit",
+      "done": "Abgeschlossen"
+    },
+    "ordersEmpty": {
+      "applied": "Keine offenen Bewerbungen",
+      "offered": "Keine Angebote ohne Antwort",
+      "active": "Gerade arbeitet niemand an einem Video",
+      "done": "Noch nichts abgeschlossen"
+    },
+    "ordersEmptyText": "Aufträge erscheinen, wenn sich Creator auf ein offenes Briefing bewerben oder Ihr Angebot annehmen.",
+    "toVideo": "Video öffnen",
+    "materialsIntro": "Videos, die eingestellte Creator geschickt haben. Pro Video eine Entscheidung, eine Überarbeitung ist erlaubt.",
+    "materialGroup": {
+      "waiting": "Zu prüfen",
+      "changes": "In Überarbeitung",
+      "accepted": "Angenommen",
+      "rejected": "Abgelehnt"
+    },
+    "materialsEmpty": {
+      "waiting": "Keine Videos zu prüfen",
+      "changes": "Gerade keine Überarbeitung",
+      "accepted": "Noch keine angenommenen Videos",
+      "rejected": "Keine abgelehnten Videos"
+    },
+    "materialsEmptyText": "Ein eingestellter Creator schickt einen Link zu TikTok, Instagram oder YouTube, und er erscheint hier.",
+    "video": {
+      "submitted": "Wartet auf Prüfung",
+      "changes_requested": "In Überarbeitung",
+      "accepted": "Angenommen",
+      "winner": "Gewinner",
+      "rejected": "Abgelehnt"
+    },
+    "platform": {
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "youtube": "YouTube",
+      "other": "Link"
+    },
+    "openVideo": "Video von {name} auf {platform} öffnen (neuer Tab)",
+    "reportedLabel": "Laut Creator",
+    "decideHint": "Sehen Sie sich das Video an und entscheiden Sie. Ein Gewinner darf nur dann in Anzeigen, wenn die Rechte es erlauben.",
+    "revisionUsed": "Die eine Überarbeitung wurde schon genutzt.",
+    "paymentsIntro": "Budgets der Briefings und Vergütungen für angenommene Videos. Nur gespeicherte Beträge, keine Prognosen.",
+    "paymentsEmpty": "Noch keine Briefings",
+    "walletOffTitle": "Budgetzahlungen sind aus",
+    "walletOffText": "Vergütungen werden für angenommene Videos erfasst. Hier wird nichts abgebucht und nichts an Creator gesendet.",
+    "money": {
+      "deposited": "Eingezahlt",
+      "awaiting": "Wartet auf Einzahlung",
+      "owed": "Erfasst, noch nicht bezahlt",
+      "paid": "Als bezahlt markiert"
+    },
+    "budgetsTitle": "Budgets der Briefings",
+    "budgetFormula": "{videos} × {price}",
+    "deposit": {
+      "off": "Nicht nötig",
+      "paid": "Eingezahlt",
+      "checking": "Überweisung wird geprüft",
+      "awaiting": "Wartet auf Überweisung",
+      "due": "Einzahlen, um einzustellen",
+      "later": "Nach der Prüfung",
+      "closed": "Nicht eingezahlt"
+    },
+    "rewardsTitle": "Vergütungen für angenommene Videos",
+    "rewardsEmpty": "Noch keine Vergütungen",
+    "rewardsEmptyText": "Eine Vergütung wird erfasst, wenn Sie ein Video annehmen.",
+    "reward": {
+      "owed": "Erfasst",
+      "paid": "Bezahlt"
+    },
+    "rewardsNote": "Der Gründer überweist Vergütungen von Hand aus der Plattform-Wallet; der Server prüft die Überweisung, bevor sie als bezahlt gilt.",
+    "nextTitle": "Nächster Schritt",
+    "nextText": {
+      "deposit": "Zahlen Sie das Budget ein: Erst danach gehen Angebote raus.",
+      "hire": "Creator haben sich beworben. Sehen Sie sich die Beispiele an und stellen Sie ein.",
+      "decide": "Ein Video wartet auf Ihre Entscheidung.",
+      "remind": "Eingestellte Creator haben noch nicht alle Videos geschickt."
+    },
+    "fact": {
+      "reward": "Pro Video",
+      "videos": "Eingestellt / Videos",
+      "budget": "Budget",
+      "rights": "Rechte"
+    },
+    "peopleTitle": "Creator und Aufträge",
+    "peopleEmpty": "Noch keine Bewerbungen",
+    "peopleEmptyOpen": "Das Briefing ist offen. Schicken Sie einem bekannten Creator einen Link oder warten Sie auf Bewerbungen.",
+    "peopleEmptyOther": "Creator können sich bewerben, sobald das Briefing offen ist.",
+    "videosTitle": "Videos",
+    "videosEmpty": "Noch keine Videos",
+    "videosEmptyText": "Nur ein eingestellter Creator schickt ein Video.",
+    "briefTitle": "Briefing",
+    "manageTitle": "Briefing verwalten",
+    "joinHint": "Ein Link für einen Creator außerhalb des Pools. Sie leiten ihn selbst weiter; er führt zu einer Bewerbung, nicht zu einer Einstellung.",
+    "backToBrief": "Zurück zum Briefing",
+    "newIntro": "Dieselben Felder, die Spoki im Chat abfragt. Der Entwurf ist gemeinsam: Was Sie hier speichern, sieht auch Spoki.",
+    "form": {
+      "product": "Produkt",
+      "audience": "Zielgruppe",
+      "audienceHint": "Für wen das Video ist. Füllen Sie die Zielgruppe oder die Länder aus.",
+      "video": "Videos",
+      "money": "Vergütung und Bedingungen",
+      "extra": "Nachricht und Beispiele",
+      "extraHint": "Optional. Die Nachricht sieht ein Creator zusammen mit Ihrem Angebot.",
+      "summaryHelp": "Ein oder zwei Sätze: was es ist und wozu man es nutzt.",
+      "audienceHelp": "Zum Beispiel: Studierende, die ihre Ausgaben verfolgen",
+      "countryHelp": "Zweibuchstabige Codes mit Komma getrennt, z. B. US, DE. Leer heißt jedes Land.",
+      "languagesHelp": "Sprachcodes mit Komma getrennt, z. B. de, en",
+      "videosHelp": "Von 1 bis 30",
+      "listHelp": "Kurze Punkte, mit Semikolon getrennt",
+      "bountyHelp": "Ganze Dollar pro angenommenem Video, von $5 bis $500",
+      "pitchHelp": "Bis zu 300 Zeichen",
+      "examplesHelp": "Bis zu fünf https-Links, einer pro Zeile",
+      "summary": "Zusammenfassung des Briefings",
+      "budget": "Budget",
+      "budgetEmpty": "Geben Sie Anzahl der Videos und Vergütung an.",
+      "after1": "Nach dem Senden prüft eine Moderation das Briefing.",
+      "after2": "Dann sehen es Creator und bewerben sich.",
+      "after3": "Sie stellen die ein, die Sie auswählen.",
+      "send": "Zur Prüfung senden",
+      "saveDraft": "Entwurf speichern",
+      "saved": "Entwurf gespeichert.",
+      "draftNote": "Beim Senden eines Briefings wird nichts abgebucht.",
+      "fieldProblem": "Prüfen Sie das Feld „{field}“."
     }
   }
 }

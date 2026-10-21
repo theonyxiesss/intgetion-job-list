@@ -64,7 +64,7 @@ export function UgcAction({
     <div className="flex flex-col items-start gap-2">
       <Button
         type="button"
-        variant={primary ? "primary" : "secondary"}
+        variant={primary ? "strong" : "secondary"}
         disabled={busy}
         aria-busy={busy}
         onClick={() => void run()}

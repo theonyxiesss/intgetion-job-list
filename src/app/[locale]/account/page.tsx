@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Badge } from "@/components/ui/badge";
+import { AccountSignIn } from "@/components/settings/account-sign-in";
 import { ButtonLink } from "@/components/ui/button";
 import { Container, PageHeader } from "@/components/ui/container";
 import { RouteMessages } from "@/components/shell/route-messages";
+import { PRICING } from "@/config/pricing";
 import { logger } from "@/lib/logger";
+import { billingMe, type BillingMe } from "@/modules/billing/service";
+import { AccountWallet } from "@/modules/billing/ui/account-wallet";
 import { getOwnCandidate } from "@/modules/candidates/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
 import { getSeller, listOwnServices } from "@/modules/freelance/service";
 import { listJobsForUser } from "@/modules/jobs/service";
 import { getOwnCreatorProfile, listMyCampaigns } from "@/modules/ugc/service";
-import { readSharedProfile } from "@/modules/users/service";
+import {
+  readAccountWallet,
+  readSharedProfile,
+  walletChangeImpact,
+} from "@/modules/users/service";
 import { SharedProfileForm } from "@/modules/users/ui/shared-profile-form";
 import { requireSettingsUser } from "../settings/require-settings-user";
 
@@ -26,24 +33,45 @@ export async function generateMetadata({
   return { title: t("title"), robots: { index: false, follow: false } };
 }
 
-/** One role's read failing must not take the account page down. */
+/** One service's read failing must not take the account page down. */
 async function safe<T>(read: Promise<T>, fallback: T): Promise<T> {
   try {
     return await read;
   } catch (error) {
-    logger.warn({ err: error }, "account: role read failed");
+    logger.warn({ err: error }, "account: service read failed");
     return fallback;
   }
 }
 
-type Role = {
-  key: "candidate" | "employer" | "creator" | "freelancer" | "client";
-  on: boolean;
+type Service = {
+  key: "jobs" | "hiring" | "videos" | "creator" | "freelance";
   status: string;
   href: string;
 };
 
-/** One account for every service (D504, 29.8): the shared profile and the roles. */
+const FREE_BILLING: BillingMe = {
+  plan: "start",
+  candidatePlan: "free",
+  crypto: false,
+  hires: [],
+  teamUntil: null,
+  candidateUntil: null,
+};
+
+function day(iso: string | null, locale: string): string | null {
+  return iso
+    ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(
+        new Date(iso),
+      )
+    : null;
+}
+
+/**
+ * One account for every service (D504, D517): about me, the plans in
+ * force, every service of the site without "roles", sign-in and the wallet.
+ * Rights stay where they live (company membership, plan); the page only
+ * shows them.
+ */
 export default async function AccountPage({
   params,
 }: {
@@ -53,6 +81,7 @@ export default async function AccountPage({
   setRequestLocale(locale);
   const user = await requireSettingsUser(locale);
   const t = await getTranslations("account");
+  const pricing = await getTranslations("pricing");
   const [
     shared,
     candidate,
@@ -62,6 +91,9 @@ export default async function AccountPage({
     seller,
     services,
     campaigns,
+    billing,
+    wallet,
+    impact,
   ] = await Promise.all([
     safe(readSharedProfile(user.id), null),
     safe(getOwnCandidate(user.id), null),
@@ -71,67 +103,95 @@ export default async function AccountPage({
     safe(getSeller(user.id), null),
     safe(listOwnServices(user.id), []),
     safe(listMyCampaigns(user.id), []),
+    safe(billingMe(user.id), FREE_BILLING),
+    safe(readAccountWallet(user.id), null),
+    safe(walletChangeImpact(user.id), null),
   ]);
 
-  const roles: Role[] = [
+  const list: Service[] = [
     {
-      key: "candidate",
-      on: candidate !== null,
+      key: "jobs",
       status: candidate
-        ? t("roles.candidate.on", { score: candidate.completeness })
-        : t("roles.candidate.off"),
-      href: candidate ? "/profile" : "/profile/edit",
+        ? t("services.jobs.on", { score: candidate.completeness })
+        : t("services.jobs.off"),
+      href: "/profile/edit",
     },
     {
-      key: "employer",
-      on: companies.length > 0,
+      key: "hiring",
       status: companies.length
-        ? t("roles.employer.on", {
+        ? t("services.hiring.on", {
             companies: companies.length,
             jobs: jobs.length,
           })
-        : t("roles.employer.off"),
-      href: companies.length ? "/employer/jobs" : "/employer/company",
+        : t("services.hiring.off"),
+      href: companies.length ? "/employer/jobs" : "/post-job",
+    },
+    {
+      key: "videos",
+      status: campaigns.length
+        ? t("services.videos.on", { briefs: campaigns.length })
+        : t("services.videos.off"),
+      href: campaigns.length ? "/campaigns" : "/campaigns/new",
     },
     {
       key: "creator",
-      on: creator !== null,
       status: creator
-        ? t(`roles.creator.${creator.status === "paused" ? "paused" : "on"}`)
-        : t("roles.creator.off"),
+        ? t(`services.creator.${creator.status === "paused" ? "paused" : "on"}`)
+        : t("services.creator.off"),
       href: "/creator",
     },
     {
-      key: "freelancer",
-      on: Boolean(seller?.accepting) || services.length > 0,
+      key: "freelance",
       status:
         seller?.accepting || services.length
-          ? t("roles.freelancer.on", {
+          ? t("services.freelance.on", {
               accepting: seller?.accepting ? "true" : "false",
               services: services.length,
             })
-          : t("roles.freelancer.off"),
+          : t("services.freelance.off"),
       href: "/profile/freelance",
-    },
-    {
-      key: "client",
-      on: campaigns.length > 0,
-      status: campaigns.length
-        ? t("roles.client.on", { briefs: campaigns.length })
-        : t("roles.client.off"),
-      href: campaigns.length ? "/campaigns" : "/campaigns/new",
     },
   ];
 
+  const personal = PRICING.candidates.find(
+    (tier) => tier.code === billing.candidatePlan,
+  )!;
+  const company = PRICING.companies.find((tier) => tier.code === billing.plan)!;
+  const plans = [
+    {
+      key: "personal",
+      name: pricing(`tiers.${personal.code}.name`),
+      until: day(billing.candidateUntil, locale),
+      points: personal.points.map((point) =>
+        pricing(`tiers.${personal.code}.points.${point}`),
+      ),
+    },
+    // The company plan belongs to the company; shown to its members.
+    ...(companies.length
+      ? [
+          {
+            key: "company",
+            name: pricing(`tiers.${company.code}.name`),
+            until:
+              billing.plan === "team" ? day(billing.teamUntil, locale) : null,
+            points: company.points.map((point) =>
+              pricing(`tiers.${company.code}.points.${point}`),
+            ),
+          },
+        ]
+      : []),
+  ];
+
+  const section =
+    "flex flex-col gap-4 rounded-lg border border-line p-4 md:p-6";
+
   return (
-    <RouteMessages namespaces={["account"]}>
+    <RouteMessages namespaces={["account", "settings"]}>
       <main className="py-10 md:py-16">
         <Container narrow className="flex flex-col gap-10">
           <PageHeader title={t("title")} intro={t("intro")} />
-          <section
-            aria-labelledby="account-profile"
-            className="flex flex-col gap-4 rounded-lg border border-line p-4 md:p-6"
-          >
+
+          <section aria-labelledby="account-profile" className={section}>
             <div className="flex flex-col gap-1">
               <h2 id="account-profile" className="t-h3">
                 {t("profile.title")}
@@ -149,39 +209,105 @@ export default async function AccountPage({
               }}
             />
           </section>
+
+          <section aria-labelledby="account-plan" className={section}>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex flex-col gap-1">
+                <h2 id="account-plan" className="t-h3">
+                  {t("plan.title")}
+                </h2>
+                <p className="t-body-s text-fg-muted">{t("plan.text")}</p>
+              </div>
+              <ButtonLink href="/pricing" variant="secondary">
+                {t("plan.change")}
+              </ButtonLink>
+            </div>
+            <ul className="flex flex-col border-t border-line">
+              {plans.map((plan) => (
+                <li
+                  key={plan.key}
+                  className="flex flex-col gap-2 border-b border-line py-4"
+                >
+                  <p className="font-medium">
+                    {t(`plan.${plan.key}`, { name: plan.name })}
+                    {plan.until ? (
+                      <span className="t-body-s font-mono text-fg-muted">
+                        {" · "}
+                        {t("plan.until", { date: plan.until })}
+                      </span>
+                    ) : null}
+                  </p>
+                  <ul className="t-body-s flex list-disc flex-col gap-1 pl-5 text-fg-muted">
+                    {plan.points.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          </section>
+
           <section
-            aria-labelledby="account-roles"
+            aria-labelledby="account-services"
             className="flex flex-col gap-2"
           >
-            <h2 id="account-roles" className="t-h3">
-              {t("roles.title")}
+            <h2 id="account-services" className="t-h3">
+              {t("services.title")}
             </h2>
-            <p className="t-body-s text-fg-muted">{t("roles.text")}</p>
+            <p className="t-body-s text-fg-muted">{t("services.text")}</p>
             <ul className="mt-2 flex flex-col border-t border-line">
-              {roles.map((role) => (
+              {list.map((service) => (
                 <li
-                  key={role.key}
+                  key={service.key}
                   className="flex flex-col gap-3 border-b border-line py-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex flex-col gap-1">
-                    <p className="flex items-center gap-2 font-medium">
-                      {t(`roles.${role.key}.name`)}
-                      {role.on ? (
-                        <Badge tone="success">{t("roles.active")}</Badge>
-                      ) : null}
+                    <p className="font-medium">
+                      {t(`services.${service.key}.name`)}
                     </p>
-                    <p className="t-body-s text-fg-muted">{role.status}</p>
+                    <p className="t-body-s text-fg-muted">{service.status}</p>
                   </div>
                   <ButtonLink
-                    href={role.href}
+                    href={service.href}
                     variant="secondary"
                     className="self-start sm:self-auto"
                   >
-                    {role.on ? t("roles.open") : t("roles.start")}
+                    {t("services.open")}
                   </ButtonLink>
                 </li>
               ))}
             </ul>
+          </section>
+
+          <section
+            id="security"
+            aria-labelledby="account-security"
+            className="flex scroll-mt-24 flex-col gap-6"
+          >
+            <div className="flex flex-col gap-1">
+              <h2 id="account-security" className="t-h3">
+                {t("security.title")}
+              </h2>
+              <p className="t-body-s text-fg-muted">{t("security.text")}</p>
+            </div>
+            <AccountSignIn locale={locale} user={user} />
+            <AccountWallet
+              address={wallet?.address ?? null}
+              projectId={
+                process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID?.trim() ?? ""
+              }
+              blocked={impact?.blocked ?? false}
+              openPayments={impact?.openPayments ?? 0}
+              unpaidOrders={impact?.unpaidOrders ?? 0}
+              owedRewards={impact?.owedRewards ?? 0}
+            />
+            <ButtonLink
+              href="/settings/account"
+              variant="ghost"
+              className="self-start"
+            >
+              {t("security.more")}
+            </ButtonLink>
           </section>
         </Container>
       </main>

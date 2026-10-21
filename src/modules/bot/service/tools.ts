@@ -46,7 +46,7 @@ import {
 import { freelanceTools } from "@/modules/freelance/service";
 import { ugcTools } from "@/modules/ugc/service";
 import { jobDraftTools } from "./job-tools";
-import { OFFER_ACTIONS, offerPath } from "./offers";
+import { OFFER_ACTIONS, offerPath, type FillKind } from "./offers";
 import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
 import { accountTools } from "./account-tools";
 import { employerJobTools } from "./employer-job-tools";
@@ -90,6 +90,8 @@ export type BotState = {
   needsDraftOffer?: boolean;
   /** How a signed-in person wants the profile filled. */
   fillMode?: FillMode | null;
+  /** Spoki asked "here or in the form?" about this (D516). */
+  fillOffered?: FillKind;
   /** The guest has already been offered an account once. */
   signupHintShown?: boolean;
   /** Claimed guest thread still needs one continuation message. */
@@ -402,7 +404,7 @@ export const TOOLS: readonly BotTool[] = [
   tool({
     name: "offer_step",
     description:
-      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, order_service, events, freelance (the freelance catalog), freelance_sell (the seller cabinet), freelance_payout (a freelancer confirms the payout address), memory (what Spoki remembers, in settings), account_settings (email, password, sign-in methods, deleting the account), my_account (the about-me profile and all roles) or company (the company page: website, domain, legal details, logo). Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet. Use order_service only after they ask to order a managed team or leave the task. Do not use it to answer a question about a service.",
+      "Show one card that opens a page on this site: pay_hire, pay_team, pay_plus, pay_pro, pricing, register, post_job, fill_job, fill_brief, fill_service, fill_profile, fill_creator, fill_company (a card asking whether to fill that in together here in the chat or alone in the form), order_service, events, freelance (the freelance catalog), freelance_sell (the seller cabinet), freelance_payout (a freelancer confirms the payout address), memory (what Spoki remembers, in settings), account_settings (email, password, sign-in methods, deleting the account), my_account (the about-me profile and all roles) or company (the company page: website, domain, legal details, logo). Use this instead of writing a URL. After you have helped, call it for the paid plan that fits. Use pricing when the plan is not clear yet. Use order_service only after they ask to order a managed team or leave the task. Do not use it to answer a question about a service.",
     input: z.object({ action: z.enum(OFFER_ACTIONS) }).strict(),
     access: "guest",
     confirm: never,

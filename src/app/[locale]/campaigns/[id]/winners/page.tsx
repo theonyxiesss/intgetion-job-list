@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { Container, PageHeader } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button";
 import { HttpError } from "@/lib/http";
 import { formatMinor } from "@/lib/money";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { listWinners } from "@/modules/ugc/service";
+import { DeskEmpty, DeskShell, Monogram } from "@/modules/ugc/ui/desk";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +29,7 @@ export default async function WinnersPage({
   const { locale, id } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("ugc");
+  const d = await getTranslations("ugcDesk");
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
   if (!user) notFound();
@@ -40,58 +41,76 @@ export default async function WinnersPage({
     throw error;
   }
   return (
-    <main className="py-10 md:py-16">
-      <Container className="flex max-w-3xl flex-col gap-6">
-        <PageHeader title={view.productName} intro={t("winnersIntro")} />
+    <DeskShell
+      active="materials"
+      title={view.productName}
+      intro={t("winnersIntro")}
+      actions={
         <ButtonLink href={`/campaigns/${id}`} variant="secondary">
-          {t("title")}
+          {d("backToBrief")}
         </ButtonLink>
-        {view.winners.length === 0 ? (
-          <p className="t-body-s text-fg-muted">{t("winnersEmpty")}</p>
-        ) : (
-          <ul className="flex flex-col gap-4">
-            {view.winners.map((row) => (
+      }
+    >
+      {view.winners.length === 0 ? (
+        <DeskEmpty title={t("winnersEmpty")} />
+      ) : (
+        <ul className="flex flex-col divide-y divide-line rounded-lg border border-line">
+          {view.winners.map((row) => {
+            const name = row.displayName || t("creator");
+            return (
               <li
                 key={row.inviteId}
-                className="rounded-lg border border-line p-4"
+                className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start md:px-5"
               >
-                <p className="font-medium">{row.displayName || t("creator")}</p>
-                {row.rights ? (
-                  <p className="t-body-s text-fg-muted">
-                    {t(`rights.${row.rights}`)}
-                  </p>
-                ) : null}
-                {row.liveUrl ? (
-                  <p className="t-body-s mt-2 break-all">{row.liveUrl}</p>
-                ) : (
-                  <p className="t-body-s mt-2 text-fg-muted">
-                    {t("winnersNoCount")}
-                  </p>
-                )}
-                {row.reportedViews != null ? (
-                  <p className="t-body-s mt-2 font-mono">
-                    {t("reportedViews", { count: row.reportedViews })}
-                  </p>
-                ) : null}
-                {row.payout ? (
-                  <p className="t-body-s mt-2">
-                    {t(row.payout.status === "paid" ? "paidNote" : "owedNote", {
-                      amount: formatMinor(
-                        BigInt(row.payout.amountMinor),
-                        "USD",
-                        locale,
+                <Monogram name={name} />
+                <div className="flex min-w-0 flex-col gap-2">
+                  <p className="font-medium break-words">{name}</p>
+                  {row.rights ? (
+                    <p className="t-body-s text-fg-muted">
+                      {t(`rights.${row.rights}`)}
+                    </p>
+                  ) : null}
+                  {row.liveUrl ? (
+                    <a
+                      href={row.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="t-body-s break-all underline underline-offset-4"
+                    >
+                      {row.liveUrl}
+                      <span className="sr-only">{d("newTab")}</span>
+                    </a>
+                  ) : (
+                    <p className="t-body-s text-fg-muted">
+                      {t("winnersNoCount")}
+                    </p>
+                  )}
+                  {row.reportedViews != null ? (
+                    <p className="t-body-s font-mono">
+                      {t("reportedViews", { count: row.reportedViews })}
+                    </p>
+                  ) : null}
+                  {row.payout ? (
+                    <p className="t-body-s">
+                      {t(
+                        row.payout.status === "paid" ? "paidNote" : "owedNote",
                         {
-                          wholeWhenEven: true,
+                          amount: formatMinor(
+                            BigInt(row.payout.amountMinor),
+                            "USD",
+                            locale,
+                            { wholeWhenEven: true },
+                          ),
                         },
-                      ),
-                    })}
-                  </p>
-                ) : null}
+                      )}
+                    </p>
+                  ) : null}
+                </div>
               </li>
-            ))}
-          </ul>
-        )}
-      </Container>
-    </main>
+            );
+          })}
+        </ul>
+      )}
+    </DeskShell>
   );
 }

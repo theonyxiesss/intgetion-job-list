@@ -1854,6 +1854,28 @@
         "exampleUrls": "Ejemplos"
       }
     },
+    "fillChoice": {
+      "title": "¿Cómo rellenamos {what}?",
+      "text": "En el chat pregunto paso a paso y guardo tus respuestas; en el formulario lo rellenas todo tú.",
+      "chat": "Rellenar con Spoki en el chat",
+      "form": "Rellenar el formulario yo",
+      "what": {
+        "job": "la oferta",
+        "brief": "el brief de vídeo",
+        "service": "tu servicio",
+        "profile": "tu perfil",
+        "creator": "tu perfil de creador",
+        "company": "la ficha de la empresa"
+      },
+      "reply": {
+        "job": "Rellenemos la oferta aquí en el chat.",
+        "brief": "Rellenemos el brief aquí en el chat.",
+        "service": "Rellenemos mi servicio aquí en el chat.",
+        "profile": "Rellenemos mi perfil aquí en el chat.",
+        "creator": "Rellenemos mi perfil de creador aquí en el chat.",
+        "company": "Rellenemos la ficha de la empresa aquí en el chat."
+      }
+    },
     "confirm": {
       "applyTitle": "¿Postularte a este empleo?",
       "applyNote": "Carta para la empresa",
@@ -4196,10 +4218,10 @@
   "account": {
     "nav": "Mi cuenta",
     "title": "Mi cuenta",
-    "intro": "Una cuenta para empleo, contratación, videos de creadores y freelance. Completa tus datos una vez y todos los roles los usan.",
+    "intro": "Una cuenta para todos los servicios del sitio: perfil, plan, acceso y monedero están aquí.",
     "profile": {
       "title": "Sobre mí",
-      "text": "Los roles muestran estos datos solo donde está permitido. Los contactos no se guardan aquí.",
+      "text": "Las personas con las que trabajas ven tu nombre. Lo demás es opcional: Spoki lo pregunta cuando hace falta.",
       "displayName": "Nombre",
       "displayNameHelp": "Como creador puedes poner un seudónimo aparte en ese perfil.",
       "country": "País",
@@ -4214,40 +4236,313 @@
       "save": "Guardar",
       "saving": "Guardando…",
       "saved": "Guardado. Tus roles se actualizaron.",
-      "failed": "No se pudo guardar. Revisa los campos e inténtalo de nuevo."
+      "failed": "No se pudo guardar. Revisa los campos e inténtalo de nuevo.",
+      "more": "País, ciudad, zona horaria e idiomas — opcional",
+      "moreHelp": "Rellénalos ahora o responde a Spoki cuando pregunte. Estos datos son comunes a todos los servicios."
     },
-    "roles": {
-      "title": "Roles",
-      "text": "Un rol se activa cuando empiezas a usarlo. Puedes tener tantos como quieras.",
-      "active": "Activo",
+    "plan": {
+      "title": "Plan",
+      "text": "Planes vigentes y lo que incluyen.",
+      "change": "Cambiar plan",
+      "personal": "Plan personal: {name}",
+      "company": "Plan de la empresa: {name}",
+      "until": "hasta el {date}"
+    },
+    "services": {
+      "title": "Mis servicios",
+      "text": "Todo lo que puedes usar con esta cuenta. No hay nada que activar.",
       "open": "Abrir",
-      "start": "Empezar",
-      "candidate": {
-        "name": "Busco empleo",
+      "jobs": {
+        "name": "Búsqueda de empleo",
         "on": "Perfil completo al {score}%",
         "off": "Aún no hay perfil de candidato"
       },
-      "employer": {
-        "name": "Contrato",
+      "hiring": {
+        "name": "Contratación",
         "on": "{companies, plural, one {# empresa} other {# empresas}} · {jobs, plural, one {# vacante} other {# vacantes}}",
         "off": "Aún no hay empresa"
       },
+      "videos": {
+        "name": "Vídeos de creadores",
+        "on": "{briefs, plural, one {# brief} other {# briefs}}",
+        "off": "Aún no hay briefs"
+      },
       "creator": {
-        "name": "Creador de videos",
+        "name": "Creador de vídeo",
         "on": "Perfil activo, las empresas pueden encontrarte",
         "paused": "Perfil en pausa",
         "off": "Aún no hay perfil de creador"
       },
-      "freelancer": {
-        "name": "Freelancer",
+      "freelance": {
+        "name": "Freelance",
         "on": "{accepting, select, true {Aceptas pedidos} other {No aceptas pedidos}} · {services, plural, one {# servicio} other {# servicios}}",
         "off": "Aún no hay servicios"
-      },
-      "client": {
-        "name": "Encargo videos",
-        "on": "{briefs, plural, one {# brief} other {# briefs}}",
-        "off": "Aún no hay briefs"
       }
+    },
+    "security": {
+      "title": "Acceso y seguridad",
+      "text": "Cómo entras en la cuenta y adónde llegan los pagos.",
+      "more": "Idioma de los correos y eliminar la cuenta"
+    },
+    "wallet": {
+      "title": "Monedero cripto",
+      "text": "Aquí llegan los pagos de pedidos freelance y las recompensas por vídeos. El monedero se vincula firmando un mensaje: no hacen falta frase semilla ni claves.",
+      "none": "No hay monedero conectado.",
+      "connected": "Conectado:",
+      "connect": "Conectar monedero",
+      "changeBrowser": "Conectar otro monedero",
+      "qr": "Con WalletConnect (QR)",
+      "change": "Cambiar monedero",
+      "disconnect": "Desconectar",
+      "changeTitle": "¿Cambiar el monedero?",
+      "disconnectTitle": "¿Desconectar el monedero?",
+      "keepsHistory": "El historial de pagos y los pagos ya enviados no cambian.",
+      "openPayments": "Pagos ya en camino a esta dirección: {count}. Llegarán a ella.",
+      "unpaidOrdersChange": "Pedidos aceptados sin pagar: {count}. Se pagarán al monedero nuevo.",
+      "unpaidOrdersDisconnect": "Pedidos aceptados sin pagar: {count}. Sin monedero, los compradores no podrán pagarlos en el sitio.",
+      "blocked": "Recompensas pendientes de pago a esta dirección: {count}. Podrás cambiar o desconectar el monedero cuando se paguen.",
+      "disconnectConfirm": "Desconectar monedero",
+      "cancel": "Cancelar",
+      "linked": "Monedero conectado.",
+      "unlinked": "Monedero desconectado.",
+      "error": {
+        "wallet": "Abre tu monedero y conéctalo.",
+        "cancel": "Cancelaste la firma. No cambió nada.",
+        "network": "Esta red no es compatible.",
+        "token": "Este token no es compatible.",
+        "failed": "No ha funcionado. Inténtalo de nuevo.",
+        "taken": "Este monedero ya está vinculado a otra cuenta.",
+        "review": "Esta dirección está en revisión y no se guardó.",
+        "blocked": "Espera primero a que se paguen las recompensas a la dirección actual.",
+        "rate": "Demasiados intentos. Inténtalo dentro de una hora."
+      }
+    }
+  },
+  "ugcDesk": {
+    "label": "Vídeos UGC · panel de empresa",
+    "navLabel": "Secciones del panel",
+    "navCount": "Pendientes:",
+    "nav": {
+      "overview": "Resumen",
+      "campaigns": "Campañas",
+      "creators": "Creadores",
+      "orders": "Encargos",
+      "materials": "Vídeos",
+      "payments": "Pagos"
+    },
+    "newBrief": "Nuevo brief",
+    "withSpoki": "Brief con Spoki",
+    "fillWithSpoki": "Rellenar con Spoki en el chat",
+    "fillForm": "Rellenar el formulario",
+    "loading": "Cargando el panel…",
+    "overviewTitle": "Resumen",
+    "startText": "Describe el producto una vez. Los creadores que encajan responden, contratas a quienes eliges y pagas solo por los vídeos que aceptas.",
+    "start1Title": "Brief",
+    "start1Text": "Producto, público, qué decir, cuántos vídeos y la recompensa por vídeo. Un moderador lo revisa antes de que lo vean los creadores.",
+    "start2Title": "Respuestas y contratación",
+    "start2Text": "Los creadores con perfil responden. Miras sus ejemplos y envías una oferta a personas concretas.",
+    "start3Title": "Vídeos y decisión",
+    "start3Text": "Un creador contratado envía un enlace. Lo aceptas, pides una revisión o lo rechazas.",
+    "attentionTitle": "Te espera",
+    "attentionEmpty": "Ahora nada espera tu decisión",
+    "attentionEmptyText": "Las nuevas respuestas y vídeos aparecen aquí en cuanto los creadores los envían.",
+    "attention": {
+      "decide": "{count, plural, one {# vídeo espera tu decisión} other {# vídeos esperan tu decisión}}",
+      "hire": "{count, plural, one {# respuesta espera una decisión de contratación} other {# respuestas esperan una decisión de contratación}}",
+      "deposit": "Aporta el presupuesto para empezar a contratar",
+      "remind": "{count, plural, =0 {Los creadores contratados aún no han enviado vídeo} one {# creador contratado aún no ha enviado vídeo} other {# creadores contratados aún no han enviado vídeo}}"
+    },
+    "attentionAction": {
+      "decide": "Ver vídeos",
+      "hire": "Elegir creadores",
+      "deposit": "Aportar presupuesto",
+      "remind": "Abrir el brief"
+    },
+    "stat": {
+      "active": "Briefs activos",
+      "applied": "Respuestas",
+      "hired": "Contratados",
+      "waiting": "Vídeos por revisar",
+      "accepted": "Vídeos aceptados"
+    },
+    "freshTitle": "Últimos vídeos",
+    "seeAll": "Ver todo",
+    "deadline": "Plazo {date}",
+    "creatorToo": "¿También grabas vídeos?",
+    "needCompanyTitle": "Primero, una empresa",
+    "needCompanyText": "Los briefs se publican en nombre de una empresa. Créala en tu cuenta y vuelve aquí.",
+    "createCompany": "Crear empresa",
+    "campaignsIntro": "Todos los briefs de tus empresas y el paso en que está cada uno.",
+    "filterLabel": "Filtro",
+    "campaignGroup": {
+      "active": "Activos",
+      "review": "Borrador y revisión",
+      "closed": "Cerrados",
+      "all": "Todos"
+    },
+    "campaignsEmpty": "No hay briefs aquí",
+    "campaignsEmptyText": "Elige otro filtro o escribe un brief nuevo.",
+    "col": {
+      "brief": "Brief",
+      "status": "Estado",
+      "step": "Paso",
+      "deadline": "Plazo",
+      "hired": "Contratados / vídeos",
+      "budget": "Presupuesto",
+      "next": "Siguiente paso",
+      "creator": "Creador",
+      "reward": "Recompensa",
+      "rights": "Derechos",
+      "action": "Acción",
+      "deposit": "Aporte del presupuesto"
+    },
+    "hiredOf": "{hired} / {wanted}",
+    "creatorsIntro": "Personas que respondieron a tus briefs o recibieron tu oferta, con su ficha pública y enlaces de ejemplo. No se muestran contactos.",
+    "inBriefs": "En tus briefs",
+    "creatorsEmpty": "Aún no hay creadores",
+    "creatorsEmptyText": "Cuando un creador responda a un brief abierto, su ficha aparecerá aquí.",
+    "participations": "Briefs",
+    "offerAfterDeposit": "La oferta de contratación sale después de aportar el presupuesto.",
+    "offerClosed": "El brief no admite nuevas contrataciones.",
+    "matchesTitle": "Creadores que encajan",
+    "matchesIntro": "Creadores que aceptan invitaciones y cuya plataforma, idioma, nicho y país coinciden con un brief abierto. La misma regla que usa Spoki.",
+    "matchesNoOpen": "Aún no hay briefs abiertos",
+    "matchesNoOpenText": "Los creadores que encajan aparecen cuando un brief pasa la revisión.",
+    "matchesEmpty": "Aún nadie encaja con este brief",
+    "matchesEmptyText": "Envía un enlace a un creador que conozcas: responde y tú decides si lo contratas.",
+    "examplesCount": "{count, plural, =0 {Sin enlaces de ejemplo} one {# enlace de ejemplo} other {# enlaces de ejemplo}}",
+    "portfolio": "Ejemplos",
+    "noPortfolio": "Aún no hay enlaces de ejemplo.",
+    "anyCountry": "Cualquier país",
+    "newTab": "(se abre en una pestaña nueva)",
+    "ordersIntro": "Respuestas, ofertas y creadores contratados de todos los briefs.",
+    "orderGroup": {
+      "applied": "Respuestas",
+      "offered": "Ofertas enviadas",
+      "active": "En curso",
+      "done": "Terminados"
+    },
+    "ordersEmpty": {
+      "applied": "No hay respuestas pendientes",
+      "offered": "No hay ofertas sin respuesta",
+      "active": "Ahora nadie está grabando un vídeo",
+      "done": "Aún no hay nada terminado"
+    },
+    "ordersEmptyText": "Los encargos aparecen cuando los creadores responden a un brief abierto o aceptan tu oferta.",
+    "toVideo": "Abrir el vídeo",
+    "materialsIntro": "Vídeos enviados por creadores contratados. Una decisión por vídeo; se permite una revisión.",
+    "materialGroup": {
+      "waiting": "Por revisar",
+      "changes": "En revisión",
+      "accepted": "Aceptados",
+      "rejected": "Rechazados"
+    },
+    "materialsEmpty": {
+      "waiting": "No hay vídeos por revisar",
+      "changes": "Ahora no hay revisiones",
+      "accepted": "Aún no hay vídeos aceptados",
+      "rejected": "No hay vídeos rechazados"
+    },
+    "materialsEmptyText": "Un creador contratado envía un enlace de TikTok, Instagram o YouTube y aparece aquí.",
+    "video": {
+      "submitted": "Espera revisión",
+      "changes_requested": "En revisión",
+      "accepted": "Aceptado",
+      "winner": "Ganador",
+      "rejected": "Rechazado"
+    },
+    "platform": {
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "youtube": "YouTube",
+      "other": "Enlace"
+    },
+    "openVideo": "Abrir el vídeo de {name} en {platform} (pestaña nueva)",
+    "reportedLabel": "Según el creador",
+    "decideHint": "Mira el vídeo y decide. Un ganador solo puede ir a anuncios si los derechos lo permiten.",
+    "revisionUsed": "La única revisión ya se usó.",
+    "paymentsIntro": "Presupuestos de los briefs y recompensas registradas por vídeos aceptados. Solo importes guardados, sin previsiones.",
+    "paymentsEmpty": "Aún no hay briefs",
+    "walletOffTitle": "Los aportes de presupuesto están desactivados",
+    "walletOffText": "Las recompensas se registran por vídeos aceptados. Aquí no se cobra nada ni se envía nada a los creadores.",
+    "money": {
+      "deposited": "Aportado",
+      "awaiting": "Pendiente de aporte",
+      "owed": "Registrado, sin pagar",
+      "paid": "Marcado como pagado"
+    },
+    "budgetsTitle": "Presupuestos de los briefs",
+    "budgetFormula": "{videos} × {price}",
+    "deposit": {
+      "off": "No hace falta",
+      "paid": "Aportado",
+      "checking": "Se está comprobando la transferencia",
+      "awaiting": "Esperando la transferencia",
+      "due": "Aporta para empezar a contratar",
+      "later": "Después de la revisión",
+      "closed": "Sin aporte"
+    },
+    "rewardsTitle": "Recompensas por vídeos aceptados",
+    "rewardsEmpty": "Aún no hay recompensas",
+    "rewardsEmptyText": "La recompensa se registra cuando aceptas un vídeo.",
+    "reward": {
+      "owed": "Registrada",
+      "paid": "Pagada"
+    },
+    "rewardsNote": "El fundador envía la recompensa a mano desde la cartera de la plataforma; el servidor comprueba la transferencia antes de marcarla como pagada.",
+    "nextTitle": "Siguiente paso",
+    "nextText": {
+      "deposit": "Aporta el presupuesto: las ofertas salen solo después.",
+      "hire": "Hay creadores que respondieron. Mira sus ejemplos y contrata.",
+      "decide": "Un vídeo espera tu decisión.",
+      "remind": "Los creadores contratados aún no han enviado todos los vídeos."
+    },
+    "fact": {
+      "reward": "Por vídeo",
+      "videos": "Contratados / vídeos",
+      "budget": "Presupuesto",
+      "rights": "Derechos"
+    },
+    "peopleTitle": "Creadores y encargos",
+    "peopleEmpty": "Aún no hay respuestas",
+    "peopleEmptyOpen": "El brief está abierto. Envía un enlace a un creador que conozcas o espera respuestas.",
+    "peopleEmptyOther": "Los creadores podrán responder cuando el brief esté abierto.",
+    "videosTitle": "Vídeos",
+    "videosEmpty": "Aún no hay vídeos",
+    "videosEmptyText": "Solo un creador contratado envía un vídeo.",
+    "briefTitle": "Brief",
+    "manageTitle": "Gestionar el brief",
+    "joinHint": "Un enlace para un creador fuera del grupo. Lo reenvías tú; genera una respuesta, no una contratación.",
+    "backToBrief": "Volver al brief",
+    "newIntro": "Los mismos campos que Spoki pregunta en el chat. El borrador es común: lo que guardes aquí también lo ve Spoki.",
+    "form": {
+      "product": "Producto",
+      "audience": "Público",
+      "audienceHint": "Para quién es el vídeo. Rellena el público o los países.",
+      "video": "Vídeos",
+      "money": "Recompensa y condiciones",
+      "extra": "Mensaje y ejemplos",
+      "extraHint": "Opcional. El creador ve el mensaje junto con tu oferta.",
+      "summaryHelp": "Una o dos frases: qué es y para qué se usa.",
+      "audienceHelp": "Por ejemplo: estudiantes que controlan sus gastos",
+      "countryHelp": "Códigos de dos letras separados por comas, por ejemplo US, DE. Vacío significa cualquier país.",
+      "languagesHelp": "Códigos de idioma separados por comas, por ejemplo es, en",
+      "videosHelp": "De 1 a 30",
+      "listHelp": "Puntos breves separados por punto y coma",
+      "bountyHelp": "Dólares enteros por vídeo aceptado, de $5 a $500",
+      "pitchHelp": "Hasta 300 caracteres",
+      "examplesHelp": "Hasta cinco enlaces https, uno por línea",
+      "summary": "Resumen del brief",
+      "budget": "Presupuesto",
+      "budgetEmpty": "Indica el número de vídeos y la recompensa.",
+      "after1": "Tras enviarlo, un moderador revisa el brief.",
+      "after2": "Luego lo ven los creadores y responden.",
+      "after3": "Contratas a quienes elijas.",
+      "send": "Enviar a revisión",
+      "saveDraft": "Guardar borrador",
+      "saved": "Borrador guardado.",
+      "draftNote": "Al enviar un brief no se cobra nada.",
+      "fieldProblem": "Revisa el campo «{field}»."
     }
   }
 }

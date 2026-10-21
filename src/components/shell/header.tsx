@@ -80,9 +80,9 @@ export async function Header() {
           { href: "/chat", label: t("nav.chatWithAgent") },
           { href: "/for-employers", label: t("nav.employers") },
         ];
-  // One account, many roles (D506): a company member keeps the job-seeker links.
+  // One account for every service (D506, D517): the account page holds the
+  // profile; company pages appear only by membership, a right, not a kind.
   const cabinet: AccountLink[] = [
-    { href: "/profile", label: t("profile.nav") },
     { href: "/applications", label: t("applications.nav") },
     { href: "/saved-jobs", label: t("nav.saved") },
   ];
@@ -103,7 +103,6 @@ export async function Header() {
   const accountMenu: AccountLink[] = signedIn
     ? [
         { href: "/account", label: t("account.nav") },
-        { href: "/profile", label: t("profile.nav") },
         { href: "/applications", label: t("applications.nav") },
         { href: "/saved-jobs", label: t("nav.saved") },
         { href: "/notifications", label: t("notifications.nav") },
@@ -227,7 +226,7 @@ export async function Header() {
           <MobileNav
             items={orderPhoneNav(
               [...sections, ...main, ...more, ...account],
-              employer ? "employer" : signedIn ? "candidate" : "guest",
+              signedIn ? "member" : "guest",
             )}
             label={t("nav.menu")}
             openLabel={t("nav.menu")}

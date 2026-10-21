@@ -16,12 +16,15 @@ import {
 } from "@/modules/candidates/service";
 import { seedSkills } from "@/modules/taxonomy/service";
 import {
+  issueAccountWalletNonce,
+  verifyAccountWalletSignature,
+} from "@/modules/users/service";
+import {
   confirmOrderPayment,
   createOrderPayment,
   createService,
   decideServiceModeration,
   getOrderForParty,
-  issuePayoutNonce,
   orderHistory,
   orderPayState,
   recheckOrderPayments,
@@ -30,7 +33,6 @@ import {
   setChainReaderForTests,
   submitService,
   transitionOrder,
-  verifyPayoutSignature,
 } from "./service";
 
 /**
@@ -195,29 +197,30 @@ describe("freelance order payment (28.6)", () => {
       "PAYOUT_WALLET_REQUIRED",
     );
 
-    // The freelancer proves the address; a wrong signer is refused.
-    const { message } = await issuePayoutNonce(sellerId, {
+    // The freelancer links the account wallet (D518); a wrong signer is
+    // refused.
+    const { message } = await issueAccountWalletNonce(sellerId, {
       address: sellerAccount.address,
       chainId: 8453,
     });
-    expect(message).toContain("for payouts on INTGETION JOB LIST");
+    expect(message).toContain("INTGETION JOB LIST account for payouts");
     await expectCode(
-      verifyPayoutSignature(sellerId, {
+      verifyAccountWalletSignature(sellerId, {
         signature: await buyerAccount.signMessage({ message }),
       }),
       403,
     );
-    const payout = await verifyPayoutSignature(sellerId, {
+    const payout = await verifyAccountWalletSignature(sellerId, {
       signature: await sellerAccount.signMessage({ message }),
     });
     expect(payout.address).toBe(sellerAddress);
-    // Only a seller may set one.
+    // One proven address belongs to one account.
     await expectCode(
-      issuePayoutNonce(buyerId, {
-        address: buyerAccount.address,
+      issueAccountWalletNonce(buyerId, {
+        address: sellerAccount.address,
         chainId: 8453,
       }),
-      409,
+      "WALLET_TAKEN",
     );
 
     expect((await orderPayState(buyerId, order.id)).payable).toBe(true);

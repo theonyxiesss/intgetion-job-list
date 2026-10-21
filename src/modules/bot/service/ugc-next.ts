@@ -152,7 +152,7 @@ export function ugcNextLink(step: UgcNextStep): UgcNextLink | null {
     };
   }
   if (step.kind === "payout") {
-    return { href: "/billing/crypto?payout=1&for=ugc", link: "ugcPayout" };
+    return { href: "/account#security", link: "ugcPayout" };
   }
   if (
     step.kind === "decide" ||

@@ -1,4 +1,4 @@
-import { getPayoutStatus } from "@/modules/freelance/service";
+import { readAccountWallet } from "@/modules/users/service";
 import { HttpError } from "@/lib/http";
 import { campaignForMember, db } from "./commands";
 import { escrowOn } from "./escrow-gate";
@@ -185,7 +185,7 @@ export async function ugcNextStep(
         payout,
         fromWallet,
         hasPayoutAddress: fromWallet
-          ? Boolean((await getPayoutStatus(userId)).address)
+          ? Boolean(await readAccountWallet(userId))
           : false,
       });
     }

@@ -1854,6 +1854,28 @@
         "exampleUrls": "Examples"
       }
     },
+    "fillChoice": {
+      "title": "How shall we fill in {what}?",
+      "text": "In the chat I ask step by step and save your answers; in the form you fill in everything yourself.",
+      "chat": "Fill in with Spoki in the chat",
+      "form": "Fill in the form myself",
+      "what": {
+        "job": "the job",
+        "brief": "the video brief",
+        "service": "your service",
+        "profile": "your profile",
+        "creator": "your creator profile",
+        "company": "the company card"
+      },
+      "reply": {
+        "job": "Let's fill in the job here in the chat.",
+        "brief": "Let's fill in the brief here in the chat.",
+        "service": "Let's fill in my service here in the chat.",
+        "profile": "Let's fill in my profile here in the chat.",
+        "creator": "Let's fill in my creator profile here in the chat.",
+        "company": "Let's fill in the company card here in the chat."
+      }
+    },
     "confirm": {
       "applyTitle": "Apply to this job?",
       "applyNote": "Letter to the employer",
@@ -4702,10 +4724,10 @@
   "account": {
     "nav": "My account",
     "title": "My account",
-    "intro": "One account for jobs, hiring, creator videos and freelance. Fill in your details once and every role uses them.",
+    "intro": "One account for every service on the site: profile, plan, sign-in and wallet are here.",
     "profile": {
       "title": "About me",
-      "text": "Roles show these details only where they are allowed to. Contacts are not kept here.",
+      "text": "People you work with see your name. The rest is optional: Spoki asks when it is needed.",
       "displayName": "Name",
       "displayNameHelp": "As a creator you can set a separate nickname in that profile.",
       "country": "Country",
@@ -4720,23 +4742,36 @@
       "save": "Save",
       "saving": "Saving…",
       "saved": "Saved. Your roles are updated.",
-      "failed": "Could not save. Check the fields and try again."
+      "failed": "Could not save. Check the fields and try again.",
+      "more": "Country, city, time zone and languages — optional",
+      "moreHelp": "Fill them in now or answer Spoki when it asks. These details are shared by every service."
     },
-    "roles": {
-      "title": "Roles",
-      "text": "A role turns on when you start using it. You can have as many as you like.",
-      "active": "On",
+    "plan": {
+      "title": "Plan",
+      "text": "Plans in force and what they include.",
+      "change": "Change plan",
+      "personal": "Personal plan: {name}",
+      "company": "Company plan: {name}",
+      "until": "until {date}"
+    },
+    "services": {
+      "title": "My services",
+      "text": "Everything you can use with this account. Nothing to switch on.",
       "open": "Open",
-      "start": "Start",
-      "candidate": {
-        "name": "Looking for work",
+      "jobs": {
+        "name": "Job search",
         "on": "Profile {score}% complete",
         "off": "No candidate profile yet"
       },
-      "employer": {
+      "hiring": {
         "name": "Hiring",
         "on": "{companies, plural, one {# company} other {# companies}} · {jobs, plural, one {# job} other {# jobs}}",
         "off": "No company yet"
+      },
+      "videos": {
+        "name": "Creator videos",
+        "on": "{briefs, plural, one {# brief} other {# briefs}}",
+        "off": "No briefs yet"
       },
       "creator": {
         "name": "Video creator",
@@ -4744,16 +4779,276 @@
         "paused": "Profile paused",
         "off": "No creator profile yet"
       },
-      "freelancer": {
-        "name": "Freelancer",
+      "freelance": {
+        "name": "Freelance",
         "on": "{accepting, select, true {Taking orders} other {Not taking orders}} · {services, plural, one {# service} other {# services}}",
         "off": "No services yet"
-      },
-      "client": {
-        "name": "Ordering videos",
-        "on": "{briefs, plural, one {# brief} other {# briefs}}",
-        "off": "No briefs yet"
       }
+    },
+    "security": {
+      "title": "Sign-in and security",
+      "text": "How you sign in and where payouts go.",
+      "more": "Email language and deleting the account"
+    },
+    "wallet": {
+      "title": "Crypto wallet",
+      "text": "Freelance payments and video rewards arrive here. You link the wallet by signing a message — no seed phrase or keys needed.",
+      "none": "No wallet connected.",
+      "connected": "Connected:",
+      "connect": "Connect wallet",
+      "changeBrowser": "Connect another wallet",
+      "qr": "Use WalletConnect (QR)",
+      "change": "Change wallet",
+      "disconnect": "Disconnect",
+      "changeTitle": "Change the wallet?",
+      "disconnectTitle": "Disconnect the wallet?",
+      "keepsHistory": "Payment history and payouts already sent stay as they are.",
+      "openPayments": "Payments already on their way to this address: {count}. They arrive there.",
+      "unpaidOrdersChange": "Accepted orders not paid yet: {count}. They will be paid to the new wallet.",
+      "unpaidOrdersDisconnect": "Accepted orders not paid yet: {count}. Without a wallet, buyers cannot pay them on the site.",
+      "blocked": "Rewards waiting to be paid to this address: {count}. You can change or disconnect the wallet after they are paid.",
+      "disconnectConfirm": "Disconnect wallet",
+      "cancel": "Cancel",
+      "linked": "Wallet connected.",
+      "unlinked": "Wallet disconnected.",
+      "error": {
+        "wallet": "Open your wallet and connect it.",
+        "cancel": "You cancelled the signature. Nothing changed.",
+        "network": "This network is not supported.",
+        "token": "This token is not supported.",
+        "failed": "That did not work. Try again.",
+        "taken": "This wallet is already linked to another account.",
+        "review": "This address is under review and was not saved.",
+        "blocked": "Wait until the rewards are paid to the current address first.",
+        "rate": "Too many attempts. Try again in an hour."
+      }
+    }
+  },
+  "ugcDesk": {
+    "label": "UGC videos · company workspace",
+    "navLabel": "Workspace sections",
+    "navCount": "Waiting:",
+    "nav": {
+      "overview": "Overview",
+      "campaigns": "Campaigns",
+      "creators": "Creators",
+      "orders": "Orders",
+      "materials": "Videos",
+      "payments": "Payments"
+    },
+    "newBrief": "New brief",
+    "withSpoki": "Brief with Spoki",
+    "fillWithSpoki": "Fill in with Spoki in the chat",
+    "fillForm": "Fill in the form",
+    "loading": "Loading the workspace…",
+    "overviewTitle": "Overview",
+    "startText": "Describe the product once. Creators who fit respond, you hire the ones you pick, and you pay only for videos you accept.",
+    "start1Title": "Brief",
+    "start1Text": "Product, audience, what to say, how many videos and the reward per video. A moderator checks it before creators see it.",
+    "start2Title": "Responses and hiring",
+    "start2Text": "Creators with a profile respond. You look at their examples and send a hire offer to specific people.",
+    "start3Title": "Videos and decision",
+    "start3Text": "A hired creator sends a link. You accept it, ask for one revision, or reject it.",
+    "attentionTitle": "Waiting on you",
+    "attentionEmpty": "Nothing waits on you right now",
+    "attentionEmptyText": "New responses and videos appear here as soon as creators send them.",
+    "attention": {
+      "decide": "{count, plural, one {# video waits for your decision} other {# videos wait for your decision}}",
+      "hire": "{count, plural, one {# response waits for a hiring decision} other {# responses wait for a hiring decision}}",
+      "deposit": "Pay in the budget to start hiring",
+      "remind": "{count, plural, =0 {Hired creators have not sent a video yet} one {# hired creator has not sent a video yet} other {# hired creators have not sent a video yet}}"
+    },
+    "attentionAction": {
+      "decide": "Review videos",
+      "hire": "Choose creators",
+      "deposit": "Pay in the budget",
+      "remind": "Open the brief"
+    },
+    "stat": {
+      "active": "Live briefs",
+      "applied": "Responses",
+      "hired": "Hired",
+      "waiting": "Videos to review",
+      "accepted": "Accepted videos"
+    },
+    "freshTitle": "Latest videos",
+    "seeAll": "See all",
+    "deadline": "Deadline {date}",
+    "creatorToo": "Do you also make videos?",
+    "needCompanyTitle": "A company comes first",
+    "needCompanyText": "Briefs are placed on behalf of a company. Create one in your account, then come back here.",
+    "createCompany": "Create a company",
+    "campaignsIntro": "Every brief of your companies and the step it is on.",
+    "filterLabel": "Filter",
+    "campaignGroup": {
+      "active": "Live",
+      "review": "Draft and review",
+      "closed": "Closed",
+      "all": "All"
+    },
+    "campaignsEmpty": "No briefs here",
+    "campaignsEmptyText": "Pick another filter or write a new brief.",
+    "col": {
+      "brief": "Brief",
+      "status": "Status",
+      "step": "Step",
+      "deadline": "Deadline",
+      "hired": "Hired / videos",
+      "budget": "Budget",
+      "next": "Next step",
+      "creator": "Creator",
+      "reward": "Reward",
+      "rights": "Rights",
+      "action": "Action",
+      "deposit": "Budget payment"
+    },
+    "hiredOf": "{hired} / {wanted}",
+    "creatorsIntro": "People who responded to your briefs or got your offer, with their public card and example links. Contacts are not shown.",
+    "inBriefs": "In your briefs",
+    "creatorsEmpty": "No creators yet",
+    "creatorsEmptyText": "When a creator responds to an open brief, their card appears here.",
+    "participations": "Briefs",
+    "offerAfterDeposit": "A hire offer goes out after the budget is paid in.",
+    "offerClosed": "The brief does not take new hires.",
+    "matchesTitle": "Creators who fit",
+    "matchesIntro": "Creators who accept invitations and whose platform, language, niche and country match an open brief. The same rule Spoki uses.",
+    "matchesNoOpen": "No open brief yet",
+    "matchesNoOpenText": "Matching creators appear once a brief passes review.",
+    "matchesEmpty": "No one fits this brief yet",
+    "matchesEmptyText": "Send a link to a creator you know: they respond, and you decide whether to hire.",
+    "examplesCount": "{count, plural, =0 {No example links} one {# example link} other {# example links}}",
+    "portfolio": "Examples",
+    "noPortfolio": "No example links yet.",
+    "anyCountry": "Any country",
+    "newTab": "(opens in a new tab)",
+    "ordersIntro": "Responses, hire offers and hired creators across all briefs.",
+    "orderGroup": {
+      "applied": "Responses",
+      "offered": "Offers sent",
+      "active": "In progress",
+      "done": "Finished"
+    },
+    "ordersEmpty": {
+      "applied": "No responses waiting",
+      "offered": "No offers waiting for an answer",
+      "active": "No one is working on a video now",
+      "done": "Nothing finished yet"
+    },
+    "ordersEmptyText": "Orders appear when creators respond to an open brief or accept your offer.",
+    "toVideo": "Open the video",
+    "materialsIntro": "Videos hired creators sent. Each one gets one decision; one revision is allowed.",
+    "materialGroup": {
+      "waiting": "To review",
+      "changes": "Revision asked",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
+    "materialsEmpty": {
+      "waiting": "No videos wait for review",
+      "changes": "No revision is in progress",
+      "accepted": "No accepted videos yet",
+      "rejected": "No rejected videos"
+    },
+    "materialsEmptyText": "A hired creator sends a link to TikTok, Instagram or YouTube, and it appears here.",
+    "video": {
+      "submitted": "Waiting for review",
+      "changes_requested": "Revision asked",
+      "accepted": "Accepted",
+      "winner": "Winner",
+      "rejected": "Rejected"
+    },
+    "platform": {
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "youtube": "YouTube",
+      "other": "Link"
+    },
+    "openVideo": "Open the video by {name} on {platform} (new tab)",
+    "reportedLabel": "Reported by the creator",
+    "decideHint": "Watch the video, then decide. A winner can be used in ads only if the rights allow it.",
+    "revisionUsed": "The one revision was already used.",
+    "paymentsIntro": "Brief budgets and rewards recorded for accepted videos. Only stored amounts, no forecasts.",
+    "paymentsEmpty": "No briefs yet",
+    "walletOffTitle": "Budget payments are off",
+    "walletOffText": "Rewards are recorded for accepted videos. Nothing is charged here and nothing is sent to creators.",
+    "money": {
+      "deposited": "Paid in",
+      "awaiting": "Waiting to be paid in",
+      "owed": "Recorded, not paid yet",
+      "paid": "Marked as paid"
+    },
+    "budgetsTitle": "Brief budgets",
+    "budgetFormula": "{videos} × {price}",
+    "deposit": {
+      "off": "Not needed",
+      "paid": "Paid in",
+      "checking": "Transfer is being checked",
+      "awaiting": "Waiting for the transfer",
+      "due": "Pay in to start hiring",
+      "later": "After the review",
+      "closed": "Not paid in"
+    },
+    "rewardsTitle": "Rewards for accepted videos",
+    "rewardsEmpty": "No rewards recorded yet",
+    "rewardsEmptyText": "A reward is recorded when you accept a video.",
+    "reward": {
+      "owed": "Recorded",
+      "paid": "Paid"
+    },
+    "rewardsNote": "The founder sends a reward by hand from the platform wallet; the server checks the transfer before marking it paid.",
+    "nextTitle": "Next step",
+    "nextText": {
+      "deposit": "Pay in the budget: hire offers go out only after that.",
+      "hire": "Creators responded. Look at their examples and hire.",
+      "decide": "A video is waiting for your decision.",
+      "remind": "Hired creators have not sent all videos yet."
+    },
+    "fact": {
+      "reward": "Per video",
+      "videos": "Hired / videos",
+      "budget": "Budget",
+      "rights": "Rights"
+    },
+    "peopleTitle": "Creators and orders",
+    "peopleEmpty": "No responses yet",
+    "peopleEmptyOpen": "The brief is open. Send a link to a creator you know or wait for responses.",
+    "peopleEmptyOther": "Creators can respond once the brief is open.",
+    "videosTitle": "Videos",
+    "videosEmpty": "No videos yet",
+    "videosEmptyText": "Only a hired creator sends a video.",
+    "briefTitle": "Brief",
+    "manageTitle": "Manage the brief",
+    "joinHint": "A link for a creator outside the pool. You forward it yourself; it gives a response, not a hire.",
+    "backToBrief": "Back to the brief",
+    "newIntro": "The same fields Spoki asks in the chat. The draft is shared: what you save here, Spoki sees too.",
+    "form": {
+      "product": "Product",
+      "audience": "Audience",
+      "audienceHint": "Who the video is for. Fill in the audience or the countries.",
+      "video": "Videos",
+      "money": "Reward and terms",
+      "extra": "Message and examples",
+      "extraHint": "Optional. The message is shown to a creator with your hire offer.",
+      "summaryHelp": "One or two sentences: what it is and why people use it.",
+      "audienceHelp": "For example: students who track their spending",
+      "countryHelp": "Two-letter codes separated by a comma, for example US, DE. Empty means any country.",
+      "languagesHelp": "Language codes separated by a comma, for example en, es",
+      "videosHelp": "From 1 to 30",
+      "listHelp": "Short points separated by a semicolon",
+      "bountyHelp": "Whole dollars per accepted video, from $5 to $500",
+      "pitchHelp": "Up to 300 characters",
+      "examplesHelp": "Up to five https links, one per line",
+      "summary": "Brief summary",
+      "budget": "Budget",
+      "budgetEmpty": "Set the number of videos and the reward.",
+      "after1": "After sending, a moderator checks the brief.",
+      "after2": "Then creators see it and respond.",
+      "after3": "You hire the ones you choose.",
+      "send": "Send for review",
+      "saveDraft": "Save draft",
+      "saved": "Draft saved.",
+      "draftNote": "Nothing is charged when you send a brief.",
+      "fieldProblem": "Check the field “{field}”."
     }
   }
 }

@@ -1,79 +1,35 @@
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 
-/** Queries for payout wallets and order payments (28.6, D463). */
+/**
+ * Queries for order payments (28.6, D463). The payout address is the
+ * account wallet (D518), read through the users module.
+ */
 
-export type PayoutWalletRow = {
-  user_id: string;
-  address: string | null;
-  chain_id: number | null;
-  verified_at: string | null;
-  pending_address: string | null;
-  pending_chain_id: number | null;
-  pending_message: string | null;
-  pending_expires_at: string | null;
-};
-
-export async function findPayoutWallet(
-  userId: string,
-): Promise<PayoutWalletRow | null> {
-  const rows = await getDb().execute<PayoutWalletRow>(sql`
-    select user_id, address, chain_id, verified_at::text,
-           pending_address, pending_chain_id, pending_message,
-           pending_expires_at::text
-    from public.freelance_payout_wallets
-    where user_id = ${userId}
+/** Payments still on their way to this address, and unpaid orders (D518). */
+export async function paymentsInFlightTo(
+  sellerId: string,
+  address: string,
+): Promise<{ open_payments: number; unpaid_orders: number }> {
+  const rows = await getDb().execute<{
+    open_payments: number;
+    unpaid_orders: number;
+  }>(sql`
+    select
+      (select count(*)::int from public.freelance_order_payments p
+         join public.freelance_orders o on o.id = p.order_id
+        where o.seller_id = ${sellerId}
+          and p.recipient = ${address}
+          and p.status in ('open', 'submitted')) as open_payments,
+      (select count(*)::int from public.freelance_orders o
+        where o.seller_id = ${sellerId}
+          and o.status = 'accepted'
+          and not exists (
+            select 1 from public.freelance_order_payments p
+            where p.order_id = o.id and p.status = 'confirmed'
+          )) as unpaid_orders
   `);
-  return rows[0] ?? null;
-}
-
-export async function savePendingPayout(input: {
-  userId: string;
-  address: string;
-  chainId: number;
-  message: string;
-  expiresAt: Date;
-}): Promise<void> {
-  await getDb().execute(sql`
-    insert into public.freelance_payout_wallets
-      (user_id, pending_address, pending_chain_id, pending_message, pending_expires_at)
-    values (${input.userId}, ${input.address}, ${input.chainId}, ${input.message},
-            ${input.expiresAt.toISOString()})
-    on conflict (user_id) do update set
-      pending_address = excluded.pending_address,
-      pending_chain_id = excluded.pending_chain_id,
-      pending_message = excluded.pending_message,
-      pending_expires_at = excluded.pending_expires_at,
-      updated_at = now()
-  `);
-}
-
-/** The signed address becomes the payout address; the pending one is cleared. */
-export async function confirmPayout(input: {
-  userId: string;
-  message: string;
-  signature: string;
-}): Promise<PayoutWalletRow | null> {
-  const rows = await getDb().execute<PayoutWalletRow>(sql`
-    update public.freelance_payout_wallets set
-      address = pending_address,
-      chain_id = pending_chain_id,
-      signed_message = pending_message,
-      signature = ${input.signature},
-      verified_at = now(),
-      pending_address = null,
-      pending_chain_id = null,
-      pending_message = null,
-      pending_expires_at = null,
-      updated_at = now()
-    where user_id = ${input.userId}
-      and pending_message = ${input.message}
-      and pending_expires_at > now()
-    returning user_id, address, chain_id, verified_at::text,
-              pending_address, pending_chain_id, pending_message,
-              pending_expires_at::text
-  `);
-  return rows[0] ?? null;
+  return rows[0] ?? { open_payments: 0, unpaid_orders: 0 };
 }
 
 export type OrderPaymentRow = {
