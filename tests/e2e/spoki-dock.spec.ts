@@ -183,6 +183,10 @@ test("phone: the tab bar opens Spoki over the page, another tab closes it, the d
     page.getByRole("button", { name: "Open Spoki full screen" }),
   ).toBeHidden();
 
+  // While writing, the tab bar steps aside for the keyboard (D468); the
+  // person closes the keyboard first, as on a real phone.
+  await field(page).blur();
+  await expect(tabs).toBeVisible();
   await tabs.getByRole("link", { name: "Jobs" }).click();
   await expect(page).toHaveURL(/\/jobs$/);
   await expect(field(page)).toBeHidden();
