@@ -172,7 +172,8 @@ test("phone: the tab bar opens Spoki over the page, another tab closes it, the d
   await expect(field(page)).toBeVisible();
   const box = await page.locator("#spoki-panel").boundingBox();
   expect(box?.width).toBe(390);
-  // The tab bar stays usable under it.
+  // Not a modal dialog: the tab bar stays usable and readable beside it.
+  await expect(page.getByRole("dialog")).toHaveCount(0);
   const bar = await tabs.boundingBox();
   expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(bar?.y ?? 0);
   await markField(page);
@@ -195,9 +196,14 @@ test("a job's button opens that job's thread in the panel; /chat?job= does the s
 }) => {
   await page.setViewportSize({ width: 1600, height: 900 });
   await page.goto("/en/jobs");
-  const first = page.locator('a[href^="/jobs/"]').first();
-  const href = await first.getAttribute("href");
-  const jobId = href?.split("/").pop() ?? "";
+  // The first vacancy link: `/jobs/<uuid>`, not the RSS feed or a filter.
+  const hrefs = await page
+    .locator('a[href^="/jobs/"]')
+    .evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+  const jobId =
+    hrefs
+      .map((href) => href?.split("/").pop() ?? "")
+      .find((id) => /^[0-9a-f-]{36}$/.test(id)) ?? "";
   expect(jobId).toMatch(/^[0-9a-f-]{36}$/);
   await page.goto(`/en/jobs/${jobId}`);
   await page.getByRole("link", { name: "Talk to the assistant" }).click();

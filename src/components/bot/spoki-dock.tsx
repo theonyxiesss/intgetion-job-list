@@ -35,6 +35,7 @@ export function SpokiDock({
   const panelRef = useRef<HTMLElement>(null);
   const returnTo = useRef<HTMLElement | null>(null);
   const floating = spoki?.floating ?? false;
+  const large = spoki?.large ?? false;
 
   // A panel over the page takes the focus and gives it back on close.
   useEffect(() => {
@@ -47,16 +48,19 @@ export function SpokiDock({
     if (active instanceof HTMLElement && !panelRef.current?.contains(active))
       returnTo.current = active;
     // After the classes show the panel; the field when the chat is there.
+    // On a phone the panel itself: the field would pop the keyboard up.
     const timer = setTimeout(() => {
-      const field = panelRef.current?.querySelector("textarea");
+      const field = large ? panelRef.current?.querySelector("textarea") : null;
       (field ?? panelRef.current)?.focus();
     }, 0);
     return () => clearTimeout(timer);
-  }, [floating]);
+  }, [floating, large]);
 
   // A click beside the panel over the page closes it, as Esc does.
   const close = spoki?.close;
-  const modalNow = floating && !(spoki?.expanded ?? false);
+  // Only the side panel over a page is modal (1024–1535 px). On a phone the
+  // panel leaves the tab bar usable, like the `/chat` page, so it is not.
+  const modalNow = floating && !(spoki?.expanded ?? false) && large;
   useEffect(() => {
     if (!modalNow || !close) return;
     function onPointerDown(event: PointerEvent) {
@@ -111,7 +115,7 @@ export function SpokiDock({
 
   if (!spoki) return null;
   const { mode, docked, expanded, target, loaded } = spoki;
-  const modal = !expanded && floating;
+  const modal = modalNow;
 
   return (
     <>
