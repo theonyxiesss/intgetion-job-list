@@ -20,11 +20,13 @@ const TIMEOUT_MS = 45_000;
  * D496: a free model often has a single upstream provider, and when it is down
  * every request fails. OpenRouter then tries these in order (`models`). Only
  * `:free` models, so a fallback never bills. All accept tools; uptime checked
- * on `/api/v1/models/<id>/endpoints` on 2026-10-20.
+ * on `/api/v1/models/<id>/endpoints` and each answered a real request on
+ * 2026-10-23 (D527: the old pair was removed or closed to the API, so when
+ * the default model went down Spoki answered nothing).
  */
 export const OPENROUTER_FREE_FALLBACKS = [
-  "minimax/minimax-m3.1-flash:free",
-  "thinkingmachines/inkling:free",
+  "nvidia/nemotron-3.5-lightning:free",
+  "google/gemma-4-31b-it:free",
 ] as const;
 
 /**

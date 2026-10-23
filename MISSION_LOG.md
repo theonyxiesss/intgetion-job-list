@@ -3005,3 +3005,10 @@
 - Включено (`PUT …/branches/master/protection`): проверки `check` и `database` (app 15368), `strict` выкл., `enforce_admins` вкл., force-push и удаление запрещены, PR не требуется. GitHub вернул те же правила.
 - Правила выкладки: навык `intgetion-vercel` (ветка → зелёный CI → `git push origin <ветка>:master`, `git ls-remote` перед шагом, без `[skip ci]`, перезапуск нестабильного CI), RUNBOOK §5, D526.
 - Проверка защиты: пуш `72039fd` в master до CI → `protected branch hook declined` («2 of 2 required status checks are expected»), master остался `e4df34c`. CI на `72039fd` не запустился: в сообщении коммита была строка про метку пропуска CI, а GitHub ищет её в любом месте сообщения. Урок: не писать эту метку даже в тексте сообщения. В master идёт следующий коммит после зелёного CI.
+
+## [2026-10-23] — D527: Spoki на сайте снова отвечает (модели OpenRouter)
+
+- Founder: «почему там апи с опен роутера не работает»; затем «Да: поставь в Vercel production LLM_MODEL_CHAT=… и перевыложи текущий production … Запасные модели в коде поправь отдельной веткой».
+- Причина: с 22.10 основная бесплатная модель отвечает 404, обе запасные удалены или закрыты для API → `BOT_TRY_LATER` на сайте и локально. Локально ещё мешали строки `LLM_MODEL_*` с моделями Claude в `.env.local` — к моменту правки их уже не было.
+- Сайт: `vercel env update LLM_MODEL_CHAT -e production` → `nvidia/nemotron-3-ultra-550b-a55b:free` (сверено выгрузкой в scratchpad, файл удалён), `vercel redeploy` текущей выкладки `cf70064` → `dpl_7HnCDMfimovBLHUco7Mz1LZ8jkjR` Ready, алиас intgetion.com; `/api/health` 200; гостевой вопрос — `search_jobs` и ответ.
+- Ветка `claude/llm-fallbacks` от master: модель по умолчанию и запасные (D527). Не слита.
