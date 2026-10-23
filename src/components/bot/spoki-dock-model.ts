@@ -6,6 +6,9 @@
  */
 
 import type { PageSection } from "@/config/page-sections";
+import type { ChatTarget } from "./spoki-href";
+
+export { chatHref, type ChatTarget } from "./spoki-href";
 
 const SECTION_PREFIXES: readonly [string, PageSection][] = [
   ["/jobs", "jobs"],
@@ -44,17 +47,6 @@ export function pageSection(pathname: string): PageSection {
   return "other";
 }
 
-/** The thread the chat shows; the same keys as the `/chat` address. */
-export type ChatTarget = {
-  job?: string;
-  campaign?: string;
-  invite?: string;
-  service?: string;
-  order?: string;
-  confirm?: string;
-  from?: "services" | "campaigns" | "freelance_sell" | "post_job";
-};
-
 const UUID = /^[0-9a-f-]{36}$/i;
 const FROM = new Set(["services", "campaigns", "freelance_sell", "post_job"]);
 
@@ -90,16 +82,6 @@ export function targetKey(target: ChatTarget | null): string {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([key, value]) => `${key}=${value}`)
     .join("&");
-}
-
-/** `/chat` with the same thread, for links and the full-screen address. */
-export function chatHref(target: ChatTarget | null): string {
-  if (!target) return "/chat";
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(target))
-    if (value) params.set(key, value);
-  const query = params.toString();
-  return query ? `/chat?${query}` : "/chat";
 }
 
 /**

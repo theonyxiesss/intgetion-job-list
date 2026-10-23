@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { chatTargetFromParams } from "./spoki-dock-model";
-import { useSpoki } from "./spoki-provider";
+import { useSpoki } from "./spoki-context";
 
 /**
  * On `/chat` with the panel on (D525): hands the thread named in the address

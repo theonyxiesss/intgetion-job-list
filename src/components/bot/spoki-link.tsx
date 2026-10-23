@@ -3,8 +3,8 @@
 import type { ComponentProps, MouseEvent } from "react";
 import { Link } from "@/i18n/navigation";
 import { ButtonLink } from "@/components/ui/button";
-import { chatHref, type ChatTarget } from "./spoki-dock-model";
-import { useSpoki } from "./spoki-provider";
+import { chatHref, type ChatTarget } from "./spoki-href";
+import { useSpoki } from "./spoki-context";
 
 /**
  * A way into Spoki (D525). With the panel on, a click opens the panel (with

@@ -14,13 +14,12 @@ import { AnalyticsTracker } from "@/components/shell/analytics-tracker";
 import { ServiceWorker } from "@/components/shell/service-worker";
 import { CookieBanner } from "@/components/shell/cookie-banner";
 import { Header } from "@/components/shell/header";
-import { SpokiDock } from "@/components/bot/spoki-dock";
 import { spokiDockOn } from "@/components/bot/spoki-dock-on";
 import {
   SPOKI_DOCK_COOKIE,
   readDockPreference,
 } from "@/components/bot/spoki-dock-model";
-import { SpokiProvider } from "@/components/bot/spoki-provider";
+import { SpokiRow, SpokiShell } from "@/components/bot/spoki-shell";
 import { SiteRail, type SiteRailData } from "@/components/shell/site-rail";
 import { railServices } from "@/components/shell/rail-items";
 import { JOB_CATEGORIES } from "@/config/markers";
@@ -167,7 +166,7 @@ export default async function LocaleLayout({
             >
               <Header />
               <div id="content" tabIndex={-1} className="flex flex-1 flex-col">
-                <DockRow
+                <SpokiRow
                   dock={dock}
                   labels={{
                     panel: t("nav.spokiPanel"),
@@ -187,7 +186,7 @@ export default async function LocaleLayout({
                       {children}
                     </div>
                   </div>
-                </DockRow>
+                </SpokiRow>
               </div>
             </SpokiShell>
             <Footer />
@@ -220,47 +219,5 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
       </body>
     </html>
-  );
-}
-
-/** The Spoki state around the header and the page, when the panel is on. */
-function SpokiShell({
-  dock,
-  signedIn,
-  preference,
-  children,
-}: {
-  dock: boolean;
-  signedIn: boolean;
-  preference: ReturnType<typeof readDockPreference>;
-  children: React.ReactNode;
-}) {
-  if (!dock) return children;
-  return (
-    <SpokiProvider signedIn={signedIn} preference={preference}>
-      {children}
-    </SpokiProvider>
-  );
-}
-
-/**
- * The page and, at its right, the one Spoki panel (D525). It sits outside
- * the template, so navigation never remounts it.
- */
-function DockRow({
-  dock,
-  labels,
-  children,
-}: {
-  dock: boolean;
-  labels: React.ComponentProps<typeof SpokiDock>["labels"];
-  children: React.ReactNode;
-}) {
-  if (!dock) return children;
-  return (
-    <div className="flex min-h-0 w-full flex-1">
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
-      <SpokiDock labels={labels} />
-    </div>
   );
 }

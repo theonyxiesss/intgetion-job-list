@@ -5,7 +5,7 @@ import { Maximize2, Minimize2, X } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import { Icon } from "@/components/ui/icon";
 import { SpokiChat } from "./spoki-chat-lazy";
-import { useSpoki } from "./spoki-provider";
+import { useSpoki } from "./spoki-context";
 
 const tool =
   "inline-flex size-11 items-center justify-center rounded-full text-fg-muted transition-colors hover:bg-surface hover:text-fg";
