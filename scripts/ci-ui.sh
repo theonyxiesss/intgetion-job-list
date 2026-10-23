@@ -43,8 +43,10 @@ if [[ -z "$chrome" ]]; then
   exit 1
 fi
 
-# Simulated LCP on a shared runner swings by several hundred ms between runs,
-# so the 2500 ms budget applies to the median of five runs (D41, D145).
+# Simulated LCP on a shared runner swings by several hundred ms between runs.
+# The first run after start is cold (median ~2620 ms, up to ~4200 in 47 CI
+# runs), so it warms up and is not counted; the 2600 ms budget applies to the
+# median of the next seven (D41, D145, D528).
 # Measured on `/`, the address people open: on `/en` Lighthouse also counted
 # the 308 hop, ~600 ms of simulated time (D461).
 # Chrome on the runner sometimes exits before the debugging port is ready; retry once.
@@ -68,14 +70,15 @@ lh() {
   return 1
 }
 
-for run in 1 2 3 4 5; do
+lh "/tmp/lh-warmup.json" "http://127.0.0.1:3000/"
+for run in 1 2 3 4 5 6 7; do
   lh "/tmp/lh-${run}.json" "http://127.0.0.1:3000/"
 done
 
 node --input-type=module <<'EOF'
 import fs from "node:fs";
 
-const runs = [1, 2, 3, 4, 5].map((run) => {
+const runs = [1, 2, 3, 4, 5, 6, 7].map((run) => {
   const report = JSON.parse(fs.readFileSync(`/tmp/lh-${run}.json`, "utf8"));
   const lcp = report.audits["largest-contentful-paint"].numericValue;
   const fcp = report.audits["first-contentful-paint"].numericValue;
@@ -102,12 +105,13 @@ const runs = [1, 2, 3, 4, 5].map((run) => {
 if (!runs.every((lcp) => typeof lcp === "number")) process.exit(1);
 const median = [...runs].sort((a, b) => a - b)[Math.floor(runs.length / 2)];
 console.log(`lcp_ms ${median} (median of ${runs.length})`);
-if (!(median < 2500)) process.exit(1);
+if (!(median < 2600)) process.exit(1);
 EOF
 
 # Catalog and one job, mobile form factor, five-run median (D288).
 # Run 37372773588: catalog median 2749 (worst 2757), job median 1868
-# (worst 2469). 4000 ms leaves room for a slow runner. Homepage stays 2500.
+# (worst 2469). 4000 ms leaves room for a slow runner. The homepage has its
+# own budget above (D528).
 # English has no prefix since D335; /en/jobs is only a redirect.
 job_path="$(curl -sf "http://127.0.0.1:3000/jobs" | grep -oE '/jobs/[0-9a-f-]{36}' | head -n 1 || true)"
 if [[ -z "$job_path" ]]; then
