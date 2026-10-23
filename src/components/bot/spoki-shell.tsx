@@ -7,9 +7,9 @@ import type { DockPreference } from "./spoki-dock-model";
 /*
  * The Spoki panel's provider and panel, split from the shell (D525). A server
  * layout cannot code-split a client component it imports, so the layout
- * imports these small wrappers instead: with SPOKI_DOCK off they render
- * nothing of the panel and its code is never loaded; with it on the chunks
- * load with the page and still render on the server.
+ * imports these small wrappers and renders them only with SPOKI_DOCK on:
+ * the panel's chunks then load with the page and still render on the
+ * server; with it off nothing of the panel is loaded.
  */
 const Provider = dynamic(() =>
   import("./spoki-provider").then((module) => module.SpokiProvider),
@@ -19,17 +19,14 @@ const Dock = dynamic(() =>
 );
 
 export function SpokiShell({
-  dock,
   signedIn,
   preference,
   children,
 }: {
-  dock: boolean;
   signedIn: boolean;
   preference: DockPreference | null;
   children: ReactNode;
 }) {
-  if (!dock) return children;
   return (
     <Provider signedIn={signedIn} preference={preference}>
       {children}
@@ -42,15 +39,12 @@ export function SpokiShell({
  * outside the template, so navigation never remounts it.
  */
 export function SpokiRow({
-  dock,
   labels,
   children,
 }: {
-  dock: boolean;
   labels: ComponentProps<typeof Dock>["labels"];
   children: ReactNode;
 }) {
-  if (!dock) return children;
   return (
     <div className="flex min-h-0 w-full flex-1">
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>

@@ -127,6 +127,16 @@ export default async function LocaleLayout({
     SHELL_NAMESPACES,
   );
 
+  // Left rail from 1280 px, kept across navigations (D477, D489). min-h-0 on
+  // both wrappers: the chat keeps the window height and scrolls its thread
+  // instead of pushing the field down (D491).
+  const pageColumn = (
+    <div className="flex min-h-0 w-full flex-1 flex-col xl:has-[>[data-rail]]:mx-auto xl:has-[>[data-rail]]:grid xl:has-[>[data-rail]]:max-w-[1376px] xl:has-[>[data-rail]]:grid-cols-[300px_minmax(0,1fr)]">
+      <SiteRail data={rail} />
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
+    </div>
+  );
+
   return (
     <html
       lang={locale}
@@ -159,36 +169,42 @@ export default async function LocaleLayout({
         </a>
         <NextIntlClientProvider messages={clientMessages}>
           <ToastProvider closeLabel={t("ui.close")}>
-            <SpokiShell
-              dock={dock}
-              signedIn={signedIn}
-              preference={dockPreference}
-            >
-              <Header />
-              <div id="content" tabIndex={-1} className="flex flex-1 flex-col">
-                <SpokiRow
-                  dock={dock}
-                  labels={{
-                    panel: t("nav.spokiPanel"),
-                    title: t("chat.title"),
-                    expand: t("nav.spokiExpand"),
-                    collapse: t("nav.spokiCollapse"),
-                    close: t("nav.spokiClose"),
-                    loading: t("nav.spokiLoading"),
-                  }}
+            {/* With SPOKI_DOCK off the panel's wrappers are not rendered at
+                all, so pages load none of its code (D525). */}
+            {dock ? (
+              <SpokiShell signedIn={signedIn} preference={dockPreference}>
+                <Header />
+                <div
+                  id="content"
+                  tabIndex={-1}
+                  className="flex flex-1 flex-col"
                 >
-                  {/* Left rail from 1280 px, kept across navigations (D477, D489).
-                      min-h-0 on both wrappers: the chat keeps the window height and
-                      scrolls its thread instead of pushing the field down (D491). */}
-                  <div className="flex min-h-0 w-full flex-1 flex-col xl:has-[>[data-rail]]:mx-auto xl:has-[>[data-rail]]:grid xl:has-[>[data-rail]]:max-w-[1376px] xl:has-[>[data-rail]]:grid-cols-[300px_minmax(0,1fr)]">
-                    <SiteRail data={rail} />
-                    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                      {children}
-                    </div>
-                  </div>
-                </SpokiRow>
-              </div>
-            </SpokiShell>
+                  <SpokiRow
+                    labels={{
+                      panel: t("nav.spokiPanel"),
+                      title: t("chat.title"),
+                      expand: t("nav.spokiExpand"),
+                      collapse: t("nav.spokiCollapse"),
+                      close: t("nav.spokiClose"),
+                      loading: t("nav.spokiLoading"),
+                    }}
+                  >
+                    {pageColumn}
+                  </SpokiRow>
+                </div>
+              </SpokiShell>
+            ) : (
+              <>
+                <Header />
+                <div
+                  id="content"
+                  tabIndex={-1}
+                  className="flex flex-1 flex-col"
+                >
+                  {pageColumn}
+                </div>
+              </>
+            )}
             <Footer />
             <AnalyticsTracker />
             <TelegramLoginResume />
