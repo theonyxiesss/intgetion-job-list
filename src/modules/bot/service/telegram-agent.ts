@@ -561,6 +561,16 @@ function render(
     }
   }
 
+  // A Spoki block (D523) cannot be drawn here: its text and its page.
+  for (const event of events) {
+    if (event.type !== "ui") continue;
+    const { text, path } = event.block.fallback;
+    out.push({
+      text: text.slice(0, TELEGRAM_TEXT_LIMIT),
+      links: path ? [{ label: lines.openJob, url: pageUrl(locale, path) }] : [],
+    });
+  }
+
   const labels = buttonsFor(locale);
   for (const event of events) {
     if (event.type !== "tool_result" || event.kind !== "offer") continue;

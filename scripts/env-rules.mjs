@@ -63,6 +63,7 @@ const ALL_KNOWN = new Set([
   "BOT_ACTIONS_RETENTION_DAYS",
   "SPOKI_TOOL_ROUTING",
   "SPOKI_DOCK",
+  "SPOKI_INTERACTIVE_UI",
   "EMBEDDINGS_ENABLED",
   "IMPORT_LIVE_ENABLED",
   "EVENTS_IMPORT_SOURCES",
@@ -271,6 +272,7 @@ function validateVar(name, value, mode) {
 
     case "SPOKI_TOOL_ROUTING":
     case "SPOKI_DOCK":
+    case "SPOKI_INTERACTIVE_UI":
     case "EMBEDDINGS_ENABLED":
     case "IMPORT_LIVE_ENABLED":
       if (!isBooleanString(trimmed)) {

@@ -55,6 +55,9 @@ import { myCardsTools } from "./my-cards-tool";
 import { companyTools } from "./company-tools";
 import { pitchTools, screenCoverNote } from "./pitch";
 import { reminderTools } from "./reminders";
+import { showUiTool } from "./ui-tool";
+import { interactiveUiOn } from "../ui/flag";
+import type { UiBlock } from "../ui/types";
 import {
   DOMAIN_CATALOG,
   LOADABLE_DOMAINS,
@@ -157,6 +160,8 @@ export type ToolOutcome = {
   state?: BotState;
   /** The business item the write made or changed, for the journal (D521). */
   audit?: { entityType: string; entityId: string };
+  /** An interactive block for the chat (D523), already checked. */
+  ui?: UiBlock;
 };
 
 type Access = "guest" | "user";
@@ -800,6 +805,7 @@ export const TOOLS: readonly BotTool[] = [
   ...companyTools,
   ...pitchTools,
   ...reminderTools,
+  showUiTool as unknown as BotTool,
   ...(ugcTools as unknown as BotTool[]),
   ...(freelanceTools as unknown as BotTool[]),
   ...jobDraftTools,
@@ -807,6 +813,9 @@ export const TOOLS: readonly BotTool[] = [
 
 /** Tools Spoki has; MCP-only tools are not among them (D486). */
 const SPOKI_TOOLS = TOOLS.filter((t) => t.spoki !== false);
+
+/** `show_ui` is offered only with SPOKI_INTERACTIVE_UI on (D523). */
+const offeredNow = (t: BotTool) => t.name !== "show_ui" || interactiveUiOn();
 
 /**
  * Tools offered to the model: guests never even see user tools (P11). With
@@ -825,12 +834,13 @@ export function toolsFor(
     const wanted = new Set<string>(["core", ...domains]);
     const rank = (name: string) =>
       TOOL_DOMAINS.indexOf(domainOf(name) ?? "core");
-    return SPOKI_TOOLS.filter(
-      (t) =>
-        wanted.has(domainOf(t.name) ?? "") &&
-        // A brief starts from its card in a UGC thread (D457).
-        !(state?.topic === "ugc" && t.name === "propose_ugc_campaign"),
-    )
+    return SPOKI_TOOLS.filter(offeredNow)
+      .filter(
+        (t) =>
+          wanted.has(domainOf(t.name) ?? "") &&
+          // A brief starts from its card in a UGC thread (D457).
+          !(state?.topic === "ugc" && t.name === "propose_ugc_campaign"),
+      )
       .sort((a, b) => rank(a.name) - rank(b.name))
       .map((t) => ({
         name: t.name,
@@ -838,7 +848,8 @@ export function toolsFor(
         input: t.input,
       }));
   }
-  return SPOKI_TOOLS.filter((t) => t.name !== "use_tools")
+  return SPOKI_TOOLS.filter(offeredNow)
+    .filter((t) => t.name !== "use_tools")
     .filter((t) => userId !== null || t.access === "guest")
     .filter((t) => {
       if (state?.ugcDraftMode)

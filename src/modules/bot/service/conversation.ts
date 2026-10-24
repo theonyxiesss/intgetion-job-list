@@ -99,6 +99,10 @@ import {
   ugcTopicState,
 } from "./ugc-focus";
 import { stripLeakedToolMarkup } from "./leaked-tool";
+import { blockFromTool } from "../ui/build";
+import { interactiveUiOn } from "../ui/flag";
+import { checkBlock } from "../ui/schemas";
+import type { UiBlock } from "../ui/types";
 import {
   followUp,
   noAnswerLine,
@@ -164,6 +168,8 @@ export type BotEvent =
   /** A tool is about to run; the web chat shows what Spoki is doing (D490). */
   | { type: "tool_start"; name: string }
   | { type: "tool_result"; name: string; kind: string; data: unknown }
+  /** A checked interactive block (D523); Telegram shows its text. */
+  | { type: "ui"; block: UiBlock }
   | {
       type: "confirm_request";
       confirmationId: string;
@@ -1336,6 +1342,7 @@ export async function handleMessage(
         ? undefined
         : freelanceFocusBlock(state, userId !== null),
     memory: remembered?.memory,
+    interactive: interactiveUiOn(),
     now: userId ? localNow(now, known?.timezone) : undefined,
     page: input.page,
   });
@@ -1415,7 +1422,11 @@ export async function handleMessage(
       conversationId: current.id,
       role: "tool",
       content: declined.llm,
-      toolCall: { toolCallId: "call_server_search", name: "search_jobs" },
+      toolCall: {
+        toolCallId: "call_server_search",
+        name: "search_jobs",
+        ...(declined.ui ? { ui: declined.ui } : {}),
+      },
     });
     const choice = await chooseVacancy({
       cards: declined.jobCards ?? [],
@@ -1754,7 +1765,13 @@ export async function handleMessage(
           conversationId: conversation.id,
           role: "tool",
           content: content.llm,
-          toolCall: { toolCallId: call.id, name: call.name },
+          // The block lives with the tool row: the model never reads it,
+          // the chat draws it again from history; D471 wipes it with the row.
+          toolCall: {
+            toolCallId: call.id,
+            name: call.name,
+            ...(content.ui ? { ui: content.ui } : {}),
+          },
         });
       }
     }
@@ -1964,6 +1981,7 @@ async function callTool(
   waiting?: boolean;
   jobs?: boolean;
   jobCards?: JobCardFacts[];
+  ui?: UiBlock;
 }> {
   // The web chat names the step while it runs (D490). Name only, no input.
   emit({ type: "tool_start", name: call.name });
@@ -2043,7 +2061,12 @@ async function callTool(
   try {
     const outcome = await runTool(ctx, call.name, call.input);
     await journal(true, { entity: outcome.audit });
-    if (outcome.client) {
+    const ui = toolBlock(ctx, call, outcome, now);
+    if (ui) emit({ type: "ui", block: ui });
+    // Cards of jobs and services become the block; a draft keeps its card.
+    const replaced =
+      ui?.component === "job_cards" || ui?.component === "service_cards";
+    if (outcome.client && !replaced) {
       emit({
         type: "tool_result",
         name: call.name,
@@ -2061,6 +2084,7 @@ async function callTool(
       state: outcome.state,
       jobs,
       jobCards: jobs ? cardsFrom(data) : [],
+      ...(ui ? { ui } : {}),
     };
   } catch (error) {
     await journal(false, { error });
@@ -2071,6 +2095,29 @@ async function callTool(
     }
     throw error;
   }
+}
+
+/**
+ * The block for a tool's result (D523), only with SPOKI_INTERACTIVE_UI on:
+ * `show_ui` builds its own; data tools get one in the web chat only, so
+ * Telegram keeps its old cards.
+ */
+function toolBlock(
+  ctx: ToolContext,
+  call: LLMToolCall,
+  outcome: { client?: { kind: string; data: unknown }; ui?: UiBlock },
+  now: Date,
+): UiBlock | null {
+  if (!interactiveUiOn()) return null;
+  if (outcome.ui) return outcome.ui;
+  if ((ctx.channel ?? "web") !== "web") return null;
+  return blockFromTool(
+    call.name,
+    outcome.client,
+    call.input,
+    { userId: ctx.userId, locale: ctx.locale },
+    now,
+  );
 }
 
 async function maybeSignup(
@@ -2310,6 +2357,20 @@ export async function continueAfterCard(
 export async function conversationHistory(conversationId: string) {
   const rows = await repo.listMessages(conversationId, 50);
   const visible = rows.flatMap((row) => {
+    // A block kept with its tool row (D523) is drawn again after a reload.
+    const block = row.role === "tool" ? storedBlock(row.toolCall) : null;
+    if (block) {
+      return [
+        {
+          id: row.id,
+          role: "ui" as const,
+          content: block.fallback.text,
+          block,
+          done: blockDone(row.toolCall),
+          createdAt: row.createdAt.toISOString(),
+        },
+      ];
+    }
     if (
       row.role !== "user" &&
       row.role !== "assistant" &&
@@ -2330,6 +2391,20 @@ export async function conversationHistory(conversationId: string) {
     ];
   });
   return visible;
+}
+
+/** The block stored with a tool row, checked again on the way out. */
+function storedBlock(toolCall: unknown): UiBlock | null {
+  const ui = (toolCall as { ui?: unknown } | null)?.ui;
+  return ui ? checkBlock(ui) : null;
+}
+
+/** The block's buttons already pressed (a saved job stays "Saved"). */
+function blockDone(toolCall: unknown): string[] {
+  const done = (toolCall as { uiDone?: unknown } | null)?.uiDone;
+  return Array.isArray(done)
+    ? done.filter((id): id is string => typeof id === "string").slice(0, 30)
+    : [];
 }
 
 installVacancyReader(async (id, locale) => {

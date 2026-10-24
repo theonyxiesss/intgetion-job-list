@@ -35,6 +35,9 @@ const REQUIRED = [
   "deadline",
   "rights",
 ] as const;
+
+/** What a brief needs before it can go to review; Spoki shows progress (D523). */
+export const UGC_BRIEF_REQUIRED: readonly string[] = REQUIRED;
 const text = (value: unknown, min: number, max: number) =>
   typeof value === "string" &&
   value.trim().length >= min &&

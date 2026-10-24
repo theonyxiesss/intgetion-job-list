@@ -2006,6 +2006,95 @@
       "stop": "Остановить ответ",
       "stopped": "Ответ остановлен.",
       "toBottom": "К новым сообщениям"
+    },
+    "blocks": {
+      "open": "Открыть",
+      "save": "Сохранить",
+      "saved": "Сохранено",
+      "apply": "Откликнуться",
+      "applyReply": "Хочу откликнуться на «{title}»",
+      "order": "Заказать",
+      "orderReply": "Хочу заказать «{title}»",
+      "refresh": "Обновить",
+      "refreshing": "Обновляем…",
+      "stale": "Данные на {time}",
+      "failed": "Не получилось. Попробуйте ещё раз.",
+      "signIn": "Чтобы это сделать, войдите.",
+      "expand": "Во весь экран",
+      "from": "от {price}",
+      "days": "{count, plural, one {# день} few {# дня} many {# дней} other {# дня}}",
+      "plans": {
+        "month": "Помесячно",
+        "year": "За год",
+        "billing": "Оплата",
+        "perJob": "за вакансию",
+        "perMonth": "в месяц",
+        "perYear": "{price} в год",
+        "free": "Бесплатно",
+        "current": "Ваш тариф",
+        "recommended": "Рекомендуем",
+        "choose": "Выбрать «{name}»"
+      },
+      "calc": {
+        "total": "Итого",
+        "perMonth": "в месяц",
+        "ugc_budget": {
+          "title": "Бюджет UGC",
+          "videos": "Роликов",
+          "rewardCents": "Вознаграждение за ролик",
+          "range": "По проверенным брифам: {min}–{max}, чаще {median}",
+          "presets": "Проверенных брифов пока мало. Обычно выбирают {min}–{max}, чаще {median}.",
+          "network": "Комиссия сети за пополнение не входит.",
+          "create": "Создать бриф"
+        },
+        "freelance_order": {
+          "title": "Стоимость заказа",
+          "priceCents": "Цена пакета",
+          "quantity": "Сколько",
+          "range": "Базовые пакеты: {min}–{max}, чаще {median}",
+          "noFee": "Платформа не берёт комиссию.",
+          "find": "Найти услуги"
+        },
+        "hiring_cost": {
+          "title": "Найм или Команда",
+          "jobsPerMonth": "Вакансий в месяц",
+          "hire": "Найм",
+          "team": "Команда",
+          "cheaper": "{plan} дешевле на {saving} в месяц",
+          "same": "Стоимость одинаковая",
+          "breakEven": "Команда выгоднее от {count} вакансий в месяц",
+          "post": "Разместить вакансию",
+          "teamCta": "Выбрать «Команда»"
+        }
+      },
+      "progress": {
+        "title": {
+          "ugc_brief": "Бриф",
+          "freelance_service": "Карточка услуги",
+          "job": "Вакансия"
+        },
+        "filled": "Заполнено {filled} из {total}",
+        "missing": "Ещё нужно",
+        "open": "Открыть форму"
+      },
+      "fallback": {
+        "jobs": "Вакансии:",
+        "services": "Услуги:",
+        "plans": "Тарифы:",
+        "progress": "Заполнено {filled} из {total} обязательных полей.",
+        "ugc_budget": "{videos} роликов × {reward} = {total}.",
+        "freelance_order": "{quantity} × {price} = {total}.",
+        "hiring_cost": "{jobs, plural, one {# вакансия} few {# вакансии} many {# вакансий} other {# вакансии}} в месяц: Найм {hire}, Команда {team}. {plan} дешевле."
+      },
+      "label": {
+        "job_cards": "Вакансии",
+        "service_cards": "Услуги",
+        "compare_plans": "Тарифы",
+        "calculator": "Калькулятор",
+        "choice": "Выбор",
+        "progress": "Прогресс",
+        "details": "Подробности"
+      }
     }
   },
   "cookies": {

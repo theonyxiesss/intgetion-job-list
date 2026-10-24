@@ -37,6 +37,9 @@ const chatRequired = [
   "applicationMethod",
 ] as const;
 
+/** What a job listing needs from the chat; Spoki shows progress (D523). */
+export const JOB_DRAFT_REQUIRED: readonly string[] = chatRequired;
+
 const optionalText = (max: number) =>
   z.string().trim().max(max).nullable().optional();
 const patchSchema = z

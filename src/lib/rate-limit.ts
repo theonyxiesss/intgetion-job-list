@@ -51,6 +51,8 @@ export const rateRules = {
   botAfterCard: { limit: 1, windowSeconds: 24 * 60 * 60 },
   /** 👍/👎 on Spoki's answers (D514). */
   botFeedback: { limit: 120, windowSeconds: 60 * 60 },
+  /** Buttons on Spoki blocks: save, refresh (D523). */
+  botUiAction: { limit: 120, windowSeconds: 60 * 60 },
   /** analytics beacons, keyed by IP; over the limit they are dropped (D225) */
   beacon: { limit: 600, windowSeconds: 60 * 60 },
   /** guest JSON reads of jobs, keyed by IP (P-SCRAPE, D218) */

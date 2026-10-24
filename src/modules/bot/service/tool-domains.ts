@@ -66,6 +66,7 @@ const BY_NAME: Record<string, ToolDomain> = {
   remember_fact: "core",
   forget_fact: "core",
   use_tools: "core",
+  show_ui: "core",
   search_jobs: "jobs",
   get_job: "jobs",
   published_demand: "jobs",

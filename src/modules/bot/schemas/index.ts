@@ -59,6 +59,14 @@ export const botMemoryFactInput = z
   .strict();
 
 /** `POST /api/bot/feedback` — 👍, 👎 or take it back (D514). */
+/** A button on a Spoki block (D523): ids only, the server keeps the rest. */
+export const botUiActionInput = z
+  .object({
+    blockId: z.uuid(),
+    actionId: z.string().min(1).max(80),
+  })
+  .strict();
+
 export const botFeedbackInput = z
   .object({
     messageId: z.uuid(),

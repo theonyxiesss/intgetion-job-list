@@ -35,6 +35,15 @@ import {
 import { AssistantAnswer } from "@/components/bot/chat-markdown";
 import { draftCardDue } from "@/components/bot/draft-card";
 import { ThinkingStatusLine } from "@/components/bot/thinking-status-line";
+import {
+  SpokiBlock,
+  type CalcValues,
+} from "@/components/bot/blocks/spoki-block";
+import {
+  UI_COMPONENTS,
+  UI_VERSION,
+  type UiBlock,
+} from "@/modules/bot/ui/types";
 import { ConfirmCard } from "@/components/ui/dialog";
 import { ugcBudgetMinor, usdLabel } from "@/modules/ugc/service/pricing";
 import { Alert } from "@/components/ui/feedback";
@@ -105,6 +114,17 @@ type Entry =
       link: FreelanceLinkKind;
     }
   | { key: string; kind: "notice"; code: string }
+  /** A Spoki block (D523); its buttons and slider values live here. */
+  | {
+      key: string;
+      kind: "ui";
+      block: UiBlock;
+      done: string[];
+      busy?: string;
+      note?: "failed" | "signIn" | "stale";
+      values?: CalcValues;
+      live?: boolean;
+    }
   | {
       key: string;
       kind: "ugc_brief_draft";
@@ -209,7 +229,26 @@ function freelanceEntry(kind: unknown, data: unknown): Entry | null {
   return null;
 }
 
-type HistoryMessage = { id: string; role: string; content: string };
+type HistoryMessage = {
+  id: string;
+  role: string;
+  content: string;
+  /** `role: "ui"`: a block kept with the thread (D523). */
+  block?: unknown;
+  done?: string[];
+};
+
+/** A block from the server, drawn only in a format this chat knows. */
+function blockOf(value: unknown): UiBlock | null {
+  const block = value as Partial<UiBlock> | null;
+  return block &&
+    block.v === UI_VERSION &&
+    typeof block.id === "string" &&
+    UI_COMPONENTS.includes(block.component as never) &&
+    Array.isArray(block.actions)
+    ? (block as UiBlock)
+    : null;
+}
 
 /** What the thread is about, from `GET /api/bot/conversation` (D525). */
 type ServerFocus = {
@@ -422,18 +461,25 @@ export function Chat({
           if (body.actions) setActions(body.actions);
           if (body.focus) setServerFocus(body.focus);
           const history: Entry[] = body.messages.map((message) =>
-            message.role === "assistant"
+            message.role === "ui" && blockOf(message.block)
               ? {
-                  key: message.id,
-                  kind: "assistant",
-                  text: message.content,
-                  messageId: message.id,
+                  key: `ui-${blockOf(message.block)!.id}`,
+                  kind: "ui",
+                  block: blockOf(message.block)!,
+                  done: Array.isArray(message.done) ? message.done : [],
                 }
-              : {
-                  key: message.id,
-                  kind: message.role === "user" ? "user" : "event",
-                  text: message.content,
-                },
+              : message.role === "assistant"
+                ? {
+                    key: message.id,
+                    kind: "assistant",
+                    text: message.content,
+                    messageId: message.id,
+                  }
+                : {
+                    key: message.id,
+                    kind: message.role === "user" ? "user" : "event",
+                    text: message.content,
+                  },
           );
           if (body.draftOffer) {
             history.push({
@@ -684,6 +730,18 @@ export function Chat({
               ? data.messageId
               : undefined,
           );
+        } else if (data.type === "ui") {
+          const block = blockOf(data.block);
+          if (block) {
+            setThinking(false);
+            put({
+              key: `ui-${block.id}`,
+              kind: "ui",
+              block,
+              done: [],
+              live: true,
+            });
+          }
         } else if (data.type === "tool_start") {
           setActivity(String(data.name));
           setThinking(true);
@@ -978,6 +1036,78 @@ export function Chat({
     void continueAfterCard(confirmationId);
   }
 
+  /** Changes one block entry in place. */
+  function patchBlock(
+    key: string,
+    patch: Partial<Extract<Entry, { kind: "ui" }>>,
+  ) {
+    setEntries((current) =>
+      current.map((entry) =>
+        entry.key === key && entry.kind === "ui"
+          ? { ...entry, ...patch }
+          : entry,
+      ),
+    );
+  }
+
+  /** A reply button: the line goes to Spoki as the person's message. */
+  function blockReply(
+    entry: Extract<Entry, { kind: "ui" }>,
+    actionId: string,
+    line: string,
+  ) {
+    if (sending) return;
+    if (entry.block.component === "choice")
+      patchBlock(entry.key, { done: [...entry.done, actionId] });
+    void ask(line);
+  }
+
+  /** A server button (save, refresh): the server keeps what it does. */
+  async function blockAct(
+    entry: Extract<Entry, { kind: "ui" }>,
+    actionId: string,
+  ) {
+    patchBlock(entry.key, { busy: actionId, note: undefined });
+    const response = await fetch("/api/bot/ui/action", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ blockId: entry.block.id, actionId }),
+    }).catch(() => null);
+    const body = response
+      ? ((await response.json().catch(() => null)) as {
+          kind?: string;
+          block?: unknown;
+          error?: { code?: string };
+        } | null)
+      : null;
+    if (!response?.ok) {
+      patchBlock(entry.key, {
+        busy: undefined,
+        note:
+          response?.status === 401
+            ? "signIn"
+            : body?.error?.code === "BLOCK_STALE"
+              ? "stale"
+              : "failed",
+      });
+      return;
+    }
+    const fresh = body?.kind === "refreshed" ? blockOf(body.block) : null;
+    if (fresh) {
+      patchBlock(entry.key, {
+        block: fresh,
+        busy: undefined,
+        done: [],
+        values: undefined,
+      });
+      return;
+    }
+    patchBlock(entry.key, {
+      busy: undefined,
+      done: [...entry.done, actionId],
+    });
+  }
+
   async function chooseFill(mode: "self" | "spoki") {
     setActions((current) => ({ ...current, fillChoice: false }));
     const response = await fetch("/api/bot/fill", {
@@ -1221,6 +1351,26 @@ export function Chat({
                       </button>
                     ) : null}
                   </div>
+                );
+              }
+              if (entry.kind === "ui") {
+                return (
+                  <SpokiBlock
+                    key={entry.key}
+                    block={entry.block}
+                    live={entry.live}
+                    note={entry.note}
+                    values={entry.values}
+                    onValues={(values) => patchBlock(entry.key, { values })}
+                    handlers={{
+                      reply: (actionId, line) =>
+                        blockReply(entry, actionId, line),
+                      act: (actionId) => void blockAct(entry, actionId),
+                      busy: entry.busy ?? null,
+                      done: entry.done,
+                      sending,
+                    }}
+                  />
                 );
               }
               if (entry.kind === "jobs" || entry.kind === "matches") {

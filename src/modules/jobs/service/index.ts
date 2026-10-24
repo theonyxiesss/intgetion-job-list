@@ -18,6 +18,7 @@ export type { AdminJobRow } from "../repo/admin-jobs-repo";
 export { transitionOwnedJob } from "./notify-job";
 export { submitHireListing } from "./hire-post";
 export {
+  JOB_DRAFT_REQUIRED,
   confirmJobDraft,
   jobDraftForModel,
   mergeJobDraft,

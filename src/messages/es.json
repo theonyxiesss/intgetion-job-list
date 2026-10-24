@@ -2006,6 +2006,95 @@
       "stop": "Detener respuesta",
       "stopped": "Respuesta detenida.",
       "toBottom": "Ir a mensajes nuevos"
+    },
+    "blocks": {
+      "open": "Abrir",
+      "save": "Guardar",
+      "saved": "Guardado",
+      "apply": "Postularme",
+      "applyReply": "Quiero postularme a «{title}»",
+      "order": "Pedir",
+      "orderReply": "Quiero pedir «{title}»",
+      "refresh": "Actualizar",
+      "refreshing": "Actualizando…",
+      "stale": "Datos de las {time}",
+      "failed": "No funcionó. Inténtalo de nuevo.",
+      "signIn": "Inicia sesión para hacerlo.",
+      "expand": "Pantalla completa",
+      "from": "desde {price}",
+      "days": "{count, plural, one {# día} other {# días}}",
+      "plans": {
+        "month": "Mensual",
+        "year": "Anual",
+        "billing": "Pago",
+        "perJob": "por vacante",
+        "perMonth": "al mes",
+        "perYear": "{price} al año",
+        "free": "Gratis",
+        "current": "Tu plan",
+        "recommended": "Recomendado",
+        "choose": "Elegir {name}"
+      },
+      "calc": {
+        "total": "Total",
+        "perMonth": "al mes",
+        "ugc_budget": {
+          "title": "Presupuesto UGC",
+          "videos": "Vídeos",
+          "rewardCents": "Pago por vídeo",
+          "range": "Briefs revisados: {min}–{max}, normalmente {median}",
+          "presets": "Aún hay pocos briefs revisados. Se suele elegir {min}–{max}, sobre todo {median}.",
+          "network": "La comisión de la red por el depósito no está incluida.",
+          "create": "Crear un brief"
+        },
+        "freelance_order": {
+          "title": "Coste del pedido",
+          "priceCents": "Precio del paquete",
+          "quantity": "Cuántos",
+          "range": "Paquetes básicos: {min}–{max}, normalmente {median}",
+          "noFee": "La plataforma no cobra comisión.",
+          "find": "Buscar servicios"
+        },
+        "hiring_cost": {
+          "title": "Hire o Team",
+          "jobsPerMonth": "Vacantes al mes",
+          "hire": "Hire",
+          "team": "Team",
+          "cheaper": "{plan} cuesta {saving} menos al mes",
+          "same": "Cuesta lo mismo",
+          "breakEven": "Team sale a cuenta desde {count} vacantes al mes",
+          "post": "Publicar una vacante",
+          "teamCta": "Elegir Team"
+        }
+      },
+      "progress": {
+        "title": {
+          "ugc_brief": "Brief",
+          "freelance_service": "Ficha del servicio",
+          "job": "Vacante"
+        },
+        "filled": "{filled} de {total} completados",
+        "missing": "Falta",
+        "open": "Abrir el formulario"
+      },
+      "fallback": {
+        "jobs": "Vacantes:",
+        "services": "Servicios:",
+        "plans": "Planes:",
+        "progress": "{filled} de {total} campos obligatorios completados.",
+        "ugc_budget": "{videos} vídeos × {reward} = {total}.",
+        "freelance_order": "{quantity} × {price} = {total}.",
+        "hiring_cost": "{jobs} vacantes al mes: Hire {hire}, Team {team}. {plan} cuesta menos."
+      },
+      "label": {
+        "job_cards": "Empleos",
+        "service_cards": "Servicios",
+        "compare_plans": "Planes",
+        "calculator": "Calculadora",
+        "choice": "Elección",
+        "progress": "Progreso",
+        "details": "Detalles"
+      }
     }
   },
   "cookies": {

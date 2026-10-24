@@ -35,6 +35,7 @@ export {
   type ChatActions,
 } from "./conversation";
 export { jobDraftOpener } from "./job-draft-focus";
+export { runUiAction, type UiActionResult } from "./ui-action";
 export {
   TOOLS,
   findTool,

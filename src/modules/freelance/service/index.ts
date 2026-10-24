@@ -42,6 +42,7 @@ export type { OrderCommand, PartyOrder, PublicReview } from "./order-service";
 export { orderNotice } from "./notices";
 export type { OrderNotice } from "./notices";
 export {
+  SERVICE_DRAFT_REQUIRED,
   confirmServiceBriefDraft,
   isExplicitServiceDraftConfirmation,
   normalizeServiceLanguages,

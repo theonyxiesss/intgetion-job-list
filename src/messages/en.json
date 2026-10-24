@@ -2006,6 +2006,95 @@
       "stop": "Stop answer",
       "stopped": "Answer stopped.",
       "toBottom": "Jump to new messages"
+    },
+    "blocks": {
+      "open": "Open",
+      "save": "Save",
+      "saved": "Saved",
+      "apply": "Apply",
+      "applyReply": "I want to apply to “{title}”",
+      "order": "Order",
+      "orderReply": "I want to order “{title}”",
+      "refresh": "Refresh",
+      "refreshing": "Refreshing…",
+      "stale": "Data as of {time}",
+      "failed": "That did not work. Try again.",
+      "signIn": "Sign in to do this.",
+      "expand": "Full screen",
+      "from": "from {price}",
+      "days": "{count, plural, one {# day} other {# days}}",
+      "plans": {
+        "month": "Monthly",
+        "year": "Yearly",
+        "billing": "Billing",
+        "perJob": "per job",
+        "perMonth": "per month",
+        "perYear": "{price} a year",
+        "free": "Free",
+        "current": "Your plan",
+        "recommended": "Recommended",
+        "choose": "Choose {name}"
+      },
+      "calc": {
+        "total": "Total",
+        "perMonth": "a month",
+        "ugc_budget": {
+          "title": "UGC budget",
+          "videos": "Videos",
+          "rewardCents": "Reward per video",
+          "range": "Reviewed briefs: {min}–{max}, usually {median}",
+          "presets": "Too few reviewed briefs yet. Common picks: {min}–{max}, most often {median}.",
+          "network": "The network fee for the deposit is not included.",
+          "create": "Create a brief"
+        },
+        "freelance_order": {
+          "title": "Order cost",
+          "priceCents": "Package price",
+          "quantity": "How many",
+          "range": "Basic packages: {min}–{max}, usually {median}",
+          "noFee": "The platform takes no fee.",
+          "find": "Find services"
+        },
+        "hiring_cost": {
+          "title": "Hire or Team",
+          "jobsPerMonth": "Jobs a month",
+          "hire": "Hire",
+          "team": "Team",
+          "cheaper": "{plan} costs {saving} less a month",
+          "same": "The same cost",
+          "breakEven": "Team pays off from {count} jobs a month",
+          "post": "Post a job",
+          "teamCta": "Choose Team"
+        }
+      },
+      "progress": {
+        "title": {
+          "ugc_brief": "Brief",
+          "freelance_service": "Service listing",
+          "job": "Job listing"
+        },
+        "filled": "{filled} of {total} filled",
+        "missing": "Still needed",
+        "open": "Open the form"
+      },
+      "fallback": {
+        "jobs": "Jobs:",
+        "services": "Services:",
+        "plans": "Plans:",
+        "progress": "{filled} of {total} required fields filled.",
+        "ugc_budget": "{videos} videos × {reward} = {total}.",
+        "freelance_order": "{quantity} × {price} = {total}.",
+        "hiring_cost": "{jobs} jobs a month: Hire {hire}, Team {team}. {plan} costs less."
+      },
+      "label": {
+        "job_cards": "Jobs",
+        "service_cards": "Services",
+        "compare_plans": "Plans",
+        "calculator": "Calculator",
+        "choice": "Choice",
+        "progress": "Progress",
+        "details": "Details"
+      }
     }
   },
   "cookies": {

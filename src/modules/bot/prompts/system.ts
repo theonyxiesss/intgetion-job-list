@@ -6,7 +6,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 46;
+export const SYSTEM_PROMPT_VERSION = 47;
 
 /** How the PAGE line names each part of the site (D525). */
 const PAGE_NAMES: Record<PageSection, string> = {
@@ -53,6 +53,8 @@ export function systemPrompt(input: {
   now?: string;
   /** The part of the site open beside the Spoki panel (D525). */
   page?: PageSection;
+  /** Interactive blocks are on (D523): the show_ui tool is offered. */
+  interactive?: boolean;
 }): string {
   const language = LANGUAGE[input.locale] ?? "English";
   const slot = directedSlot(input.draft, input.profileFill === true);
@@ -163,6 +165,9 @@ export function systemPrompt(input: {
     input.jobFocus ?? "",
     input.page && input.page !== "other"
       ? `PAGE: the person has the ${PAGE_NAMES[input.page]} part of the site open next to this chat. Use it only to understand words such as "this", "here" or "these" when the message itself does not say; never change the subject of the conversation because of the page.`
+      : "",
+    input.interactive
+      ? "BLOCKS. When a picture says it better than words, call show_ui: compare_plans when they compare or choose plans; calculator when they ask what a number of UGC videos, a freelance order or hiring would cost; choice when the answer is a pick from 2 to 5 options; details for a long explanation in parts. Not on a greeting, not for a one-line answer, and at most one block per reply. Job and service results already come as cards: do not call show_ui for them. After a block, one short sentence; never repeat its numbers or type a price."
       : "",
     input.serviceFocus ?? "",
     input.ugcFocus ?? "",

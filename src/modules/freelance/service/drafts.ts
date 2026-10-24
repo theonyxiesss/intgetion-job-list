@@ -26,6 +26,9 @@ const REQUIRED = [
   "languages",
   "packages",
 ] as const;
+
+/** What a service listing needs; Spoki shows progress (D523). */
+export const SERVICE_DRAFT_REQUIRED: readonly string[] = REQUIRED;
 const isText = (value: unknown, min: number, max: number) =>
   typeof value === "string" &&
   value.trim().length >= min &&

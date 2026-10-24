@@ -2006,6 +2006,95 @@
       "stop": "Antwort stoppen",
       "stopped": "Antwort gestoppt.",
       "toBottom": "Zu neuen Nachrichten"
+    },
+    "blocks": {
+      "open": "Öffnen",
+      "save": "Merken",
+      "saved": "Gemerkt",
+      "apply": "Bewerben",
+      "applyReply": "Ich möchte mich auf „{title}“ bewerben",
+      "order": "Bestellen",
+      "orderReply": "Ich möchte „{title}“ bestellen",
+      "refresh": "Aktualisieren",
+      "refreshing": "Wird aktualisiert…",
+      "stale": "Stand {time}",
+      "failed": "Das hat nicht geklappt. Bitte noch einmal.",
+      "signIn": "Melden Sie sich dafür an.",
+      "expand": "Vollbild",
+      "from": "ab {price}",
+      "days": "{count, plural, one {# Tag} other {# Tage}}",
+      "plans": {
+        "month": "Monatlich",
+        "year": "Jährlich",
+        "billing": "Abrechnung",
+        "perJob": "pro Stelle",
+        "perMonth": "pro Monat",
+        "perYear": "{price} pro Jahr",
+        "free": "Kostenlos",
+        "current": "Ihr Tarif",
+        "recommended": "Empfohlen",
+        "choose": "{name} wählen"
+      },
+      "calc": {
+        "total": "Gesamt",
+        "perMonth": "pro Monat",
+        "ugc_budget": {
+          "title": "UGC-Budget",
+          "videos": "Videos",
+          "rewardCents": "Vergütung pro Video",
+          "range": "Geprüfte Briefings: {min}–{max}, meist {median}",
+          "presets": "Noch zu wenige geprüfte Briefings. Üblich sind {min}–{max}, am häufigsten {median}.",
+          "network": "Die Netzwerkgebühr für die Einzahlung ist nicht enthalten.",
+          "create": "Briefing erstellen"
+        },
+        "freelance_order": {
+          "title": "Auftragskosten",
+          "priceCents": "Paketpreis",
+          "quantity": "Wie viele",
+          "range": "Basispakete: {min}–{max}, meist {median}",
+          "noFee": "Die Plattform nimmt keine Gebühr.",
+          "find": "Dienste finden"
+        },
+        "hiring_cost": {
+          "title": "Hire oder Team",
+          "jobsPerMonth": "Stellen pro Monat",
+          "hire": "Hire",
+          "team": "Team",
+          "cheaper": "{plan} kostet {saving} weniger im Monat",
+          "same": "Gleiche Kosten",
+          "breakEven": "Team lohnt sich ab {count} Stellen im Monat",
+          "post": "Stelle ausschreiben",
+          "teamCta": "Team wählen"
+        }
+      },
+      "progress": {
+        "title": {
+          "ugc_brief": "Briefing",
+          "freelance_service": "Dienstangebot",
+          "job": "Stellenanzeige"
+        },
+        "filled": "{filled} von {total} ausgefüllt",
+        "missing": "Es fehlt noch",
+        "open": "Formular öffnen"
+      },
+      "fallback": {
+        "jobs": "Stellen:",
+        "services": "Dienste:",
+        "plans": "Tarife:",
+        "progress": "{filled} von {total} Pflichtfeldern ausgefüllt.",
+        "ugc_budget": "{videos} Videos × {reward} = {total}.",
+        "freelance_order": "{quantity} × {price} = {total}.",
+        "hiring_cost": "{jobs} Stellen pro Monat: Hire {hire}, Team {team}. {plan} ist günstiger."
+      },
+      "label": {
+        "job_cards": "Jobs",
+        "service_cards": "Services",
+        "compare_plans": "Tarife",
+        "calculator": "Rechner",
+        "choice": "Auswahl",
+        "progress": "Fortschritt",
+        "details": "Details"
+      }
     }
   },
   "cookies": {

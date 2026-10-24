@@ -24,4 +24,9 @@ export const flags = {
    * full screen.
    */
   spokiDockEnabled: envFlag("SPOKI_DOCK"),
+  /**
+   * Spoki interactive blocks (D523): cards, plans, calculators, choices.
+   * Off until tested; the bot reads it per turn (`interactiveUiOn`).
+   */
+  spokiInteractiveUiEnabled: envFlag("SPOKI_INTERACTIVE_UI"),
 } as const;

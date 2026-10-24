@@ -35,6 +35,8 @@
 
 `SPOKI_DOCK=true` — Spoki живёт в layout рядом с каждой страницей: `src/components/bot/spoki-provider.tsx` (состояние, режимы, cookie `spoki_dock`), `spoki-dock.tsx` (один `<aside id="spoki-panel">`, режимы — классы), `spoki-chat-lazy.tsx` (ленивый `Chat` + тексты из `GET /api/bot/messages`), `spoki-link.tsx` (входы), `spoki-chat-address.tsx` (`/chat?…` → нить). `/chat` — режим «во весь экран» того же чата. С сообщением идёт `section` (имя раздела) → строка `PAGE` промпта 46 и сервис раздела в маршрутизации. Подробно — `docs/tz/34-spoki-dock.md` §9.
 
+`SPOKI_INTERACTIVE_UI=true` — блоки Spoki (D529): сервер строит их в `src/modules/bot/ui/build.ts` из ответов инструментов данных (веб) и из `show_ui` (`service/ui-tool.ts`), проверяет `ui/schemas.ts`, шлёт событием `ui` и хранит в `tool_call.ui` строки инструмента (24 ч, D471). Чат рисует их `src/components/bot/blocks/`; кнопки — `POST /api/bot/ui/action` (`service/ui-action.ts`: блок владельца, список инструментов, журнал D521, 409 для устаревших данных). Промпт 47, строка BLOCKS. Подробно — `docs/tz/33-spoki-interactive-ui.md` §10.
+
 ## Статус
 
 Web chat — OK при валидном LLM-ключе. Phone Mini App — OPEN ([../OPEN_TASKS.md](../OPEN_TASKS.md)).

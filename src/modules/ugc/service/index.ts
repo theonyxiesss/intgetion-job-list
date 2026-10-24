@@ -93,6 +93,7 @@ export {
 } from "./commands";
 export { ugcTools } from "./bot-tools";
 export {
+  UGC_BRIEF_REQUIRED,
   confirmBriefDraft,
   withdrawToDraft,
   isExplicitBriefConfirmation,

@@ -132,6 +132,25 @@ describe("the agent inside the Telegram bot (D311)", () => {
     ]);
   });
 
+  it("shows a Spoki block as its text and one link to our page (D523)", async () => {
+    turn = (emit) => {
+      emit({ type: "token", text: "Here is the cost." });
+      emit({
+        type: "ui",
+        block: {
+          fallback: { text: "4 videos × $50 = $200.", path: "/campaigns" },
+        },
+      } as unknown as BotEvent);
+    };
+    await handleTelegramAgentUpdate("token", update("ugc budget"));
+    expect(sent).toHaveLength(2);
+    expect(sent[1]).toEqual({
+      chatId: 42,
+      text: "4 videos × $50 = $200.",
+      links: [{ label: "Open", url: "https://example.test/campaigns" }],
+    });
+  });
+
   it("keeps the job line and link when the same turn also leaked tool markup", async () => {
     turn = (emit) => {
       emit({ type: "token", text: `Here you go.\n${LEAKED_OFFER}` });

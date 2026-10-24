@@ -604,3 +604,60 @@ export async function listActionsForUser(
     .orderBy(desc(botActions.createdAt))
     .limit(limit);
 }
+
+// ---- Spoki blocks (D523) --------------------------------------------------
+
+/**
+ * The tool row that keeps block `blockId`, in the caller's own conversation
+ * (by account, or by the guest's session) and from the last 24 hours: an
+ * older block went with its text (D471).
+ */
+export async function findBlockRow(input: {
+  blockId: string;
+  userId: string | null;
+  tokenHash: string | null;
+  now?: Date;
+}): Promise<
+  { message: MessageRow; conversation: ConversationRow } | undefined
+> {
+  if (!input.userId && !input.tokenHash) return undefined;
+  const owner = input.userId
+    ? eq(botConversations.userId, input.userId)
+    : eq(botConversations.sessionTokenHash, input.tokenHash!);
+  const since = new Date(
+    (input.now ?? new Date()).getTime() - CHAT_TEXT_TTL_MS,
+  );
+  const [row] = await getDb()
+    .select({ message: botMessages, conversation: botConversations })
+    .from(botMessages)
+    .innerJoin(
+      botConversations,
+      eq(botConversations.id, botMessages.conversationId),
+    )
+    .where(
+      and(
+        owner,
+        eq(botMessages.role, "tool"),
+        gte(botMessages.createdAt, since),
+        sql`${botMessages.toolCall} -> 'ui' ->> 'id' = ${input.blockId}`,
+      ),
+    )
+    .limit(1);
+  return row;
+}
+
+/** Replaces the kept block (a refresh) or marks one of its buttons done. */
+export async function updateBlockRow(
+  id: string,
+  patch: { ui: unknown } | { done: string },
+): Promise<void> {
+  await getDb()
+    .update(botMessages)
+    .set({
+      toolCall:
+        "ui" in patch
+          ? sql`coalesce(${botMessages.toolCall}, '{}'::jsonb) || jsonb_build_object('ui', ${JSON.stringify(patch.ui)}::jsonb)`
+          : sql`coalesce(${botMessages.toolCall}, '{}'::jsonb) || jsonb_build_object('uiDone', coalesce(${botMessages.toolCall} -> 'uiDone', '[]'::jsonb) || to_jsonb(${patch.done}::text))`,
+    })
+    .where(eq(botMessages.id, id));
+}
