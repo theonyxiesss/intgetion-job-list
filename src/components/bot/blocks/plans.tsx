@@ -47,9 +47,8 @@ export function ComparePlans({
             </div>
             <p>
               <span className="font-mono text-2xl">
-                {plan.priceCents === null || plan.priceCents === 0
-                  ? t("free")
-                  : usdText(plan.priceCents, locale)}
+                {/* $0, not "Free": a free plan is often named so already. */}
+                {usdText(plan.priceCents ?? 0, locale)}
               </span>
               {plan.priceCents ? (
                 <span className="t-body-s ml-1 text-fg-muted">

@@ -1,5 +1,8 @@
+import { randomUUID } from "node:crypto";
+import pg from "pg";
 import type { Page, Route } from "@playwright/test";
 import { consentCookie, expect, test, testIp } from "./fixtures";
+import { authLink, waitForMail } from "./mail";
 
 /**
  * D523: Spoki blocks in the panel, full screen, a tablet and a phone. Runs
@@ -369,4 +372,159 @@ test("the button route answers 404 for a block that is not the caller's", async 
     data: { blockId: "not-an-id", actionId: "x", tool: "save_job" },
   });
   expect(bad.status()).toBe(400);
+});
+
+/**
+ * The whole path under a real account, on the isolated CI database: the
+ * kept block draws in the panel, "Save" writes the saved job and the
+ * action journal (D521), a reload keeps it, full screen keeps it; a
+ * confirmation card waits in the panel and in full screen. Nothing here
+ * reaches the cloud database: CI runs `supabase start`.
+ */
+test("signed in: Save writes the saved job and the journal; a card works in the panel and full screen", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) throw new Error("DATABASE_URL is required.");
+  await page.setViewportSize({ width: 1600, height: 900 });
+
+  // A real account through the local mail catcher.
+  const email = `blocks-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
+  await page.goto("/en/register");
+  await page.getByLabel("Email", { exact: true }).fill(email);
+  await page.locator('input[type="password"]').fill("orbit-lantern-42");
+  await page.getByLabel("I accept the terms").check();
+  await page.getByRole("button", { name: "Create account" }).click();
+  await expect(page).toHaveURL(/:\d+\/auth\/check-email$/);
+  await page.goto(authLink(await waitForMail(page.request, email)));
+  await expect(page).toHaveURL(/:\d+\/auth\/(confirmed|signed-in)/);
+  const me = await page.request.get("/api/me");
+  expect(me.status()).toBe(200);
+  const userId = ((await me.json()) as { id: string }).id;
+
+  // A published job, a thread with its block, a waiting card.
+  const companyId = randomUUID();
+  const jobId = randomUUID();
+  const conversationId = randomUUID();
+  const confirmationId = randomUUID();
+  const title = `Blocks e2e ${jobId.slice(0, 8)}`;
+  const block = {
+    ...jobCards(1),
+    id: randomUUID(),
+    props: {
+      items: [
+        {
+          id: jobId,
+          title,
+          company: "Blocks Co",
+          actions: [`open:${jobId}`, `save:${jobId}`],
+        },
+      ],
+    },
+    actions: [
+      {
+        id: `open:${jobId}`,
+        type: "link",
+        label: "Open",
+        path: `/jobs/${jobId}`,
+      },
+      {
+        id: `save:${jobId}`,
+        type: "action",
+        label: "Save",
+        doneLabel: "Saved",
+        tool: "save_job",
+        args: { jobId },
+        write: true,
+      },
+      { id: "refresh", type: "refresh", label: "Refresh" },
+    ],
+  };
+  const db = new pg.Client({ connectionString });
+  await db.connect();
+  try {
+    await db.query(
+      `insert into public.companies (id, name, slug, status) values ($1, 'Blocks Co', $2, 'verified')`,
+      [companyId, `blocks-${companyId.slice(0, 8)}`],
+    );
+    await db.query(
+      `insert into public.jobs (id, company_id, title, description, category, work_format, employment_type, application_method, status, published_at, expires_at)
+       values ($1, $2, $3, 'Blocks e2e role description long enough for the schema constraints of a job.', 'engineering', 'remote', 'full_time', 'internal', 'published', now(), now() + interval '30 days')`,
+      [jobId, companyId, title],
+    );
+    await db.query(
+      `insert into public.bot_conversations (id, user_id, session_token_hash, locale, last_message_at)
+       values ($1, $2, $3, 'en', now())`,
+      [conversationId, userId, `blocks-${conversationId}`],
+    );
+    await db.query(
+      `insert into public.bot_messages (conversation_id, role, content, created_at) values ($1, 'user', 'Find remote roles', now() - interval '2 seconds')`,
+      [conversationId],
+    );
+    await db.query(
+      `insert into public.bot_messages (conversation_id, role, content, tool_call, created_at)
+       values ($1, 'tool', 'one job', $2::jsonb, now() - interval '1 second')`,
+      [
+        conversationId,
+        JSON.stringify({
+          toolCallId: "call_e2e",
+          name: "search_jobs",
+          ui: block,
+        }),
+      ],
+    );
+    await db.query(
+      `insert into public.bot_confirmations (id, conversation_id, user_id, tool, args, args_hash, expires_at)
+       values ($1, $2, $3, 'apply_to_job', $4::jsonb, 'e2e', now() + interval '10 minutes')`,
+      [confirmationId, conversationId, userId, JSON.stringify({ jobId })],
+    );
+  } finally {
+    await db.end();
+  }
+
+  // Signed in, the panel is open from the start (D525).
+  await page.goto("/en/jobs");
+  await expect(field(page)).toBeVisible();
+  const cards = panel(page).locator('[data-block="job_cards"]');
+  await expect(cards.getByRole("link", { name: title })).toBeVisible();
+  await cards.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(cards.getByRole("button", { name: "Saved" })).toBeDisabled();
+
+  const check = new pg.Client({ connectionString });
+  await check.connect();
+  try {
+    const saved = await check.query(
+      `select count(*)::int as n from public.saved_jobs where user_id = $1 and job_id = $2`,
+      [userId, jobId],
+    );
+    expect(saved.rows[0]?.n).toBe(1);
+    const journal = await check.query(
+      `select tool, kind, status, channel from public.bot_actions where user_id = $1`,
+      [userId],
+    );
+    expect(journal.rows).toContainEqual({
+      tool: "save_job",
+      kind: "direct",
+      status: "completed",
+      channel: "web",
+    });
+  } finally {
+    await check.end();
+  }
+
+  // The card waits in the panel, and in full screen it is the same card.
+  const card = panel(page).getByText("Apply to this job?");
+  await expect(card).toBeVisible();
+  await page.getByRole("button", { name: "Open Spoki full screen" }).click();
+  await expect(page).toHaveURL(/\/chat$/);
+  await expect(cards.getByRole("button", { name: "Saved" })).toBeDisabled();
+  await expect(card).toBeVisible();
+  await panel(page).getByRole("button", { name: "Cancel" }).click();
+  await expect(panel(page).getByText("Cancelled.")).toBeVisible();
+
+  // After a reload the saved button stays saved and the card is gone.
+  await page.reload();
+  await expect(cards.getByRole("button", { name: "Saved" })).toBeDisabled();
+  await expect(panel(page).getByText("Apply to this job?")).toHaveCount(0);
 });

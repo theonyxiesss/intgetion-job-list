@@ -5,6 +5,7 @@ import {
   pickVacancy,
   presentVacancy,
   shapeToolCalls,
+  speaksAsEmployer,
   stripOffGoalEnding,
   type VacancyFacts,
 } from "../service/fit";
@@ -187,5 +188,42 @@ describe("one fitting vacancy", () => {
         waiting: false,
       }),
     ).toEqual([]);
+  });
+
+  it("never turns an employer's hiring question into a job search (D529)", () => {
+    const turn = (
+      userText: string,
+      calls: Parameters<typeof shapeToolCalls>[0] = [],
+    ) =>
+      shapeToolCalls(calls, {
+        userText,
+        // The thread already holds a candidate draft that is ready to search.
+        ready: true,
+        jobThread: false,
+        showedJobs: false,
+        waiting: false,
+      }).map((call) => call.name);
+    for (const text of [
+      "Нанимаю 4 человека в месяц. Что дешевле: Hire или Team? Посчитай.",
+      "Хочу нанять дизайнера",
+      "Как разместить вакансию?",
+      "We are hiring two engineers, which plan?",
+      "How much to hire one developer?",
+      "Need to post a job",
+    ]) {
+      expect(speaksAsEmployer(text)).toBe(true);
+      expect(turn(text)).toEqual([]);
+    }
+    // A block answers the turn: no search rides along.
+    expect(
+      turn("Сколько стоят 6 UGC-видео?", [
+        { id: "b", name: "show_ui", input: { component: "calculator" } },
+      ]),
+    ).toEqual(["show_ui"]);
+    // A candidate still gets the search, "hired" included.
+    for (const text of ["покажи вакансии", "help me get hired"]) {
+      expect(speaksAsEmployer(text)).toBe(false);
+      expect(turn(text)).toEqual(["search_jobs"]);
+    }
   });
 });

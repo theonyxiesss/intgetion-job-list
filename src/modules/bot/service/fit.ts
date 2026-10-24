@@ -737,8 +737,22 @@ const CONFIRM_TOOLS = new Set(["apply_to_job", "propose_profile_update"]);
 const SEARCH_TOOLS = new Set(["search_jobs", "get_matches"]);
 
 /**
+ * The person speaks as an employer: hiring, posting a job, a hiring plan.
+ * Such a turn is never a job search for a candidate, even when the thread
+ * holds a candidate draft (D529). "hired" is a candidate word.
+ */
+const HIRING =
+  /(?<!\p{L})(?:наним|нанять|найм|ищем сотрудник|ищу сотрудник|разместить ваканси|опубликовать ваканси|hire(?!d)|hiring|recruit|post a job)/iu;
+
+export function speaksAsEmployer(text: string): boolean {
+  return HIRING.test(text);
+}
+
+/**
  * Search turns call search_jobs with an empty input. A polite yes is not
  * an apply. Plus does not ride along. A ?job= thread stays on that vacancy.
+ * An employer turn and a turn answered with a block (show_ui) get no
+ * search the model did not ask for.
  */
 export function shapeToolCalls(
   calls: readonly LLMToolCall[],
@@ -764,12 +778,15 @@ export function shapeToolCalls(
   }
   const confirms = next.some((call) => CONFIRM_TOOLS.has(call.name));
   const searched = next.some((call) => SEARCH_TOOLS.has(call.name));
+  const blockTurn = next.some((call) => call.name === "show_ui");
   const searchTurn =
     !input.waiting &&
     !input.showedJobs &&
     !confirms &&
+    !blockTurn &&
     input.ready &&
-    !input.jobThread;
+    !input.jobThread &&
+    !speaksAsEmployer(input.userText);
   if (searchTurn) {
     next = next.filter((call) => {
       if (call.name !== "offer_step") return true;

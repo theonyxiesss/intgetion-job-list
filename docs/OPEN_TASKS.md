@@ -4,6 +4,19 @@
 
 ## OPEN
 
+### D527 — бесплатные модели OpenRouter (отдельная задача, не D523)
+
+Основатель 2026-10-24: «Зафиксируй известные проблемы бесплатных моделей OpenRouter как отдельную задачу D527». Код запасных моделей — ветка `claude/llm-fallbacks` (не слита, по указанию основателя не трогается); на сайте `LLM_MODEL_CHAT=nvidia/nemotron-3-ultra-550b-a55b:free`.
+
+Наблюдения при проверке D529 (локально, 2026-10-24):
+
+- Провайдер отвечает ошибкой (`LLMProviderError: The provider reported an error`) на отдельных ходах; без запасных моделей ход заканчивается «Агент не смог ответить». Один из 7 живых ходов.
+- Модель шлёт вложенный объект аргументов строкой JSON (`start: "{…}"`) — строгая проверка отклоняет весь вызов. В D529 обойдено плоскими аргументами `show_ui`; другие инструменты с вложенными объектами могут падать так же.
+- Модель повторяет числа блока в тексте вопреки инструкции и иногда переспрашивает необязательные поля вместо вызова инструмента.
+- Извлечение профиля (`extractDraft`) тоже падает на ошибке провайдера (`bot: profile extraction skipped`) — ход продолжается без него.
+
+Что сделать (после слияния D529): слить `claude/llm-fallbacks` (нужен merge master), проверить запасные модели на `show_ui`, решить — разбирать ли строковый JSON в аргументах инструментов на уровне `src/lib/llm` (один раз для всех инструментов). Выкладка — отдельным «да».
+
 ### UGC bot repeats saved product name (D495) — local hotfix
 
 - In brief-draft mode, the system prompt now treats the live server draft and `missingRequired` as the only authority for whether product name is missing. Legacy `state.ugcProduct` can no longer cause a contradictory “no product named” instruction.

@@ -23,11 +23,18 @@ export default defineConfig({
           env: { ...process.env, ADMIN_HOST_ONLY: "1", PORT: "3100" },
         },
         {
-          // The persistent Spoki panel (D525): tests/e2e/spoki-dock.spec.ts.
+          // The persistent Spoki panel (D525) and its blocks (D529):
+          // tests/e2e/spoki-dock.spec.ts, tests/e2e/spoki-blocks.spec.ts.
           command: "pnpm start --port 3200",
           url: "http://127.0.0.1:3200",
           reuseExistingServer: false,
-          env: { ...process.env, SPOKI_DOCK: "true", PORT: "3200" },
+          // Interactive blocks on too (D529): the flag as it will be on the site.
+          env: {
+            ...process.env,
+            SPOKI_DOCK: "true",
+            SPOKI_INTERACTIVE_UI: "true",
+            PORT: "3200",
+          },
         },
       ]
     : {

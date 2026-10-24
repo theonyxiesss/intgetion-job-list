@@ -205,4 +205,64 @@ describe("Spoki blocks in the chat (D523)", () => {
     const history = await conversationHistory("c1");
     expect(history.find((row) => row.id === "bad")).toBeUndefined();
   });
+
+  it("answers an employer's hiring question with the calculator, not a job search", async () => {
+    vi.stubEnv("SPOKI_INTERACTIVE_UI", "true");
+    const { blockFromShowUi } = await import("../ui/build");
+    const ui = await blockFromShowUi(
+      { component: "calculator", formula: "hiring_cost", jobsPerMonth: 4 },
+      { userId: null, locale: "ru" },
+    );
+    runToolMock.mockReset();
+    runToolMock.mockResolvedValue({
+      llm: "A calculator block is on the screen now.",
+      ui,
+    });
+    setBotLLMForTests({
+      provider: new FakeLLMProvider([
+        fakeToolCall("show_ui", {
+          component: "calculator",
+          formula: "hiring_cost",
+          jobsPerMonth: 4,
+        }),
+        fakeText("Команда выгоднее."),
+      ]),
+      model: "fake-model",
+      prices,
+    });
+    const events: BotEvent[] = [];
+    await handleMessage(
+      {
+        userId: null,
+        // The candidate draft of this thread is ready to search.
+        conversation,
+        text: "Нанимаю 4 человека в месяц. Что дешевле: Hire или Team? Посчитай.",
+        ip: "203.0.113.21",
+        locale: "ru",
+      },
+      (event) => events.push(event),
+    );
+    expect(runToolMock.mock.calls.map((call) => call[1])).toEqual(["show_ui"]);
+    expect(
+      events.flatMap((event) =>
+        event.type === "ui" ? [event.block.component] : [],
+      ),
+    ).toEqual(["calculator"]);
+  });
+
+  it("offers show_ui and the BLOCKS line only while the flag is on", async () => {
+    const { toolsFor } = await import("../service/tools");
+    const names = (userId: string | null) =>
+      [
+        ...toolsFor(userId),
+        ...(userId ? toolsFor(userId, {}, ["jobs"]) : []),
+      ].map((tool) => tool.name);
+    const user = "44444444-4444-4444-8444-444444444444";
+    vi.stubEnv("SPOKI_INTERACTIVE_UI", "false");
+    expect(names(null)).not.toContain("show_ui");
+    expect(names(user)).not.toContain("show_ui");
+    vi.stubEnv("SPOKI_INTERACTIVE_UI", "true");
+    expect(names(null)).toContain("show_ui");
+    expect(names(user)).toContain("show_ui");
+  });
 });
