@@ -15,7 +15,7 @@ const FOCUSABLE =
 
 /**
  * The one Spoki of the site (D525). The same element is the docked column
- * (from 1280 px), the panel over the page (1024–1279 px), the phone screen
+ * (from 1536 px), the panel over the page (1024–1535 px), the phone screen
  * and the full screen of `/chat`: only its classes change, so the chat
  * inside keeps its thread, the text being typed and an answer still coming.
  */
@@ -58,7 +58,7 @@ export function SpokiDock({
 
   // A click beside the panel over the page closes it, as Esc does.
   const close = spoki?.close;
-  // Only the side panel over a page is modal (1024–1279 px). On a phone the
+  // Only the side panel over a page is modal (1024–1535 px). On a phone the
   // panel leaves the tab bar usable, like the `/chat` page, so it is not.
   const modalNow = spoki?.mode === "overlay";
   useEffect(() => {
@@ -122,7 +122,7 @@ export function SpokiDock({
       {modal ? (
         <div
           aria-hidden="true"
-          className="fixed inset-x-0 top-16 bottom-0 z-30 hidden bg-bg/70 lg:max-xl:block"
+          className="fixed inset-x-0 top-16 bottom-0 z-30 hidden bg-bg/70 lg:max-2xl:block"
         />
       ) : null}
       <aside
@@ -137,14 +137,14 @@ export function SpokiDock({
           "min-h-0 flex-col bg-bg",
           // Hidden unless one of the places below shows it.
           !expanded && "hidden",
-          // From 1280 px a permanent part of the layout, beside the page (D531).
+          // From 1536 px a permanent part of the layout, beside the page (D531).
           docked &&
             !expanded &&
-            "xl:sticky xl:top-16 xl:flex xl:h-[calc(100dvh-4rem)] xl:w-[400px] xl:shrink-0 xl:self-start xl:border-l xl:border-line",
+            "2xl:sticky 2xl:top-16 2xl:flex 2xl:h-[calc(100dvh-4rem)] 2xl:w-[400px] 2xl:shrink-0 2xl:self-start 2xl:border-l 2xl:border-line",
           // Below it, over the page: a side panel, a phone screen under 1024 px.
           floating &&
             !expanded &&
-            "chat-shell max-xl:fixed max-xl:top-16 max-xl:right-0 max-xl:bottom-0 max-xl:z-40 max-xl:flex max-lg:left-0 lg:max-xl:w-[400px] lg:max-xl:border-l lg:max-xl:border-line",
+            "chat-shell max-2xl:fixed max-2xl:top-16 max-2xl:right-0 max-2xl:bottom-0 max-2xl:z-40 max-2xl:flex max-lg:left-0 lg:max-2xl:w-[400px] lg:max-2xl:border-l lg:max-2xl:border-line",
           expanded && "chat-shell fixed inset-x-0 top-16 bottom-0 z-40 flex",
         )}
       >

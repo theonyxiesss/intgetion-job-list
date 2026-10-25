@@ -19,8 +19,8 @@ import {
 import { preloadSpokiChat } from "./spoki-chat-lazy";
 import { SpokiContext, type DockMode, type SpokiDock } from "./spoki-context";
 
-/** From here the panel is part of the layout; below it slides over (D531). */
-const WIDE = "(min-width: 1280px)";
+/** From here the panel is part of the layout; below it slides over (D525). */
+const WIDE = "(min-width: 1536px)";
 /** Below this the panel takes the whole screen, like the chat page. */
 const LARGE = "(min-width: 1024px)";
 

@@ -15,7 +15,7 @@ export type SpokiDock = {
   signedIn: boolean;
   /** The panel is permanently part of the desktop layout (D531). */
   docked: boolean;
-  /** Opened over the page below 1280 px. */
+  /** Opened over the page below 1536 px. */
   floating: boolean;
   /** `/chat`: the same chat over the whole page. */
   expanded: boolean;

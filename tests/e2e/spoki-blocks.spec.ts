@@ -164,10 +164,15 @@ async function stubThread(page: Page, block: unknown, done: string[] = []) {
 
 async function openPanel(page: Page, path = "/en/jobs") {
   await page.goto(path);
-  const phone = (page.viewportSize()?.width ?? 1600) < 768;
-  // A phone opens Spoki from the tab bar; wider screens from the header.
+  const width = page.viewportSize()?.width ?? 1600;
+  if (width >= 1536) {
+    // At desktop width Spoki is already part of the page layout (D531).
+    await expect(field(page)).toBeVisible();
+    return;
+  }
+  // A phone opens Spoki from the tab bar; narrower desktop uses the header.
   await (
-    phone
+    width < 768
       ? page
           .getByRole("navigation", { name: "Main sections" })
           .getByRole("link", { name: "Spoki" })
@@ -237,7 +242,7 @@ test("wide screen: the calculator counts at once and keeps its values through fu
   await expect(log(page).getByText("Hire or Team for 5 jobs?")).toBeVisible();
 });
 
-test("a reload draws the kept cards again, with a saved job still saved", async ({
+test("a reload restores saved cards; opening a job keeps Spoki beside the page", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1600, height: 900 });
@@ -256,6 +261,11 @@ test("a reload draws the kept cards again, with a saved job still saved", async 
   await expect(field(page)).toBeVisible();
   await expect(cards.getByRole("button", { name: "Saved" })).toBeDisabled();
   await expect(cards.getByText(/^Data as of/)).toHaveCount(0);
+
+  await cards.getByRole("link", { name: "Solidity Engineer" }).click();
+  await expect(page).toHaveURL(new RegExp(`/jobs/${JOB}$`));
+  await expect(panel(page)).toHaveAttribute("data-spoki-mode", "docked");
+  await expect(field(page)).toBeVisible();
 });
 
 test("old data is marked, a write waits for a refresh, and the server answers a press", async ({
@@ -516,7 +526,7 @@ test("signed in: Save writes the saved job and the journal; a card works in the 
   // The card waits in the panel, and in full screen it is the same card.
   const card = panel(page).getByText("Apply to this job?");
   await expect(card).toBeVisible();
-  await page.getByRole("button", { name: "Open Spoki full screen" }).click();
+  await page.locator('[data-rail] a[href="/chat"]').click();
   await expect(page).toHaveURL(/\/chat$/);
   await expect(cards.getByRole("button", { name: "Saved" })).toBeDisabled();
   await expect(card).toBeVisible();

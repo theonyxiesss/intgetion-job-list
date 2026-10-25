@@ -63,15 +63,17 @@ test("wide screen: the panel sits beside the page and keeps one chat across page
   await stubSlowAnswer(page, sent);
 
   await page.goto("/en/jobs");
-  // A guest starts with the panel closed (D525).
-  await expect(panel(page)).toBeHidden();
+  // The guest gets the same permanent desktop panel as a signed-in person.
+  await expect(panel(page)).toBeVisible();
+  await expect(field(page)).toBeVisible();
+  await expect(
+    panel(page).getByRole("button", { name: "Close Spoki" }),
+  ).toHaveCount(0);
   // The catalog no longer repeats Spoki in a card; its actions stay.
   await expect(
     page.getByRole("heading", { name: "Let Spoki find jobs" }),
   ).toHaveCount(0);
 
-  await page.getByRole("link", { name: "Chat with the agent" }).click();
-  await expect(field(page)).toBeVisible();
   await expect(page).toHaveURL(/\/jobs$/);
   // Part of the layout: the page ends where the panel starts.
   const box = await panel(page).boundingBox();
@@ -106,7 +108,7 @@ test("wide screen: the panel sits beside the page and keeps one chat across page
 
   // Full screen is the same chat at /chat, and back again.
   await field(page).fill("Kept through full screen");
-  await page.getByRole("button", { name: "Open Spoki full screen" }).click();
+  await railLink(page, "/chat").click();
   await expect(page).toHaveURL(/\/chat$/);
   expect((await panel(page).boundingBox())?.width).toBe(1600);
   await expect(field(page)).toHaveValue("Kept through full screen");
@@ -118,26 +120,17 @@ test("wide screen: the panel sits beside the page and keeps one chat across page
   await expectSameChat(page);
 });
 
-test("wide screen: a closed panel stays closed after a reload", async ({
+test("wide screen: the permanent panel cannot be closed and stays after a reload", async ({
   page,
-  context,
 }) => {
   await page.setViewportSize({ width: 1600, height: 900 });
   await page.goto("/en/events");
-  await page.getByRole("link", { name: "Chat with the agent" }).click();
   await expect(field(page)).toBeVisible();
-  await page.getByRole("button", { name: "Close Spoki" }).click();
-  await expect(panel(page)).toBeHidden();
-  const cookies = await context.cookies(DOCK);
-  expect(cookies.find((cookie) => cookie.name === "spoki_dock")?.value).toBe(
-    "closed",
-  );
+  await expect(
+    panel(page).getByRole("button", { name: "Close Spoki" }),
+  ).toHaveCount(0);
   await page.reload();
-  await expect(panel(page)).toBeHidden();
-  // Opened again, the choice is kept the other way.
-  await page.getByRole("link", { name: "Chat with the agent" }).click();
-  await expect(field(page)).toBeVisible();
-  await page.reload();
+  await expect(panel(page)).toBeVisible();
   await expect(field(page)).toBeVisible();
 });
 
@@ -146,7 +139,7 @@ test("1280 px: Spoki opens over the page, Esc closes it and the focus goes back"
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/en/jobs");
-  const trigger = page.getByRole("link", { name: "Chat with the agent" });
+  const trigger = railLink(page, "/chat");
   await trigger.click();
   const dialog = page.getByRole("dialog", { name: "Spoki assistant panel" });
   await expect(dialog).toBeVisible();
@@ -195,7 +188,7 @@ test("phone: the tab bar opens Spoki over the page, another tab closes it, the d
   await expectSameChat(page);
 });
 
-test("a job's button opens that job's thread in the panel; /chat?job= does the same full screen", async ({
+test("/chat?job= opens that job's thread in the full-screen Spoki", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1600, height: 900 });
@@ -209,12 +202,6 @@ test("a job's button opens that job's thread in the panel; /chat?job= does the s
       .map((href) => href?.split("/").pop() ?? "")
       .find((id) => /^[0-9a-f-]{36}$/.test(id)) ?? "";
   expect(jobId).toMatch(/^[0-9a-f-]{36}$/);
-  await page.goto(`/en/jobs/${jobId}`);
-  await page.getByRole("link", { name: "Talk to the assistant" }).click();
-  // The page stays; the panel opens on the vacancy.
-  await expect(page).toHaveURL(new RegExp(`/jobs/${jobId}$`));
-  await expect(panel(page).getByText(/^Discussing: /)).toBeVisible();
-
   await page.goto(`/en/chat?job=${jobId}`);
   await expect(panel(page).getByText(/^Discussing: /)).toBeVisible();
   expect((await panel(page).boundingBox())?.width).toBe(1600);
