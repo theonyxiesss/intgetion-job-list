@@ -17,7 +17,6 @@ import { Tag } from "@/components/ui/badge";
 import { navForward } from "@/components/ui/page-transition";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
-import { isEmployer } from "@/modules/companies/service";
 import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import {
@@ -35,14 +34,10 @@ import {
 } from "@/modules/jobs/ui/recent-jobs";
 import { RecentlyViewed } from "@/modules/jobs/ui/recently-viewed";
 import { SaveSearchButton } from "@/modules/saved-searches/ui/save-search-button";
-import { cookies, headers } from "next/headers";
-import { spokiDockOn } from "@/components/bot/spoki-dock-on";
+import { cookies } from "next/headers";
 import { CONSENT_COOKIE, consentAllows, consentInForce } from "@/lib/consent";
 import { localePrefix } from "@/i18n/paths";
 import { RouteMessages } from "@/components/shell/route-messages";
-import type { RailViewer } from "@/components/shell/rail-items";
-import { WithAside } from "@/components/shell/with-aside";
-import { JobsAside } from "@/modules/jobs/ui/jobs-aside";
 
 export const dynamic = "force-dynamic";
 
@@ -149,7 +144,6 @@ export default async function JobsPage({
   const categoryNames = await getTranslations("categories");
   const markers = await getTranslations("markers");
   let signedIn = false;
-  let railViewer: RailViewer = "guest";
   const raw = await searchParams;
   // "You viewed" exists only with preferences consent (D228).
   const jar = await cookies();
@@ -166,7 +160,6 @@ export default async function JobsPage({
     const viewerUser = await getCurrentUser(supabase.auth);
     if (viewerUser) {
       signedIn = true;
-      railViewer = (await isEmployer(viewerUser.id)) ? "employer" : "candidate";
       viewer = { hidden: await getHiddenSetsForViewer(viewerUser.id) };
     }
   } catch {
@@ -210,14 +203,7 @@ export default async function JobsPage({
     <RouteMessages namespaces={["savedSearches"]}>
       <main className="py-10 md:py-16">
         <Container>
-          <WithAside
-            aside={
-              <JobsAside
-                viewer={railViewer}
-                spokiCard={!spokiDockOn(await headers())}
-              />
-            }
-          >
+          <div className="flex flex-col gap-8">
             <PageHeader
               title={t("title")}
               intro={t("subtitle")}
@@ -505,7 +491,7 @@ export default async function JobsPage({
                 </Link>
               ) : null}
             </div>
-          </WithAside>
+          </div>
         </Container>
       </main>
     </RouteMessages>

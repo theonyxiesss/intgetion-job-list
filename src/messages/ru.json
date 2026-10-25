@@ -160,7 +160,8 @@
     "spokiExpand": "Развернуть Spoki на весь экран",
     "spokiCollapse": "Вернуться к странице",
     "spokiClose": "Закрыть Spoki",
-    "spokiLoading": "Загружаем Spoki…"
+    "spokiLoading": "Загружаем Spoki…",
+    "spokiResize": "Изменить размер страницы и панели Spoki"
   },
   "locale": {
     "en": "Английский",

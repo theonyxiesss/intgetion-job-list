@@ -187,6 +187,7 @@ export default async function LocaleLayout({
                       collapse: t("nav.spokiCollapse"),
                       close: t("nav.spokiClose"),
                       loading: t("nav.spokiLoading"),
+                      resize: t("nav.spokiResize"),
                     }}
                   >
                     {pageColumn}

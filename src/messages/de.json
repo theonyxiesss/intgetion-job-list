@@ -160,7 +160,8 @@
     "spokiExpand": "Spoki im Vollbild öffnen",
     "spokiCollapse": "Zurück zur Seite",
     "spokiClose": "Spoki schließen",
-    "spokiLoading": "Spoki wird geladen…"
+    "spokiLoading": "Spoki wird geladen…",
+    "spokiResize": "Größe der Seite und des Spoki-Bereichs ändern"
   },
   "locale": {
     "en": "Englisch",

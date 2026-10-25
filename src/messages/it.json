@@ -160,7 +160,8 @@
     "spokiExpand": "Apri Spoki a schermo intero",
     "spokiCollapse": "Torna alla pagina",
     "spokiClose": "Chiudi Spoki",
-    "spokiLoading": "Caricamento di Spoki…"
+    "spokiLoading": "Caricamento di Spoki…",
+    "spokiResize": "Ridimensiona la pagina e il pannello Spoki"
   },
   "locale": {
     "en": "Inglese",

@@ -91,6 +91,13 @@ test("public catalog lists published jobs, filters, and opens detail accessibly"
   await expect(
     page.getByRole("heading", { name: "Remote jobs" }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Don’t miss new jobs" }),
+  ).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Hiring?" })).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Let Spoki find jobs" }),
+  ).toHaveCount(0);
   expect(
     (await new AxeBuilder({ page }).analyze()).violations.filter(
       (issue) => issue.impact === "critical",
