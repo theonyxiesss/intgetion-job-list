@@ -3151,3 +3151,14 @@
 - Отклонения от ТЗ: нет.
 - OPEN QUESTION: нет.
 - Следующая подфаза: нет.
+
+## [2026-10-25] — D534: постоянная панель на ноутбуках — NOT DONE (выпуск ожидает CI)
+
+- Сделано: воспроизведён production overlay на 1440 px; закрепление перенесено на 1024 px, удалены затемнение и модальный режим; Spoki в левой навигации сохраняет страницу; состояние чата переживает изменение ширины. Футер адаптируется к ширине центральной колонки.
+- Проверки: typecheck, lint и build → 0; браузер локально подтвердил постоянную колонку на 1024/1280/1440/1920 px и сохранение черновика. Unit: 1579 passed, 1 failed (юридические тексты: 7 несовпадений исключительно CRLF/LF на Windows), 2 ранее пропущенных теста; эти файлы не менялись. Полный Linux CI обязателен перед master.
+- Тесты: e2e для 1280 px проверяет постоянную колонку, Escape, переходы, изменение ширины до 820 и обратно на 1024 с сохранением того же чата; карточки вакансий проверяются на 1440 px. Прямой /chat сохраняет отдельную проверку полного экрана.
+- Миграции: нет.
+- Файлы: spoki-provider.tsx, spoki-dock.tsx, spoki-context.ts, spoki-link.tsx, header.tsx, footer.tsx, spoki-dock.spec.ts, spoki-blocks.spec.ts, docs/DECISIONS.md, docs/tz/34-spoki-dock.md, docs/CURRENT.md, MISSION_LOG.md.
+- Отклонения: порог и поведение навигации уточнены в D534 по запросу основателя.
+- Навыки: intgetion-design, react-best-practices, systematic-debugging, verification-before-completion, intgetion-vercel, deployments-cicd, vercel-cli.
+- OPEN QUESTION: нет. Следующий шаг: зелёный CI → master → проверка production.

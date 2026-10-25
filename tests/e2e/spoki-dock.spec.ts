@@ -20,7 +20,7 @@ test.beforeEach(async ({ context }) => {
 
 const panel = (page: Page) =>
   page.getByRole("complementary", { name: "Spoki assistant panel" });
-/** The field in any mode: the panel is a dialog over the page below 1536 px. */
+/** One field in the desktop column and the phone/tablet sheet. */
 const field = (page: Page) =>
   page.locator("#spoki-panel").getByLabel("Write a message");
 const railLink = (page: Page, href: string) =>
@@ -106,9 +106,14 @@ test("wide screen: the panel sits beside the page and keeps one chat across page
   await expect(log.getByText("Stubbed answer.")).toBeVisible();
   await expectSameChat(page);
 
-  // Full screen is the same chat at /chat, and back again.
+  // Choosing Spoki keeps the current page and its permanent column.
   await field(page).fill("Kept through full screen");
   await railLink(page, "/chat").click();
+  await expect(page).toHaveURL(/\/freelance$/);
+  await expect(panel(page)).toHaveAttribute("data-spoki-mode", "docked");
+  await expectSameChat(page);
+  // The direct /chat link still provides the same chat in full screen.
+  await page.locator('footer a[href="/chat"]').click();
   await expect(page).toHaveURL(/\/chat$/);
   expect((await panel(page).boundingBox())?.width).toBe(1600);
   await expect(field(page)).toHaveValue("Kept through full screen");
@@ -134,24 +139,41 @@ test("wide screen: the permanent panel cannot be closed and stays after a reload
   await expect(field(page)).toBeVisible();
 });
 
-test("1280 px: Spoki opens over the page, Esc closes it and the focus goes back", async ({
+test("1280 px: Spoki is a permanent column, the page stays usable and navigation keeps the draft", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/en/jobs");
+  await expect(panel(page)).toHaveAttribute("data-spoki-mode", "docked");
+  await expect(field(page)).toBeVisible();
+  await markField(page);
+  await field(page).fill("Laptop draft");
   const trigger = railLink(page, "/chat");
   await trigger.click();
-  const dialog = page.getByRole("dialog", { name: "Spoki assistant panel" });
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByLabel("Write a message")).toBeVisible();
-  const box = await dialog.boundingBox();
-  expect(box?.width).toBe(400);
-  expect(box?.x).toBe(880);
+  await expect(page).toHaveURL(/\/jobs$/);
+  await expect(
+    page.getByRole("dialog", { name: "Spoki assistant panel" }),
+  ).toHaveCount(0);
+  const box = await panel(page).boundingBox();
+  expect(box?.width).toBe(360);
+  expect(box?.x).toBe(920);
   await expect(trigger).toHaveAttribute("aria-expanded", "true");
   await page.keyboard.press("Escape");
-  await expect(dialog).toBeHidden();
-  await expect(trigger).toBeFocused();
-  await expect(trigger).toHaveAttribute("aria-expanded", "false");
+  await expect(panel(page)).toBeVisible();
+  await railLink(page, "/events").click();
+  await expect(page).toHaveURL(/\/events$/);
+  await expect(field(page)).toHaveValue("Laptop draft");
+  await expectSameChat(page);
+  await page.setViewportSize({ width: 820, height: 900 });
+  await expect(field(page)).toBeHidden();
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect(field(page)).toHaveValue("Laptop draft");
+  await expectSameChat(page);
+  const heading = await page.getByRole("heading", { level: 1 }).boundingBox();
+  const laptopBox = await panel(page).boundingBox();
+  expect((heading?.x ?? 0) + (heading?.width ?? 0)).toBeLessThanOrEqual(
+    laptopBox?.x ?? 0,
+  );
 });
 
 test("phone: the tab bar opens Spoki over the page, another tab closes it, the draft stays", async ({

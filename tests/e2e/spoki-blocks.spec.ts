@@ -165,7 +165,7 @@ async function stubThread(page: Page, block: unknown, done: string[] = []) {
 async function openPanel(page: Page, path = "/en/jobs") {
   await page.goto(path);
   const width = page.viewportSize()?.width ?? 1600;
-  if (width >= 1536) {
+  if (width >= 1024) {
     // At desktop width Spoki is already part of the page layout (D531).
     await expect(field(page)).toBeVisible();
     return;
@@ -225,9 +225,12 @@ test("wide screen: the calculator counts at once and keeps its values through fu
   await block.getByRole("button", { name: "Yearly" }).click();
   await expect(block.getByText("$165.83")).toBeVisible();
 
-  // The permanent desktop dock is part of the page; open /chat from the
-  // navigation instead of expanding the calculator from inside the panel.
+  // Choosing Spoki leaves the calculator beside the current page.
   await page.locator('[data-rail] a[href="/chat"]').click();
+  await expect(page).toHaveURL(/\/jobs$/);
+  await expect(slider).toHaveValue("5");
+  // The direct full-screen address remains available from the footer.
+  await page.locator('footer a[href="/chat"]').click();
   await expect(page).toHaveURL(/\/chat$/);
   expect((await panel(page).boundingBox())?.width).toBe(1600);
   await expect(slider).toHaveValue("5");
@@ -247,7 +250,7 @@ test("wide screen: the calculator counts at once and keeps its values through fu
 test("a reload restores saved cards; opening a job keeps Spoki beside the page", async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.setViewportSize({ width: 1440, height: 900 });
   await stubThread(page, jobCards(5), [`save:${JOB}`]);
   await openPanel(page);
   const cards = panel(page).locator('[data-block="job_cards"]');
@@ -528,7 +531,7 @@ test("signed in: Save writes the saved job and the journal; a card works in the 
   // The card waits in the panel, and in full screen it is the same card.
   const card = panel(page).getByText("Apply to this job?");
   await expect(card).toBeVisible();
-  await page.locator('[data-rail] a[href="/chat"]').click();
+  await page.locator('footer a[href="/chat"]').click();
   await expect(page).toHaveURL(/\/chat$/);
   await expect(cards.getByRole("button", { name: "Saved" })).toBeDisabled();
   await expect(card).toBeVisible();

@@ -9,7 +9,6 @@ import {
 } from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import {
-  SPOKI_DOCK_COOKIE,
   chatHref,
   pageSection,
   targetKey,
@@ -19,10 +18,8 @@ import {
 import { preloadSpokiChat } from "./spoki-chat-lazy";
 import { SpokiContext, type DockMode, type SpokiDock } from "./spoki-context";
 
-/** From here the panel is part of the layout; below it slides over (D525). */
-const WIDE = "(min-width: 1536px)";
-/** Below this the panel takes the whole screen, like the chat page. */
-const LARGE = "(min-width: 1024px)";
+/** Desktop includes laptops: Spoki stays beside the page from 1024 px. */
+const WIDE = "(min-width: 1024px)";
 
 function useMedia(query: string): boolean {
   return useSyncExternalStore(
@@ -36,33 +33,23 @@ function useMedia(query: string): boolean {
   );
 }
 
-function savePreference(value: DockPreference) {
-  // The person's own choice, kept a year; a UI preference, no data (D525).
-  document.cookie = `${SPOKI_DOCK_COOKIE}=${value}; Path=/; Max-Age=${365 * 24 * 60 * 60}; SameSite=Lax`;
-}
-
 /**
  * One Spoki for the whole site (D525). Lives in the locale layout, so it
  * survives navigation; the panel and `/chat` read the same state.
  */
 export function SpokiProvider({
   signedIn,
-  preference,
   children,
 }: {
   signedIn: boolean;
-  /** The saved choice from the cookie, read on the server: no flash. */
+  /** Accepted from older shells; desktop visibility no longer uses a cookie. */
   preference: DockPreference | null;
   children: ReactNode;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const wide = useMedia(WIDE);
-  const large = useMedia(LARGE);
-  // Kept for tablet/phone panel preferences. Desktop is always docked (D531).
-  const [docked, setDocked] = useState(
-    preference ? preference === "open" : signedIn,
-  );
+  const large = wide;
   const [floating, setFloating] = useState(false);
   const [target, setTarget] = useState<ChatTarget | null>(null);
   const [wanted, setWanted] = useState(false);
@@ -71,8 +58,6 @@ export function SpokiProvider({
     pathname === "/chat" ? null : pathname,
   );
   const [seenPath, setSeenPath] = useState(pathname);
-  /** Set by "collapse": the next page keeps the floating panel open. */
-  const [keepOpen, setKeepOpen] = useState(false);
   const expanded = pathname === "/chat";
 
   // Leaving a page closes the panel that covers it; the docked one stays.
@@ -81,45 +66,32 @@ export function SpokiProvider({
     setSeenPath(pathname);
     if (pathname !== "/chat") {
       setLastPage(pathname);
-      if (keepOpen) setKeepOpen(false);
-      else setFloating(false);
+      setFloating(false);
     }
   }
 
-  const desktopDocked = wide || docked;
+  const desktopDocked = wide;
   const mode: DockMode = expanded
     ? "expanded"
     : wide
-      ? desktopDocked
-        ? "docked"
-        : "hidden"
+      ? "docked"
       : floating
-        ? large
-          ? "overlay"
-          : "sheet"
+        ? "sheet"
         : "hidden";
+  // Keep the same chat mounted when a resize temporarily hides its panel.
+  if (!wanted && mode !== "hidden") setWanted(true);
   const loaded = wanted || mode !== "hidden";
 
   const open = useCallback((next?: ChatTarget) => {
     if (next) setTarget(next);
     setWanted(true);
-    if (window.matchMedia(WIDE).matches) {
-      setDocked(true);
-      savePreference("open");
-    } else {
+    if (!window.matchMedia(WIDE).matches) {
       setFloating(true);
     }
   }, []);
 
   const collapse = useCallback(() => {
-    const stay = window.matchMedia(LARGE).matches;
-    if (window.matchMedia(WIDE).matches) {
-      setDocked(true);
-      savePreference("open");
-    } else {
-      setKeepOpen(stay);
-      setFloating(stay);
-    }
+    setFloating(false);
     router.push(lastPage ?? "/jobs");
   }, [router, lastPage]);
 
@@ -130,7 +102,6 @@ export function SpokiProvider({
       return;
     }
     if (pathname === "/chat") {
-      setKeepOpen(false);
       router.push(lastPage ?? "/jobs");
       return;
     }

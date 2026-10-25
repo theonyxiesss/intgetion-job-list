@@ -9,13 +9,13 @@ import type { ChatTarget } from "./spoki-href";
  * Spoki in the header and the menus import only this, so pages without the
  * panel do not load the panel's code.
  */
-export type DockMode = "docked" | "overlay" | "sheet" | "expanded" | "hidden";
+export type DockMode = "docked" | "sheet" | "expanded" | "hidden";
 
 export type SpokiDock = {
   signedIn: boolean;
   /** The panel is permanently part of the desktop layout (D531). */
   docked: boolean;
-  /** Opened over the page below 1536 px. */
+  /** Opened over the page below 1024 px. */
   floating: boolean;
   /** `/chat`: the same chat over the whole page. */
   expanded: boolean;

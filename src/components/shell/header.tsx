@@ -20,6 +20,7 @@ import { flags } from "@/config/flags";
 import { MobileNav, type NavItem } from "./mobile-nav";
 import { orderPhoneNav } from "./nav-icons";
 import { ThemeToggle } from "./theme-toggle";
+import { cn } from "@/components/ui/cn";
 
 const iconLink =
   "relative inline-flex size-11 items-center justify-center text-fg-muted transition-colors hover:text-fg";
@@ -157,7 +158,10 @@ export async function Header() {
         <div className="ml-auto flex shrink-0 items-center gap-1 max-md:ml-0 max-md:w-full">
           <span
             data-header-chat
-            className="mr-1 inline-flex sm:mr-2 2xl:hidden"
+            className={cn(
+              "mr-1 inline-flex sm:mr-2",
+              flags.spokiDockEnabled && "lg:hidden",
+            )}
           >
             {flags.spokiDockEnabled ? (
               // Opens and closes the one Spoki panel (D525); a link without JS.

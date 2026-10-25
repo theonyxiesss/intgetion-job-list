@@ -16,7 +16,7 @@ export function Footer() {
   const year = new Date().getUTCFullYear();
 
   return (
-    <footer className="mt-auto border-t border-line max-[767px]:hidden">
+    <footer className="@container mt-auto border-t border-line max-[767px]:hidden">
       <div className="mx-auto grid w-full max-w-[1376px] gap-10 px-4 pt-12 pb-10 md:px-6 md:pt-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-16 xl:px-12">
         <div className="flex flex-col gap-3">
           <Link
@@ -31,7 +31,7 @@ export function Footer() {
             {t("home.tagline")}
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 @3xl:grid-cols-5">
           {footerGroups.map((group) => (
             <nav
               key={group.title}

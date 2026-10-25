@@ -32,7 +32,7 @@ function useSpokiEntry(thread?: ChatTarget) {
         return;
       event.preventDefault();
       if (thread) spoki.open(thread);
-      else if (spoki.mode === "docked") spoki.expand();
+      else if (spoki.mode === "docked") spoki.open();
       else spoki.toggle();
     },
   };
