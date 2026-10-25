@@ -3140,3 +3140,14 @@
 - Локальные проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; Prettier `--check` по изменённым файлам → 0; `git diff --check` → 0. Новый CI ещё не завершён.
 - Миграции: нет. Изменённые файлы: `src/components/bot/spoki-provider.tsx`, `spoki-context.ts`, `spoki-dock.tsx`, `spoki-link.tsx`, `src/components/shell/header.tsx`, `tests/e2e/spoki-dock.spec.ts`, `spoki-blocks.spec.ts`, `docs/CURRENT.md`, `docs/DECISIONS.md`, `MISSION_LOG.md`.
 - Следующий шаг: зелёный CI на `claude/spoki-ui`; production не затрагивался.
+
+## [2026-10-25] — D531–D533: выпуск в production — DONE
+
+- Сделано: исправлен desktop e2e сценарий калькулятора — в закреплённой панели полный чат открывается пунктом Spoki в навигации. Коммит `f695dc43` прошёл `check` и `database`; fast-forward продвинут в master. Vercel production готов: `dpl_3wC4ojHMT2DTXEtRJEJTNSq2zrPu`.
+- Команды проверки: CI `40196900422` (`check`, `database`) → 0; `pnpm typecheck` → 0; `pnpm lint` → 0; Prettier на изменённом e2e файле → 0; `git diff --check` → 0. `pnpm test` локально → 1 (`spawn EPERM` при загрузке Vitest на Windows); общий `pnpm format:check` локально → 2 из-за вложенных `.claude/worktrees` в рабочем каталоге, CI format:check → 0. `/api/health`, `/ru/jobs`, `/ru/jobs/77b109ea-af96-4d29-8e28-d7fd7d9a4413` → 200; обе страницы отдают deployment id `dpl_3wC4ojHMT2DTXEtRJEJTNSq2zrPu`.
+- P-тесты подфазы: новые проверки desktop dock/e2e прошли в CI.
+- Миграции: нет.
+- Изменённые файлы: `tests/e2e/spoki-blocks.spec.ts`, `docs/CURRENT.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет.
+- Следующая подфаза: нет.
