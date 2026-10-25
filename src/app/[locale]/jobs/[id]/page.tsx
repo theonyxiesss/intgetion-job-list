@@ -115,219 +115,216 @@ export default async function JobPage({
         ])}
       />
       <Container className="flex flex-col gap-8">
-          <Link
-            href="/jobs"
-            {...navBack}
-            className="t-label self-start text-fg-muted"
-          >
-            {t("backToJobs")}
-          </Link>
-          <article className="flex flex-col gap-8">
-            <header className="flex flex-col gap-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="t-label text-fg-muted">
-                  {categories(job.category as "engineering")}
-                </p>
-                {promoted ? <Badge tone="new">{t("promoted")}</Badge> : null}
-                <Badge>{t(job.workFormat)}</Badge>
-                <Badge>{t(job.employmentType)}</Badge>
-              </div>
-              <Morph name={`job-title-${job.id}`}>
-                <h1 className="t-display-l">{job.title}</h1>
-              </Morph>
-              <div className="flex items-start gap-3">
-                <CompanyMarkFor company={job.company} size="page" />
-                <div className="flex min-w-0 flex-col gap-1">
-                  <Link
-                    href={`/companies/${job.company.slug}`}
-                    {...navForward}
-                    className="t-body-s self-start text-fg-muted underline-offset-4 hover:underline"
-                  >
-                    {job.company.name}
-                  </Link>
-                  <CompanyLinks
-                    links={[
-                      {
-                        href: job.company.websiteUrl,
-                        label: companyPage("links.website"),
-                      },
-                      {
-                        href: job.company.linkedinUrl,
-                        label: companyPage("links.linkedin"),
-                      },
-                      {
-                        href: job.company.telegramUrl,
-                        label: companyPage("links.telegram"),
-                      },
-                      { href: job.company.xUrl, label: companyPage("links.x") },
-                    ]}
-                  />
-                </div>
-              </div>
-              {job.company.description ? (
-                <p className="max-w-[68ch] whitespace-pre-wrap text-fg-muted">
-                  {job.company.description}
-                </p>
-              ) : null}
-              {job.publishedAt ? (
-                <time
-                  dateTime={job.publishedAt}
-                  className="t-data text-fg-muted"
-                >
-                  {new Intl.DateTimeFormat(locale, {
-                    dateStyle: "medium",
-                  }).format(new Date(job.publishedAt))}
-                </time>
-              ) : null}
-              {sourceLabel ? (
-                <p className="t-label text-fg-muted">{sourceLabel}</p>
-              ) : null}
-            </header>
-            <div className="flex flex-wrap items-center gap-3">
-              {applyHref && job.applicationMethod === "external_url" ? (
-                <ExternalApplyLink
-                  jobId={job.id}
-                  href={applyHref}
-                  label={t("apply")}
-                />
-              ) : null}
-              {user ? (
-                <JobFeedbackActions
-                  jobId={job.id}
-                  initialSaved={initialSaved}
-                  text={{
-                    save: actions("save"),
-                    saved: actions("saved"),
-                    unsave: actions("unsave"),
-                    saveError: actions("saveError"),
-                    hide: actions("hide"),
-                    hideTitle: actions("hideTitle"),
-                    hideScopeJob: actions("hideScopeJob"),
-                    hideScopeCompany: actions("hideScopeCompany"),
-                    reasonLabel: actions("reasonLabel"),
-                    reasonNone: actions("reasonNone"),
-                    confirm: actions("confirm"),
-                    cancel: actions("cancel"),
-                    hideError: actions("hideError"),
-                    report: actions("report"),
-                    reportTitle: actions("reportTitle"),
-                    detailsLabel: actions("detailsLabel"),
-                    reportSuccess: actions("reportSuccess"),
-                    alreadyReported: actions("alreadyReported"),
-                    rateLimited: actions("rateLimited"),
-                    reportError: actions("reportError"),
-                    hideReasons: {
-                      salary: actions("reasons.salary"),
-                      format: actions("reasons.format"),
-                      timezone: actions("reasons.timezone"),
-                      company: actions("reasons.company"),
-                      role: actions("reasons.role"),
-                      other: actions("reasons.other"),
-                    },
-                    reportReasons: {
-                      scam: actions("reportReasons.scam"),
-                      spam: actions("reportReasons.spam"),
-                      fake_company: actions("reportReasons.fake_company"),
-                      discrimination: actions("reportReasons.discrimination"),
-                      wrong_info: actions("reportReasons.wrong_info"),
-                      inappropriate: actions("reportReasons.inappropriate"),
-                      other: actions("reportReasons.other"),
-                    },
-                  }}
-                />
-              ) : null}
+        <Link
+          href="/jobs"
+          {...navBack}
+          className="t-label self-start text-fg-muted"
+        >
+          {t("backToJobs")}
+        </Link>
+        <article className="flex flex-col gap-8">
+          <header className="flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="t-label text-fg-muted">
+                {categories(job.category as "engineering")}
+              </p>
+              {promoted ? <Badge tone="new">{t("promoted")}</Badge> : null}
+              <Badge>{t(job.workFormat)}</Badge>
+              <Badge>{t(job.employmentType)}</Badge>
             </div>
-            {/* The middle column is too narrow for four in a row (D477). */}
-            <StatRow className="xl:grid xl:grid-cols-2 xl:gap-6 xl:[&>*]:border-l-0 xl:[&>*]:px-0">
-              <Stat
-                label={t("salaryMin")}
-                value={salary}
-                muted={!job.salaryMin}
-              />
-              <Stat label={t("format")} value={t(job.workFormat)} />
-              <Stat
-                label={t("timezone")}
-                value={
-                  job.timezoneRequired
-                    ? `${job.timezoneRequired} · ${job.minOverlapHours}h`
-                    : t("worldwide")
-                }
-                muted={!job.timezoneRequired}
-              />
-              <Stat label={t("employment")} value={t(job.employmentType)} />
-            </StatRow>
-            {job.source.type === "imported" ? (
-              <section className="flex flex-col gap-4 border border-line p-4">
-                <h2 className="t-h3">{seo("inOurWords")}</h2>
-                <p className="max-w-[68ch]">
-                  {importedJobSummary({
-                    title: job.title,
-                    company: job.company.name,
-                    format: t(job.workFormat),
-                    employment: t(job.employmentType),
-                    timezone: job.timezoneRequired
-                      ? `${job.timezoneRequired} · ${job.minOverlapHours}h`
-                      : t("worldwide"),
-                    salary,
-                    skills: job.skills.map((skill) => skill.name),
-                  })}
-                </p>
-                <div className="flex flex-col gap-1 border border-line p-4">
-                  <p className="t-label text-fg-muted">{t("company")}</p>
-                  <Link
-                    href={`/companies/${job.company.slug}`}
-                    {...navForward}
-                    className="t-body-s self-start underline-offset-4 hover:underline"
-                  >
-                    {job.company.name}
-                  </Link>
-                </div>
-                {sourceHref ? (
-                  <a
-                    href={sourceHref}
-                    rel="noopener noreferrer"
-                    className="t-body-s self-start underline-offset-4 hover:underline"
-                  >
-                    {seo("originalOn", { source: job.source.name ?? "" })}
-                  </a>
-                ) : null}
-              </section>
-            ) : null}
-            {user ? <WhyItFits userId={user.id} jobId={job.id} /> : null}
-            {description ? (
-              <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
-                {description}
+            <Morph name={`job-title-${job.id}`}>
+              <h1 className="t-display-l">{job.title}</h1>
+            </Morph>
+            <div className="flex items-start gap-3">
+              <CompanyMarkFor company={job.company} size="page" />
+              <div className="flex min-w-0 flex-col gap-1">
+                <Link
+                  href={`/companies/${job.company.slug}`}
+                  {...navForward}
+                  className="t-body-s self-start text-fg-muted underline-offset-4 hover:underline"
+                >
+                  {job.company.name}
+                </Link>
+                <CompanyLinks
+                  links={[
+                    {
+                      href: job.company.websiteUrl,
+                      label: companyPage("links.website"),
+                    },
+                    {
+                      href: job.company.linkedinUrl,
+                      label: companyPage("links.linkedin"),
+                    },
+                    {
+                      href: job.company.telegramUrl,
+                      label: companyPage("links.telegram"),
+                    },
+                    { href: job.company.xUrl, label: companyPage("links.x") },
+                  ]}
+                />
               </div>
-            ) : null}
-            {job.skills.length > 0 ? (
-              <ul className="flex flex-wrap gap-2">
-                {job.skills.map((skill) => (
-                  <li key={skill.id}>
-                    <Badge>{skill.name}</Badge>
-                  </li>
-                ))}
-                {job.skillsMore > 0 ? (
-                  <li>
-                    <Badge>{`+${job.skillsMore}`}</Badge>
-                  </li>
-                ) : null}
-              </ul>
-            ) : null}
-            {job.languages.length > 0 ? (
-              <p className="t-body-s text-fg-muted">
-                {job.languages
-                  .map((language) => `${language.lang} ${language.minLevel}`)
-                  .join(" · ")}
+            </div>
+            {job.company.description ? (
+              <p className="max-w-[68ch] whitespace-pre-wrap text-fg-muted">
+                {job.company.description}
               </p>
             ) : null}
-            <RelatedJobs
-              job={job}
-              locale={locale}
-              viewer={{
-                hidden: user ? await getHiddenSetsForViewer(user.id) : null,
-              }}
+            {job.publishedAt ? (
+              <time dateTime={job.publishedAt} className="t-data text-fg-muted">
+                {new Intl.DateTimeFormat(locale, {
+                  dateStyle: "medium",
+                }).format(new Date(job.publishedAt))}
+              </time>
+            ) : null}
+            {sourceLabel ? (
+              <p className="t-label text-fg-muted">{sourceLabel}</p>
+            ) : null}
+          </header>
+          <div className="flex flex-wrap items-center gap-3">
+            {applyHref && job.applicationMethod === "external_url" ? (
+              <ExternalApplyLink
+                jobId={job.id}
+                href={applyHref}
+                label={t("apply")}
+              />
+            ) : null}
+            {user ? (
+              <JobFeedbackActions
+                jobId={job.id}
+                initialSaved={initialSaved}
+                text={{
+                  save: actions("save"),
+                  saved: actions("saved"),
+                  unsave: actions("unsave"),
+                  saveError: actions("saveError"),
+                  hide: actions("hide"),
+                  hideTitle: actions("hideTitle"),
+                  hideScopeJob: actions("hideScopeJob"),
+                  hideScopeCompany: actions("hideScopeCompany"),
+                  reasonLabel: actions("reasonLabel"),
+                  reasonNone: actions("reasonNone"),
+                  confirm: actions("confirm"),
+                  cancel: actions("cancel"),
+                  hideError: actions("hideError"),
+                  report: actions("report"),
+                  reportTitle: actions("reportTitle"),
+                  detailsLabel: actions("detailsLabel"),
+                  reportSuccess: actions("reportSuccess"),
+                  alreadyReported: actions("alreadyReported"),
+                  rateLimited: actions("rateLimited"),
+                  reportError: actions("reportError"),
+                  hideReasons: {
+                    salary: actions("reasons.salary"),
+                    format: actions("reasons.format"),
+                    timezone: actions("reasons.timezone"),
+                    company: actions("reasons.company"),
+                    role: actions("reasons.role"),
+                    other: actions("reasons.other"),
+                  },
+                  reportReasons: {
+                    scam: actions("reportReasons.scam"),
+                    spam: actions("reportReasons.spam"),
+                    fake_company: actions("reportReasons.fake_company"),
+                    discrimination: actions("reportReasons.discrimination"),
+                    wrong_info: actions("reportReasons.wrong_info"),
+                    inappropriate: actions("reportReasons.inappropriate"),
+                    other: actions("reportReasons.other"),
+                  },
+                }}
+              />
+            ) : null}
+          </div>
+          {/* The middle column is too narrow for four in a row (D477). */}
+          <StatRow className="xl:grid xl:grid-cols-2 xl:gap-6 xl:[&>*]:border-l-0 xl:[&>*]:px-0">
+            <Stat
+              label={t("salaryMin")}
+              value={salary}
+              muted={!job.salaryMin}
             />
-          </article>
+            <Stat label={t("format")} value={t(job.workFormat)} />
+            <Stat
+              label={t("timezone")}
+              value={
+                job.timezoneRequired
+                  ? `${job.timezoneRequired} · ${job.minOverlapHours}h`
+                  : t("worldwide")
+              }
+              muted={!job.timezoneRequired}
+            />
+            <Stat label={t("employment")} value={t(job.employmentType)} />
+          </StatRow>
+          {job.source.type === "imported" ? (
+            <section className="flex flex-col gap-4 border border-line p-4">
+              <h2 className="t-h3">{seo("inOurWords")}</h2>
+              <p className="max-w-[68ch]">
+                {importedJobSummary({
+                  title: job.title,
+                  company: job.company.name,
+                  format: t(job.workFormat),
+                  employment: t(job.employmentType),
+                  timezone: job.timezoneRequired
+                    ? `${job.timezoneRequired} · ${job.minOverlapHours}h`
+                    : t("worldwide"),
+                  salary,
+                  skills: job.skills.map((skill) => skill.name),
+                })}
+              </p>
+              <div className="flex flex-col gap-1 border border-line p-4">
+                <p className="t-label text-fg-muted">{t("company")}</p>
+                <Link
+                  href={`/companies/${job.company.slug}`}
+                  {...navForward}
+                  className="t-body-s self-start underline-offset-4 hover:underline"
+                >
+                  {job.company.name}
+                </Link>
+              </div>
+              {sourceHref ? (
+                <a
+                  href={sourceHref}
+                  rel="noopener noreferrer"
+                  className="t-body-s self-start underline-offset-4 hover:underline"
+                >
+                  {seo("originalOn", { source: job.source.name ?? "" })}
+                </a>
+              ) : null}
+            </section>
+          ) : null}
+          {user ? <WhyItFits userId={user.id} jobId={job.id} /> : null}
+          {description ? (
+            <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
+              {description}
+            </div>
+          ) : null}
+          {job.skills.length > 0 ? (
+            <ul className="flex flex-wrap gap-2">
+              {job.skills.map((skill) => (
+                <li key={skill.id}>
+                  <Badge>{skill.name}</Badge>
+                </li>
+              ))}
+              {job.skillsMore > 0 ? (
+                <li>
+                  <Badge>{`+${job.skillsMore}`}</Badge>
+                </li>
+              ) : null}
+            </ul>
+          ) : null}
+          {job.languages.length > 0 ? (
+            <p className="t-body-s text-fg-muted">
+              {job.languages
+                .map((language) => `${language.lang} ${language.minLevel}`)
+                .join(" · ")}
+            </p>
+          ) : null}
+          <RelatedJobs
+            job={job}
+            locale={locale}
+            viewer={{
+              hidden: user ? await getHiddenSetsForViewer(user.id) : null,
+            }}
+          />
+        </article>
         <div className="border-t border-line pt-4">
           <ShareJob
             url={`${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`}
