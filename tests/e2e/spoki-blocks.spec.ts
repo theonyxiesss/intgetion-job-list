@@ -225,7 +225,9 @@ test("wide screen: the calculator counts at once and keeps its values through fu
   await block.getByRole("button", { name: "Yearly" }).click();
   await expect(block.getByText("$165.83")).toBeVisible();
 
-  await block.getByRole("button", { name: "Full screen", exact: true }).click();
+  // The permanent desktop dock is part of the page; open /chat from the
+  // navigation instead of expanding the calculator from inside the panel.
+  await page.locator('[data-rail] a[href="/chat"]').click();
   await expect(page).toHaveURL(/\/chat$/);
   expect((await panel(page).boundingBox())?.width).toBe(1600);
   await expect(slider).toHaveValue("5");
