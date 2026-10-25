@@ -3071,3 +3071,11 @@
 - Флаг вкл. (локально, production-сборка, бесплатная модель): во весь экран 1600 px «Нанимаю 4 человека…» → только калькулятор «Найм или Команда», без вакансий; панель 400 px «вакансии продуктового дизайнера» → карточки вакансий; панель 1280 px «тарифы соискателя» → сравнение тарифов. Повтор «Бесплатно» в тарифе → «$0».
 - D527 записан в `docs/OPEN_TASKS.md` (ошибки провайдера, строковый JSON в аргументах, повтор чисел, сбой извлечения профиля). Тарифы — не трогал (отдельная карточка задачи).
 - Локально: typecheck 0, lint 0, unit 1579 (1 — `legal.test.ts`, CRLF рабочей копии), eval 0, env:check 0.
+
+## [2026-10-25] — D523 (D529, D530) на сайте с выключенным флагом
+
+- Founder: «Да: слей claude/spoki-ui в master с соблюдением защиты, выложи с SPOKI_INTERACTIVE_UI=false и проверь production. Флаг пока не включай».
+- Перед шагом: `git ls-remote` — master `23f4e88` (не двигался), переход fast-forward; CI на `1d5a512` зелёный (run 40106661154, `check` + `database`); `SPOKI_INTERACTIVE_UI` в Vercel Production не задан.
+- `git push origin 1d5a512:master` — защита D526 приняла; Vercel (интеграция GitHub) собрал `dpl_CqEvCgfx4nCgBMywRyDbFSs1ZXCE`, `data-dpl-id` на `/jobs` совпадает.
+- Проверки production: `/api/health` 200; `/ru/jobs`, `/campaigns`, `/freelance`, `/events`, `/services`, `/pricing`, `/login`, `/chat`, `/ru/chat` — 200 (`/en/jobs` → 308 на `/jobs`, как раньше); `POST /api/bot/ui/action`: чужой блок 404, неверный ввод 400, чужой Origin 403; `POST /api/bot/confirm` гостем 401. Гостевой ход Spoki «вакансии продуктового дизайнера»: `search_jobs` → `tool_result:jobs`, без события `ui` — прежнее поведение. Панель в браузере (Playwright, Chromium 1217): 1600 px — 400 px справа, прежние карточки вакансий; телефон 390 px — на всю ширину; горизонтальной прокрутки нет. Логи Vercel за 30 мин после выкладки: 0 ошибок (MCP — 403, взято через CLI).
+- Флаг не включался. Следующий шаг — `SPOKI_INTERACTIVE_UI=true` в Production и перевыкладка, отдельным «да».
