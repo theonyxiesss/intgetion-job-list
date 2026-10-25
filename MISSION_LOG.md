@@ -3194,3 +3194,9 @@
 - E2E не запущен локально: согласно проектным инструкциям, миграции и браузерные тесты запускаются в CI (локальные Docker/Chromium не гарантированы). Сервер `http://localhost:3000` с `SPOKI_DOCK=true` остаётся запущен; `GET /en/jobs` → 200, маркеры `aside-spoki`, `aside-alerts`, `aside-hire` отсутствуют.
 - Миграции и зависимости: нет. Файлы: `src/app/[locale]/jobs/page.tsx`, `tests/e2e/jobs.spec.ts`, `docs/DECISIONS.md`, `docs/CURRENT.md`, `MISSION_LOG.md`.
 - Отклонения: нет. OPEN QUESTION: нет. Выпуск/коммит не делались.
+
+## [2026-10-25] — D535 + D536: выпуск на production — DONE
+
+- Опубликован проверенный commit `2e8d6cb8b55c5bb3ae541ab29cd923e05ac900ff` в `master`. CI `40223131867`: check и database/e2e зелёные.
+- Vercel production deployment `HSptPt6BdyEvZnwPmNo9835uHRew` завершился успешно. `/api/health` и `/en/jobs` → 200; live accessibility tree страницы `/jobs` не содержит удалённые карточки уведомлений, найма и Spoki.
+- Изменения доступны на сайте. Миграций и новых зависимостей нет. OPEN QUESTION: нет.
