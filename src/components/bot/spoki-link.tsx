@@ -7,10 +7,9 @@ import { chatHref, type ChatTarget } from "./spoki-href";
 import { useSpoki } from "./spoki-context";
 
 /**
- * A way into Spoki (D525). With the panel on, a click opens the panel (with
- * this thread, when one is given) and the page stays; a new tab, a modified
- * click or no JavaScript still follow the `/chat` address. Without the panel
- * it is the plain link it always was.
+ * A way into Spoki (D525, D531, D532). On desktop, a click keeps the current
+ * page and shows the persistent panel; a thread link selects that thread.
+ * A new tab, a modified click or no JavaScript still follows `/chat`.
  */
 function useSpokiEntry(thread?: ChatTarget) {
   const spoki = useSpoki();
@@ -18,7 +17,7 @@ function useSpokiEntry(thread?: ChatTarget) {
   return {
     href: chatHref(thread ?? spoki.target),
     "aria-controls": "spoki-panel",
-    // A bare entry toggles the panel; one with a thread only opens it.
+    // Desktop keeps its persistent panel; narrower layouts toggle as before.
     "aria-expanded": thread ? undefined : spoki.mode !== "hidden",
     onMouseEnter: spoki.preload,
     onFocus: spoki.preload,
@@ -33,6 +32,7 @@ function useSpokiEntry(thread?: ChatTarget) {
         return;
       event.preventDefault();
       if (thread) spoki.open(thread);
+      else if (spoki.mode === "docked") spoki.open();
       else spoki.toggle();
     },
   };

@@ -79,32 +79,46 @@ export function ServiceCards({
   const locale = useLocale();
   return (
     <ul className="grid gap-2 @xl:grid-cols-2">
-      {props.items.map((service) => (
-        <li
-          key={service.id}
-          className="flex min-w-0 flex-col gap-1 rounded-lg border border-line bg-surface-2 px-4 py-3"
-        >
-          <p className="font-medium break-words">{service.title}</p>
-          <p className="t-body-s text-fg-muted">
-            <span className="font-mono">
-              {t("from", { price: usdText(service.fromCents, locale) })}
-            </span>
-            {service.fromDays > 0 ? (
-              <>
-                {" · "}
-                <span className="font-mono">
-                  {t("days", { count: service.fromDays })}
-                </span>
-              </>
-            ) : null}
-          </p>
-          <ItemButtons
-            ids={service.actions}
-            actions={actions}
-            handlers={handlers}
-          />
-        </li>
-      ))}
+      {props.items.map((service) => {
+        const open = actionById(actions, `open:${service.id}`);
+        return (
+          <li
+            key={service.id}
+            className="flex min-w-0 flex-col gap-1 rounded-lg border border-line bg-surface-2 px-4 py-3"
+          >
+            <p className="font-medium break-words">
+              {open?.type === "link" ? (
+                <Link
+                  href={open.path}
+                  className="underline-offset-4 hover:underline"
+                >
+                  {service.title}
+                </Link>
+              ) : (
+                service.title
+              )}
+            </p>
+            <p className="t-body-s text-fg-muted">
+              <span className="font-mono">
+                {t("from", { price: usdText(service.fromCents, locale) })}
+              </span>
+              {service.fromDays > 0 ? (
+                <>
+                  {" · "}
+                  <span className="font-mono">
+                    {t("days", { count: service.fromDays })}
+                  </span>
+                </>
+              ) : null}
+            </p>
+            <ItemButtons
+              ids={service.actions}
+              actions={actions}
+              handlers={handlers}
+            />
+          </li>
+        );
+      })}
     </ul>
   );
 }

@@ -155,7 +155,7 @@ export async function Header() {
         )}
 
         <div className="ml-auto flex shrink-0 items-center gap-1 max-md:ml-0 max-md:w-full">
-          <span data-header-chat className="mr-1 inline-flex sm:mr-2">
+          <span data-header-chat className="mr-1 inline-flex sm:mr-2 xl:hidden">
             {flags.spokiDockEnabled ? (
               // Opens and closes the one Spoki panel (D525); a link without JS.
               <SpokiButtonLink

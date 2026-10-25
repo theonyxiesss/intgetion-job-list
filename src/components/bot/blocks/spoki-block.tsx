@@ -48,6 +48,7 @@ export function SpokiBlock({
   const refresh = block.actions.find((action) => action.type === "refresh");
   const canExpand =
     spoki !== null &&
+    !spoki.docked &&
     !spoki.expanded &&
     spoki.mode !== "sheet" &&
     WIDE.has(block.component);

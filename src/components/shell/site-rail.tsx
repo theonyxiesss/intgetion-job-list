@@ -18,7 +18,7 @@ export type SiteRailData = {
 };
 
 const item =
-  "flex min-h-11 items-center gap-3 rounded-md px-3 text-[15px] transition-colors hover:bg-surface hover:text-fg";
+  "flex min-h-12 items-center gap-3 rounded-md px-3 text-base transition-colors hover:bg-surface hover:text-fg";
 
 function Group({
   id,
@@ -47,7 +47,7 @@ function RailItem({
 }: SiteRailLink & { active: boolean; mark?: NavMark }) {
   const body = (
     <>
-      {Mark ? <Mark size={20} className="shrink-0" /> : null}
+      {Mark ? <Mark size={24} className="shrink-0" /> : null}
       <span className="truncate">{label}</span>
     </>
   );

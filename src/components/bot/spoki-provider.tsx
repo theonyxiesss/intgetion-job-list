@@ -19,8 +19,8 @@ import {
 import { preloadSpokiChat } from "./spoki-chat-lazy";
 import { SpokiContext, type DockMode, type SpokiDock } from "./spoki-context";
 
-/** From here the panel is part of the layout; below it slides over (D525). */
-const WIDE = "(min-width: 1536px)";
+/** From here the panel is part of the layout; below it slides over (D531). */
+const WIDE = "(min-width: 1280px)";
 /** Below this the panel takes the whole screen, like the chat page. */
 const LARGE = "(min-width: 1024px)";
 
@@ -59,7 +59,7 @@ export function SpokiProvider({
   const pathname = usePathname();
   const wide = useMedia(WIDE);
   const large = useMedia(LARGE);
-  // Signed in: open by default on wide screens; guests start closed.
+  // Kept for tablet/phone panel preferences. Desktop is always docked (D531).
   const [docked, setDocked] = useState(
     preference ? preference === "open" : signedIn,
   );
@@ -86,10 +86,11 @@ export function SpokiProvider({
     }
   }
 
+  const desktopDocked = wide || docked;
   const mode: DockMode = expanded
     ? "expanded"
     : wide
-      ? docked
+      ? desktopDocked
         ? "docked"
         : "hidden"
       : floating
@@ -123,21 +124,17 @@ export function SpokiProvider({
   }, [router, lastPage]);
 
   const close = useCallback(() => {
+    if (window.matchMedia(WIDE).matches) {
+      // Desktop Spoki is part of the layout and cannot be dismissed (D531).
+      if (pathname === "/chat") router.push(lastPage ?? "/jobs");
+      return;
+    }
     if (pathname === "/chat") {
       setKeepOpen(false);
-      if (window.matchMedia(WIDE).matches) {
-        setDocked(false);
-        savePreference("closed");
-      }
       router.push(lastPage ?? "/jobs");
       return;
     }
-    if (window.matchMedia(WIDE).matches) {
-      setDocked(false);
-      savePreference("closed");
-    } else {
-      setFloating(false);
-    }
+    setFloating(false);
   }, [pathname, router, lastPage]);
 
   const visible = mode !== "hidden";
@@ -162,7 +159,7 @@ export function SpokiProvider({
   const value = useMemo<SpokiDock>(
     () => ({
       signedIn,
-      docked,
+      docked: desktopDocked,
       floating,
       expanded,
       mode,
@@ -181,7 +178,7 @@ export function SpokiProvider({
     }),
     [
       signedIn,
-      docked,
+      desktopDocked,
       floating,
       expanded,
       mode,

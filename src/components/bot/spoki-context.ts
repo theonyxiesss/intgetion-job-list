@@ -13,9 +13,9 @@ export type DockMode = "docked" | "overlay" | "sheet" | "expanded" | "hidden";
 
 export type SpokiDock = {
   signedIn: boolean;
-  /** The person wants the panel in the layout on wide screens. */
+  /** The panel is permanently part of the desktop layout (D531). */
   docked: boolean;
-  /** Opened over the page below 1536 px. */
+  /** Opened over the page below 1280 px. */
   floating: boolean;
   /** `/chat`: the same chat over the whole page. */
   expanded: boolean;

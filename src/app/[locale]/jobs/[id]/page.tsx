@@ -4,7 +4,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { formatMoneyDto } from "@/lib/money";
 import { Badge } from "@/components/ui/badge";
-import { SpokiButtonLink } from "@/components/bot/spoki-link";
 import { CompanyLinks, CompanyMarkFor } from "@/components/ui/company-mark";
 import { Container } from "@/components/ui/container";
 import { Morph, navBack, navForward } from "@/components/ui/page-transition";
@@ -33,7 +32,6 @@ import { localePrefix } from "@/i18n/paths";
 import { intlLocale } from "@/i18n/locale";
 import { publicHttpUrl } from "@/lib/company-mark";
 import { publicJobText } from "@/lib/public-job-text";
-import { WithAside } from "@/components/shell/with-aside";
 
 export const dynamic = "force-dynamic";
 
@@ -95,82 +93,6 @@ export default async function JobPage({
   const applyHref = publicHttpUrl(job.applicationUrl);
   const sourceHref = publicHttpUrl(job.source.url);
 
-  const aside = (
-    <aside className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg p-4 lg:sticky lg:top-24 lg:border lg:p-5">
-      <div className="flex flex-col gap-3">
-        {/* This vacancy's thread in the Spoki panel; `/chat?job=` without it (D525). */}
-        <SpokiButtonLink thread={{ job: job.id }} variant="secondary">
-          {t("talkToAssistant")}
-        </SpokiButtonLink>
-        {applyHref && job.applicationMethod === "external_url" ? (
-          <ExternalApplyLink
-            jobId={job.id}
-            href={applyHref}
-            label={t("apply")}
-          />
-        ) : null}
-        {user ? (
-          <JobFeedbackActions
-            jobId={job.id}
-            initialSaved={initialSaved}
-            text={{
-              save: actions("save"),
-              saved: actions("saved"),
-              unsave: actions("unsave"),
-              saveError: actions("saveError"),
-              hide: actions("hide"),
-              hideTitle: actions("hideTitle"),
-              hideScopeJob: actions("hideScopeJob"),
-              hideScopeCompany: actions("hideScopeCompany"),
-              reasonLabel: actions("reasonLabel"),
-              reasonNone: actions("reasonNone"),
-              confirm: actions("confirm"),
-              cancel: actions("cancel"),
-              hideError: actions("hideError"),
-              report: actions("report"),
-              reportTitle: actions("reportTitle"),
-              detailsLabel: actions("detailsLabel"),
-              reportSuccess: actions("reportSuccess"),
-              alreadyReported: actions("alreadyReported"),
-              rateLimited: actions("rateLimited"),
-              reportError: actions("reportError"),
-              hideReasons: {
-                salary: actions("reasons.salary"),
-                format: actions("reasons.format"),
-                timezone: actions("reasons.timezone"),
-                company: actions("reasons.company"),
-                role: actions("reasons.role"),
-                other: actions("reasons.other"),
-              },
-              reportReasons: {
-                scam: actions("reportReasons.scam"),
-                spam: actions("reportReasons.spam"),
-                fake_company: actions("reportReasons.fake_company"),
-                discrimination: actions("reportReasons.discrimination"),
-                wrong_info: actions("reportReasons.wrong_info"),
-                inappropriate: actions("reportReasons.inappropriate"),
-                other: actions("reportReasons.other"),
-              },
-            }}
-          />
-        ) : null}
-        {user ? <WhyItFits userId={user.id} jobId={job.id} /> : null}
-        <div className="hidden lg:block">
-          <ShareJob
-            url={`${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`}
-            title={job.title}
-            text={{
-              title: t("share.title"),
-              copy: t("share.copy"),
-              copied: t("share.copied"),
-              more: t("share.more"),
-            }}
-          />
-        </div>
-      </div>
-    </aside>
-  );
-
   return (
     <main className="py-10 md:py-16">
       <RememberViewedJob jobId={job.id} />
@@ -193,7 +115,6 @@ export default async function JobPage({
         ])}
       />
       <Container className="flex flex-col gap-8">
-        <WithAside aside={aside}>
           <Link
             href="/jobs"
             {...navBack}
@@ -201,7 +122,7 @@ export default async function JobPage({
           >
             {t("backToJobs")}
           </Link>
-          <article className="flex flex-col gap-8 pb-28 lg:pb-0">
+          <article className="flex flex-col gap-8">
             <header className="flex flex-col gap-4">
               <div className="flex flex-wrap items-center gap-2">
                 <p className="t-label text-fg-muted">
@@ -262,6 +183,60 @@ export default async function JobPage({
                 <p className="t-label text-fg-muted">{sourceLabel}</p>
               ) : null}
             </header>
+            <div className="flex flex-wrap items-center gap-3">
+              {applyHref && job.applicationMethod === "external_url" ? (
+                <ExternalApplyLink
+                  jobId={job.id}
+                  href={applyHref}
+                  label={t("apply")}
+                />
+              ) : null}
+              {user ? (
+                <JobFeedbackActions
+                  jobId={job.id}
+                  initialSaved={initialSaved}
+                  text={{
+                    save: actions("save"),
+                    saved: actions("saved"),
+                    unsave: actions("unsave"),
+                    saveError: actions("saveError"),
+                    hide: actions("hide"),
+                    hideTitle: actions("hideTitle"),
+                    hideScopeJob: actions("hideScopeJob"),
+                    hideScopeCompany: actions("hideScopeCompany"),
+                    reasonLabel: actions("reasonLabel"),
+                    reasonNone: actions("reasonNone"),
+                    confirm: actions("confirm"),
+                    cancel: actions("cancel"),
+                    hideError: actions("hideError"),
+                    report: actions("report"),
+                    reportTitle: actions("reportTitle"),
+                    detailsLabel: actions("detailsLabel"),
+                    reportSuccess: actions("reportSuccess"),
+                    alreadyReported: actions("alreadyReported"),
+                    rateLimited: actions("rateLimited"),
+                    reportError: actions("reportError"),
+                    hideReasons: {
+                      salary: actions("reasons.salary"),
+                      format: actions("reasons.format"),
+                      timezone: actions("reasons.timezone"),
+                      company: actions("reasons.company"),
+                      role: actions("reasons.role"),
+                      other: actions("reasons.other"),
+                    },
+                    reportReasons: {
+                      scam: actions("reportReasons.scam"),
+                      spam: actions("reportReasons.spam"),
+                      fake_company: actions("reportReasons.fake_company"),
+                      discrimination: actions("reportReasons.discrimination"),
+                      wrong_info: actions("reportReasons.wrong_info"),
+                      inappropriate: actions("reportReasons.inappropriate"),
+                      other: actions("reportReasons.other"),
+                    },
+                  }}
+                />
+              ) : null}
+            </div>
             {/* The middle column is too narrow for four in a row (D477). */}
             <StatRow className="xl:grid xl:grid-cols-2 xl:gap-6 xl:[&>*]:border-l-0 xl:[&>*]:px-0">
               <Stat
@@ -318,6 +293,7 @@ export default async function JobPage({
                 ) : null}
               </section>
             ) : null}
+            {user ? <WhyItFits userId={user.id} jobId={job.id} /> : null}
             {description ? (
               <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
                 {description}
@@ -352,8 +328,7 @@ export default async function JobPage({
               }}
             />
           </article>
-        </WithAside>
-        <div className="lg:hidden">
+        <div className="border-t border-line pt-4">
           <ShareJob
             url={`${siteUrl()}${localePrefix(locale)}/jobs/${job.id}`}
             title={job.title}
