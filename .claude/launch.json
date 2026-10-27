@@ -64,11 +64,7 @@
     {
       "name": "master-dev",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": [
-        "dev",
-        "--port",
-        "3000"
-      ],
+      "runtimeArgs": ["dev", "--port", "3000"],
       "port": 3000,
       "env": {
         "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache"
@@ -174,11 +170,7 @@
     {
       "name": "dock-dev",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": [
-        "dev",
-        "--port",
-        "3000"
-      ],
+      "runtimeArgs": ["dev", "--port", "3000"],
       "port": 3000,
       "env": {
         "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache-claude",
@@ -189,11 +181,7 @@
     {
       "name": "blocks-prod",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": [
-        "start",
-        "--port",
-        "3200"
-      ],
+      "runtimeArgs": ["start", "--port", "3200"],
       "port": 3200,
       "env": {
         "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache-claude",
@@ -201,6 +189,15 @@
         "SPOKI_INTERACTIVE_UI": "true",
         "PORT": "3200",
         "LLM_MODEL_CHAT": "nvidia/nemotron-3-ultra-550b-a55b:free"
+      }
+    },
+    {
+      "name": "spoki-local",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev", "--port", "3000"],
+      "port": 3000,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:/Users/Admin/.swc-cache"
       }
     }
   ]
