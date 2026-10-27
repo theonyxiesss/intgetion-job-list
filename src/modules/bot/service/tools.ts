@@ -288,7 +288,7 @@ export const TOOLS: readonly BotTool[] = [
   tool({
     name: "search_jobs",
     description:
-      "Search published jobs. Returns up to 5 jobs; descriptions are not included.",
+      "Search published jobs. Returns up to 5 jobs; descriptions are not included. Job titles are mostly in English: write q in English (designer, not дизайнер), and leave it out when category already says it.",
     input: searchInput,
     access: "guest",
     confirm: never,
@@ -311,10 +311,24 @@ export const TOOLS: readonly BotTool[] = [
       const hidden = ctx.userId
         ? await getHiddenSetsForViewer(ctx.userId)
         : null;
-      const { items } = await searchJobs(query, ctx.locale, { hidden });
+      let { items } = await searchJobs(query, ctx.locale, { hidden });
+      // Titles are mostly English: a word in another language can empty an
+      // otherwise good search, so the other filters are tried alone (D555).
+      let droppedWord: string | undefined;
+      if (items.length === 0 && query.q) {
+        ({ items } = await searchJobs({ ...query, q: undefined }, ctx.locale, {
+          hidden,
+        }));
+        if (items.length > 0) droppedWord = query.q;
+      }
       const jobs = items.slice(0, MAX_JOBS);
+      const listed = jobs.map(jobForLlm).join("\n");
       return {
-        llm: jobs.length ? jobs.map(jobForLlm).join("\n") : "No jobs found.",
+        llm: !jobs.length
+          ? "No jobs found."
+          : droppedWord
+            ? `No job title matched "${droppedWord}". These jobs match the other filters:\n${listed}`
+            : listed,
         client: { kind: "jobs", data: jobs.map(jobCard) },
         ...(goal
           ? {

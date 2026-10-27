@@ -123,6 +123,38 @@ describe("OpenRouter wire format (D213)", () => {
     ]);
   });
 
+  it("moves on when the answer body times out while it is read", async () => {
+    let call = 0;
+    const fetchImpl = vi.fn(async () => {
+      call += 1;
+      if (call === 1) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => {
+            throw new DOMException("timeout", "TimeoutError");
+          },
+        } as unknown as Response;
+      }
+      return Response.json({
+        choices: [{ message: { content: "ok" }, finish_reason: "stop" }],
+      });
+    });
+    const provider = new OpenRouterProvider(
+      "k",
+      undefined,
+      fetchImpl as typeof fetch,
+    );
+    const response = await provider.complete({
+      model: OPENROUTER_DEFAULT_MODELS.chat,
+      system: "s",
+      messages: [{ role: "user", content: "x" }],
+      maxTokens: 10,
+    });
+    expect(response.text).toBe("ok");
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
   it("throws the last error when every free model fails", async () => {
     const fetchImpl = vi.fn(
       async () => new Response("limited", { status: 429 }),

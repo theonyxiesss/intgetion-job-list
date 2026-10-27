@@ -41,9 +41,12 @@ export const OPENROUTER_FREE_FALLBACKS = [
   "liquid/lfm-2.5-2.6b:free",
 ] as const;
 
-/** One attempt per model; the whole chain stops after this much time. */
-const ATTEMPT_TIMEOUT_MS = 25_000;
-const CHAIN_BUDGET_MS = 60_000;
+/**
+ * One attempt per model; no new attempt starts after the chain budget. The
+ * 550B default model needed more than 25 s for an answer in a live turn.
+ */
+const ATTEMPT_TIMEOUT_MS = 40_000;
+const CHAIN_BUDGET_MS = 75_000;
 
 /**
  * Hotfix 2026-10-21: every free chat model is a reasoning model, and its
@@ -260,7 +263,13 @@ export class OpenRouterProvider implements LLMProvider {
         response.status,
       );
     }
-    const body = (await response.json()) as { error?: { message?: string } };
+    let body: { error?: { message?: string } };
+    try {
+      // The timeout also covers reading the body; it must fail like the fetch.
+      body = (await response.json()) as typeof body;
+    } catch {
+      throw new LLMProviderError("The provider did not answer");
+    }
     // OpenRouter reports upstream failures as 200 with an `error` object.
     if (body && typeof body === "object" && "error" in body && body.error) {
       throw new LLMProviderError("The provider reported an error");

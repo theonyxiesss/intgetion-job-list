@@ -156,3 +156,29 @@ describe("synthetic profile and published job tool results", () => {
     );
   });
 });
+
+describe("search_jobs with a query word that matches no title", () => {
+  it("searches again without the word and says so to the model", async () => {
+    searchJobsMock
+      .mockResolvedValueOnce({ items: [] })
+      .mockResolvedValueOnce({ items: jobs });
+    const result = await runTool(GUEST, "search_jobs", {
+      q: "дизайнер",
+      category: "design",
+    });
+    expect(searchJobsMock).toHaveBeenCalledTimes(2);
+    expect(searchJobsMock.mock.calls[1]![0]).toMatchObject({
+      category: "design",
+    });
+    expect(searchJobsMock.mock.calls[1]![0].q).toBeUndefined();
+    expect(result.llm).toContain('No job title matched "дизайнер"');
+    expect(result.client?.data).toHaveLength(2);
+  });
+
+  it("keeps an empty answer when nothing matches without the word either", async () => {
+    searchJobsMock.mockResolvedValue({ items: [] });
+    const result = await runTool(GUEST, "search_jobs", { q: "дизайнер" });
+    expect(result.llm).toBe("No jobs found.");
+    expect(result.client?.data).toEqual([]);
+  });
+});
