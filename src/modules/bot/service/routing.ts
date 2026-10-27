@@ -161,6 +161,46 @@ const PATTERNS = Object.fromEntries(
   ]),
 ) as Record<LoadableDomain, RegExp>;
 
+/**
+ * D556: words that name a service outright. A message with one of them
+ * changes the subject, so services of earlier turns it does not name are
+ * not carried over. The wider lexicon is not used for this: "дизайнер" is
+ * a freelance word, yet "покажи ещё дизайнеров" after a job search goes on.
+ */
+const SUBJECT_MARKERS: Partial<Record<LoadableDomain, readonly string[]>> = {
+  jobs: ["ваканс", "vacanc"],
+  ugc: ["ugc", "юджиси"],
+  freelance: ["фриланс", "freelanc"],
+  events: [
+    "событи",
+    "конференц",
+    "митап",
+    "хакатон",
+    "event",
+    "conference",
+    "meetup",
+    "hackathon",
+  ],
+};
+
+const SUBJECT_PATTERNS = Object.entries(SUBJECT_MARKERS).map(
+  ([domain, stems]) =>
+    [
+      domain as LoadableDomain,
+      new RegExp(
+        `(?<!\\p{L})(?:${stems!.map((stem) => stem.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`,
+        "iu",
+      ),
+    ] as const,
+);
+
+/** Services the message names outright (D556); empty when it names none. */
+export function namedSubjects(text: string): LoadableDomain[] {
+  return SUBJECT_PATTERNS.filter(([, pattern]) => pattern.test(text)).map(
+    ([domain]) => domain,
+  );
+}
+
 /** The service a thread is focused on, if any. */
 function topicDomain(input: {
   topic?: string;
@@ -216,8 +256,14 @@ export function routeDomains(input: {
   const picked = new Set<LoadableDomain>(matchedDomains(input));
   const pageDomain = input.page ? PAGE_DOMAIN[input.page] : undefined;
   if (pageDomain) picked.add(pageDomain);
+  // A message that names a service is a new subject: earlier services it
+  // does not name stay behind; a follow-up without such a word keeps them.
+  const named = namedSubjects(input.text);
   for (const domain of input.previous ?? [])
-    if ((LOADABLE_DOMAINS as readonly string[]).includes(domain))
+    if (
+      (LOADABLE_DOMAINS as readonly string[]).includes(domain) &&
+      (named.length === 0 || named.includes(domain as LoadableDomain))
+    )
       picked.add(domain as LoadableDomain);
   if (picked.size === 0) picked.add("jobs");
   return LOADABLE_DOMAINS.filter((domain) => picked.has(domain));

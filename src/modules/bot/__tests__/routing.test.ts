@@ -205,6 +205,53 @@ describe("hybrid tool routing (D522)", () => {
     ]);
   });
 
+  it("drops earlier services when the message names another service (D556)", () => {
+    expect(
+      routeDomains({
+        text: "Сколько будут стоить 5 UGC-видео?",
+        previous: ["jobs"],
+      }),
+    ).toEqual(["ugc"]);
+    expect(
+      routeDomains({ text: "А что есть на фрилансе?", previous: ["jobs"] }),
+    ).toEqual(["freelance"]);
+    expect(
+      routeDomains({
+        text: "Какие конференции в Берлине?",
+        previous: ["jobs"],
+      }),
+    ).toEqual(["events"]);
+    expect(
+      routeDomains({ text: "Вернёмся к вакансиям", previous: ["ugc"] }),
+    ).toEqual(["jobs"]);
+    expect(
+      routeDomains({
+        text: "Найди вакансии UGC-креатора",
+        previous: ["jobs", "events"],
+      }),
+    ).toEqual(["jobs", "ugc"]);
+  });
+
+  it("keeps earlier services for a follow-up that names no service (D556)", () => {
+    expect(
+      routeDomains({ text: "покажи ещё дизайнеров", previous: ["jobs"] }),
+    ).toEqual(["jobs", "freelance"]);
+    expect(
+      routeDomains({ text: "а подешевле?", previous: ["freelance"] }),
+    ).toEqual(["freelance"]);
+  });
+
+  it("keeps the thread topic and the page even when the subject changes (D556)", () => {
+    expect(
+      routeDomains({
+        text: "Какие конференции в Берлине?",
+        topic: "ugc",
+        page: "jobs",
+        previous: ["freelance"],
+      }),
+    ).toEqual(["jobs", "ugc", "events"]);
+  });
+
   it("leaves guests, drafts and the switched-off router as they were", () => {
     expect(toolsFor(null).map((t) => t.name)).not.toContain("use_tools");
     expect(toolsFor(USER).map((t) => t.name)).not.toContain("use_tools");
