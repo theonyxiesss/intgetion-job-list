@@ -17,15 +17,33 @@ const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const TIMEOUT_MS = 45_000;
 
 /**
- * D496: a free model often has a single upstream provider, and when it is down
- * every request fails. OpenRouter then tries these in order (`models`). Only
- * `:free` models, so a fallback never bills. All accept tools; uptime checked
- * on `/api/v1/models/<id>/endpoints` on 2026-10-20.
+ * D496, D554: a free model has a daily and per-minute limit and often one
+ * upstream provider, so a failed request moves to the next one here. Only
+ * `:free` models that accept tools, from `/api/v1/models` on 2026-10-27
+ * (`nemotron-3.5-content-safety` has no tools and is left out). A model that
+ * OpenRouter no longer serves is dropped from this list; it was
+ * `minimax/minimax-m3.1-flash:free` until 2026-10-27.
  */
 export const OPENROUTER_FREE_FALLBACKS = [
-  "minimax/minimax-m3.1-flash:free",
+  "google/gemma-4-31b-it:free",
   "thinkingmachines/inkling:free",
+  "google/gemma-4-26b-a4b-it:free",
+  "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+  "poolside/laguna-s-2.1:free",
+  "cohere/north-mini-code:free",
+  "xingchen-agi/xing4.0-29b-a4b:free",
+  "dots-studio/dots-3-note-preview:free",
+  "nvidia/nemotron-3.5-super-vl:free",
+  "nvidia/nemotron-3.5-lightning:free",
+  "thinkingmachines/inkling-small:free",
+  "poolside/laguna-xs-2.1:free",
+  "recursive/flint-v1.0:free",
+  "liquid/lfm-2.5-2.6b:free",
 ] as const;
+
+/** One attempt per model; the whole chain stops after this much time. */
+const ATTEMPT_TIMEOUT_MS = 25_000;
+const CHAIN_BUDGET_MS = 60_000;
 
 /**
  * Hotfix 2026-10-21: every free chat model is a reasoning model, and its
@@ -36,8 +54,9 @@ export const OPENROUTER_FREE_FALLBACKS = [
  */
 export const FREE_REASONING_HEADROOM = 3000;
 
-function fallbackModels(model: string): string[] | undefined {
-  if (!isFreeModel(model)) return undefined;
+/** The models to try in order: the chosen one, then the other free models. */
+export function freeModelChain(model: string): string[] {
+  if (!isFreeModel(model)) return [model];
   return [model, ...OPENROUTER_FREE_FALLBACKS.filter((m) => m !== model)];
 }
 
@@ -90,10 +109,8 @@ export function toOpenRouterMessages(
 }
 
 export function toOpenRouterRequest(request: LLMRequest) {
-  const models = fallbackModels(request.model);
   return {
     model: request.model,
-    ...(models ? { models } : {}),
     max_tokens: isFreeModel(request.model)
       ? request.maxTokens + FREE_REASONING_HEADROOM
       : request.maxTokens,
@@ -198,7 +215,28 @@ export class OpenRouterProvider implements LLMProvider {
     private readonly fetchImpl: typeof fetch = fetch,
   ) {}
 
+  /** A free model that fails (limit, outage, unknown) passes the turn on. */
   async complete(request: LLMRequest): Promise<LLMResponse> {
+    const chain = freeModelChain(request.model);
+    if (chain.length === 1) return this.attempt(request, TIMEOUT_MS);
+    const deadline = Date.now() + CHAIN_BUDGET_MS;
+    let lastError: LLMProviderError | undefined;
+    for (const model of chain) {
+      if (lastError && Date.now() > deadline) break;
+      try {
+        return await this.attempt({ ...request, model }, ATTEMPT_TIMEOUT_MS);
+      } catch (error) {
+        if (!(error instanceof LLMProviderError)) throw error;
+        lastError = error;
+      }
+    }
+    throw lastError ?? new LLMProviderError("The provider did not answer");
+  }
+
+  private async attempt(
+    request: LLMRequest,
+    timeoutMs: number,
+  ): Promise<LLMResponse> {
     let response: Response;
     try {
       response = await this.fetchImpl(API_URL, {
@@ -211,7 +249,7 @@ export class OpenRouterProvider implements LLMProvider {
           "x-title": "INTGETION JOB LIST",
         },
         body: JSON.stringify(toOpenRouterRequest(request)),
-        signal: AbortSignal.timeout(TIMEOUT_MS),
+        signal: AbortSignal.timeout(timeoutMs),
       });
     } catch {
       throw new LLMProviderError("The provider did not answer");

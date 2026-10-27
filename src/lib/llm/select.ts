@@ -24,7 +24,7 @@ export type ProviderName = "anthropic" | "openrouter";
  * is worth re-reading before changing these.
  */
 export const OPENROUTER_DEFAULT_MODELS: LLMModels = {
-  chat: "nvidia/nemotron-3-super-120b-a12b:free",
+  chat: "nvidia/nemotron-3-ultra-550b-a55b:free",
   extract: "google/gemma-4-26b-a4b-it:free",
 };
 const ANTHROPIC_DEFAULT_MODELS: LLMModels = {

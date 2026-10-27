@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 import { LLMProviderError } from "./anthropic";
 import {
+  freeModelChain,
   fromOpenRouterResponse,
   OPENROUTER_FREE_FALLBACKS,
   OpenRouterProvider,
@@ -70,29 +71,78 @@ describe("OpenRouter wire format (D213)", () => {
     });
   });
 
-  it("lets a free model fall back to other free models only (D496)", () => {
-    const base = {
-      system: "s",
-      messages: [{ role: "user" as const, content: "x" }],
-      maxTokens: 10,
-    };
-    const free = toOpenRouterRequest({
-      ...base,
+  it("tries the chosen free model first, then every other free model once (D496, D554)", () => {
+    const chain = freeModelChain(OPENROUTER_DEFAULT_MODELS.chat);
+    expect(chain[0]).toBe(OPENROUTER_DEFAULT_MODELS.chat);
+    expect(chain.slice(1)).toEqual(
+      OPENROUTER_FREE_FALLBACKS.filter(
+        (m) => m !== OPENROUTER_DEFAULT_MODELS.chat,
+      ),
+    );
+    expect(new Set(chain).size).toBe(chain.length);
+    expect(chain.every((m) => m.endsWith(":free"))).toBe(true);
+    expect(freeModelChain("openai/gpt-5")).toEqual(["openai/gpt-5"]);
+  });
+
+  it("sends one model per request, never the models array", () => {
+    const request = toOpenRouterRequest({
       model: OPENROUTER_DEFAULT_MODELS.chat,
+      system: "s",
+      messages: [{ role: "user", content: "x" }],
+      maxTokens: 10,
     });
-    expect(free.models?.[0]).toBe(OPENROUTER_DEFAULT_MODELS.chat);
-    expect(free.models?.slice(1)).toEqual([...OPENROUTER_FREE_FALLBACKS]);
-    expect(free.models?.length).toBeLessThanOrEqual(3);
-    expect(free.models?.every((m) => m.endsWith(":free"))).toBe(true);
+    expect(request.model).toBe(OPENROUTER_DEFAULT_MODELS.chat);
+    expect(request).not.toHaveProperty("models");
+  });
 
-    const fallback = toOpenRouterRequest({
-      ...base,
-      model: OPENROUTER_FREE_FALLBACKS[0],
+  it("moves to the next free model when one is rate limited", async () => {
+    const calls: string[] = [];
+    const fetchImpl = vi.fn(async (_url: string, init: RequestInit) => {
+      const model = JSON.parse(String(init.body)).model as string;
+      calls.push(model);
+      if (calls.length === 1) return new Response("limited", { status: 429 });
+      return Response.json({
+        choices: [{ message: { content: "ok" }, finish_reason: "stop" }],
+      });
     });
-    expect(new Set(fallback.models).size).toBe(fallback.models?.length);
+    const provider = new OpenRouterProvider(
+      "k",
+      undefined,
+      fetchImpl as typeof fetch,
+    );
+    const response = await provider.complete({
+      model: OPENROUTER_DEFAULT_MODELS.chat,
+      system: "s",
+      messages: [{ role: "user", content: "x" }],
+      maxTokens: 10,
+    });
+    expect(response.text).toBe("ok");
+    expect(calls).toEqual([
+      OPENROUTER_DEFAULT_MODELS.chat,
+      freeModelChain(OPENROUTER_DEFAULT_MODELS.chat)[1],
+    ]);
+  });
 
-    const paid = toOpenRouterRequest({ ...base, model: "openai/gpt-5" });
-    expect(paid).not.toHaveProperty("models");
+  it("throws the last error when every free model fails", async () => {
+    const fetchImpl = vi.fn(
+      async () => new Response("limited", { status: 429 }),
+    );
+    const provider = new OpenRouterProvider(
+      "k",
+      undefined,
+      fetchImpl as typeof fetch,
+    );
+    await expect(
+      provider.complete({
+        model: OPENROUTER_DEFAULT_MODELS.chat,
+        system: "s",
+        messages: [{ role: "user", content: "x" }],
+        maxTokens: 10,
+      }),
+    ).rejects.toBeInstanceOf(LLMProviderError);
+    expect(fetchImpl).toHaveBeenCalledTimes(
+      freeModelChain(OPENROUTER_DEFAULT_MODELS.chat).length,
+    );
   });
 
   it("reads text, tool calls and usage", () => {
