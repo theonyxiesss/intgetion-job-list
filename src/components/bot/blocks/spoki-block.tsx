@@ -86,7 +86,7 @@ export function SpokiBlock({
             <button
               type="button"
               onClick={() => handlers.act(refresh.id)}
-              disabled={handlers.busy === refresh.id}
+              disabled={handlers.busy !== null}
               aria-busy={handlers.busy === refresh.id || undefined}
               className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-fg-muted transition-colors duration-150 hover:bg-surface-2 hover:text-fg disabled:opacity-40"
             >

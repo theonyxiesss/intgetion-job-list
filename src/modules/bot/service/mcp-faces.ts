@@ -74,6 +74,7 @@ function jobCard(job: SearchedJob | PublicJob) {
 export const searchJobsFace: McpFace<{
   q?: string;
   category?: (typeof JOB_CATEGORIES)[number];
+  country?: string;
   workFormat?: "remote" | "hybrid" | "onsite";
   employmentType?: string;
   limit?: number;
@@ -84,6 +85,7 @@ export const searchJobsFace: McpFace<{
     const query = jobSearchQuery.parse({
       q: input.q,
       category: input.category,
+      country: input.country,
       workFormat: input.workFormat,
       employmentType: input.employmentType,
       limit: input.limit ?? MAX_JOBS,

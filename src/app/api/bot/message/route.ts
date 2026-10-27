@@ -12,6 +12,7 @@ import {
   openUgcHomeConversation,
   openUgcThread,
   resolveConversation,
+  goalSessionFromRequest,
   type BotEvent,
 } from "@/modules/bot/service";
 import { readCampaign } from "@/modules/ugc/service";
@@ -60,6 +61,7 @@ data: ${JSON.stringify(event)}
               ip,
               locale,
               page: input.section,
+              goalSession: goalSessionFromRequest(request),
             },
             emit,
           );

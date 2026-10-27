@@ -97,6 +97,7 @@ export default async function ChatPage({
         "notifications",
         "notificationSettings",
         "jobs",
+        "categories",
       ]}
     >
       <main className="flex min-h-0 flex-1 flex-col">

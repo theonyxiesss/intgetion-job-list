@@ -27,6 +27,7 @@
     "legal:sync": "node scripts/legal-sync.mjs"
   },
   "dependencies": {
+    "@assistant-ui/react": "^0.15.31",
     "@hookform/resolvers": "^5.9.1",
     "@modelcontextprotocol/server": "2.3.1",
     "@reown/appkit": "1.8.19",

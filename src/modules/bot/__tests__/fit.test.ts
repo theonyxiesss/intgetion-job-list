@@ -226,4 +226,17 @@ describe("one fitting vacancy", () => {
       expect(turn(text)).toEqual(["search_jobs"]);
     }
   });
+
+  it("does not append the jobs search outside the routed jobs domain", () => {
+    expect(
+      shapeToolCalls([], {
+        userText: "Покажи услуги по дизайну логотипа",
+        ready: true,
+        jobThread: false,
+        showedJobs: false,
+        waiting: false,
+        allowJobSearch: false,
+      }),
+    ).toEqual([]);
+  });
 });

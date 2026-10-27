@@ -87,6 +87,9 @@ export async function runRetention(now = new Date()) {
   // D521: the Spoki action journal expires, cut-off actions are marked.
   const { sweepBotActions } = await import("@/modules/bot/service");
   const botActions = await sweepBotActions(now);
+  // D553: a saved job goal left idle for 30 days is dropped.
+  const { sweepIdleJobGoals } = await import("@/modules/bot/service");
+  const jobGoals = await sweepIdleJobGoals(now);
   const since = new Date(
     now.getTime() - AUTH_DELETE_RETRY_DAYS * 24 * 60 * 60 * 1000,
   );
@@ -98,5 +101,5 @@ export async function runRetention(now = new Date()) {
       logger.warn("retention: auth user delete still failing");
     }
   }
-  return { ...purged, analyticsEvents, authRetried, botActions };
+  return { ...purged, analyticsEvents, authRetried, botActions, jobGoals };
 }

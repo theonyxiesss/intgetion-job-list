@@ -21,6 +21,7 @@ export function Choice({
   actions: readonly UiAction[];
   handlers: BlockHandlers;
 }) {
+  const t = useTranslations("chat.work");
   const options = props.options
     .map((id) => actionById(actions, id))
     .filter((action): action is UiAction => action !== undefined);
@@ -33,14 +34,20 @@ export function Choice({
           <BlockButton
             key={option.id}
             action={option}
-            handlers={
-              answered
-                ? { ...handlers, done: options.map((o) => o.id) }
-                : handlers
-            }
+            handlers={answered ? { ...handlers, sending: true } : handlers}
           />
         ))}
       </div>
+      {handlers.edit ? (
+        <button
+          type="button"
+          onClick={handlers.edit}
+          disabled={handlers.sending}
+          className="min-h-11 justify-self-start rounded-full px-3 text-sm text-fg-muted hover:text-fg disabled:opacity-40"
+        >
+          {t("customReply")}
+        </button>
+      ) : null}
     </div>
   );
 }

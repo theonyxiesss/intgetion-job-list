@@ -1639,6 +1639,65 @@
     }
   },
   "chat": {
+    "jobGoal": {
+      "title": "Find a job",
+      "intro": "Set your criteria. Spoki will search jobs on the platform and suggest a next step.",
+      "category": "Category",
+      "anyCategory": "Any category",
+      "country": "Country code",
+      "countryHint": "US",
+      "remoteOnly": "Remote only",
+      "start": "Start search",
+      "update": "Update and search",
+      "save": "Save goal",
+      "saveHint": "Save this goal to continue on another visit.",
+      "sessionOnly": "This goal lasts only for this browser session. Sign in to save it.",
+      "pause": "Pause",
+      "resume": "Resume",
+      "delete": "Delete goal",
+      "confirmDelete": "Confirm delete",
+      "cancel": "Cancel",
+      "skipProfile": "Search without profile",
+      "paused": "Paused",
+      "saved": "Saved",
+      "error": "Could not update the goal. Try again.",
+      "searchPrompt": "Find jobs for me on this platform using my current goal criteria. If I have a profile, read it first. Show confirmed results and one next step.",
+      "step": {
+        "profile": "Next: check your profile",
+        "search": "Next: search platform jobs",
+        "next": "Next: choose a job or refine your search"
+      }
+    },
+    "work": {
+      "noSteps": "No tool steps were recorded for this response.",
+      "title": "Work progress",
+      "running": "Working",
+      "done": "Response finished",
+      "failed": "Could not finish",
+      "stopped": "Response stopped",
+      "attention": "Needs attention",
+      "preparing": "Preparing a response",
+      "interrupted": "Stopping the chat may not stop a server action. Check its status before trying again.",
+      "customReply": "Answer in my own words",
+      "step": {
+        "running": "Running",
+        "completed": "Step completed",
+        "waiting": "Waiting for your confirmation",
+        "blocked": "Action not performed",
+        "failed": "Execution failed",
+        "unknown": "Result not confirmed"
+      },
+      "tools": {
+        "searchJobs": "Job search",
+        "readJob": "Job details",
+        "events": "Event search",
+        "services": "Services and providers",
+        "account": "Account data",
+        "memory": "Memory",
+        "ugc": "UGC campaign",
+        "working": "Platform action"
+      }
+    },
     "jobDraft": {
       "title": "Shared job draft",
       "missing": "{count} required job details still need a value.",
@@ -1724,6 +1783,11 @@
     "telegramBot": "@intgetion_bot",
     "emptyGuest": "Tell Spoki where you are and what work you want.",
     "emptySignedIn": "Tell Spoki what you want to find. The conversation continues where you left it.",
+    "searchPlatform": "Find jobs on the platform",
+    "internetFallbackQuestion": "No suitable jobs were found on the platform. Search the internet?",
+    "internetFallbackYes": "Yes, search the internet",
+    "internetFallbackNo": "No, refine the platform search",
+    "internetSearchUnavailable": "Spoki currently searches jobs on INTGETION only. You can change the search and try again.",
     "score": "{score}% match",
     "status": {
       "thinking": "Thinking",

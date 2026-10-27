@@ -1639,6 +1639,65 @@
     }
   },
   "chat": {
+    "jobGoal": {
+      "title": "Job finden",
+      "intro": "Lege deine Kriterien fest. Spoki sucht auf der Plattform und schlägt den nächsten Schritt vor.",
+      "category": "Bereich",
+      "anyCategory": "Alle Bereiche",
+      "country": "Ländercode",
+      "countryHint": "DE",
+      "remoteOnly": "Nur remote",
+      "start": "Suche starten",
+      "update": "Aktualisieren und suchen",
+      "save": "Ziel speichern",
+      "saveHint": "Speichere dieses Ziel, um es später fortzusetzen.",
+      "sessionOnly": "Dieses Ziel gilt nur für diese Browsersitzung. Melde dich an, um es zu speichern.",
+      "pause": "Pausieren",
+      "resume": "Fortsetzen",
+      "delete": "Ziel löschen",
+      "confirmDelete": "Löschen bestätigen",
+      "cancel": "Abbrechen",
+      "skipProfile": "Ohne Profil suchen",
+      "paused": "Pausiert",
+      "saved": "Gespeichert",
+      "error": "Das Ziel konnte nicht aktualisiert werden. Bitte erneut versuchen.",
+      "searchPrompt": "Finde für mich Jobs auf dieser Plattform nach meinen aktuellen Zielkriterien. Lies zuerst mein Profil, falls vorhanden. Zeige bestätigte Ergebnisse und einen nächsten Schritt.",
+      "step": {
+        "profile": "Nächster Schritt: Profil prüfen",
+        "search": "Nächster Schritt: Plattformjobs suchen",
+        "next": "Nächster Schritt: Job wählen oder Suche anpassen"
+      }
+    },
+    "work": {
+      "noSteps": "Für diese Antwort wurden keine Werkzeugschritte erfasst.",
+      "title": "Arbeitsfortschritt",
+      "running": "In Bearbeitung",
+      "done": "Antwort abgeschlossen",
+      "failed": "Nicht abgeschlossen",
+      "stopped": "Antwort gestoppt",
+      "attention": "Aktion erforderlich",
+      "preparing": "Antwort wird vorbereitet",
+      "interrupted": "Eine Serveraktion kann nach dem Stoppen des Chats weiterlaufen. Prüfen Sie den Status vor einem erneuten Versuch.",
+      "customReply": "Mit eigenen Worten antworten",
+      "step": {
+        "running": "Läuft",
+        "completed": "Schritt abgeschlossen",
+        "waiting": "Wartet auf Ihre Bestätigung",
+        "blocked": "Aktion nicht ausgeführt",
+        "failed": "Ausführung fehlgeschlagen",
+        "unknown": "Ergebnis nicht bestätigt"
+      },
+      "tools": {
+        "searchJobs": "Stellensuche",
+        "readJob": "Stellendetails",
+        "events": "Veranstaltungssuche",
+        "services": "Dienstleistungen und Anbieter",
+        "account": "Kontodaten",
+        "memory": "Erinnerungen",
+        "ugc": "UGC-Kampagne",
+        "working": "Plattformaktion"
+      }
+    },
     "jobDraft": {
       "title": "Gemeinsamer Stellenentwurf",
       "missing": "Noch {count} Pflichtangaben fehlen.",
@@ -1724,6 +1783,11 @@
     "telegramBot": "@intgetion_bot",
     "emptyGuest": "Sagen Sie Spoki, wo Sie sind und welche Arbeit Sie wollen.",
     "emptySignedIn": "Sagen Sie Spoki, was Sie finden möchten. Das Gespräch geht dort weiter, wo Sie aufgehört haben.",
+    "searchPlatform": "Jobs auf der Plattform suchen",
+    "internetFallbackQuestion": "Auf der Plattform wurden keine passenden Jobs gefunden. Im Internet suchen?",
+    "internetFallbackYes": "Ja, im Internet suchen",
+    "internetFallbackNo": "Nein, Plattformsuche verfeinern",
+    "internetSearchUnavailable": "Spoki sucht derzeit nur auf INTGETION nach Jobs. Sie können die Suche ändern und es erneut versuchen.",
     "score": "{score}% Übereinstimmung",
     "status": {
       "thinking": "Thinking",

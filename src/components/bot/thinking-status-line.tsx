@@ -2,13 +2,13 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { elapsedLabel, idleStep, stepForTool } from "./thinking-status";
+import { elapsedLabel, stepForTool } from "./thinking-status";
 
 /**
  * The live line under the conversation while Spoki works (D490): a pulsing
  * spark, the step in English with a light sweeping over it, and the seconds
- * so far. Idle words take turns; a running tool names its step. Screen
- * readers hear the step only when a tool starts, not every turn of the words.
+ * so far. Idle text stays neutral; only a running tool names a step.
+ * Screen readers hear tool changes, not the elapsed-time counter.
  */
 export function ThinkingStatusLine({ tool }: { tool: string | null }) {
   const t = useTranslations("chat.status");
@@ -23,7 +23,7 @@ export function ThinkingStatusLine({ tool }: { tool: string | null }) {
     return () => window.clearInterval(timer);
   }, []);
 
-  const step = tool ? stepForTool(tool) : idleStep(elapsed);
+  const step = tool ? stepForTool(tool) : "thinking";
   const seconds = elapsedLabel(elapsed);
   return (
     <div className="t-body-s flex items-center gap-2" data-thinking>

@@ -145,6 +145,50 @@ describe("Spoki blocks in the chat (D523)", () => {
     expect(tool?.toolCall).not.toHaveProperty("ui");
   });
 
+  it("reports tool completion even when its result becomes an interactive block", async () => {
+    vi.stubEnv("SPOKI_INTERACTIVE_UI", "true");
+    const events = await turn();
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        type: "tool_end",
+        name: "search_jobs",
+        status: "completed",
+      }),
+    );
+    const start = events.find((event) => event.type === "tool_start");
+    expect(start).toHaveProperty("id");
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        type: "tool_end",
+        id: (start as unknown as { id: string }).id,
+      }),
+    );
+  });
+
+  it("reports a failed tool without exposing its arguments or error details", async () => {
+    const { HttpError } = await import("@/lib/http/errors");
+    runToolMock.mockRejectedValue(
+      new HttpError(422, "VALIDATION_ERROR", "private details"),
+    );
+    const events = await turn();
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        type: "tool_end",
+        name: "search_jobs",
+        status: "failed",
+      }),
+    );
+    expect(
+      JSON.stringify(
+        events.filter(
+          (event) =>
+            event.type === "tool_start" ||
+            (event as { type: string }).type === "tool_end",
+        ),
+      ),
+    ).not.toContain("private details");
+  });
+
   it("sends a checked block instead of the cards and keeps it for the history", async () => {
     vi.stubEnv("SPOKI_INTERACTIVE_UI", "true");
     const events = await turn();

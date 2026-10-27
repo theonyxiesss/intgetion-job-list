@@ -762,6 +762,8 @@ export function shapeToolCalls(
     jobThread: boolean;
     showedJobs: boolean;
     waiting: boolean;
+    /** Routed turns only append an implicit search inside the jobs domain. */
+    allowJobSearch?: boolean;
   },
 ): LLMToolCall[] {
   let next = calls.filter((call) => {
@@ -785,6 +787,7 @@ export function shapeToolCalls(
     !confirms &&
     !blockTurn &&
     input.ready &&
+    input.allowJobSearch !== false &&
     !input.jobThread &&
     !speaksAsEmployer(input.userText);
   if (searchTurn) {

@@ -387,4 +387,43 @@ describe("provider", () => {
     const unknown = new FakeLLMProvider([fakeToolCall("drop_db", {})]);
     await expect(chat(unknown, request)).rejects.toBeInstanceOf(LLMOutputError);
   });
+
+  it("accepts a JSON object encoded in a nested tool argument only after schema validation", async () => {
+    const tools = [
+      {
+        name: "find_events",
+        description: "events",
+        input: z.object({
+          start: z.object({ date: z.string().date() }),
+          note: z.string(),
+        }),
+      },
+    ];
+    const request = {
+      model: "m",
+      system: "s",
+      messages: [],
+      tools,
+      maxTokens: 800,
+    };
+    const encoded = new FakeLLMProvider([
+      fakeToolCall("find_events", {
+        start: '{"date":"2026-11-12"}',
+        note: '{"keep":"as text"}',
+      }),
+    ]);
+    expect((await chat(encoded, request)).toolCalls[0]?.input).toEqual({
+      start: { date: "2026-11-12" },
+      note: '{"keep":"as text"}',
+    });
+
+    for (const start of ['{"date":"bad"}', '{"date":', '"2026-11-12"']) {
+      const invalid = new FakeLLMProvider([
+        fakeToolCall("find_events", { start, note: "x" }),
+      ]);
+      await expect(chat(invalid, request)).rejects.toBeInstanceOf(
+        LLMOutputError,
+      );
+    }
+  });
 });

@@ -14,6 +14,8 @@ const DOCS = { terms: "legal-terms.md", privacy: "legal-privacy.md" };
  * and <!-- it --> (D350, D373, D374, D379).
  */
 export function splitLegal(markdown) {
+  // Git checkouts on Windows use CRLF; generated copy has canonical LF.
+  markdown = markdown.replace(/\r\n?/g, "\n");
   const [ru, rest] = markdown.split(/^<!-- en -->\s*$/m);
   const [en, ptRest] = (rest ?? "").split(/^<!-- pt-BR -->\s*$/m);
   const [ptBR, esRest] = (ptRest ?? "").split(/^<!-- es -->\s*$/m);

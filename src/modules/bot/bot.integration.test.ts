@@ -171,11 +171,22 @@ describe("bot conversation (7A)", () => {
     expect(events.map((event) => event.type)).toEqual([
       "tool_start",
       "tool_result",
+      "tool_end",
       "token",
       "done",
     ]);
     // The step name only: the arguments carry the person's words (D490).
-    expect(events[0]).toEqual({ type: "tool_start", name: "search_jobs" });
+    expect(events[0]).toEqual({
+      type: "tool_start",
+      id: expect.any(String),
+      name: "search_jobs",
+    });
+    expect(events).toContainEqual({
+      type: "tool_end",
+      id: (events[0] as { id: string }).id,
+      name: "search_jobs",
+      status: "completed",
+    });
     expect(events[1]).toMatchObject({
       kind: "jobs",
       data: [{ id: jobId, title }],
@@ -219,6 +230,13 @@ describe("bot conversation (7A)", () => {
     const { events, conversation } = await send(userId, "apply to it");
     const request = events.find((event) => event.type === "confirm_request");
     expect(request).toMatchObject({ tool: "apply_to_job", args: { jobId } });
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        type: "tool_end",
+        name: "apply_to_job",
+        status: "waiting",
+      }),
+    );
     expect(
       await rowsOf(
         sql`select 1 from public.applications where job_id = ${jobId}`,

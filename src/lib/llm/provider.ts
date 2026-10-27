@@ -88,7 +88,14 @@ export function parseToolCalls(
   return calls.map((call) => {
     const tool = tools.find((candidate) => candidate.name === call.name);
     if (!tool) throw new LLMOutputError(`Unknown tool ${call.name}`);
-    const parsed = tool.input.safeParse(call.input);
+    let parsed = tool.input.safeParse(call.input);
+    if (!parsed.success) {
+      const normalized = decodeJsonObjectArguments(
+        call.input,
+        parsed.error.issues,
+      );
+      if (normalized !== call.input) parsed = tool.input.safeParse(normalized);
+    }
     if (!parsed.success) {
       throw new LLMOutputError(
         `Invalid arguments for ${call.name}`,
@@ -97,6 +104,69 @@ export function parseToolCalls(
     }
     return { id: call.id, name: call.name, input: parsed.data };
   });
+}
+
+/** Repair only fields the schema expected to be objects or arrays. */
+function decodeJsonObjectArguments(
+  input: unknown,
+  issues: readonly z.core.$ZodIssue[],
+): unknown {
+  let result = input;
+  for (const issue of issues) {
+    if (
+      issue.code !== "invalid_type" ||
+      (issue.expected !== "object" && issue.expected !== "array") ||
+      issue.path.some(
+        (key) =>
+          typeof key === "symbol" ||
+          key === "__proto__" ||
+          key === "constructor" ||
+          key === "prototype",
+      )
+    ) {
+      continue;
+    }
+    let current: unknown = result;
+    for (const key of issue.path) {
+      if (current === null || typeof current !== "object") break;
+      current = (current as Record<string | number, unknown>)[
+        key as string | number
+      ];
+    }
+    if (typeof current !== "string" || current.length > 16_384) continue;
+    const trimmed = current.trim();
+    if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) continue;
+    let decoded: unknown;
+    try {
+      decoded = JSON.parse(trimmed);
+    } catch {
+      continue;
+    }
+    if (
+      issue.expected === "array"
+        ? !Array.isArray(decoded)
+        : decoded === null ||
+          typeof decoded !== "object" ||
+          Array.isArray(decoded)
+    ) {
+      continue;
+    }
+    const replace = (value: unknown, path: readonly PropertyKey[]): unknown => {
+      if (path.length === 0) return decoded;
+      if (value === null || typeof value !== "object") return value;
+      const [key, ...rest] = path;
+      if (typeof key !== "string" && typeof key !== "number") return value;
+      if (Array.isArray(value)) {
+        const copy = [...value];
+        copy[key as number] = replace(copy[key as number], rest);
+        return copy;
+      }
+      const object = value as Record<string | number, unknown>;
+      return { ...object, [key]: replace(object[key], rest) };
+    };
+    result = replace(result, issue.path);
+  }
+  return result;
 }
 
 /** One chat turn with validated tool calls. */

@@ -48,6 +48,7 @@ import { ugcTools } from "@/modules/ugc/service";
 import { jobDraftTools } from "./job-tools";
 import { OFFER_ACTIONS, offerPath, type FillKind } from "./offers";
 import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
+import { readJobGoal, transitionJobGoal, type JobGoal } from "./job-goal";
 import { accountTools } from "./account-tools";
 import { employerJobTools } from "./employer-job-tools";
 import { accountProfileTools } from "./account-profile-tool";
@@ -92,6 +93,10 @@ import {
 export type FillMode = "self" | "spoki";
 
 export type BotState = {
+  /** One thread's bounded job-search goal; activation is explicit. */
+  jobGoal?: JobGoal;
+  /** Browser tab session owning an unsaved goal. Removed on explicit save. */
+  jobGoalSession?: string;
   /** Allowlisted profile fields gathered in the conversation (12.2, D324). */
   draft?: Record<string, unknown>;
   /** Preferences that are not columns on the candidate profile. */
@@ -257,6 +262,7 @@ const searchInput = z
   .object({
     q: z.string().trim().max(200).optional(),
     category: jobSearchQuery.shape.category,
+    country: jobSearchQuery.shape.country,
     workFormat: z.enum(["remote", "hybrid", "onsite"]).optional(),
     employmentType: z.enum(EMPLOYMENT_TYPES).optional(),
     limit: z.number().int().min(1).max(MAX_JOBS).optional(),
@@ -289,12 +295,17 @@ export const TOOLS: readonly BotTool[] = [
     mcp: searchJobsFace,
     async run(ctx, input) {
       const remembered = searchFiltersFromDraft(ctx.state.draft);
+      const goal = readJobGoal(ctx.state.jobGoal, new Date());
       const query = jobSearchQuery.parse({
         q: input.q ?? remembered.q,
-        category: input.category,
-        workFormat: input.workFormat ?? remembered.workFormat,
+        category: input.category ?? goal?.filters.categorySlug,
+        workFormat:
+          input.workFormat ??
+          (goal?.filters.remoteOnly ? "remote" : undefined) ??
+          remembered.workFormat,
         employmentType: input.employmentType,
-        country: remembered.country,
+        country:
+          input.country ?? goal?.filters.countryCode ?? remembered.country,
         limit: input.limit ?? MAX_JOBS,
       });
       const hidden = ctx.userId
@@ -305,6 +316,18 @@ export const TOOLS: readonly BotTool[] = [
       return {
         llm: jobs.length ? jobs.map(jobForLlm).join("\n") : "No jobs found.",
         client: { kind: "jobs", data: jobs.map(jobCard) },
+        ...(goal
+          ? {
+              state: {
+                ...ctx.state,
+                jobGoal: transitionJobGoal(
+                  goal,
+                  { type: "jobs_search_succeeded", count: jobs.length },
+                  new Date(),
+                )!,
+              },
+            }
+          : {}),
       };
     },
   }),
@@ -467,6 +490,7 @@ export const TOOLS: readonly BotTool[] = [
     async run(ctx) {
       const profile = await getOwnCandidate(ctx.userId!);
       if (!profile) return { llm: "The user has no profile yet." };
+      const goal = readJobGoal(ctx.state.jobGoal, new Date());
       return {
         llm: JSON.stringify(
           pickLlmFields(
@@ -482,6 +506,18 @@ export const TOOLS: readonly BotTool[] = [
             PROFILE_LLM_FIELDS,
           ),
         ),
+        ...(goal
+          ? {
+              state: {
+                ...ctx.state,
+                jobGoal: transitionJobGoal(
+                  goal,
+                  { type: "profile_read_succeeded" },
+                  new Date(),
+                )!,
+              },
+            }
+          : {}),
       };
     },
   }),
@@ -830,7 +866,7 @@ export function toolsFor(
 ): LLMToolDefinition[] {
   const drafting =
     state?.ugcDraftMode || state?.freelanceDraftMode || state?.jobDraftMode;
-  if (domains && userId !== null && !drafting) {
+  if (domains && !drafting) {
     const wanted = new Set<string>(["core", ...domains]);
     const rank = (name: string) =>
       TOOL_DOMAINS.indexOf(domainOf(name) ?? "core");
@@ -838,6 +874,9 @@ export function toolsFor(
       .filter(
         (t) =>
           wanted.has(domainOf(t.name) ?? "") &&
+          // Routing limits the model's choices for guests too; access checks
+          // still exclude every user-only tool from a guest turn.
+          (userId !== null || t.access === "guest") &&
           // A brief starts from its card in a UGC thread (D457).
           !(state?.topic === "ugc" && t.name === "propose_ugc_campaign"),
       )

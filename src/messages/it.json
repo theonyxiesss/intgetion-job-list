@@ -1639,6 +1639,65 @@
     }
   },
   "chat": {
+    "jobGoal": {
+      "title": "Trova lavoro",
+      "intro": "Imposta i criteri. Spoki cercherà sulla piattaforma e suggerirà il prossimo passo.",
+      "category": "Categoria",
+      "anyCategory": "Qualsiasi categoria",
+      "country": "Codice paese",
+      "countryHint": "IT",
+      "remoteOnly": "Solo da remoto",
+      "start": "Avvia ricerca",
+      "update": "Aggiorna e cerca",
+      "save": "Salva obiettivo",
+      "saveHint": "Salva questo obiettivo per riprenderlo in un’altra visita.",
+      "sessionOnly": "Questo obiettivo dura solo per questa sessione del browser. Accedi per salvarlo.",
+      "pause": "Metti in pausa",
+      "resume": "Riprendi",
+      "delete": "Elimina obiettivo",
+      "confirmDelete": "Conferma eliminazione",
+      "cancel": "Annulla",
+      "skipProfile": "Cerca senza profilo",
+      "paused": "In pausa",
+      "saved": "Salvato",
+      "error": "Impossibile aggiornare l’obiettivo. Riprova.",
+      "searchPrompt": "Trova offerte per me su questa piattaforma usando i criteri del mio obiettivo attuale. Se ho un profilo, leggilo prima. Mostra risultati confermati e un prossimo passo.",
+      "step": {
+        "profile": "Prossimo passo: controllare il profilo",
+        "search": "Prossimo passo: cercare offerte",
+        "next": "Prossimo passo: scegliere un’offerta o affinare la ricerca"
+      }
+    },
+    "work": {
+      "noSteps": "Nessun passaggio degli strumenti registrato per questa risposta.",
+      "title": "Avanzamento",
+      "running": "In corso",
+      "done": "Risposta completata",
+      "failed": "Impossibile completare",
+      "stopped": "Risposta interrotta",
+      "attention": "Richiede attenzione",
+      "preparing": "Preparazione della risposta",
+      "interrupted": "Un’azione del server può continuare dopo l’interruzione della chat. Verifica lo stato prima di riprovare.",
+      "customReply": "Rispondere con parole mie",
+      "step": {
+        "running": "In corso",
+        "completed": "Passaggio completato",
+        "waiting": "In attesa della tua conferma",
+        "blocked": "Azione non eseguita",
+        "failed": "Esecuzione non riuscita",
+        "unknown": "Risultato non confermato"
+      },
+      "tools": {
+        "searchJobs": "Ricerca di lavoro",
+        "readJob": "Dettagli dell’offerta",
+        "events": "Ricerca di eventi",
+        "services": "Servizi e fornitori",
+        "account": "Dati dell’account",
+        "memory": "Memoria",
+        "ugc": "Campagna UGC",
+        "working": "Azione sulla piattaforma"
+      }
+    },
     "jobDraft": {
       "title": "Bozza condivisa dell’offerta",
       "missing": "Mancano ancora {count} dati obbligatori.",
@@ -1724,6 +1783,11 @@
     "telegramBot": "@intgetion_bot",
     "emptyGuest": "Di’ a Spoki dove ti trovi e che lavoro cerchi.",
     "emptySignedIn": "Di’ a Spoki cosa vuoi trovare. La conversazione riprende da dove l’hai lasciata.",
+    "searchPlatform": "Cerca offerte sulla piattaforma",
+    "internetFallbackQuestion": "Nessuna offerta adatta trovata sulla piattaforma. Cerchiamo su Internet?",
+    "internetFallbackYes": "Sì, cerca su Internet",
+    "internetFallbackNo": "No, affina la ricerca sulla piattaforma",
+    "internetSearchUnavailable": "Al momento Spoki cerca offerte solo su INTGETION. Puoi modificare la ricerca e riprovare.",
     "score": "{score}% di corrispondenza",
     "status": {
       "thinking": "Thinking",

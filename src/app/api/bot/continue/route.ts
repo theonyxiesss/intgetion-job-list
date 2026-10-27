@@ -5,7 +5,11 @@ import { clientIp } from "@/lib/request-ip";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { botContinueInput } from "@/modules/bot/schemas";
-import { continueAfterCard, type BotEvent } from "@/modules/bot/service";
+import {
+  continueAfterCard,
+  goalSessionFromRequest,
+  type BotEvent,
+} from "@/modules/bot/service";
 
 /**
  * `POST /api/bot/continue` → SSE like `/api/bot/message`: Spoki's own turn
@@ -31,7 +35,12 @@ data: ${JSON.stringify(event)}
           );
         try {
           await continueAfterCard(
-            { userId: user.id, confirmationId: input.confirmationId, ip },
+            {
+              userId: user.id,
+              confirmationId: input.confirmationId,
+              ip,
+              goalSession: goalSessionFromRequest(request),
+            },
             emit,
           );
         } catch (error) {

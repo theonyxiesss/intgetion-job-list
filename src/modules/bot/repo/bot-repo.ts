@@ -661,3 +661,25 @@ export async function updateBlockRow(
     })
     .where(eq(botMessages.id, id));
 }
+
+/** Saved job goals idle since before the cut-off (D553 retention). */
+export async function listIdleJobGoalConversations(cutoff: Date) {
+  return getDb()
+    .select({ id: botConversations.id, state: botConversations.state })
+    .from(botConversations)
+    .where(
+      sql`${botConversations.state} -> 'jobGoal' ->> 'savedAt' is not null
+        and (${botConversations.state} -> 'jobGoal' ->> 'updatedAt')::timestamptz < ${cutoff.toISOString()}::timestamptz`,
+    );
+}
+
+/** Replaces only the state; the retention sweep must not extend the thread's life. */
+export async function setConversationState(
+  id: string,
+  state: ConversationRow["state"],
+) {
+  await getDb()
+    .update(botConversations)
+    .set({ state })
+    .where(eq(botConversations.id, id));
+}

@@ -1639,6 +1639,65 @@
     }
   },
   "chat": {
+    "jobGoal": {
+      "title": "Buscar empleo",
+      "intro": "Define tus criterios. Spoki buscará en la plataforma y sugerirá el siguiente paso.",
+      "category": "Categoría",
+      "anyCategory": "Cualquier categoría",
+      "country": "Código de país",
+      "countryHint": "ES",
+      "remoteOnly": "Solo remoto",
+      "start": "Iniciar búsqueda",
+      "update": "Actualizar y buscar",
+      "save": "Guardar objetivo",
+      "saveHint": "Guarda este objetivo para continuar en otra visita.",
+      "sessionOnly": "Este objetivo dura solo esta sesión del navegador. Inicia sesión para guardarlo.",
+      "pause": "Pausar",
+      "resume": "Continuar",
+      "delete": "Eliminar objetivo",
+      "confirmDelete": "Confirmar eliminación",
+      "cancel": "Cancelar",
+      "skipProfile": "Buscar sin perfil",
+      "paused": "En pausa",
+      "saved": "Guardado",
+      "error": "No se pudo actualizar el objetivo. Inténtalo de nuevo.",
+      "searchPrompt": "Busca empleos para mí en esta plataforma con los criterios de mi objetivo actual. Si tengo perfil, léelo primero. Muestra resultados confirmados y un siguiente paso.",
+      "step": {
+        "profile": "Siguiente: revisar tu perfil",
+        "search": "Siguiente: buscar empleos en la plataforma",
+        "next": "Siguiente: elegir un empleo o ajustar la búsqueda"
+      }
+    },
+    "work": {
+      "noSteps": "No se registraron pasos de herramientas para esta respuesta.",
+      "title": "Progreso",
+      "running": "En curso",
+      "done": "Respuesta terminada",
+      "failed": "No se pudo terminar",
+      "stopped": "Respuesta detenida",
+      "attention": "Requiere atención",
+      "preparing": "Preparando la respuesta",
+      "interrupted": "Detener el chat puede no detener una acción del servidor. Comprueba su estado antes de repetirla.",
+      "customReply": "Responder con mis palabras",
+      "step": {
+        "running": "En curso",
+        "completed": "Paso completado",
+        "waiting": "Espera tu confirmación",
+        "blocked": "Acción no realizada",
+        "failed": "Error de ejecución",
+        "unknown": "Resultado sin confirmar"
+      },
+      "tools": {
+        "searchJobs": "Búsqueda de empleos",
+        "readJob": "Detalles del empleo",
+        "events": "Búsqueda de eventos",
+        "services": "Servicios y proveedores",
+        "account": "Datos de la cuenta",
+        "memory": "Memoria",
+        "ugc": "Campaña UGC",
+        "working": "Acción de la plataforma"
+      }
+    },
     "jobDraft": {
       "title": "Borrador compartido de la oferta",
       "missing": "Faltan {count} datos obligatorios de la oferta.",
@@ -1724,6 +1783,11 @@
     "telegramBot": "@intgetion_bot",
     "emptyGuest": "Prueba: «empleos remotos de backend con Python». Como invitado puedes buscar; regístrate para guardar empleos y postularte.",
     "emptySignedIn": "Prueba: «encuentra empleos remotos de diseño» o «¿en qué estado están mis candidaturas?»",
+    "searchPlatform": "Buscar empleos en la plataforma",
+    "internetFallbackQuestion": "No se encontraron empleos adecuados en la plataforma. ¿Buscamos en internet?",
+    "internetFallbackYes": "Sí, buscar en internet",
+    "internetFallbackNo": "No, ajustar la búsqueda en la plataforma",
+    "internetSearchUnavailable": "Por ahora, Spoki solo busca empleos en INTGETION. Puedes cambiar la búsqueda e intentarlo de nuevo.",
     "score": "{score}% de afinidad",
     "status": {
       "thinking": "Thinking",

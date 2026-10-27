@@ -99,6 +99,8 @@ import {
   ugcTopicState,
 } from "./ugc-focus";
 import { stripLeakedToolMarkup } from "./leaked-tool";
+import { goalStateForTurn, visibleJobGoal } from "./job-goal-session";
+import type { JobGoal } from "./job-goal";
 import { blockFromTool } from "../ui/build";
 import { interactiveUiOn } from "../ui/flag";
 import { checkBlock } from "../ui/schemas";
@@ -166,7 +168,13 @@ export type BotEvent =
   /** `messageId`: the stored answer, so the person can rate it (D514). */
   | { type: "token"; text: string; messageId?: string }
   /** A tool is about to run; the web chat shows what Spoki is doing (D490). */
-  | { type: "tool_start"; name: string }
+  | { type: "tool_start"; id: string; name: string }
+  | {
+      type: "tool_end";
+      id: string;
+      name: string;
+      status: "completed" | "waiting" | "blocked" | "failed";
+    }
   | { type: "tool_result"; name: string; kind: string; data: unknown }
   /** A checked interactive block (D523); Telegram shows its text. */
   | { type: "ui"; block: UiBlock }
@@ -186,6 +194,7 @@ export type BotEvent =
   | { type: "resume_ack"; text: string }
   | { type: "fill_choice" }
   | { type: "profile_saved"; text: string }
+  | { type: "job_goal"; goal: JobGoal | null }
   | { type: "done"; conversationId: string };
 
 export type ChatActions = {
@@ -1204,6 +1213,8 @@ export type MessageInput = {
   channel?: Channel;
   /** The part of the site open beside the Spoki panel (D525). */
   page?: PageSection;
+  /** Browser tab session for an unsaved job goal. */
+  goalSession?: string | null;
 };
 
 /** How long after a card is answered Spoki may still take its turn (D515). */
@@ -1243,11 +1254,16 @@ export async function handleMessage(
       content: redactPii(input.text),
     });
 
+  const threadState = goalStateForTurn(
+    (current.state ?? {}) as BotState,
+    input.goalSession ?? null,
+    now,
+  );
   let state: BotState = afterCard
-    ? { ...(current.state as BotState) }
+    ? { ...threadState }
     : {
-        ...(current.state as BotState),
-        draft: rememberUtterance((current.state as BotState).draft, input.text),
+        ...threadState,
+        draft: rememberUtterance(threadState.draft, input.text),
       };
   // D516: a request to fill something in (a job, a brief, a service, a
   // profile, the company card) first asks how: together here or alone in
@@ -1345,6 +1361,14 @@ export async function handleMessage(
     interactive: interactiveUiOn(),
     now: userId ? localNow(now, known?.timezone) : undefined,
     page: input.page,
+    jobGoal: state.jobGoal
+      ? JSON.stringify({
+          step: state.jobGoal.step,
+          status: state.jobGoal.status,
+          filters: state.jobGoal.filters,
+          savedAt: state.jobGoal.savedAt,
+        })
+      : undefined,
   });
   // D522: hybrid routing. A signed-in person outside a draft gets the core
   // and the services of this turn; `use_tools` loads one more set per turn;
@@ -1352,7 +1376,6 @@ export async function handleMessage(
   // whole registry by default; SPOKI_TOOL_ROUTING=false turns it off.
   const routed =
     toolRoutingOn() &&
-    userId !== null &&
     !state.ugcDraftMode &&
     !state.freelanceDraftMode &&
     !state.jobDraftMode;
@@ -1597,6 +1620,7 @@ export async function handleMessage(
       jobThread: Boolean(focusedId),
       showedJobs,
       waiting,
+      allowJobSearch: !routed || domains.has("jobs"),
     });
     const calls = state.jobDraftMode
       ? shapedCalls
@@ -1975,6 +1999,30 @@ async function callTool(
   call: LLMToolCall,
   emit: Emit,
   now: Date,
+) {
+  // Each invocation has its own identity, even when a provider reuses call ids.
+  const id = crypto.randomUUID();
+  emit({ type: "tool_start", id, name: call.name });
+  try {
+    const result = await executeTool(ctx, call, emit, now);
+    emit({
+      type: "tool_end",
+      id,
+      name: call.name,
+      status: result.workStatus ?? (result.waiting ? "waiting" : "completed"),
+    });
+    return result;
+  } catch (error) {
+    emit({ type: "tool_end", id, name: call.name, status: "failed" });
+    throw error;
+  }
+}
+
+async function executeTool(
+  ctx: ToolContext,
+  call: LLMToolCall,
+  emit: Emit,
+  now: Date,
 ): Promise<{
   llm: string;
   state?: BotState;
@@ -1982,14 +2030,14 @@ async function callTool(
   jobs?: boolean;
   jobCards?: JobCardFacts[];
   ui?: UiBlock;
+  workStatus?: "blocked" | "failed";
 }> {
-  // The web chat names the step while it runs (D490). Name only, no input.
-  emit({ type: "tool_start", name: call.name });
   // A draft is sent only after the person's own clear yes; the card then
   // asks once more (D520). A yes that asks for a change is not a yes.
   const yesCheck = findTool(call.name)?.requiresExplicitYes;
   if (yesCheck && !yesCheck(ctx.state.lastUserText ?? "")) {
     return {
+      workStatus: "blocked",
       llm: "No confirmation card was shown. Wait until the person's own message clearly says yes to sending it, with no change asked. If they asked for a change, make it first.",
     };
   }
@@ -2000,6 +2048,7 @@ async function callTool(
     } catch (error) {
       if (!(error instanceof HttpError)) throw error;
       return {
+        workStatus: "blocked",
         llm:
           error.status === 404
             ? "Not found among this person's own items. No card was shown. Read the list again."
@@ -2091,7 +2140,7 @@ async function callTool(
     if (error instanceof HttpError) {
       const details =
         error.details === undefined ? "" : ` ${JSON.stringify(error.details)}`;
-      return { llm: `Error: ${error.code}${details}` };
+      return { llm: `Error: ${error.code}${details}`, workStatus: "failed" };
     }
     throw error;
   }
@@ -2152,6 +2201,10 @@ async function finish(
     { state: next, locale: input.locale },
     now,
   );
+  emit({
+    type: "job_goal",
+    goal: visibleJobGoal(next, input.goalSession ?? null, now),
+  });
   emit({ type: "done", conversationId: input.conversation.id });
 }
 
@@ -2320,7 +2373,12 @@ export async function confirmAction(
  * per card; it does not count against the daily message limit.
  */
 export async function continueAfterCard(
-  input: { userId: string; confirmationId: string; ip: string },
+  input: {
+    userId: string;
+    confirmationId: string;
+    ip: string;
+    goalSession?: string | null;
+  },
   emit: Emit,
   now = new Date(),
 ): Promise<void> {
@@ -2347,6 +2405,7 @@ export async function continueAfterCard(
       ip: input.ip,
       locale: conversation.locale ?? "en",
       afterCard: true,
+      goalSession: input.goalSession,
     },
     emit,
     now,

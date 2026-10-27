@@ -15,6 +15,7 @@ const LEXICON: Record<LoadableDomain, readonly string[]> = {
     "работ",
     "отклик",
     "резюме",
+    "анкет",
     "профил",
     "зарплат",
     "собеседован",

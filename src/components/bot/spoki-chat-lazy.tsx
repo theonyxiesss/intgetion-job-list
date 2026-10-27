@@ -45,6 +45,7 @@ export function SpokiChat({
         "notifications",
         "notificationSettings",
         "jobs",
+        "categories",
         "chatFreelance",
       ]}
       fallback={fallback}

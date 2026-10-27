@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { buildLegal } from "../../../scripts/legal-sync.mjs";
+import { buildLegal, splitLegal } from "../../../scripts/legal-sync.mjs";
 import { LEGAL_DETAILS } from "@/config/legal";
 import { headingId, parseLegal } from "@/components/legal/parse";
 import legal from "./legal.json";
 import { legalText } from "./index";
 
 describe("legal texts (D241)", () => {
+  it("builds identical legal content from Windows and Unix line endings", () => {
+    const source = "# Условия\n\nТекст.\n<!-- en -->\n# Terms\n\nText.\n";
+    expect(splitLegal(source.replaceAll("\n", "\r\n"))).toEqual(
+      splitLegal(source),
+    );
+  });
   it("match docs/content/legal-*.md — run pnpm legal:sync after editing", () => {
     expect(buildLegal(process.cwd())).toEqual(legal);
   });

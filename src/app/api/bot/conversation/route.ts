@@ -9,6 +9,8 @@ import {
   pendingConfirmations,
   readFreelanceFocus,
   resumeConversation,
+  readConversationJobGoal,
+  goalSessionFromRequest,
   type BotState,
 } from "@/modules/bot/service";
 import {
@@ -53,6 +55,10 @@ export async function GET(request: Request) {
             draftOffer: null,
             pending: await pendingConfirmations(thread.id, userId),
             actions: chatActions(userId, (thread.state ?? {}) as BotState),
+            jobGoal: await readConversationJobGoal({
+              conversation: thread,
+              session: goalSessionFromRequest(request),
+            }),
           },
           { headers: { "cache-control": "no-store" } },
         );
@@ -146,6 +152,12 @@ export async function GET(request: Request) {
           ? await pendingConfirmations(conversation.id, userId)
           : [],
         actions,
+        jobGoal: conversation
+          ? await readConversationJobGoal({
+              conversation,
+              session: goalSessionFromRequest(request),
+            })
+          : null,
         focus,
         next,
         briefDraft,

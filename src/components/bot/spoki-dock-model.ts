@@ -95,6 +95,7 @@ export const SPOKI_NAMESPACES = [
   "notifications",
   "notificationSettings",
   "jobs",
+  "categories",
   "chatFreelance",
 ] as const;
 

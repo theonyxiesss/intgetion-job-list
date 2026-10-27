@@ -33,8 +33,21 @@ import {
   isAccountCardTool,
 } from "@/components/bot/account-card";
 import { AssistantAnswer } from "@/components/bot/chat-markdown";
+import { ChatSuggestions } from "@/components/bot/chat-suggestions";
+import {
+  JobGoalPanel,
+  type JobGoalAction,
+} from "@/components/bot/job-goal-panel";
+import type { JobGoal } from "@/modules/bot/service/job-goal";
 import { draftCardDue } from "@/components/bot/draft-card";
 import { ThinkingStatusLine } from "@/components/bot/thinking-status-line";
+import { WorkProgressCard } from "@/components/bot/work-progress-card";
+import {
+  advanceWork,
+  finishWork,
+  type WorkState,
+  type WorkStep,
+} from "@/components/bot/work-progress";
 import {
   SpokiBlock,
   type CalcValues,
@@ -87,6 +100,7 @@ type JobCard = {
 };
 
 type Entry =
+  | { key: string; kind: "work"; steps: WorkStep[]; state: WorkState }
   | { key: string; kind: "user" | "event"; text: string }
   /** `live`: arrived in this visit, so it types itself out (D514). */
   | {
@@ -353,6 +367,7 @@ export function Chat({
   ugcProduct?: string;
 }) {
   const t = useTranslations("chat");
+  const goalText = useTranslations("chat.jobGoal");
   const ugcText = useTranslations("ugc");
   const explain = useTranslations("explain");
   const locale = useLocale();
@@ -361,6 +376,7 @@ export function Chat({
   const [historyReady, setHistoryReady] = useState(false);
   const [lane, setLane] = useState<StarterLane>("find");
   const [starterSeed, setStarterSeed] = useState(1);
+  const [noJobsFound, setNoJobsFound] = useState(false);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [thinking, setThinking] = useState(false);
@@ -368,6 +384,10 @@ export function Chat({
   const [activity, setActivity] = useState<string | null>(null);
   /** The thread's subject from the server, when the address named none (D525). */
   const [serverFocus, setServerFocus] = useState<ServerFocus | null>(null);
+  const [jobGoal, setJobGoal] = useState<JobGoal | null>(null);
+  const [goalBusy, setGoalBusy] = useState(false);
+  const [goalError, setGoalError] = useState(false);
+  const goalSessionRef = useRef<string | null>(null);
   const [actions, setActions] = useState<ChatActions>({
     signup: false,
     fillChoice: false,
@@ -377,6 +397,11 @@ export function Chat({
   const fieldRef = useRef<HTMLTextAreaElement>(null);
   /** Empty chat sits mid-screen; a started conversation pins the field to the bottom. */
   const welcome = entries.length === 0;
+  const suggestionMessages = entries.flatMap((entry) =>
+    entry.kind === "user" || entry.kind === "assistant"
+      ? [{ id: entry.key, role: entry.kind, text: entry.text }]
+      : [],
+  );
 
   /** One line, then a few more, then a fixed cap. Past that, the field scrolls. */
   function fitComposer(node: HTMLTextAreaElement) {
@@ -423,7 +448,21 @@ export function Chat({
       params.set("confirm", confirmId);
     }
     const query = params.size > 0 ? `?${params.toString()}` : "";
-    fetch(`/api/bot/conversation${query}`)
+    try {
+      let marker = sessionStorage.getItem("spoki_goal_session");
+      if (!marker) {
+        marker = crypto.randomUUID();
+        sessionStorage.setItem("spoki_goal_session", marker);
+      }
+      goalSessionRef.current = marker;
+    } catch {
+      goalSessionRef.current = null;
+    }
+    fetch(`/api/bot/conversation${query}`, {
+      headers: goalSessionRef.current
+        ? { "x-spoki-goal-session": goalSessionRef.current }
+        : {},
+    })
       .then((response) => (response.ok ? response.json() : null))
       .then(
         (
@@ -435,6 +474,7 @@ export function Chat({
             } | null;
             pending?: PendingCard[];
             actions?: ChatActions;
+            jobGoal?: JobGoal | null;
             focus?: ServerFocus;
             /** The page of the next UGC step (D467). */
             next?: { href: string; link: string } | null;
@@ -459,6 +499,7 @@ export function Chat({
         ) => {
           if (!body) return;
           if (body.actions) setActions(body.actions);
+          setJobGoal(body.jobGoal ?? null);
           if (body.focus) setServerFocus(body.focus);
           const history: Entry[] = body.messages.map((message) =>
             message.role === "ui" && blockOf(message.block)
@@ -670,11 +711,12 @@ export function Chat({
   }
 
   async function ask(message: string) {
-    if (!message || sending) return;
+    if (!message || sending) return false;
+    setNoJobsFound(false);
     setText("");
     fieldRef.current?.focus();
     add({ key: nextKey(), kind: "user", text: message });
-    await streamTurn("/api/bot/message", {
+    return streamTurn("/api/bot/message", {
       text: message,
       locale,
       ...(section ? { section } : {}),
@@ -685,6 +727,53 @@ export function Chat({
       ...(campaignId ? { campaignId } : {}),
       ...(inviteId ? { inviteId } : {}),
     });
+  }
+
+  async function changeJobGoal(action: JobGoalAction) {
+    if (goalBusy || sending) return;
+    setGoalBusy(true);
+    setGoalError(false);
+    try {
+      const response = await fetch("/api/bot/goal", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          ...(goalSessionRef.current
+            ? { "x-spoki-goal-session": goalSessionRef.current }
+            : {}),
+        },
+        body: JSON.stringify(action),
+      });
+      if (!response.ok) throw new Error("Goal update failed");
+      const result = (await response.json()) as { goal: JobGoal | null };
+      setJobGoal(result.goal);
+      if (
+        action.action === "start" ||
+        action.action === "filters" ||
+        action.action === "resume" ||
+        action.action === "skip_profile"
+      ) {
+        void ask(goalText("searchPrompt"));
+      }
+    } catch {
+      setGoalError(true);
+    } finally {
+      setGoalBusy(false);
+    }
+  }
+
+  function selectSuggestion(prompt: string) {
+    if (prompt === t("internetFallbackYes")) {
+      add({ key: nextKey(), kind: "user", text: prompt });
+      add({
+        key: nextKey(),
+        kind: "assistant",
+        text: t("internetSearchUnavailable"),
+      });
+      setNoJobsFound(false);
+      return;
+    }
+    void ask(prompt);
   }
 
   /**
@@ -704,11 +793,20 @@ export function Chat({
     setThinking(true);
     setActivity(null);
     const answerKey = nextKey();
+    const workKey = nextKey();
+    let turnState: WorkState = "failed";
+    let hadError = false;
+    add({ key: workKey, kind: "work", steps: [], state: "running" });
     try {
       const response = await fetch(url, {
         method: "POST",
         signal: controller.signal,
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          ...(goalSessionRef.current
+            ? { "x-spoki-goal-session": goalSessionRef.current }
+            : {}),
+        },
         body: JSON.stringify(payload),
       });
       if (!response.ok || !response.body) {
@@ -718,9 +816,24 @@ export function Chat({
             kind: "notice",
             code: response.status === 429 ? "RATE_LIMITED" : "BOT_TRY_LATER",
           });
-        return;
+        return false;
       }
       for await (const data of readEvents(response.body)) {
+        if (data.type === "tool_start" || data.type === "tool_end") {
+          setEntries((current) =>
+            current.map((entry) =>
+              entry.key === workKey && entry.kind === "work"
+                ? { ...entry, steps: advanceWork(entry.steps, data) }
+                : entry,
+            ),
+          );
+        }
+        if (data.type === "tool_end") setActivity(null);
+        if (data.type === "error") hadError = true;
+        if (data.type === "done") turnState = hadError ? "failed" : "done";
+        if (data.type === "job_goal") {
+          setJobGoal((data.goal as JobGoal | null) ?? null);
+        }
         if (data.type === "token") {
           setThinking(false);
           appendAnswer(
@@ -750,10 +863,12 @@ export function Chat({
           (data.kind === "jobs" || data.kind === "matches")
         ) {
           setThinking(false);
+          const jobs = Array.isArray(data.data) ? (data.data as JobCard[]) : [];
+          setNoJobsFound(jobs.length === 0);
           add({
             key: nextKey(),
             kind: data.kind,
-            jobs: data.data as JobCard[],
+            jobs,
           });
         } else if (data.type === "tool_result" && data.kind === "ugc_join") {
           const payload = (data.data as { payload?: unknown } | null)?.payload;
@@ -921,16 +1036,26 @@ export function Chat({
         }
       }
     } catch {
+      turnState = controller.signal.aborted ? "stopped" : "failed";
       if (controller.signal.aborted)
         add({ key: nextKey(), kind: "event", text: t("answer.stopped") });
       else if (!quiet)
         add({ key: nextKey(), kind: "notice", code: "BOT_TRY_LATER" });
     } finally {
+      if (controller.signal.aborted) turnState = "stopped";
+      setEntries((current) =>
+        current.map((entry) =>
+          entry.key === workKey && entry.kind === "work"
+            ? { ...entry, state: turnState, steps: finishWork(entry.steps) }
+            : entry,
+        ),
+      );
       abortRef.current = null;
       setThinking(false);
       setActivity(null);
       setSending(false);
     }
+    return turnState === "done";
   }
 
   useLayoutEffect(() => {
@@ -1059,7 +1184,10 @@ export function Chat({
     if (sending) return;
     if (entry.block.component === "choice")
       patchBlock(entry.key, { done: [...entry.done, actionId] });
-    void ask(line);
+    void ask(line).then((completed) => {
+      if (!completed && entry.block.component === "choice")
+        patchBlock(entry.key, { done: entry.done });
+    });
   }
 
   /** A server button (save, refresh): the server keeps what it does. */
@@ -1145,6 +1273,18 @@ export function Chat({
     shownFreelanceTitle ||
     fromServices,
   );
+  const showJobGoal =
+    Boolean(jobGoal) ||
+    (!jobId &&
+      !fromServices &&
+      !fromCampaigns &&
+      !fromFreelanceSell &&
+      !fromPostJob &&
+      !serviceId &&
+      !orderId &&
+      !campaignId &&
+      !inviteId &&
+      (variant === "page" || section === "jobs"));
 
   return (
     <FreelanceCopyContext.Provider value={freelanceCopy}>
@@ -1158,7 +1298,7 @@ export function Chat({
         <div
           data-chat-meta
           className={
-            variant === "page" || hasFocusLine
+            variant === "page" || hasFocusLine || showJobGoal
               ? "mx-auto w-full max-w-3xl shrink-0 px-4 py-3 md:px-6"
               : "hidden"
           }
@@ -1217,6 +1357,21 @@ export function Chat({
                 {t("serviceFocus.back")}
               </Link>
             </p>
+          ) : null}
+          {historyReady && showJobGoal ? (
+            <>
+              <JobGoalPanel
+                goal={jobGoal}
+                signedIn={signedIn}
+                busy={goalBusy || sending}
+                onAction={changeJobGoal}
+              />
+              {goalError ? (
+                <p role="alert" className="mt-2 text-sm text-danger">
+                  {goalText("error")}
+                </p>
+              ) : null}
+            </>
           ) : null}
         </div>
         <div
@@ -1281,24 +1436,25 @@ export function Chat({
                           </button>
                         ))}
                       </div>
-                      <div className="flex flex-col gap-2">
-                        {pickStarterKeys(
-                          STARTER_KEYS[lane],
-                          STARTER_SHOW,
-                          starterSeed,
-                        ).map((key) => (
-                          <button
-                            key={key}
-                            type="button"
-                            className="min-h-11 rounded-full border border-line px-5 text-left text-fg"
-                            onClick={() =>
-                              void ask(t(`starters.questions.${key}`))
-                            }
-                          >
-                            {t(`starters.questions.${key}`)}
-                          </button>
-                        ))}
-                      </div>
+                      <ChatSuggestions
+                        messages={suggestionMessages}
+                        isRunning={sending}
+                        onSelect={selectSuggestion}
+                        prompts={[
+                          {
+                            id: "platform-search",
+                            text: t("searchPlatform"),
+                          },
+                          ...pickStarterKeys(
+                            STARTER_KEYS[lane],
+                            STARTER_SHOW,
+                            starterSeed,
+                          ).map((key) => ({
+                            id: key,
+                            text: t(`starters.questions.${key}`),
+                          })),
+                        ]}
+                      />
                     </div>
                   )}
               </div>
@@ -1353,6 +1509,15 @@ export function Chat({
                   </div>
                 );
               }
+              if (entry.kind === "work") {
+                return (
+                  <WorkProgressCard
+                    key={entry.key}
+                    steps={entry.steps}
+                    state={entry.state}
+                  />
+                );
+              }
               if (entry.kind === "ui") {
                 return (
                   <SpokiBlock
@@ -1369,11 +1534,13 @@ export function Chat({
                       busy: entry.busy ?? null,
                       done: entry.done,
                       sending,
+                      edit: () => fieldRef.current?.focus(),
                     }}
                   />
                 );
               }
               if (entry.kind === "jobs" || entry.kind === "matches") {
+                if (entry.jobs.length === 0) return null;
                 return (
                   <ul key={entry.key} className="grid gap-2">
                     {entry.jobs.map((job) => (
@@ -1828,6 +1995,22 @@ export function Chat({
                 </p>
               );
             })}
+            {noJobsFound && !sending && (
+              <div className="flex w-full flex-col gap-3 rounded-lg border border-line p-4">
+                <p className="text-sm text-fg-muted">
+                  {t("internetFallbackQuestion")}
+                </p>
+                <ChatSuggestions
+                  messages={suggestionMessages}
+                  isRunning={sending}
+                  onSelect={selectSuggestion}
+                  prompts={[
+                    { id: "internet-yes", text: t("internetFallbackYes") },
+                    { id: "internet-no", text: t("internetFallbackNo") },
+                  ]}
+                />
+              </div>
+            )}
             {thinking && <ThinkingStatusLine tool={activity} />}
             <div ref={endRef} />
           </div>

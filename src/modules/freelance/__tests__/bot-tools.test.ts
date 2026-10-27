@@ -1,7 +1,17 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const searchServicesMock = vi.hoisted(() => vi.fn());
+
+vi.mock("../service/listing-service", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("../service/listing-service")>();
+  return { ...actual, searchServices: searchServicesMock };
+});
+
 import {
   cardLinks,
   cleanForModel,
+  FREELANCE_EMPTY_CATALOG,
   freelanceTools,
   orderForModel,
   priceRangeForModel,
@@ -11,7 +21,29 @@ import { hasContacts } from "../service/rules";
 
 const SERVICE = "00000000-0000-4000-8000-0000000000f1";
 
+const publishedVideoService = {
+  id: SERVICE,
+  title: "Video editing for short-form social ads",
+  category: "marketing",
+  languages: ["en"],
+  completed: 0,
+  rating: null,
+  reviews: 0,
+  packages: [
+    {
+      tier: "basic",
+      priceMinor: BigInt(3000),
+      deliveryDays: 2,
+      revisions: 1,
+    },
+  ],
+};
+
 describe("freelance Spoki tools (28.8, D460)", () => {
+  beforeEach(() => {
+    searchServicesMock.mockReset();
+  });
+
   it("names every read and card tool of 28.8", () => {
     const names = freelanceTools.map((tool) => tool.name);
     for (const name of [
@@ -118,6 +150,65 @@ describe("freelance Spoki tools (28.8, D460)", () => {
     expect(line).not.toContain("sellerId");
     expect(line).not.toContain("https://");
   });
+
+  it.each([
+    ["guest", null],
+    ["signed-in user", "user-1"],
+  ] as const)(
+    "find_services returns only stubbed published service facts for a %s",
+    async (_role, userId) => {
+      searchServicesMock.mockResolvedValue({
+        services: [publishedVideoService],
+        total: 1,
+        page: 1,
+      });
+      const findServices = freelanceTools.find(
+        (tool) => tool.name === "find_services",
+      )!;
+      const runFindServices = findServices.run as unknown as (
+        context: { userId: string | null; locale: string },
+        input: { q: string },
+      ) => Promise<{ llm: string; client?: unknown }>;
+
+      const outcome = await runFindServices(
+        { userId, locale: "en" },
+        { q: "video editing" },
+      );
+
+      expect(searchServicesMock).toHaveBeenCalledWith(
+        expect.objectContaining({ q: "video editing", page: 1 }),
+      );
+      expect(outcome.llm).toContain(publishedVideoService.title);
+      expect(outcome.llm).toContain("$30");
+      expect(outcome.llm).not.toContain("sellerId");
+      expect(outcome.llm).not.toContain("https://");
+    },
+  );
+
+  it.each([
+    ["guest", null],
+    ["signed-in user", "user-1"],
+  ] as const)(
+    "returns the honest empty-catalog result for a %s",
+    async (_role, userId) => {
+      searchServicesMock.mockResolvedValue({ services: [], total: 0, page: 1 });
+      const findServices = freelanceTools.find(
+        (tool) => tool.name === "find_services",
+      )!;
+      const runFindServices = findServices.run as unknown as (
+        context: { userId: string | null; locale: string },
+        input: { q: string },
+      ) => Promise<{ llm: string; client?: unknown }>;
+
+      const outcome = await runFindServices(
+        { userId, locale: "en" },
+        { q: "video editing" },
+      );
+
+      expect(outcome.llm).toBe(FREELANCE_EMPTY_CATALOG);
+      expect(outcome.client).toBeUndefined();
+    },
+  );
 
   it("says plainly when a direction has no prices", () => {
     expect(priceRangeForModel("design", null)).toMatch(/No published prices/);

@@ -37,5 +37,6 @@
 | [32-spoki-stage1.md](32-spoki-stage1.md)                 | Spoki этап 1 (проект): гибридная маршрутизация инструментов, карточки брифа и услуги, журнал `bot_actions`, замеры. Кода нет                                                                                               |
 | [33-spoki-interactive-ui.md](33-spoki-interactive-ui.md) | D523 (проект): интерактивные блоки в чате Spoki — формат `UiBlock`, реестр, `show_ui`, действия через карточки, Telegram-замена, MVP из 7 компонентов. §10 — актуализация под Spoki Dock и план MVP (2026-10-24). Кода нет |
 | [34-spoki-dock.md](34-spoki-dock.md)                     | D525: постоянная панель Spoki — один экземпляр `Chat` в layout, режимы по ширине, `/chat` как «во весь экран», телефон, раздел страницы в промпте; решения §8, как сделано §9. Ветка `claude/spoki-dock`, за `SPOKI_DOCK`  |
+| [35-spoki-agent-roadmap.md](35-spoki-agent-roadmap.md)   | D540/D541: план Spoki в 5 этапов, ревью слабых мест и брейншторм сценария, workflow и памяти. Предложения не приняты автоматически.                                                                                        |
 
 Новые D — только в [../DECISIONS.md](../DECISIONS.md). Как в коде — [../how-it-works/](../how-it-works/INDEX.md).

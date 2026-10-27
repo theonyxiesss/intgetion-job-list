@@ -20,6 +20,8 @@ export type BlockHandlers = {
   sending: boolean;
   /** Old data: write buttons wait for a refresh. */
   stale: boolean;
+  /** Continue in the composer instead of selecting a suggested answer. */
+  edit?: () => void;
 };
 
 export function actionById(
@@ -71,7 +73,9 @@ export function BlockButton({
         type="button"
         className={style}
         aria-busy={busy || undefined}
-        disabled={done || busy || (action.write && handlers.stale)}
+        disabled={
+          done || handlers.busy !== null || (action.write && handlers.stale)
+        }
         onClick={() => handlers.act(action.id)}
       >
         {done ? action.doneLabel : action.label}

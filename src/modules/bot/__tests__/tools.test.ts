@@ -48,6 +48,18 @@ describe("bot tool layer (7A)", () => {
     );
   });
 
+  it("routes guest turns to the requested service without exposing other domains", () => {
+    const names = toolsFor(null, {}, ["freelance"]).map((tool) => tool.name);
+    expect(names).toEqual([
+      "offer_step",
+      "find_services",
+      "get_service",
+      "freelance_price_range",
+    ]);
+    expect(names).not.toContain("search_jobs");
+    expect(names).not.toContain("apply_to_job");
+  });
+
   it("D493: the freelance listing thread exposes only its draft actions", () => {
     expect(
       toolsFor("user-1", { topic: "freelance", freelanceDraftMode: true }).map(
