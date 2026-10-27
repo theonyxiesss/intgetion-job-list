@@ -334,6 +334,61 @@ describe("Spoki search loop", () => {
     );
   });
 
+  it("does not show the server's job question twice when the model copies it (D557)", async () => {
+    runToolMock.mockResolvedValue({
+      llm: "one job",
+      client: {
+        kind: "jobs",
+        data: [
+          {
+            id: JOB,
+            title: "First",
+            companyName: "Kept",
+            workFormat: "remote",
+          },
+        ],
+      },
+    });
+    const turn = async (responses: LLMResponse[]) => {
+      messages.length = 0;
+      setBotLLMForTests({
+        provider: new FakeLLMProvider(responses),
+        model: "fake-model",
+        prices,
+      });
+      const events: BotEvent[] = [];
+      await handleMessage(
+        {
+          userId: null,
+          conversation: conversation({
+            draft: {
+              country: "IT",
+              desiredTitles: ["designer"],
+              workFormats: ["remote"],
+            },
+          }),
+          text: "Найди удалённые вакансии дизайнера",
+          ip: "203.0.113.30",
+          locale: "ru",
+        },
+        (event) => events.push(event),
+      );
+      return events.flatMap((event) =>
+        event.type === "token" ? [event.text] : [],
+      );
+    };
+    const [line] = await turn([reply("", "search_jobs", {}), reply("")]);
+    expect(line).toContain("Вам подходит эта вакансия?");
+
+    const shown = await turn([
+      reply("", "search_jobs", {}),
+      reply(` ${line}\n`),
+    ]);
+    expect(shown.filter((text) => text.trim() === line!.trim())).toHaveLength(
+      1,
+    );
+  });
+
   it("gives the model one more try after a tool this thread does not offer (D502)", async () => {
     const provider = new FakeLLMProvider([
       reply("", "patch_brief", { productName: "North" }),

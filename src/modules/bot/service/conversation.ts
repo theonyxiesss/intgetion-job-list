@@ -1228,6 +1228,12 @@ const AFTER_CARD =
  * redacted text → breaker → up to 3 model rounds with read tools; a write
  * tool stops the turn with a confirmation card.
  */
+/** The same words, ignoring spaces and line breaks around and between them. */
+function sameLine(a: string, b: string): boolean {
+  const flat = (value: string) => value.replace(/\s+/g, " ").trim();
+  return flat(a) !== "" && flat(a) === flat(b);
+}
+
 export async function handleMessage(
   input: MessageInput,
   emit: Emit,
@@ -1476,6 +1482,7 @@ export async function handleMessage(
   let waiting = false;
   let showedJobs = false;
   let fitSpoken = false;
+  let spokenFitLine: string | null = null;
 
   let roundSystem = system;
   let greetingRetried = false;
@@ -1663,11 +1670,17 @@ export async function handleMessage(
       input.text,
     );
     const askedOffGoal = personAskedOffGoal(input.text);
-    const visible = askedOffGoal
+    const modelText = askedOffGoal
       ? stripped
       : hadOffGoal(response.text)
         ? ""
         : stripped;
+    // D557: the server's question about one job is in the history, and the
+    // model may copy it word for word in the next round. Say it only once.
+    const visible =
+      spokenFitLine !== null && sameLine(modelText, spokenFitLine)
+        ? ""
+        : modelText;
     if (
       !cutRetried &&
       !lastRound &&
@@ -1823,6 +1836,7 @@ export async function handleMessage(
         emit({ type: "token", text: line.text, messageId: said.id });
         spoke = true;
         fitSpoken = true;
+        spokenFitLine = line.text;
       }
     }
     // Loading tools does not use up a round of the turn (once).
