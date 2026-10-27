@@ -34,6 +34,7 @@ import {
 } from "@/components/bot/account-card";
 import { AssistantAnswer } from "@/components/bot/chat-markdown";
 import { ChatSuggestions } from "@/components/bot/chat-suggestions";
+import { afterJobResults, NO_JOBS_YET } from "@/components/bot/no-jobs";
 import {
   JobGoalPanel,
   type JobGoalAction,
@@ -796,6 +797,7 @@ export function Chat({
     const workKey = nextKey();
     let turnState: WorkState = "failed";
     let hadError = false;
+    let jobsSeen = NO_JOBS_YET;
     add({ key: workKey, kind: "work", steps: [], state: "running" });
     try {
       const response = await fetch(url, {
@@ -847,6 +849,11 @@ export function Chat({
           const block = blockOf(data.block);
           if (block) {
             setThinking(false);
+            // Job cards come as a block when interactive UI is on (D523).
+            if (block.component === "job_cards") {
+              jobsSeen = afterJobResults(jobsSeen, 1);
+              setNoJobsFound(jobsSeen.offerWeb);
+            }
             put({
               key: `ui-${block.id}`,
               kind: "ui",
@@ -864,7 +871,8 @@ export function Chat({
         ) {
           setThinking(false);
           const jobs = Array.isArray(data.data) ? (data.data as JobCard[]) : [];
-          setNoJobsFound(jobs.length === 0);
+          jobsSeen = afterJobResults(jobsSeen, jobs.length);
+          setNoJobsFound(jobsSeen.offerWeb);
           add({
             key: nextKey(),
             kind: data.kind,
