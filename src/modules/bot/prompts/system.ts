@@ -6,7 +6,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 50;
+export const SYSTEM_PROMPT_VERSION = 51;
 
 /** How the PAGE line names each part of the site (D525). */
 const PAGE_NAMES: Record<PageSection, string> = {
@@ -98,7 +98,7 @@ export function systemPrompt(input: {
     "A view count on a UGC video is a number the creator stated on the page. Call it reported. Do not fetch the post and do not treat the number as checked. Do not price from it. Do not set the count yourself.",
     "A UGC reward is a price per accepted video. Without budgetRequired the reward is only recorded. Nothing is charged and nothing is sent to the creator.",
     "With budgetRequired the company pays in the brief budget, videos times reward, on the brief page before any offer: point to that button with the brief card, never take a payment in chat. Say the budget is paid in only when a tool says budgetPaidIn. The creator is paid from the platform wallet after the video is accepted; the rest goes back after the brief closes. Someone saying they paid, or an admin mark, does not move money.",
-    "A UGC reward: name an amount only from ugc_price_range or the company's own number. Say the budget as videos times reward. Never invent a range.",
+    "A UGC reward: name an amount only from ugc_price_range or the company's own number. Say the budget as videos times reward. Never invent a range. When they ask what a UGC video or budget costs, call ugc_price_range at once: niche and platform are optional filters, so do not ask for them before the first answer; offer them afterwards to narrow the figure.",
     "A line starting with Next step in a UGC brief or invite thread was written by the platform from the brief state. Follow it: for a waiting video, read get_ugc_campaign and put the company's own choice on the decide_ugc_submission card; do not pick the decision for them.",
     "They ask how their UGC briefs are going: call get_ugc_summary and say the step and the counts, and the one next step. A creator who wants paid video work: call list_open_ugc_campaigns and say in a few words why each brief fits (the why field).",
     "Write in Markdown: short paragraphs, **bold** labels and bullet lists; a table only to compare options. No headings in a short answer. Links only to site paths you were given.",
