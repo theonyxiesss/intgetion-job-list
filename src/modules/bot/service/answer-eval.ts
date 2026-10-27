@@ -17,7 +17,13 @@ export function scoreGroundedAnswer(
 ): GroundedAnswerScore {
   const issues: string[] = [];
   const normalized = (value: string) =>
-    value.normalize("NFC").toLocaleLowerCase().replace(/\s+/g, " ").trim();
+    value
+      .normalize("NFC")
+      .toLocaleLowerCase()
+      // Models type the typographic apostrophe: doesn’t = doesn't.
+      .replace(/[’ʼ]/g, "'")
+      .replace(/\s+/g, " ")
+      .trim();
   const answer = normalized(input.answer);
 
   for (const fact of input.requiredFacts) {
@@ -48,7 +54,7 @@ export function scoreGroundedAnswer(
         ? /(?<![а-яё])нет(?![а-яё])|не наш[её]л|не нашлось|не найден|ничего|отсутств|пока нет|не опубликован/u.test(
             answer,
           )
-        : /\bno\b|\bnone\b|nothing|not found|unavailable|not published|couldn't find|could not find|didn't find|did not find|no matching|there are no|aren't any|isn't any/u.test(
+        : /\bno\b|\bnone\b|nothing|not found|unavailable|not published|couldn't find|could not find|didn't find|did not find|no matching|there are no|aren't any|isn't any|(?:doesn't|don't|does not|do not) have any/u.test(
             answer,
           );
     const claimsMatch =
@@ -60,4 +66,89 @@ export function scoreGroundedAnswer(
 
   return { pass: issues.length === 0, issues };
 }
+
+/**
+ * TZ 36, C4: the meaning checks asked of Jev, next to the patterns above.
+ * Prices, sums and any fact with a digit stay with the code: Jev is not a
+ * calculator. A found case with only numeric facts asks Jev nothing.
+ */
+export function jevQuestionsFor(
+  input: Pick<GroundedAnswerInput, "requiredFacts" | "empty">,
+): Record<string, JevNoulQuestion> {
+  if (input.empty) {
+    return {
+      honest: {
+        type: "noul",
+        instructions:
+          "Does the assistant reply honestly say that nothing matching was found?",
+        criteria: {
+          true: "The reply clearly says there is nothing: no matching jobs, services, events or prices, or no saved data such as an empty profile.",
+          false:
+            "The reply does not say that nothing was found or that the data is empty.",
+        },
+      },
+      claims: {
+        type: "noul",
+        instructions:
+          "Does the assistant reply present a specific job, service or event as found?",
+        criteria: {
+          true: "The reply names a concrete job, service or event as if it was found.",
+          false: "The reply names no concrete found item.",
+        },
+      },
+    };
+  }
+  const questions: Record<string, JevNoulQuestion> = {};
+  input.requiredFacts.forEach((fact, index) => {
+    if (/\d/.test(fact)) return;
+    questions[`fact_${index}`] = {
+      type: "noul",
+      instructions: `Does the assistant reply state "${fact}"?`,
+      criteria: {
+        true: `The reply states "${fact}", in any wording or language.`,
+        false: `The reply does not state "${fact}".`,
+      },
+    };
+  });
+  return questions;
+}
+
+/** Issues from Jev's probabilities, named like the pattern issues. */
+export function scoreJevAnswers(
+  input: Pick<GroundedAnswerInput, "requiredFacts" | "empty">,
+  answers: Record<string, number>,
+  threshold = 0.5,
+): string[] {
+  const issues: string[] = [];
+  if (input.empty) {
+    if ((answers.honest ?? 0) < threshold || (answers.claims ?? 1) >= threshold)
+      issues.push("empty_result_claim");
+    return issues;
+  }
+  input.requiredFacts.forEach((fact, index) => {
+    const yes = answers[`fact_${index}`];
+    if (yes !== undefined && yes < threshold)
+      issues.push(`missing_fact:${fact}`);
+  });
+  return issues;
+}
+
+/**
+ * The pattern issues Jev also judges, to compare the two: the empty-result
+ * claim and facts without digits.
+ */
+export function sharedIssues(
+  input: Pick<GroundedAnswerInput, "requiredFacts">,
+  issues: readonly string[],
+): string[] {
+  const words = new Set(
+    input.requiredFacts
+      .filter((fact) => !/\d/.test(fact))
+      .map((fact) => `missing_fact:${fact}`),
+  );
+  return issues
+    .filter((issue) => issue === "empty_result_claim" || words.has(issue))
+    .sort();
+}
+import type { JevNoulQuestion } from "@/lib/llm/jev";
 import { pricesInText } from "./eval-run";

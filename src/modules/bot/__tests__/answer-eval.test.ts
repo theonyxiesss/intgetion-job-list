@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { scoreGroundedAnswer } from "../service/answer-eval";
+import {
+  jevQuestionsFor,
+  scoreGroundedAnswer,
+  scoreJevAnswers,
+  sharedIssues,
+} from "../service/answer-eval";
 import { routeDomains } from "../service/routing";
 import { toolsFor } from "../service/tools";
 import { ANSWER_EVAL_CASES } from "./answer-eval-cases";
@@ -134,6 +139,7 @@ describe("Spoki grounded answer eval", () => {
 
   it.each([
     "I couldn't find any published podcast editing services.",
+    "The freelance catalog doesn’t have any published podcast-editing services right now.",
     "There are no matching events in Rome right now.",
   ])("accepts an honest English answer: %s", (answer) => {
     expect(
@@ -159,5 +165,48 @@ describe("Spoki grounded answer eval", () => {
         answer: "No published jobs match, but I found a Remote Designer role.",
       }).issues,
     ).toContain("empty_result_claim");
+  });
+});
+
+describe("Jev next to the patterns (TZ 36, C4)", () => {
+  it("asks two meaning questions for an empty result", () => {
+    expect(
+      Object.keys(jevQuestionsFor({ empty: true, requiredFacts: [] })),
+    ).toEqual(["honest", "claims"]);
+  });
+
+  it("asks only about facts without digits; prices stay with the code", () => {
+    const questions = jevQuestionsFor({
+      empty: false,
+      requiredFacts: ["Монтаж коротких видео", "$30", "12 ноября 2026"],
+    });
+    expect(Object.keys(questions)).toEqual(["fact_0"]);
+    expect(questions.fact_0?.instructions).toContain("Монтаж коротких видео");
+    expect(
+      jevQuestionsFor({ empty: false, requiredFacts: ["$50", "$250"] }),
+    ).toEqual({});
+  });
+
+  it("names Jev's findings like the pattern issues", () => {
+    const empty = { empty: true, requiredFacts: [] };
+    expect(scoreJevAnswers(empty, { honest: 0.97, claims: 0.02 })).toEqual([]);
+    expect(scoreJevAnswers(empty, { honest: 0.03, claims: 0.98 })).toEqual([
+      "empty_result_claim",
+    ]);
+    const found = { empty: false, requiredFacts: ["Poland", "Polish C1"] };
+    expect(scoreJevAnswers(found, { fact_0: 0.99, fact_1: 0.1 })).toEqual([
+      "missing_fact:Polish C1",
+    ]);
+  });
+
+  it("compares only the checks both make", () => {
+    expect(
+      sharedIssues({ requiredFacts: ["Poland", "$80,000"] }, [
+        "language:en",
+        "missing_fact:$80,000",
+        "missing_fact:Poland",
+        "empty_result_claim",
+      ]),
+    ).toEqual(["empty_result_claim", "missing_fact:Poland"]);
   });
 });
