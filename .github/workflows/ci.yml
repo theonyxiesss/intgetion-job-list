@@ -55,4 +55,9 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Migrate from scratch, test access, run e2e and Lighthouse
+        # ghcr.io answered toomanyrequests for the Supabase images on
+        # 2026-10-27 (four runs in a row); the CLI pulls the same images
+        # from the AWS public mirror.
+        env:
+          SUPABASE_INTERNAL_IMAGE_REGISTRY: public.ecr.aws
         run: bash scripts/ci-db.sh
