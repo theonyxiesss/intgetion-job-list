@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs";
+import { appendFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -63,6 +63,14 @@ describe.skipIf(!live)("Spoki live answer quality baseline", () => {
           maxTokens: MAX_OUTPUT_TOKENS,
         });
         routingResponses += 1;
+        if (process.env.ANSWER_EVAL_TEXT_FILE)
+          appendFileSync(
+            process.env.ANSWER_EVAL_TEXT_FILE,
+            `--- ${item.id} routing
+${response.text}
+calls: ${response.toolCalls.map((c) => c.name).join(",")}
+`,
+          );
         routeReply =
           response.toolCalls.length > 0
             ? "tool"
@@ -101,6 +109,13 @@ describe.skipIf(!live)("Spoki live answer quality baseline", () => {
           maxTokens: MAX_OUTPUT_TOKENS,
         });
         answerResponses += 1;
+        if (process.env.ANSWER_EVAL_TEXT_FILE)
+          appendFileSync(
+            process.env.ANSWER_EVAL_TEXT_FILE,
+            `--- ${item.id} answer
+${response.text}
+`,
+          );
         tokensIn += response.usage.tokensIn;
         tokensOut += response.usage.tokensOut;
         issues.push(

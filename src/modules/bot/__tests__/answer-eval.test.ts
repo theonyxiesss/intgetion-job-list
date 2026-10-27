@@ -116,6 +116,38 @@ describe("Spoki grounded answer eval", () => {
     ).toEqual({ pass: true, issues: [] });
   });
 
+  it.each([
+    "На платформе сейчас нет опубликованных вакансий с названием «дизайнер».",
+    "Сейчас нет опубликованных услуг по этому запросу.",
+  ])("accepts an honest Russian answer that says none exist: %s", (answer) => {
+    expect(
+      scoreGroundedAnswer({
+        locale: "ru",
+        userText: "Найди опубликованные вакансии дизайнера на платформе.",
+        toolResult: "Опубликованных вакансий по запросу нет.",
+        requiredFacts: [],
+        empty: true,
+        answer,
+      }),
+    ).toEqual({ pass: true, issues: [] });
+  });
+
+  it.each([
+    "I couldn't find any published podcast editing services.",
+    "There are no matching events in Rome right now.",
+  ])("accepts an honest English answer: %s", (answer) => {
+    expect(
+      scoreGroundedAnswer({
+        locale: "en",
+        userText: "Find published Web3 events in Rome.",
+        toolResult: "No published events found in Rome for this topic.",
+        requiredFacts: [],
+        empty: true,
+        answer,
+      }),
+    ).toEqual({ pass: true, issues: [] });
+  });
+
   it("flags a fabricated match even when the answer also says the catalog is empty", () => {
     expect(
       scoreGroundedAnswer({

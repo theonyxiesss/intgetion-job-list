@@ -45,14 +45,14 @@ export function scoreGroundedAnswer(
   if (input.empty) {
     const honest =
       input.locale === "ru"
-        ? /\bнет\b|не наш[её]л|не нашлось|не найден|ничего|отсутств|пока нет|не опубликован/u.test(
+        ? /(?<![а-яё])нет(?![а-яё])|не наш[её]л|не нашлось|не найден|ничего|отсутств|пока нет|не опубликован/u.test(
             answer,
           )
-        : /\bno\b|\bnone\b|nothing|not found|unavailable|not published/u.test(
+        : /\bno\b|\bnone\b|nothing|not found|unavailable|not published|couldn't find|could not find|didn't find|did not find|no matching|there are no|aren't any|isn't any/u.test(
             answer,
           );
     const claimsMatch =
-      /found (?:a|an|some|one|\d+)|here (?:is|are)|(?<!не )наш[её]л(?:а|и)?\s+(?:ваканс|услуг|событ)|есть\s+(?:ваканс|услуг|событ)/iu.test(
+      /found (?:a|an|some|one|\d+)|\bhere (?:is|are)|(?<!не )наш[её]л(?:а|и)?\s+(?:ваканс|услуг|событ)|есть\s+(?:ваканс|услуг|событ)/iu.test(
         answer,
       );
     if (!honest || claimsMatch) issues.push("empty_result_claim");
