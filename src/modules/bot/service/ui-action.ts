@@ -1,7 +1,7 @@
 import { HttpError, notFound, unauthenticated } from "@/lib/http";
 import { enforceRateLimit } from "@/lib/rate-limit";
-import { blockFromTool } from "../ui/build";
-import { checkBlock } from "../ui/schemas";
+import { blockFromShowUi, blockFromTool } from "../ui/build";
+import { checkBlock, showUiInput } from "../ui/schemas";
 import { blockIsStale, type UiBlock } from "../ui/types";
 import * as repo from "../repo/bot-repo";
 import { hashSessionToken } from "./conversation";
@@ -23,7 +23,13 @@ import {
  */
 const ACTION_TOOLS = new Set(["save_job"]);
 /** Reads a block may run again to show fresh data. */
-const REFRESH_TOOLS = new Set(["search_jobs", "get_matches", "find_services"]);
+const REFRESH_TOOLS = new Set([
+  "search_jobs",
+  "get_matches",
+  "find_services",
+  // Only the catalog comparison is read again; other show_ui blocks are not.
+  "show_ui",
+]);
 
 export type UiActionResult =
   | { kind: "done"; actionId: string; label: string }
@@ -68,14 +74,26 @@ export async function runUiAction(
   if (action.type === "refresh") {
     const source = block.source.refresh;
     if (!source || !REFRESH_TOOLS.has(source.tool)) throw invalid();
-    const outcome = await runTool(ctx, source.tool, source.args);
-    const fresh = blockFromTool(
-      source.tool,
-      outcome.client,
-      source.args,
-      { userId: input.userId, locale: ctx.locale },
-      now,
-    );
+    let fresh: UiBlock | null;
+    if (source.tool === "show_ui") {
+      const asked = showUiInput.safeParse(source.args);
+      if (!asked.success || asked.data.component !== "compare_jobs")
+        throw invalid();
+      fresh = await blockFromShowUi(
+        asked.data,
+        { userId: input.userId, locale: ctx.locale },
+        now,
+      );
+    } else {
+      const outcome = await runTool(ctx, source.tool, source.args);
+      fresh = blockFromTool(
+        source.tool,
+        outcome.client,
+        source.args,
+        { userId: input.userId, locale: ctx.locale },
+        now,
+      );
+    }
     if (!fresh) {
       throw new HttpError(409, "BLOCK_EMPTY", "Nothing to show any more");
     }

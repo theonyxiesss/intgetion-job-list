@@ -152,3 +152,43 @@ export function sharedIssues(
 }
 import type { JevNoulQuestion } from "@/lib/llm/jev";
 import { pricesInText } from "./eval-run";
+
+/**
+ * TZ 35, stage 2: proposed thresholds for the live baseline, pending the
+ * founder's acceptance. Routing: at least 9 of 10 cases call the expected
+ * tool. Critical: an invented price, or a found item claimed on an empty
+ * result (Jev's judgement when it ran, else the pattern) — none allowed.
+ */
+export const BASELINE_ROUTE_MIN = 0.9;
+export const BASELINE_CRITICAL_MAX = 0;
+
+export type BaselineCase = {
+  routeHit: boolean;
+  patternIssues: readonly string[];
+  /** Jev's issues for the case, or null when Jev did not judge it. */
+  jevIssues: readonly string[] | null;
+};
+
+export function baselineVerdict(cases: readonly BaselineCase[]) {
+  const hits = cases.filter((item) => item.routeHit).length;
+  let critical = 0;
+  for (const item of cases) {
+    critical += item.patternIssues.filter((issue) =>
+      issue.startsWith("unsupported_price:"),
+    ).length;
+    const emptyClaim = (item.jevIssues ?? item.patternIssues).includes(
+      "empty_result_claim",
+    );
+    if (emptyClaim) critical += 1;
+  }
+  const routeShare = cases.length ? hits / cases.length : 0;
+  return {
+    routeHits: hits,
+    total: cases.length,
+    critical,
+    pass:
+      cases.length > 0 &&
+      routeShare >= BASELINE_ROUTE_MIN &&
+      critical <= BASELINE_CRITICAL_MAX,
+  };
+}

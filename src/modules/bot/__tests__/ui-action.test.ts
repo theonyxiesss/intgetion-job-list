@@ -47,6 +47,12 @@ vi.mock("../service/tools", async () => {
   };
 });
 
+const listJobsMock = vi.hoisted(() => vi.fn());
+vi.mock("@/modules/jobs/service", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/modules/jobs/service")>()),
+  listPublicJobsByIds: (...args: unknown[]) => listJobsMock(...args),
+}));
+
 const { runUiAction } = await import("../service/ui-action");
 
 function jobsBlock(at = NOW): UiBlock {
@@ -216,5 +222,90 @@ describe("buttons on Spoki blocks (D523)", () => {
     expect(block.source.at).toBe(NOW.toISOString());
     expect(JSON.stringify(block.props)).toContain("Solidity Lead");
     expect(updateBlockRowMock).toHaveBeenCalledWith("row-1", { ui: block });
+  });
+});
+
+describe("refreshing a job comparison (TZ 35, stage 4)", () => {
+  const A = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const B = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+  const job = (id: string) => ({
+    id,
+    title: `Job ${id.slice(0, 1)}`,
+    company: { name: "Acme" },
+    workFormat: "remote",
+    employmentType: "full_time",
+    seniority: null,
+    location: null,
+    locationCountry: null,
+    salaryMin: null,
+    salaryMax: null,
+    publishedAt: null,
+  });
+  const compareBlock = (args: Record<string, unknown>): UiBlock =>
+    ({
+      v: 1,
+      id: BLOCK,
+      component: "compare_jobs",
+      props: {
+        criteria: ["Salary"],
+        items: [
+          {
+            id: A,
+            title: "Job a",
+            company: "Acme",
+            values: [null],
+            action: `open:${A}`,
+          },
+          {
+            id: B,
+            title: "Job b",
+            company: "Acme",
+            values: [null],
+            action: `open:${B}`,
+          },
+        ],
+      },
+      source: {
+        tool: "show_ui",
+        at: new Date(NOW.getTime() - 2 * 3600 * 1000).toISOString(),
+        ttlSec: 3600,
+        refresh: { tool: "show_ui", args },
+      },
+      fallback: { text: "x" },
+      actions: [
+        { id: `open:${A}`, type: "link", label: "Open", path: `/jobs/${A}` },
+        { id: `open:${B}`, type: "link", label: "Open", path: `/jobs/${B}` },
+        { id: "refresh", type: "refresh", label: "Refresh" },
+      ],
+    }) as UiBlock;
+
+  beforeEach(() => {
+    listJobsMock.mockReset();
+    findBlockRowMock.mockReset();
+    updateBlockRowMock.mockReset();
+    runToolMock.mockReset();
+  });
+
+  it("reads the same jobs again and keeps the block id", async () => {
+    listJobsMock.mockResolvedValue([job(A), job(B)]);
+    findBlockRowMock.mockResolvedValue(
+      kept(compareBlock({ component: "compare_jobs", jobIds: [A, B] })),
+    );
+    const result = await press("refresh");
+    expect(result).toMatchObject({ kind: "refreshed" });
+    const block = (result as { block: UiBlock }).block;
+    expect(block.id).toBe(BLOCK);
+    expect(block.component).toBe("compare_jobs");
+    expect(listJobsMock).toHaveBeenCalledWith([A, B], "en");
+    expect(runToolMock).not.toHaveBeenCalled();
+    expect(updateBlockRowMock).toHaveBeenCalled();
+  });
+
+  it("refuses to rebuild any other show_ui block", async () => {
+    findBlockRowMock.mockResolvedValue(
+      kept(compareBlock({ component: "calculator", formula: "ugc_budget" })),
+    );
+    await expect(press("refresh")).rejects.toBeTruthy();
+    expect(listJobsMock).not.toHaveBeenCalled();
   });
 });

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  baselineVerdict,
   jevQuestionsFor,
   scoreGroundedAnswer,
   scoreJevAnswers,
@@ -208,5 +209,72 @@ describe("Jev next to the patterns (TZ 36, C4)", () => {
         "empty_result_claim",
       ]),
     ).toEqual(["empty_result_claim", "missing_fact:Poland"]);
+  });
+});
+
+describe("baseline thresholds (TZ 35, stage 2)", () => {
+  const ok = { routeHit: true, patternIssues: [], jevIssues: [] };
+  it("passes at 9 of 10 routed and no critical error", () => {
+    const cases = [
+      ...Array.from({ length: 9 }, () => ok),
+      { routeHit: false, patternIssues: ["wrong_tool"], jevIssues: null },
+    ];
+    expect(baselineVerdict(cases)).toEqual({
+      routeHits: 9,
+      total: 10,
+      critical: 0,
+      pass: true,
+    });
+  });
+
+  it("fails on an invented price or a claimed find on an empty result", () => {
+    expect(
+      baselineVerdict([
+        {
+          routeHit: true,
+          patternIssues: ["unsupported_price:5000"],
+          jevIssues: [],
+        },
+      ]).pass,
+    ).toBe(false);
+    expect(
+      baselineVerdict([
+        {
+          routeHit: true,
+          patternIssues: [],
+          jevIssues: ["empty_result_claim"],
+        },
+      ]).critical,
+    ).toBe(1);
+  });
+
+  it("trusts Jev over the pattern for the empty-result claim when Jev ran", () => {
+    expect(
+      baselineVerdict([
+        {
+          routeHit: true,
+          patternIssues: ["empty_result_claim"],
+          jevIssues: [],
+        },
+      ]).pass,
+    ).toBe(true);
+    expect(
+      baselineVerdict([
+        {
+          routeHit: true,
+          patternIssues: ["empty_result_claim"],
+          jevIssues: null,
+        },
+      ]).pass,
+    ).toBe(false);
+  });
+
+  it("fails below 9 of 10 routed", () => {
+    const cases = [
+      ...Array.from({ length: 8 }, () => ok),
+      { routeHit: false, patternIssues: [], jevIssues: null },
+      { routeHit: false, patternIssues: [], jevIssues: null },
+    ];
+    expect(baselineVerdict(cases).pass).toBe(false);
   });
 });

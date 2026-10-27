@@ -442,6 +442,8 @@ async function compareJobs(
       action: `open:${job.id}`,
     };
   });
+  // Stale data reads the catalog again with the same ids (TZ 35, stage 4).
+  actions.push({ id: "refresh", type: "refresh", label: t("refresh") });
   const unknown = t("compareJobs.unknown");
   const lines = items.map(
     (item) =>
@@ -451,7 +453,13 @@ async function compareJobs(
     "compare_jobs",
     { criteria, items },
     actions,
-    { tool: "show_ui" },
+    {
+      tool: "show_ui",
+      refresh: {
+        tool: "show_ui",
+        args: { component: "compare_jobs", jobIds: ids },
+      },
+    },
     {
       text: `${t("fallback.compareJobs")}\n${lines.join("\n")}`,
       path: "/jobs",

@@ -440,6 +440,13 @@ describe("jobs side by side (D560)", () => {
     );
     expect(block?.fallback.text).toContain("Not stated");
     expect(block?.source.ttlSec).toBe(3600);
+    expect(block?.actions).toContainEqual(
+      expect.objectContaining({ id: "refresh", type: "refresh" }),
+    );
+    expect(block?.source.refresh).toEqual({
+      tool: "show_ui",
+      args: { component: "compare_jobs", jobIds: [A, B] },
+    });
   });
 
   it("shows nothing when fewer than two of the jobs are published", async () => {

@@ -12,10 +12,12 @@ import {
 import { systemPrompt } from "../prompts/system";
 import { askJevNouls } from "@/lib/llm/jev";
 import {
+  baselineVerdict,
   jevQuestionsFor,
   scoreGroundedAnswer,
   scoreJevAnswers,
   sharedIssues,
+  type BaselineCase,
 } from "../service/answer-eval";
 import { routeDomains } from "../service/routing";
 import { toolsFor } from "../service/tools";
@@ -42,6 +44,7 @@ describe.skipIf(!live)("Spoki live answer quality baseline", () => {
     }
 
     const rows: string[] = [];
+    const baseline: BaselineCase[] = [];
     let routingResponses = 0;
     let answerResponses = 0;
     let jevCost = 0;
@@ -62,6 +65,7 @@ describe.skipIf(!live)("Spoki live answer quality baseline", () => {
       const issues: string[] = [];
       let jev = "off";
       let agree = "-";
+      let caseJevIssues: string[] | null = null;
       const routeStarted = performance.now();
       try {
         const response = await chat(setup.provider, {
@@ -151,6 +155,7 @@ ${response.text}
               });
               jevCost += judged.costUsd;
               const jevIssues = scoreJevAnswers(item, judged.answers).sort();
+              caseJevIssues = jevIssues;
               jev = jevIssues.length ? jevIssues.join("|") : "pass";
               agree = String(
                 jevIssues.join("|") ===
@@ -183,11 +188,17 @@ ${response.text}
           agree,
         ].join("\t"),
       );
+      baseline.push({
+        routeHit,
+        patternIssues: [...issues],
+        jevIssues: caseJevIssues,
+      });
       if (rows.length < ANSWER_EVAL_CASES.length) {
         await new Promise((resolve) => setTimeout(resolve, PAUSE_MS));
       }
     }
 
+    const verdict = baselineVerdict(baseline);
     const reportPath = join(tmpdir(), "spoki-answer-quality-live.tsv");
     writeFileSync(
       reportPath,
@@ -196,6 +207,9 @@ ${response.text}
         "id\tdomain\tlocale\tcalled\trouteHit\ttokensIn\ttokensOut\trouteReply\trouteMs\tanswerMs\tresult\tjev\tagree",
         ...rows,
         ...(jevOn ? [`jevCostUsd\t${jevCost.toFixed(6)}`] : []),
+        `routing\t${verdict.routeHits}/${verdict.total}`,
+        `critical\t${verdict.critical}`,
+        `verdict\t${verdict.pass ? "pass" : "fail"}`,
       ].join("\n"),
     );
     expect(rows).toHaveLength(ANSWER_EVAL_CASES.length);
