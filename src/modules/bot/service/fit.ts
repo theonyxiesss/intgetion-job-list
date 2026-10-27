@@ -764,6 +764,8 @@ export function shapeToolCalls(
     waiting: boolean;
     /** Routed turns only append an implicit search inside the jobs domain. */
     allowJobSearch?: boolean;
+    /** D561: jobs were compared this turn; another search only adds noise. */
+    compared?: boolean;
   },
 ): LLMToolCall[] {
   let next = calls.filter((call) => {
@@ -775,7 +777,7 @@ export function shapeToolCalls(
     }
     return true;
   });
-  if (input.jobThread) {
+  if (input.jobThread || input.compared) {
     next = next.filter((call) => !SEARCH_TOOLS.has(call.name));
   }
   const confirms = next.some((call) => CONFIRM_TOOLS.has(call.name));
@@ -784,6 +786,7 @@ export function shapeToolCalls(
   const searchTurn =
     !input.waiting &&
     !input.showedJobs &&
+    !input.compared &&
     !confirms &&
     !blockTurn &&
     input.ready &&

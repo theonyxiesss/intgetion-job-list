@@ -190,6 +190,26 @@ describe("one fitting vacancy", () => {
     ).toEqual([]);
   });
 
+  it("drops job searches after jobs were compared in the turn (D561)", () => {
+    const shape = (compared: boolean) =>
+      shapeToolCalls(
+        [
+          { id: "s", name: "search_jobs", input: { q: "designer" } },
+          { id: "o", name: "offer_step", input: { action: "register" } },
+        ],
+        {
+          userText: "compare the Autodesk and Coinbase jobs",
+          ready: true,
+          jobThread: false,
+          showedJobs: false,
+          waiting: false,
+          compared,
+        },
+      ).map((call) => call.name);
+    expect(shape(true)).toEqual(["offer_step"]);
+    expect(shape(false)).toContain("search_jobs");
+  });
+
   it("never turns an employer's hiring question into a job search (D529)", () => {
     const turn = (
       userText: string,

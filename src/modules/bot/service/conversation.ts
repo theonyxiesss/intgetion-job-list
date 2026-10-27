@@ -99,6 +99,7 @@ import {
   ugcTopicState,
 } from "./ugc-focus";
 import { stripLeakedToolMarkup } from "./leaked-tool";
+import { rememberShownJobs, shownJobsText } from "./shown-jobs";
 import { goalStateForTurn, visibleJobGoal } from "./job-goal-session";
 import type { JobGoal } from "./job-goal";
 import { blockFromTool } from "../ui/build";
@@ -1367,6 +1368,9 @@ export async function handleMessage(
     interactive: interactiveUiOn(),
     now: userId ? localNow(now, known?.timezone) : undefined,
     page: input.page,
+    shownJobs: state.shownJobs?.length
+      ? wrapUntrusted("shown_jobs", shownJobsText(state.shownJobs))
+      : undefined,
     jobGoal: state.jobGoal
       ? JSON.stringify({
           step: state.jobGoal.step,
@@ -1483,6 +1487,7 @@ export async function handleMessage(
   let showedJobs = false;
   let fitSpoken = false;
   let spokenFitLine: string | null = null;
+  let comparedJobs = false;
 
   let roundSystem = system;
   let greetingRetried = false;
@@ -1628,6 +1633,7 @@ export async function handleMessage(
       showedJobs,
       waiting,
       allowJobSearch: !routed || domains.has("jobs"),
+      compared: comparedJobs,
     });
     const calls = state.jobDraftMode
       ? shapedCalls
@@ -1794,9 +1800,21 @@ export async function handleMessage(
           channel: input.channel ?? "web",
         };
         const content = await callTool(ctx, call, emit, now);
+        if (
+          call.name === "show_ui" &&
+          (call.input as { component?: unknown } | null)?.component ===
+            "compare_jobs"
+        )
+          comparedJobs = true;
         if (content.state) state = content.state;
         if (content.jobs) showedJobs = true;
-        if (content.jobCards?.length) roundCards = content.jobCards;
+        if (content.jobCards?.length) {
+          roundCards = content.jobCards;
+          state = {
+            ...state,
+            shownJobs: rememberShownJobs(state.shownJobs, content.jobCards),
+          };
+        }
         if (content.waiting) waiting = true;
         await repo.insertMessage({
           conversationId: conversation.id,

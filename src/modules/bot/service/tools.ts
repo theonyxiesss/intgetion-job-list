@@ -49,6 +49,7 @@ import { jobDraftTools } from "./job-tools";
 import { OFFER_ACTIONS, offerPath, type FillKind } from "./offers";
 import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
 import { readJobGoal, transitionJobGoal, type JobGoal } from "./job-goal";
+import type { ShownJob } from "./shown-jobs";
 import { accountTools } from "./account-tools";
 import { employerJobTools } from "./employer-job-tools";
 import { accountProfileTools } from "./account-profile-tool";
@@ -97,6 +98,8 @@ export type BotState = {
   jobGoal?: JobGoal;
   /** Browser tab session owning an unsaved goal. Removed on explicit save. */
   jobGoalSession?: string;
+  /** Jobs this thread showed, newest first: id, title, company (D561). */
+  shownJobs?: ShownJob[];
   /** Allowlisted profile fields gathered in the conversation (12.2, D324). */
   draft?: Record<string, unknown>;
   /** Preferences that are not columns on the candidate profile. */
