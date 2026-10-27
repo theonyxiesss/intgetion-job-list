@@ -1642,6 +1642,8 @@
     "jobGoal": {
       "title": "Find a job",
       "intro": "Set your criteria. Spoki will search jobs on the platform and suggest a next step.",
+      "open": "Set filters",
+      "edit": "Change filters",
       "category": "Category",
       "anyCategory": "Any category",
       "country": "Country code",

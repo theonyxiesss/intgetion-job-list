@@ -1642,6 +1642,8 @@
     "jobGoal": {
       "title": "Trouver un emploi",
       "intro": "Définissez vos critères. Spoki cherchera sur la plateforme et proposera la prochaine étape.",
+      "open": "Définir les filtres",
+      "edit": "Modifier les filtres",
       "category": "Catégorie",
       "anyCategory": "Toutes les catégories",
       "country": "Code pays",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { JOB_CATEGORIES } from "@/config/markers";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,11 @@ function GoalControls({ goal, signedIn, busy, onAction }: PanelProps) {
     goal?.filters.remoteOnly ?? false,
   );
   const [confirmDelete, setConfirmDelete] = useState(false);
+  // D558: the form stays folded, so the conversation keeps its height on a
+  // short screen; a changed goal remounts the panel folded again.
+  const [open, setOpen] = useState(false);
+  const paused = goal?.status === "paused";
+  const formId = useId();
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -53,20 +58,40 @@ function GoalControls({ goal, signedIn, busy, onAction }: PanelProps) {
     <section
       aria-label={t("title")}
       aria-busy={busy}
-      className="mt-3 rounded-lg border border-line bg-surface p-3"
+      className="mt-3 rounded-lg border border-line bg-surface px-3 py-2"
     >
-      <p className="text-sm font-medium text-fg">{t("title")}</p>
-      {goal ? (
-        <p className="mt-1 text-sm text-fg-muted" role="status">
-          {t(`step.${goal.step}`)}
-          {goal.status === "paused" ? ` · ${t("paused")}` : ""}
-          {goal.savedAt ? ` · ${t("saved")}` : ""}
-        </p>
-      ) : (
-        <p className="mt-1 text-sm text-fg-muted">{t("intro")}</p>
-      )}
-      {goal?.status !== "paused" ? (
-        <form onSubmit={submit} className="mt-3 grid gap-2 sm:grid-cols-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-fg">{t("title")}</p>
+          {goal ? (
+            <p className="text-sm text-fg-muted" role="status">
+              {t(`step.${goal.step}`)}
+              {paused ? ` · ${t("paused")}` : ""}
+              {goal.savedAt ? ` · ${t("saved")}` : ""}
+            </p>
+          ) : null}
+        </div>
+        {!paused ? (
+          <Button
+            variant="ghost"
+            aria-expanded={open}
+            aria-controls={formId}
+            disabled={busy}
+            onClick={() => setOpen((value) => !value)}
+          >
+            {t(goal ? "edit" : "open")}
+          </Button>
+        ) : null}
+      </div>
+      {open && !paused ? (
+        <form
+          id={formId}
+          onSubmit={submit}
+          className="mt-2 grid gap-2 sm:grid-cols-3"
+        >
+          {goal ? null : (
+            <p className="text-sm text-fg-muted sm:col-span-3">{t("intro")}</p>
+          )}
           <label className="text-xs text-fg-muted">
             {t("category")}
             <select
@@ -116,7 +141,7 @@ function GoalControls({ goal, signedIn, busy, onAction }: PanelProps) {
       ) : null}
       {goal ? (
         <div className="mt-2 flex flex-wrap gap-2">
-          {goal.step === "profile" && goal.status !== "paused" ? (
+          {goal.step === "profile" && !paused ? (
             <Button
               variant="ghost"
               disabled={busy}
@@ -138,12 +163,10 @@ function GoalControls({ goal, signedIn, busy, onAction }: PanelProps) {
             variant="ghost"
             disabled={busy}
             onClick={() =>
-              void onAction({
-                action: goal.status === "paused" ? "resume" : "pause",
-              })
+              void onAction({ action: paused ? "resume" : "pause" })
             }
           >
-            {t(goal.status === "paused" ? "resume" : "pause")}
+            {t(paused ? "resume" : "pause")}
           </Button>
           {confirmDelete ? (
             <>
