@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { FakeLLMProvider, type LLMResponse } from "@/lib/llm";
 import { setVacancyReaderForTests, vacancyFromPublic } from "../service/fit";
+import { createJobGoal } from "../service/job-goal";
 import type { BotState } from "../service/tools";
 import type { BotEvent } from "../service/conversation";
 
@@ -387,6 +388,33 @@ describe("Spoki search loop", () => {
     expect(shown.filter((text) => text.trim() === line!.trim())).toHaveLength(
       1,
     );
+  });
+
+  it("sends the goal event only to a thread that has a goal", async () => {
+    const turn = async (state: BotState) => {
+      messages.length = 0;
+      setBotLLMForTests({
+        provider: new FakeLLMProvider([reply("Готово.")]),
+        model: "fake-model",
+        prices,
+      });
+      const events: BotEvent[] = [];
+      await handleMessage(
+        {
+          userId: null,
+          conversation: conversation(state),
+          text: "Привет, что нового?",
+          ip: "203.0.113.31",
+          locale: "ru",
+        },
+        (event) => events.push(event),
+      );
+      return events.filter((event) => event.type === "job_goal");
+    };
+    expect(await turn({})).toHaveLength(0);
+    expect(
+      await turn({ jobGoal: createJobGoal({ remoteOnly: true }, new Date()) }),
+    ).toHaveLength(1);
   });
 
   it("gives the model one more try after a tool this thread does not offer (D502)", async () => {

@@ -2215,10 +2215,14 @@ async function finish(
     { state: next, locale: input.locale },
     now,
   );
-  emit({
-    type: "job_goal",
-    goal: visibleJobGoal(next, input.goalSession ?? null, now),
-  });
+  // Only a thread that had a goal or has one now tells the panel about it.
+  const before = (input.conversation.state ?? {}) as BotState;
+  if (before.jobGoal !== undefined || next.jobGoal !== undefined) {
+    emit({
+      type: "job_goal",
+      goal: visibleJobGoal(next, input.goalSession ?? null, now),
+    });
+  }
   emit({ type: "done", conversationId: input.conversation.id });
 }
 
