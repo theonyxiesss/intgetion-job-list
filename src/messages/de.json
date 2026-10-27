@@ -1698,6 +1698,23 @@
         "memory": "Erinnerungen",
         "ugc": "UGC-Kampagne",
         "working": "Plattformaktion"
+      },
+      "steps": "{count, plural, one {# Schritt} other {# Schritte}}",
+      "seconds": "{seconds} s",
+      "fallback": "Das Hauptmodell hat nicht geantwortet, ein Ersatzmodell hat übernommen.",
+      "summary": {
+        "jobs": "{count, plural, =0 {nichts gefunden} one {# Job} other {# Jobs}}",
+        "services": "{count, plural, =0 {Keine Dienste gefunden} one {# Dienst} other {# Dienste}}",
+        "events": "{count, plural, =0 {Keine Events gefunden} one {# Event} other {# Events}}",
+        "compare": "{count} Jobs im Vergleich",
+        "remote": "remote",
+        "dropped": "Das Suchwort ergab nichts, ohne es gesucht",
+        "price": "Preisrahmen gelesen",
+        "calc": {
+          "ugc_budget": "UGC-Budget",
+          "freelance_order": "Freelance-Auftrag",
+          "hiring_cost": "Einstellungskosten"
+        }
       }
     },
     "jobDraft": {

@@ -117,6 +117,7 @@ describe("OpenRouter wire format (D213)", () => {
       maxTokens: 10,
     });
     expect(response.text).toBe("ok");
+    expect(response.fallback).toBe(true);
     expect(calls).toEqual([
       OPENROUTER_DEFAULT_MODELS.chat,
       freeModelChain(OPENROUTER_DEFAULT_MODELS.chat)[1],
@@ -152,6 +153,7 @@ describe("OpenRouter wire format (D213)", () => {
       maxTokens: 10,
     });
     expect(response.text).toBe("ok");
+    expect(response.fallback).toBe(true);
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 

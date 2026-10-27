@@ -100,6 +100,7 @@ import {
 } from "./ugc-focus";
 import { stripLeakedToolMarkup } from "./leaked-tool";
 import { rememberShownJobs, shownJobsText } from "./shown-jobs";
+import { stepFromOutcome, type StepSummary } from "../ui/step-summary";
 import { goalStateForTurn, visibleJobGoal } from "./job-goal-session";
 import type { JobGoal } from "./job-goal";
 import { blockFromTool } from "../ui/build";
@@ -175,7 +176,13 @@ export type BotEvent =
       id: string;
       name: string;
       status: "completed" | "waiting" | "blocked" | "failed";
+      /** How long the step took, in milliseconds. */
+      ms?: number;
+      /** What the step did, checked on the server (TZ 36, task A). */
+      summary?: StepSummary;
     }
+  /** The main model failed and a fallback answered (D554). */
+  | { type: "model_fallback" }
   | { type: "tool_result"; name: string; kind: string; data: unknown }
   /** A checked interactive block (D523); Telegram shows its text. */
   | { type: "ui"; block: UiBlock }
@@ -1488,6 +1495,7 @@ export async function handleMessage(
   let fitSpoken = false;
   let spokenFitLine: string | null = null;
   let comparedJobs = false;
+  let fallbackSaid = false;
 
   let roundSystem = system;
   let greetingRetried = false;
@@ -1620,6 +1628,10 @@ export async function handleMessage(
       }
       emit({ type: "error", code: "BOT_TRY_LATER" });
       return finish(input, state, emit, now);
+    }
+    if (response.fallback && !fallbackSaid) {
+      fallbackSaid = true;
+      emit({ type: "model_fallback" });
     }
     const cost = costMicroUsd(llm.model, response.usage, llm.prices);
     const modelCalls = lastRound ? [] : response.toolCalls;
@@ -2034,18 +2046,32 @@ async function callTool(
 ) {
   // Each invocation has its own identity, even when a provider reuses call ids.
   const id = crypto.randomUUID();
+  const started = performance.now();
   emit({ type: "tool_start", id, name: call.name });
   try {
     const result = await executeTool(ctx, call, emit, now);
+    const status =
+      result.workStatus ?? (result.waiting ? "waiting" : "completed");
     emit({
       type: "tool_end",
       id,
       name: call.name,
-      status: result.workStatus ?? (result.waiting ? "waiting" : "completed"),
+      status,
+      ms: Math.round(performance.now() - started),
+      // A summary only for a step that did its work (TZ 36, task A).
+      ...(status === "completed" && result.step
+        ? { summary: result.step }
+        : {}),
     });
     return result;
   } catch (error) {
-    emit({ type: "tool_end", id, name: call.name, status: "failed" });
+    emit({
+      type: "tool_end",
+      id,
+      name: call.name,
+      status: "failed",
+      ms: Math.round(performance.now() - started),
+    });
     throw error;
   }
 }
@@ -2063,6 +2089,7 @@ async function executeTool(
   jobCards?: JobCardFacts[];
   ui?: UiBlock;
   workStatus?: "blocked" | "failed";
+  step?: StepSummary;
 }> {
   // A draft is sent only after the person's own clear yes; the card then
   // asks once more (D520). A yes that asks for a change is not a yes.
@@ -2166,6 +2193,7 @@ async function executeTool(
       jobs,
       jobCards: jobs ? cardsFrom(data) : [],
       ...(ui ? { ui } : {}),
+      step: stepFromOutcome(call.name, { ...outcome, ui: ui ?? undefined }),
     };
   } catch (error) {
     await journal(false, { error });

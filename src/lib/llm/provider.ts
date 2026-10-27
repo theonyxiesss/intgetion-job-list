@@ -37,6 +37,8 @@ export type LLMResponse = {
   toolCalls: LLMToolCall[];
   usage: LLMUsage;
   stopReason: "end" | "tool_use" | "max_tokens";
+  /** A fallback model answered because the chosen one failed (D554). */
+  fallback?: boolean;
 };
 
 export interface LLMProvider {

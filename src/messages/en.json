@@ -1698,6 +1698,23 @@
         "memory": "Memory",
         "ugc": "UGC campaign",
         "working": "Platform action"
+      },
+      "steps": "{count, plural, one {# step} other {# steps}}",
+      "seconds": "{seconds} s",
+      "fallback": "The main model did not answer, a backup model replied.",
+      "summary": {
+        "jobs": "{count, plural, =0 {nothing found} one {# job} other {# jobs}}",
+        "services": "{count, plural, =0 {No services found} one {# service} other {# services}}",
+        "events": "{count, plural, =0 {No events found} one {# event} other {# events}}",
+        "compare": "{count} jobs side by side",
+        "remote": "remote",
+        "dropped": "The query word found nothing, searched without it",
+        "price": "Price guide read",
+        "calc": {
+          "ugc_budget": "UGC budget",
+          "freelance_order": "Freelance order",
+          "hiring_cost": "Hiring cost"
+        }
       }
     },
     "jobDraft": {

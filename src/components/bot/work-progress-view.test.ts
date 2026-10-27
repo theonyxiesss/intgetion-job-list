@@ -59,3 +59,69 @@ describe("work and clarification accessibility", () => {
     expect(html).toContain("Answer in my own words");
   });
 });
+
+describe("the work timeline (TZ 36, task A)", () => {
+  it("shows what each step did, its time and the turn total", () => {
+    const html = render(
+      createElement(WorkProgressCard, {
+        steps: [
+          {
+            id: "a",
+            name: "search_jobs",
+            status: "completed",
+            ms: 1200,
+            summary: {
+              kind: "jobs",
+              count: 5,
+              category: "design",
+              remote: true,
+              dropped: true,
+            },
+          },
+          {
+            id: "b",
+            name: "show_ui",
+            status: "completed",
+            ms: 300,
+            summary: { kind: "compare", count: 2 },
+          },
+        ],
+        state: "done",
+      }),
+    );
+    expect(html).toContain("2 steps");
+    expect(html).toContain("2 s");
+    expect(html).toContain("Design · remote → 5 jobs");
+    expect(html).toContain("The query word found nothing, searched without it");
+    expect(html).toContain("2 jobs side by side");
+    expect(html).toContain("1.2 s");
+  });
+
+  it("says when a backup model answered", () => {
+    const html = render(
+      createElement(WorkProgressCard, {
+        steps: [],
+        state: "done",
+        fallback: true,
+      }),
+    );
+    expect(html).toContain("a backup model replied");
+  });
+
+  it("says nothing was found in words", () => {
+    const html = render(
+      createElement(WorkProgressCard, {
+        steps: [
+          {
+            id: "a",
+            name: "search_jobs",
+            status: "completed",
+            summary: { kind: "jobs", count: 0 },
+          },
+        ],
+        state: "done",
+      }),
+    );
+    expect(html).toContain("nothing found");
+  });
+});

@@ -50,6 +50,7 @@ import { OFFER_ACTIONS, offerPath, type FillKind } from "./offers";
 import { searchFiltersFromDraft, eventPlaceFromDraft } from "./memory";
 import { readJobGoal, transitionJobGoal, type JobGoal } from "./job-goal";
 import type { ShownJob } from "./shown-jobs";
+import type { StepSummary } from "../ui/step-summary";
 import { accountTools } from "./account-tools";
 import { employerJobTools } from "./employer-job-tools";
 import { accountProfileTools } from "./account-profile-tool";
@@ -170,6 +171,8 @@ export type ToolOutcome = {
   audit?: { entityType: string; entityId: string };
   /** An interactive block for the chat (D523), already checked. */
   ui?: UiBlock;
+  /** What the step did, for the chat's work timeline (TZ 36, task A). */
+  step?: StepSummary;
 };
 
 type Access = "guest" | "user";
@@ -333,6 +336,16 @@ export const TOOLS: readonly BotTool[] = [
             ? `No job title matched "${droppedWord}". These jobs match the other filters:\n${listed}`
             : listed,
         client: { kind: "jobs", data: jobs.map(jobCard) },
+        step: {
+          kind: "jobs",
+          count: jobs.length,
+          ...(query.category ? { category: query.category } : {}),
+          ...(query.workFormat?.length === 1 && query.workFormat[0] === "remote"
+            ? { remote: true }
+            : {}),
+          ...(query.country ? { country: query.country } : {}),
+          ...(droppedWord ? { dropped: true } : {}),
+        },
         ...(goal
           ? {
               state: {
@@ -398,8 +411,16 @@ export const TOOLS: readonly BotTool[] = [
         remote: input.remote ?? known.remote,
         limit: input.limit ?? MAX_EVENTS,
       });
-      if (!events.length) return { llm: "No upcoming events found." };
+      if (!events.length)
+        return {
+          llm: "No upcoming events found.",
+          step: { kind: "events", count: 0 },
+        };
       return {
+        step: {
+          kind: "events",
+          count: Math.min(events.length, MAX_EVENTS),
+        },
         llm: events
           .slice(0, MAX_EVENTS)
           .map((event) =>

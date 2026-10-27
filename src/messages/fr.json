@@ -1698,6 +1698,23 @@
         "memory": "Mémoire",
         "ugc": "Campagne UGC",
         "working": "Action sur la plateforme"
+      },
+      "steps": "{count, plural, one {# étape} other {# étapes}}",
+      "seconds": "{seconds} s",
+      "fallback": "Le modèle principal n’a pas répondu, un modèle de secours a répondu.",
+      "summary": {
+        "jobs": "{count, plural, =0 {rien trouvé} one {# offre} other {# offres}}",
+        "services": "{count, plural, =0 {Aucun service trouvé} one {# service} other {# services}}",
+        "events": "{count, plural, =0 {Aucun événement trouvé} one {# événement} other {# événements}}",
+        "compare": "{count} offres comparées",
+        "remote": "à distance",
+        "dropped": "Le mot recherché n’a rien donné, recherche sans lui",
+        "price": "Repère de prix lu",
+        "calc": {
+          "ugc_budget": "Budget UGC",
+          "freelance_order": "Commande freelance",
+          "hiring_cost": "Coût d’embauche"
+        }
       }
     },
     "jobDraft": {

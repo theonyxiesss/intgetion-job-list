@@ -101,7 +101,14 @@ type JobCard = {
 };
 
 type Entry =
-  | { key: string; kind: "work"; steps: WorkStep[]; state: WorkState }
+  | {
+      key: string;
+      kind: "work";
+      steps: WorkStep[];
+      state: WorkState;
+      /** A fallback model answered this turn (D554). */
+      fallback?: boolean;
+    }
   | { key: string; kind: "user" | "event"; text: string }
   /** `live`: arrived in this visit, so it types itself out (D514). */
   | {
@@ -830,6 +837,15 @@ export function Chat({
             ),
           );
         }
+        if (data.type === "model_fallback") {
+          setEntries((current) =>
+            current.map((entry) =>
+              entry.key === workKey && entry.kind === "work"
+                ? { ...entry, fallback: true }
+                : entry,
+            ),
+          );
+        }
         if (data.type === "tool_end") setActivity(null);
         if (data.type === "error") hadError = true;
         if (data.type === "done") turnState = hadError ? "failed" : "done";
@@ -1523,6 +1539,7 @@ export function Chat({
                     key={entry.key}
                     steps={entry.steps}
                     state={entry.state}
+                    fallback={entry.fallback ?? false}
                   />
                 );
               }

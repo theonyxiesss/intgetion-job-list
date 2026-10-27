@@ -1698,6 +1698,23 @@
         "memory": "Память",
         "ugc": "UGC-кампания",
         "working": "Работа с платформой"
+      },
+      "steps": "{count, plural, one {# шаг} few {# шага} many {# шагов} other {# шага}}",
+      "seconds": "{seconds} с",
+      "fallback": "Основная модель не ответила, ответила запасная.",
+      "summary": {
+        "jobs": "{count, plural, =0 {ничего не найдено} one {# вакансия} few {# вакансии} many {# вакансий} other {# вакансии}}",
+        "services": "{count, plural, =0 {Услуг не найдено} one {# услуга} few {# услуги} many {# услуг} other {# услуги}}",
+        "events": "{count, plural, =0 {Событий не найдено} one {# событие} few {# события} many {# событий} other {# события}}",
+        "compare": "Сравнение: {count} вакансии",
+        "remote": "удалённо",
+        "dropped": "Слово запроса ничего не дало, искал без него",
+        "price": "Ориентир цены прочитан",
+        "calc": {
+          "ugc_budget": "Бюджет UGC",
+          "freelance_order": "Заказ на фрилансе",
+          "hiring_cost": "Стоимость найма"
+        }
       }
     },
     "jobDraft": {

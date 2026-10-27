@@ -227,7 +227,13 @@ export class OpenRouterProvider implements LLMProvider {
     for (const model of chain) {
       if (lastError && Date.now() > deadline) break;
       try {
-        return await this.attempt({ ...request, model }, ATTEMPT_TIMEOUT_MS);
+        const response = await this.attempt(
+          { ...request, model },
+          ATTEMPT_TIMEOUT_MS,
+        );
+        return model === request.model
+          ? response
+          : { ...response, fallback: true };
       } catch (error) {
         if (!(error instanceof LLMProviderError)) throw error;
         lastError = error;

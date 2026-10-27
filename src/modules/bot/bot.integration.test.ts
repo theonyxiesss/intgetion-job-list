@@ -186,7 +186,13 @@ describe("bot conversation (7A)", () => {
       id: (events[0] as { id: string }).id,
       name: "search_jobs",
       status: "completed",
+      ms: expect.any(Number),
+      summary: expect.objectContaining({ kind: "jobs" }),
     });
+    // The step summary carries counts and codes, never the person's words.
+    expect(
+      JSON.stringify(events.find((event) => event.type === "tool_end")),
+    ).not.toContain(title);
     expect(events[1]).toMatchObject({
       kind: "jobs",
       data: [{ id: jobId, title }],

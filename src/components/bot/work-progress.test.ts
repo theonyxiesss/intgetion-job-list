@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { advanceWork, finishWork, type WorkStep } from "./work-progress";
+import {
+  advanceWork,
+  finishWork,
+  workSeconds,
+  type WorkStep,
+} from "./work-progress";
 
 describe("the observed work of a chat turn", () => {
   it("keeps repeated calls to the same tool distinct", () => {
@@ -41,5 +46,54 @@ describe("the observed work of a chat turn", () => {
     expect(
       advanceWork([], { type: "tool_start", name: "search_jobs" }),
     ).toEqual([]);
+  });
+});
+
+describe("step time and summary (TZ 36, task A)", () => {
+  it("keeps a checked summary and the time of a completed step only", () => {
+    let steps = advanceWork([], {
+      type: "tool_start",
+      id: "a",
+      name: "search_jobs",
+    });
+    steps = advanceWork(steps, {
+      type: "tool_end",
+      id: "a",
+      status: "completed",
+      ms: 1234,
+      summary: { kind: "jobs", count: 5, category: "design", q: "x" },
+    });
+    expect(steps[0]).toEqual({
+      id: "a",
+      name: "search_jobs",
+      status: "completed",
+      ms: 1234,
+      summary: { kind: "jobs", count: 5, category: "design" },
+    });
+    const failed = advanceWork(
+      advanceWork([], { type: "tool_start", id: "b", name: "search_jobs" }),
+      {
+        type: "tool_end",
+        id: "b",
+        status: "failed",
+        ms: -5,
+        summary: { kind: "jobs", count: 1 },
+      },
+    );
+    expect(failed[0]).toEqual({
+      id: "b",
+      name: "search_jobs",
+      status: "failed",
+    });
+  });
+
+  it("adds up the turn's tool time in whole seconds", () => {
+    expect(workSeconds([])).toBeNull();
+    expect(
+      workSeconds([
+        { id: "a", name: "x", status: "completed", ms: 1200 },
+        { id: "b", name: "y", status: "completed", ms: 4900 },
+      ]),
+    ).toBe(6);
   });
 });
