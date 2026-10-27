@@ -13,6 +13,7 @@ export const UI_COMPONENTS = [
   "job_cards",
   "service_cards",
   "compare_plans",
+  "compare_jobs",
   "calculator",
   "choice",
   "progress",
@@ -83,6 +84,22 @@ export type ComparePlansProps = {
   }[];
 };
 
+/**
+ * D560: published jobs side by side on the same fields, in the same order.
+ * `criteria` are the field names; each job has one value per name, `null`
+ * when the job does not say (shown as unknown, never guessed).
+ */
+export type CompareJobsProps = {
+  criteria: string[];
+  items: {
+    id: string;
+    title: string;
+    company: string;
+    values: (string | null)[];
+    action: string;
+  }[];
+};
+
 export type CalcInput = {
   name: string;
   min: number;
@@ -128,6 +145,7 @@ export type UiPropsMap = {
   job_cards: JobCardsProps;
   service_cards: ServiceCardsProps;
   compare_plans: ComparePlansProps;
+  compare_jobs: CompareJobsProps;
   calculator: CalculatorProps;
   choice: ChoiceProps;
   progress: ProgressProps;
@@ -158,6 +176,7 @@ export const UI_TTL_SEC: Record<UiComponent, number> = {
   job_cards: 60 * 60,
   service_cards: 60 * 60,
   compare_plans: 24 * 60 * 60,
+  compare_jobs: 60 * 60,
   calculator: 24 * 60 * 60,
   choice: 24 * 60 * 60,
   progress: 5 * 60,

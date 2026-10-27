@@ -2151,7 +2151,8 @@
         "progress": "{filled} di {total} campi obbligatori compilati.",
         "ugc_budget": "{videos} video × {reward} = {total}.",
         "freelance_order": "{quantity} × {price} = {total}.",
-        "hiring_cost": "{jobs} annunci al mese: Hire {hire}, Team {team}. {plan} costa meno."
+        "hiring_cost": "{jobs} annunci al mese: Hire {hire}, Team {team}. {plan} costa meno.",
+        "compareJobs": "Offerte a confronto:"
       },
       "label": {
         "job_cards": "Offerte",
@@ -2160,7 +2161,17 @@
         "calculator": "Calcolatore",
         "choice": "Scelta",
         "progress": "Avanzamento",
-        "details": "Dettagli"
+        "details": "Dettagli",
+        "compare_jobs": "Confronta offerte"
+      },
+      "compareJobs": {
+        "salary": "Stipendio",
+        "format": "Modalità",
+        "employment": "Tipo di contratto",
+        "seniority": "Livello",
+        "place": "Luogo",
+        "posted": "Pubblicata",
+        "unknown": "Non indicato"
       }
     }
   },

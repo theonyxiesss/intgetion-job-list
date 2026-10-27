@@ -2151,7 +2151,8 @@
         "progress": "Заполнено {filled} из {total} обязательных полей.",
         "ugc_budget": "{videos} роликов × {reward} = {total}.",
         "freelance_order": "{quantity} × {price} = {total}.",
-        "hiring_cost": "{jobs, plural, one {# вакансия} few {# вакансии} many {# вакансий} other {# вакансии}} в месяц: Найм {hire}, Команда {team}. {plan} дешевле."
+        "hiring_cost": "{jobs, plural, one {# вакансия} few {# вакансии} many {# вакансий} other {# вакансии}} в месяц: Найм {hire}, Команда {team}. {plan} дешевле.",
+        "compareJobs": "Сравнение вакансий:"
       },
       "label": {
         "job_cards": "Вакансии",
@@ -2160,7 +2161,17 @@
         "calculator": "Калькулятор",
         "choice": "Выбор",
         "progress": "Прогресс",
-        "details": "Подробности"
+        "details": "Подробности",
+        "compare_jobs": "Сравнение вакансий"
+      },
+      "compareJobs": {
+        "salary": "Зарплата",
+        "format": "Формат",
+        "employment": "Занятость",
+        "seniority": "Уровень",
+        "place": "Место",
+        "posted": "Опубликована",
+        "unknown": "Не указано"
       }
     }
   },

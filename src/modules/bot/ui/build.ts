@@ -16,7 +16,12 @@ import {
   freelancePriceRange,
   SERVICE_DRAFT_REQUIRED,
 } from "@/modules/freelance/service";
-import { JOB_DRAFT_REQUIRED } from "@/modules/jobs/service";
+import { intlLocale } from "@/i18n/locale";
+import { formatMoneyDto } from "@/lib/money";
+import {
+  JOB_DRAFT_REQUIRED,
+  listPublicJobsByIds,
+} from "@/modules/jobs/service";
 import { UGC_BRIEF_REQUIRED, ugcPriceGuide } from "@/modules/ugc/service";
 import { offerPath } from "../service/offers";
 import { checkBlock, type ShowUiInput } from "./schemas";
@@ -367,6 +372,94 @@ async function comparePlans(
   );
 }
 
+/**
+ * D560: two to four published jobs on the same fields, read here from the
+ * catalog. A field the job leaves empty stays `null`; ids that are not
+ * published are dropped, and fewer than two left means no block.
+ */
+async function compareJobs(
+  input: Extract<ShowUiInput, { component: "compare_jobs" }>,
+  ctx: Ctx,
+  now: Date,
+): Promise<UiBlock | null> {
+  const ids = [...new Set(input.jobIds)];
+  const found = await listPublicJobsByIds(ids, ctx.locale);
+  const byId = new Map(found.map((job) => [job.id, job]));
+  const jobs = ids.flatMap((id) => {
+    const job = byId.get(id);
+    return job ? [job] : [];
+  });
+  if (jobs.length < 2) return null;
+  const t = blocksText(ctx.locale);
+  const messages = messagesFor(ctx.locale);
+  const jobText = createTranslator({
+    locale: ctx.locale,
+    messages,
+    namespace: "jobs",
+  });
+  const markers = createTranslator({
+    locale: ctx.locale,
+    messages,
+    namespace: "markers",
+  });
+  const money = intlLocale(ctx.locale);
+  const day = new Intl.DateTimeFormat(money, {
+    day: "numeric",
+    month: "short",
+  });
+  const criteria = [
+    t("compareJobs.salary"),
+    t("compareJobs.format"),
+    t("compareJobs.employment"),
+    t("compareJobs.seniority"),
+    t("compareJobs.place"),
+    t("compareJobs.posted"),
+  ];
+  const actions: UiAction[] = [];
+  const items = jobs.map((job) => {
+    const salary = job.salaryMin
+      ? `${formatMoneyDto(job.salaryMin, money)}${job.salaryMax ? ` – ${formatMoneyDto(job.salaryMax, money)}` : ""} / ${jobText(job.salaryMin.period as never)}`
+      : null;
+    const values = [
+      salary,
+      jobText(job.workFormat as never),
+      jobText(job.employmentType as never),
+      job.seniority ? markers(`seniority.${job.seniority}` as never) : null,
+      job.location?.trim() || job.locationCountry || null,
+      job.publishedAt ? day.format(new Date(job.publishedAt)) : null,
+    ];
+    actions.push({
+      id: `open:${job.id}`,
+      type: "link",
+      label: t("open"),
+      path: `/jobs/${job.id}`,
+    });
+    return {
+      id: job.id,
+      title: job.title,
+      company: job.company.name,
+      values,
+      action: `open:${job.id}`,
+    };
+  });
+  const unknown = t("compareJobs.unknown");
+  const lines = items.map(
+    (item) =>
+      `• ${item.title} — ${item.company}: ${criteria.map((name, index) => `${name}: ${item.values[index] ?? unknown}`).join("; ")}`,
+  );
+  return block(
+    "compare_jobs",
+    { criteria, items },
+    actions,
+    { tool: "show_ui" },
+    {
+      text: `${t("fallback.compareJobs")}\n${lines.join("\n")}`,
+      path: "/jobs",
+    },
+    now,
+  );
+}
+
 function slider(
   name: string,
   min: number,
@@ -548,6 +641,8 @@ export async function blockFromShowUi(
   switch (input.component) {
     case "compare_plans":
       return comparePlans(input, ctx, now);
+    case "compare_jobs":
+      return compareJobs(input, ctx, now);
     case "calculator":
       return calculator(input, ctx, now);
     case "choice": {

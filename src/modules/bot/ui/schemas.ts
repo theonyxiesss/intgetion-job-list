@@ -27,6 +27,13 @@ export const showUiInput = z.discriminatedUnion("component", [
     .strict(),
   z
     .object({
+      component: z.literal("compare_jobs"),
+      // Only ids: titles, pay and facts are read from the catalog (D560).
+      jobIds: z.array(z.uuid()).min(2).max(4),
+    })
+    .strict(),
+  z
+    .object({
       component: z.literal("calculator"),
       formula: z.enum(CALC_FORMULAS),
       // Start values in dollars and counts, flat: free models send a nested
@@ -164,6 +171,28 @@ const props = {
         .max(4),
     })
     .strict(),
+  compare_jobs: z
+    .object({
+      criteria: z.array(text(60)).min(1).max(8),
+      items: z
+        .array(
+          z
+            .object({
+              id: z.uuid(),
+              title: text(300),
+              company: z.string().max(200),
+              values: z.array(z.string().max(200).nullable()).max(8),
+              action: id,
+            })
+            .strict(),
+        )
+        .min(2)
+        .max(4),
+    })
+    .strict()
+    .refine((value) =>
+      value.items.every((item) => item.values.length === value.criteria.length),
+    ),
   calculator: z
     .object({
       formula: z.enum(CALC_FORMULAS),
@@ -280,6 +309,8 @@ function namedActions(component: string, value: unknown): string[] {
       return ((data.plans ?? []) as { action?: string }[]).flatMap((plan) =>
         plan.action ? [plan.action] : [],
       );
+    case "compare_jobs":
+      return (data.items as { action: string }[]).map((item) => item.action);
     case "calculator":
       return data.actions as string[];
     case "choice":

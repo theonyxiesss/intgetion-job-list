@@ -2151,7 +2151,8 @@
         "progress": "{filled} de {total} campos obrigatórios preenchidos.",
         "ugc_budget": "{videos} vídeos × {reward} = {total}.",
         "freelance_order": "{quantity} × {price} = {total}.",
-        "hiring_cost": "{jobs} vagas por mês: Hire {hire}, Team {team}. {plan} custa menos."
+        "hiring_cost": "{jobs} vagas por mês: Hire {hire}, Team {team}. {plan} custa menos.",
+        "compareJobs": "Vagas comparadas:"
       },
       "label": {
         "job_cards": "Vagas",
@@ -2160,7 +2161,17 @@
         "calculator": "Calculadora",
         "choice": "Escolha",
         "progress": "Progresso",
-        "details": "Detalhes"
+        "details": "Detalhes",
+        "compare_jobs": "Comparar vagas"
+      },
+      "compareJobs": {
+        "salary": "Salário",
+        "format": "Modelo de trabalho",
+        "employment": "Tipo de contrato",
+        "seniority": "Nível",
+        "place": "Local",
+        "posted": "Publicada",
+        "unknown": "Não informado"
       }
     }
   },

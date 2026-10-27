@@ -9,6 +9,7 @@ import { blockIsStale, type UiBlock } from "@/modules/bot/ui/types";
 import type { BlockHandlers } from "./block-kit";
 import { Calculator, type CalcValues } from "./calculator";
 import { JobCards, ServiceCards } from "./cards";
+import { CompareJobs } from "./compare-jobs";
 import { ComparePlans } from "./plans";
 import { Choice, Details, Progress } from "./simple";
 
@@ -138,6 +139,13 @@ function Body({
       return (
         <ComparePlans
           props={(block as UiBlock<"compare_plans">).props}
+          {...shared}
+        />
+      );
+    case "compare_jobs":
+      return (
+        <CompareJobs
+          props={(block as UiBlock<"compare_jobs">).props}
           {...shared}
         />
       );

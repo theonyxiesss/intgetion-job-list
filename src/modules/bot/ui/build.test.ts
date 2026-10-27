@@ -26,6 +26,12 @@ vi.mock("@/modules/freelance/service", async () => {
   };
 });
 
+const listJobsMock = vi.hoisted(() => vi.fn());
+vi.mock("@/modules/jobs/service", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/modules/jobs/service")>()),
+  listPublicJobsByIds: (...args: unknown[]) => listJobsMock(...args),
+}));
+
 const { blockFromShowUi, blockFromTool, hiringPrices } =
   await import("./build");
 const { checkBlock, showUiInput } = await import("./schemas");
@@ -343,5 +349,136 @@ describe("the block check (D523)", () => {
     }
     expect(checkBlock({ ...valid(), html: "<b>x</b>" })).toBeNull();
     expect(checkBlock({ ...valid(), component: "iframe" })).toBeNull();
+  });
+});
+
+describe("jobs side by side (D560)", () => {
+  const A = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const B = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+  const C = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+  const job = (id: string, extra: Record<string, unknown>) => ({
+    id,
+    title: `Job ${id.slice(0, 1)}`,
+    company: { name: `Company ${id.slice(0, 1)}` },
+    workFormat: "remote",
+    employmentType: "full_time",
+    seniority: null,
+    location: null,
+    locationCountry: null,
+    salaryMin: null,
+    salaryMax: null,
+    publishedAt: null,
+    ...extra,
+  });
+
+  beforeEach(() => listJobsMock.mockReset());
+
+  it("takes only ids from the model", () => {
+    expect(
+      showUiInput.safeParse({ component: "compare_jobs", jobIds: [A, B] })
+        .success,
+    ).toBe(true);
+    expect(
+      showUiInput.safeParse({ component: "compare_jobs", jobIds: [A] }).success,
+    ).toBe(false);
+    expect(
+      showUiInput.safeParse({
+        component: "compare_jobs",
+        jobIds: [A, B],
+        salary: "$1",
+      }).success,
+    ).toBe(false);
+  });
+
+  it("puts the same fields in the same order and marks what a job does not say", async () => {
+    listJobsMock.mockResolvedValue([
+      job(B, {
+        seniority: "senior",
+        locationCountry: "PL",
+        salaryMin: {
+          amountMinor: "8000000",
+          currency: "USD",
+          period: "year",
+          basis: "gross",
+        },
+        publishedAt: "2026-10-20T00:00:00.000Z",
+      }),
+      job(A, {}),
+    ]);
+    const block = await blockFromShowUi(
+      { component: "compare_jobs", jobIds: [A, B] },
+      guest,
+      NOW,
+    );
+    expect(block?.component).toBe("compare_jobs");
+    const props = block?.props as {
+      criteria: string[];
+      items: { id: string; values: (string | null)[]; action: string }[];
+    };
+    expect(props.criteria).toEqual([
+      "Salary",
+      "Work format",
+      "Employment",
+      "Level",
+      "Location",
+      "Posted",
+    ]);
+    // The order the model asked for, not the order the catalog returned.
+    expect(props.items.map((item) => item.id)).toEqual([A, B]);
+    expect(props.items[0]!.values).toEqual([
+      null,
+      "Remote",
+      "Full time",
+      null,
+      null,
+      null,
+    ]);
+    expect(props.items[1]!.values[0]).toContain("80,000");
+    expect(props.items[1]!.values[4]).toBe("PL");
+    expect(block?.actions).toContainEqual(
+      expect.objectContaining({ type: "link", path: `/jobs/${A}` }),
+    );
+    expect(block?.fallback.text).toContain("Not stated");
+    expect(block?.source.ttlSec).toBe(3600);
+  });
+
+  it("shows nothing when fewer than two of the jobs are published", async () => {
+    listJobsMock.mockResolvedValue([job(A, {})]);
+    expect(
+      await blockFromShowUi(
+        { component: "compare_jobs", jobIds: [A, C] },
+        guest,
+        NOW,
+      ),
+    ).toBeNull();
+  });
+
+  it("refuses a block whose job lacks a value for a field", () => {
+    expect(
+      checkBlock({
+        v: 1,
+        id: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+        component: "compare_jobs",
+        props: {
+          criteria: ["Salary", "Level"],
+          items: [
+            { id: A, title: "A", company: "", values: [null], action: "a" },
+            {
+              id: B,
+              title: "B",
+              company: "",
+              values: [null, null],
+              action: "b",
+            },
+          ],
+        },
+        source: { tool: "show_ui", at: NOW.toISOString(), ttlSec: 3600 },
+        fallback: { text: "x" },
+        actions: [
+          { id: "a", type: "link", label: "Open", path: `/jobs/${A}` },
+          { id: "b", type: "link", label: "Open", path: `/jobs/${B}` },
+        ],
+      }),
+    ).toBeNull();
   });
 });

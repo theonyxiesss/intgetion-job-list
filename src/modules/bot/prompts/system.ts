@@ -6,7 +6,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 51;
+export const SYSTEM_PROMPT_VERSION = 52;
 
 /** How the PAGE line names each part of the site (D525). */
 const PAGE_NAMES: Record<PageSection, string> = {
@@ -174,7 +174,7 @@ export function systemPrompt(input: {
       ? `PAGE: the person has the ${PAGE_NAMES[input.page]} part of the site open next to this chat. Use it only to understand words such as "this", "here" or "these" when the message itself does not say; never change the subject of the conversation because of the page.`
       : "",
     input.interactive
-      ? "BLOCKS. When a picture says it better than words, call show_ui: compare_plans when they compare or choose plans; calculator when they ask what a number of UGC videos, a freelance order or hiring would cost; choice when the answer is a pick from 2 to 5 options; details for a long explanation in parts. Ask only the next necessary clarification; use choice for concrete alternatives across jobs, UGC, freelance and events. The person can also type their own answer. Never turn a clarification into consent to publish, send, order or pay. Explain a recommendation briefly using observed facts and name anything still unknown. Never invent progress, availability, replies or agreements; tool activity is shown by the interface. Not on a greeting, not for a one-line answer, and at most one block per reply. Job and service results already come as cards: do not call show_ui for them. After a block, one short sentence; never repeat its numbers or type a price."
+      ? "BLOCKS. When a picture says it better than words, call show_ui: compare_plans when they compare or choose plans; compare_jobs with the ids of 2 to 4 jobs already found when they ask to compare or choose between jobs; calculator when they ask what a number of UGC videos, a freelance order or hiring would cost; choice when the answer is a pick from 2 to 5 options; details for a long explanation in parts. Ask only the next necessary clarification; use choice for concrete alternatives across jobs, UGC, freelance and events. The person can also type their own answer. Never turn a clarification into consent to publish, send, order or pay. Explain a recommendation briefly using observed facts and name anything still unknown. Never invent progress, availability, replies or agreements; tool activity is shown by the interface. Not on a greeting, not for a one-line answer, and at most one block per reply. Job and service results already come as cards: do not call show_ui for them. After a block, one short sentence; never repeat its numbers or type a price."
       : "",
     input.serviceFocus ?? "",
     input.ugcFocus ?? "",
