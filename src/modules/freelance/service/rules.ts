@@ -25,6 +25,12 @@ export const FREELANCE_ERRORS = {
   noRevisionsLeft: "NO_REVISIONS_LEFT",
   reviewClosed: "REVIEW_CLOSED",
   roomClosed: "ROOM_CLOSED",
+  ownTask: "OWN_TASK",
+  sellerRequired: "SELLER_REQUIRED",
+  taskClosed: "TASK_CLOSED",
+  proposalExists: "PROPOSAL_EXISTS",
+  proposalClosed: "PROPOSAL_CLOSED",
+  tasksNotReady: "TASKS_NOT_READY",
 } as const;
 
 const HOUR_MS = 60 * 60 * 1000;

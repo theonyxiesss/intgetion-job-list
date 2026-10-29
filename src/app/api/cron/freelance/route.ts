@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { notFound, toErrorResponse } from "@/lib/http";
 import {
+  expireOldTasks,
   recheckOrderPayments,
   runOrderTimers,
 } from "@/modules/freelance/service";
@@ -26,7 +27,9 @@ export async function GET(request: Request) {
     const result = await runOrderTimers();
     // Payments still waiting on confirmations (D463).
     const payments = await recheckOrderPayments();
-    return Response.json({ ok: true, ...result, payments });
+    // Client tasks open longer than 30 days expire (TZ 47, D569).
+    const tasksExpired = await expireOldTasks();
+    return Response.json({ ok: true, ...result, payments, tasksExpired });
   } catch (error) {
     return toErrorResponse(error);
   }

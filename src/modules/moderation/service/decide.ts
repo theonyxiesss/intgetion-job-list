@@ -4,6 +4,7 @@ export type QueueTarget =
   | { kind: "job"; source: "internal" | "imported"; status: string }
   | { kind: "company"; status: string; reason?: string }
   | { kind: "freelance_service"; status: string }
+  | { kind: "freelance_task"; status: string }
   | { kind: "missing" };
 
 export type QueueEffect =
@@ -15,6 +16,8 @@ export type QueueEffect =
   | "verify_company"
   | "publish_service"
   | "reject_service"
+  | "publish_task"
+  | "reject_task"
   | "none";
 
 export function planDecision(
@@ -26,6 +29,11 @@ export function planDecision(
     // Only a service still waiting is decided; an older item for it is closed (D447).
     if (target.status !== "pending") return "none";
     return decision === "approved" ? "publish_service" : "reject_service";
+  }
+  if (target.kind === "freelance_task") {
+    // A client's task (TZ 47, D569): only a task still waiting is decided.
+    if (target.status !== "pending") return "none";
+    return decision === "approved" ? "publish_task" : "reject_task";
   }
   if (target.kind === "company") {
     // 10B: a verification request is approved into `verified` (D132).

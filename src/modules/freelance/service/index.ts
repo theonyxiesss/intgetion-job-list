@@ -15,6 +15,25 @@ export {
   leaveClientReview,
 } from "./client-review-service";
 export type { ClientReviewView } from "./client-review-service";
+export {
+  acceptProposal,
+  closeTask,
+  createTask,
+  declineProposal,
+  decideTaskModeration,
+  expireOldTasks,
+  getTasksForModeration,
+  getTaskView,
+  listMyProposals,
+  listMyTasks,
+  listOpenTasks,
+  listTaskProposals,
+  sendProposal,
+  withdrawProposal,
+} from "./task-service";
+export type { PublicTask, TaskView } from "./task-service";
+export { TASK_QUEUE_ENTITY as FREELANCE_TASK_QUEUE_ENTITY } from "../repo/task-repo";
+export type { ProposalRow, TaskRow } from "../repo/task-repo";
 export type { RoomFeedItem } from "./order-room";
 export {
   CATALOG_PAGE_SIZE,

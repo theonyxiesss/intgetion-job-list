@@ -14,8 +14,11 @@ import {
 } from "@/modules/jobs/service";
 import {
   decideServiceModeration,
+  decideTaskModeration,
   FREELANCE_QUEUE_ENTITY,
+  FREELANCE_TASK_QUEUE_ENTITY,
   getServicesForModeration,
+  getTasksForModeration,
 } from "@/modules/freelance/service";
 import { enqueueMatchJob } from "@/modules/matching/service";
 import { safeNotify } from "@/modules/notifications/service";
@@ -91,12 +94,21 @@ export async function listQueue(
       )
     ).map((s) => [s.id, s]),
   );
+  const taskIds = items
+    .filter((i) => i.entityType === FREELANCE_TASK_QUEUE_ENTITY)
+    .map((i) => i.entityId);
+  const tasksById = new Map(
+    (taskIds.length > 0 ? await getTasksForModeration(taskIds) : []).map(
+      (task) => [task.id, task],
+    ),
+  );
   const last = items.at(-1);
   return {
     items: items.map((item): QueueItemDto => {
       const job = jobsById.get(item.entityId);
       const company = companiesById.get(item.entityId);
       const service = servicesById.get(item.entityId);
+      const task = tasksById.get(item.entityId);
       return {
         id: item.id,
         entityType: item.entityType,
@@ -122,7 +134,9 @@ export async function listQueue(
                     status: service.status,
                     slug: service.slug,
                   }
-                : null,
+                : item.entityType === FREELANCE_TASK_QUEUE_ENTITY && task
+                  ? { title: task.title, status: task.status }
+                  : null,
       };
     }),
     nextCursor: rows.length > query.limit && last ? encodeCursor(last) : null,
@@ -146,6 +160,12 @@ async function targetOf(item: repo.QueueRow): Promise<QueueTarget> {
     const [service] = await getServicesForModeration([item.entityId]);
     return service
       ? { kind: "freelance_service", status: service.status }
+      : { kind: "missing" };
+  }
+  if (item.entityType === FREELANCE_TASK_QUEUE_ENTITY) {
+    const [task] = await getTasksForModeration([item.entityId]);
+    return task
+      ? { kind: "freelance_task", status: task.status }
       : { kind: "missing" };
   }
   return { kind: "missing" };
@@ -211,6 +231,12 @@ export async function decideQueueItem(
         break;
       case "reject_service":
         await decideServiceModeration(item.entityId, "reject", note);
+        break;
+      case "publish_task":
+        await decideTaskModeration(item.entityId, "publish", note);
+        break;
+      case "reject_task":
+        await decideTaskModeration(item.entityId, "reject", note);
         break;
       case "none":
         break;

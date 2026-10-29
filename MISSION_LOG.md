@@ -3623,3 +3623,8 @@
 - Миграции: `0072` — локально. Решения: D568.
 - Не проверено: вид под входом (квота Supabase), интеграционные тесты с базой.
 - OPEN QUESTION: D568 (тексты, своя сводка, «слепая» публикация); «да» на `0071` и `0072`.
+
+## 2026-10-29 — ТЗ 47 A3.1 (задачи и отклики, сервер) — DONE локально; A3.2/A3.3 NOT DONE
+
+- Сделано: ТЗ 47; миграция `0073_freelance_tasks.sql` (не применена); схема; `repo/task-repo.ts`; `service/task-rules.ts`, `service/task-service.ts`; модерация задач в общей очереди (`moderation/service/decide.ts`, `queue-service.ts`); истечение задач в `/api/cron/freelance`; API `/api/freelance/tasks`, `/tasks/[id]`, `/proposals`, `/proposals/[id]`; лимиты `freelanceTask` 3/сутки, `freelanceProposal` 20/сутки. Тесты +20. Решение D569 (отдельный раздел, одна правка при найме) — записать в DECISIONS.
+- Не сделано: страницы раздела и тексты (A3.2), уведомления и Spoki (A3.3), полный `pnpm test` после изменений модерации.

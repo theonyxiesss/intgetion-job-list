@@ -101,3 +101,38 @@ export const FREELANCE_TIMERS = {
   acceptHours: 7 * 24,
   reviewHours: 14 * 24,
 } as const;
+
+/** Tasks posted by clients (TZ 47, D569). */
+export const FREELANCE_TASK_STATUSES = [
+  "pending",
+  "open",
+  "hired",
+  "closed",
+  "expired",
+  "rejected",
+] as const;
+export type FreelanceTaskStatus = (typeof FREELANCE_TASK_STATUSES)[number];
+
+/** Proposals of freelancers to a task (TZ 47, D569). */
+export const FREELANCE_PROPOSAL_STATUSES = [
+  "sent",
+  "accepted",
+  "declined",
+  "withdrawn",
+] as const;
+export type FreelanceProposalStatus =
+  (typeof FREELANCE_PROPOSAL_STATUSES)[number];
+
+export const FREELANCE_TASK_LIMITS = {
+  titleMin: 10,
+  titleMax: 120,
+  descriptionMin: 80,
+  /** Same as an order's task, so it fits the order made from it. */
+  descriptionMax: 2000,
+  wantedByMax: 80,
+  coverMin: 40,
+  coverMax: 2000,
+  openDays: 30,
+  /** D569: a hire from a proposal carries one revision. */
+  hireRevisions: 1,
+} as const;

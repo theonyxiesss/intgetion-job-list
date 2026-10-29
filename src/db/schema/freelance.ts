@@ -17,8 +17,10 @@ import {
 import type {
   FreelanceCategory,
   FreelanceOrderStatus,
+  FreelanceProposalStatus,
   FreelanceReviewAuthorKind,
   FreelanceServiceStatus,
+  FreelanceTaskStatus,
   FreelanceTier,
 } from "@/config/freelance";
 import { companies } from "./companies";
@@ -433,6 +435,107 @@ export const freelanceClientReviews = pgTable(
     check(
       "freelance_client_reviews_body_check",
       sql`char_length(${table.body}) <= 1000`,
+    ),
+  ],
+);
+
+/** A task posted by a client; public after a moderator (TZ 47, D569). */
+export const freelanceTasks = pgTable(
+  "freelance_tasks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    buyerId: uuid("buyer_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    buyerCompanyId: uuid("buyer_company_id").references(() => companies.id, {
+      onDelete: "set null",
+    }),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    category: text("category").$type<FreelanceCategory>().notNull(),
+    budgetMinMinor: bigint("budget_min_minor", { mode: "bigint" }),
+    budgetMaxMinor: bigint("budget_max_minor", { mode: "bigint" }),
+    wantedBy: text("wanted_by"),
+    status: text("status")
+      .$type<FreelanceTaskStatus>()
+      .notNull()
+      .default("pending"),
+    moderationNote: text("moderation_note"),
+    hiredOrderId: uuid("hired_order_id").references(() => freelanceOrders.id, {
+      onDelete: "set null",
+    }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("freelance_tasks_open_idx").on(table.status, table.createdAt),
+    index("freelance_tasks_buyer_idx").on(table.buyerId, table.createdAt),
+    check(
+      "freelance_tasks_status_check",
+      sql`${table.status} IN ('pending', 'open', 'hired', 'closed', 'expired', 'rejected')`,
+    ),
+    check(
+      "freelance_tasks_title_check",
+      sql`char_length(${table.title}) BETWEEN 10 AND 120`,
+    ),
+    check(
+      "freelance_tasks_description_check",
+      sql`char_length(${table.description}) BETWEEN 80 AND 2000`,
+    ),
+  ],
+);
+
+/** A freelancer's offer to a task: price, days and a cover note (D569). */
+export const freelanceProposals = pgTable(
+  "freelance_proposals",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    taskId: uuid("task_id")
+      .notNull()
+      .references(() => freelanceTasks.id, { onDelete: "cascade" }),
+    sellerId: uuid("seller_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    priceMinor: bigint("price_minor", { mode: "bigint" }).notNull(),
+    deliveryDays: integer("delivery_days").notNull(),
+    cover: text("cover").notNull(),
+    status: text("status")
+      .$type<FreelanceProposalStatus>()
+      .notNull()
+      .default("sent"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("freelance_proposals_task_seller_key").on(
+      table.taskId,
+      table.sellerId,
+    ),
+    index("freelance_proposals_seller_idx").on(table.sellerId, table.createdAt),
+    check(
+      "freelance_proposals_status_check",
+      sql`${table.status} IN ('sent', 'accepted', 'declined', 'withdrawn')`,
+    ),
+    check(
+      "freelance_proposals_price_check",
+      sql`${table.priceMinor} BETWEEN 1000 AND 2000000`,
+    ),
+    check(
+      "freelance_proposals_days_check",
+      sql`${table.deliveryDays} BETWEEN 1 AND 90`,
+    ),
+    check(
+      "freelance_proposals_cover_check",
+      sql`char_length(${table.cover}) BETWEEN 40 AND 2000`,
     ),
   ],
 );
