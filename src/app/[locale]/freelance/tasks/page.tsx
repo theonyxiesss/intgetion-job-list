@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { FREELANCE_CATEGORIES, type FreelanceCategory } from "@/config/freelance";
+import {
+  FREELANCE_CATEGORIES,
+  type FreelanceCategory,
+} from "@/config/freelance";
 import { Badge } from "@/components/ui/badge";
 import { buttonClass } from "@/components/ui/button";
 import { Container, PageHeader } from "@/components/ui/container";
@@ -72,10 +75,16 @@ export default async function FreelanceTasksPage({
           intro={t("intro")}
           actions={
             <div className="flex flex-wrap gap-2">
-              <Link href="/freelance/tasks/new" className={buttonClass("primary")}>
+              <Link
+                href="/freelance/tasks/new"
+                className={buttonClass("primary")}
+              >
                 {t("postTask")}
               </Link>
-              <Link href="/freelance/tasks/mine" className={buttonClass("secondary")}>
+              <Link
+                href="/freelance/tasks/mine"
+                className={buttonClass("secondary")}
+              >
                 {t("myTasks")}
               </Link>
             </div>
@@ -103,7 +112,10 @@ export default async function FreelanceTasksPage({
               <EmptyState
                 title={t("empty")}
                 action={
-                  <Link href="/freelance/tasks/new" className="underline underline-offset-4">
+                  <Link
+                    href="/freelance/tasks/new"
+                    className="underline underline-offset-4"
+                  >
                     {t("postTask")}
                   </Link>
                 }
@@ -125,10 +137,23 @@ export default async function FreelanceTasksPage({
                       </span>
                       <span className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-fg-muted">
                         <span className="font-mono">
-                          {budgetLabel(task.budgetMinMinor, task.budgetMaxMinor, locale, t("negotiable"))}
+                          {budgetLabel(
+                            task.budgetMinMinor,
+                            task.budgetMaxMinor,
+                            locale,
+                            t("negotiable"),
+                          )}
                         </span>
-                        {task.wantedBy ? <span>{t("wantedBy")}: {task.wantedBy}</span> : null}
-                        <span>{task.postedBy === "company" ? t("company") : t("person")}</span>
+                        {task.wantedBy ? (
+                          <span>
+                            {t("wantedBy")}: {task.wantedBy}
+                          </span>
+                        ) : null}
+                        <span>
+                          {task.postedBy === "company"
+                            ? t("company")
+                            : t("person")}
+                        </span>
                       </span>
                     </Link>
                   </li>

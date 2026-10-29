@@ -12,10 +12,16 @@ import {
   suggestSellers,
   type SuggestedSeller,
 } from "@/modules/freelance/service";
-import { InviteSellers, type InviteCard } from "@/modules/freelance/ui/invite-sellers";
+import {
+  InviteSellers,
+  type InviteCard,
+} from "@/modules/freelance/ui/invite-sellers";
 import { TaskManagementActions } from "@/modules/freelance/ui/task-management-actions";
 import { formatUsd } from "@/modules/freelance/ui/format";
-import { freelanceTasksCopy, userOrLogin } from "@/modules/freelance/ui/server-copy";
+import {
+  freelanceTasksCopy,
+  userOrLogin,
+} from "@/modules/freelance/ui/server-copy";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +57,11 @@ export default async function MyFreelanceTasksPage({
           ? f("recordCompleted", { count: item.record.completed })
           : f("recordNone"),
         ...(item.record.onTimeShare !== null
-          ? [f("recordOnTime", { percent: Math.round(item.record.onTimeShare * 100) })]
+          ? [
+              f("recordOnTime", {
+                percent: Math.round(item.record.onTimeShare * 100),
+              }),
+            ]
           : []),
       ],
       invited: item.invited,
@@ -93,28 +103,58 @@ export default async function MyFreelanceTasksPage({
         <PageHeader
           title={t("myTasks")}
           intro={t("myTasksIntro")}
-          actions={<Link href="/freelance/tasks/new" className={buttonClass("primary")}>{t("postTask")}</Link>}
+          actions={
+            <Link
+              href="/freelance/tasks/new"
+              className={buttonClass("primary")}
+            >
+              {t("postTask")}
+            </Link>
+          }
         />
         {notReady ? (
-          <p role="status" className="border border-line p-4 text-fg-muted">{t("comingSoon")}</p>
+          <p role="status" className="border border-line p-4 text-fg-muted">
+            {t("comingSoon")}
+          </p>
         ) : tasks.length === 0 ? (
           <EmptyState
             title={t("myTasksEmpty")}
-            action={<Link href="/freelance/tasks/new" className="underline underline-offset-4">{t("postTask")}</Link>}
+            action={
+              <Link
+                href="/freelance/tasks/new"
+                className="underline underline-offset-4"
+              >
+                {t("postTask")}
+              </Link>
+            }
           />
         ) : (
           <ul className="flex flex-col gap-6">
             {tasks.map((task, index) => (
-              <li key={task.id} className="rounded-lg border border-line p-4 md:p-6">
+              <li
+                key={task.id}
+                className="rounded-lg border border-line p-4 md:p-6"
+              >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex flex-col gap-2">
-                    <Link href={`/freelance/tasks/${task.id}`} className="t-h3 underline underline-offset-4">{task.title}</Link>
-                    <span className="text-sm text-fg-muted">{copy[`category_${task.category}`]}</span>
+                    <Link
+                      href={`/freelance/tasks/${task.id}`}
+                      className="t-h3 underline underline-offset-4"
+                    >
+                      {task.title}
+                    </Link>
+                    <span className="text-sm text-fg-muted">
+                      {copy[`category_${task.category}`]}
+                    </span>
                   </div>
                   <Badge>{t(`status.${task.status}`)}</Badge>
                 </div>
-                <p className="mt-4 whitespace-pre-wrap text-fg-muted">{task.description}</p>
-                {task.status === "open" ? <TaskManagementActions taskId={task.id} copy={copy} /> : null}
+                <p className="mt-4 whitespace-pre-wrap text-fg-muted">
+                  {task.description}
+                </p>
+                {task.status === "open" ? (
+                  <TaskManagementActions taskId={task.id} copy={copy} />
+                ) : null}
                 {task.status === "open" ? (
                   <InviteSellers
                     taskId={task.id}
@@ -122,20 +162,39 @@ export default async function MyFreelanceTasksPage({
                     labels={inviteLabels}
                   />
                 ) : null}
-                <h2 className="t-h3 mt-6">{t("proposals", { count: proposalGroups[index]?.length ?? 0 })}</h2>
+                <h2 className="t-h3 mt-6">
+                  {t("proposals", {
+                    count: proposalGroups[index]?.length ?? 0,
+                  })}
+                </h2>
                 {(proposalGroups[index] ?? []).length === 0 ? (
-                  <p className="mt-3 text-sm text-fg-muted">{t("noProposals")}</p>
+                  <p className="mt-3 text-sm text-fg-muted">
+                    {t("noProposals")}
+                  </p>
                 ) : (
                   <ul className="mt-3 divide-y divide-line border-y border-line">
                     {proposalGroups[index]?.map((proposal) => (
-                      <li key={proposal.id} className="flex flex-col gap-3 py-4">
+                      <li
+                        key={proposal.id}
+                        className="flex flex-col gap-3 py-4"
+                      >
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <span className="font-mono">{formatUsd(proposal.priceMinor, locale)} · {t("deliveryDays", { count: proposal.deliveryDays })}</span>
-                          <Badge>{t(`proposalStatus.${proposal.status}`)}</Badge>
+                          <span className="font-mono">
+                            {formatUsd(proposal.priceMinor, locale)} ·{" "}
+                            {t("deliveryDays", {
+                              count: proposal.deliveryDays,
+                            })}
+                          </span>
+                          <Badge>
+                            {t(`proposalStatus.${proposal.status}`)}
+                          </Badge>
                         </div>
                         <p className="whitespace-pre-wrap">{proposal.cover}</p>
                         {proposal.status === "sent" ? (
-                          <TaskManagementActions proposalId={proposal.id} copy={copy} />
+                          <TaskManagementActions
+                            proposalId={proposal.id}
+                            copy={copy}
+                          />
                         ) : null}
                       </li>
                     ))}

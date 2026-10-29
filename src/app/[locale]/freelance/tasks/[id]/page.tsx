@@ -83,11 +83,19 @@ export default async function FreelanceTaskPage({
           </span>
         </div>
         {task.wantedBy ? (
-          <p><span className="text-fg-muted">{t("wantedBy")}:</span> {task.wantedBy}</p>
+          <p>
+            <span className="text-fg-muted">{t("wantedBy")}:</span>{" "}
+            {task.wantedBy}
+          </p>
         ) : null}
-        <p className="max-w-[68ch] whitespace-pre-wrap leading-relaxed">{task.description}</p>
+        <p className="max-w-[68ch] whitespace-pre-wrap leading-relaxed">
+          {task.description}
+        </p>
         {task.own ? (
-          <Link href="/freelance/tasks/mine" className="underline underline-offset-4">
+          <Link
+            href="/freelance/tasks/mine"
+            className="underline underline-offset-4"
+          >
             {t("myTasks")}
           </Link>
         ) : task.canPropose ? (
@@ -101,7 +109,9 @@ export default async function FreelanceTaskPage({
           </>
         ) : task.myProposal ? (
           <p role="status" className="border border-line p-4 text-fg-muted">
-            {t("alreadyProposed", { status: t(`proposalStatus.${task.myProposal.status}`) })}
+            {t("alreadyProposed", {
+              status: t(`proposalStatus.${task.myProposal.status}`),
+            })}
           </p>
         ) : !viewer ? (
           <Link href="/login" className="underline underline-offset-4">
