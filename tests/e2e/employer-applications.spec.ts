@@ -164,13 +164,13 @@ test("employer views an application, then moves it to interview, offer and hired
   const candidateMe = await page.request.get("/api/me");
   const candidateId = ((await candidateMe.json()) as { id: string }).id;
 
-  await insertWithdrawnApplications(jobId, candidateId, 21);
+  await insertWithdrawnApplications(jobId, candidateId, 51);
   const filteredApiPage = await employer.request.get(
     `/api/applications?as=employer&jobId=${jobId}&status=withdrawn&limit=50`,
   );
   expect(filteredApiPage.status()).toBe(200);
   expect(await filteredApiPage.json()).toMatchObject({
-    counts: { all: 22, applied: 1, withdrawn: 21 },
+    counts: { all: 52, applied: 1, withdrawn: 51 },
     items: expect.arrayContaining([
       expect.objectContaining({ status: "withdrawn" }),
     ]),
@@ -180,7 +180,7 @@ test("employer views an application, then moves it to interview, offer and hired
     `/en/employer/jobs/${jobId}/applications?status=withdrawn`,
   );
   await expect(
-    employer.getByRole("link", { name: "Withdrawn 21" }),
+    employer.getByRole("link", { name: "Withdrawn 51" }),
   ).toHaveAttribute("aria-current", "page");
   await employer.getByRole("link", { name: "Next page" }).click();
   const nextPageUrl = new URL(employer.url());

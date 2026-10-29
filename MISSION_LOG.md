@@ -3884,9 +3884,10 @@
 - Код не слит в `master` и не выложен.
 
 ## 2026-10-29 — Кабинеты вакансий P1.1 — NOT DONE
+
 - Сделано локально в `codex/jobs-dashboard-p1`: фильтр статусов откликов работодателя выполняется до пагинации; сервер возвращает полные счётчики статусов и название вакансии; фильтр сохраняется при переходе между страницами. Добавлены проверки service и e2e, обновлены API-ТЗ и статус проекта.
-- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (257 файлов, 1925 тестов; 3 skipped); `pnpm build` → 0; `pnpm exec prettier --check <7 изменённых исходников>` → 0; `pnpm exec prettier --check <4 изменённых docs>` → 1 (документы не проходят форматирование); `pnpm format:check` → 1 (репозиторий сообщает 1583 файла с проблемами форматирования; изменённые исходники проходят).
-- P-тесты подфазы: unit → зелёный; интеграционный и e2e → не запущены локально, проект требует CI с базой/браузером.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (257 файлов, 1925 тестов; 3 skipped); `pnpm build` → 0; `pnpm exec prettier --check <7 изменённых исходников>` → 0; `pnpm exec prettier --check <11 изменённых файлов>` → 0; первый CI: `format:check` упал на пустой строке после заголовка этой записи, исправлено Prettier; локальный полный `pnpm format:check` на Windows всё ещё отмечает 1579 файлов.
+- P-тесты подфазы: unit → зелёный; integration CI прошёл (51 файл, 188 тестов; 7 skipped); первая e2e CI попытка обнаружила, что фикстуре нужны 51 withdrawn запись при лимите страницы 50; фикстура исправлена, повторный CI ожидается.
 - Миграции: нет.
 - Изменённые файлы: `src/modules/applications/repo/applications.ts`, `src/modules/applications/service/employer-service.ts`, `src/modules/applications/schemas/index.ts`, `src/app/api/applications/route.ts`, `src/app/[locale]/employer/jobs/[id]/applications/page.tsx`, `src/modules/applications/employer.integration.test.ts`, `tests/e2e/employer-applications.spec.ts`, `docs/tz/06-api.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`.
 - Отклонения от ТЗ: нет.
