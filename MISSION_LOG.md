@@ -3488,3 +3488,10 @@
 - Не установлены: Impeccable (хуки на каждую правку, запись в проект и в `app/layout.tsx`), Taste Skill (запускает Chrome, качает ресурсы из сети), ui-ux-pro-max (скрипты через `${CLAUDE_PLUGIN_ROOT}`, `--persist` пишет `design-system/` — конфликт с `intgetion-design`), `ui-styling` (предлагает shadcn, у нас свой набор), `webapp-testing` (Python Playwright и Chromium; локально Chromium часто недоступен).
 - Приоритет прежний: `intgetion-design` ведёт вид, `AGENTS.md` главнее скиллов. Правило «Title Case» в `web-design-guidelines` не применять: тексты идут через `src/messages`.
 - Код проекта не менялся. Push и выкладки не было.
+
+## 2026-10-27 — плагин Deque Axe Accessibility: не ставим
+
+- Скачан в изолированную папку и прочитан (`dequelabs/axe-accessibility` 0.3.2, MIT). Код чистый: `.mcp.json` запускает `npx -y axe-mcp-server@1.6.0` и `@deque/axe-auth@1.6.0` с закреплёнными версиями.
+- Причины отказа: нужна платная подписка Axe DevTools for Web (план Bundle) и ключ или OAuth-вход в аккаунт Deque; запросы идут в облако Deque; `remediate` и guided-тесты тратят AI-кредиты организации; передача содержимого страниц стороннему сервису требует отдельного решения по приватности.
+- Бесплатная замена без аккаунта: локальный запуск `axe-core` на страницах localhost. Для постоянной установки пакета нужен «да» на новую зависимость (AGENTS.md).
+- Установка не выполнялась. Код проекта не менялся.
