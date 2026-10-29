@@ -88,16 +88,80 @@ export default async function CampaignPage({
               {view.brief.deadline}
             </p>
             <p className="t-body-s text-fg-muted">{t("moneyNote")}</p>
+            {view.invite.terms ? (
+              <section
+                aria-labelledby="offer-terms"
+                className="flex flex-col gap-2 rounded-lg border border-border p-4"
+              >
+                <h2 id="offer-terms" className="t-h4">
+                  {t("termsTitle")}
+                </h2>
+                <ul className="t-body-s flex flex-col gap-1">
+                  <li>{t("termsVideos")}</li>
+                  <li className="font-mono">
+                    {t("termsReward")}:{" "}
+                    {formatMinor(
+                      BigInt(view.invite.terms.bountyMinor),
+                      "USD",
+                      locale,
+                      { wholeWhenEven: true },
+                    )}
+                  </li>
+                  <li className="font-mono">
+                    {t("termsDeadline")}: {view.invite.terms.deadline}
+                  </li>
+                  <li>
+                    {t(`rights.${view.invite.terms.rights}`)} ·{" "}
+                    {t("termsLicense", {
+                      months: view.invite.terms.licenseMonths,
+                    })}
+                  </li>
+                  <li>
+                    {t("termsReview", {
+                      days: view.invite.terms.reviewBusinessDays,
+                    })}
+                  </li>
+                  <li>
+                    {t("termsMustSay")}: {view.invite.terms.mustSay}
+                  </li>
+                  <li>
+                    {t("termsMustNot")}: {view.invite.terms.mustNot}
+                  </li>
+                </ul>
+                {view.invite.status === "offered" ? (
+                  <p className="t-body-s text-fg-muted">{t("termsNote")}</p>
+                ) : null}
+                {view.invite.agreedAt ? (
+                  <p className="t-body-s text-fg-muted">
+                    {t("agreedAt", {
+                      date: view.invite.agreedAt.slice(0, 10),
+                    })}
+                  </p>
+                ) : null}
+              </section>
+            ) : null}
             <div className="flex flex-col gap-3">
               <p className="font-mono">{t(`status.${view.invite.status}`)}</p>
+              {view.invite.status === "offered" && view.invite.termsChanged ? (
+                <p role="alert" className="t-body-s">
+                  {t("termsChanged")}
+                </p>
+              ) : null}
               {view.invite.status === "offered" ? (
                 <div className="flex flex-wrap gap-3">
-                  <UgcAction
-                    action="accept"
-                    label={t("accept")}
-                    body={{ inviteId: view.invite.id }}
-                    primary
-                  />
+                  {view.invite.termsChanged ? null : (
+                    <UgcAction
+                      action="accept"
+                      label={t("accept")}
+                      body={{
+                        inviteId: view.invite.id,
+                        ...(view.invite.termsHash
+                          ? { termsHash: view.invite.termsHash }
+                          : {}),
+                      }}
+                      primary
+                    />
+                  )}
                   <UgcAction
                     action="decline"
                     label={t("decline")}

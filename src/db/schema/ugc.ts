@@ -24,6 +24,7 @@ import type {
   UgcRights,
   UgcSubmissionStatus,
 } from "@/config/ugc";
+import type { TermsSnapshot } from "@/modules/ugc/service/terms";
 import { companies } from "./companies";
 import { users } from "./users";
 
@@ -187,6 +188,12 @@ export const ugcInvites = pgTable(
     revisionUsed: boolean("revision_used").notNull().default(false),
     deadlineNoted: boolean("deadline_noted").notNull().default(false),
     offeredAt: timestamp("offered_at", { withTimezone: true }),
+    /** Terms the offer carried and their hash; null on offers made before U3 (0074). */
+    terms: jsonb("terms").$type<TermsSnapshot>(),
+    termsHash: text("terms_hash"),
+    /** The hash the creator agreed to and when; null until they accept. */
+    agreedHash: text("agreed_hash"),
+    agreedAt: timestamp("agreed_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

@@ -100,6 +100,10 @@ function inviteOf(row: InviteRow): Invite {
     revisionUsed: row.revisionUsed,
     deadlineNoted: row.deadlineNoted,
     offeredAt: row.offeredAt,
+    terms: row.terms,
+    termsHash: row.termsHash,
+    agreedHash: row.agreedHash,
+    agreedAt: row.agreedAt,
     createdAt: row.createdAt,
   };
 }
@@ -398,6 +402,10 @@ export function productionUgcStore(): UgcStore {
           revisionUsed: row.revisionUsed,
           deadlineNoted: row.deadlineNoted,
           offeredAt: row.offeredAt,
+          terms: row.terms ?? null,
+          termsHash: row.termsHash ?? null,
+          agreedHash: row.agreedHash ?? null,
+          agreedAt: row.agreedAt ?? null,
           updatedAt: new Date(),
         })
         .where(eq(ugcInvites.id, row.id));

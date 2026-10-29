@@ -65,7 +65,11 @@ const body = z.discriminatedUnion("action", [
     campaignId: z.uuid(),
     creatorId: z.uuid(),
   }),
-  z.object({ action: z.literal("accept"), inviteId: z.uuid() }),
+  z.object({
+    action: z.literal("accept"),
+    inviteId: z.uuid(),
+    termsHash: z.string().length(64).optional(),
+  }),
   z.object({ action: z.literal("decline"), inviteId: z.uuid() }),
   z.object({
     action: z.literal("submit"),
@@ -154,7 +158,9 @@ export async function POST(request: Request) {
       );
     }
     if (input.action === "accept") {
-      return Response.json(await acceptInvite(id, input.inviteId));
+      return Response.json(
+        await acceptInvite(id, input.inviteId, input.termsHash),
+      );
     }
     if (input.action === "decline") {
       return Response.json(await declineInvite(id, input.inviteId));

@@ -81,6 +81,9 @@ export const UGC_LIMITS = {
   changeNoteMax: 500,
   exampleLinksMax: 5,
   offerSilenceDays: 7,
+  /** D574: default licence and review terms shown to the creator. */
+  licenseMonths: 6,
+  reviewBusinessDays: 5,
   joinTokenDays: 14,
   offersPerCreatorPerDay: 3,
   draftsPerCompanyPerHour: 5,

@@ -21,6 +21,7 @@ export type CreatorProfile = {
   inviteOptIn: boolean;
   status: UgcCreatorStatus;
 };
+import type { TermsSnapshot } from "./terms";
 
 export type Campaign = {
   id: string;
@@ -59,6 +60,11 @@ export type Invite = {
   revisionUsed: boolean;
   deadlineNoted: boolean;
   offeredAt: Date | null;
+  /** U3: terms the offer carried; absent on offers made before 0074. */
+  terms?: TermsSnapshot | null;
+  termsHash?: string | null;
+  agreedHash?: string | null;
+  agreedAt?: Date | null;
   createdAt: Date;
 };
 

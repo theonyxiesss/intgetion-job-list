@@ -1,3 +1,4 @@
+import { assertTermsAgreed, buildTerms, termsHash } from "./terms";
 import { randomBytes, randomUUID } from "node:crypto";
 import {
   UGC_GOALS,
@@ -478,6 +479,14 @@ export async function readCampaign(userId: string | null, campaignId: string) {
       bountyMinor: invite.bountyMinor?.toString() ?? null,
       rights: invite.rights,
       pitch: invite.pitch,
+      terms: invite.terms ?? null,
+      termsHash: invite.termsHash ?? null,
+      /** The brief no longer says what the offer said: the creator cannot accept it. */
+      termsChanged:
+        !!invite.termsHash &&
+        invite.status === "offered" &&
+        termsHash(buildTerms(campaign)) !== invite.termsHash,
+      agreedAt: invite.agreedAt?.toISOString() ?? null,
     },
     submission: forReader(submission),
     payout: moneyRecord(
@@ -799,7 +808,18 @@ export async function offerHire(
   if (!profile) throw notFound();
   const invites = await store.listInvites(campaign.id);
   const hired = invites.filter((row) => row.status === "hired").length;
-  const openOffers = invites.filter((row) => row.status === "offered").length;
+  const terms = buildTerms(campaign);
+  const hash = termsHash(terms);
+  const staleOffer = invites.find(
+    (row) =>
+      row.creatorUserId === creatorId &&
+      row.status === "offered" &&
+      row.termsHash &&
+      row.termsHash !== hash,
+  );
+  const openOffers = invites.filter(
+    (row) => row.status === "offered" && row !== staleOffer,
+  ).length;
   assertOfferRoom({
     offersToCreatorToday: await store.offersToCreatorOnDay(creatorId, day(now)),
     openOffers,
@@ -807,7 +827,7 @@ export async function offerHire(
     videosWanted: campaign.videosWanted,
   });
   const existing = invites.find((row) => row.creatorUserId === creatorId);
-  if (existing && existing.status !== "applied") {
+  if (existing && existing.status !== "applied" && existing !== staleOffer) {
     throw new HttpError(
       409,
       errorCodes.invalidTransition,
@@ -839,7 +859,7 @@ export async function offerHire(
       },
     );
     if (!matches || !profile.inviteOptIn) throw notFound();
-  } else {
+  } else if (existing !== staleOffer) {
     checkParticipationTransition({
       from: "applied",
       to: "offered",
@@ -865,6 +885,10 @@ export async function offerHire(
   invite.rights = campaign.rights;
   invite.pitch = campaign.pitch;
   invite.offeredAt = now;
+  invite.terms = terms;
+  invite.termsHash = hash;
+  invite.agreedHash = null;
+  invite.agreedAt = null;
   if (existing) await store.saveInvite(invite);
   else await store.insertInvite(invite);
   await store.notify({
@@ -901,7 +925,11 @@ async function inviteForCreator(
   return { invite, campaign };
 }
 
-export async function acceptInvite(userId: string | null, inviteId: string) {
+export async function acceptInvite(
+  userId: string | null,
+  inviteId: string,
+  termsSeen?: string,
+) {
   const id = requireUser(userId);
   const store = await db();
   const { invite, campaign } = await inviteForCreator(store, inviteId, id);
@@ -919,6 +947,15 @@ export async function acceptInvite(userId: string | null, inviteId: string) {
     to: "hired",
     actor: "creator",
   });
+  const agreed = assertTermsAgreed({
+    snapshotHash: invite.termsHash ?? null,
+    current: buildTerms(campaign),
+    sentHash: termsSeen,
+  });
+  if (agreed) {
+    invite.agreedHash = agreed;
+    invite.agreedAt = store.now();
+  }
   invite.status = "hired";
   await store.saveInvite(invite);
   await store.notify({

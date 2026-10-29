@@ -29,6 +29,8 @@ export const UGC_ERRORS = {
   txInvalid: "UGC_TX_INVALID",
   refundWait: "UGC_REFUND_WAIT",
   nothingToRefund: "UGC_NOTHING_TO_REFUND",
+  termsChanged: "UGC_TERMS_CHANGED",
+  termsMismatch: "UGC_TERMS_MISMATCH",
 } as const;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
