@@ -19,6 +19,11 @@ import { Link } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { listJobsForUser } from "@/modules/jobs/service";
+import {
+  getCompaniesForUser,
+  resolveEmployerCompany,
+} from "@/modules/companies/service";
+import { EmployerCompanySwitcher } from "@/modules/companies/ui/employer-company-switcher";
 import { localePrefix } from "@/i18n/paths";
 
 /** DESIGN.md 9.0: tabs by status, archive = expired, closed, removed. */
@@ -38,7 +43,7 @@ export default async function EmployerJobsPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string; companyId?: string | string[] }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -46,8 +51,14 @@ export default async function EmployerJobsPage({
   const user = await getCurrentUser(supabase.auth);
   if (!user) redirect(`${localePrefix(locale)}/login`);
   const t = await getTranslations("employerJobs");
-  const rows = await listJobsForUser(user.id);
-  const requested = (await searchParams).tab;
+  const query = await searchParams;
+  const companyContext = resolveEmployerCompany(
+    await getCompaniesForUser(user.id),
+    typeof query.companyId === "string" ? query.companyId : undefined,
+  );
+  const selected = companyContext.selected;
+  const rows = selected ? await listJobsForUser(user.id, selected.id) : [];
+  const requested = query.tab;
   const tab: Tab =
     requested && requested in TABS ? (requested as Tab) : "published";
   const inTab = (key: Tab) =>
@@ -61,23 +72,48 @@ export default async function EmployerJobsPage({
       <Container className="flex flex-col gap-8">
         <PageHeader
           title={t("title")}
+          label={selected?.name}
           actions={
-            <ButtonLink
-              href="/employer/jobs/new"
-              {...navForward}
-              icon={<Icon icon={Plus} size={16} />}
-            >
-              {t("newJob")}
-            </ButtonLink>
+            selected &&
+            ["owner", "admin", "recruiter"].includes(selected.role) ? (
+              <ButtonLink
+                href={`/employer/jobs/new?companyId=${selected.id}`}
+                {...navForward}
+                icon={<Icon icon={Plus} size={16} />}
+              >
+                {t("newJob")}
+              </ButtonLink>
+            ) : undefined
           }
         />
-        {rows.length === 0 ? (
+        <EmployerCompanySwitcher
+          companies={companyContext.companies}
+          selectedCompanyId={selected?.id ?? null}
+          pathname="/employer/jobs"
+          label={t("companySwitcher")}
+        />
+        {companyContext.companies.length > 1 && !selected ? (
+          <EmptyState
+            title={t("selectCompanyTitle")}
+            text={t("selectCompanyText")}
+          />
+        ) : rows.length === 0 ? (
           <EmptyState
             title={t("empty")}
             action={
-              <ButtonLink href="/employer/jobs/new" variant="secondary">
-                {t("newJob")}
-              </ButtonLink>
+              !companyContext.companies.length ? (
+                <ButtonLink href="/employer/jobs/new" variant="secondary">
+                  {t("newJob")}
+                </ButtonLink>
+              ) : selected &&
+                ["owner", "admin", "recruiter"].includes(selected.role) ? (
+                <ButtonLink
+                  href={`/employer/jobs/new?companyId=${selected.id}`}
+                  variant="secondary"
+                >
+                  {t("newJob")}
+                </ButtonLink>
+              ) : undefined
             }
           />
         ) : (
@@ -86,7 +122,10 @@ export default async function EmployerJobsPage({
               label={t("title")}
               items={(Object.keys(TABS) as Tab[]).map((key) => ({
                 label: t(`tabs.${key}`),
-                href: { pathname: "/employer/jobs", query: { tab: key } },
+                href: {
+                  pathname: "/employer/jobs",
+                  query: { tab: key, companyId: selected?.id },
+                },
                 active: key === tab,
                 count: inTab(key).length,
               }))}
@@ -109,7 +148,7 @@ export default async function EmployerJobsPage({
                       <Td>
                         <Link
                           {...navForward}
-                          href={`/employer/jobs/${job.id}`}
+                          href={`/employer/jobs/${job.id}?companyId=${selected?.id}`}
                           className="font-medium underline-offset-4 hover:underline"
                         >
                           {job.title}

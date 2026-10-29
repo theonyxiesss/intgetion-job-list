@@ -854,6 +854,9 @@
     "title": "Your jobs",
     "newJob": "Create a job",
     "empty": "You have not created any jobs yet.",
+    "companySwitcher": "Company",
+    "selectCompanyTitle": "Choose a company",
+    "selectCompanyText": "Select the company whose hiring workspace you want to open.",
     "status": "Status",
     "edit": "Edit job",
     "back": "Back to jobs",
@@ -5312,7 +5315,7 @@
       "text": "Plans in force and what they include.",
       "change": "Change plan",
       "personal": "Personal plan: {name}",
-      "company": "Company plan: {name}",
+      "company": "{company}: {name}",
       "until": "until {date}"
     },
     "services": {

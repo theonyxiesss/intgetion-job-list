@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { HttpError } from "@/lib/http";
-import { assertCompanyEditable, isPossibleDuplicate } from "../service";
+import {
+  assertCompanyEditable,
+  isPossibleDuplicate,
+  resolveEmployerCompany,
+} from "../service";
 
 describe("company authorization", () => {
   const internal = { origin: "internal" as const };
@@ -35,4 +39,35 @@ describe("possible duplicate rules", () => {
     expect(isPossibleDuplicate(null, null, 0.8)).toBe(true));
   it("does not flag name similarity below 0.8", () =>
     expect(isPossibleDuplicate(null, null, 0.79)).toBe(false));
+});
+
+describe("employer company context", () => {
+  const first = { id: "first", name: "First", origin: "internal" };
+  const second = { id: "second", name: "Second", origin: "internal" };
+
+  it("selects the only company automatically", () => {
+    expect(resolveEmployerCompany([first])).toEqual({
+      companies: [first],
+      selected: first,
+    });
+  });
+
+  it("requires an explicit choice when there are multiple companies", () => {
+    expect(resolveEmployerCompany([first, second]).selected).toBeNull();
+    expect(resolveEmployerCompany([first, second], "second").selected).toBe(
+      second,
+    );
+  });
+
+  it("hides imported or non-member companies", () => {
+    expect(
+      resolveEmployerCompany([
+        first,
+        { id: "imported", name: "Imported", origin: "imported" },
+      ]).companies,
+    ).toEqual([first]);
+    expect(() => resolveEmployerCompany([first], "outsider")).toThrow(
+      expect.objectContaining({ status: 404 }),
+    );
+  });
 });

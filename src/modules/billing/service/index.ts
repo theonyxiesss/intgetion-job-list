@@ -1,4 +1,5 @@
 export {
+  billingForCompany,
   billingMe,
   companyHasActiveTeam,
   payableCompanies,
@@ -20,4 +21,9 @@ export {
   verifiedPayerWallet,
   cryptoCheckoutOn,
 } from "./billing-service";
-export type { BillingMe, OrderView, SanctionsRefresh } from "./billing-service";
+export type {
+  BillingMe,
+  CompanyBilling,
+  OrderView,
+  SanctionsRefresh,
+} from "./billing-service";

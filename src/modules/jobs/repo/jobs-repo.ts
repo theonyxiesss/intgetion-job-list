@@ -261,7 +261,7 @@ export async function findOwnedJob(jobId: string, userId: string) {
   return { ...row.job, company: row.company };
 }
 
-export async function listJobsForUser(userId: string) {
+export async function listJobsForUser(userId: string, companyId?: string) {
   return getDb()
     .select({ job: jobs, company: companies })
     .from(jobs)
@@ -273,7 +273,13 @@ export async function listJobsForUser(userId: string) {
         eq(companyMembers.userId, userId),
       ),
     )
-    .where(and(eq(jobs.source, "internal"), eq(companies.origin, "internal")))
+    .where(
+      and(
+        eq(jobs.source, "internal"),
+        eq(companies.origin, "internal"),
+        companyId ? eq(jobs.companyId, companyId) : undefined,
+      ),
+    )
     .orderBy(desc(jobs.updatedAt));
 }
 

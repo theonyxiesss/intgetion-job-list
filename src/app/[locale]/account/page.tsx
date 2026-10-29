@@ -6,7 +6,12 @@ import { Container, PageHeader } from "@/components/ui/container";
 import { RouteMessages } from "@/components/shell/route-messages";
 import { PRICING } from "@/config/pricing";
 import { logger } from "@/lib/logger";
-import { billingMe, type BillingMe } from "@/modules/billing/service";
+import {
+  billingForCompany,
+  billingMe,
+  type BillingMe,
+  type CompanyBilling,
+} from "@/modules/billing/service";
 import { AccountWallet } from "@/modules/billing/ui/account-wallet";
 import { getOwnCandidate } from "@/modules/candidates/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
@@ -107,6 +112,15 @@ export default async function AccountPage({
     safe(readAccountWallet(user.id), null),
     safe(walletChangeImpact(user.id), null),
   ]);
+  const companyBillings = await Promise.all(
+    companies.map(async (company) => ({
+      company,
+      billing: await safe<CompanyBilling>(
+        billingForCompany(user.id, company.id),
+        { plan: "start", hires: [], teamUntil: null },
+      ),
+    })),
+  );
 
   const list: Service[] = [
     {
@@ -156,10 +170,12 @@ export default async function AccountPage({
   const personal = PRICING.candidates.find(
     (tier) => tier.code === billing.candidatePlan,
   )!;
-  const company = PRICING.companies.find((tier) => tier.code === billing.plan)!;
   const plans = [
     {
       key: "personal",
+      label: t("plan.personal", {
+        name: pricing(`tiers.${personal.code}.name`),
+      }),
       name: pricing(`tiers.${personal.code}.name`),
       until: day(billing.candidateUntil, locale),
       points: personal.points.map((point) =>
@@ -167,19 +183,26 @@ export default async function AccountPage({
       ),
     },
     // The company plan belongs to the company; shown to its members.
-    ...(companies.length
-      ? [
-          {
-            key: "company",
-            name: pricing(`tiers.${company.code}.name`),
-            until:
-              billing.plan === "team" ? day(billing.teamUntil, locale) : null,
-            points: company.points.map((point) =>
-              pricing(`tiers.${company.code}.points.${point}`),
-            ),
-          },
-        ]
-      : []),
+    ...companyBillings.map(({ company, billing: companyBilling }) => {
+      const tier = PRICING.companies.find(
+        (item) => item.code === companyBilling.plan,
+      )!;
+      return {
+        key: `company-${company.id}`,
+        label: t("plan.company", {
+          company: company.name,
+          name: pricing(`tiers.${tier.code}.name`),
+        }),
+        name: pricing(`tiers.${tier.code}.name`),
+        until:
+          companyBilling.plan === "team"
+            ? day(companyBilling.teamUntil, locale)
+            : null,
+        points: tier.points.map((point) =>
+          pricing(`tiers.${tier.code}.points.${point}`),
+        ),
+      };
+    }),
   ];
 
   const section =
@@ -229,7 +252,7 @@ export default async function AccountPage({
                   className="flex flex-col gap-2 border-b border-line py-4"
                 >
                   <p className="font-medium">
-                    {t(`plan.${plan.key}`, { name: plan.name })}
+                    {plan.label}
                     {plan.until ? (
                       <span className="t-body-s font-mono text-fg-muted">
                         {" · "}

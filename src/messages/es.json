@@ -854,6 +854,9 @@
     "title": "Tus empleos",
     "newJob": "Crear un empleo",
     "empty": "Aún no has creado ningún empleo.",
+    "companySwitcher": "Empresa",
+    "selectCompanyTitle": "Elige una empresa",
+    "selectCompanyText": "Elige la empresa cuyo espacio de contratación quieres abrir.",
     "status": "Estado",
     "edit": "Editar empleo",
     "back": "Volver a los empleos",
@@ -4806,7 +4809,7 @@
       "text": "Planes vigentes y lo que incluyen.",
       "change": "Cambiar plan",
       "personal": "Plan personal: {name}",
-      "company": "Plan de la empresa: {name}",
+      "company": "Plan de {company}: {name}",
       "until": "hasta el {date}"
     },
     "services": {

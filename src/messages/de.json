@@ -854,6 +854,9 @@
     "title": "Ihre Jobs",
     "newJob": "Job erstellen",
     "empty": "Sie haben noch keine Jobs erstellt.",
+    "companySwitcher": "Unternehmen",
+    "selectCompanyTitle": "Unternehmen auswählen",
+    "selectCompanyText": "Wählen Sie das Unternehmen, dessen Recruiting-Bereich Sie öffnen möchten.",
     "status": "Status",
     "edit": "Job bearbeiten",
     "back": "Zurück zu den Jobs",
@@ -4806,7 +4809,7 @@
       "text": "Aktive Tarife und was sie enthalten.",
       "change": "Tarif ändern",
       "personal": "Persönlicher Tarif: {name}",
-      "company": "Firmentarif: {name}",
+      "company": "Tarif von {company}: {name}",
       "until": "bis {date}"
     },
     "services": {

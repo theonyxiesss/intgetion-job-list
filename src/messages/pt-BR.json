@@ -854,6 +854,9 @@
     "title": "Suas vagas",
     "newJob": "Criar vaga",
     "empty": "Você ainda não criou nenhuma vaga.",
+    "companySwitcher": "Empresa",
+    "selectCompanyTitle": "Escolha uma empresa",
+    "selectCompanyText": "Escolha a empresa cujo espaço de contratação você quer abrir.",
     "status": "Status",
     "edit": "Editar vaga",
     "back": "Voltar às vagas",
@@ -4805,7 +4808,7 @@
       "text": "Planos em vigor e o que incluem.",
       "change": "Mudar de plano",
       "personal": "Plano pessoal: {name}",
-      "company": "Plano da empresa: {name}",
+      "company": "Plano de {company}: {name}",
       "until": "até {date}"
     },
     "services": {

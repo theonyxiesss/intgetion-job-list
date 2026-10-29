@@ -97,6 +97,8 @@ export type BillingMe = {
   candidateUntil: string | null;
 };
 
+export type CompanyBilling = Pick<BillingMe, "plan" | "hires" | "teamUntil">;
+
 function cryptoReady(chain: string, token: string): boolean {
   return (
     process.env.BILLING_ENABLED === "true" &&
@@ -243,6 +245,34 @@ export async function billingMe(userId: string): Promise<BillingMe> {
     })),
     teamUntil,
     candidateUntil: proUntil ?? plusUntil,
+  };
+}
+
+export async function billingForCompany(
+  userId: string,
+  companyId: string,
+): Promise<CompanyBilling> {
+  if (!(await findMemberRole(companyId, userId))) throw notFound();
+  const rows = await getDb().execute<{
+    plan_code: string;
+    job_id: string | null;
+    valid_until: string;
+  }>(sql`
+    select p.plan_code, p.job_id, p.valid_until::text
+    from purchases p
+    where p.company_id = ${companyId}
+      and p.status = 'paid'
+      and p.valid_until > now()
+  `);
+  const hires = rows.filter((row) => row.plan_code === HIRE_PLAN && row.job_id);
+  const teamUntil = latestUntil(rows, SALE_PLANS.team.code);
+  return {
+    plan: teamUntil ? "team" : hires.length > 0 ? "hire" : "start",
+    hires: hires.map((row) => ({
+      jobId: row.job_id as string,
+      validUntil: new Date(row.valid_until).toISOString(),
+    })),
+    teamUntil,
   };
 }
 
