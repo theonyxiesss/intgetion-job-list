@@ -9,6 +9,7 @@ import {
   resolveDelivery,
 } from "../lib/catalog";
 import type { NotificationType } from "../lib/catalog";
+import { notificationPath } from "../service/render";
 
 /** Section 15 table, in order: type → email default. */
 const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
@@ -33,6 +34,8 @@ const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
   ["freelance.request_created", true],
   ["freelance.order_updated", true],
   ["freelance.service_decided", true],
+  // D569: new task proposals and hires use the normal freelance notice channels.
+  ["freelance.task_proposal", true],
   // D457: creative tests. Invite email is skipped per call when opt-in is off.
   ["ugc.campaign_decided", true],
   ["ugc.application", false],
@@ -43,8 +46,8 @@ const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
 ];
 
 describe("notification catalog (15, D100)", () => {
-  it("contains the 11 types of section 15 in table order, then D234", () => {
-    expect(NOTIFICATION_TYPES).toHaveLength(23);
+  it("contains every configured event in catalog order", () => {
+    expect(NOTIFICATION_TYPES).toHaveLength(24);
     expect([...NOTIFICATION_TYPES]).toEqual(
       SECTION_15_EMAIL_DEFAULTS.map(([type]) => type),
     );
@@ -97,6 +100,26 @@ describe("notification catalog (15, D100)", () => {
     const { candidateId: _omitted, ...missingField } = valid;
     void _omitted;
     expect(schema.safeParse(missingField).success).toBe(false); // missing candidateId
+  });
+
+  it("catalogs task proposal notices without exposing message content", () => {
+    const schema = notificationPayloadSchema("freelance.task_proposal");
+    const payload = {
+      taskId: "task-1",
+      taskTitle: "Landing page",
+      proposalId: "proposal-1",
+      decision: "received",
+    };
+    expect(schema.safeParse(payload).success).toBe(true);
+    expect(
+      schema.safeParse({ ...payload, cover: "private proposal text" }).success,
+    ).toBe(false);
+    expect(NOTIFICATION_CATALOG["freelance.task_proposal"].emailDefault).toBe(
+      true,
+    );
+    expect(notificationPath("freelance.task_proposal", payload)).toBe(
+      "/freelance/tasks/mine",
+    );
   });
 
   it("validates enums and digest payload shapes", () => {

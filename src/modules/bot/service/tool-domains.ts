@@ -40,7 +40,7 @@ export const DOMAIN_CATALOG: Record<LoadableDomain, string> = {
     "the person's own vacancies and their status, the company card, team job posts",
   ugc: "creator videos: briefs, creators, applications, invites, hires, video submissions and decisions, the creator profile",
   freelance:
-    "freelance services: the catalog, prices, the seller's services, requests and orders through delivery and review, reports",
+    "freelance services and client tasks: search published services or open tasks, send a proposal through a confirmation card, the seller's services, requests and orders through delivery and review, reports",
   events: "Web3 and tech events: search and one event in full",
   reminders: "Telegram reminders: create, list, cancel",
   account:
@@ -99,6 +99,8 @@ const BY_NAME: Record<string, ToolDomain> = {
   propose_company_update: "employer",
   find_events: "events",
   get_event: "events",
+  find_freelance_tasks: "freelance",
+  send_task_proposal: "freelance",
   create_reminder: "reminders",
   list_my_reminders: "reminders",
   cancel_reminder: "reminders",

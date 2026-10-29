@@ -4,6 +4,7 @@ import {
 } from "@/config/freelance";
 import { HttpError, notFound } from "@/lib/http";
 import { findMemberRole } from "@/modules/companies/service";
+import { safeNotify } from "@/modules/notifications/service";
 import * as repo from "../repo/freelance-repo";
 import { isRoomTableMissing } from "../repo/room-repo";
 import * as tasks from "../repo/task-repo";
@@ -164,6 +165,13 @@ export async function listOpenTasks(
   );
 }
 
+/** The latest public tasks for the sitemap; empty until migration 0073. */
+export async function listTaskSitemapEntries(): Promise<
+  { id: string; updatedAt: Date }[]
+> {
+  return ready(() => tasks.listTaskSitemapRows());
+}
+
 export type TaskView = PublicTask & {
   status: tasks.TaskRow["status"];
   /** The viewer posted this task. */
@@ -232,7 +240,7 @@ export async function sendProposal(
       );
     }
     try {
-      return await tasks.insertProposal({
+      const proposal = await tasks.insertProposal({
         taskId: task.id,
         sellerId,
         priceMinor: input.priceMinor,
@@ -242,6 +250,13 @@ export async function sendProposal(
         createdAt: now,
         updatedAt: now,
       });
+      await safeNotify("freelance.task_proposal", [task.buyerId], {
+        taskId: task.id,
+        taskTitle: task.title,
+        proposalId: proposal.id,
+        decision: "received",
+      });
+      return proposal;
     } catch (error) {
       if (isUniqueViolation(error)) {
         throw conflict(
@@ -346,7 +361,7 @@ export async function acceptProposal(
   return ready(async () => {
     const proposal = await tasks.findProposal(proposalId);
     if (!proposal) throw notFound();
-    return repo.runInTransaction(async (tx) => {
+    const hired = await repo.runInTransaction(async (tx) => {
       const task = await tasks.lockTask(tx, proposal.taskId);
       if (!task || task.buyerId !== buyerId) throw notFound();
       if (!taskTakesProposals(task, now)) {
@@ -397,8 +412,21 @@ export async function acceptProposal(
       if (!hired) {
         throw conflict(FREELANCE_ERRORS.taskClosed, "The task is closed");
       }
-      return order;
+      return {
+        order,
+        taskTitle: task.title,
+        proposalId: accepted.id,
+        sellerId: accepted.sellerId,
+        taskId: task.id,
+      };
     });
+    await safeNotify("freelance.task_proposal", [hired.sellerId], {
+      taskId: hired.taskId,
+      taskTitle: hired.taskTitle,
+      proposalId: hired.proposalId,
+      decision: "accepted",
+    });
+    return hired.order;
   });
 }
 

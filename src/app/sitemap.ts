@@ -5,7 +5,10 @@ import { getDb } from "@/db/client";
 import { logger } from "@/lib/logger";
 import { jobSearchQuery } from "@/modules/jobs/schemas/search";
 import { listEventSitemapEntries } from "@/modules/events/service";
-import { listFreelanceSitemapEntries } from "@/modules/freelance/service";
+import {
+  listFreelanceSitemapEntries,
+  listTaskSitemapEntries,
+} from "@/modules/freelance/service";
 import { listSitemapEntries, searchJobs } from "@/modules/jobs/service";
 import { listSalarySkillSlugs } from "@/modules/salaries/service";
 import { languageAlternates, localeUrl } from "@/modules/seo/site";
@@ -18,6 +21,7 @@ const STATIC_PATHS = [
   "/jobs",
   "/events",
   "/freelance",
+  "/freelance/tasks",
   "/for-employers",
   "/pricing",
   "/services",
@@ -85,7 +89,7 @@ async function presentTagSlugs(): Promise<Set<string>> {
   return present;
 }
 
-/** Public pages, jobs, companies, tag pages, events and freelance services with hreflang alternates (D210, D435, D446). */
+/** Public pages, jobs, companies, tag pages, events, freelance services and tasks with hreflang alternates (D210, D435, D446, D569). */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pages = STATIC_PATHS.map((path) => entry(path));
   try {
@@ -104,6 +108,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         return [];
       },
     );
+    const tasks = await listTaskSitemapEntries().catch((error: unknown) => {
+      logger.error({ err: error }, "sitemap freelance tasks query failed");
+      return [];
+    });
     return [
       ...pages,
       ...jobs.map((job) => entry(`/jobs/${job.id}`, job.updatedAt)),
@@ -118,6 +126,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...events.map((event) => entry(`/events/${event.slug}`, event.updatedAt)),
       ...services.map((service) =>
         entry(`/freelance/${service.slug}`, service.updatedAt),
+      ),
+      ...tasks.map((task) =>
+        entry(`/freelance/tasks/${task.id}`, task.updatedAt),
       ),
     ];
   } catch (error) {

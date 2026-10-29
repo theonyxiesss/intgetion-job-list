@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const searchServicesMock = vi.hoisted(() => vi.fn());
+const taskToolsMock = vi.hoisted(() => ({
+  getTaskView: vi.fn(),
+  listOpenTasks: vi.fn(),
+  sendProposal: vi.fn(),
+}));
+vi.mock("../service/task-service", () => taskToolsMock);
 
 vi.mock("../service/listing-service", async (importOriginal) => {
   const actual =
@@ -48,6 +54,8 @@ describe("freelance Spoki tools (28.8, D460)", () => {
     const names = freelanceTools.map((tool) => tool.name);
     for (const name of [
       "find_services",
+      "find_freelance_tasks",
+      "send_task_proposal",
       "get_service",
       "freelance_price_range",
       "get_my_services",
@@ -86,6 +94,52 @@ describe("freelance Spoki tools (28.8, D460)", () => {
           !/^(find_|get_|freelance_price_range)/.test(tool.name));
       expect(tool.confirm()).toBe(writes);
     }
+  });
+
+  it("shows task cards to guests and requires confirmation for proposals", async () => {
+    taskToolsMock.listOpenTasks.mockResolvedValue([
+      {
+        id: SERVICE,
+        title: "Landing page",
+        category: "design",
+        description: "A landing page brief without contact details.",
+        budgetMinMinor: BigInt(25000),
+        budgetMaxMinor: BigInt(50000),
+        wantedBy: null,
+      },
+    ]);
+    const findTasks = freelanceTools.find(
+      (tool) => tool.name === "find_freelance_tasks",
+    )!;
+    const runFindTasks = findTasks.run as unknown as (
+      context: { userId: string | null },
+      input: { q?: string; category?: string },
+    ) => Promise<{ llm: string; client: { kind: string } }>;
+    const result = await runFindTasks({ userId: null }, {});
+    expect(result.client.kind).toBe("freelance_tasks");
+    expect(result.llm).toContain('"budgetMinUsd":"250"');
+    const proposal = freelanceTools.find(
+      (tool) => tool.name === "send_task_proposal",
+    )!;
+    expect(proposal.confirm()).toBe(true);
+    taskToolsMock.getTaskView.mockResolvedValue({ title: "Landing page" });
+    await expect(
+      (
+        proposal.preview as unknown as (
+          context: { userId: string | null },
+          input: { taskId: string },
+        ) => Promise<string>
+      )({ userId: "user-1" }, { taskId: SERVICE }),
+    ).resolves.toBe("Landing page");
+    expect(
+      proposal.input.safeParse({
+        taskId: SERVICE,
+        price: "450",
+        deliveryDays: 7,
+        cover:
+          "A sufficiently detailed response that meets the minimum required length.",
+      }).success,
+    ).toBe(true);
   });
 
   it("takes links and the result URL from the card, not the model", () => {

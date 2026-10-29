@@ -58,6 +58,7 @@ export async function Header() {
     { href: "/jobs", label: t("nav.jobs") },
     { href: "/events", label: t("nav.events") },
     { href: "/freelance", label: t("nav.freelance") },
+    { href: "/freelance/tasks", label: t("nav.taskBoard") },
     { href: "/campaigns", label: t("nav.campaigns") },
     { href: "/services", label: t("nav.services") },
   ];

@@ -31,6 +31,7 @@ describe("left rail (D477)", () => {
       "/jobs",
       "/events",
       "/freelance",
+      "/freelance/tasks",
       "/campaigns",
       "/services",
       "/chat",
@@ -56,6 +57,9 @@ describe("left rail (D477)", () => {
     expect(railActive("/jobs/123", "/jobs")).toBe(true);
     expect(railActive("/jobs", "/jobs")).toBe(true);
     expect(railActive("/jobsearch", "/jobs")).toBe(false);
+    expect(railActive("/freelance/tasks", "/freelance")).toBe(false);
+    expect(railActive("/freelance/tasks", "/freelance/tasks")).toBe(true);
+    expect(railActive("/freelance/tasksx", "/freelance")).toBe(true);
   });
 
   it("has a mark for every link", () => {

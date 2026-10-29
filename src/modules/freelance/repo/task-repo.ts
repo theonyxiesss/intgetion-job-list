@@ -74,6 +74,23 @@ export async function listOpenTasks(input: {
     .limit(input.limit);
 }
 
+/** Published tasks for sitemap discovery. */
+export async function listTaskSitemapRows(): Promise<
+  { id: string; updatedAt: Date }[]
+> {
+  return getDb()
+    .select({ id: freelanceTasks.id, updatedAt: freelanceTasks.updatedAt })
+    .from(freelanceTasks)
+    .where(
+      and(
+        eq(freelanceTasks.status, "open"),
+        gt(freelanceTasks.expiresAt, new Date()),
+      ),
+    )
+    .orderBy(desc(freelanceTasks.updatedAt))
+    .limit(5000);
+}
+
 export async function listTasksByBuyer(buyerId: string): Promise<TaskRow[]> {
   return getDb()
     .select()

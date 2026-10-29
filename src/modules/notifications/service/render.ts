@@ -178,9 +178,11 @@ export function renderEmail(input: {
             ? messagesFor(input.locale).notifications.brief.openCandidates
             : input.type === "freelance.service_decided"
               ? messagesFor(input.locale).notifications.freelance.openService
-              : input.type.startsWith("freelance.")
-                ? messagesFor(input.locale).notifications.freelance.openOrder
-                : null;
+              : input.type === "freelance.task_proposal"
+                ? messagesFor(input.locale).notifications.freelance.openTask
+                : input.type.startsWith("freelance.")
+                  ? messagesFor(input.locale).notifications.freelance.openOrder
+                  : null;
   const action =
     actionLabel && input.actionPath
       ? {
@@ -228,6 +230,7 @@ export function templateValues(
     companyName: String(payload.companyName ?? ""),
     searchName: String(payload.searchName ?? ""),
     serviceTitle: String(payload.serviceTitle ?? ""),
+    taskTitle: String(payload.taskTitle ?? ""),
     intro: typeof payload.intro === "string" ? payload.intro : "",
     date: expires,
     count,
@@ -282,6 +285,8 @@ export function notificationPath(
         : "/freelance/orders";
     case "freelance.service_decided":
       return "/profile/freelance";
+    case "freelance.task_proposal":
+      return "/freelance/tasks/mine";
     default:
       return "/notifications";
   }

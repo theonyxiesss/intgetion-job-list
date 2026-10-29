@@ -151,6 +151,7 @@
     "myJobs": "Le mie offerte",
     "company": "Azienda",
     "freelance": "Freelance",
+    "taskBoard": "Incarichi freelance",
     "campaigns": "Video UGC",
     "more": "Altro",
     "rail": "Sezioni del sito",
@@ -1209,6 +1210,16 @@
           "body": "{decision, select, published {Il tuo servizio ha superato la verifica ed è ora nel catalogo.} rejected {Il tuo servizio non ha superato la verifica. Correggilo e invialo di nuovo.} removed {Un moderatore ha rimosso il tuo servizio dal catalogo.} other {Il tuo servizio è stato verificato.}} Servizio: «{serviceTitle}»."
         }
       },
+      "freelanceTaskProposal": {
+        "inapp": {
+          "title": "Risposta all’attività aggiornata",
+          "body": "{decision, select, received {Un freelance ha risposto alla tua attività.} accepted {La tua risposta è stata accettata ed è stato creato un ordine.} other {Lo stato della risposta è cambiato.}} Attività: «{taskTitle}»"
+        },
+        "email": {
+          "subject": "Risposta all’attività: {taskTitle}",
+          "body": "{decision, select, received {Un freelance ha risposto alla tua attività.} accepted {La tua risposta è stata accettata ed è stato creato un ordine.} other {Lo stato della risposta è cambiato.}} Attività: «{taskTitle}»"
+        }
+      },
       "ugcCampaignDecided": {
         "inapp": {
           "title": "Brief UGC revisionato",
@@ -1265,6 +1276,7 @@
     "freelance": {
       "openOrder": "Apri l’ordine",
       "openService": "Apri il servizio",
+      "openTask": "Apri le attività",
       "accept": "Accetta",
       "decline": "Rifiuta"
     },
@@ -3798,6 +3810,65 @@
       "openOrder": "Apri l’ordine"
     },
     "metaTitle": "Servizi freelance a prezzo fisso",
+    "tasks": {
+      "metaTitle": "Incarichi freelance",
+      "title": "Incarichi freelance",
+      "intro": "Esplora i progetti dei clienti e invia una proposta con prezzo e tempi di consegna.",
+      "detailIntro": "Dettagli dell’incarico e proposte",
+      "postTask": "Pubblica un incarico",
+      "myTasks": "I miei incarichi",
+      "myTasksIntro": "I tuoi incarichi e le proposte ricevute.",
+      "myTasksEmpty": "Non hai ancora pubblicato incarichi.",
+      "empty": "Non ci sono ancora incarichi aperti in questa categoria.",
+      "comingSoon": "Gli incarichi freelance saranno disponibili a breve.",
+      "category": "Categoria",
+      "anyCategory": "Qualsiasi categoria",
+      "negotiable": "Da concordare",
+      "wantedBy": "Scadenza desiderata",
+      "company": "Azienda",
+      "person": "Cliente privato",
+      "createIntro": "Descrivi il lavoro e il budget. L’incarico apparirà dopo la moderazione.",
+      "taskDetails": "Dettagli dell’incarico",
+      "taskTitle": "Titolo dell’incarico",
+      "taskTitleHint": "Da 10 a 120 caratteri.",
+      "description": "Descrizione dell’incarico",
+      "taskDescriptionHint": "Da 80 a 2.000 caratteri. Non inserire contatti.",
+      "budgetMin": "Budget minimo, USD",
+      "budgetMax": "Budget massimo, USD",
+      "optional": "Facoltativo",
+      "wantedByHint": "Fino a 80 caratteri.",
+      "chooseCategory": "Scegli una categoria",
+      "submittedForReview": "L’incarico è stato inviato alla moderazione. Apparirà dopo l’approvazione.",
+      "sendProposal": "Invia una proposta",
+      "proposalPrice": "Il tuo prezzo, USD",
+      "proposalPriceHint": "$10–$20.000",
+      "deliveryDaysLabel": "Tempi di consegna, giorni",
+      "deliveryDaysHint": "Da 1 a 90 giorni.",
+      "cover": "Messaggio al cliente",
+      "coverHint": "Da 40 a 2.000 caratteri. Non inserire contatti.",
+      "proposalSent": "La proposta è stata inviata.",
+      "closeTask": "Chiudi incarico",
+      "acceptProposal": "Scegli questo freelance",
+      "declineProposal": "Rifiuta",
+      "proposals": "Proposte ({count})",
+      "noProposals": "Ancora nessuna proposta.",
+      "deliveryDays": "{count} giorni",
+      "alreadyProposed": "Hai già inviato una proposta ({status}).",
+      "signInToPropose": "Accedi per inviare una proposta",
+      "status": { "pending": "In revisione", "open": "Aperto", "hired": "Freelance scelto", "closed": "Chiuso", "expired": "Scaduto", "rejected": "Rifiutato" },
+      "proposalStatus": { "sent": "Inviata", "accepted": "Accettata", "declined": "Rifiutata", "withdrawn": "Ritirata" },
+      "sending": "Invio…",
+      "failed": "Si è verificato un errore. Riprova.",
+      "error_TASKS_NOT_READY": "Gli incarichi freelance saranno disponibili a breve.",
+      "error_VALIDATION_ERROR": "Controlla i dati e riprova.",
+      "error_CONTACTS_IN_TEXT": "Rimuovi email, numeri di telefono, link e nomi con @.",
+      "error_RATE_LIMITED": "Hai raggiunto il limite di oggi. Riprova domani.",
+      "error_OWN_TASK": "Non puoi inviare una proposta per il tuo incarico.",
+      "error_TASK_CLOSED": "Questo incarico non accetta più proposte.",
+      "error_PROPOSAL_EXISTS": "Hai già inviato una proposta.",
+      "error_SELLER_REQUIRED": "Attiva prima l’accettazione degli ordini nel profilo freelance.",
+      "error_PROPOSAL_CLOSED": "Non puoi più modificare questa proposta."
+    },
     "title": "Freelance. Servizi pronti, con un prezzo.",
     "subtitle": "Singoli specialisti: cosa faranno, a quanto ed entro quando. I contatti si aprono quando il freelance accetta la tua richiesta. Per un intero team, vedi Servizi.",
     "teamLink": "Serve un team? Servizi",
@@ -4276,6 +4347,18 @@
     "deliveryLabel": "Link al risultato (https)",
     "orderTitle": "La pagina dell’ordine",
     "orderAction": "Apri l’ordine",
+    "taskAction": "Visualizza l’attività e rispondi",
+    "taskNegotiable": "Prezzo da concordare",
+    "taskFrom": "Da {amount}",
+    "taskUpTo": "Fino a {amount}",
+    "taskTitle": "Attività: {title}",
+    "taskPrice": "Prezzo proposto: {price}",
+    "taskDays": "Tempi: {days} giorni",
+    "send_task_proposal": {
+      "title": "Invia la proposta",
+      "text": "Controlla attività, prezzo, tempi e messaggio prima di inviare."
+    },
+    "openTask": "Apri le attività",
     "cabinetTitle": "I tuoi servizi",
     "cabinetAction": "Apri l’area",
     "propose_freelancer_mode": {

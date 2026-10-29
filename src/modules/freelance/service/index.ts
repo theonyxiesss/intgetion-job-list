@@ -27,6 +27,7 @@ export {
   listMyProposals,
   listMyTasks,
   listOpenTasks,
+  listTaskSitemapEntries,
   listTaskProposals,
   sendProposal,
   withdrawProposal,

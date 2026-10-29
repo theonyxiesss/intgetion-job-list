@@ -151,6 +151,7 @@
     "myJobs": "Meine Jobs",
     "company": "Unternehmen",
     "freelance": "Freelance",
+    "taskBoard": "Freelance-Aufgaben",
     "campaigns": "UGC-Videos",
     "more": "Mehr",
     "rail": "Bereiche der Website",
@@ -1209,6 +1210,16 @@
           "body": "{decision, select, published {Ihre Leistung hat die Prüfung bestanden und ist jetzt im Katalog.} rejected {Ihre Leistung hat die Prüfung nicht bestanden. Korrigieren Sie sie und senden Sie sie erneut.} removed {Ein Moderator hat Ihre Leistung aus dem Katalog entfernt.} other {Ihre Leistung wurde geprüft.}} Leistung: „{serviceTitle}“."
         }
       },
+      "freelanceTaskProposal": {
+        "inapp": {
+          "title": "Antwort auf Aufgabe aktualisiert",
+          "body": "{decision, select, received {Ein Freelancer hat auf Ihre Aufgabe geantwortet.} accepted {Ihre Antwort wurde angenommen und ein Auftrag erstellt.} other {Der Status der Antwort hat sich geändert.}} Aufgabe: „{taskTitle}“"
+        },
+        "email": {
+          "subject": "Antwort auf Aufgabe: {taskTitle}",
+          "body": "{decision, select, received {Ein Freelancer hat auf Ihre Aufgabe geantwortet.} accepted {Ihre Antwort wurde angenommen und ein Auftrag erstellt.} other {Der Status der Antwort hat sich geändert.}} Aufgabe: „{taskTitle}“"
+        }
+      },
       "ugcCampaignDecided": {
         "inapp": {
           "title": "UGC-Briefing geprüft",
@@ -1265,6 +1276,7 @@
     "freelance": {
       "openOrder": "Auftrag öffnen",
       "openService": "Leistung öffnen",
+      "openTask": "Aufgaben öffnen",
       "accept": "Annehmen",
       "decline": "Ablehnen"
     },
@@ -3798,6 +3810,66 @@
       "openOrder": "Auftrag öffnen"
     },
     "metaTitle": "Freelance-Leistungen mit Festpreis",
+    "tasks": {
+      "metaTitle": "Freelance-Aufgaben",
+      "title": "Freelance-Aufgaben",
+      "intro": "Entdecke Projekte von Auftraggebern und sende ein Angebot mit Preis und Lieferzeit.",
+      "detailIntro": "Aufgabenbeschreibung und Angebote",
+      "postTask": "Aufgabe veröffentlichen",
+      "myTasks": "Meine Aufgaben",
+      "myTasksIntro": "Deine Aufgaben und eingegangenen Angebote.",
+      "myTasksEmpty": "Du hast noch keine Aufgaben veröffentlicht.",
+      "empty": "In diesem Bereich gibt es noch keine offenen Aufgaben.",
+      "comingSoon": "Freelance-Aufgaben sind bald verfügbar.",
+      "category": "Bereich",
+      "anyCategory": "Alle Bereiche",
+      "negotiable": "Verhandelbar",
+      "wantedBy": "Gewünschter Termin",
+      "company": "Unternehmen",
+      "person": "Privater Auftraggeber",
+      "createIntro": "Beschreibe die Arbeit und das Budget. Die Aufgabe erscheint nach der Moderation.",
+      "taskDetails": "Aufgabendetails",
+      "taskDetails": "Aufgabendetails",
+      "taskTitle": "Aufgabentitel",
+      "taskTitleHint": "10–120 Zeichen.",
+      "description": "Aufgabenbeschreibung",
+      "taskDescriptionHint": "80–2.000 Zeichen. Keine Kontaktdaten angeben.",
+      "budgetMin": "Mindestbudget, USD",
+      "budgetMax": "Höchstbudget, USD",
+      "optional": "Optional",
+      "wantedByHint": "Bis zu 80 Zeichen.",
+      "chooseCategory": "Bereich auswählen",
+      "submittedForReview": "Deine Aufgabe wurde zur Moderation gesendet und erscheint nach der Freigabe.",
+      "sendProposal": "Angebot senden",
+      "proposalPrice": "Dein Preis, USD",
+      "proposalPriceHint": "$10–$20.000",
+      "deliveryDaysLabel": "Lieferzeit, Tage",
+      "deliveryDaysHint": "1–90 Tage.",
+      "cover": "Nachricht an den Auftraggeber",
+      "coverHint": "40–2.000 Zeichen. Keine Kontaktdaten angeben.",
+      "proposalSent": "Dein Angebot wurde gesendet.",
+      "closeTask": "Aufgabe schließen",
+      "acceptProposal": "Für diese Aufgabe beauftragen",
+      "declineProposal": "Ablehnen",
+      "proposals": "Angebote ({count})",
+      "noProposals": "Noch keine Angebote.",
+      "deliveryDays": "{count} Tage",
+      "alreadyProposed": "Du hast bereits ein Angebot gesendet ({status}).",
+      "signInToPropose": "Melde dich an, um ein Angebot zu senden",
+      "status": { "pending": "In Prüfung", "open": "Offen", "hired": "Beauftragt", "closed": "Geschlossen", "expired": "Abgelaufen", "rejected": "Abgelehnt" },
+      "proposalStatus": { "sent": "Gesendet", "accepted": "Angenommen", "declined": "Abgelehnt", "withdrawn": "Zurückgezogen" },
+      "sending": "Wird gesendet…",
+      "failed": "Etwas ist schiefgelaufen. Versuche es erneut.",
+      "error_TASKS_NOT_READY": "Freelance-Aufgaben sind bald verfügbar.",
+      "error_VALIDATION_ERROR": "Prüfe die Angaben und versuche es erneut.",
+      "error_CONTACTS_IN_TEXT": "Entferne E-Mail-Adressen, Telefonnummern, Links und @Namen.",
+      "error_RATE_LIMITED": "Das Tageslimit ist erreicht. Versuche es morgen erneut.",
+      "error_OWN_TASK": "Du kannst kein Angebot für deine eigene Aufgabe senden.",
+      "error_TASK_CLOSED": "Diese Aufgabe nimmt keine Angebote mehr an.",
+      "error_PROPOSAL_EXISTS": "Du hast bereits ein Angebot gesendet.",
+      "error_SELLER_REQUIRED": "Aktiviere zuerst die Auftragsannahme in deinem Freelancer-Profil.",
+      "error_PROPOSAL_CLOSED": "Dieses Angebot kann nicht mehr geändert werden."
+    },
     "title": "Freelance. Fertige Leistungen mit Preis.",
     "subtitle": "Einzelne Fachleute: was sie machen, zu welchem Preis und bis wann. Kontakte öffnen sich, sobald die Person deine Anfrage annimmt. Für ein ganzes Team siehe Services.",
     "teamLink": "Ein Team nötig? Services",
@@ -4276,6 +4348,18 @@
     "deliveryLabel": "Link zum Ergebnis (https)",
     "orderTitle": "Die Auftragsseite",
     "orderAction": "Auftrag öffnen",
+    "taskAction": "Aufgabe ansehen und antworten",
+    "taskNegotiable": "Verhandlungssache",
+    "taskFrom": "Ab {amount}",
+    "taskUpTo": "Bis {amount}",
+    "taskTitle": "Aufgabe: {title}",
+    "taskPrice": "Preisvorschlag: {price}",
+    "taskDays": "Lieferzeit: {days} Tage",
+    "send_task_proposal": {
+      "title": "Angebot senden",
+      "text": "Prüfen Sie Aufgabe, Preis, Lieferzeit und Nachricht vor dem Senden."
+    },
+    "openTask": "Aufgaben öffnen",
     "cabinetTitle": "Ihre Dienste",
     "cabinetAction": "Bereich öffnen",
     "propose_freelancer_mode": {

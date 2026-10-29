@@ -151,6 +151,7 @@
     "myJobs": "Minhas vagas",
     "company": "Empresa",
     "freelance": "Freelance",
+    "taskBoard": "Tarefas freelance",
     "campaigns": "Vídeos UGC",
     "more": "Mais",
     "rail": "Seções do site",
@@ -1209,6 +1210,16 @@
           "body": "{decision, select, published {Seu serviço passou na revisão e já está no catálogo.} rejected {Seu serviço não passou na revisão. Corrija e envie de novo.} removed {Um moderador removeu seu serviço do catálogo.} other {Seu serviço foi revisado.}} Serviço: “{serviceTitle}”."
         }
       },
+      "freelanceTaskProposal": {
+        "inapp": {
+          "title": "Resposta à tarefa atualizada",
+          "body": "{decision, select, received {Um freelancer respondeu à sua tarefa.} accepted {Sua resposta foi aceita e um pedido foi criado.} other {O status da resposta mudou.}} Tarefa: “{taskTitle}”"
+        },
+        "email": {
+          "subject": "Resposta à tarefa: {taskTitle}",
+          "body": "{decision, select, received {Um freelancer respondeu à sua tarefa.} accepted {Sua resposta foi aceita e um pedido foi criado.} other {O status da resposta mudou.}} Tarefa: “{taskTitle}”"
+        }
+      },
       "ugcCampaignDecided": {
         "inapp": {
           "title": "Brief UGC revisado",
@@ -1265,6 +1276,7 @@
     "freelance": {
       "openOrder": "Abrir o pedido",
       "openService": "Abrir o serviço",
+      "openTask": "Abrir tarefas",
       "accept": "Aceitar",
       "decline": "Recusar"
     },
@@ -3798,6 +3810,65 @@
       "openOrder": "Abrir o pedido"
     },
     "metaTitle": "Serviços freelance com preço fixo",
+    "tasks": {
+      "metaTitle": "Tarefas freelance",
+      "title": "Tarefas freelance",
+      "intro": "Explore projetos publicados por clientes e envie uma proposta com preço e prazo.",
+      "detailIntro": "Detalhes do projeto e propostas",
+      "postTask": "Publicar uma tarefa",
+      "myTasks": "Minhas tarefas",
+      "myTasksIntro": "Suas tarefas e as propostas recebidas.",
+      "myTasksEmpty": "Você ainda não publicou tarefas.",
+      "empty": "Ainda não há tarefas abertas nesta categoria.",
+      "comingSoon": "As tarefas freelance estarão disponíveis em breve.",
+      "category": "Categoria",
+      "anyCategory": "Qualquer categoria",
+      "negotiable": "A combinar",
+      "wantedBy": "Prazo desejado",
+      "company": "Empresa",
+      "person": "Cliente pessoa física",
+      "createIntro": "Descreva o trabalho e o orçamento. A tarefa aparecerá após a moderação.",
+      "taskDetails": "Detalhes da tarefa",
+      "taskTitle": "Título da tarefa",
+      "taskTitleHint": "De 10 a 120 caracteres.",
+      "description": "Descrição da tarefa",
+      "taskDescriptionHint": "De 80 a 2.000 caracteres. Não inclua dados de contato.",
+      "budgetMin": "Orçamento mínimo, USD",
+      "budgetMax": "Orçamento máximo, USD",
+      "optional": "Opcional",
+      "wantedByHint": "Até 80 caracteres.",
+      "chooseCategory": "Escolha uma categoria",
+      "submittedForReview": "A tarefa foi enviada para moderação. Ela aparecerá após a aprovação.",
+      "sendProposal": "Enviar proposta",
+      "proposalPrice": "Seu preço, USD",
+      "proposalPriceHint": "US$ 10–20.000",
+      "deliveryDaysLabel": "Prazo de entrega, dias",
+      "deliveryDaysHint": "De 1 a 90 dias.",
+      "cover": "Mensagem para o cliente",
+      "coverHint": "De 40 a 2.000 caracteres. Não inclua dados de contato.",
+      "proposalSent": "A proposta foi enviada.",
+      "closeTask": "Fechar tarefa",
+      "acceptProposal": "Contratar para esta tarefa",
+      "declineProposal": "Recusar",
+      "proposals": "Propostas ({count})",
+      "noProposals": "Ainda não há propostas.",
+      "deliveryDays": "{count} dias",
+      "alreadyProposed": "Você já enviou uma proposta ({status}).",
+      "signInToPropose": "Entre para enviar uma proposta",
+      "status": { "pending": "Em análise", "open": "Aberta", "hired": "Freelancer escolhido", "closed": "Fechada", "expired": "Expirada", "rejected": "Rejeitada" },
+      "proposalStatus": { "sent": "Enviada", "accepted": "Aceita", "declined": "Recusada", "withdrawn": "Retirada" },
+      "sending": "Enviando…",
+      "failed": "Ocorreu um erro. Tente novamente.",
+      "error_TASKS_NOT_READY": "As tarefas freelance estarão disponíveis em breve.",
+      "error_VALIDATION_ERROR": "Confira os dados e tente novamente.",
+      "error_CONTACTS_IN_TEXT": "Remova e-mails, telefones, links e nomes com @.",
+      "error_RATE_LIMITED": "Você atingiu o limite de hoje. Tente amanhã.",
+      "error_OWN_TASK": "Você não pode enviar proposta para sua própria tarefa.",
+      "error_TASK_CLOSED": "Esta tarefa não está mais aceitando propostas.",
+      "error_PROPOSAL_EXISTS": "Você já enviou uma proposta.",
+      "error_SELLER_REQUIRED": "Ative primeiro o recebimento de pedidos no seu perfil freelance.",
+      "error_PROPOSAL_CLOSED": "Esta proposta não pode mais ser alterada."
+    },
     "title": "Freelance. Serviços prontos com preço.",
     "subtitle": "Especialistas individuais: o que vão fazer, por quanto e até quando. Os contatos abrem quando o freelancer aceita seu pedido. Para uma equipe inteira, veja Serviços.",
     "teamLink": "Precisa de uma equipe? Serviços",
@@ -4276,6 +4347,18 @@
     "deliveryLabel": "Link do resultado (https)",
     "orderTitle": "A página do pedido",
     "orderAction": "Abrir o pedido",
+    "taskAction": "Ver a tarefa e responder",
+    "taskNegotiable": "Preço negociável",
+    "taskFrom": "A partir de {amount}",
+    "taskUpTo": "Até {amount}",
+    "taskTitle": "Tarefa: {title}",
+    "taskPrice": "Preço proposto: {price}",
+    "taskDays": "Prazo: {days} dias",
+    "send_task_proposal": {
+      "title": "Enviar proposta",
+      "text": "Revise a tarefa, o preço, o prazo e a mensagem antes de enviar."
+    },
+    "openTask": "Abrir tarefas",
     "cabinetTitle": "Seus serviços",
     "cabinetAction": "Abrir o painel",
     "propose_freelancer_mode": {

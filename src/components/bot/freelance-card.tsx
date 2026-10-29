@@ -11,6 +11,7 @@ export { cardText, FREELANCE_CARD_TOOLS, type FreelanceCardCopy };
 import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { formatUsd } from "@/modules/freelance/ui/format";
+import { ListingCard } from "@/components/ui/listing-card";
 
 export const FreelanceCopyContext = createContext<FreelanceCardCopy>({});
 
@@ -47,9 +48,11 @@ function usdFromTyped(value: unknown, locale: string): string {
 export function FreelanceCardSummary({
   tool,
   args,
+  preview,
 }: {
   tool: string;
   args: unknown;
+  preview?: string;
 }) {
   const t = useCardText();
   const locale = useLocale();
@@ -71,6 +74,12 @@ export function FreelanceCardSummary({
   if (tool === "send_service_request") {
     lines.push(t("tier", { tier: text(a.tier) }));
     if (a.task) lines.push(text(a.task));
+  }
+  if (tool === "send_task_proposal") {
+    lines.push(t("taskTitle", { title: preview ?? "" }));
+    lines.push(t("taskPrice", { price: usdFromTyped(a.price, locale) }));
+    lines.push(t("taskDays", { days: Number(a.deliveryDays) || 0 }));
+    if (a.cover) lines.push(text(a.cover));
   }
   if (tool === "propose_freelancer_mode") {
     lines.push(a.accepting ? t("modeOn") : t("modeOff"));
@@ -192,7 +201,51 @@ export function FreelanceServiceList({
 
 /** A link card to a page of the freelance cabinet. */
 export type FreelanceLinkKind =
-  "order" | "cabinet" | "ugcCampaign" | "ugcDeposit" | "ugcPayout";
+  "order" | "cabinet" | "task" | "ugcCampaign" | "ugcDeposit" | "ugcPayout";
+
+export type FreelanceTaskCardItem = {
+  id: string;
+  title: string;
+  category: string;
+  budgetMinMinor: string | null;
+  budgetMaxMinor: string | null;
+};
+
+export function FreelanceTaskCards({
+  items,
+}: {
+  items: FreelanceTaskCardItem[];
+}) {
+  const t = useCardText();
+  const locale = useLocale();
+  return (
+    <ul className="grid max-w-3xl gap-4 sm:grid-cols-2">
+      {items.map((item) => (
+        <li key={item.id}>
+          <ListingCard
+            href={`/freelance/tasks/${encodeURIComponent(item.id)}`}
+            title={item.title}
+            label={item.category}
+            lead={
+              item.budgetMinMinor !== null && item.budgetMaxMinor !== null
+                ? `${formatUsd(BigInt(item.budgetMinMinor), locale)}–${formatUsd(BigInt(item.budgetMaxMinor), locale)}`
+                : item.budgetMinMinor !== null
+                  ? t("taskFrom", {
+                      amount: formatUsd(BigInt(item.budgetMinMinor), locale),
+                    })
+                  : item.budgetMaxMinor !== null
+                    ? t("taskUpTo", {
+                        amount: formatUsd(BigInt(item.budgetMaxMinor), locale),
+                      })
+                    : t("taskNegotiable")
+            }
+            viewLabel={t("taskAction")}
+          />
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export function FreelanceLinkCard({
   href,

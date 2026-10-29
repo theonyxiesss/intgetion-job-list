@@ -31,6 +31,7 @@ describe("bot tool layer (7A)", () => {
       "offer_step",
       "propose_profile_update",
       "ugc_price_range",
+      "find_freelance_tasks",
       "find_services",
       "get_service",
       "freelance_price_range",
@@ -52,6 +53,7 @@ describe("bot tool layer (7A)", () => {
     const names = toolsFor(null, {}, ["freelance"]).map((tool) => tool.name);
     expect(names).toEqual([
       "offer_step",
+      "find_freelance_tasks",
       "find_services",
       "get_service",
       "freelance_price_range",

@@ -24,6 +24,8 @@ import {
   FreelanceLinkCard,
   type FreelanceLinkKind,
   FreelanceServiceList,
+  FreelanceTaskCards,
+  type FreelanceTaskCardItem,
   isFreelanceCardTool,
   type FreelanceServiceCard,
 } from "@/components/bot/freelance-card";
@@ -129,6 +131,7 @@ type Entry =
       kind: "freelance_services";
       services: FreelanceServiceCard[];
     }
+  | { key: string; kind: "freelance_tasks"; tasks: FreelanceTaskCardItem[] }
   | {
       key: string;
       kind: "freelance_link";
@@ -216,6 +219,24 @@ function confirmEntry(card: PendingCard): Entry {
 
 /** A freelance tool result as a chat entry, or null for other kinds. */
 function freelanceEntry(kind: unknown, data: unknown): Entry | null {
+  if (kind === "freelance_tasks" && Array.isArray(data)) {
+    return {
+      key: nextKey(),
+      kind: "freelance_tasks",
+      tasks: data as FreelanceTaskCardItem[],
+    };
+  }
+  if (kind === "freelance_task_proposal") {
+    const id = (data as { id?: unknown } | null)?.id;
+    if (typeof id === "string" && UUID.test(id)) {
+      return {
+        key: nextKey(),
+        kind: "freelance_link",
+        href: `/freelance/tasks/${id}`,
+        link: "task",
+      };
+    }
+  }
   if (kind === "freelance_services" && Array.isArray(data)) {
     return {
       key: nextKey(),
@@ -1817,6 +1838,11 @@ export function Chat({
                   />
                 );
               }
+              if (entry.kind === "freelance_tasks") {
+                return (
+                  <FreelanceTaskCards key={entry.key} items={entry.tasks} />
+                );
+              }
               if (entry.kind === "freelance_link") {
                 return (
                   <FreelanceLinkCard
@@ -1972,6 +1998,7 @@ export function Chat({
                         <FreelanceCardSummary
                           tool={entry.tool}
                           args={entry.args}
+                          preview={entry.preview}
                         />
                         {entry.fields?.length ? (
                           <FreelanceCardFields

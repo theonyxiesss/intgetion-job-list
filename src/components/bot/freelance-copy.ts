@@ -4,6 +4,7 @@ export const FREELANCE_CARD_TOOLS = [
   "propose_service",
   "propose_service_update",
   "send_service_request",
+  "send_task_proposal",
   "cancel_request",
   "respond_to_request",
   "start_order",

@@ -7,7 +7,7 @@
 export const UNTRUSTED_MAX_CHARS = 2000;
 
 const SOURCE =
-  /^(?:job:[A-Za-z0-9-]{1,64}|company:[A-Za-z0-9-]{1,64}|ugc:[A-Za-z0-9-]{1,64}|event:[a-z0-9-]{1,120}|service:[A-Za-z0-9-]{1,64}|order:[A-Za-z0-9-]{1,64}|freelance_title|shown_jobs|user_message)$/;
+  /^(?:job:[A-Za-z0-9-]{1,64}|company:[A-Za-z0-9-]{1,64}|ugc:[A-Za-z0-9-]{1,64}|event:[a-z0-9-]{1,120}|service:[A-Za-z0-9-]{1,64}|order:[A-Za-z0-9-]{1,64}|freelance_task:[A-Za-z0-9-]{1,64}|freelance_title|shown_jobs|user_message)$/;
 
 export class UntrustedSourceError extends Error {
   constructor(source: string) {

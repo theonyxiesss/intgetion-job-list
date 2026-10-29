@@ -26,6 +26,16 @@ export async function freelanceClientCopy(locale: string): Promise<ClientCopy> {
   return { ...client, ...extra };
 }
 
+/** Task board copy plus the existing freelance category labels. */
+export async function freelanceTasksCopy(locale: string): Promise<ClientCopy> {
+  const t = await getTranslations({ locale, namespace: "freelance" });
+  const copy: ClientCopy = { ...(t.raw("tasks") as ClientCopy) };
+  for (const category of FREELANCE_CATEGORIES) {
+    copy[`category_${category}`] = t(`categories.${category}`);
+  }
+  return copy;
+}
+
 /**
  * Texts for the order room (TZ 45): `room_*` lines, room error lines that
  * win over the general ones, and `status_*` names for the feed.

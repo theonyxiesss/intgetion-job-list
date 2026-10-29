@@ -151,6 +151,7 @@
     "myJobs": "My jobs",
     "company": "Company",
     "freelance": "Freelance",
+    "taskBoard": "Freelance tasks",
     "campaigns": "UGC videos",
     "more": "More",
     "rail": "Site sections",
@@ -1209,6 +1210,16 @@
           "body": "{decision, select, published {Your service passed review and is in the catalog now.} rejected {Your service did not pass review. Fix it and send it again.} removed {A moderator removed your service from the catalog.} other {Your service was reviewed.}} Service: “{serviceTitle}”."
         }
       },
+      "freelanceTaskProposal": {
+        "inapp": {
+          "title": "Task response update",
+          "body": "{decision, select, received {A freelancer responded to your task.} accepted {Your response was accepted and an order was created.} other {Your task response was updated.}} Task: “{taskTitle}”"
+        },
+        "email": {
+          "subject": "Task response update: {taskTitle}",
+          "body": "{decision, select, received {A freelancer responded to your task.} accepted {Your response was accepted and an order was created.} other {Your task response was updated.}} Task: “{taskTitle}”"
+        }
+      },
       "ugcCampaignDecided": {
         "inapp": {
           "title": "UGC brief reviewed",
@@ -1265,6 +1276,7 @@
     "freelance": {
       "openOrder": "Open the order",
       "openService": "Open the service",
+      "openTask": "Open tasks",
       "accept": "Accept",
       "decline": "Decline"
     },
@@ -4304,6 +4316,66 @@
       "openOrder": "Open the order"
     },
     "metaTitle": "Freelance services with a fixed price",
+    "tasks": {
+      "metaTitle": "Freelance tasks",
+      "title": "Freelance tasks",
+      "intro": "Browse projects posted by clients and send a proposal with your price and delivery time.",
+      "detailIntro": "Project details and proposals",
+      "postTask": "Post a task",
+      "myTasks": "My tasks",
+      "myTasksIntro": "Review your task posts and the proposals you receive.",
+      "myTasksEmpty": "You have not posted any tasks yet.",
+      "empty": "No open tasks in this direction yet.",
+      "comingSoon": "Freelance tasks will be available soon.",
+      "category": "Direction",
+      "anyCategory": "Any direction",
+      "negotiable": "Negotiable",
+      "wantedBy": "Wanted by",
+      "company": "Company",
+      "person": "Individual client",
+      "createIntro": "Describe the work and budget. Your task will appear after moderation.",
+      "taskDetails": "Task details",
+      "taskDetails": "Task details",
+      "taskTitle": "Task title",
+      "taskTitleHint": "10–120 characters.",
+      "description": "Task description",
+      "taskDescriptionHint": "80–2,000 characters. Do not include contact details.",
+      "budgetMin": "Minimum budget, USD",
+      "budgetMax": "Maximum budget, USD",
+      "optional": "Optional",
+      "wantedByHint": "Up to 80 characters.",
+      "chooseCategory": "Choose a direction",
+      "submittedForReview": "Your task was sent for moderation. It will appear here after approval.",
+      "sendProposal": "Send a proposal",
+      "proposalPrice": "Your price, USD",
+      "proposalPriceHint": "$10–$20,000",
+      "deliveryDaysLabel": "Delivery time, days",
+      "deliveryDaysHint": "1–90 days.",
+      "cover": "Message to the client",
+      "coverHint": "40–2,000 characters. Do not include contact details.",
+      "proposalSent": "Your proposal was sent.",
+      "closeTask": "Close task",
+      "acceptProposal": "Hire for this task",
+      "declineProposal": "Decline",
+      "proposals": "Proposals ({count})",
+      "noProposals": "No proposals yet.",
+      "deliveryDays": "{count} days",
+      "alreadyProposed": "You already sent a proposal ({status}).",
+      "signInToPropose": "Sign in to send a proposal",
+      "status": { "pending": "In review", "open": "Open", "hired": "Hired", "closed": "Closed", "expired": "Expired", "rejected": "Rejected" },
+      "proposalStatus": { "sent": "Sent", "accepted": "Accepted", "declined": "Declined", "withdrawn": "Withdrawn" },
+      "sending": "Sending…",
+      "failed": "Something went wrong. Try again.",
+      "error_TASKS_NOT_READY": "Freelance tasks will be available soon.",
+      "error_VALIDATION_ERROR": "Check the task details and try again.",
+      "error_CONTACTS_IN_TEXT": "Remove email addresses, phone numbers, links and @names.",
+      "error_RATE_LIMITED": "You have reached today's limit. Try again tomorrow.",
+      "error_OWN_TASK": "You cannot send a proposal to your own task.",
+      "error_TASK_CLOSED": "This task is no longer accepting proposals.",
+      "error_PROPOSAL_EXISTS": "You already sent a proposal.",
+      "error_SELLER_REQUIRED": "Turn on accepting orders in your freelancer profile first.",
+      "error_PROPOSAL_CLOSED": "This proposal is no longer available for changes."
+    },
     "title": "Freelance. Ready services with a price.",
     "subtitle": "Individual specialists: what they will do, for how much and by when. Contacts open once the freelancer accepts your request. For a whole team, see Services.",
     "teamLink": "Need a team? Services",
@@ -4782,6 +4854,18 @@
     "deliveryLabel": "Link to the result (https)",
     "orderTitle": "The order page",
     "orderAction": "Open the order",
+    "taskAction": "View task and respond",
+    "taskNegotiable": "Negotiable",
+    "taskFrom": "From {amount}",
+    "taskUpTo": "Up to {amount}",
+    "taskTitle": "Task: {title}",
+    "taskPrice": "Proposed price: {price}",
+    "taskDays": "Delivery time: {days} days",
+    "send_task_proposal": {
+      "title": "Send your proposal",
+      "text": "Review the task, price, delivery time and message before sending."
+    },
+    "openTask": "Open tasks",
     "cabinetTitle": "Your services",
     "cabinetAction": "Open the cabinet",
     "propose_freelancer_mode": {

@@ -35,6 +35,7 @@ import { moveOrder } from "./party-service";
 import { orderPayState } from "./payment-service";
 import { FREELANCE_REPORT_REASONS, reportFreelance } from "./report-service";
 import { minorToUsd, sortPackages, type PriceRange } from "./rules";
+import { getTaskView, listOpenTasks, sendProposal } from "./task-service";
 import {
   confirmServiceBriefDraft,
   isExplicitServiceDraftConfirmation,
@@ -340,6 +341,118 @@ const findInput = z
 const orderIdInput = z.object({ orderId: id }).strict();
 
 export const freelanceTools = [
+  {
+    name: "find_freelance_tasks",
+    description:
+      "Search open freelance tasks posted by clients. Read-only. Do not invent budgets, requirements or task details. Return up to 5 matching tasks; the task cards open the details and proposal form on this site.",
+    input: z
+      .object({
+        q: z.string().trim().max(200).optional(),
+        category: z.enum(FREELANCE_CATEGORIES).optional(),
+      })
+      .strict(),
+    access: "guest" as const,
+    confirm: read,
+    async run(
+      _ctx: Ctx,
+      input: {
+        q?: string;
+        category?: (typeof FREELANCE_CATEGORIES)[number];
+      },
+    ) {
+      const query = input.q?.toLocaleLowerCase();
+      const rows = (
+        await listOpenTasks({
+          category: input.category,
+          limit: 100,
+        })
+      )
+        .filter(
+          (task) =>
+            !query ||
+            `${task.title} ${task.description} ${task.category} ${task.wantedBy ?? ""}`
+              .toLocaleLowerCase()
+              .includes(query),
+        )
+        .slice(0, 5);
+      if (!rows.length)
+        return { llm: "No open tasks match. Do not invent tasks or budgets." };
+      return {
+        llm: rows
+          .map((task) =>
+            wrapUntrusted(
+              `freelance_task:${task.id}`,
+              JSON.stringify({
+                id: task.id,
+                title: cleanForModel(task.title),
+                category: task.category,
+                description: cleanForModel(task.description),
+                budgetMinUsd:
+                  task.budgetMinMinor === null
+                    ? null
+                    : minorToUsd(task.budgetMinMinor),
+                budgetMaxUsd:
+                  task.budgetMaxMinor === null
+                    ? null
+                    : minorToUsd(task.budgetMaxMinor),
+                wantedBy: task.wantedBy ? cleanForModel(task.wantedBy) : null,
+              }),
+            ),
+          )
+          .join("\n"),
+        client: {
+          kind: "freelance_tasks",
+          data: rows.map((task) => ({
+            id: task.id,
+            title: task.title,
+            category: task.category,
+            budgetMinMinor: task.budgetMinMinor?.toString() ?? null,
+            budgetMaxMinor: task.budgetMaxMinor?.toString() ?? null,
+          })),
+        },
+      };
+    },
+  },
+  {
+    name: "send_task_proposal",
+    description:
+      "Send a proposal to one open freelance task. Use only the freelancer's stated price, delivery days and proposal text. Ask for missing details instead of inventing them. This write always asks the person to confirm the proposal in a card first.",
+    input: z
+      .object({
+        taskId: id,
+        price: z
+          .string()
+          .trim()
+          .regex(/^\d{1,7}(?:\.\d{1,2})?$/),
+        deliveryDays: z.number().int().min(1).max(90),
+        cover: z.string().trim().min(40).max(2000),
+      })
+      .strict(),
+    access: "user" as const,
+    confirm: write,
+    async preview(ctx: Ctx, input: { taskId: string }) {
+      return (await getTaskView(ctx.userId!, input.taskId)).title;
+    },
+    async run(
+      ctx: Ctx,
+      input: {
+        taskId: string;
+        price: string;
+        deliveryDays: number;
+        cover: string;
+      },
+    ) {
+      await enforceRateLimit("freelanceProposal", ctx.userId!);
+      const proposal = await sendProposal(ctx.userId!, input);
+      return {
+        llm: "Proposal sent. The client can review it in their task dashboard.",
+        client: {
+          kind: "freelance_task_proposal",
+          data: { id: proposal.taskId },
+        },
+      };
+    },
+  },
   {
     name: "patch_service_draft",
     description:

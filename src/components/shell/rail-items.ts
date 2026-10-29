@@ -11,6 +11,7 @@ export const railServices: readonly RailLink[] = [
   { href: "/jobs", label: "nav.jobs" },
   { href: "/events", label: "nav.events" },
   { href: "/freelance", label: "nav.freelance" },
+  { href: "/freelance/tasks", label: "nav.taskBoard" },
   { href: "/campaigns", label: "nav.campaigns" },
   { href: "/services", label: "nav.services" },
   { href: "/chat", label: "nav.chat" },
@@ -28,5 +29,11 @@ export function railHidden(pathname: string): boolean {
 
 /** Same section or a page inside it. */
 export function railActive(pathname: string, href: string): boolean {
+  if (
+    href === "/freelance" &&
+    (pathname === "/freelance/tasks" || pathname.startsWith("/freelance/tasks/"))
+  ) {
+    return false;
+  }
   return pathname === href || pathname.startsWith(`${href}/`);
 }

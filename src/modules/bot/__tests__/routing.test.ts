@@ -143,6 +143,11 @@ describe("hybrid tool routing (D522)", () => {
       expect(domainOf(tool.name), tool.name).toBeTruthy();
   });
 
+  it("routes freelance task search and proposals to the freelance service", () => {
+    expect(domainOf("find_freelance_tasks")).toBe("freelance");
+    expect(domainOf("send_task_proposal")).toBe("freelance");
+  });
+
   it("offers the needed tools for recorded and cross-service requests, smaller than the full set", () => {
     const full = toolsFor(USER);
     const fullSize = requestChars(full);

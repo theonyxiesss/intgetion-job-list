@@ -32,6 +32,8 @@ export type RecipientRole =
   | "freelanceParty"
   /** The seller of a freelance service (D456). */
   | "freelanceSeller"
+  /** The client of a task or the freelancer who answered it (D569). */
+  | "freelanceTaskParty"
   /** A company member or a creator on a creative test (D457). */
   | "ugcParty";
 
@@ -195,6 +197,12 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
     serviceTitle: z.string().min(1).max(200),
     decision: z.enum(["published", "rejected", "removed"]),
   }),
+  freelanceTaskProposal: strict({
+    taskId: idSchema,
+    taskTitle: z.string().min(1).max(120),
+    proposalId: idSchema,
+    decision: z.enum(["received", "accepted"]),
+  }),
   ugcCampaignDecided: strict({
     campaignId: idSchema,
     productName: z.string().min(1).max(120),
@@ -245,6 +253,7 @@ export const NOTIFICATION_TYPES = [
   "freelance.request_created",
   "freelance.order_updated",
   "freelance.service_decided",
+  "freelance.task_proposal",
   "ugc.campaign_decided",
   "ugc.application",
   "ugc.invite",
@@ -415,6 +424,14 @@ export const NOTIFICATION_CATALOG: Readonly<
     policy: "immediate",
     emailDefault: true,
     payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.freelanceServiceDecided,
+  },
+  "freelance.task_proposal": {
+    type: "freelance.task_proposal",
+    i18nKey: "freelanceTaskProposal",
+    recipients: "freelanceTaskParty",
+    policy: "immediate",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.freelanceTaskProposal,
   },
   "ugc.campaign_decided": {
     type: "ugc.campaign_decided",

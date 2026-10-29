@@ -151,6 +151,7 @@
     "myJobs": "Mis empleos",
     "company": "Empresa",
     "freelance": "Freelance",
+    "taskBoard": "Tareas freelance",
     "campaigns": "Vídeos UGC",
     "more": "Más",
     "rail": "Secciones del sitio",
@@ -1209,6 +1210,16 @@
           "body": "{decision, select, published {Tu servicio pasó la revisión y ya está en el catálogo.} rejected {Tu servicio no pasó la revisión. Corrígelo y envíalo de nuevo.} removed {Un moderador retiró tu servicio del catálogo.} other {Tu servicio fue revisado.}} Servicio: «{serviceTitle}»."
         }
       },
+      "freelanceTaskProposal": {
+        "inapp": {
+          "title": "Respuesta a la tarea actualizada",
+          "body": "{decision, select, received {Un profesional respondió a tu tarea.} accepted {Tu respuesta fue aceptada y se creó un pedido.} other {El estado de la respuesta cambió.}} Tarea: «{taskTitle}»"
+        },
+        "email": {
+          "subject": "Respuesta a la tarea: {taskTitle}",
+          "body": "{decision, select, received {Un profesional respondió a tu tarea.} accepted {Tu respuesta fue aceptada y se creó un pedido.} other {El estado de la respuesta cambió.}} Tarea: «{taskTitle}»"
+        }
+      },
       "ugcCampaignDecided": {
         "inapp": {
           "title": "Brief UGC revisado",
@@ -1265,6 +1276,7 @@
     "freelance": {
       "openOrder": "Abrir el pedido",
       "openService": "Abrir el servicio",
+      "openTask": "Abrir tareas",
       "accept": "Aceptar",
       "decline": "Rechazar"
     },
@@ -3798,6 +3810,66 @@
       "openOrder": "Abrir el pedido"
     },
     "metaTitle": "Servicios freelance con precio fijo",
+    "tasks": {
+      "metaTitle": "Tareas freelance",
+      "title": "Tareas freelance",
+      "intro": "Explora proyectos publicados por clientes y envía una propuesta con precio y plazo.",
+      "detailIntro": "Detalles del proyecto y propuestas",
+      "postTask": "Publicar una tarea",
+      "myTasks": "Mis tareas",
+      "myTasksIntro": "Tus tareas y las propuestas recibidas.",
+      "myTasksEmpty": "Aún no has publicado tareas.",
+      "empty": "Aún no hay tareas abiertas en esta categoría.",
+      "comingSoon": "Las tareas freelance estarán disponibles pronto.",
+      "category": "Categoría",
+      "anyCategory": "Cualquier categoría",
+      "negotiable": "A convenir",
+      "wantedBy": "Fecha deseada",
+      "company": "Empresa",
+      "person": "Cliente particular",
+      "createIntro": "Describe el trabajo y el presupuesto. La tarea aparecerá después de la moderación.",
+      "taskDetails": "Detalles de la tarea",
+      "taskDetails": "Detalles de la tarea",
+      "taskTitle": "Título de la tarea",
+      "taskTitleHint": "De 10 a 120 caracteres.",
+      "description": "Descripción de la tarea",
+      "taskDescriptionHint": "De 80 a 2.000 caracteres. No incluyas datos de contacto.",
+      "budgetMin": "Presupuesto mínimo, USD",
+      "budgetMax": "Presupuesto máximo, USD",
+      "optional": "Opcional",
+      "wantedByHint": "Hasta 80 caracteres.",
+      "chooseCategory": "Elige una categoría",
+      "submittedForReview": "La tarea se envió a moderación. Aparecerá después de su aprobación.",
+      "sendProposal": "Enviar propuesta",
+      "proposalPrice": "Tu precio, USD",
+      "proposalPriceHint": "$10–$20.000",
+      "deliveryDaysLabel": "Plazo de entrega, días",
+      "deliveryDaysHint": "De 1 a 90 días.",
+      "cover": "Mensaje para el cliente",
+      "coverHint": "De 40 a 2.000 caracteres. No incluyas datos de contacto.",
+      "proposalSent": "La propuesta se envió.",
+      "closeTask": "Cerrar tarea",
+      "acceptProposal": "Contratar para esta tarea",
+      "declineProposal": "Rechazar",
+      "proposals": "Propuestas ({count})",
+      "noProposals": "Aún no hay propuestas.",
+      "deliveryDays": "{count} días",
+      "alreadyProposed": "Ya enviaste una propuesta ({status}).",
+      "signInToPropose": "Inicia sesión para enviar una propuesta",
+      "status": { "pending": "En revisión", "open": "Abierta", "hired": "Contratado", "closed": "Cerrada", "expired": "Caducada", "rejected": "Rechazada" },
+      "proposalStatus": { "sent": "Enviada", "accepted": "Aceptada", "declined": "Rechazada", "withdrawn": "Retirada" },
+      "sending": "Enviando…",
+      "failed": "Algo salió mal. Inténtalo de nuevo.",
+      "error_TASKS_NOT_READY": "Las tareas freelance estarán disponibles pronto.",
+      "error_VALIDATION_ERROR": "Revisa los datos e inténtalo de nuevo.",
+      "error_CONTACTS_IN_TEXT": "Elimina correos, teléfonos, enlaces y nombres con @.",
+      "error_RATE_LIMITED": "Has alcanzado el límite de hoy. Vuelve mañana.",
+      "error_OWN_TASK": "No puedes enviar una propuesta a tu propia tarea.",
+      "error_TASK_CLOSED": "Esta tarea ya no acepta propuestas.",
+      "error_PROPOSAL_EXISTS": "Ya has enviado una propuesta.",
+      "error_SELLER_REQUIRED": "Activa primero la recepción de pedidos en tu perfil freelance.",
+      "error_PROPOSAL_CLOSED": "Esta propuesta ya no se puede cambiar."
+    },
     "title": "Freelance. Servicios listos con precio.",
     "subtitle": "Especialistas individuales: qué harán, por cuánto y para cuándo. Los contactos se abren cuando el freelancer acepta tu solicitud. Para un equipo completo, mira Servicios.",
     "teamLink": "¿Necesitas un equipo? Servicios",
@@ -4276,6 +4348,18 @@
     "deliveryLabel": "Enlace al resultado (https)",
     "orderTitle": "La página del pedido",
     "orderAction": "Abrir el pedido",
+    "taskAction": "Ver la tarea y responder",
+    "taskNegotiable": "Precio negociable",
+    "taskFrom": "Desde {amount}",
+    "taskUpTo": "Hasta {amount}",
+    "taskTitle": "Tarea: {title}",
+    "taskPrice": "Precio propuesto: {price}",
+    "taskDays": "Plazo: {days} días",
+    "send_task_proposal": {
+      "title": "Enviar respuesta",
+      "text": "Revisa la tarea, el precio, el plazo y el mensaje antes de enviar."
+    },
+    "openTask": "Abrir tareas",
     "cabinetTitle": "Tus servicios",
     "cabinetAction": "Abrir el panel",
     "propose_freelancer_mode": {

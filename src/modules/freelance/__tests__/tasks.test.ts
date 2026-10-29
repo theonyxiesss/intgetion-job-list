@@ -25,6 +25,8 @@ const mocks = vi.hoisted(() => ({
   insertOrder: vi.fn(),
   insertHistory: vi.fn(),
   member: vi.fn(),
+  safeNotify: vi.fn(),
+  sitemap: vi.fn(),
 }));
 
 vi.mock("../repo/task-repo", () => ({
@@ -41,6 +43,7 @@ vi.mock("../repo/task-repo", () => ({
   setProposalStatus: mocks.setProposalStatus,
   declineOtherProposals: mocks.declineOthers,
   listOpenTasks: mocks.listOpen,
+  listTaskSitemapRows: mocks.sitemap,
   listTasksByBuyer: vi.fn(),
   listProposalsForTask: vi.fn(),
   listProposalsBySeller: vi.fn(),
@@ -55,6 +58,9 @@ vi.mock("../repo/freelance-repo", () => ({
 vi.mock("@/modules/companies/service", () => ({
   findMemberRole: mocks.member,
 }));
+vi.mock("@/modules/notifications/service", () => ({
+  safeNotify: mocks.safeNotify,
+}));
 
 import {
   acceptProposal,
@@ -62,6 +68,7 @@ import {
   decideTaskModeration,
   expireOldTasks,
   getTaskView,
+  listTaskSitemapEntries,
   sendProposal,
   withdrawProposal,
 } from "../service/task-service";
@@ -316,6 +323,19 @@ describe("viewing a task", () => {
   });
 });
 
+describe("task sitemap", () => {
+  it("returns public task ids and safely yields empty before migration 0073", async () => {
+    const entries = [{ id: TASK, updatedAt: NOW }];
+    mocks.sitemap.mockResolvedValue(entries);
+    await expect(listTaskSitemapEntries()).resolves.toEqual(entries);
+    mocks.sitemap.mockRejectedValue(missingTable);
+    await expect(listTaskSitemapEntries()).rejects.toMatchObject({
+      status: 503,
+      code: "TASKS_NOT_READY",
+    });
+  });
+});
+
 describe("proposals", () => {
   const input = { taskId: TASK, price: "450", deliveryDays: 7, cover: COVER };
 
@@ -328,6 +348,11 @@ describe("proposals", () => {
         priceMinor: BigInt(45000),
         status: "sent",
       }),
+    );
+    expect(mocks.safeNotify).toHaveBeenCalledWith(
+      "freelance.task_proposal",
+      [BUYER],
+      expect.objectContaining({ taskId: TASK, decision: "received" }),
     );
   });
 
@@ -403,6 +428,11 @@ describe("hiring from a proposal (D569)", () => {
       "open",
       { status: "hired", hiredOrderId: "order-1", updatedAt: NOW },
       "tx",
+    );
+    expect(mocks.safeNotify).toHaveBeenCalledWith(
+      "freelance.task_proposal",
+      [SELLER],
+      expect.objectContaining({ taskId: TASK, decision: "accepted" }),
     );
   });
 

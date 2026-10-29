@@ -151,6 +151,7 @@
     "myJobs": "Mes offres",
     "company": "Entreprise",
     "freelance": "Freelance",
+    "taskBoard": "Missions freelance",
     "campaigns": "Vidéos UGC",
     "more": "Plus",
     "rail": "Sections du site",
@@ -1209,6 +1210,16 @@
           "body": "{decision, select, published {Votre service a passé l’examen et figure dans le catalogue.} rejected {Votre service n’a pas passé l’examen. Corrigez-le et renvoyez-le.} removed {Un modérateur a retiré votre service du catalogue.} other {Votre service a été examiné.}} Service : « {serviceTitle} »."
         }
       },
+      "freelanceTaskProposal": {
+        "inapp": {
+          "title": "Réponse à la tâche mise à jour",
+          "body": "{decision, select, received {Un freelance a répondu à votre tâche.} accepted {Votre réponse a été acceptée et une commande a été créée.} other {Le statut de la réponse a changé.}} Tâche : « {taskTitle} »"
+        },
+        "email": {
+          "subject": "Réponse à la tâche : {taskTitle}",
+          "body": "{decision, select, received {Un freelance a répondu à votre tâche.} accepted {Votre réponse a été acceptée et une commande a été créée.} other {Le statut de la réponse a changé.}} Tâche : « {taskTitle} »"
+        }
+      },
       "ugcCampaignDecided": {
         "inapp": {
           "title": "Brief UGC examiné",
@@ -1265,6 +1276,7 @@
     "freelance": {
       "openOrder": "Ouvrir la commande",
       "openService": "Ouvrir le service",
+      "openTask": "Ouvrir les tâches",
       "accept": "Accepter",
       "decline": "Refuser"
     },
@@ -3798,6 +3810,65 @@
       "openOrder": "Ouvrir la commande"
     },
     "metaTitle": "Services freelance à prix fixe",
+    "tasks": {
+      "metaTitle": "Missions freelance",
+      "title": "Missions freelance",
+      "intro": "Consultez les projets des clients et envoyez une proposition avec votre prix et votre délai.",
+      "detailIntro": "Détails de la mission et propositions",
+      "postTask": "Publier une mission",
+      "myTasks": "Mes missions",
+      "myTasksIntro": "Vos missions et les propositions reçues.",
+      "myTasksEmpty": "Vous n’avez pas encore publié de mission.",
+      "empty": "Aucune mission ouverte dans cette catégorie pour le moment.",
+      "comingSoon": "Les missions freelance seront bientôt disponibles.",
+      "category": "Catégorie",
+      "anyCategory": "Toutes les catégories",
+      "negotiable": "À négocier",
+      "wantedBy": "Échéance souhaitée",
+      "company": "Entreprise",
+      "person": "Client particulier",
+      "createIntro": "Décrivez le travail et le budget. La mission sera publiée après modération.",
+      "taskDetails": "Détails de la mission",
+      "taskTitle": "Titre de la mission",
+      "taskTitleHint": "De 10 à 120 caractères.",
+      "description": "Description de la mission",
+      "taskDescriptionHint": "De 80 à 2 000 caractères. N’indiquez pas de coordonnées.",
+      "budgetMin": "Budget minimum, USD",
+      "budgetMax": "Budget maximum, USD",
+      "optional": "Facultatif",
+      "wantedByHint": "80 caractères maximum.",
+      "chooseCategory": "Choisir une catégorie",
+      "submittedForReview": "Votre mission a été envoyée à la modération. Elle apparaîtra après validation.",
+      "sendProposal": "Envoyer une proposition",
+      "proposalPrice": "Votre prix, USD",
+      "proposalPriceHint": "10 à 20 000 $",
+      "deliveryDaysLabel": "Délai, jours",
+      "deliveryDaysHint": "De 1 à 90 jours.",
+      "cover": "Message au client",
+      "coverHint": "De 40 à 2 000 caractères. N’indiquez pas de coordonnées.",
+      "proposalSent": "Votre proposition a été envoyée.",
+      "closeTask": "Fermer la mission",
+      "acceptProposal": "Choisir ce prestataire",
+      "declineProposal": "Refuser",
+      "proposals": "Propositions ({count})",
+      "noProposals": "Aucune proposition pour le moment.",
+      "deliveryDays": "{count} jours",
+      "alreadyProposed": "Vous avez déjà envoyé une proposition ({status}).",
+      "signInToPropose": "Connectez-vous pour envoyer une proposition",
+      "status": { "pending": "En modération", "open": "Ouverte", "hired": "Prestataire choisi", "closed": "Fermée", "expired": "Expirée", "rejected": "Refusée" },
+      "proposalStatus": { "sent": "Envoyée", "accepted": "Acceptée", "declined": "Refusée", "withdrawn": "Retirée" },
+      "sending": "Envoi…",
+      "failed": "Une erreur est survenue. Réessayez.",
+      "error_TASKS_NOT_READY": "Les missions freelance seront bientôt disponibles.",
+      "error_VALIDATION_ERROR": "Vérifiez les informations et réessayez.",
+      "error_CONTACTS_IN_TEXT": "Retirez les e-mails, numéros, liens et noms précédés de @.",
+      "error_RATE_LIMITED": "La limite du jour est atteinte. Réessayez demain.",
+      "error_OWN_TASK": "Vous ne pouvez pas répondre à votre propre mission.",
+      "error_TASK_CLOSED": "Cette mission n’accepte plus de propositions.",
+      "error_PROPOSAL_EXISTS": "Vous avez déjà envoyé une proposition.",
+      "error_SELLER_REQUIRED": "Activez d’abord la réception de commandes dans votre profil freelance.",
+      "error_PROPOSAL_CLOSED": "Cette proposition ne peut plus être modifiée."
+    },
     "title": "Freelance. Des services prêts, avec un prix.",
     "subtitle": "Des spécialistes indépendants : ce qu’ils feront, pour combien et pour quand. Les contacts s’ouvrent quand le freelance accepte votre demande. Pour une équipe entière, voir Services.",
     "teamLink": "Besoin d’une équipe ? Services",
@@ -4276,6 +4347,18 @@
     "deliveryLabel": "Lien vers le résultat (https)",
     "orderTitle": "La page de la commande",
     "orderAction": "Ouvrir la commande",
+    "taskAction": "Voir la tâche et répondre",
+    "taskNegotiable": "Prix à négocier",
+    "taskFrom": "À partir de {amount}",
+    "taskUpTo": "Jusqu’à {amount}",
+    "taskTitle": "Tâche : {title}",
+    "taskPrice": "Prix proposé : {price}",
+    "taskDays": "Délai : {days} jours",
+    "send_task_proposal": {
+      "title": "Envoyer votre réponse",
+      "text": "Vérifiez la tâche, le prix, le délai et le message avant l’envoi."
+    },
+    "openTask": "Ouvrir les tâches",
     "cabinetTitle": "Vos services",
     "cabinetAction": "Ouvrir l’espace",
     "propose_freelancer_mode": {
