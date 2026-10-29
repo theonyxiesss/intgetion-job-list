@@ -17,9 +17,12 @@ import {
   DeskSectionBlock,
   DeskShell,
   DeskSkeleton,
+  DeskCompanies,
+  DeskPager,
   NeedCompany,
 } from "@/modules/ugc/ui/desk";
 import { requireDeskUser, loadDesk } from "../desk-data";
+import { deskPath, paginate } from "../desk-query";
 
 export const dynamic = "force-dynamic";
 
@@ -56,33 +59,54 @@ function depositKey(campaign: WorkspaceCampaign): DepositKey {
  */
 export default async function PaymentsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ company?: string; page?: string }>;
 }) {
-  const { locale } = await params;
+  const [{ locale }, query] = await Promise.all([params, searchParams]);
   setRequestLocale(locale);
   const userId = await requireDeskUser(locale);
   return (
     <Suspense fallback={<DeskSkeleton />}>
-      <PaymentsBody userId={userId} />
+      <PaymentsBody
+        userId={userId}
+        companyId={query.company}
+        page={Number(query.page) || 1}
+      />
     </Suspense>
   );
 }
 
-async function PaymentsBody({ userId }: { userId: string }) {
+async function PaymentsBody({
+  userId,
+  companyId,
+  page: rawPage,
+}: {
+  userId: string;
+  companyId?: string;
+  page: number;
+}) {
   const t = await getTranslations("ugc");
   const h = await getTranslations("ugcHub");
   const d = await getTranslations("ugcDesk");
-  const desk = await loadDesk(userId);
+  const desk = await loadDesk(userId, companyId);
+  const here = (over: { company?: string | null; page?: number }) =>
+    deskPath("/campaigns/payments", {
+      company: over.company === undefined ? desk.company?.id : over.company,
+      page: over.page,
+    });
   const totals = moneyTotals(desk.campaigns);
   const walletOn = desk.campaigns.some((row) => row.deposit.required);
-  const rewards = desk.campaigns.flatMap((campaign) =>
+  const allRewards = desk.campaigns.flatMap((campaign) =>
     campaign.participants.flatMap((participant) =>
       participant.payout
         ? [{ campaign, participant, payout: participant.payout }]
         : [],
     ),
   );
+  const paged = paginate(allRewards, rawPage);
+  const rewards = paged.items;
 
   const action = (campaign: WorkspaceCampaign) =>
     depositKey(campaign) === "due" || depositKey(campaign) === "awaiting" ? (
@@ -98,7 +122,11 @@ async function PaymentsBody({ userId }: { userId: string }) {
   return (
     <DeskShell
       active="payments"
-      title={d("nav.payments")}
+      title={
+        desk.company && desk.companies.length > 1
+          ? `${d("nav.payments")} · ${desk.company.name}`
+          : d("nav.payments")
+      }
       intro={d("paymentsIntro")}
       counts={desk.counts}
     >
@@ -116,6 +144,11 @@ async function PaymentsBody({ userId }: { userId: string }) {
         />
       ) : (
         <>
+          <DeskCompanies
+            companies={desk.companies}
+            selectedId={desk.company?.id}
+            hrefFor={(id) => here({ company: id })}
+          />
           {walletOn ? null : (
             <Alert title={d("walletOffTitle")}>{d("walletOffText")}</Alert>
           )}
@@ -256,6 +289,11 @@ async function PaymentsBody({ userId }: { userId: string }) {
                 ))}
               </ul>
             )}
+            <DeskPager
+              page={paged.page}
+              pages={paged.pages}
+              hrefFor={(page) => here({ page })}
+            />
             <p className="t-body-s text-fg-muted">{d("rewardsNote")}</p>
           </DeskSectionBlock>
         </>

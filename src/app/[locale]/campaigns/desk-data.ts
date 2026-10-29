@@ -12,6 +12,8 @@ import {
 export type DeskData = {
   userId: string;
   companies: { id: string; name: string }[];
+  /** The company chosen in the address; undefined means all of them. */
+  company: { id: string; name: string } | undefined;
   campaigns: WorkspaceCampaign[];
   /** Numbers next to nav items: only rows that wait on the company. */
   counts: Partial<Record<DeskSection, number>>;
@@ -35,15 +37,24 @@ export async function requireDeskUser(locale: string): Promise<string> {
  * What every page of the company's UGC workspace reads (D519). A person
  * without a company gets no campaigns and the pages show how to start one.
  */
-export async function loadDesk(userId: string): Promise<DeskData> {
+export async function loadDesk(
+  userId: string,
+  companyId?: string,
+): Promise<DeskData> {
   const companies = (await getCompaniesForUser(userId)).map((row) => ({
     id: row.id,
     name: row.name,
   }));
-  const campaigns = companies.length ? await companyWorkspace(userId) : [];
+  // A company id that is not the member's own selects nothing and shows
+  // nothing: never another company's data (TZ 48 §3).
+  const company = companies.find((row) => row.id === companyId);
+  const campaigns = companies.length
+    ? await companyWorkspace(userId, { companyId: company?.id })
+    : [];
   return {
     userId,
     companies,
+    company,
     campaigns,
     counts: deskCounts(campaigns),
   };

@@ -15,7 +15,9 @@ import {
 import { UgcAction } from "@/modules/ugc/ui/action";
 import {
   DeskEmpty,
+  DeskCompanies,
   DeskFilter,
+  DeskPager,
   DeskShell,
   DeskSkeleton,
   Monogram,
@@ -23,6 +25,7 @@ import {
   ParticipationStatus,
 } from "@/modules/ugc/ui/desk";
 import { requireDeskUser, loadDesk, offerOpen } from "../desk-data";
+import { deskPath, paginate } from "../desk-query";
 
 export const dynamic = "force-dynamic";
 
@@ -47,14 +50,19 @@ export default async function OrdersPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ view?: string }>;
+  searchParams: Promise<{ view?: string; company?: string; page?: string }>;
 }) {
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   setRequestLocale(locale);
   const userId = await requireDeskUser(locale);
   return (
     <Suspense fallback={<DeskSkeleton />}>
-      <OrdersBody userId={userId} view={query.view} />
+      <OrdersBody
+        userId={userId}
+        view={query.view}
+        companyId={query.company}
+        page={Number(query.page) || 1}
+      />
     </Suspense>
   );
 }
@@ -62,18 +70,35 @@ export default async function OrdersPage({
 async function OrdersBody({
   userId,
   view: rawView,
+  companyId,
+  page: rawPage,
 }: {
   userId: string;
   view?: string;
+  companyId?: string;
+  page: number;
 }) {
   const t = await getTranslations("ugc");
   const d = await getTranslations("ugcDesk");
-  const desk = await loadDesk(userId);
+  const desk = await loadDesk(userId, companyId);
   const view = pickGroup(ORDER_GROUPS, rawView);
+  const here = (over: {
+    view?: string;
+    company?: string | null;
+    page?: number;
+  }) =>
+    deskPath("/campaigns/orders", {
+      view: over.view ?? view,
+      defaultView: "applied",
+      company: over.company === undefined ? desk.company?.id : over.company,
+      page: over.page,
+    });
   const all: Row[] = desk.campaigns.flatMap((campaign) =>
     campaign.participants.map((participant) => ({ campaign, participant })),
   );
-  const rows = all.filter((row) => orderGroup(row.participant) === view);
+  const filtered = all.filter((row) => orderGroup(row.participant) === view);
+  const paged = paginate(filtered, rawPage);
+  const rows = paged.items;
 
   const reward = ({ campaign, participant }: Row) =>
     usdLabel(Number(participant.bountyMinor ?? campaign.bountyMinor));
@@ -139,7 +164,11 @@ async function OrdersBody({
     <RouteMessages namespaces={["ugc"]}>
       <DeskShell
         active="orders"
-        title={d("nav.orders")}
+        title={
+          desk.company && desk.companies.length > 1
+            ? `${d("nav.orders")} · ${desk.company.name}`
+            : d("nav.orders")
+        }
         intro={d("ordersIntro")}
         counts={desk.counts}
       >
@@ -147,15 +176,17 @@ async function OrdersBody({
           <NeedCompany />
         ) : (
           <>
+            <DeskCompanies
+              companies={desk.companies}
+              selectedId={desk.company?.id}
+              hrefFor={(id) => here({ company: id })}
+            />
             <DeskFilter
               label={d("filterLabel")}
               items={ORDER_GROUPS.map((group) => ({
                 value: group,
                 label: d(`orderGroup.${group}`),
-                href:
-                  group === "applied"
-                    ? "/campaigns/orders"
-                    : `/campaigns/orders?view=${group}`,
+                href: here({ view: group }),
                 active: group === view,
                 count: all.filter(
                   (row) => orderGroup(row.participant) === group,
@@ -248,6 +279,11 @@ async function OrdersBody({
                     );
                   })}
                 </ul>
+                <DeskPager
+                  page={paged.page}
+                  pages={paged.pages}
+                  hrefFor={(page) => here({ page })}
+                />
               </>
             )}
           </>

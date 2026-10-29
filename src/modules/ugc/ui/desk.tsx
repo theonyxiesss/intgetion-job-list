@@ -559,3 +559,76 @@ export async function DeskSkeleton() {
     </main>
   );
 }
+
+/**
+ * Which company the desk shows (TZ 48 §3). Only with two or more companies;
+ * the name of the chosen one is also in the page title. The choice lives in
+ * the address and changes no right.
+ */
+export async function DeskCompanies({
+  companies,
+  selectedId,
+  hrefFor,
+}: {
+  companies: readonly { id: string; name: string }[];
+  selectedId: string | undefined;
+  hrefFor: (companyId: string | null) => string;
+}) {
+  if (companies.length < 2) return null;
+  const d = await getTranslations("ugcDesk");
+  return (
+    <DeskFilter
+      label={d("companyLabel")}
+      items={[
+        {
+          value: "all",
+          label: d("companyAll"),
+          href: hrefFor(null),
+          active: !selectedId,
+        },
+        ...companies.map((row) => ({
+          value: row.id,
+          label: row.name,
+          href: hrefFor(row.id),
+          active: row.id === selectedId,
+        })),
+      ]}
+    />
+  );
+}
+
+/** Previous and next page of a desk list; nothing when there is one page. */
+export async function DeskPager({
+  page,
+  pages,
+  hrefFor,
+}: {
+  page: number;
+  pages: number;
+  hrefFor: (page: number) => string;
+}) {
+  if (pages <= 1) return null;
+  const d = await getTranslations("ugcDesk");
+  return (
+    <nav
+      aria-label={d("pagerLabel")}
+      className="flex flex-wrap items-center justify-between gap-3"
+    >
+      <span className="t-data text-fg-muted">
+        {d("pagerOf", { page, pages })}
+      </span>
+      <span className="flex gap-3">
+        {page > 1 ? (
+          <ButtonLink href={hrefFor(page - 1)} variant="secondary">
+            {d("pagerPrev")}
+          </ButtonLink>
+        ) : null}
+        {page < pages ? (
+          <ButtonLink href={hrefFor(page + 1)} variant="secondary">
+            {d("pagerNext")}
+          </ButtonLink>
+        ) : null}
+      </span>
+    </nav>
+  );
+}

@@ -10,13 +10,16 @@ import {
 } from "@/modules/ugc/service";
 import {
   DeskEmpty,
+  DeskCompanies,
   DeskFilter,
+  DeskPager,
   DeskShell,
   DeskSkeleton,
   NeedCompany,
 } from "@/modules/ugc/ui/desk";
 import { VideoReviewItem } from "@/modules/ugc/ui/video-review";
 import { requireDeskUser, loadDesk } from "../desk-data";
+import { deskPath, paginate } from "../desk-query";
 
 export const dynamic = "force-dynamic";
 
@@ -42,14 +45,20 @@ export default async function MaterialsPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ view?: string }>;
+  searchParams: Promise<{ view?: string; company?: string; page?: string }>;
 }) {
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   setRequestLocale(locale);
   const userId = await requireDeskUser(locale);
   return (
     <Suspense fallback={<DeskSkeleton />}>
-      <MaterialsBody userId={userId} locale={locale} view={query.view} />
+      <MaterialsBody
+        userId={userId}
+        locale={locale}
+        view={query.view}
+        companyId={query.company}
+        page={Number(query.page) || 1}
+      />
     </Suspense>
   );
 }
@@ -58,15 +67,30 @@ async function MaterialsBody({
   userId,
   locale,
   view: rawView,
+  companyId,
+  page: rawPage,
 }: {
   userId: string;
   locale: string;
   view?: string;
+  companyId?: string;
+  page: number;
 }) {
   const d = await getTranslations("ugcDesk");
   const t = await getTranslations("ugc");
-  const desk = await loadDesk(userId);
+  const desk = await loadDesk(userId, companyId);
   const view = pickGroup(MATERIAL_GROUPS, rawView);
+  const here = (over: {
+    view?: string;
+    company?: string | null;
+    page?: number;
+  }) =>
+    deskPath("/campaigns/materials", {
+      view: over.view ?? view,
+      defaultView: "waiting",
+      company: over.company === undefined ? desk.company?.id : over.company,
+      page: over.page,
+    });
   const all = desk.campaigns.flatMap((campaign) =>
     campaign.participants.flatMap((participant) =>
       participant.submission
@@ -74,9 +98,11 @@ async function MaterialsBody({
         : [],
     ),
   );
-  const rows = all.filter(
+  const filtered = all.filter(
     (row) => materialGroup(row.submission.status) === view,
   );
+  const paged = paginate(filtered, rawPage);
+  const rows = paged.items;
   const winnersLinks = desk.campaigns.filter((campaign) =>
     campaign.participants.some((row) => row.submission?.status === "winner"),
   );
@@ -85,7 +111,11 @@ async function MaterialsBody({
     <RouteMessages namespaces={["ugc"]}>
       <DeskShell
         active="materials"
-        title={d("nav.materials")}
+        title={
+          desk.company && desk.companies.length > 1
+            ? `${d("nav.materials")} · ${desk.company.name}`
+            : d("nav.materials")
+        }
         intro={d("materialsIntro")}
         counts={desk.counts}
       >
@@ -93,15 +123,17 @@ async function MaterialsBody({
           <NeedCompany />
         ) : (
           <>
+            <DeskCompanies
+              companies={desk.companies}
+              selectedId={desk.company?.id}
+              hrefFor={(id) => here({ company: id })}
+            />
             <DeskFilter
               label={d("filterLabel")}
               items={MATERIAL_GROUPS.map((group) => ({
                 value: group,
                 label: d(`materialGroup.${group}`),
-                href:
-                  group === "waiting"
-                    ? "/campaigns/materials"
-                    : `/campaigns/materials?view=${group}`,
+                href: here({ view: group }),
                 active: group === view,
                 count: all.filter(
                   (row) => materialGroup(row.submission.status) === group,
@@ -125,6 +157,11 @@ async function MaterialsBody({
                 ))}
               </ul>
             )}
+            <DeskPager
+              page={paged.page}
+              pages={paged.pages}
+              hrefFor={(page) => here({ page })}
+            />
             {winnersLinks.length > 0 ? (
               <p className="t-body-s text-fg-muted">
                 {t("winners")}:{" "}

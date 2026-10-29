@@ -13,10 +13,13 @@ import {
   DeskShell,
   DeskSkeleton,
   Monogram,
+  DeskCompanies,
+  DeskPager,
   NeedCompany,
   ParticipationStatus,
 } from "@/modules/ugc/ui/desk";
 import { requireDeskUser, loadDesk, offerOpen } from "../desk-data";
+import { deskPath, paginate } from "../desk-query";
 
 export const dynamic = "force-dynamic";
 
@@ -36,31 +39,56 @@ export async function generateMetadata({
  */
 export default async function CreatorsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ company?: string; page?: string }>;
 }) {
-  const { locale } = await params;
+  const [{ locale }, query] = await Promise.all([params, searchParams]);
   setRequestLocale(locale);
   const userId = await requireDeskUser(locale);
   return (
     <Suspense fallback={<DeskSkeleton />}>
-      <CreatorsBody userId={userId} />
+      <CreatorsBody
+        userId={userId}
+        companyId={query.company}
+        page={Number(query.page) || 1}
+      />
     </Suspense>
   );
 }
 
-async function CreatorsBody({ userId }: { userId: string }) {
+async function CreatorsBody({
+  userId,
+  companyId,
+  page: rawPage,
+}: {
+  userId: string;
+  companyId?: string;
+  page: number;
+}) {
   const t = await getTranslations("ugc");
   const d = await getTranslations("ugcDesk");
-  const desk = await loadDesk(userId);
-  const people = creatorsFrom(desk.campaigns);
+  const desk = await loadDesk(userId, companyId);
+  const here = (over: { company?: string | null; page?: number }) =>
+    deskPath("/campaigns/creators", {
+      company: over.company === undefined ? desk.company?.id : over.company,
+      page: over.page,
+    });
+  const everyone = creatorsFrom(desk.campaigns);
+  const paged = paginate(everyone, rawPage);
+  const people = paged.items;
   const matches = await workspaceMatches(desk.userId, desk.campaigns);
 
   return (
     <RouteMessages namespaces={["ugc"]}>
       <DeskShell
         active="creators"
-        title={d("nav.creators")}
+        title={
+          desk.company && desk.companies.length > 1
+            ? `${d("nav.creators")} · ${desk.company.name}`
+            : d("nav.creators")
+        }
         intro={d("creatorsIntro")}
         counts={desk.counts}
       >
@@ -68,6 +96,11 @@ async function CreatorsBody({ userId }: { userId: string }) {
           <NeedCompany />
         ) : (
           <>
+            <DeskCompanies
+              companies={desk.companies}
+              selectedId={desk.company?.id}
+              hrefFor={(id) => here({ company: id })}
+            />
             <DeskSectionBlock id="ugc-people-all" title={d("inBriefs")}>
               {people.length === 0 ? (
                 <DeskEmpty
@@ -130,6 +163,11 @@ async function CreatorsBody({ userId }: { userId: string }) {
                   ))}
                 </ul>
               )}
+              <DeskPager
+                page={paged.page}
+                pages={paged.pages}
+                hrefFor={(page) => here({ page })}
+              />
             </DeskSectionBlock>
 
             <DeskSectionBlock id="ugc-matches" title={d("matchesTitle")}>

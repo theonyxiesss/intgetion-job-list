@@ -24,6 +24,7 @@ import {
   CampaignStatus,
   DeskEmpty,
   DeskSectionBlock,
+  DeskCompanies,
   DeskShell,
   DeskSkeleton,
   SubmissionStatus,
@@ -50,10 +51,12 @@ export async function generateMetadata({
  */
 export default async function CampaignsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ company?: string }>;
 }) {
-  const { locale } = await params;
+  const [{ locale }, query] = await Promise.all([params, searchParams]);
   setRequestLocale(locale);
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
@@ -64,7 +67,12 @@ export default async function CampaignsPage({
   }
   return (
     <Suspense fallback={<DeskSkeleton />}>
-      <Overview userId={user.id} guide={guide} />
+      <Overview
+        userId={user.id}
+        guide={guide}
+        companies={companies.map((row) => ({ id: row.id, name: row.name }))}
+        companyId={query.company}
+      />
     </Suspense>
   );
 }
@@ -73,19 +81,37 @@ export default async function CampaignsPage({
 async function Overview({
   userId,
   guide,
+  companies,
+  companyId,
 }: {
   userId: string;
   guide: UgcPriceGuide;
+  companies: { id: string; name: string }[];
+  companyId?: string;
 }) {
   const t = await getTranslations("ugc");
   const h = await getTranslations("ugcHub");
   const d = await getTranslations("ugcDesk");
-  const campaigns = await companyWorkspace(userId);
+  // A company id that is not the member's own selects nothing (TZ 48 §3).
+  const company = companies.find((row) => row.id === companyId);
+  const campaigns = await companyWorkspace(userId, { companyId: company?.id });
   const counts = deskCounts(campaigns);
+  const title =
+    company && companies.length > 1
+      ? `${d("overviewTitle")} · ${company.name}`
+      : d("overviewTitle");
+  const chooser = (
+    <DeskCompanies
+      companies={companies}
+      selectedId={company?.id}
+      hrefFor={(id) => (id ? `/campaigns?company=${id}` : "/campaigns")}
+    />
+  );
 
   if (campaigns.length === 0) {
     return (
-      <DeskShell active="overview" title={d("overviewTitle")} counts={counts}>
+      <DeskShell active="overview" title={title} counts={counts}>
+        {chooser}
         <section
           aria-labelledby="ugc-start"
           className="grid gap-8 rounded-lg border border-line p-5 md:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]"
@@ -156,7 +182,8 @@ async function Overview({
     .slice(0, 3);
 
   return (
-    <DeskShell active="overview" title={d("overviewTitle")} counts={counts}>
+    <DeskShell active="overview" title={title} counts={counts}>
+      {chooser}
       <DeskSectionBlock id="ugc-attention" title={d("attentionTitle")}>
         {attention.length === 0 ? (
           <DeskEmpty
