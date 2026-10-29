@@ -402,3 +402,37 @@ export const freelanceReviews = pgTable(
     ),
   ],
 );
+
+/** The freelancer's rating of the client; only average and count are shown (D568). */
+export const freelanceClientReviews = pgTable(
+  "freelance_client_reviews",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orderId: uuid("order_id")
+      .notNull()
+      .references(() => freelanceOrders.id, { onDelete: "cascade" }),
+    sellerId: uuid("seller_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    buyerId: uuid("buyer_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    rating: smallint("rating").notNull(),
+    body: text("body").notNull().default(""),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("freelance_client_reviews_order_key").on(table.orderId),
+    index("freelance_client_reviews_buyer_idx").on(table.buyerId),
+    check(
+      "freelance_client_reviews_rating_check",
+      sql`${table.rating} BETWEEN 1 AND 5`,
+    ),
+    check(
+      "freelance_client_reviews_body_check",
+      sql`char_length(${table.body}) <= 1000`,
+    ),
+  ],
+);

@@ -15,6 +15,7 @@ import { clientIp } from "@/lib/request-ip";
 import type { FreelanceOrderStatus } from "@/config/freelance";
 import {
   canLeaveReview,
+  getClientReviewView,
   getOrderView,
   getRoomFeed,
   orderPayState,
@@ -74,6 +75,11 @@ export default async function FreelanceOrderPage({
   const contact = order.counterpart;
   const payState = await orderPayState(user.id, order.id);
   const feed = await getRoomFeed(user.id, order.id);
+  const clientReview = await getClientReviewView(user.id, order.id);
+  const ratingFormat = new Intl.NumberFormat(intlLocale(locale), {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
   const stepIndex = STEPS.indexOf(order.status);
 
   return (
@@ -291,6 +297,24 @@ export default async function FreelanceOrderPage({
             {canReview ? <ReviewForm orderId={order.id} copy={copy} /> : null}
             {order.reviewed ? (
               <p className="t-body-s text-fg-muted">{t("orders.reviewLeft")}</p>
+            ) : null}
+            {order.side === "seller" && clientReview.ready ? (
+              <p className="t-body-s text-fg-muted">
+                {clientReview.summary
+                  ? t("orders.clientRating", {
+                      rating: ratingFormat.format(clientReview.summary.average),
+                      count: clientReview.summary.count,
+                    })
+                  : t("orders.clientRatingNone")}
+              </p>
+            ) : null}
+            {clientReview.canReview ? (
+              <ReviewForm orderId={order.id} copy={copy} about="client" />
+            ) : null}
+            {clientReview.reviewed ? (
+              <p className="t-body-s text-fg-muted">
+                {t("orders.clientReviewed")}
+              </p>
             ) : null}
             <Link
               href={`/chat?order=${order.id}`}

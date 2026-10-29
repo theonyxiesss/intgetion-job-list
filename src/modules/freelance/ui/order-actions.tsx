@@ -97,13 +97,18 @@ export function OrderActions({
   );
 }
 
-/** One public review by the buyer of a completed order (28.5). */
+/**
+ * One review of a completed order: the buyer's public review of the service
+ * (28.5), or with `about="client"` the seller's rating of the client (D568).
+ */
 export function ReviewForm({
   orderId,
   copy,
+  about = "service",
 }: {
   orderId: string;
   copy: ClientCopy;
+  about?: "service" | "client";
 }) {
   const router = useRouter();
   const [rating, setRating] = useState("5");
@@ -115,7 +120,11 @@ export function ReviewForm({
     event.preventDefault();
     setBusy(true);
     setError(null);
-    const result = await callApi("/api/freelance/reviews", {
+    const url =
+      about === "client"
+        ? "/api/freelance/client-reviews"
+        : "/api/freelance/reviews";
+    const result = await callApi(url, {
       orderId,
       rating: Number(rating),
       body,
@@ -130,7 +139,12 @@ export function ReviewForm({
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
-      <h2 className="t-h3">{copy.reviewTitle}</h2>
+      <h2 className="t-h3">
+        {about === "client" ? copy.clientReviewTitle : copy.reviewTitle}
+      </h2>
+      {about === "client" ? (
+        <p className="t-body-s text-fg-muted">{copy.clientReviewNote}</p>
+      ) : null}
       <Field label={copy.rating ?? ""}>
         <Select
           value={rating}

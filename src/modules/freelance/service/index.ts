@@ -9,6 +9,12 @@ export {
   sweepClosedRoomMessages,
 } from "./order-room-service";
 export type { RoomFeed } from "./order-room-service";
+export {
+  CLIENT_REVIEWS_NOT_READY,
+  getClientReviewView,
+  leaveClientReview,
+} from "./client-review-service";
+export type { ClientReviewView } from "./client-review-service";
 export type { RoomFeedItem } from "./order-room";
 export {
   CATALOG_PAGE_SIZE,

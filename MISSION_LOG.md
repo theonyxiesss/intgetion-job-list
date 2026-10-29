@@ -3615,3 +3615,11 @@
 - Скиллы: `intgetion-supabase`, `intgetion-design`, `intgetion-security`.
 - Отклонения: на телефоне колонки друг под другом вместо вкладок (D567). Найдено попутно, не трогал: в `freelance.client` ключ `error_VALIDATION` не совпадает с кодом `VALIDATION_ERROR`, поэтому формы фриланса показывают общую ошибку вместо подсказки.
 - OPEN QUESTION: «да» на применение 0071 к облаку (путь D438) и выкладку.
+
+## 2026-10-29 — ТЗ 46 (A2): отзывы о заказчике — DONE локально, NOT DONE на сайте
+
+- Сделано: ТЗ 46; миграция `0072_freelance_client_reviews.sql` (не применена); схема; `repo/client-review-repo.ts`; `service/client-reviews.ts`, `service/client-review-service.ts`; `POST /api/freelance/client-reviews`; `ReviewForm about="client"`; сводка и форма на странице заказа; тексты на 7 языках. Тесты +10.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (237 файлов, 1758 тестов). curl: гость → 401. `pnpm build` не запускался (dev-сервер на 3000).
+- Миграции: `0072` — локально. Решения: D568.
+- Не проверено: вид под входом (квота Supabase), интеграционные тесты с базой.
+- OPEN QUESTION: D568 (тексты, своя сводка, «слепая» публикация); «да» на `0071` и `0072`.
