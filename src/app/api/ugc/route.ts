@@ -4,6 +4,7 @@ import {
   UGC_GOALS,
   UGC_NICHES,
   UGC_PLATFORMS,
+  UGC_REPORT_REASONS,
   UGC_RIGHTS,
 } from "@/config/ugc";
 import { readJson, toErrorResponse } from "@/lib/http";
@@ -12,6 +13,8 @@ import {
   acceptInvite,
   setShortlist,
   postUgcRoomMessage,
+  reportRoomMessage,
+  decideRoomReport,
   rejectApplication,
   applyToCampaign,
   closeCampaign,
@@ -88,6 +91,16 @@ const body = z.discriminatedUnion("action", [
     action: z.literal("roomPost"),
     inviteId: z.uuid(),
     body: z.string().max(4000),
+  }),
+  z.object({
+    action: z.literal("roomReport"),
+    messageId: z.uuid(),
+    reason: z.enum(UGC_REPORT_REASONS),
+  }),
+  z.object({
+    action: z.literal("roomReportDecide"),
+    reportId: z.uuid(),
+    to: z.enum(["hidden", "dismissed"]),
   }),
   z.object({
     action: z.literal("reject"),
@@ -191,6 +204,21 @@ export async function POST(request: Request) {
     if (input.action === "accept") {
       return Response.json(
         await acceptInvite(id, input.inviteId, input.termsHash),
+      );
+    }
+    if (input.action === "roomReport") {
+      return Response.json(
+        await reportRoomMessage(id, input.messageId, input.reason),
+      );
+    }
+    if (input.action === "roomReportDecide") {
+      return Response.json(
+        await decideRoomReport({
+          adminId: id,
+          isAdmin: user.platformRole === "admin",
+          reportId: input.reportId,
+          to: input.to,
+        }),
       );
     }
     if (input.action === "roomPost") {

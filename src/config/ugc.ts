@@ -72,6 +72,15 @@ export const UGC_SUBMISSION_HOSTS = [
   "youtu.be",
 ] as const;
 
+/** What a party may say about a message in an order room (U4б). */
+export const UGC_REPORT_REASONS = [
+  "spam",
+  "abuse",
+  "contacts",
+  "other",
+] as const;
+export type UgcReportReason = (typeof UGC_REPORT_REASONS)[number];
+
 /** Safe reasons a company gives when it turns an application down (U3б). */
 export const UGC_DECLINE_REASONS = ["not_fit", "filled", "other"] as const;
 export type UgcDeclineReason = (typeof UGC_DECLINE_REASONS)[number];

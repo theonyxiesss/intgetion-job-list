@@ -17,6 +17,7 @@ import {
 import type {
   UgcCampaignStatus,
   UgcDeclineReason,
+  UgcReportReason,
   UgcCreatorStatus,
   UgcGoal,
   UgcNiche,
@@ -387,5 +388,35 @@ export const ugcRoomMessages = pgTable(
   },
   (table) => [
     index("ugc_room_messages_invite_idx").on(table.inviteId, table.createdAt),
+  ],
+);
+
+/** A complaint about a message in an order room (0080). */
+export const ugcRoomReports = pgTable(
+  "ugc_room_reports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    messageId: uuid("message_id")
+      .notNull()
+      .references(() => ugcRoomMessages.id, { onDelete: "cascade" }),
+    reporterId: uuid("reporter_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    reason: text("reason").$type<UgcReportReason>().notNull(),
+    status: text("status")
+      .$type<"open" | "hidden" | "dismissed">()
+      .notNull()
+      .default("open"),
+    decidedBy: uuid("decided_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    decidedAt: timestamp("decided_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("ugc_room_reports_unique").on(table.messageId, table.reporterId),
+    index("ugc_room_reports_status_idx").on(table.status, table.createdAt),
   ],
 );

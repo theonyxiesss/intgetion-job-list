@@ -6,6 +6,7 @@ import type {
   JoinToken,
   Payout,
   RoomMessage,
+  RoomReport,
   Submission,
   UgcNotice,
 } from "./records";
@@ -226,6 +227,50 @@ export class MemoryUgcStore implements UgcStore {
   }
   async insertRoomMessage(row: RoomMessage) {
     this.roomMessages.push(row);
+  }
+  async getRoomMessage(id: string) {
+    return this.roomMessages.find((row) => row.id === id) ?? null;
+  }
+  async hideRoomMessage(id: string, _by: string, at: Date) {
+    const row = this.roomMessages.find((item) => item.id === id);
+    if (row) row.hiddenAt = at;
+  }
+  roomReports: RoomReport[] = [];
+  async insertRoomReport(row: RoomReport) {
+    if (
+      this.roomReports.some(
+        (item) =>
+          item.messageId === row.messageId &&
+          item.reporterId === row.reporterId,
+      )
+    ) {
+      throw Object.assign(new Error("duplicate"), { code: "23505" });
+    }
+    this.roomReports.push(row);
+  }
+  async listOpenRoomReports() {
+    return this.roomReports.filter((row) => row.status === "open");
+  }
+  async getRoomReport(id: string) {
+    return this.roomReports.find((row) => row.id === id) ?? null;
+  }
+  async decideRoomReport(id: string, status: "hidden" | "dismissed") {
+    const row = this.roomReports.find((item) => item.id === id);
+    if (row) row.status = status;
+  }
+  /** Tests set when a room closed; the database knows it from the rows. */
+  roomClosedAt = new Map<string, Date>();
+  async deleteClosedRoomMessages(cutoff: Date) {
+    const gone = new Set(
+      [...this.roomClosedAt]
+        .filter(([, at]) => at < cutoff)
+        .map(([inviteId]) => inviteId),
+    );
+    const before = this.roomMessages.length;
+    this.roomMessages = this.roomMessages.filter(
+      (row) => !gone.has(row.inviteId),
+    );
+    return before - this.roomMessages.length;
   }
   versions: CampaignVersion[] = [];
   async listCampaignVersions(campaignId: string) {

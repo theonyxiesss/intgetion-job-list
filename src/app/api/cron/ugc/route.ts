@@ -1,6 +1,10 @@
 import { timingSafeEqual } from "node:crypto";
 import { notFound, toErrorResponse } from "@/lib/http";
-import { noteDeadlines, recheckCampaignDeposits } from "@/modules/ugc/service";
+import {
+  noteDeadlines,
+  recheckCampaignDeposits,
+  sweepRoomMessages,
+} from "@/modules/ugc/service";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +22,8 @@ export async function GET(request: Request) {
     if (!authorized(request)) throw notFound();
     const result = await noteDeadlines();
     const deposits = await recheckCampaignDeposits();
-    return Response.json({ ok: true, ...result, deposits });
+    const rooms = await sweepRoomMessages();
+    return Response.json({ ok: true, ...result, deposits, rooms });
   } catch (error) {
     return toErrorResponse(error);
   }

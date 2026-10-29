@@ -8,6 +8,7 @@ import {
   ugcJoinTokens,
   ugcPayouts,
   ugcRoomMessages,
+  ugcRoomReports,
   ugcSubmissions,
   users,
   userProfiles,
@@ -31,6 +32,7 @@ import type {
   JoinToken,
   Payout,
   RoomMessage,
+  RoomReport,
   Submission,
 } from "../service/records";
 import type { UgcStore } from "../service/store";
@@ -557,6 +559,93 @@ export function productionUgcStore(): UgcStore {
         authorId: row.authorId,
         body: row.body,
       });
+    },
+    async getRoomMessage(id) {
+      const [row] = await db
+        .select()
+        .from(ugcRoomMessages)
+        .where(eq(ugcRoomMessages.id, id))
+        .limit(1);
+      return row
+        ? {
+            id: row.id,
+            inviteId: row.inviteId,
+            authorId: row.authorId,
+            body: row.body,
+            hiddenAt: row.hiddenAt,
+            createdAt: row.createdAt,
+          }
+        : null;
+    },
+    async hideRoomMessage(id, by, at) {
+      await db
+        .update(ugcRoomMessages)
+        .set({ hiddenAt: at, hiddenBy: by })
+        .where(eq(ugcRoomMessages.id, id));
+    },
+    async insertRoomReport(row) {
+      await db.insert(ugcRoomReports).values({
+        id: row.id,
+        messageId: row.messageId,
+        reporterId: row.reporterId,
+        reason: row.reason,
+      });
+    },
+    async listOpenRoomReports() {
+      const rows = await db
+        .select()
+        .from(ugcRoomReports)
+        .where(eq(ugcRoomReports.status, "open"))
+        .orderBy(ugcRoomReports.createdAt);
+      return rows.map((row): RoomReport => ({
+        id: row.id,
+        messageId: row.messageId,
+        reporterId: row.reporterId,
+        reason: row.reason,
+        status: row.status,
+        createdAt: row.createdAt,
+      }));
+    },
+    async getRoomReport(id) {
+      const [row] = await db
+        .select()
+        .from(ugcRoomReports)
+        .where(eq(ugcRoomReports.id, id))
+        .limit(1);
+      return row
+        ? {
+            id: row.id,
+            messageId: row.messageId,
+            reporterId: row.reporterId,
+            reason: row.reason,
+            status: row.status,
+            createdAt: row.createdAt,
+          }
+        : null;
+    },
+    async decideRoomReport(id, status, by, at) {
+      await db
+        .update(ugcRoomReports)
+        .set({ status, decidedBy: by, decidedAt: at })
+        .where(eq(ugcRoomReports.id, id));
+    },
+    async deleteClosedRoomMessages(cutoff) {
+      const rows = await db.execute<{ n: number }>(sql`
+        with gone as (
+          delete from ugc_room_messages m
+          using ugc_invites i, ugc_campaigns c
+          where m.invite_id = i.id
+            and c.id = i.campaign_id
+            and (
+              (i.status in ('declined', 'expired', 'withdrawn')
+                and i.updated_at < ${cutoff.toISOString()})
+              or (c.status = 'closed' and c.updated_at < ${cutoff.toISOString()})
+            )
+          returning 1
+        )
+        select count(*)::int as n from gone
+      `);
+      return Number(rows[0]?.n ?? 0);
     },
     async listCampaignVersions(campaignId) {
       const rows = await db

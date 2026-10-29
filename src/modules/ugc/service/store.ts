@@ -6,6 +6,7 @@ import type {
   JoinToken,
   Payout,
   RoomMessage,
+  RoomReport,
   Submission,
   UgcNotice,
 } from "./records";
@@ -70,6 +71,20 @@ export interface UgcStore {
   /** Messages of one participation's room, oldest first (U4). */
   listRoomMessages(inviteId: string): Promise<RoomMessage[]>;
   insertRoomMessage(row: RoomMessage): Promise<void>;
+  getRoomMessage(id: string): Promise<RoomMessage | null>;
+  hideRoomMessage(id: string, by: string, at: Date): Promise<void>;
+  /** Throws a Postgres 23505 when this person already reported the message. */
+  insertRoomReport(row: RoomReport): Promise<void>;
+  listOpenRoomReports(): Promise<RoomReport[]>;
+  getRoomReport(id: string): Promise<RoomReport | null>;
+  decideRoomReport(
+    id: string,
+    status: "hidden" | "dismissed",
+    by: string,
+    at: Date,
+  ): Promise<void>;
+  /** Removes the text of rooms closed before the cutoff; returns how many (D574). */
+  deleteClosedRoomMessages(cutoff: Date): Promise<number>;
   revokeJoinTokens(campaignId: string, at: Date): Promise<void>;
   insertJoinToken(row: JoinToken): Promise<void>;
   findJoinToken(tokenHash: string): Promise<JoinToken | null>;

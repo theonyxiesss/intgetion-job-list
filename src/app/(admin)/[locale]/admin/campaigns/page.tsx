@@ -1,11 +1,14 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Container, PageHeader } from "@/components/ui/container";
 import { requireAdminPage } from "@/components/admin/admin-page";
+import { Link } from "@/i18n/navigation";
 import { formatMinor } from "@/lib/money";
 import { BILLING_CHAINS } from "@/lib/billing/chains";
 import {
+  listEscalatedReviews,
   listRefundsDue,
   listReviewQueue,
+  listRoomReportQueue,
   listWalletPayouts,
 } from "@/modules/ugc/service";
 import { UgcAction } from "@/modules/ugc/ui/action";
@@ -25,6 +28,8 @@ export default async function AdminCampaignsPage({
   const rows = await listReviewQueue(true);
   const owed = await listWalletPayouts(true);
   const refunds = await listRefundsDue(true);
+  const escalated = await listEscalatedReviews(true);
+  const roomReports = await listRoomReportQueue(true);
   const h = await getTranslations("ugcHub");
   const chains = BILLING_CHAINS.map((chain) => chain.id);
   const usd = (minor: string) =>
@@ -105,6 +110,60 @@ export default async function AdminCampaignsPage({
                     {h("admin.payoutNoAddress")}
                   </p>
                 )}
+              </li>
+            ))}
+          </ul>
+        )}
+        <h2 className="font-medium">{t("adminEscalationsTitle")}</h2>
+        {escalated.length === 0 ? (
+          <p className="text-fg-muted">{t("adminEscalationsEmpty")}</p>
+        ) : (
+          <ul className="flex flex-col gap-4">
+            {escalated.map((row) => (
+              <li
+                key={row.submissionId}
+                className="rounded-lg border border-line p-4"
+              >
+                <p className="font-medium">{row.productName}</p>
+                <p className="t-body-s font-mono">
+                  {t("adminEscalationLine", {
+                    date: row.dueAt.slice(0, 10),
+                  })}
+                </p>
+                <Link
+                  href={`/campaigns/${row.campaignId}/room/${row.inviteId}`}
+                  className="t-body-s underline underline-offset-4"
+                >
+                  {t("roomOpen")}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+        <h2 className="font-medium">{t("adminRoomReportsTitle")}</h2>
+        {roomReports.length === 0 ? (
+          <p className="text-fg-muted">{t("adminRoomReportsEmpty")}</p>
+        ) : (
+          <ul className="flex flex-col gap-4">
+            {roomReports.map((row) => (
+              <li key={row.id} className="rounded-lg border border-line p-4">
+                <p className="t-body-s text-fg-muted">
+                  {row.productName} · {t(`reportReason.${row.reason}`)}
+                </p>
+                <p className="break-words whitespace-pre-wrap">{row.body}</p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  <UgcAction
+                    action="roomReportDecide"
+                    label={t("adminHideMessage")}
+                    body={{ reportId: row.id, to: "hidden" }}
+                    primary
+                  />
+                  <UgcAction
+                    action="roomReportDecide"
+                    label={t("adminDismissReport")}
+                    body={{ reportId: row.id, to: "dismissed" }}
+                  />
+                </div>
               </li>
             ))}
           </ul>

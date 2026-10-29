@@ -3,6 +3,7 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 import {
   buildRoomFeed,
   checkRoomMessage,
+  UGC_ROOM_RETENTION_DAYS,
   UGC_ROOM_WRITABLE,
   type RoomFeedItem,
   type RoomSide,
@@ -17,8 +18,10 @@ import {
   UGC_NICHES,
   UGC_PLATFORMS,
   UGC_DECLINE_REASONS,
+  UGC_REPORT_REASONS,
   UGC_RIGHTS,
   type UgcDeclineReason,
+  type UgcReportReason,
   type UgcNiche,
   type UgcPlatform,
   type UgcRights,
@@ -1975,4 +1978,156 @@ export async function postUgcRoomMessage(
     email: false,
   });
   return getUgcRoom(id, invite.id);
+}
+
+function hasPgCode(error: unknown, code: string): boolean {
+  for (
+    let current: unknown = error, depth = 0;
+    current && depth < 4;
+    depth += 1
+  ) {
+    if ((current as { code?: unknown }).code === code) return true;
+    current = (current as { cause?: unknown }).cause;
+  }
+  return false;
+}
+
+/**
+ * A party's complaint about a message of the other side in their room (U4б,
+ * D574). Only a party of that room, never about one's own message, one
+ * complaint per person per message. The text stays until a moderator decides.
+ */
+export async function reportRoomMessage(
+  userId: string | null,
+  messageId: string,
+  reason: UgcReportReason,
+) {
+  const id = requireUser(userId);
+  if (!UGC_REPORT_REASONS.includes(reason)) {
+    throw validationError([{ path: "reason", problem: "invalid" }]);
+  }
+  const store = await db();
+  const message = await store.getRoomMessage(messageId);
+  if (!message) throw notFound();
+  await roomParty(store, message.inviteId, id);
+  if (message.authorId === id) {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "This is your own message",
+    );
+  }
+  await enforceRateLimit("ugcMessage", id);
+  try {
+    await store.insertRoomReport({
+      id: randomUUID(),
+      messageId: message.id,
+      reporterId: id,
+      reason,
+      status: "open",
+      createdAt: store.now(),
+    });
+  } catch (error) {
+    if (hasPgCode(error, "23505")) {
+      throw new HttpError(409, "ALREADY_REPORTED", "You already reported this");
+    }
+    throw error;
+  }
+  return { reported: true as const };
+}
+
+/** Open complaints with the text they are about, for moderators (U4б). */
+export async function listRoomReportQueue(isAdmin: boolean) {
+  if (!isAdmin) throw notFound();
+  const store = await db();
+  const rows = [];
+  for (const report of await store.listOpenRoomReports()) {
+    const message = await store.getRoomMessage(report.messageId);
+    if (!message) continue;
+    const invite = await store.getInvite(message.inviteId);
+    const campaign = invite ? await store.getCampaign(invite.campaignId) : null;
+    rows.push({
+      id: report.id,
+      reason: report.reason,
+      at: report.createdAt.toISOString(),
+      body: message.body,
+      hidden: message.hiddenAt !== null,
+      campaignId: campaign?.id ?? null,
+      inviteId: message.inviteId,
+      productName: campaign?.productName ?? "",
+    });
+  }
+  return rows;
+}
+
+/** A moderator hides the message or dismisses the complaint (U4б). */
+export async function decideRoomReport(input: {
+  adminId: string | null;
+  isAdmin: boolean;
+  reportId: string;
+  to: "hidden" | "dismissed";
+}) {
+  if (!input.isAdmin) throw notFound();
+  const adminId = requireUser(input.adminId);
+  const store = await db();
+  const report = await store.getRoomReport(input.reportId);
+  if (!report) throw notFound();
+  if (report.status !== "open") {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "This complaint was already decided",
+    );
+  }
+  const at = store.now();
+  if (input.to === "hidden") {
+    await store.hideRoomMessage(report.messageId, adminId, at);
+  }
+  await store.decideRoomReport(report.id, input.to, adminId, at);
+  await store.audit(
+    adminId,
+    input.to === "hidden"
+      ? "ugc.room_message_hidden"
+      : "ugc.room_report_dismissed",
+    report.id,
+    "ugc_room_report",
+  );
+  return { status: input.to };
+}
+
+/** Videos whose review time ran out, for support (U4б, D574). */
+export async function listEscalatedReviews(isAdmin: boolean) {
+  if (!isAdmin) throw notFound();
+  const store = await db();
+  const rows = [];
+  for (const submission of await store.listSubmissionsAwaitingReview()) {
+    if (!submission.escalatedAt || !submission.submittedAt) continue;
+    const invite = await store.getInvite(submission.inviteId);
+    const campaign = invite ? await store.getCampaign(invite.campaignId) : null;
+    if (!invite || !campaign) continue;
+    rows.push({
+      submissionId: submission.id,
+      campaignId: campaign.id,
+      inviteId: invite.id,
+      productName: campaign.productName,
+      dueAt: reviewDueAt(submission.submittedAt).toISOString(),
+      escalatedAt: submission.escalatedAt.toISOString(),
+    });
+  }
+  return rows.sort((a, b) => a.escalatedAt.localeCompare(b.escalatedAt));
+}
+
+/**
+ * Message text stays 12 months after the order closed (D574). Zero before
+ * migration 0078 is applied.
+ */
+export async function sweepRoomMessages(now = new Date()) {
+  const store = await db();
+  const cutoff = new Date(now.getTime() - UGC_ROOM_RETENTION_DAYS * 86_400_000);
+  try {
+    return { deleted: await store.deleteClosedRoomMessages(cutoff) };
+  } catch (error) {
+    if (isRoomTableMissing(error)) return { deleted: 0 };
+    throw error;
+  }
 }

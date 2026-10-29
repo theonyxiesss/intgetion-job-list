@@ -8,6 +8,7 @@ import { HttpError } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getUgcRoom } from "@/modules/ugc/service";
+import { ReportMessage } from "@/modules/ugc/ui/report-message";
 import { RoomForm } from "@/modules/ugc/ui/room-form";
 
 export async function generateMetadata({
@@ -98,6 +99,9 @@ export default async function UgcRoomPage({
                       <p className="break-words whitespace-pre-wrap">
                         {item.hidden ? t("roomHidden") : item.body}
                       </p>
+                      {!item.mine && !item.hidden ? (
+                        <ReportMessage messageId={item.id} />
+                      ) : null}
                     </div>
                   )}
                 </li>

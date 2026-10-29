@@ -6,6 +6,7 @@ import type {
   UgcParticipationStatus,
   UgcPlatform,
   UgcDeclineReason,
+  UgcReportReason,
   UgcRights,
   UgcSubmissionStatus,
 } from "@/config/ugc";
@@ -122,6 +123,15 @@ export type RoomMessage = {
   authorId: string | null;
   body: string;
   hiddenAt: Date | null;
+  createdAt: Date;
+};
+
+export type RoomReport = {
+  id: string;
+  messageId: string;
+  reporterId: string | null;
+  reason: UgcReportReason;
+  status: "open" | "hidden" | "dismissed";
   createdAt: Date;
 };
 
