@@ -13,6 +13,7 @@ import { publicHttpUrl } from "@/lib/company-mark";
 import { requireUser } from "@/lib/auth-guards";
 import {
   companiesToOrderFrom,
+  getSellerRecord,
   getServicePage,
   minorToUsd,
   type ServicePage,
@@ -88,6 +89,7 @@ export default async function FreelanceServicePage({
   const page = await getServicePage(slug, locale);
   if (!page) notFound();
   const t = await getTranslations("freelance");
+  const record = await getSellerRecord(page.seller.userId);
   // A guest still reads the page; only the request needs a session.
   const viewer = await requireUser().catch(() => null);
   const seo = await getTranslations("seo");
@@ -202,6 +204,39 @@ export default async function FreelanceServicePage({
                 </ul>
               </section>
             ) : null}
+            <section
+              aria-labelledby="seller-record"
+              className="flex flex-col gap-2 rounded-lg border border-line p-4"
+            >
+              <h2 id="seller-record" className="t-h4">
+                {t("recordTitle")}
+              </h2>
+              {record.completed === 0 ? (
+                <p className="t-body-s text-fg-muted">{t("recordNone")}</p>
+              ) : (
+                <ul className="t-body-s flex flex-col gap-1">
+                  {record.badge ? (
+                    <li className="font-medium">
+                      {t(`recordBadge.${record.badge}`)}
+                    </li>
+                  ) : null}
+                  <li>{t("recordCompleted", { count: record.completed })}</li>
+                  {record.onTimeShare !== null ? (
+                    <li>
+                      {t("recordOnTime", {
+                        percent: Math.round(record.onTimeShare * 100),
+                      })}
+                    </li>
+                  ) : null}
+                  {record.repeatClients > 0 ? (
+                    <li>
+                      {t("recordRepeat", { count: record.repeatClients })}
+                    </li>
+                  ) : null}
+                </ul>
+              )}
+              <p className="t-body-s text-fg-muted">{t("recordNote")}</p>
+            </section>
             <section className="flex flex-col gap-3">
               <div className="flex flex-wrap items-baseline gap-3">
                 <h2 className="t-h3">{t("reviewsTitle")}</h2>

@@ -1213,11 +1213,11 @@
       "freelanceTaskProposal": {
         "inapp": {
           "title": "Antwort auf Aufgabe aktualisiert",
-          "body": "{decision, select, received {Ein Freelancer hat auf Ihre Aufgabe geantwortet.} accepted {Ihre Antwort wurde angenommen und ein Auftrag erstellt.} other {Der Status der Antwort hat sich geändert.}} Aufgabe: „{taskTitle}“"
+          "body": "{decision, select, received {Ein Freelancer hat auf Ihre Aufgabe geantwortet.} accepted {Ihre Antwort wurde angenommen und ein Auftrag erstellt.} invited {Ein Auftraggeber hat dich eingeladen, auf seine Aufgabe zu antworten.} other {Der Status der Antwort hat sich geändert.}} Aufgabe: „{taskTitle}“"
         },
         "email": {
           "subject": "Antwort auf Aufgabe: {taskTitle}",
-          "body": "{decision, select, received {Ein Freelancer hat auf Ihre Aufgabe geantwortet.} accepted {Ihre Antwort wurde angenommen und ein Auftrag erstellt.} other {Der Status der Antwort hat sich geändert.}} Aufgabe: „{taskTitle}“"
+          "body": "{decision, select, received {Ein Freelancer hat auf Ihre Aufgabe geantwortet.} accepted {Ihre Antwort wurde angenommen und ein Auftrag erstellt.} invited {Ein Auftraggeber hat dich eingeladen, auf seine Aufgabe zu antworten.} other {Der Status der Antwort hat sich geändert.}} Aufgabe: „{taskTitle}“"
         }
       },
       "ugcCampaignDecided": {
@@ -3841,6 +3841,14 @@
     },
     "metaTitle": "Freelance-Leistungen mit Festpreis",
     "tasks": {
+      "inviteTitle": "Vorgeschlagene Freelancer",
+      "inviteNone": "Noch keine Freelancer mit veröffentlichter Leistung in dieser Kategorie.",
+      "inviteButton": "Einladen",
+      "invitedMark": "Eingeladen",
+      "proposedMark": "Hat bereits geantwortet",
+      "inviteNote": "Eine Einladung verspricht nichts: Der Freelancer entscheidet, ob er antwortet, und du wählst.",
+      "inviteError": "Einladung nicht möglich. Versuche es später.",
+      "invitedBanner": "Der Auftraggeber hat dich eingeladen, auf diese Aufgabe zu antworten.",
       "metaTitle": "Freelance-Aufgaben",
       "title": "Freelance-Aufgaben",
       "intro": "Entdecke Projekte von Auftraggebern und sende ein Angebot mit Preis und Lieferzeit.",
@@ -3961,6 +3969,16 @@
     "worksTitle": "Arbeitsproben",
     "reviewsTitle": "Bewertungen",
     "reviewsNote": "Bewerten kann nur, wessen Leistung hier abgeschlossen wurde.",
+    "recordTitle": "Bilanz des Anbieters",
+    "recordNone": "Noch keine abgeschlossenen Aufträge.",
+    "recordCompleted": "{count, plural, one {# Auftrag abgeschlossen} other {# Aufträge abgeschlossen}}",
+    "recordOnTime": "{percent}% termingerecht geliefert",
+    "recordRepeat": "{count, plural, one {# Kunde kam wieder} other {# Kunden kamen wieder}}",
+    "recordNote": "Berechnet aus abgeschlossenen Aufträgen auf dieser Plattform. Neue Anbieter haben kein Abzeichen.",
+    "recordBadge": {
+      "reliable": "Zuverlässiger Anbieter",
+      "top": "Top-Anbieter"
+    },
     "noReviews": "Noch keine Bewertungen: keine abgeschlossenen Leistungen auf der Plattform.",
     "authorKinds": {
       "person": "Person",
@@ -4051,6 +4069,11 @@
       "contactTelegram": "Telegram",
       "contactLinkedin": "LinkedIn",
       "wantedBy": "Bis {when}",
+      "deadline": {
+        "on_track": "Im Plan: Lieferung bis {date}",
+        "due_soon": "Frist bald: bis {date}",
+        "overdue": "Überfällig: Frist war {date}"
+      },
       "fromCompany": "Von {company}",
       "contactsClosed": "Kontakte öffnen sich, wenn die Anfrage angenommen ist.",
       "reviewLeft": "Bewertung gespeichert.",

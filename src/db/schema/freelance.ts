@@ -539,3 +539,33 @@ export const freelanceProposals = pgTable(
     ),
   ],
 );
+
+/** A client's invitation of a freelancer to a task (TZ 49, A4, 0084). */
+export const freelanceTaskInvites = pgTable(
+  "freelance_task_invites",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    taskId: uuid("task_id")
+      .notNull()
+      .references(() => freelanceTasks.id, { onDelete: "cascade" }),
+    sellerId: uuid("seller_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    invitedBy: uuid("invited_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("freelance_task_invites_task_seller_key").on(
+      table.taskId,
+      table.sellerId,
+    ),
+    index("freelance_task_invites_seller_idx").on(
+      table.sellerId,
+      table.createdAt,
+    ),
+  ],
+);

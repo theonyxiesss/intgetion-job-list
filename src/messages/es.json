@@ -1213,11 +1213,11 @@
       "freelanceTaskProposal": {
         "inapp": {
           "title": "Respuesta a la tarea actualizada",
-          "body": "{decision, select, received {Un profesional respondió a tu tarea.} accepted {Tu respuesta fue aceptada y se creó un pedido.} other {El estado de la respuesta cambió.}} Tarea: «{taskTitle}»"
+          "body": "{decision, select, received {Un profesional respondió a tu tarea.} accepted {Tu respuesta fue aceptada y se creó un pedido.} invited {Un cliente te invitó a responder a su tarea.} other {El estado de la respuesta cambió.}} Tarea: «{taskTitle}»"
         },
         "email": {
           "subject": "Respuesta a la tarea: {taskTitle}",
-          "body": "{decision, select, received {Un profesional respondió a tu tarea.} accepted {Tu respuesta fue aceptada y se creó un pedido.} other {El estado de la respuesta cambió.}} Tarea: «{taskTitle}»"
+          "body": "{decision, select, received {Un profesional respondió a tu tarea.} accepted {Tu respuesta fue aceptada y se creó un pedido.} invited {Un cliente te invitó a responder a su tarea.} other {El estado de la respuesta cambió.}} Tarea: «{taskTitle}»"
         }
       },
       "ugcCampaignDecided": {
@@ -3841,6 +3841,14 @@
     },
     "metaTitle": "Servicios freelance con precio fijo",
     "tasks": {
+      "inviteTitle": "Freelancers sugeridos",
+      "inviteNone": "Aún no hay freelancers con un servicio publicado en esta categoría.",
+      "inviteButton": "Invitar",
+      "invitedMark": "Invitado",
+      "proposedMark": "Ya respondió",
+      "inviteNote": "Una invitación no promete nada: el freelancer decide si responde y tú eliges.",
+      "inviteError": "No se pudo invitar. Inténtalo más tarde.",
+      "invitedBanner": "El cliente te invitó a responder a esta tarea.",
       "metaTitle": "Tareas freelance",
       "title": "Tareas freelance",
       "intro": "Explora proyectos publicados por clientes y envía una propuesta con precio y plazo.",
@@ -3961,6 +3969,16 @@
     "worksTitle": "Muestras de trabajo",
     "reviewsTitle": "Reseñas",
     "reviewsNote": "Solo deja reseña quien completó un servicio aquí.",
+    "recordTitle": "Historial del vendedor",
+    "recordNone": "Aún no hay pedidos completados.",
+    "recordCompleted": "{count, plural, one {# pedido completado} other {# pedidos completados}}",
+    "recordOnTime": "{percent}% entregado a tiempo",
+    "recordRepeat": "{count, plural, one {# cliente volvió} other {# clientes volvieron}}",
+    "recordNote": "Se calcula con los pedidos completados en esta plataforma. Un vendedor nuevo no tiene insignia.",
+    "recordBadge": {
+      "reliable": "Vendedor fiable",
+      "top": "Vendedor destacado"
+    },
     "noReviews": "Aún no hay reseñas: no hay servicios completados en la plataforma.",
     "authorKinds": {
       "person": "Persona",
@@ -4051,6 +4069,11 @@
       "contactTelegram": "Telegram",
       "contactLinkedin": "LinkedIn",
       "wantedBy": "Para el {when}",
+      "deadline": {
+        "on_track": "En plazo: entrega hasta el {date}",
+        "due_soon": "Plazo próximo: hasta el {date}",
+        "overdue": "Retrasado: el plazo era el {date}"
+      },
       "fromCompany": "De {company}",
       "contactsClosed": "Los contactos se abren cuando aceptan la solicitud.",
       "reviewLeft": "Reseña guardada.",

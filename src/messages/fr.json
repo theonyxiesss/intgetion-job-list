@@ -1213,11 +1213,11 @@
       "freelanceTaskProposal": {
         "inapp": {
           "title": "Réponse à la tâche mise à jour",
-          "body": "{decision, select, received {Un freelance a répondu à votre tâche.} accepted {Votre réponse a été acceptée et une commande a été créée.} other {Le statut de la réponse a changé.}} Tâche : « {taskTitle} »"
+          "body": "{decision, select, received {Un freelance a répondu à votre tâche.} accepted {Votre réponse a été acceptée et une commande a été créée.} invited {Un client vous invite à répondre à sa tâche.} other {Le statut de la réponse a changé.}} Tâche : « {taskTitle} »"
         },
         "email": {
           "subject": "Réponse à la tâche : {taskTitle}",
-          "body": "{decision, select, received {Un freelance a répondu à votre tâche.} accepted {Votre réponse a été acceptée et une commande a été créée.} other {Le statut de la réponse a changé.}} Tâche : « {taskTitle} »"
+          "body": "{decision, select, received {Un freelance a répondu à votre tâche.} accepted {Votre réponse a été acceptée et une commande a été créée.} invited {Un client vous invite à répondre à sa tâche.} other {Le statut de la réponse a changé.}} Tâche : « {taskTitle} »"
         }
       },
       "ugcCampaignDecided": {
@@ -3841,6 +3841,14 @@
     },
     "metaTitle": "Services freelance à prix fixe",
     "tasks": {
+      "inviteTitle": "Freelances suggérés",
+      "inviteNone": "Aucun freelance avec un service publié dans cette catégorie pour l’instant.",
+      "inviteButton": "Inviter",
+      "invitedMark": "Invité",
+      "proposedMark": "A déjà répondu",
+      "inviteNote": "Une invitation ne promet rien : le freelance décide de répondre ou non, et vous choisissez.",
+      "inviteError": "Invitation impossible. Réessayez plus tard.",
+      "invitedBanner": "Le client vous invite à répondre à cette tâche.",
       "metaTitle": "Missions freelance",
       "title": "Missions freelance",
       "intro": "Consultez les projets des clients et envoyez une proposition avec votre prix et votre délai.",
@@ -3960,6 +3968,16 @@
     "worksTitle": "Exemples de travaux",
     "reviewsTitle": "Avis",
     "reviewsNote": "Seul un acheteur dont le service est terminé ici peut laisser un avis.",
+    "recordTitle": "Bilan du prestataire",
+    "recordNone": "Aucune commande terminée pour l’instant.",
+    "recordCompleted": "{count, plural, one {# commande terminée} other {# commandes terminées}}",
+    "recordOnTime": "{percent} % livrées dans les temps",
+    "recordRepeat": "{count, plural, one {# client est revenu} other {# clients sont revenus}}",
+    "recordNote": "Calculé sur les commandes terminées sur cette plateforme. Un nouveau prestataire n’a pas de badge.",
+    "recordBadge": {
+      "reliable": "Prestataire fiable",
+      "top": "Prestataire de premier plan"
+    },
     "noReviews": "Pas encore d’avis : aucun service terminé sur la plateforme.",
     "authorKinds": {
       "person": "Particulier",
@@ -4050,6 +4068,11 @@
       "contactTelegram": "Telegram",
       "contactLinkedin": "LinkedIn",
       "wantedBy": "Pour le {when}",
+      "deadline": {
+        "on_track": "Dans les temps : livraison avant le {date}",
+        "due_soon": "Échéance proche : avant le {date}",
+        "overdue": "En retard : l’échéance était le {date}"
+      },
       "fromCompany": "De {company}",
       "contactsClosed": "Les contacts s’ouvrent quand la demande est acceptée.",
       "reviewLeft": "Avis enregistré.",

@@ -697,3 +697,47 @@ export async function findOrdersForModeration(
     .from(freelanceOrders)
     .where(inArray(freelanceOrders.id, [...ids]));
 }
+
+/** What the seller record needs from one completed order (A5, TZ 49). */
+export type CompletedOrderRow = {
+  buyerId: string | null;
+  startedAt: Date | null;
+  deliveredAt: Date | null;
+  deliveryDays: number;
+};
+
+/** The seller's latest completed orders, newest first. */
+export async function listCompletedOrdersOf(
+  sellerId: string,
+  limit = 500,
+): Promise<CompletedOrderRow[]> {
+  return getDb()
+    .select({
+      buyerId: freelanceOrders.buyerId,
+      startedAt: freelanceOrders.startedAt,
+      deliveredAt: freelanceOrders.deliveredAt,
+      deliveryDays: freelanceOrders.deliveryDays,
+    })
+    .from(freelanceOrders)
+    .where(
+      and(
+        eq(freelanceOrders.sellerId, sellerId),
+        eq(freelanceOrders.status, "completed"),
+      ),
+    )
+    .orderBy(desc(freelanceOrders.completedAt))
+    .limit(limit);
+}
+
+/** The ratings buyers gave to the seller's services. */
+export async function listRatingsOfSeller(sellerId: string): Promise<number[]> {
+  const rows = await getDb()
+    .select({ rating: freelanceReviews.rating })
+    .from(freelanceReviews)
+    .innerJoin(
+      freelanceServices,
+      eq(freelanceServices.id, freelanceReviews.serviceId),
+    )
+    .where(eq(freelanceServices.sellerId, sellerId));
+  return rows.map((row) => row.rating);
+}

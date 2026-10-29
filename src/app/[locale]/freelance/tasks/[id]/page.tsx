@@ -6,7 +6,7 @@ import { Container, PageHeader } from "@/components/ui/container";
 import { Link } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth-guards";
 import { HttpError } from "@/lib/http";
-import { getTaskView } from "@/modules/freelance/service";
+import { getTaskView, wasInvited } from "@/modules/freelance/service";
 import { TaskProposalForm } from "@/modules/freelance/ui/task-proposal-form";
 import { formatUsd } from "@/modules/freelance/ui/format";
 import { freelanceTasksCopy } from "@/modules/freelance/ui/server-copy";
@@ -56,6 +56,8 @@ export default async function FreelanceTaskPage({
     }
     throw error;
   }
+  const invited =
+    viewer && task.canPropose ? await wasInvited(viewer.id, task.id) : false;
   const copy = await freelanceTasksCopy(locale);
   const budget =
     task.budgetMinMinor === null && task.budgetMaxMinor === null
@@ -89,7 +91,14 @@ export default async function FreelanceTaskPage({
             {t("myTasks")}
           </Link>
         ) : task.canPropose ? (
-          <TaskProposalForm taskId={task.id} copy={copy} />
+          <>
+            {invited ? (
+              <p role="status" className="border border-line p-4">
+                {t("invitedBanner")}
+              </p>
+            ) : null}
+            <TaskProposalForm taskId={task.id} copy={copy} />
+          </>
         ) : task.myProposal ? (
           <p role="status" className="border border-line p-4 text-fg-muted">
             {t("alreadyProposed", { status: t(`proposalStatus.${task.myProposal.status}`) })}

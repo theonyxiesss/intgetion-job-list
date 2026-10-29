@@ -17,6 +17,7 @@ import {
   canLeaveReview,
   getClientReviewView,
   getOrderView,
+  orderDeadline,
   getRoomFeed,
   orderPayState,
 } from "@/modules/freelance/service";
@@ -81,6 +82,7 @@ export default async function FreelanceOrderPage({
     maximumFractionDigits: 1,
   });
   const stepIndex = STEPS.indexOf(order.status);
+  const deadline = orderDeadline(order, new Date());
 
   return (
     <main className="py-10 md:py-16">
@@ -141,6 +143,16 @@ export default async function FreelanceOrderPage({
             value={String(order.revisionsLeft)}
           />
         </StatRow>
+        {deadline ? (
+          <p
+            role={deadline.state === "overdue" ? "alert" : "status"}
+            className="t-body-s font-mono"
+          >
+            {t(`orders.deadline.${deadline.state}`, {
+              date: deadline.dueAt.toISOString().slice(0, 10),
+            })}
+          </p>
+        ) : null}
         {stepIndex >= 0 ? (
           <nav aria-label={roomCopy.room_steps}>
             <ol className="flex flex-wrap gap-x-4 gap-y-2">

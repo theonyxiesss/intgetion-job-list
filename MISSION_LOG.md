@@ -3870,3 +3870,10 @@
 - Проверено чтением после применения: журнал 80 строк (было 67); 11 таблиц (`freelance_threads`, `freelance_messages`, `freelance_client_reviews`, `freelance_tasks`, `freelance_proposals`, `ugc_campaign_versions`, `ugc_room_messages`, `ugc_room_reports`, `ugc_submission_versions`, `ugc_shipments`, `ugc_disputes`) — владелец `migrator`, RLS включён и принудителен; 12 колонок в `ugc_invites`, `ugc_campaigns`, `ugc_submissions`; частичный уникальный индекс `ugc_disputes_one_unresolved_idx`; `app_rw` имеет `SELECT` и `INSERT` на всех новых таблицах; членство `migrator` — `supabase_admin`, set=false. `get_advisors` (security): только прежние замечания про четыре функции и защиту от утёкших паролей, новых нет.
 - Не проверено: интеграционные тесты CI на этой базе; сценарии под входом (вход блокирует квота Supabase).
 - Код не выложен: ветка `claude/ugc-workspace` не слита в `master`.
+
+## 2026-10-29 — Фриланс: A4, A5, B4 (статус) по ТЗ 44 — DONE локально
+
+- A4: `task-invite-service.ts`, `task-invite-repo.ts`, таблица `freelance_task_invites` (миграция `0084`, не применялась), API `POST /api/freelance/tasks/[id]/invite`, блок «Подходящие исполнители» в «Мои задачи», плашка приглашённому, решение «приглашён» в уведомлении. A5: `seller-score.ts`, `getSellerRecord`, блок «Итоги исполнителя» на странице услуги. B4: `order-deadline.ts`, строка срока на странице заказа. Тексты на 7 языках. ТЗ 49, D576. +24 теста.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (257 файлов, 1925 тестов); `pnpm build` — в терминале основателя.
+- Не проверено: SQL новых запросов на настоящей базе (CI); вид под входом и на телефоне (квота Supabase).
+- Не сделано, нужны решения: пороги значков (приняты осторожные по умолчанию), B1 шаг 2б (кошельки), B2–B3, C1–C5, уведомление о просрочке (нужна миграция).

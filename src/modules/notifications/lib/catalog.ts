@@ -200,8 +200,9 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
   freelanceTaskProposal: strict({
     taskId: idSchema,
     taskTitle: z.string().min(1).max(120),
-    proposalId: idSchema,
-    decision: z.enum(["received", "accepted"]),
+    /** Absent for an invitation: there is no proposal yet (TZ 49). */
+    proposalId: idSchema.optional(),
+    decision: z.enum(["received", "accepted", "invited"]),
   }),
   ugcCampaignDecided: strict({
     campaignId: idSchema,

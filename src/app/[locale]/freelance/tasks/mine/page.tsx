@@ -6,7 +6,13 @@ import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
 import { Link } from "@/i18n/navigation";
 import { HttpError } from "@/lib/http";
-import { listMyTasks, listTaskProposals } from "@/modules/freelance/service";
+import {
+  listMyTasks,
+  listTaskProposals,
+  suggestSellers,
+  type SuggestedSeller,
+} from "@/modules/freelance/service";
+import { InviteSellers, type InviteCard } from "@/modules/freelance/ui/invite-sellers";
 import { TaskManagementActions } from "@/modules/freelance/ui/task-management-actions";
 import { formatUsd } from "@/modules/freelance/ui/format";
 import { freelanceTasksCopy, userOrLogin } from "@/modules/freelance/ui/server-copy";
@@ -33,13 +39,48 @@ export default async function MyFreelanceTasksPage({
   const user = await userOrLogin(locale);
   const t = await getTranslations("freelance.tasks");
   const copy = await freelanceTasksCopy(locale);
+  const f = await getTranslations("freelance");
+  const cardsOf = (list: SuggestedSeller[]): InviteCard[] =>
+    list.map((item) => ({
+      sellerId: item.sellerId,
+      name: item.name ?? "",
+      headline: item.headline,
+      badge: item.record.badge ? f(`recordBadge.${item.record.badge}`) : null,
+      facts: [
+        item.record.completed > 0
+          ? f("recordCompleted", { count: item.record.completed })
+          : f("recordNone"),
+        ...(item.record.onTimeShare !== null
+          ? [f("recordOnTime", { percent: Math.round(item.record.onTimeShare * 100) })]
+          : []),
+      ],
+      invited: item.invited,
+      proposed: item.proposed,
+    }));
+  const inviteLabels = {
+    title: t("inviteTitle"),
+    none: t("inviteNone"),
+    button: t("inviteButton"),
+    invited: t("invitedMark"),
+    proposed: t("proposedMark"),
+    note: t("inviteNote"),
+    error: t("inviteError"),
+  };
   let tasks: Awaited<ReturnType<typeof listMyTasks>> = [];
   let proposalGroups: Awaited<ReturnType<typeof listTaskProposals>>[] = [];
+  let suggestionGroups: SuggestedSeller[][] = [];
   let notReady = false;
   try {
     tasks = await listMyTasks(user.id);
     proposalGroups = await Promise.all(
       tasks.map((task) => listTaskProposals(user.id, task.id)),
+    );
+    suggestionGroups = await Promise.all(
+      tasks.map((task) =>
+        task.status === "open"
+          ? suggestSellers(user.id, task.id)
+          : Promise.resolve([]),
+      ),
     );
   } catch (error) {
     if (error instanceof HttpError && error.status === 503) notReady = true;
@@ -74,6 +115,13 @@ export default async function MyFreelanceTasksPage({
                 </div>
                 <p className="mt-4 whitespace-pre-wrap text-fg-muted">{task.description}</p>
                 {task.status === "open" ? <TaskManagementActions taskId={task.id} copy={copy} /> : null}
+                {task.status === "open" ? (
+                  <InviteSellers
+                    taskId={task.id}
+                    cards={cardsOf(suggestionGroups[index] ?? [])}
+                    labels={inviteLabels}
+                  />
+                ) : null}
                 <h2 className="t-h3 mt-6">{t("proposals", { count: proposalGroups[index]?.length ?? 0 })}</h2>
                 {(proposalGroups[index] ?? []).length === 0 ? (
                   <p className="mt-3 text-sm text-fg-muted">{t("noProposals")}</p>

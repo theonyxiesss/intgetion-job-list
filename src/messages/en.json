@@ -1213,11 +1213,11 @@
       "freelanceTaskProposal": {
         "inapp": {
           "title": "Task response update",
-          "body": "{decision, select, received {A freelancer responded to your task.} accepted {Your response was accepted and an order was created.} other {Your task response was updated.}} Task: “{taskTitle}”"
+          "body": "{decision, select, received {A freelancer responded to your task.} accepted {Your response was accepted and an order was created.} invited {A client invited you to answer their task.} other {Your task response was updated.}} Task: “{taskTitle}”"
         },
         "email": {
           "subject": "Task response update: {taskTitle}",
-          "body": "{decision, select, received {A freelancer responded to your task.} accepted {Your response was accepted and an order was created.} other {Your task response was updated.}} Task: “{taskTitle}”"
+          "body": "{decision, select, received {A freelancer responded to your task.} accepted {Your response was accepted and an order was created.} invited {A client invited you to answer their task.} other {Your task response was updated.}} Task: “{taskTitle}”"
         }
       },
       "ugcCampaignDecided": {
@@ -4347,6 +4347,14 @@
     },
     "metaTitle": "Freelance services with a fixed price",
     "tasks": {
+      "inviteTitle": "Suggested freelancers",
+      "inviteNone": "No freelancers with a published service in this category yet.",
+      "inviteButton": "Invite",
+      "invitedMark": "Invited",
+      "proposedMark": "Already responded",
+      "inviteNote": "An invitation promises nothing: the freelancer decides whether to respond, and you choose.",
+      "inviteError": "Could not invite. Try again later.",
+      "invitedBanner": "The client invited you to respond to this task.",
       "metaTitle": "Freelance tasks",
       "title": "Freelance tasks",
       "intro": "Browse projects posted by clients and send a proposal with your price and delivery time.",
@@ -4467,6 +4475,16 @@
     "worksTitle": "Work samples",
     "reviewsTitle": "Reviews",
     "reviewsNote": "Only a buyer whose service was completed here can leave a review.",
+    "recordTitle": "Seller record",
+    "recordNone": "No completed orders yet.",
+    "recordCompleted": "{count, plural, one {# order completed} other {# orders completed}}",
+    "recordOnTime": "{percent}% delivered in time",
+    "recordRepeat": "{count, plural, one {# client came back} other {# clients came back}}",
+    "recordNote": "Counted from completed orders on this platform. A new seller has no badge.",
+    "recordBadge": {
+      "reliable": "Reliable seller",
+      "top": "Top seller"
+    },
     "noReviews": "No reviews yet: no completed services on the platform.",
     "authorKinds": {
       "person": "Person",
@@ -4557,6 +4575,11 @@
       "contactTelegram": "Telegram",
       "contactLinkedin": "LinkedIn",
       "wantedBy": "Needed by {when}",
+      "deadline": {
+        "on_track": "On time: due by {date}",
+        "due_soon": "Due soon: by {date}",
+        "overdue": "Overdue: was due {date}"
+      },
       "fromCompany": "From {company}",
       "contactsClosed": "Contacts open after the request is accepted.",
       "reviewLeft": "Review saved.",

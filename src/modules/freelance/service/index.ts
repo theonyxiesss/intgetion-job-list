@@ -74,6 +74,17 @@ export {
 } from "./order-service";
 export type { OrderCommand, PartyOrder, PublicReview } from "./order-service";
 export { orderNotice } from "./notices";
+export {
+  inviteSeller,
+  rankSuggestions,
+  suggestSellers,
+  wasInvited,
+  type SuggestedSeller,
+} from "./task-invite-service";
+export { orderDeadline } from "./order-deadline";
+export type { DeadlineState, OrderDeadline } from "./order-deadline";
+export { getSellerRecord } from "./seller-record-service";
+export type { SellerBadge, SellerRecord } from "./seller-score";
 export type { OrderNotice } from "./notices";
 export {
   SERVICE_DRAFT_REQUIRED,

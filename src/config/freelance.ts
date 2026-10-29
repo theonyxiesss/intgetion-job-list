@@ -95,6 +95,19 @@ export const FREELANCE_LIMITS = {
   requestsPerHour: 5,
 } as const;
 
+/**
+ * Thresholds of the seller's badge (A5, TZ 49, D576). A new seller has no
+ * badge; the numbers are conservative defaults that the founder may change.
+ */
+export const FREELANCE_SCORE = {
+  reliableMinCompleted: 3,
+  reliableMinOnTime: 0.8,
+  topMinCompleted: 10,
+  topMinOnTime: 0.9,
+  topMinReviews: 5,
+  topMinRating: 4.5,
+} as const;
+
 /** Timers from D447, in hours. */
 export const FREELANCE_TIMERS = {
   answerHours: 72,
@@ -133,6 +146,10 @@ export const FREELANCE_TASK_LIMITS = {
   coverMin: 40,
   coverMax: 2000,
   openDays: 30,
+  /** A4 (TZ 49): invitations one task may send. */
+  invitesPerTask: 5,
+  /** How many suggested freelancers the client sees. */
+  suggestions: 12,
   /** D569: a hire from a proposal carries one revision. */
   hireRevisions: 1,
 } as const;

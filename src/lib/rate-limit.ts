@@ -77,6 +77,8 @@ export const rateRules = {
   ugcMessage: { limit: 30, windowSeconds: 60 * 60 },
   /** Client tasks, keyed by user id (D569: 3 a day). */
   freelanceTask: { limit: 3, windowSeconds: 24 * 60 * 60 },
+  /** Invitations of freelancers to tasks, keyed by user id (TZ 49: 10 a day). */
+  freelanceInvite: { limit: 10, windowSeconds: 24 * 60 * 60 },
   /** Proposals to tasks, keyed by user id (D569: 20 a day). */
   freelanceProposal: { limit: 20, windowSeconds: 24 * 60 * 60 },
   /** «Accept»/«Decline» taps in Telegram, keyed by Telegram id (D456). */

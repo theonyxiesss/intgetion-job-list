@@ -1213,11 +1213,11 @@
       "freelanceTaskProposal": {
         "inapp": {
           "title": "Risposta all’attività aggiornata",
-          "body": "{decision, select, received {Un freelance ha risposto alla tua attività.} accepted {La tua risposta è stata accettata ed è stato creato un ordine.} other {Lo stato della risposta è cambiato.}} Attività: «{taskTitle}»"
+          "body": "{decision, select, received {Un freelance ha risposto alla tua attività.} accepted {La tua risposta è stata accettata ed è stato creato un ordine.} invited {Un cliente ti ha invitato a rispondere alla sua attività.} other {Lo stato della risposta è cambiato.}} Attività: «{taskTitle}»"
         },
         "email": {
           "subject": "Risposta all’attività: {taskTitle}",
-          "body": "{decision, select, received {Un freelance ha risposto alla tua attività.} accepted {La tua risposta è stata accettata ed è stato creato un ordine.} other {Lo stato della risposta è cambiato.}} Attività: «{taskTitle}»"
+          "body": "{decision, select, received {Un freelance ha risposto alla tua attività.} accepted {La tua risposta è stata accettata ed è stato creato un ordine.} invited {Un cliente ti ha invitato a rispondere alla sua attività.} other {Lo stato della risposta è cambiato.}} Attività: «{taskTitle}»"
         }
       },
       "ugcCampaignDecided": {
@@ -3841,6 +3841,14 @@
     },
     "metaTitle": "Servizi freelance a prezzo fisso",
     "tasks": {
+      "inviteTitle": "Freelance suggeriti",
+      "inviteNone": "Ancora nessun freelance con un servizio pubblicato in questa categoria.",
+      "inviteButton": "Invita",
+      "invitedMark": "Invitato",
+      "proposedMark": "Ha già risposto",
+      "inviteNote": "Un invito non promette nulla: il freelance decide se rispondere e tu scegli.",
+      "inviteError": "Invito non riuscito. Riprova più tardi.",
+      "invitedBanner": "Il cliente ti ha invitato a rispondere a questa attività.",
       "metaTitle": "Incarichi freelance",
       "title": "Incarichi freelance",
       "intro": "Esplora i progetti dei clienti e invia una proposta con prezzo e tempi di consegna.",
@@ -3960,6 +3968,16 @@
     "worksTitle": "Esempi di lavoro",
     "reviewsTitle": "Recensioni",
     "reviewsNote": "Recensisce solo chi ha completato un servizio qui.",
+    "recordTitle": "Storico del fornitore",
+    "recordNone": "Ancora nessun ordine completato.",
+    "recordCompleted": "{count, plural, one {# ordine completato} other {# ordini completati}}",
+    "recordOnTime": "{percent}% consegnati in tempo",
+    "recordRepeat": "{count, plural, one {# cliente è tornato} other {# clienti sono tornati}}",
+    "recordNote": "Calcolato sugli ordini completati su questa piattaforma. Un nuovo fornitore non ha badge.",
+    "recordBadge": {
+      "reliable": "Fornitore affidabile",
+      "top": "Fornitore top"
+    },
     "noReviews": "Ancora nessuna recensione: nessun servizio completato sulla piattaforma.",
     "authorKinds": {
       "person": "Persona",
@@ -4050,6 +4068,11 @@
       "contactTelegram": "Telegram",
       "contactLinkedin": "LinkedIn",
       "wantedBy": "Entro {when}",
+      "deadline": {
+        "on_track": "Nei tempi: consegna entro il {date}",
+        "due_soon": "Scadenza vicina: entro il {date}",
+        "overdue": "In ritardo: la scadenza era il {date}"
+      },
       "fromCompany": "Da {company}",
       "contactsClosed": "I contatti si aprono quando la richiesta è accettata.",
       "reviewLeft": "Recensione salvata.",

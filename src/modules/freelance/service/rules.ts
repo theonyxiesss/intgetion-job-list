@@ -31,6 +31,8 @@ export const FREELANCE_ERRORS = {
   proposalExists: "PROPOSAL_EXISTS",
   proposalClosed: "PROPOSAL_CLOSED",
   tasksNotReady: "TASKS_NOT_READY",
+  inviteLimit: "INVITE_LIMIT",
+  alreadyInvited: "ALREADY_INVITED",
 } as const;
 
 const HOUR_MS = 60 * 60 * 1000;
