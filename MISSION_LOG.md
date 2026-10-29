@@ -3539,3 +3539,11 @@
 - Первая попытка не подключилась: Git Bash превратил `/c` в `C:/`; сервер переустановлен с `MSYS_NO_PATHCONV=1`. `claude mcp get chrome-devtools` → Connected.
 - Не проверено: фактический замер (инструменты появляются в новой сессии). Откат: `claude mcp remove chrome-devtools -s local`.
 - Код проекта не менялся.
+
+## 2026-10-27 — поиск дизайн-инструментов: выравнивание, плагины, ревью (без установки)
+
+- Каталог плагинов claude.ai (сообщественные, не установлены; reach: contained / remote / privileged): `audit-suite` (Orbit, 10 «линз» аудита: design, UX, a11y, perf; внутри уже установленные нами web-design-guidelines и react-best-practices, плюс emil-design-engineering, web-animation-design, make-interfaces-feel-better), `Fairmind Design` (WCAG, токены, соответствие Figma), `design-superpowers`, `design-dev-bridge`, `figma-suite`, официальный `Figma` (skills + MCP; Figma MCP в сессии уже подключён), `UI Color Palette` (внешний API), `Codesign` (IMG.LY), `Rayden UI` (чужая библиотека — не наш случай).
+- Скиллы дизайн-ревью из каталогов: web-design-reviewer (galaxy-dawn/claude-scholar и github/awesome-copilot), jezweb/design-review, mastepanoski/ui-design-review, nexu-io/open-design design-review (отдельный коммит на каждую правку — противоречит правилу коммитов AGENTS.md). Сведения из каталогов, файлы не читались.
+- Выравнивание и сетки: расширения браузера Grid Overlay Pro, PerfectPixel / Pixel Perfect Advanced (наложение макета на страницу); описания самоотчётные, пользователей мало. Установка расширений не рассматривалась.
+- Вариант без установки: скрипт измерений во встроенном браузере (границы элементов, шаг отступов, общие левые края).
+- Код проекта не менялся.
