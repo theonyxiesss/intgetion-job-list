@@ -56,6 +56,7 @@ export type {
 export {
   acceptInvite,
   setShortlist,
+  reportBrokenLink,
   getUgcRoom,
   reportRoomMessage,
   listRoomReportQueue,

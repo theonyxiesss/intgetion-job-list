@@ -176,13 +176,38 @@ export default async function CampaignPage({
                   />
                 </div>
               ) : null}
+              {view.submission?.linkReported &&
+              view.submission.status === "submitted" ? (
+                <p role="alert" className="t-body-s">
+                  {t("brokenLinkCreator")}
+                </p>
+              ) : null}
               {view.invite.status === "hired" &&
               (view.submission === null ||
-                view.submission.status === "changes_requested") ? (
+                view.submission.status === "changes_requested" ||
+                (view.submission.status === "submitted" &&
+                  view.submission.linkReported)) ? (
                 <UgcSubmit inviteId={view.invite.id} />
               ) : null}
               {view.submission ? (
                 <p className="t-body-s break-all">{view.submission.url}</p>
+              ) : null}
+              {view.linkVersions.length > 1 ? (
+                <ol className="t-body-s flex flex-col gap-1">
+                  {view.linkVersions.map((row) => (
+                    <li key={row.version} className="break-all">
+                      <span className="font-mono">
+                        {t("linkVersionLine", {
+                          n: row.version,
+                          date: row.at.slice(0, 10),
+                        })}
+                      </span>
+                      {row.accepted ? ` · ${t("linkAccepted")}` : ""}
+                      {" · "}
+                      {row.url}
+                    </li>
+                  ))}
+                </ol>
               ) : null}
               {view.submission?.reviewDueAt ? (
                 <p className="t-body-s font-mono">

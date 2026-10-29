@@ -247,6 +247,8 @@ export const ugcSubmissions = pgTable(
     submittedAt: timestamp("submitted_at", { withTimezone: true }),
     reviewStage: smallint("review_stage").notNull().default(0),
     escalatedAt: timestamp("escalated_at", { withTimezone: true }),
+    /** The company said the link does not open; the creator may send a new one (0081). */
+    linkReportedAt: timestamp("link_reported_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -418,5 +420,26 @@ export const ugcRoomReports = pgTable(
   (table) => [
     unique("ugc_room_reports_unique").on(table.messageId, table.reporterId),
     index("ugc_room_reports_status_idx").on(table.status, table.createdAt),
+  ],
+);
+
+/** Every link a creator sent for one video; the accepted one is marked (0081). */
+export const ugcSubmissionVersions = pgTable(
+  "ugc_submission_versions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    submissionId: uuid("submission_id")
+      .notNull()
+      .references(() => ugcSubmissions.id, { onDelete: "cascade" }),
+    version: integer("version").notNull(),
+    url: text("url").notNull(),
+    hook: text("hook").notNull().default(""),
+    acceptedAt: timestamp("accepted_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("ugc_submission_versions_key").on(table.submissionId, table.version),
   ],
 );

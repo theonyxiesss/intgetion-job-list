@@ -8,6 +8,7 @@ import type {
   RoomMessage,
   RoomReport,
   Submission,
+  SubmissionVersion,
   UgcNotice,
 } from "./records";
 import type { UgcStore } from "./store";
@@ -213,6 +214,28 @@ export class MemoryUgcStore implements UgcStore {
         token.revokedAt = at;
       }
     }
+  }
+  submissionVersions: SubmissionVersion[] = [];
+  async listSubmissionVersions(submissionId: string) {
+    return this.submissionVersions
+      .filter((row) => row.submissionId === submissionId)
+      .sort((a, b) => a.version - b.version);
+  }
+  async listSubmissionVersionsFor(submissionIds: readonly string[]) {
+    const out = new Map<string, SubmissionVersion[]>();
+    for (const id of submissionIds) {
+      const rows = await this.listSubmissionVersions(id);
+      if (rows.length) out.set(id, rows);
+    }
+    return out;
+  }
+  async insertSubmissionVersion(row: SubmissionVersion) {
+    this.submissionVersions.push(row);
+  }
+  async markSubmissionVersionAccepted(submissionId: string, at: Date) {
+    const rows = await this.listSubmissionVersions(submissionId);
+    const last = rows[rows.length - 1];
+    if (last) last.acceptedAt = at;
   }
   async listSubmissionsAwaitingReview() {
     return [...this.submissions.values()].filter(

@@ -9,6 +9,7 @@ import {
   ugcPayouts,
   ugcRoomMessages,
   ugcRoomReports,
+  ugcSubmissionVersions,
   ugcSubmissions,
   users,
   userProfiles,
@@ -34,6 +35,7 @@ import type {
   RoomMessage,
   RoomReport,
   Submission,
+  SubmissionVersion,
 } from "../service/records";
 import type { UgcStore } from "../service/store";
 
@@ -132,6 +134,7 @@ function submissionOf(row: SubmissionRow): Submission {
     submittedAt: row.submittedAt,
     reviewStage: row.reviewStage,
     escalatedAt: row.escalatedAt,
+    linkReportedAt: row.linkReportedAt,
   };
 }
 
@@ -455,6 +458,65 @@ export function productionUgcStore(): UgcStore {
     async insertSubmission(row) {
       await db.insert(ugcSubmissions).values(row);
     },
+    async listSubmissionVersions(submissionId) {
+      const rows = await db
+        .select()
+        .from(ugcSubmissionVersions)
+        .where(eq(ugcSubmissionVersions.submissionId, submissionId))
+        .orderBy(ugcSubmissionVersions.version);
+      return rows.map((row): SubmissionVersion => ({
+        id: row.id,
+        submissionId: row.submissionId,
+        version: row.version,
+        url: row.url,
+        hook: row.hook,
+        acceptedAt: row.acceptedAt,
+        createdAt: row.createdAt,
+      }));
+    },
+    async listSubmissionVersionsFor(submissionIds) {
+      const out = new Map<string, SubmissionVersion[]>();
+      if (submissionIds.length === 0) return out;
+      const rows = await db
+        .select()
+        .from(ugcSubmissionVersions)
+        .where(inArray(ugcSubmissionVersions.submissionId, [...submissionIds]))
+        .orderBy(ugcSubmissionVersions.version);
+      for (const row of rows) {
+        const list = out.get(row.submissionId) ?? [];
+        list.push({
+          id: row.id,
+          submissionId: row.submissionId,
+          version: row.version,
+          url: row.url,
+          hook: row.hook,
+          acceptedAt: row.acceptedAt,
+          createdAt: row.createdAt,
+        });
+        out.set(row.submissionId, list);
+      }
+      return out;
+    },
+    async insertSubmissionVersion(row) {
+      await db.insert(ugcSubmissionVersions).values({
+        id: row.id,
+        submissionId: row.submissionId,
+        version: row.version,
+        url: row.url,
+        hook: row.hook,
+      });
+    },
+    async markSubmissionVersionAccepted(submissionId, at) {
+      await db.execute(sql`
+        update ugc_submission_versions
+        set accepted_at = ${at.toISOString()}
+        where submission_id = ${submissionId}
+          and version = (
+            select max(version) from ugc_submission_versions
+            where submission_id = ${submissionId}
+          )
+      `);
+    },
     async listSubmissionsAwaitingReview() {
       const rows = await db
         .select()
@@ -476,6 +538,7 @@ export function productionUgcStore(): UgcStore {
           submittedAt: row.submittedAt ?? null,
           reviewStage: row.reviewStage ?? 0,
           escalatedAt: row.escalatedAt ?? null,
+          linkReportedAt: row.linkReportedAt ?? null,
           updatedAt: new Date(),
         })
         .where(eq(ugcSubmissions.id, row.id));

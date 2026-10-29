@@ -3,6 +3,8 @@ import {
   briefForReaders,
   db,
   forReader,
+  linkVersionsFor,
+  linkVersionView,
   listMyCampaignSummaries,
   moneyRecord,
   previewMatches,
@@ -188,12 +190,16 @@ async function detailsFor(
   const submissions = loaded.submissions.filter((row) =>
     inviteIds.has(row.inviteId),
   );
-  const [profiles, payouts, deposits] = await Promise.all([
+  const [profiles, payouts, deposits, links] = await Promise.all([
     loaded.store.getProfiles([
       ...new Set(invites.map((row) => row.creatorUserId)),
     ]),
     loaded.store.listPayoutsBySubmissions(submissions.map((row) => row.id)),
     depositStatesFor(briefs),
+    linkVersionsFor(
+      loaded.store,
+      submissions.map((row) => row.id),
+    ),
   ]);
   const submissionOf = new Map(submissions.map((row) => [row.inviteId, row]));
   return summaries.flatMap((summary) => {
@@ -225,6 +231,9 @@ async function detailsFor(
               declineReason: invite.declineReason ?? null,
               creator: profile ? publicCreatorCard(profile) : null,
               submission: forReader(submission),
+              linkVersions: linkVersionView(
+                submission ? (links.get(submission.id) ?? []) : [],
+              ),
               payout: moneyRecord(
                 submission ? (payouts.get(submission.id) ?? null) : null,
               ),

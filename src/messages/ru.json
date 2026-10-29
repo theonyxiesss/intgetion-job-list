@@ -1255,11 +1255,11 @@
       "ugcSubmissionDecided": {
         "inapp": {
           "title": "Видео проверено",
-          "body": "{decision, select, changes_requested {Попросили одну правку.} accepted {Видео принято.} rejected {Видео отклонено.} winner {Видео отмечено как победитель.} other {Видео проверено.}} Продукт: «{productName}»."
+          "body": "{decision, select, changes_requested {Попросили одну правку.} accepted {Видео принято.} rejected {Видео отклонено.} winner {Видео отмечено как победитель.} link_broken {Компания не смогла открыть ссылку на видео. Отправьте рабочую ссылку.} other {Видео проверено.}} Продукт: «{productName}»."
         },
         "email": {
           "subject": "Видео проверено: {productName}",
-          "body": "{decision, select, changes_requested {Попросили одну правку.} accepted {Видео принято.} rejected {Видео отклонено.} winner {Видео отмечено как победитель.} other {Видео проверено.}} Продукт: «{productName}»."
+          "body": "{decision, select, changes_requested {Попросили одну правку.} accepted {Видео принято.} rejected {Видео отклонено.} winner {Видео отмечено как победитель.} link_broken {Компания не смогла открыть ссылку на видео. Отправьте рабочую ссылку.} other {Видео проверено.}} Продукт: «{productName}»."
         }
       },
       "ugcDeadline": {
@@ -4236,6 +4236,12 @@
     "title": "UGC-видео",
     "intro": "Короткие ролики от реальных людей для рекламы и соцсетей. Один бриф, авторы откликаются, вы нанимаете тех, кого выбрали.",
     "moneyNote": "Сумма записывается в центах. На этом шаге ничего не списывается и не выплачивается.",
+    "linkVersionsTitle": "Версии ссылки",
+    "linkVersionLine": "Версия {n} · {date}",
+    "linkAccepted": "принята",
+    "brokenLink": "Ссылка не открывается",
+    "brokenLinkWaiting": "Вы сообщили, что ссылка не открывается. Ждём новую ссылку.",
+    "brokenLinkCreator": "Компания сообщила, что ссылка не открывается. Отправьте рабочую ссылку; включённая правка не тратится.",
     "roomReport": "Пожаловаться",
     "roomReportReason": "Причина",
     "roomReportSend": "Отправить жалобу",

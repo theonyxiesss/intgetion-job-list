@@ -1255,11 +1255,11 @@
       "ugcSubmissionDecided": {
         "inapp": {
           "title": "Vídeo revisado",
-          "body": "{decision, select, changes_requested {Se pidió una revisión.} accepted {El vídeo fue aceptado.} rejected {El vídeo fue rechazado.} winner {El vídeo quedó como ganador.} other {El vídeo fue revisado.}} Producto: “{productName}”."
+          "body": "{decision, select, changes_requested {Se pidió una revisión.} accepted {El vídeo fue aceptado.} rejected {El vídeo fue rechazado.} winner {El vídeo quedó como ganador.} link_broken {La empresa no pudo abrir el enlace del vídeo. Envía un enlace que funcione.} other {El vídeo fue revisado.}} Producto: “{productName}”."
         },
         "email": {
           "subject": "Vídeo revisado: {productName}",
-          "body": "{decision, select, changes_requested {Se pidió una revisión.} accepted {El vídeo fue aceptado.} rejected {El vídeo fue rechazado.} winner {El vídeo quedó como ganador.} other {El vídeo fue revisado.}} Producto: “{productName}”."
+          "body": "{decision, select, changes_requested {Se pidió una revisión.} accepted {El vídeo fue aceptado.} rejected {El vídeo fue rechazado.} winner {El vídeo quedó como ganador.} link_broken {La empresa no pudo abrir el enlace del vídeo. Envía un enlace que funcione.} other {El vídeo fue revisado.}} Producto: “{productName}”."
         }
       },
       "ugcDeadline": {
@@ -4236,6 +4236,12 @@
     "title": "Vídeos UGC",
     "intro": "Vídeos cortos de personas reales para anuncios y redes. Un brief, los creadores se postulan, contratas a quienes eliges.",
     "moneyNote": "El importe se guarda en centavos. En este paso no se cobra ni se paga nada.",
+    "linkVersionsTitle": "Versiones del enlace",
+    "linkVersionLine": "Versión {n} · {date}",
+    "linkAccepted": "aceptada",
+    "brokenLink": "El enlace no se abre",
+    "brokenLinkWaiting": "Dijiste que el enlace no se abre. Esperamos un enlace nuevo.",
+    "brokenLinkCreator": "La empresa dijo que el enlace no se abre. Envía un enlace que funcione; no se usa tu revisión incluida.",
     "roomReport": "Denunciar",
     "roomReportReason": "Motivo",
     "roomReportSend": "Enviar denuncia",

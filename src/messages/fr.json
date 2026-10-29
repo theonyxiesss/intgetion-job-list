@@ -1255,11 +1255,11 @@
       "ugcSubmissionDecided": {
         "inapp": {
           "title": "Vidéo revue",
-          "body": "{decision, select, changes_requested {Une révision a été demandée.} accepted {La vidéo a été acceptée.} rejected {La vidéo a été refusée.} winner {La vidéo est marquée gagnante.} other {La vidéo a été revue.}} Produit : « {productName} »."
+          "body": "{decision, select, changes_requested {Une révision a été demandée.} accepted {La vidéo a été acceptée.} rejected {La vidéo a été refusée.} winner {La vidéo est marquée gagnante.} link_broken {L’entreprise n’a pas pu ouvrir le lien de la vidéo. Envoyez un lien qui fonctionne.} other {La vidéo a été revue.}} Produit : « {productName} »."
         },
         "email": {
           "subject": "Vidéo revue : {productName}",
-          "body": "{decision, select, changes_requested {Une révision a été demandée.} accepted {La vidéo a été acceptée.} rejected {La vidéo a été refusée.} winner {La vidéo est marquée gagnante.} other {La vidéo a été revue.}} Produit : « {productName} »."
+          "body": "{decision, select, changes_requested {Une révision a été demandée.} accepted {La vidéo a été acceptée.} rejected {La vidéo a été refusée.} winner {La vidéo est marquée gagnante.} link_broken {L’entreprise n’a pas pu ouvrir le lien de la vidéo. Envoyez un lien qui fonctionne.} other {La vidéo a été revue.}} Produit : « {productName} »."
         }
       },
       "ugcDeadline": {
@@ -4235,6 +4235,12 @@
     "title": "Vidéos UGC",
     "intro": "Des vidéos courtes de vraies personnes pour la pub et les réseaux. Un brief, les créateurs postulent, vous embauchez ceux que vous choisissez.",
     "moneyNote": "Le montant est enregistré en centimes. Rien n’est débité ni payé à cette étape.",
+    "linkVersionsTitle": "Versions du lien",
+    "linkVersionLine": "Version {n} · {date}",
+    "linkAccepted": "acceptée",
+    "brokenLink": "Le lien ne s’ouvre pas",
+    "brokenLinkWaiting": "Vous avez signalé que le lien ne s’ouvre pas. En attente d’un nouveau lien.",
+    "brokenLinkCreator": "L’entreprise indique que le lien ne s’ouvre pas. Envoyez un lien qui fonctionne ; votre retouche incluse n’est pas utilisée.",
     "roomReport": "Signaler",
     "roomReportReason": "Motif",
     "roomReportSend": "Envoyer le signalement",

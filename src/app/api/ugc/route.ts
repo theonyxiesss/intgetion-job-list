@@ -12,6 +12,7 @@ import { requireUser } from "@/lib/auth-guards";
 import {
   acceptInvite,
   setShortlist,
+  reportBrokenLink,
   postUgcRoomMessage,
   reportRoomMessage,
   decideRoomReport,
@@ -87,6 +88,7 @@ const body = z.discriminatedUnion("action", [
     termsHash: z.string().length(64).optional(),
   }),
   z.object({ action: z.literal("decline"), inviteId: z.uuid() }),
+  z.object({ action: z.literal("brokenLink"), inviteId: z.uuid() }),
   z.object({
     action: z.literal("roomPost"),
     inviteId: z.uuid(),
@@ -220,6 +222,9 @@ export async function POST(request: Request) {
           to: input.to,
         }),
       );
+    }
+    if (input.action === "brokenLink") {
+      return Response.json(await reportBrokenLink(id, input.inviteId));
     }
     if (input.action === "roomPost") {
       return Response.json(

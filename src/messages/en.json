@@ -1255,11 +1255,11 @@
       "ugcSubmissionDecided": {
         "inapp": {
           "title": "Video reviewed",
-          "body": "{decision, select, changes_requested {One revision was requested.} accepted {The video was accepted.} rejected {The video was rejected.} winner {The video was marked as the winner.} other {The video was reviewed.}} Product: “{productName}”."
+          "body": "{decision, select, changes_requested {One revision was requested.} accepted {The video was accepted.} rejected {The video was rejected.} winner {The video was marked as the winner.} link_broken {The company could not open the video link. Send a working link.} other {The video was reviewed.}} Product: “{productName}”."
         },
         "email": {
           "subject": "Video reviewed: {productName}",
-          "body": "{decision, select, changes_requested {One revision was requested.} accepted {The video was accepted.} rejected {The video was rejected.} winner {The video was marked as the winner.} other {The video was reviewed.}} Product: “{productName}”."
+          "body": "{decision, select, changes_requested {One revision was requested.} accepted {The video was accepted.} rejected {The video was rejected.} winner {The video was marked as the winner.} link_broken {The company could not open the video link. Send a working link.} other {The video was reviewed.}} Product: “{productName}”."
         }
       },
       "ugcDeadline": {
@@ -4742,6 +4742,12 @@
     "title": "UGC videos",
     "intro": "Short videos from real people for ads and social posts. One brief, creators apply, you hire the ones you pick.",
     "moneyNote": "The amount is recorded in cents. Nothing is charged or paid in this step.",
+    "linkVersionsTitle": "Link versions",
+    "linkVersionLine": "Version {n} · {date}",
+    "linkAccepted": "accepted",
+    "brokenLink": "The link does not open",
+    "brokenLinkWaiting": "You said the link does not open. Waiting for a new link.",
+    "brokenLinkCreator": "The company said the link does not open. Send a working link; your included revision is not used.",
     "roomReport": "Report",
     "roomReportReason": "Reason",
     "roomReportSend": "Send report",

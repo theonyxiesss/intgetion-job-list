@@ -95,6 +95,18 @@ export type Submission = {
   /** The reminder stage the company has had (0-3). */
   reviewStage?: number;
   escalatedAt?: Date | null;
+  /** The company said the link does not open (U5, D573). */
+  linkReportedAt?: Date | null;
+};
+
+export type SubmissionVersion = {
+  id: string;
+  submissionId: string;
+  version: number;
+  url: string;
+  hook: string;
+  acceptedAt: Date | null;
+  createdAt: Date;
 };
 
 export type Payout = {

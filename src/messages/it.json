@@ -1255,11 +1255,11 @@
       "ugcSubmissionDecided": {
         "inapp": {
           "title": "Video revisionato",
-          "body": "{decision, select, changes_requested {È stata chiesta una revisione.} accepted {Il video è stato accettato.} rejected {Il video è stato rifiutato.} winner {Il video è segnato come vincitore.} other {Il video è stato revisionato.}} Prodotto: «{productName}»."
+          "body": "{decision, select, changes_requested {È stata chiesta una revisione.} accepted {Il video è stato accettato.} rejected {Il video è stato rifiutato.} winner {Il video è segnato come vincitore.} link_broken {L’azienda non è riuscita ad aprire il link del video. Invia un link funzionante.} other {Il video è stato revisionato.}} Prodotto: «{productName}»."
         },
         "email": {
           "subject": "Video revisionato: {productName}",
-          "body": "{decision, select, changes_requested {È stata chiesta una revisione.} accepted {Il video è stato accettato.} rejected {Il video è stato rifiutato.} winner {Il video è segnato come vincitore.} other {Il video è stato revisionato.}} Prodotto: «{productName}»."
+          "body": "{decision, select, changes_requested {È stata chiesta una revisione.} accepted {Il video è stato accettato.} rejected {Il video è stato rifiutato.} winner {Il video è segnato come vincitore.} link_broken {L’azienda non è riuscita ad aprire il link del video. Invia un link funzionante.} other {Il video è stato revisionato.}} Prodotto: «{productName}»."
         }
       },
       "ugcDeadline": {
@@ -4235,6 +4235,12 @@
     "title": "Video UGC",
     "intro": "Video brevi di persone reali per pubblicità e social. Un brief, i creator si candidano, assumi chi scegli.",
     "moneyNote": "L’importo è registrato in centesimi. In questo passo non si addebita e non si paga nulla.",
+    "linkVersionsTitle": "Versioni del link",
+    "linkVersionLine": "Versione {n} · {date}",
+    "linkAccepted": "accettata",
+    "brokenLink": "Il link non si apre",
+    "brokenLinkWaiting": "Hai segnalato che il link non si apre. In attesa di un nuovo link.",
+    "brokenLinkCreator": "L’azienda segnala che il link non si apre. Invia un link funzionante; la modifica inclusa non viene usata.",
     "roomReport": "Segnala",
     "roomReportReason": "Motivo",
     "roomReportSend": "Invia segnalazione",

@@ -1255,11 +1255,11 @@
       "ugcSubmissionDecided": {
         "inapp": {
           "title": "Vídeo revisado",
-          "body": "{decision, select, changes_requested {Uma revisão foi pedida.} accepted {O vídeo foi aceito.} rejected {O vídeo foi recusado.} winner {O vídeo foi marcado como vencedor.} other {O vídeo foi revisado.}} Produto: “{productName}”."
+          "body": "{decision, select, changes_requested {Uma revisão foi pedida.} accepted {O vídeo foi aceito.} rejected {O vídeo foi recusado.} winner {O vídeo foi marcado como vencedor.} link_broken {A empresa não conseguiu abrir o link do vídeo. Envie um link que funcione.} other {O vídeo foi revisado.}} Produto: “{productName}”."
         },
         "email": {
           "subject": "Vídeo revisado: {productName}",
-          "body": "{decision, select, changes_requested {Uma revisão foi pedida.} accepted {O vídeo foi aceito.} rejected {O vídeo foi recusado.} winner {O vídeo foi marcado como vencedor.} other {O vídeo foi revisado.}} Produto: “{productName}”."
+          "body": "{decision, select, changes_requested {Uma revisão foi pedida.} accepted {O vídeo foi aceito.} rejected {O vídeo foi recusado.} winner {O vídeo foi marcado como vencedor.} link_broken {A empresa não conseguiu abrir o link do vídeo. Envie um link que funcione.} other {O vídeo foi revisado.}} Produto: “{productName}”."
         }
       },
       "ugcDeadline": {
@@ -4235,6 +4235,12 @@
     "title": "Vídeos UGC",
     "intro": "Vídeos curtos de pessoas reais para anúncios e redes. Um brief, criadores se candidatam, você contrata quem escolher.",
     "moneyNote": "O valor fica registrado em centavos. Neste passo nada é cobrado nem pago.",
+    "linkVersionsTitle": "Versões do link",
+    "linkVersionLine": "Versão {n} · {date}",
+    "linkAccepted": "aceita",
+    "brokenLink": "O link não abre",
+    "brokenLinkWaiting": "Você disse que o link não abre. Aguardando um novo link.",
+    "brokenLinkCreator": "A empresa disse que o link não abre. Envie um link que funcione; sua revisão incluída não é usada.",
     "roomReport": "Denunciar",
     "roomReportReason": "Motivo",
     "roomReportSend": "Enviar denúncia",

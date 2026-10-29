@@ -8,6 +8,7 @@ import type {
   RoomMessage,
   RoomReport,
   Submission,
+  SubmissionVersion,
   UgcNotice,
 } from "./records";
 
@@ -56,6 +57,15 @@ export interface UgcStore {
   listSubmissions(inviteIds: readonly string[]): Promise<Submission[]>;
   insertSubmission(row: Submission): Promise<void>;
   saveSubmission(row: Submission): Promise<void>;
+  /** Every link sent for one video, oldest first (U5). */
+  listSubmissionVersions(submissionId: string): Promise<SubmissionVersion[]>;
+  insertSubmissionVersion(row: SubmissionVersion): Promise<void>;
+  /** Links of many videos in one read, keyed by submission id (U5). */
+  listSubmissionVersionsFor(
+    submissionIds: readonly string[],
+  ): Promise<Map<string, SubmissionVersion[]>>;
+  /** Marks the newest version as the one the company accepted. */
+  markSubmissionVersionAccepted(submissionId: string, at: Date): Promise<void>;
   /** Videos the company has not decided yet (U4б). */
   listSubmissionsAwaitingReview(): Promise<Submission[]>;
   getPayout(id: string): Promise<Payout | null>;

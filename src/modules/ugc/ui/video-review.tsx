@@ -29,6 +29,7 @@ export async function VideoReviewItem({
     | "revisionUsed"
     | "creator"
     | "submission"
+    | "linkVersions"
     | "payout"
   >;
   locale: string;
@@ -89,6 +90,38 @@ export async function VideoReviewItem({
               </a>
             </dd>
           </div>
+          {participant.linkVersions.length > 1 ? (
+            <div className="flex flex-col gap-1 sm:col-span-2">
+              <dt className="t-label text-fg-muted">
+                {t("linkVersionsTitle")}
+              </dt>
+              <dd>
+                <ol className="flex flex-col gap-1">
+                  {participant.linkVersions.map((row) => (
+                    <li key={row.version} className="break-all">
+                      <span className="font-mono">
+                        {t("linkVersionLine", {
+                          n: row.version,
+                          date: row.at.slice(0, 10),
+                        })}
+                      </span>
+                      {row.accepted ? ` · ${t("linkAccepted")}` : ""}
+                      {" · "}
+                      <a
+                        href={row.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline underline-offset-4"
+                      >
+                        {row.url}
+                        <span className="sr-only">{d("newTab")}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </dd>
+            </div>
+          ) : null}
           {submission.changeNote ? (
             <div className="flex flex-col gap-1 sm:col-span-2">
               <dt className="t-label text-fg-muted">
@@ -137,6 +170,11 @@ export async function VideoReviewItem({
         {deciding ? (
           <div className="flex flex-col gap-3 border-t border-line pt-4">
             <p className="t-body-s text-fg-muted">{d("decideHint")}</p>
+            {submission.linkReported ? (
+              <p role="status" className="t-body-s">
+                {t("brokenLinkWaiting")}
+              </p>
+            ) : null}
             {submission.reviewDueAt ? (
               <p className="t-body-s font-mono">
                 {t("reviewDue", { date: submission.reviewDueAt.slice(0, 10) })}
@@ -161,6 +199,13 @@ export async function VideoReviewItem({
                 label={t("rejectVideo")}
                 body={{ inviteId: participant.inviteId, to: "rejected" }}
               />
+              {submission.linkReported ? null : (
+                <UgcAction
+                  action="brokenLink"
+                  label={t("brokenLink")}
+                  body={{ inviteId: participant.inviteId }}
+                />
+              )}
             </div>
             {participant.revisionUsed ? (
               <p className="t-body-s text-fg-muted">{d("revisionUsed")}</p>

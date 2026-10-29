@@ -75,6 +75,7 @@ import type {
   ProfileInput,
   RoomMessage,
   Submission,
+  SubmissionVersion,
 } from "./records";
 import type { UgcStore } from "./store";
 import { priceGuide, ugcBudgetMinor } from "./pricing";
@@ -195,6 +196,8 @@ export function forReader(row: Submission | null) {
     liveUrl: row.liveUrl,
     reportedViews: row.reportedViews,
     viewsSource: "reported" as const,
+    /** The company said the link does not open; the creator may send another. */
+    linkReported: Boolean(row.linkReportedAt),
     /** When the company must decide, while the video waits for it (D574). */
     reviewDueAt:
       row.status === "submitted" && row.submittedAt
@@ -488,6 +491,7 @@ export async function readCampaign(userId: string | null, campaignId: string) {
               ? publicCreatorCard(profiles[index])
               : null,
             submission: forReader(submission),
+            linkVersions: await linkVersionsOf(store, submission),
             payout: moneyRecord(
               submission
                 ? await store.getPayoutBySubmission(submission.id)
@@ -521,6 +525,7 @@ export async function readCampaign(userId: string | null, campaignId: string) {
       agreedAt: invite.agreedAt?.toISOString() ?? null,
     },
     submission: forReader(submission),
+    linkVersions: await linkVersionsOf(store, submission),
     payout: moneyRecord(
       submission ? await store.getPayoutBySubmission(submission.id) : null,
     ),
@@ -1137,19 +1142,27 @@ export async function submitVideo(
     throw validationError([{ path: "hook", problem: "length" }]);
   }
   const existing = await store.getSubmission(invite.id);
-  if (existing && existing.status !== "changes_requested") {
+  // A link the company said does not open may be replaced while it waits.
+  const replacing =
+    existing?.status === "submitted" && Boolean(existing.linkReportedAt);
+  if (existing && existing.status !== "changes_requested" && !replacing) {
     throw new HttpError(
       409,
       errorCodes.invalidTransition,
       "This video was already submitted",
     );
   }
+  const previousUrl = existing?.url ?? null;
+  let saved: Submission;
   if (existing) {
-    checkSubmissionTransition({
-      from: "changes_requested",
-      to: "submitted",
-      actor: "creator",
-    });
+    if (!replacing) {
+      checkSubmissionTransition({
+        from: "changes_requested",
+        to: "submitted",
+        actor: "creator",
+      });
+    }
+    existing.linkReportedAt = null;
     existing.url = url;
     existing.hook = note;
     existing.status = "submitted";
@@ -1157,6 +1170,7 @@ export async function submitVideo(
     existing.reviewStage = 0;
     existing.escalatedAt = null;
     await store.saveSubmission(existing);
+    saved = existing;
   } else {
     const submission: Submission = {
       id: randomUUID(),
@@ -1173,7 +1187,9 @@ export async function submitVideo(
       escalatedAt: null,
     };
     await store.insertSubmission(submission);
+    saved = submission;
   }
+  await recordLinkVersion(store, saved, previousUrl);
   await store.notify({
     type: "ugc.submission",
     userIds: await store.memberIds(campaign.companyId),
@@ -1275,6 +1291,7 @@ export async function decideSubmission(
   }
   submission.status = to;
   await store.saveSubmission(submission);
+  if (owes) await snapshotAcceptedLink(store, submission);
   if (owes && invite.bountyMinor != null) {
     await store.insertPayout({
       id: randomUUID(),
@@ -2130,4 +2147,146 @@ export async function sweepRoomMessages(now = new Date()) {
     if (isRoomTableMissing(error)) return { deleted: 0 };
     throw error;
   }
+}
+
+/**
+ * Every link of one video, oldest first (U5, D573). Before migration 0081 the
+ * table is missing: the list is empty and the page keeps working.
+ */
+async function linkVersionsOf(store: UgcStore, submission: Submission | null) {
+  if (!submission) return [];
+  try {
+    return linkVersionView(await store.listSubmissionVersions(submission.id));
+  } catch (error) {
+    if (hasPgCode(error, "42P01")) return [];
+    throw error;
+  }
+}
+
+export function linkVersionView(rows: readonly SubmissionVersion[]) {
+  return rows.map((row) => ({
+    version: row.version,
+    url: row.url,
+    at: row.createdAt.toISOString(),
+    accepted: row.acceptedAt !== null,
+  }));
+}
+
+/** Links of many videos in one read; empty before migration 0081. */
+export async function linkVersionsFor(
+  store: UgcStore,
+  submissionIds: readonly string[],
+): Promise<Map<string, SubmissionVersion[]>> {
+  try {
+    return await store.listSubmissionVersionsFor(submissionIds);
+  } catch (error) {
+    if (hasPgCode(error, "42P01")) return new Map();
+    throw error;
+  }
+}
+
+/**
+ * Keeps each link the creator sent. A video sent before 0081 has no rows:
+ * the link it had is stored first, so the history is not missing its start.
+ */
+async function recordLinkVersion(
+  store: UgcStore,
+  submission: Submission,
+  previousUrl: string | null,
+) {
+  try {
+    const rows = await store.listSubmissionVersions(submission.id);
+    let next = rows.reduce((max, row) => Math.max(max, row.version), 0);
+    const at = store.now();
+    if (rows.length === 0 && previousUrl) {
+      next += 1;
+      await store.insertSubmissionVersion({
+        id: randomUUID(),
+        submissionId: submission.id,
+        version: next,
+        url: previousUrl,
+        hook: "",
+        acceptedAt: null,
+        createdAt: at,
+      });
+    }
+    await store.insertSubmissionVersion({
+      id: randomUUID(),
+      submissionId: submission.id,
+      version: next + 1,
+      url: submission.url,
+      hook: submission.hook,
+      acceptedAt: null,
+      createdAt: at,
+    });
+  } catch (error) {
+    if (!hasPgCode(error, "42P01")) throw error;
+  }
+}
+
+/** The link the company accepted is marked, so a later change cannot rewrite it. */
+async function snapshotAcceptedLink(store: UgcStore, submission: Submission) {
+  try {
+    if ((await store.listSubmissionVersions(submission.id)).length === 0) {
+      await store.insertSubmissionVersion({
+        id: randomUUID(),
+        submissionId: submission.id,
+        version: 1,
+        url: submission.url,
+        hook: submission.hook,
+        acceptedAt: null,
+        createdAt: store.now(),
+      });
+    }
+    await store.markSubmissionVersionAccepted(submission.id, store.now());
+  } catch (error) {
+    if (!hasPgCode(error, "42P01")) throw error;
+  }
+}
+
+/**
+ * The company says the link of a video that waits for its decision does not
+ * open (U5, D573). The creator may then send another link without using the
+ * included revision; the review time starts again with the new link.
+ */
+export async function reportBrokenLink(
+  userId: string | null,
+  inviteId: string,
+) {
+  const id = requireUser(userId);
+  const store = await db();
+  const invite = await store.getInvite(inviteId);
+  if (!invite) throw notFound();
+  const campaign = await store.getCampaign(invite.campaignId);
+  if (!campaign) throw notFound();
+  await requireMember(store, campaign.companyId, id);
+  const submission = await store.getSubmission(invite.id);
+  if (!submission || submission.status !== "submitted") {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "This video has no link waiting for review",
+    );
+  }
+  if (submission.linkReportedAt) {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "The link was already reported",
+    );
+  }
+  submission.linkReportedAt = store.now();
+  await store.saveSubmission(submission);
+  await store.audit(id, "ugc.link_reported", submission.id, "ugc_submission");
+  await store.notify({
+    type: "ugc.submission_decided",
+    userIds: [invite.creatorUserId],
+    payload: {
+      campaignId: campaign.id,
+      productName: campaign.productName,
+      decision: "link_broken",
+    },
+    email: true,
+  });
+  return { status: submission.status, linkReported: true as const };
 }

@@ -227,7 +227,13 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
   ugcSubmissionDecided: strict({
     campaignId: idSchema,
     productName: z.string().min(1).max(120),
-    decision: z.enum(["changes_requested", "accepted", "rejected", "winner"]),
+    decision: z.enum([
+      "changes_requested",
+      "accepted",
+      "rejected",
+      "winner",
+      "link_broken",
+    ]),
   }),
   ugcDeadline: strict({
     campaignId: idSchema,

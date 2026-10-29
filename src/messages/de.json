@@ -1255,11 +1255,11 @@
       "ugcSubmissionDecided": {
         "inapp": {
           "title": "Video geprüft",
-          "body": "{decision, select, changes_requested {Eine Überarbeitung wurde erbeten.} accepted {Das Video wurde angenommen.} rejected {Das Video wurde abgelehnt.} winner {Das Video wurde als Gewinner markiert.} other {Das Video wurde geprüft.}} Produkt: „{productName}“."
+          "body": "{decision, select, changes_requested {Eine Überarbeitung wurde erbeten.} accepted {Das Video wurde angenommen.} rejected {Das Video wurde abgelehnt.} winner {Das Video wurde als Gewinner markiert.} link_broken {Das Unternehmen konnte den Videolink nicht öffnen. Sende einen funktionierenden Link.} other {Das Video wurde geprüft.}} Produkt: „{productName}“."
         },
         "email": {
           "subject": "Video geprüft: {productName}",
-          "body": "{decision, select, changes_requested {Eine Überarbeitung wurde erbeten.} accepted {Das Video wurde angenommen.} rejected {Das Video wurde abgelehnt.} winner {Das Video wurde als Gewinner markiert.} other {Das Video wurde geprüft.}} Produkt: „{productName}“."
+          "body": "{decision, select, changes_requested {Eine Überarbeitung wurde erbeten.} accepted {Das Video wurde angenommen.} rejected {Das Video wurde abgelehnt.} winner {Das Video wurde als Gewinner markiert.} link_broken {Das Unternehmen konnte den Videolink nicht öffnen. Sende einen funktionierenden Link.} other {Das Video wurde geprüft.}} Produkt: „{productName}“."
         }
       },
       "ugcDeadline": {
@@ -4236,6 +4236,12 @@
     "title": "UGC-Videos",
     "intro": "Kurze Videos von echten Menschen für Anzeigen und soziale Netzwerke. Ein Briefing, Creator bewerben sich, Sie stellen die Gewählten ein.",
     "moneyNote": "Der Betrag wird in Cent gespeichert. In diesem Schritt wird nichts berechnet oder ausgezahlt.",
+    "linkVersionsTitle": "Link-Versionen",
+    "linkVersionLine": "Version {n} · {date}",
+    "linkAccepted": "angenommen",
+    "brokenLink": "Der Link öffnet sich nicht",
+    "brokenLinkWaiting": "Du hast gemeldet, dass sich der Link nicht öffnet. Wir warten auf einen neuen Link.",
+    "brokenLinkCreator": "Das Unternehmen meldet, dass sich der Link nicht öffnet. Sende einen funktionierenden Link; deine enthaltene Überarbeitung wird nicht verbraucht.",
     "roomReport": "Melden",
     "roomReportReason": "Grund",
     "roomReportSend": "Meldung senden",
