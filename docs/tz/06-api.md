@@ -82,7 +82,7 @@
 **Applications**
 
 - `POST /api/applications` — кандидат — `{ jobId, coverNote? }`; imported → 422 EXTERNAL_APPLY; неполный профиль → 422 PROFILE_INCOMPLETE; дубль → 409 (D27).
-- `GET /api/applications` — role-scoped: `?as=candidate` свои; `?as=employer&jobId=` по своим вакансиям (member).
+- `GET /api/applications` — role-scoped: `?as=candidate` свои; `?as=employer&jobId=` по своим вакансиям (member). Для employer доступны `status` (enum статусов заявки), курсор и limit; фильтр применяется до пагинации. Ответ включает `items`, `nextCursor`, `jobTitle` и `counts` со всеми статусами и `all`; счётчики охватывают всю вакансию независимо от фильтра и страницы.
 - `GET /api/applications/:id` — кандидат-владелец или member; при открытии member-ом статус `applied` → `viewed` (идемпотентно).
 - `PATCH /api/applications/:id/status` `{ to }` — через `transitionApplication`; `to='shortlisted'` → 422 (только express-interest).
 - `POST /api/applications/:id/withdraw` — кандидат.

@@ -96,6 +96,27 @@ async function insertJob(employerId: string) {
   return jobId;
 }
 
+async function insertWithdrawnApplications(
+  jobId: string,
+  candidateId: string,
+  count: number,
+) {
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) throw new Error("DATABASE_URL is required.");
+  const client = new pg.Client({ connectionString });
+  await client.connect();
+  try {
+    await client.query(
+      `insert into public.applications (job_id, candidate_id, status)
+       select $1, $2, 'withdrawn'::public.application_status
+       from generate_series(1, $3::int)`,
+      [jobId, candidateId, count],
+    );
+  } finally {
+    await client.end();
+  }
+}
+
 async function markShortlisted(applicationId: string) {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL is required.");
@@ -143,7 +164,34 @@ test("employer views an application, then moves it to interview, offer and hired
   const candidateMe = await page.request.get("/api/me");
   const candidateId = ((await candidateMe.json()) as { id: string }).id;
 
-  await employer.goto(`/en/employer/jobs/${jobId}/applications`);
+  await insertWithdrawnApplications(jobId, candidateId, 21);
+  const filteredApiPage = await employer.request.get(
+    `/api/applications?as=employer&jobId=${jobId}&status=withdrawn&limit=50`,
+  );
+  expect(filteredApiPage.status()).toBe(200);
+  expect(await filteredApiPage.json()).toMatchObject({
+    counts: { all: 22, applied: 1, withdrawn: 21 },
+    items: expect.arrayContaining([
+      expect.objectContaining({ status: "withdrawn" }),
+    ]),
+  });
+
+  await employer.goto(
+    `/en/employer/jobs/${jobId}/applications?status=withdrawn`,
+  );
+  await expect(
+    employer.getByRole("link", { name: "Withdrawn 21" }),
+  ).toHaveAttribute("aria-current", "page");
+  await employer.getByRole("link", { name: "Next page" }).click();
+  const nextPageUrl = new URL(employer.url());
+  expect(nextPageUrl.searchParams.get("status")).toBe("withdrawn");
+  expect(nextPageUrl.searchParams.get("cursor")).toBeTruthy();
+  await expect(employer.getByRole("link", { name: "Next page" })).toHaveCount(
+    0,
+  );
+
+  await employer.getByRole("link", { name: "Applied 1" }).click();
+  await expect(employer).toHaveURL(/status=applied/);
   await employer.getByRole("link", { name: "Ada Lovelace" }).click();
   await expect(employer.getByText("Viewed", { exact: true })).toBeVisible();
   await expect(employer.getByText(contactEmail)).toHaveCount(0);

@@ -26,6 +26,7 @@ export async function GET(request: Request) {
           jobId: query.jobId,
           cursor: query.cursor,
           limit: query.limit,
+          status: query.status,
         }),
       );
     }

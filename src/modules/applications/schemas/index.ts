@@ -16,6 +16,7 @@ export const listApplicationsQuery = z
     jobId: z.uuid().optional(),
     cursor: z.string().trim().min(1).max(200).optional(),
     limit: z.coerce.number().int().min(1).max(50).optional(),
+    status: z.enum(APPLICATION_STATUSES).optional(),
   })
   .strict();
 

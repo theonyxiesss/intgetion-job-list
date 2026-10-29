@@ -158,6 +158,28 @@ describe("employer application pipeline", () => {
     expect(page.items).toHaveLength(1);
     expect(page.nextCursor).toBeTruthy();
     expect(page.items[0]).not.toHaveProperty("contacts");
+    expect(page.jobTitle).toBe("Pipeline integration role");
+    expect(page.counts).toMatchObject({ all: 2, applied: 2, viewed: 0 });
+
+    const appliedPage = await listEmployerApplications(memberId, {
+      jobId,
+      status: "applied",
+      limit: 1,
+    });
+    expect(appliedPage.items).toHaveLength(1);
+    expect(appliedPage.items[0]?.status).toBe("applied");
+    expect(appliedPage.counts.applied).toBe(2);
+    expect(appliedPage.nextCursor).toBeTruthy();
+    const appliedRest = await listEmployerApplications(memberId, {
+      jobId,
+      status: "applied",
+      cursor: appliedPage.nextCursor ?? undefined,
+      limit: 1,
+    });
+    expect(appliedRest.items).toHaveLength(1);
+    expect(appliedRest.items[0]?.status).toBe("applied");
+    expect(appliedRest.nextCursor).toBeNull();
+
     const rest = await listEmployerApplications(memberId, {
       jobId,
       cursor: page.nextCursor ?? undefined,
@@ -173,6 +195,12 @@ describe("employer application pipeline", () => {
     expect(opened.status).toBe("viewed");
     expect(opened.candidateName).toBe("Ada Lovelace");
     expect(opened).not.toHaveProperty("contacts");
+    const viewedPage = await listEmployerApplications(memberId, {
+      jobId,
+      status: "viewed",
+    });
+    expect(viewedPage.items.map((item) => item.id)).toEqual([first.id]);
+    expect(viewedPage.counts).toMatchObject({ all: 2, applied: 1, viewed: 1 });
     const again = await openApplication(employerId, first.id);
     expect(again.status).toBe("viewed");
     const viewed = await getDb().execute<{ n: number }>(sql`
