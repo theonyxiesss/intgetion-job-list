@@ -127,3 +127,15 @@
 - **Использование малое:** 25 контрактов в основной сети Base и 0 в тестовой. Это подтверждает риск §6.5: контракт мало проверен практикой.
 
 Шаг 2 (прототип в Base Sepolia с тестовыми токенами) — только после «да»: нужен тестовый кошелёк и тестовые токены.
+
+## 13. Шаг 2а — сделано (2026-10-27, локально)
+
+Код без сети, без базы и без маршрутов; прямая оплата D463 не тронута; переменные окружения не добавлялись.
+
+- `src/lib/billing/escrow.ts` — интерфейс Smart Invoice (фабрика `create`, чтение контракта, `balanceOf`), адрес фабрики только Base Sepolia, тип `escrow`, хэш заказа `escrowDetails`, упаковка и распаковка `_data` в порядке `_handleData`, `readEscrow(reader, address)`. Адреса токена и wrapped native token не зашиты — их передаёт вызывающий.
+- `src/modules/freelance/service/escrow-service.ts` — `escrowTerms` (один этап = цена пакета, срок = доставка + 14 дней, арбитр `INDIVIDUAL`, без шага verification), `escrowMismatches` (клиент, исполнитель, токен, арбитр, тип арбитра, ставка 1/20, срок, хэш заказа, суммы), `escrowState` (`unfunded`, `funded`, `disputed`, `settled`, `expired`).
+- Важная находка при чтении исходника: `release`, `withdraw` и `resolve` все ставят `milestone = amounts.length`, поэтому по состоянию нельзя понять, кому ушли деньги. Шаг 2б читает событие транзакции (Release / Withdraw / Resolve).
+- Тесты: `src/lib/billing/escrow.test.ts`, `src/modules/freelance/__tests__/escrow-service.test.ts` — 32 теста, синтетические адреса.
+- Проверки: `pnpm typecheck` 0, `pnpm lint` 0, `pnpm test` 234 файла / 1714 тестов зелёные, `pnpm env:check` 0.
+
+Не сделано в 2а (по плану): флаг `FREELANCE_ESCROW` и переменные окружения (нужно «да» на `.env*`), миграция и статус `disputed`, новые переходы заказа (`in_progress/delivered → disputed`, выход из спора, `in_progress → cancelled` после возврата), маршруты, экран, Spoki, разбор событий транзакций.
