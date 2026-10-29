@@ -6,7 +6,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import {
   CAMPAIGN_GROUPS,
-  campaignGroup,
+  companyDeskPage,
   pickGroup,
   usdLabel,
   type WorkspaceCampaign,
@@ -20,6 +20,7 @@ import {
   NeedCompany,
 } from "@/modules/ugc/ui/desk";
 import { requireDeskUser, loadDesk, nextHref, nextKey } from "../desk-data";
+import { listHref } from "../desk-query";
 
 export const dynamic = "force-dynamic";
 
@@ -39,32 +40,56 @@ export default async function CampaignListPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ view?: string }>;
+  searchParams: Promise<{
+    view?: string;
+    company?: string;
+    q?: string;
+    page?: string;
+  }>;
 }) {
   const [{ locale }, query] = await Promise.all([params, searchParams]);
   setRequestLocale(locale);
   const userId = await requireDeskUser(locale);
   return (
     <Suspense fallback={<DeskSkeleton />}>
-      <CampaignListBody userId={userId} view={query.view} />
+      <CampaignListBody userId={userId} query={query} />
     </Suspense>
   );
 }
 
 async function CampaignListBody({
   userId,
-  view: rawView,
+  query,
 }: {
   userId: string;
-  view?: string;
+  query: { view?: string; company?: string; q?: string; page?: string };
 }) {
   const d = await getTranslations("ugcDesk");
   const h = await getTranslations("ugcHub");
   const desk = await loadDesk(userId);
-  const view = pickGroup(CAMPAIGN_GROUPS, rawView);
-  const rows = desk.campaigns.filter(
-    (row) => view === "all" || campaignGroup(row.status) === view,
-  );
+  const view = pickGroup(CAMPAIGN_GROUPS, query.view);
+  // A company id that is not the member's own gives an empty list, not a leak.
+  const company = desk.companies.find((row) => row.id === query.company);
+  const search = (query.q ?? "").trim().slice(0, 80);
+  const paged = await companyDeskPage(userId, {
+    companyId: company?.id,
+    group: view,
+    search,
+    page: Number(query.page) || 1,
+  });
+  const rows = paged.items;
+  const pages = Math.max(1, Math.ceil(paged.total / paged.pageSize));
+  const href = (over: {
+    view?: string;
+    company?: string | null;
+    page?: number;
+  }) =>
+    listHref({
+      view: over.view ?? view,
+      company: over.company === undefined ? company?.id : over.company,
+      q: search,
+      page: over.page ?? 1,
+    });
   const stepLabel = (row: WorkspaceCampaign) =>
     row.progress.step === "done"
       ? h("stepDone")
@@ -80,7 +105,11 @@ async function CampaignListBody({
   return (
     <DeskShell
       active="campaigns"
-      title={d("nav.campaigns")}
+      title={
+        company && desk.companies.length > 1
+          ? `${d("nav.campaigns")} · ${company.name}`
+          : d("nav.campaigns")
+      }
       intro={d("campaignsIntro")}
       counts={desk.counts}
     >
@@ -88,21 +117,63 @@ async function CampaignListBody({
         <NeedCompany />
       ) : (
         <>
+          {desk.companies.length > 1 ? (
+            <DeskFilter
+              label={d("companyLabel")}
+              items={[
+                {
+                  value: "all",
+                  label: d("companyAll"),
+                  href: href({ company: null }),
+                  active: !company,
+                  count: paged.groups.all,
+                },
+                ...desk.companies.map((row) => ({
+                  value: row.id,
+                  label: row.name,
+                  href: href({ company: row.id }),
+                  active: company?.id === row.id,
+                })),
+              ]}
+            />
+          ) : null}
           <DeskFilter
             label={d("filterLabel")}
             items={CAMPAIGN_GROUPS.map((group) => ({
               value: group,
               label: d(`campaignGroup.${group}`),
-              href:
-                group === "active"
-                  ? "/campaigns/list"
-                  : `/campaigns/list?view=${group}`,
+              href: href({ view: group }),
               active: group === view,
-              count: desk.campaigns.filter(
-                (row) => group === "all" || campaignGroup(row.status) === group,
-              ).length,
+              count: paged.groups[group],
             }))}
           />
+          <form
+            action="/campaigns/list"
+            method="get"
+            role="search"
+            className="flex flex-wrap items-end gap-3"
+          >
+            <input type="hidden" name="view" value={view} />
+            {company ? (
+              <input type="hidden" name="company" value={company.id} />
+            ) : null}
+            <label className="flex min-w-0 flex-1 flex-col gap-2">
+              <span className="t-label text-fg-muted">{d("searchLabel")}</span>
+              <input
+                type="search"
+                name="q"
+                defaultValue={search}
+                maxLength={80}
+                className="w-full min-h-11 rounded-md border border-line-strong bg-surface px-3 text-fg"
+              />
+            </label>
+            <button
+              type="submit"
+              className="inline-flex min-h-11 items-center rounded-full border border-line-strong px-5"
+            >
+              {d("searchButton")}
+            </button>
+          </form>
           {rows.length === 0 ? (
             <DeskEmpty
               title={d("campaignsEmpty")}
@@ -195,6 +266,34 @@ async function CampaignListBody({
                   </li>
                 ))}
               </ul>
+              {pages > 1 ? (
+                <nav
+                  aria-label={d("pagerLabel")}
+                  className="flex flex-wrap items-center justify-between gap-3"
+                >
+                  <span className="t-data text-fg-muted">
+                    {d("pagerOf", { page: paged.page, pages })}
+                  </span>
+                  <span className="flex gap-3">
+                    {paged.page > 1 ? (
+                      <ButtonLink
+                        href={href({ page: paged.page - 1 })}
+                        variant="secondary"
+                      >
+                        {d("pagerPrev")}
+                      </ButtonLink>
+                    ) : null}
+                    {paged.page < pages ? (
+                      <ButtonLink
+                        href={href({ page: paged.page + 1 })}
+                        variant="secondary"
+                      >
+                        {d("pagerNext")}
+                      </ButtonLink>
+                    ) : null}
+                  </span>
+                </nav>
+              ) : null}
             </>
           )}
         </>

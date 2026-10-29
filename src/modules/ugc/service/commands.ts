@@ -156,7 +156,7 @@ export function publicCreatorCard(profile: CreatorProfile) {
 }
 
 /** A recorded price. `sent` stays false: the platform does not transfer it. */
-function moneyRecord(row: Payout | null) {
+export function moneyRecord(row: Payout | null) {
   if (!row) return null;
   return {
     amountMinor: row.amountMinor.toString(),
@@ -167,7 +167,7 @@ function moneyRecord(row: Payout | null) {
 }
 
 /** View counts stay labeled reported. The page is never fetched (phase B). */
-function forReader(row: Submission | null) {
+export function forReader(row: Submission | null) {
   if (!row) return null;
   return {
     status: row.status,
@@ -180,7 +180,7 @@ function forReader(row: Submission | null) {
   };
 }
 
-function briefForReaders(campaign: Campaign) {
+export function briefForReaders(campaign: Campaign) {
   return {
     id: campaign.id,
     productName: campaign.productName,

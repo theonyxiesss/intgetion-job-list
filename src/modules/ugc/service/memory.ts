@@ -115,6 +115,36 @@ export class MemoryUgcStore implements UgcStore {
       (row) => row.campaignId === campaignId,
     );
   }
+  async listInvitesForCampaigns(campaignIds: readonly string[]) {
+    const wanted = new Set(campaignIds);
+    return [...this.invites.values()].filter((row) =>
+      wanted.has(row.campaignId),
+    );
+  }
+  async getProfiles(userIds: readonly string[]) {
+    const out = new Map<string, CreatorProfile>();
+    for (const id of userIds) {
+      const profile = this.profiles.get(id);
+      if (profile) out.set(id, profile);
+    }
+    return out;
+  }
+  async listPayoutsBySubmissions(submissionIds: readonly string[]) {
+    const wanted = new Set(submissionIds);
+    const out = new Map<string, Payout>();
+    for (const row of this.payouts.values()) {
+      if (wanted.has(row.submissionId)) out.set(row.submissionId, row);
+    }
+    return out;
+  }
+  async confirmedDepositsMinor(campaignIds: readonly string[]) {
+    const out = new Map<string, bigint>();
+    for (const id of campaignIds) {
+      const amount = this.deposits.get(id);
+      if (amount !== undefined) out.set(id, amount);
+    }
+    return out;
+  }
   async listInvitesForCreator(userId: string) {
     return [...this.invites.values()].filter(
       (row) => row.creatorUserId === userId,

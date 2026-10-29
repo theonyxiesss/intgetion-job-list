@@ -122,6 +122,38 @@ export type DepositState = {
   deposit: DepositView | null;
 };
 
+/**
+ * `campaignDepositState` for briefs the caller already proved to be a
+ * member of, in one read instead of one per brief (U2, TZ 48).
+ */
+export async function depositStatesFor(
+  campaigns: readonly {
+    id: string;
+    status: string;
+    videosWanted: number;
+    bountyMinor: bigint;
+  }[],
+): Promise<Map<string, DepositState>> {
+  const latest = await repo.latestDeposits(campaigns.map((row) => row.id));
+  const required = escrowOn();
+  const out = new Map<string, DepositState>();
+  for (const campaign of campaigns) {
+    const row = latest.get(campaign.id) ?? null;
+    const paid = row?.status === "confirmed";
+    out.set(campaign.id, {
+      required,
+      budgetMinor: ugcBudgetMinor(
+        campaign.videosWanted,
+        Number(campaign.bountyMinor),
+      ).toString(),
+      payable: required && campaign.status === "open" && !paid,
+      paid,
+      deposit: row ? view(row) : null,
+    });
+  }
+  return out;
+}
+
 /** What the brief page and Spoki say about the budget. Members only. */
 export async function campaignDepositState(
   userId: string | null,

@@ -34,6 +34,18 @@ export interface UgcStore {
   findInvite(campaignId: string, userId: string): Promise<Invite | null>;
   listInvites(campaignId: string): Promise<Invite[]>;
   listInvitesForCreator(userId: string): Promise<Invite[]>;
+  /** Invites of many briefs in one read (U2, TZ 48): no read per brief. */
+  listInvitesForCampaigns(campaignIds: readonly string[]): Promise<Invite[]>;
+  /** Creator profiles in one read; ids without a profile are absent. */
+  getProfiles(userIds: readonly string[]): Promise<Map<string, CreatorProfile>>;
+  /** Payouts of many submissions in one read, keyed by submission id. */
+  listPayoutsBySubmissions(
+    submissionIds: readonly string[],
+  ): Promise<Map<string, Payout>>;
+  /** Confirmed budgets of many briefs in one read, keyed by brief id. */
+  confirmedDepositsMinor(
+    campaignIds: readonly string[],
+  ): Promise<Map<string, bigint>>;
   insertInvite(row: Invite): Promise<void>;
   saveInvite(row: Invite): Promise<void>;
   offersToCreatorOnDay(userId: string, day: string): Promise<number>;

@@ -158,7 +158,13 @@ export {
 } from "./escrow-rules";
 export { companyNextStep, creatorNextStep, ugcNextStep } from "./next-step";
 export type { UgcNextStep } from "./next-step";
-export { companyWorkspace, workspaceMatches } from "./workspace";
+export {
+  companyDeskPage,
+  companyWorkspace,
+  DESK_PAGE_SIZE,
+  workspaceMatches,
+} from "./workspace";
+export type { DeskPage } from "./workspace";
 export type {
   WorkspaceCampaign,
   WorkspaceMatch,

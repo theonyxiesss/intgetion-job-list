@@ -480,7 +480,8 @@ export async function DeskFilter<T extends string>({
     label: string;
     href: string;
     active: boolean;
-    count: number;
+    /** Left out when a count would mean nothing, as for a company. */
+    count?: number;
   }[];
 }) {
   return (
@@ -499,7 +500,9 @@ export async function DeskFilter<T extends string>({
               )}
             >
               {item.label}
-              <span className="t-data">{item.count}</span>
+              {item.count === undefined ? null : (
+                <span className="t-data">{item.count}</span>
+              )}
             </Link>
           </li>
         ))}

@@ -314,6 +314,68 @@ export function productionUgcStore(): UgcStore {
         .where(eq(ugcInvites.campaignId, campaignId));
       return rows.map(inviteOf);
     },
+    async listInvitesForCampaigns(campaignIds) {
+      if (campaignIds.length === 0) return [];
+      const rows = await db
+        .select()
+        .from(ugcInvites)
+        .where(inArray(ugcInvites.campaignId, [...campaignIds]));
+      return rows.map(inviteOf);
+    },
+    async getProfiles(userIds) {
+      const out = new Map<string, CreatorProfile>();
+      if (userIds.length === 0) return out;
+      const rows = await db
+        .select({
+          profile: creatorProfiles,
+          country: userProfiles.country,
+          languages: userProfiles.languages,
+        })
+        .from(creatorProfiles)
+        .leftJoin(userProfiles, eq(userProfiles.userId, creatorProfiles.userId))
+        .where(inArray(creatorProfiles.userId, [...userIds]));
+      for (const row of rows) {
+        out.set(
+          row.profile.userId,
+          profileOf(row.profile, {
+            country: row.country,
+            languages: row.languages,
+          }),
+        );
+      }
+      return out;
+    },
+    async listPayoutsBySubmissions(submissionIds) {
+      const out = new Map<string, Payout>();
+      if (submissionIds.length === 0) return out;
+      const rows = await db
+        .select()
+        .from(ugcPayouts)
+        .where(inArray(ugcPayouts.submissionId, [...submissionIds]));
+      for (const row of rows) out.set(row.submissionId, payoutOf(row));
+      return out;
+    },
+    async confirmedDepositsMinor(campaignIds) {
+      const out = new Map<string, bigint>();
+      if (campaignIds.length === 0) return out;
+      const rows = await db.execute<{
+        campaign_id: string;
+        amount_minor: string;
+      }>(sql`
+        select campaign_id, amount_minor::text as amount_minor
+        from public.ugc_deposits
+        where status = 'confirmed' and campaign_id in (${sql.join(
+          campaignIds.map((id) => sql`${id}`),
+          sql`, `,
+        )})
+      `);
+      for (const row of rows) {
+        if (!out.has(row.campaign_id)) {
+          out.set(row.campaign_id, BigInt(row.amount_minor));
+        }
+      }
+      return out;
+    },
     async listInvitesForCreator(userId) {
       const rows = await db
         .select()

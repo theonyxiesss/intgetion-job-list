@@ -49,6 +49,24 @@ export async function latestDeposit(
   return rows[0] ?? null;
 }
 
+/** `latestDeposit` for many briefs in one read, keyed by brief id (U2, TZ 48). */
+export async function latestDeposits(
+  campaignIds: readonly string[],
+): Promise<Map<string, DepositRow>> {
+  const out = new Map<string, DepositRow>();
+  if (campaignIds.length === 0) return out;
+  const rows = await getDb().execute<DepositRow>(sql`
+    select distinct on (campaign_id) ${COLUMNS} from public.ugc_deposits
+    where campaign_id in (${sql.join(
+      campaignIds.map((id) => sql`${id}`),
+      sql`, `,
+    )})
+    order by campaign_id, (status = 'confirmed') desc, created_at desc
+  `);
+  for (const row of rows) out.set(row.campaign_id, row);
+  return out;
+}
+
 export async function insertDeposit(input: {
   campaignId: string;
   payerUserId: string;

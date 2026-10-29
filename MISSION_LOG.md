@@ -3766,3 +3766,10 @@
 - Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (239 файлов, 1792 теста); `pnpm build` → 0.
 - Не проверено: вид под входом и на телефоне (квота Supabase). Сравнение готовых решений по правилу D570 для U1 взято из ТЗ 48 §2 (Insense, Billo, JoinBrands).
 - OPEN QUESTION: решения ТЗ 48 §14 (хранение видео, лицензия, срок проверки, переписка, выплаты) — для U3 и дальше.
+
+## 2026-10-29 — UGC U2 (чтения и контекст клиента) — DONE локально, часть не проверена
+
+- Сделано: пакетные чтения (`listInvitesForCampaigns`, `getProfiles`, `listPayoutsBySubmissions`, `confirmedDepositsMinor`, `latestDeposits`, `depositStatesFor`), переписанный `companyWorkspace` с `companyId`, `companyDeskPage`, страница `/campaigns/list` с пагинацией, поиском и выбором компании, `desk-query.ts`, тексты на 7 языках, 8 тестов. Миграций нет.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (240 файлов, 1800 тестов); `pnpm build` → 0.
+- Не проверено: SQL пакетных чтений на настоящей базе (интеграционные тесты UGC — только в CI); вид под входом и на телефоне. Остальные страницы кабинета не пагинируются.
+- Отклонения: нет. OPEN QUESTION: нет новых.
