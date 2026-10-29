@@ -453,6 +453,7 @@ export async function readCampaign(userId: string | null, campaignId: string) {
             pitch: invite.pitch,
             reminders: invite.reminders,
             revisionUsed: invite.revisionUsed,
+            shortlisted: invite.shortlisted ?? false,
             creator: profiles[index]
               ? publicCreatorCard(profiles[index])
               : null,
@@ -969,6 +970,40 @@ export async function acceptInvite(
     email: false,
   });
   return { status: invite.status };
+}
+
+/**
+ * The company's shortlist mark on an application (U3б, TZ 48 §6). Only the
+ * company's members, only while the creator has applied and nothing was
+ * offered. The creator is not told and nothing is hired or sent.
+ */
+export async function setShortlist(
+  userId: string | null,
+  inviteId: string,
+  on: boolean,
+) {
+  const id = requireUser(userId);
+  const store = await db();
+  const invite = await store.getInvite(inviteId);
+  if (!invite) throw notFound();
+  const campaign = await store.getCampaign(invite.campaignId);
+  if (!campaign) throw notFound();
+  await campaignForMember(store, campaign.id, id);
+  if (invite.status !== "applied") {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "Only an application can be shortlisted",
+    );
+  }
+  invite.shortlisted = on;
+  await store.saveInvite(invite);
+  await store.audit(
+    id,
+    on ? "ugc.shortlist_add" : "ugc.shortlist_remove",
+    invite.id,
+  );
+  return { inviteId: invite.id, shortlisted: on };
 }
 
 export async function declineInvite(userId: string | null, inviteId: string) {

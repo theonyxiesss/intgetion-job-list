@@ -191,6 +191,8 @@ export const ugcInvites = pgTable(
     /** Terms the offer carried and their hash; null on offers made before U3 (0074). */
     terms: jsonb("terms").$type<TermsSnapshot>(),
     termsHash: text("terms_hash"),
+    /** The company's own mark on an application (U3б, 0075). The creator never sees it. */
+    shortlisted: boolean("shortlisted").notNull().default(false),
     /** The hash the creator agreed to and when; null until they accept. */
     agreedHash: text("agreed_hash"),
     agreedAt: timestamp("agreed_at", { withTimezone: true }),

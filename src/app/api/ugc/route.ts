@@ -4,6 +4,7 @@ import { readJson, toErrorResponse } from "@/lib/http";
 import { requireUser } from "@/lib/auth-guards";
 import {
   acceptInvite,
+  setShortlist,
   applyToCampaign,
   closeCampaign,
   createCampaign,
@@ -71,6 +72,11 @@ const body = z.discriminatedUnion("action", [
     termsHash: z.string().length(64).optional(),
   }),
   z.object({ action: z.literal("decline"), inviteId: z.uuid() }),
+  z.object({
+    action: z.literal("shortlist"),
+    inviteId: z.uuid(),
+    on: z.boolean(),
+  }),
   z.object({
     action: z.literal("submit"),
     inviteId: z.uuid(),
@@ -161,6 +167,9 @@ export async function POST(request: Request) {
       return Response.json(
         await acceptInvite(id, input.inviteId, input.termsHash),
       );
+    }
+    if (input.action === "shortlist") {
+      return Response.json(await setShortlist(id, input.inviteId, input.on));
     }
     if (input.action === "decline") {
       return Response.json(await declineInvite(id, input.inviteId));

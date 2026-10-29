@@ -63,6 +63,8 @@ export type Invite = {
   /** U3: terms the offer carried; absent on offers made before 0074. */
   terms?: TermsSnapshot | null;
   termsHash?: string | null;
+  /** Company-only mark on an application; never shown to the creator. */
+  shortlisted?: boolean;
   agreedHash?: string | null;
   agreedAt?: Date | null;
   createdAt: Date;

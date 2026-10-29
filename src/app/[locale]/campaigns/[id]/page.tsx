@@ -238,7 +238,9 @@ export default async function CampaignPage({
   );
   const offerOpen =
     brief.status === "open" && (!deposit.required || deposit.paid);
-  const people = view.participants;
+  const people = [...view.participants].sort(
+    (a, b) => Number(b.shortlisted) - Number(a.shortlisted),
+  );
   const videos = people.filter((row) => row.submission);
   const countries = brief.countries.length
     ? brief.countries.join(", ")
@@ -449,6 +451,25 @@ export default async function CampaignPage({
                     </div>
                     <div className="flex flex-wrap items-center gap-3 md:justify-end">
                       <ParticipationStatus status={row.status} />
+                      {row.status === "applied" && row.shortlisted ? (
+                        <span className="t-body-s font-mono">
+                          {t("shortlisted")}
+                        </span>
+                      ) : null}
+                      {row.status === "applied" ? (
+                        <UgcAction
+                          action="shortlist"
+                          label={
+                            row.shortlisted
+                              ? t("shortlistRemove")
+                              : t("shortlistAdd")
+                          }
+                          body={{
+                            inviteId: row.inviteId,
+                            on: !row.shortlisted,
+                          }}
+                        />
+                      ) : null}
                       {row.status === "applied" && row.creator && offerOpen ? (
                         <UgcAction
                           action="offer"

@@ -220,6 +220,7 @@ async function detailsFor(
               pitch: invite.pitch,
               reminders: invite.reminders,
               revisionUsed: invite.revisionUsed,
+              shortlisted: invite.shortlisted ?? false,
               creator: profile ? publicCreatorCard(profile) : null,
               submission: forReader(submission),
               payout: moneyRecord(

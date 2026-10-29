@@ -55,6 +55,7 @@ export type {
 } from "./transitions";
 export {
   acceptInvite,
+  setShortlist,
   applyToCampaign,
   campaignWriteAllowed,
   campaignBudget,
