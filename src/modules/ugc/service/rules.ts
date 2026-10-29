@@ -32,6 +32,8 @@ export const UGC_ERRORS = {
   termsChanged: "UGC_TERMS_CHANGED",
   roomClosed: "UGC_ROOM_CLOSED",
   physicalOff: "UGC_PHYSICAL_OFF",
+  disputeOpen: "UGC_DISPUTE_OPEN",
+  disputeNotReady: "UGC_DISPUTE_NOT_READY",
   roomNotReady: "UGC_ROOM_NOT_READY",
   termsMismatch: "UGC_TERMS_MISMATCH",
 } as const;

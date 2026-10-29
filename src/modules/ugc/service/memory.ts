@@ -4,6 +4,7 @@ import type {
   CreatorProfile,
   Invite,
   JoinToken,
+  Dispute,
   Payout,
   RoomMessage,
   RoomReport,
@@ -251,6 +252,32 @@ export class MemoryUgcStore implements UgcStore {
   }
   async insertRoomMessage(row: RoomMessage) {
     this.roomMessages.push(row);
+  }
+  disputes: Dispute[] = [];
+  async listDisputes(inviteId: string) {
+    return this.disputes
+      .filter((row) => row.inviteId === inviteId)
+      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+  }
+  async insertDispute(row: Dispute) {
+    if (
+      this.disputes.some(
+        (item) => item.inviteId === row.inviteId && item.status !== "resolved",
+      )
+    ) {
+      throw Object.assign(new Error("duplicate"), { code: "23505" });
+    }
+    this.disputes.push({ ...row });
+  }
+  async getDispute(id: string) {
+    return this.disputes.find((row) => row.id === id) ?? null;
+  }
+  async saveDispute(row: Dispute) {
+    const at = this.disputes.findIndex((item) => item.id === row.id);
+    if (at >= 0) this.disputes[at] = { ...row };
+  }
+  async listUnresolvedDisputes() {
+    return this.disputes.filter((row) => row.status !== "resolved");
   }
   shipments = new Map<string, Shipment>();
   async getShipment(inviteId: string) {

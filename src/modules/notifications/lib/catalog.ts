@@ -245,6 +245,12 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
     inviteId: idSchema,
     stage: z.enum(["reminder", "last_day", "overdue"]),
   }),
+  ugcDispute: strict({
+    campaignId: idSchema,
+    productName: z.string().min(1).max(120),
+    inviteId: idSchema,
+    stage: z.enum(["opened", "resolved"]),
+  }),
   ugcMessage: strict({
     campaignId: idSchema,
     productName: z.string().min(1).max(120),
@@ -279,6 +285,7 @@ export const NOTIFICATION_TYPES = [
   "ugc.deadline",
   "ugc.review_due",
   "ugc.message",
+  "ugc.dispute",
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
@@ -515,6 +522,14 @@ export const NOTIFICATION_CATALOG: Readonly<
     policy: "immediate",
     emailDefault: false,
     payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.ugcMessage,
+  },
+  "ugc.dispute": {
+    type: "ugc.dispute",
+    i18nKey: "ugcDispute",
+    recipients: "ugcParty",
+    policy: "immediate",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.ugcDispute,
   },
 };
 

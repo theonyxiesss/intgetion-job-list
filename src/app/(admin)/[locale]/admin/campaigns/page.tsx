@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { formatMinor } from "@/lib/money";
 import { BILLING_CHAINS } from "@/lib/billing/chains";
 import {
+  listDisputeQueue,
   listEscalatedReviews,
   listRefundsDue,
   listReviewQueue,
@@ -30,6 +31,7 @@ export default async function AdminCampaignsPage({
   const refunds = await listRefundsDue(true);
   const escalated = await listEscalatedReviews(true);
   const roomReports = await listRoomReportQueue(true);
+  const disputes = await listDisputeQueue(true);
   const h = await getTranslations("ugcHub");
   const chains = BILLING_CHAINS.map((chain) => chain.id);
   const usd = (minor: string) =>
@@ -136,6 +138,58 @@ export default async function AdminCampaignsPage({
                 >
                   {t("roomOpen")}
                 </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+        <h2 className="font-medium">{t("adminDisputesTitle")}</h2>
+        {disputes.length === 0 ? (
+          <p className="text-fg-muted">{t("adminDisputesEmpty")}</p>
+        ) : (
+          <ul className="flex flex-col gap-4">
+            {disputes.map((row) => (
+              <li key={row.id} className="rounded-lg border border-line p-4">
+                <p className="font-medium">{row.productName}</p>
+                <p className="t-body-s text-fg-muted">
+                  {t(`disputeWho.${row.side}`)} ·{" "}
+                  {t(`disputeReason.${row.reason}`)} ·{" "}
+                  {t(`disputeStatus.${row.status}`)}
+                </p>
+                {row.note ? (
+                  <p className="break-words whitespace-pre-wrap">{row.note}</p>
+                ) : null}
+                <Link
+                  href={`/campaigns/${row.campaignId}/room/${row.inviteId}`}
+                  className="t-body-s underline underline-offset-4"
+                >
+                  {t("roomOpen")}
+                </Link>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {row.status === "open" ? (
+                    <UgcAction
+                      action="disputeDecide"
+                      label={t("adminDisputeTake")}
+                      body={{ disputeId: row.id, to: "in_review" }}
+                      primary
+                    />
+                  ) : null}
+                  {(["company", "creator", "agreed", "dismissed"] as const).map(
+                    (outcome) => (
+                      <UgcAction
+                        key={outcome}
+                        action="disputeDecide"
+                        label={t("adminDisputeClose", {
+                          outcome: t(`disputeOutcome.${outcome}`),
+                        })}
+                        body={{
+                          disputeId: row.id,
+                          to: "resolved",
+                          outcome,
+                        }}
+                      />
+                    ),
+                  )}
+                </div>
               </li>
             ))}
           </ul>

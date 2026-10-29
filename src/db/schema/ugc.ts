@@ -18,6 +18,9 @@ import type {
   UgcCampaignStatus,
   UgcDeclineReason,
   UgcDeliveryProblem,
+  UgcDisputeOutcome,
+  UgcDisputeReason,
+  UgcDisputeStatus,
   UgcReportReason,
   UgcCreatorStatus,
   UgcGoal,
@@ -460,3 +463,32 @@ export const ugcShipments = pgTable("ugc_shipments", {
   problem: text("problem").$type<UgcDeliveryProblem>(),
   problemAt: timestamp("problem_at", { withTimezone: true }),
 });
+
+/** A problem raised on an order and how support closed it (0083). */
+export const ugcDisputes = pgTable(
+  "ugc_disputes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    inviteId: uuid("invite_id")
+      .notNull()
+      .references(() => ugcInvites.id, { onDelete: "cascade" }),
+    openedBy: uuid("opened_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    side: text("side").$type<"company" | "creator">().notNull(),
+    reason: text("reason").$type<UgcDisputeReason>().notNull(),
+    note: text("note").notNull().default(""),
+    status: text("status").$type<UgcDisputeStatus>().notNull().default("open"),
+    outcome: text("outcome").$type<UgcDisputeOutcome>(),
+    resolvedBy: uuid("resolved_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("ugc_disputes_status_idx").on(table.status, table.createdAt),
+  ],
+);

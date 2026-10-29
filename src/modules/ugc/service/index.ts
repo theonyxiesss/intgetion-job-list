@@ -56,6 +56,9 @@ export type {
 export {
   acceptInvite,
   setShortlist,
+  openDispute,
+  listDisputeQueue,
+  decideDispute,
   markShipped,
   confirmReceived,
   reportDeliveryProblem,

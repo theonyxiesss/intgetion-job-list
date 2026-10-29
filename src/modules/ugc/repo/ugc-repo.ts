@@ -4,6 +4,7 @@ import {
   creatorProfiles,
   ugcCampaignVersions,
   ugcCampaigns,
+  ugcDisputes,
   ugcInvites,
   ugcJoinTokens,
   ugcPayouts,
@@ -32,6 +33,7 @@ import type {
   CreatorProfile,
   Invite,
   JoinToken,
+  Dispute,
   Payout,
   RoomMessage,
   RoomReport,
@@ -117,6 +119,21 @@ function inviteOf(row: InviteRow): Invite {
     declineReason: row.declineReason,
     agreedHash: row.agreedHash,
     agreedAt: row.agreedAt,
+    createdAt: row.createdAt,
+  };
+}
+
+function disputeOf(row: typeof ugcDisputes.$inferSelect): Dispute {
+  return {
+    id: row.id,
+    inviteId: row.inviteId,
+    openedBy: row.openedBy,
+    side: row.side,
+    reason: row.reason,
+    note: row.note,
+    status: row.status,
+    outcome: row.outcome,
+    resolvedAt: row.resolvedAt,
     createdAt: row.createdAt,
   };
 }
@@ -623,6 +640,51 @@ export function productionUgcStore(): UgcStore {
         authorId: row.authorId,
         body: row.body,
       });
+    },
+    async listDisputes(inviteId) {
+      const rows = await db
+        .select()
+        .from(ugcDisputes)
+        .where(eq(ugcDisputes.inviteId, inviteId))
+        .orderBy(ugcDisputes.createdAt);
+      return rows.map(disputeOf);
+    },
+    async insertDispute(row) {
+      await db.insert(ugcDisputes).values({
+        id: row.id,
+        inviteId: row.inviteId,
+        openedBy: row.openedBy,
+        side: row.side,
+        reason: row.reason,
+        note: row.note,
+      });
+    },
+    async getDispute(id) {
+      const [row] = await db
+        .select()
+        .from(ugcDisputes)
+        .where(eq(ugcDisputes.id, id))
+        .limit(1);
+      return row ? disputeOf(row) : null;
+    },
+    async saveDispute(row, by) {
+      await db
+        .update(ugcDisputes)
+        .set({
+          status: row.status,
+          outcome: row.outcome,
+          resolvedBy: row.status === "resolved" ? by : null,
+          resolvedAt: row.resolvedAt,
+        })
+        .where(eq(ugcDisputes.id, row.id));
+    },
+    async listUnresolvedDisputes() {
+      const rows = await db
+        .select()
+        .from(ugcDisputes)
+        .where(sql`${ugcDisputes.status} <> 'resolved'`)
+        .orderBy(ugcDisputes.createdAt);
+      return rows.map(disputeOf);
     },
     async getShipment(inviteId) {
       const [row] = await db

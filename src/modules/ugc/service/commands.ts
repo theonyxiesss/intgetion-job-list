@@ -26,10 +26,14 @@ import {
   UGC_NICHES,
   UGC_PLATFORMS,
   UGC_DECLINE_REASONS,
+  UGC_DISPUTE_OUTCOMES,
+  UGC_DISPUTE_REASONS,
   UGC_PHYSICAL_LIVE,
   UGC_REPORT_REASONS,
   UGC_RIGHTS,
   type UgcDeclineReason,
+  type UgcDisputeOutcome,
+  type UgcDisputeReason,
   type UgcReportReason,
   type UgcNiche,
   type UgcPlatform,
@@ -79,6 +83,7 @@ import type {
   BriefInput,
   Campaign,
   CreatorProfile,
+  Dispute,
   Invite,
   Payout,
   ProfileInput,
@@ -1930,6 +1935,14 @@ export type UgcRoom = {
   canShip: boolean;
   canConfirmReceipt: boolean;
   canReportProblem: boolean;
+  /** The latest dispute of the order, as both parties see it (U7). */
+  dispute: {
+    status: "open" | "in_review" | "resolved";
+    reason: UgcDisputeReason;
+    outcome: UgcDisputeOutcome | null;
+    side: RoomSide;
+  } | null;
+  canOpenDispute: boolean;
 };
 
 /**
@@ -1959,7 +1972,24 @@ export async function getUgcRoom(
     if (!hasPgCode(error, "42P01")) throw error;
   }
   const state = shipment ? deliveryState(shipment) : null;
+  let disputes: Dispute[] = [];
+  try {
+    disputes = await store.listDisputes(invite.id);
+  } catch (error) {
+    if (!hasPgCode(error, "42P01")) throw error;
+  }
+  const dispute = disputes[disputes.length - 1] ?? null;
   return {
+    dispute: dispute
+      ? {
+          status: dispute.status,
+          reason: dispute.reason,
+          outcome: dispute.outcome,
+          side: dispute.side,
+        }
+      : null,
+    canOpenDispute:
+      invite.status === "hired" && (!dispute || dispute.status === "resolved"),
     ready,
     writable: ready && UGC_ROOM_WRITABLE.includes(invite.status),
     side,
@@ -1999,6 +2029,8 @@ export async function getUgcRoom(
       shippedAt: shipment?.shippedAt.toISOString() ?? null,
       receivedAt: shipment?.receivedAt?.toISOString() ?? null,
       problemAt: shipment?.problemAt?.toISOString() ?? null,
+      disputeOpenedAt: dispute?.createdAt.toISOString() ?? null,
+      disputeResolvedAt: dispute?.resolvedAt?.toISOString() ?? null,
     }),
   };
 }
@@ -2446,4 +2478,183 @@ export async function reportDeliveryProblem(
   await store.saveShipment(shipment);
   await store.audit(id, "ugc.shipment_problem", invite.id, "ugc_invite");
   return { state: "problem" as const, reason };
+}
+
+/**
+ * A party says something went wrong with an order (U7, TZ 48 §10). Only for a
+ * hired order, one unresolved dispute at a time. It changes no status and
+ * pays nothing: support looks at it and records the outcome.
+ */
+export async function openDispute(
+  userId: string | null,
+  inviteId: string,
+  reason: UgcDisputeReason,
+  note = "",
+) {
+  const id = requireUser(userId);
+  if (!UGC_DISPUTE_REASONS.includes(reason)) {
+    throw validationError([{ path: "reason", problem: "invalid" }]);
+  }
+  const text = note.trim();
+  if (text.length > L.disputeNoteMax) {
+    throw validationError([{ path: "note", problem: "length" }]);
+  }
+  assertNoContacts(text, "note");
+  const store = await db();
+  const { invite, campaign, side } = await roomParty(store, inviteId, id);
+  if (invite.status !== "hired") {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "A problem can be raised on an order the creator agreed to",
+    );
+  }
+  await enforceRateLimit("ugcMessage", id);
+  try {
+    await store.insertDispute({
+      id: randomUUID(),
+      inviteId: invite.id,
+      openedBy: id,
+      side,
+      reason,
+      note: text,
+      status: "open",
+      outcome: null,
+      resolvedAt: null,
+      createdAt: store.now(),
+    });
+  } catch (error) {
+    if (hasPgCode(error, "23505")) {
+      throw new HttpError(
+        409,
+        UGC_ERRORS.disputeOpen,
+        "A problem is already open on this order",
+      );
+    }
+    if (hasPgCode(error, "42P01")) {
+      throw new HttpError(
+        503,
+        UGC_ERRORS.disputeNotReady,
+        "Problems on orders are not switched on yet",
+      );
+    }
+    throw error;
+  }
+  await store.audit(id, "ugc.dispute_opened", invite.id, "ugc_invite");
+  await store.notify({
+    type: "ugc.dispute",
+    userIds:
+      side === "creator"
+        ? await store.memberIds(campaign.companyId)
+        : [invite.creatorUserId],
+    payload: {
+      campaignId: campaign.id,
+      productName: campaign.productName,
+      inviteId: invite.id,
+      stage: "opened",
+    },
+    email: true,
+  });
+  return { status: "open" as const };
+}
+
+/** Unresolved disputes for support (U7). */
+export async function listDisputeQueue(isAdmin: boolean) {
+  if (!isAdmin) throw notFound();
+  const store = await db();
+  const rows = [];
+  let disputes: Dispute[] = [];
+  try {
+    disputes = await store.listUnresolvedDisputes();
+  } catch (error) {
+    if (!hasPgCode(error, "42P01")) throw error;
+  }
+  for (const dispute of disputes) {
+    const invite = await store.getInvite(dispute.inviteId);
+    const campaign = invite ? await store.getCampaign(invite.campaignId) : null;
+    if (!invite || !campaign) continue;
+    rows.push({
+      id: dispute.id,
+      status: dispute.status,
+      side: dispute.side,
+      reason: dispute.reason,
+      note: dispute.note,
+      at: dispute.createdAt.toISOString(),
+      campaignId: campaign.id,
+      inviteId: invite.id,
+      productName: campaign.productName,
+    });
+  }
+  return rows;
+}
+
+/**
+ * Support takes a dispute into review or closes it with an outcome (U7). The
+ * outcome is a record: it does not accept or reject a video or move money.
+ */
+export async function decideDispute(input: {
+  adminId: string | null;
+  isAdmin: boolean;
+  disputeId: string;
+  to: "in_review" | "resolved";
+  outcome?: UgcDisputeOutcome;
+}) {
+  if (!input.isAdmin) throw notFound();
+  const adminId = requireUser(input.adminId);
+  const store = await db();
+  const dispute = await store.getDispute(input.disputeId);
+  if (!dispute) throw notFound();
+  if (dispute.status === "resolved") {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "This dispute was already closed",
+    );
+  }
+  if (input.to === "in_review") {
+    if (dispute.status !== "open") {
+      throw new HttpError(
+        409,
+        errorCodes.invalidTransition,
+        "This dispute is already in review",
+      );
+    }
+    dispute.status = "in_review";
+    await store.saveDispute(dispute, adminId);
+    await store.audit(
+      adminId,
+      "ugc.dispute_in_review",
+      dispute.id,
+      "ugc_dispute",
+    );
+    return { status: "in_review" as const };
+  }
+  const outcome = input.outcome;
+  if (!outcome || !UGC_DISPUTE_OUTCOMES.includes(outcome)) {
+    throw validationError([{ path: "outcome", problem: "required" }]);
+  }
+  dispute.status = "resolved";
+  dispute.outcome = outcome;
+  dispute.resolvedAt = store.now();
+  await store.saveDispute(dispute, adminId);
+  await store.audit(adminId, "ugc.dispute_resolved", dispute.id, "ugc_dispute");
+  const invite = await store.getInvite(dispute.inviteId);
+  const campaign = invite ? await store.getCampaign(invite.campaignId) : null;
+  if (invite && campaign) {
+    await store.notify({
+      type: "ugc.dispute",
+      userIds: [
+        ...(await store.memberIds(campaign.companyId)),
+        invite.creatorUserId,
+      ],
+      payload: {
+        campaignId: campaign.id,
+        productName: campaign.productName,
+        inviteId: invite.id,
+        stage: "resolved",
+      },
+      email: true,
+    });
+  }
+  return { status: "resolved" as const, outcome };
 }

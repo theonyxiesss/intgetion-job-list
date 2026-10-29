@@ -62,7 +62,14 @@ export type RoomFeedItem =
       kind: "event";
       id: string;
       at: string;
-      event: "offered" | "agreed" | "shipped" | "received" | "problem";
+      event:
+        | "offered"
+        | "agreed"
+        | "shipped"
+        | "received"
+        | "problem"
+        | "dispute_opened"
+        | "dispute_resolved";
     };
 
 export type RoomFeedSources = {
@@ -81,6 +88,9 @@ export type RoomFeedSources = {
   shippedAt?: string | null;
   receivedAt?: string | null;
   problemAt?: string | null;
+  /** The latest dispute of the order (U7). */
+  disputeOpenedAt?: string | null;
+  disputeResolvedAt?: string | null;
 };
 
 // Same instant: the event first, then the talk it started; messages keep
@@ -109,6 +119,8 @@ export function buildRoomFeed(source: RoomFeedSources): RoomFeedItem[] {
     ["shipped", source.shippedAt],
     ["received", source.receivedAt],
     ["problem", source.problemAt],
+    ["dispute_opened", source.disputeOpenedAt],
+    ["dispute_resolved", source.disputeResolvedAt],
   ] as const) {
     if (at) items.push({ kind: "event", id: event, at, event });
   }

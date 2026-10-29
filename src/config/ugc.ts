@@ -81,6 +81,26 @@ export const UGC_REPORT_REASONS = [
 ] as const;
 export type UgcReportReason = (typeof UGC_REPORT_REASONS)[number];
 
+/** What a party may say went wrong with an order (U7, TZ 48 §10). */
+export const UGC_DISPUTE_REASONS = [
+  "no_response",
+  "quality",
+  "payment",
+  "link",
+  "other",
+] as const;
+export type UgcDisputeReason = (typeof UGC_DISPUTE_REASONS)[number];
+
+/** How support closed a dispute: in whose favour, agreed, or dismissed. */
+export const UGC_DISPUTE_OUTCOMES = [
+  "company",
+  "creator",
+  "agreed",
+  "dismissed",
+] as const;
+export type UgcDisputeOutcome = (typeof UGC_DISPUTE_OUTCOMES)[number];
+export type UgcDisputeStatus = "open" | "in_review" | "resolved";
+
 /** What a creator may say is wrong with a product that was sent (U6). */
 export const UGC_DELIVERY_PROBLEMS = [
   "not_arrived",
@@ -104,6 +124,8 @@ export const UGC_LIMITS = {
   offerSilenceDays: 7,
   /** D574: default licence and review terms shown to the creator. */
   licenseMonths: 6,
+  /** U7: size of the note that comes with a dispute. */
+  disputeNoteMax: 500,
   /** U6: sizes of what the company types about a shipment. */
   carrierMax: 60,
   trackingMax: 60,

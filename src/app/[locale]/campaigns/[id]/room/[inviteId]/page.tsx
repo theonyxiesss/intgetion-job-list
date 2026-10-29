@@ -9,6 +9,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getUgcRoom } from "@/modules/ugc/service";
 import { DeliveryPanel } from "@/modules/ugc/ui/delivery-panel";
+import { DisputePanel } from "@/modules/ugc/ui/dispute-panel";
 import { ReportMessage } from "@/modules/ugc/ui/report-message";
 import { RoomForm } from "@/modules/ugc/ui/room-form";
 
@@ -59,6 +60,11 @@ export default async function UgcRoomPage({
               {t("roomNotReady")}
             </p>
           ) : null}
+          <DisputePanel
+            inviteId={inviteId}
+            dispute={room.dispute}
+            canOpen={room.canOpenDispute}
+          />
           {room.shipment || room.canShip ? (
             <DeliveryPanel
               inviteId={inviteId}
@@ -86,6 +92,8 @@ export default async function UgcRoomPage({
                           shipped: "roomEventShipped",
                           received: "roomEventReceived",
                           problem: "roomEventProblem",
+                          dispute_opened: "roomEventDisputeOpened",
+                          dispute_resolved: "roomEventDisputeResolved",
                         }[item.event],
                       )}{" "}
                       <time dateTime={item.at} className="font-mono">

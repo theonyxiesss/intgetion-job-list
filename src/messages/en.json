@@ -1291,6 +1291,16 @@
           "subject": "New message in an order",
           "body": "You have a new message about “{productName}”."
         }
+      },
+      "ugcDispute": {
+        "inapp": {
+          "title": "Problem with an order",
+          "body": "{stage, select, opened {A problem was reported on your order for “{productName}”. Support will look at it.} other {Support closed the problem on the order for “{productName}”. Open the order to see the outcome.}}"
+        },
+        "email": {
+          "subject": "Problem with an order",
+          "body": "{stage, select, opened {A problem was reported on your order for “{productName}”. Support will look at it.} other {Support closed the problem on the order for “{productName}”. Open the order to see the outcome.}}"
+        }
       }
     },
     "freelance": {
@@ -4742,6 +4752,40 @@
     "title": "UGC videos",
     "intro": "Short videos from real people for ads and social posts. One brief, creators apply, you hire the ones you pick.",
     "moneyNote": "The amount is recorded in cents. Nothing is charged or paid in this step.",
+    "disputeTitle": "Problem with the order",
+    "disputeOpen": "Report a problem",
+    "disputeReasonLabel": "What went wrong",
+    "disputeNoteLabel": "What happened (optional)",
+    "disputeHint": "Support will look at it and write down the outcome. It does not accept the video or pay anything by itself. No contacts or links.",
+    "disputeSend": "Send to support",
+    "roomEventDisputeOpened": "A problem was reported",
+    "roomEventDisputeResolved": "Support closed the problem",
+    "adminDisputesTitle": "Problems on orders",
+    "adminDisputesEmpty": "No open problems.",
+    "adminDisputeTake": "Take into review",
+    "adminDisputeClose": "Close: {outcome}",
+    "disputeReason": {
+      "no_response": "No response from the other side",
+      "quality": "Quality of the work",
+      "payment": "Payment",
+      "link": "The link",
+      "other": "Something else"
+    },
+    "disputeStatus": {
+      "open": "Waiting for support",
+      "in_review": "Support is looking at it",
+      "resolved": "Closed"
+    },
+    "disputeOutcome": {
+      "company": "in favour of the company",
+      "creator": "in favour of the creator",
+      "agreed": "agreed by both",
+      "dismissed": "dismissed"
+    },
+    "disputeWho": {
+      "company": "The company",
+      "creator": "The creator"
+    },
     "deliveryTitle": "Delivery of the product",
     "deliveryNone": "The product has not been sent yet.",
     "deliverySent": "Sent by {carrier}, tracking {tracking}",

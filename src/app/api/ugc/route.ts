@@ -1,6 +1,8 @@
 import { z } from "zod";
 import {
   UGC_DECLINE_REASONS,
+  UGC_DISPUTE_OUTCOMES,
+  UGC_DISPUTE_REASONS,
   UGC_GOALS,
   UGC_NICHES,
   UGC_PLATFORMS,
@@ -12,6 +14,8 @@ import { requireUser } from "@/lib/auth-guards";
 import {
   acceptInvite,
   setShortlist,
+  openDispute,
+  decideDispute,
   UGC_DELIVERY_PROBLEMS,
   markShipped,
   confirmReceived,
@@ -105,6 +109,18 @@ const body = z.discriminatedUnion("action", [
     action: z.literal("deliveryProblem"),
     inviteId: z.uuid(),
     reason: z.enum(UGC_DELIVERY_PROBLEMS),
+  }),
+  z.object({
+    action: z.literal("disputeOpen"),
+    inviteId: z.uuid(),
+    reason: z.enum(UGC_DISPUTE_REASONS),
+    note: z.string().max(1000).optional(),
+  }),
+  z.object({
+    action: z.literal("disputeDecide"),
+    disputeId: z.uuid(),
+    to: z.enum(["in_review", "resolved"]),
+    outcome: z.enum(UGC_DISPUTE_OUTCOMES).optional(),
   }),
   z.object({
     action: z.literal("roomPost"),
@@ -258,6 +274,22 @@ export async function POST(request: Request) {
     if (input.action === "deliveryProblem") {
       return Response.json(
         await reportDeliveryProblem(id, input.inviteId, input.reason),
+      );
+    }
+    if (input.action === "disputeOpen") {
+      return Response.json(
+        await openDispute(id, input.inviteId, input.reason, input.note ?? ""),
+      );
+    }
+    if (input.action === "disputeDecide") {
+      return Response.json(
+        await decideDispute({
+          adminId: id,
+          isAdmin: user.platformRole === "admin",
+          disputeId: input.disputeId,
+          to: input.to,
+          outcome: input.outcome,
+        }),
       );
     }
     if (input.action === "roomPost") {

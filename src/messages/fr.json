@@ -1291,6 +1291,16 @@
           "subject": "Nouveau message dans une commande",
           "body": "Vous avez un nouveau message à propos de « {productName} »."
         }
+      },
+      "ugcDispute": {
+        "inapp": {
+          "title": "Problème avec une commande",
+          "body": "{stage, select, opened {Un problème a été signalé sur votre commande pour « {productName} ». Le support l’examinera.} other {Le support a clos le problème de la commande pour « {productName} ». Ouvrez la commande pour voir le résultat.}}"
+        },
+        "email": {
+          "subject": "Problème avec une commande",
+          "body": "{stage, select, opened {Un problème a été signalé sur votre commande pour « {productName} ». Le support l’examinera.} other {Le support a clos le problème de la commande pour « {productName} ». Ouvrez la commande pour voir le résultat.}}"
+        }
       }
     },
     "freelance": {
@@ -4235,6 +4245,40 @@
     "title": "Vidéos UGC",
     "intro": "Des vidéos courtes de vraies personnes pour la pub et les réseaux. Un brief, les créateurs postulent, vous embauchez ceux que vous choisissez.",
     "moneyNote": "Le montant est enregistré en centimes. Rien n’est débité ni payé à cette étape.",
+    "disputeTitle": "Problème avec la commande",
+    "disputeOpen": "Signaler un problème",
+    "disputeReasonLabel": "Ce qui a mal tourné",
+    "disputeNoteLabel": "Ce qui s’est passé (facultatif)",
+    "disputeHint": "Le support l’examinera et notera le résultat. Cela n’accepte pas la vidéo et ne paie rien à soi seul. Pas de contacts ni de liens.",
+    "disputeSend": "Envoyer au support",
+    "roomEventDisputeOpened": "Un problème a été signalé",
+    "roomEventDisputeResolved": "Le support a clos le problème",
+    "adminDisputesTitle": "Problèmes dans les commandes",
+    "adminDisputesEmpty": "Aucun problème ouvert.",
+    "adminDisputeTake": "Prendre en charge",
+    "adminDisputeClose": "Clore : {outcome}",
+    "disputeReason": {
+      "no_response": "L’autre partie ne répond pas",
+      "quality": "Qualité du travail",
+      "payment": "Paiement",
+      "link": "Le lien",
+      "other": "Autre"
+    },
+    "disputeStatus": {
+      "open": "En attente du support",
+      "in_review": "Le support l’examine",
+      "resolved": "Clos"
+    },
+    "disputeOutcome": {
+      "company": "en faveur de l’entreprise",
+      "creator": "en faveur du créateur",
+      "agreed": "accord des deux parties",
+      "dismissed": "rejeté"
+    },
+    "disputeWho": {
+      "company": "L’entreprise",
+      "creator": "Le créateur"
+    },
     "deliveryTitle": "Livraison du produit",
     "deliveryNone": "Le produit n’a pas encore été envoyé.",
     "deliverySent": "Envoyé par {carrier}, suivi {tracking}",

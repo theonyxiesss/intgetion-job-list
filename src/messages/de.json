@@ -1291,6 +1291,16 @@
           "subject": "Neue Nachricht in einem Auftrag",
           "body": "Du hast eine neue Nachricht zu „{productName}“."
         }
+      },
+      "ugcDispute": {
+        "inapp": {
+          "title": "Problem mit einem Auftrag",
+          "body": "{stage, select, opened {Zu deinem Auftrag für „{productName}“ wurde ein Problem gemeldet. Der Support prüft es.} other {Der Support hat das Problem zum Auftrag für „{productName}“ geschlossen. Öffne den Auftrag, um das Ergebnis zu sehen.}}"
+        },
+        "email": {
+          "subject": "Problem mit einem Auftrag",
+          "body": "{stage, select, opened {Zu deinem Auftrag für „{productName}“ wurde ein Problem gemeldet. Der Support prüft es.} other {Der Support hat das Problem zum Auftrag für „{productName}“ geschlossen. Öffne den Auftrag, um das Ergebnis zu sehen.}}"
+        }
       }
     },
     "freelance": {
@@ -4236,6 +4246,40 @@
     "title": "UGC-Videos",
     "intro": "Kurze Videos von echten Menschen für Anzeigen und soziale Netzwerke. Ein Briefing, Creator bewerben sich, Sie stellen die Gewählten ein.",
     "moneyNote": "Der Betrag wird in Cent gespeichert. In diesem Schritt wird nichts berechnet oder ausgezahlt.",
+    "disputeTitle": "Problem mit dem Auftrag",
+    "disputeOpen": "Problem melden",
+    "disputeReasonLabel": "Was ist schiefgelaufen",
+    "disputeNoteLabel": "Was ist passiert (optional)",
+    "disputeHint": "Der Support prüft es und hält das Ergebnis fest. Allein nimmt das weder das Video an noch zahlt es etwas. Keine Kontakte oder Links.",
+    "disputeSend": "An den Support senden",
+    "roomEventDisputeOpened": "Ein Problem wurde gemeldet",
+    "roomEventDisputeResolved": "Der Support hat das Problem geschlossen",
+    "adminDisputesTitle": "Probleme in Aufträgen",
+    "adminDisputesEmpty": "Keine offenen Probleme.",
+    "adminDisputeTake": "In Prüfung nehmen",
+    "adminDisputeClose": "Schließen: {outcome}",
+    "disputeReason": {
+      "no_response": "Die andere Seite antwortet nicht",
+      "quality": "Qualität der Arbeit",
+      "payment": "Zahlung",
+      "link": "Der Link",
+      "other": "Sonstiges"
+    },
+    "disputeStatus": {
+      "open": "Wartet auf den Support",
+      "in_review": "Der Support prüft",
+      "resolved": "Geschlossen"
+    },
+    "disputeOutcome": {
+      "company": "zugunsten des Unternehmens",
+      "creator": "zugunsten des Creators",
+      "agreed": "einvernehmlich",
+      "dismissed": "abgewiesen"
+    },
+    "disputeWho": {
+      "company": "Das Unternehmen",
+      "creator": "Der Creator"
+    },
     "deliveryTitle": "Lieferung des Produkts",
     "deliveryNone": "Das Produkt wurde noch nicht versendet.",
     "deliverySent": "Versendet mit {carrier}, Sendungsnummer {tracking}",

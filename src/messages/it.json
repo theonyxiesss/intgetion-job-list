@@ -1291,6 +1291,16 @@
           "subject": "Nuovo messaggio in un ordine",
           "body": "Hai un nuovo messaggio su «{productName}»."
         }
+      },
+      "ugcDispute": {
+        "inapp": {
+          "title": "Problema con un ordine",
+          "body": "{stage, select, opened {È stato segnalato un problema sul tuo ordine per «{productName}». Il supporto lo esaminerà.} other {Il supporto ha chiuso il problema dell’ordine per «{productName}». Apri l’ordine per vedere l’esito.}}"
+        },
+        "email": {
+          "subject": "Problema con un ordine",
+          "body": "{stage, select, opened {È stato segnalato un problema sul tuo ordine per «{productName}». Il supporto lo esaminerà.} other {Il supporto ha chiuso il problema dell’ordine per «{productName}». Apri l’ordine per vedere l’esito.}}"
+        }
       }
     },
     "freelance": {
@@ -4235,6 +4245,40 @@
     "title": "Video UGC",
     "intro": "Video brevi di persone reali per pubblicità e social. Un brief, i creator si candidano, assumi chi scegli.",
     "moneyNote": "L’importo è registrato in centesimi. In questo passo non si addebita e non si paga nulla.",
+    "disputeTitle": "Problema con l’ordine",
+    "disputeOpen": "Segnala un problema",
+    "disputeReasonLabel": "Cosa è andato storto",
+    "disputeNoteLabel": "Cosa è successo (facoltativo)",
+    "disputeHint": "Il supporto lo esaminerà e annoterà l’esito. Da solo non accetta il video né paga nulla. Niente contatti o link.",
+    "disputeSend": "Invia al supporto",
+    "roomEventDisputeOpened": "È stato segnalato un problema",
+    "roomEventDisputeResolved": "Il supporto ha chiuso il problema",
+    "adminDisputesTitle": "Problemi negli ordini",
+    "adminDisputesEmpty": "Nessun problema aperto.",
+    "adminDisputeTake": "Prendi in carico",
+    "adminDisputeClose": "Chiudi: {outcome}",
+    "disputeReason": {
+      "no_response": "L’altra parte non risponde",
+      "quality": "Qualità del lavoro",
+      "payment": "Pagamento",
+      "link": "Il link",
+      "other": "Altro"
+    },
+    "disputeStatus": {
+      "open": "In attesa del supporto",
+      "in_review": "Il supporto lo sta esaminando",
+      "resolved": "Chiuso"
+    },
+    "disputeOutcome": {
+      "company": "a favore dell’azienda",
+      "creator": "a favore del creator",
+      "agreed": "concordato da entrambi",
+      "dismissed": "respinto"
+    },
+    "disputeWho": {
+      "company": "L’azienda",
+      "creator": "Il creator"
+    },
     "deliveryTitle": "Consegna del prodotto",
     "deliveryNone": "Il prodotto non è ancora stato spedito.",
     "deliverySent": "Spedito con {carrier}, tracking {tracking}",

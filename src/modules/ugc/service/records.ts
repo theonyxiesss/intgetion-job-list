@@ -6,6 +6,9 @@ import type {
   UgcParticipationStatus,
   UgcPlatform,
   UgcDeclineReason,
+  UgcDisputeOutcome,
+  UgcDisputeReason,
+  UgcDisputeStatus,
   UgcReportReason,
   UgcRights,
   UgcSubmissionStatus,
@@ -157,6 +160,19 @@ export type Shipment = {
   receivedAt: Date | null;
   problem: UgcDeliveryProblem | null;
   problemAt: Date | null;
+};
+
+export type Dispute = {
+  id: string;
+  inviteId: string;
+  openedBy: string | null;
+  side: "company" | "creator";
+  reason: UgcDisputeReason;
+  note: string;
+  status: UgcDisputeStatus;
+  outcome: UgcDisputeOutcome | null;
+  resolvedAt: Date | null;
+  createdAt: Date;
 };
 
 export type JoinToken = {

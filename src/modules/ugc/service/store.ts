@@ -4,6 +4,7 @@ import type {
   CreatorProfile,
   Invite,
   JoinToken,
+  Dispute,
   Payout,
   RoomMessage,
   RoomReport,
@@ -84,6 +85,13 @@ export interface UgcStore {
   insertRoomMessage(row: RoomMessage): Promise<void>;
   /** The shipment of one participation, or null (U6). */
   getShipment(inviteId: string): Promise<Shipment | null>;
+  /** Disputes of one participation, newest last (U7). */
+  listDisputes(inviteId: string): Promise<Dispute[]>;
+  /** Throws a Postgres 23505 when one is already unresolved. */
+  insertDispute(row: Dispute): Promise<void>;
+  getDispute(id: string): Promise<Dispute | null>;
+  saveDispute(row: Dispute, by: string | null): Promise<void>;
+  listUnresolvedDisputes(): Promise<Dispute[]>;
   saveShipment(row: Shipment): Promise<void>;
   getRoomMessage(id: string): Promise<RoomMessage | null>;
   hideRoomMessage(id: string, by: string, at: Date): Promise<void>;
