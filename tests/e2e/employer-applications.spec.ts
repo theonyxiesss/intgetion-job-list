@@ -182,7 +182,18 @@ test("employer views an application, then moves it to interview, offer and hired
   await expect(
     employer.getByRole("link", { name: "Withdrawn 51" }),
   ).toHaveAttribute("aria-current", "page");
-  await employer.getByRole("link", { name: "Next page" }).click();
+  const nextPageLink = employer.getByRole("link", { name: "Next page" });
+  const nextPageHref = await nextPageLink.getAttribute("href");
+  expect(nextPageHref).toBeTruthy();
+  const nextPageTarget = new URL(nextPageHref!, employer.url());
+  expect(nextPageTarget.searchParams.get("status")).toBe("withdrawn");
+  expect(nextPageTarget.searchParams.get("cursor")).toBeTruthy();
+  await nextPageLink.click();
+  await employer.waitForURL(
+    (url) =>
+      url.searchParams.get("status") === "withdrawn" &&
+      url.searchParams.has("cursor"),
+  );
   const nextPageUrl = new URL(employer.url());
   expect(nextPageUrl.searchParams.get("status")).toBe("withdrawn");
   expect(nextPageUrl.searchParams.get("cursor")).toBeTruthy();
