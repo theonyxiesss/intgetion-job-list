@@ -54,11 +54,11 @@ export function scoreGroundedAnswer(
         ? /(?<![а-яё])нет(?![а-яё])|не наш[её]л|не нашлось|не найден|ничего|отсутств|пока нет|не опубликован/u.test(
             answer,
           )
-        : /\bno\b|\bnone\b|nothing|not found|unavailable|not published|couldn't find|could not find|didn't find|did not find|no matching|there are no|aren't any|isn't any|(?:doesn't|don't|does not|do not) have any/u.test(
+        : /\bno\b|\bnone\b|nothing|not found|unavailable|not published|couldn't find|could not find|didn't find|did not find|haven't found|have not found|hasn't found|has not found|no matching|there are no|aren't any|isn't any|(?:doesn't|don't|does not|do not) have any/u.test(
             answer,
           );
     const claimsMatch =
-      /found (?:a|an|some|one|\d+)|\bhere (?:is|are)|(?<!не )наш[её]л(?:а|и)?\s+(?:ваканс|услуг|событ)|есть\s+(?:ваканс|услуг|событ)/iu.test(
+      /(?<!n't |not |never )found (?:a|an|some|one|\d+)|\bhere (?:is|are) (?:(?:a|an|one|some|two|three|several|\d+|the) )?(?:jobs?|services?|events?|offers?|gigs?|providers?|matches?|candidates?)\b|(?<!не )наш[её]л(?:а|и)?\s+(?:ваканс|услуг|событ)|есть\s+(?:ваканс|услуг|событ)/iu.test(
         answer,
       );
     if (!honest || claimsMatch) issues.push("empty_result_claim");

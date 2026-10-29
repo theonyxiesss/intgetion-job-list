@@ -167,6 +167,38 @@ describe("Spoki grounded answer eval", () => {
       }).issues,
     ).toContain("empty_result_claim");
   });
+
+  it.each([
+    "I haven't found a published podcast editing service. Here are some tips to request one.",
+    "There are no published services for this. Here is what you can do next.",
+  ])("accepts an honest empty answer that offers next steps: %s", (answer) => {
+    expect(
+      scoreGroundedAnswer({
+        locale: "en",
+        userText: "Find a published podcast editing service on the platform.",
+        toolResult: "No published services found for podcast editing.",
+        requiredFacts: [],
+        empty: true,
+        answer,
+      }),
+    ).toEqual({ pass: true, issues: [] });
+  });
+
+  it.each([
+    "There are no published services. Here are two services: Podcast Edit at $30.",
+    "I haven't found a service, but I found a podcast editor for you.",
+  ])("still flags a listed or invented match: %s", (answer) => {
+    expect(
+      scoreGroundedAnswer({
+        locale: "en",
+        userText: "Find a published podcast editing service on the platform.",
+        toolResult: "No published services found for podcast editing.",
+        requiredFacts: [],
+        empty: true,
+        answer,
+      }).issues,
+    ).toContain("empty_result_claim");
+  });
 });
 
 describe("Jev next to the patterns (TZ 36, C4)", () => {
