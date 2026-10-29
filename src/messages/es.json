@@ -4216,6 +4216,9 @@
     "title": "Vídeos UGC",
     "intro": "Vídeos cortos de personas reales para anuncios y redes. Un brief, los creadores se postulan, contratas a quienes eliges.",
     "moneyNote": "El importe se guarda en centavos. En este paso no se cobra ni se paga nada.",
+    "versionsTitle": "Historial del brief",
+    "versionLine": "Versión {n} · {date}",
+    "versionFirst": "Primer texto publicado",
     "rejectApplication": "Rechazar",
     "rejectReasonLabel": "Motivo",
     "declineReason": {

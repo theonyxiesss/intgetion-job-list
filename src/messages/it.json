@@ -4215,6 +4215,9 @@
     "title": "Video UGC",
     "intro": "Video brevi di persone reali per pubblicità e social. Un brief, i creator si candidano, assumi chi scegli.",
     "moneyNote": "L’importo è registrato in centesimi. In questo passo non si addebita e non si paga nulla.",
+    "versionsTitle": "Cronologia del brief",
+    "versionLine": "Versione {n} · {date}",
+    "versionFirst": "Primo testo pubblicato",
     "rejectApplication": "Rifiuta",
     "rejectReasonLabel": "Motivo",
     "declineReason": {

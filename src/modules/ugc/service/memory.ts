@@ -1,5 +1,6 @@
 import type {
   Campaign,
+  CampaignVersion,
   CreatorProfile,
   Invite,
   JoinToken,
@@ -210,6 +211,15 @@ export class MemoryUgcStore implements UgcStore {
         token.revokedAt = at;
       }
     }
+  }
+  versions: CampaignVersion[] = [];
+  async listCampaignVersions(campaignId: string) {
+    return this.versions
+      .filter((row) => row.campaignId === campaignId)
+      .sort((a, b) => a.version - b.version);
+  }
+  async insertCampaignVersions(rows: readonly CampaignVersion[]) {
+    this.versions.push(...rows);
   }
   async insertJoinToken(row: JoinToken) {
     this.tokens.push(row);

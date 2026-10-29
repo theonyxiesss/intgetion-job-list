@@ -4216,6 +4216,9 @@
     "title": "UGC-Videos",
     "intro": "Kurze Videos von echten Menschen für Anzeigen und soziale Netzwerke. Ein Briefing, Creator bewerben sich, Sie stellen die Gewählten ein.",
     "moneyNote": "Der Betrag wird in Cent gespeichert. In diesem Schritt wird nichts berechnet oder ausgezahlt.",
+    "versionsTitle": "Verlauf des Briefings",
+    "versionLine": "Version {n} · {date}",
+    "versionFirst": "Erster veröffentlichter Text",
     "rejectApplication": "Ablehnen",
     "rejectReasonLabel": "Grund",
     "declineReason": {

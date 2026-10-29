@@ -1,4 +1,5 @@
 import { cleanAnswers, cleanQuestions } from "./questions";
+import { versionRows } from "./versions";
 import { assertTermsAgreed, buildTerms, termsHash } from "./terms";
 import { randomBytes, randomUUID } from "node:crypto";
 import {
@@ -445,6 +446,11 @@ export async function readCampaign(userId: string | null, campaignId: string) {
         pitch: campaign.pitch,
         exampleUrls: campaign.exampleUrls,
       },
+      versions: (await store.listCampaignVersions(campaign.id)).map((row) => ({
+        version: row.version,
+        changedFields: row.changedFields,
+        at: row.createdAt.toISOString(),
+      })),
       participants: await Promise.all(
         invites.map(async (invite, index) => {
           const submission =
@@ -1493,6 +1499,17 @@ export async function updateCampaignText(
   if (patch.questions !== undefined)
     next.questions = cleanQuestions(patch.questions);
   await store.saveCampaignText(next);
+  await store.insertCampaignVersions(
+    versionRows({
+      campaignId: campaign.id,
+      existing: await store.listCampaignVersions(campaign.id),
+      before: campaign,
+      after: next,
+      changedBy: id,
+      at: store.now(),
+      newId: randomUUID,
+    }),
+  );
   await store.audit(id, "ugc.campaign_text", campaign.id);
   return { status: next.status, productName: next.productName };
 }

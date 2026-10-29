@@ -4722,6 +4722,9 @@
     "title": "UGC videos",
     "intro": "Short videos from real people for ads and social posts. One brief, creators apply, you hire the ones you pick.",
     "moneyNote": "The amount is recorded in cents. Nothing is charged or paid in this step.",
+    "versionsTitle": "Brief history",
+    "versionLine": "Version {n} · {date}",
+    "versionFirst": "First published text",
     "rejectApplication": "Turn down",
     "rejectReasonLabel": "Reason",
     "declineReason": {

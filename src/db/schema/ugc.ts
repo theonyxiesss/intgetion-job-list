@@ -25,6 +25,7 @@ import type {
   UgcRights,
   UgcSubmissionStatus,
 } from "@/config/ugc";
+import type { BriefTextSnapshot } from "@/modules/ugc/service/versions";
 import type { TermsSnapshot } from "@/modules/ugc/service/terms";
 import { companies } from "./companies";
 import { users } from "./users";
@@ -334,5 +335,28 @@ export const ugcJoinTokens = pgTable(
   (table) => [
     unique("ugc_join_tokens_hash_key").on(table.tokenHash),
     index("ugc_join_tokens_campaign_idx").on(table.campaignId),
+  ],
+);
+
+/** A saved state of a brief's texts, oldest first by `version` (0077). */
+export const ugcCampaignVersions = pgTable(
+  "ugc_campaign_versions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    campaignId: uuid("campaign_id")
+      .notNull()
+      .references(() => ugcCampaigns.id, { onDelete: "cascade" }),
+    version: integer("version").notNull(),
+    changedBy: uuid("changed_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    changedFields: text("changed_fields").array().notNull().default([]),
+    snapshot: jsonb("snapshot").$type<BriefTextSnapshot>().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    unique("ugc_campaign_versions_key").on(table.campaignId, table.version),
   ],
 );

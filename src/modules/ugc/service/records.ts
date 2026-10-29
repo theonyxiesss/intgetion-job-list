@@ -23,6 +23,7 @@ export type CreatorProfile = {
   status: UgcCreatorStatus;
 };
 import type { TermsSnapshot } from "./terms";
+import type { BriefTextSnapshot } from "./versions";
 
 export type Campaign = {
   id: string;
@@ -98,6 +99,16 @@ export type Payout = {
   status: "owed" | "paid";
   paidAt: Date | null;
   paidBy: string | null;
+};
+
+export type CampaignVersion = {
+  id: string;
+  campaignId: string;
+  version: number;
+  changedBy: string | null;
+  changedFields: string[];
+  snapshot: BriefTextSnapshot;
+  createdAt: Date;
 };
 
 export type JoinToken = {

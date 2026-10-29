@@ -594,6 +594,39 @@ export default async function CampaignPage({
               />
             ) : null}
           </dl>
+          {view.versions.length > 0 ? (
+            <section
+              aria-labelledby="brief-versions"
+              className="flex flex-col gap-2 rounded-lg border border-line p-4 md:p-5"
+            >
+              <h3 id="brief-versions" className="font-medium">
+                {t("versionsTitle")}
+              </h3>
+              <ol className="t-body-s flex flex-col gap-1">
+                {[...view.versions].reverse().map((row) => (
+                  <li key={row.version}>
+                    <span className="font-mono">
+                      {t("versionLine", {
+                        n: row.version,
+                        date: row.at.slice(0, 10),
+                      })}
+                    </span>{" "}
+                    <span className="text-fg-muted">
+                      {row.changedFields.length
+                        ? row.changedFields
+                            .map((field) =>
+                              t(
+                                `fields.${field === "exampleUrls" ? "examples" : field}`,
+                              ),
+                            )
+                            .join(", ")
+                        : t("versionFirst")}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ) : null}
           {brief.status === "open" || brief.status === "paused" ? (
             <details className="group rounded-lg border border-line">
               <summary className="flex min-h-11 cursor-pointer items-center px-4 font-medium md:px-5">

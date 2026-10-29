@@ -2,6 +2,7 @@ import { and, eq, gte, inArray, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   creatorProfiles,
+  ugcCampaignVersions,
   ugcCampaigns,
   ugcInvites,
   ugcJoinTokens,
@@ -23,6 +24,7 @@ import {
 } from "@/modules/notifications/service";
 import type {
   Campaign,
+  CampaignVersion,
   CreatorProfile,
   Invite,
   JoinToken,
@@ -517,6 +519,26 @@ export function productionUgcStore(): UgcStore {
             isNull(ugcJoinTokens.revokedAt),
           ),
         );
+    },
+    async listCampaignVersions(campaignId) {
+      const rows = await db
+        .select()
+        .from(ugcCampaignVersions)
+        .where(eq(ugcCampaignVersions.campaignId, campaignId))
+        .orderBy(ugcCampaignVersions.version);
+      return rows.map((row): CampaignVersion => ({
+        id: row.id,
+        campaignId: row.campaignId,
+        version: row.version,
+        changedBy: row.changedBy,
+        changedFields: row.changedFields,
+        snapshot: row.snapshot,
+        createdAt: row.createdAt,
+      }));
+    },
+    async insertCampaignVersions(rows) {
+      if (rows.length === 0) return;
+      await db.insert(ugcCampaignVersions).values([...rows]);
     },
     async insertJoinToken(row: JoinToken) {
       await db.insert(ugcJoinTokens).values(row);

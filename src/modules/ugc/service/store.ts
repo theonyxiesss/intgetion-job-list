@@ -1,5 +1,6 @@
 import type {
   Campaign,
+  CampaignVersion,
   CreatorProfile,
   Invite,
   JoinToken,
@@ -60,6 +61,9 @@ export interface UgcStore {
   confirmedDepositMinor(campaignId: string): Promise<bigint | null>;
   insertPayout(row: Payout): Promise<void>;
   savePayout(row: Payout): Promise<void>;
+  /** Saved states of a brief's texts, oldest first (U3б). */
+  listCampaignVersions(campaignId: string): Promise<CampaignVersion[]>;
+  insertCampaignVersions(rows: readonly CampaignVersion[]): Promise<void>;
   revokeJoinTokens(campaignId: string, at: Date): Promise<void>;
   insertJoinToken(row: JoinToken): Promise<void>;
   findJoinToken(tokenHash: string): Promise<JoinToken | null>;
