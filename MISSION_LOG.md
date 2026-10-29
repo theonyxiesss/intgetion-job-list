@@ -3510,3 +3510,10 @@
 - Проверка: axe на `/ru/jobs` — нарушений 0 (было 1, `heading-order`); структура `H1 → H2…`; вид карточки прежний (`t-h3`, 17 px, 600). typecheck, eslint, prettier — без ошибок; test 232 файла, 1682 теста — зелёные.
 - Не выполнено: `pnpm build` (на 3000 работает dev-сервер, сборка в ту же `.next` его бы ломала), CI e2e. Временный `public/__axe-tmp.js` удалён.
 - Файлы: `src/components/ui/job-card.tsx`, `src/modules/jobs/ui/public-job-card.tsx`, `src/app/[locale]/jobs/page.tsx`. Push и выкладки не было.
+
+## 2026-10-27 — обзор тестовых инструментов
+
+- Уже в проекте: Vitest 5 (unit и integration), Playwright e2e (30+ файлов), `@axe-core/playwright` в e2e (главная, вакансии, подбор, для работодателей, админка), `eslint-plugin-jsx-a11y`, Lighthouse в CI (`scripts/ci-ui.sh`), собственный eval Spoki. Скиллы Superpowers (TDD, debugging, verification) указаны в `AGENTS.md`.
+- Пробелы: визуальная регрессия (`toHaveScreenshot` не используется; эталоны снимать в CI, не на Windows), отчёт покрытия Vitest не настроен, содержимое `mobile-app.spec.ts` и `phone.spec.ts` не читалось.
+- Не ставилось: Chromatic и Percy (платно), `playwright-skill`, `webapp-testing` (дублируют имеющееся). Предложение: 2–3 снимка (главная, каталог, вход) через `toHaveScreenshot` — нужно «да» на правку `tests/e2e/` и первый прогон эталонов в CI.
+- Код проекта не менялся.
