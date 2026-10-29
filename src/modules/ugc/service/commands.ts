@@ -26,6 +26,7 @@ import {
   UGC_NICHES,
   UGC_PLATFORMS,
   UGC_DECLINE_REASONS,
+  UGC_PHYSICAL_LIVE,
   UGC_REPORT_REASONS,
   UGC_RIGHTS,
   type UgcDeclineReason,
@@ -1972,6 +1973,7 @@ export async function getUgcRoom(
         }
       : null,
     canShip:
+      UGC_PHYSICAL_LIVE &&
       side === "company" &&
       invite.status === "hired" &&
       (state === null || state === "problem"),
@@ -2366,6 +2368,13 @@ export async function markShipped(
 ) {
   const id = requireUser(userId);
   const store = await db();
+  if (!UGC_PHYSICAL_LIVE) {
+    throw new HttpError(
+      409,
+      UGC_ERRORS.physicalOff,
+      "Physical products are not switched on yet",
+    );
+  }
   const { invite, side } = await hiredRoom(store, inviteId, id);
   if (side !== "company") throw notFound();
   const fields = checkShipment(input, day(store.now()));

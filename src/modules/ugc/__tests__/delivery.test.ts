@@ -2,6 +2,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { UgcNiche, UgcPlatform } from "@/config/ugc";
 
 vi.mock("@/lib/rate-limit", () => ({ enforceRateLimit: vi.fn() }));
+const physical = vi.hoisted(() => ({ live: true }));
+vi.mock("@/config/ugc", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/config/ugc")>()),
+  get UGC_PHYSICAL_LIVE() {
+    return physical.live;
+  },
+}));
 
 import {
   acceptInvite,
@@ -248,6 +255,22 @@ describe("delivery of a physical product (U6)", () => {
       for (const user of [STRANGER, null]) {
         await expect(markShipped(user, inviteId, input)).rejects.toThrow();
         await expect(confirmReceived(user, inviteId)).rejects.toThrow();
+      }
+    });
+
+    it("is switched off for now (D575): no form, no sending", async () => {
+      physical.live = false;
+      try {
+        const room = await getUgcRoom(MEMBER, inviteId);
+        expect(room.canShip).toBe(false);
+        await expect(
+          markShipped(MEMBER, inviteId, input),
+        ).rejects.toMatchObject({
+          status: 409,
+          code: "UGC_PHYSICAL_OFF",
+        });
+      } finally {
+        physical.live = true;
       }
     });
 

@@ -121,6 +121,13 @@ export const UGC_LIMITS = {
 } as const;
 
 /**
+ * Physical products (D575): off. Briefs are for digital products; the delivery
+ * block of the order room is hidden and sending is refused until the founder
+ * decides on the delivery address and the product type.
+ */
+export const UGC_PHYSICAL_LIVE = false;
+
+/**
  * Campaign wallet (D465, D466): with the crypto checkout on, a brief takes
  * offers only after its budget is paid in. Off: the reward is only recorded.
  */
