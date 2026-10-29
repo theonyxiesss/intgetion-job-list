@@ -27,7 +27,14 @@ import {
 } from "@/modules/billing/service";
 import { readAccountWallet } from "@/modules/users/service";
 import * as repo from "../repo/escrow-repo";
-import { campaignForMember, db } from "./commands";
+import {
+  assertNoOpenDispute,
+  campaignForMember,
+  db,
+  hasOpenDispute,
+  roomParty,
+} from "./commands";
+import { buildMoneyHistory } from "./money-history";
 import { campaignWalletAddress, escrowOn } from "./escrow-gate";
 import { refundableMinor, refundBlocked } from "./escrow-rules";
 import { ugcBudgetMinor } from "./pricing";
@@ -456,6 +463,7 @@ export async function payRewardByTx(input: {
     );
   }
   const store = await db();
+  await assertNoOpenDispute(store, payout.invite_id);
   if ((await store.confirmedDepositMinor(payout.campaign_id)) === null) {
     throw walletError(
       UGC_ERRORS.depositRequired,
@@ -577,6 +585,8 @@ export type WalletPayoutRow = {
   fromWallet: boolean;
   /** The creator's proven address, when there is one. */
   payoutAddress: string | null;
+  /** A problem is open on the order: the reward waits (U7). */
+  disputeOpen: boolean;
 };
 
 /** Owed rewards for the admin, with how each one is settled. */
@@ -602,6 +612,7 @@ export async function listWalletPayouts(
       payoutAddress: fromWallet
         ? ((await readAccountWallet(invite.creatorUserId))?.address ?? null)
         : null,
+      disputeOpen: await hasOpenDispute(store, invite.id),
     });
   }
   return rows;
@@ -647,4 +658,51 @@ export async function listRefundsDue(
 /** Owed rewards that hold the creator's wallet in place (D518). */
 export async function owedWalletRewards(creatorId: string): Promise<number> {
   return repo.owedWalletRewards(creatorId);
+}
+
+/**
+ * The money of one order for one of its two parties (U7): the budget paid in
+ * and what came back (company only), what was earned and what was paid.
+ */
+export async function orderMoneyHistory(
+  userId: string | null,
+  inviteId: string,
+) {
+  if (!userId) throw unauthenticated();
+  const store = await db();
+  const { invite, side } = await roomParty(store, inviteId, userId);
+  const submission = await store.getSubmission(invite.id);
+  const payout = submission
+    ? await store.getPayoutBySubmission(submission.id)
+    : null;
+  let deposit: { at: string; amountMinor: string } | null = null;
+  let refund: { at: string; amountMinor: string } | null = null;
+  if (side === "company") {
+    const row = await repo.latestDeposit(invite.campaignId);
+    if (row?.status === "confirmed") {
+      deposit = {
+        at: new Date(row.created_at).toISOString(),
+        amountMinor: row.amount_minor,
+      };
+    }
+    const back = await repo.findRefund(invite.campaignId);
+    if (back) {
+      refund = {
+        at: new Date(back.created_at).toISOString(),
+        amountMinor: back.amount_minor,
+      };
+    }
+  }
+  return buildMoneyHistory({
+    side,
+    deposit,
+    refund,
+    payout: payout
+      ? {
+          amountMinor: payout.amountMinor.toString(),
+          createdAt: payout.createdAt ?? null,
+          paidAt: payout.paidAt,
+        }
+      : null,
+  });
 }

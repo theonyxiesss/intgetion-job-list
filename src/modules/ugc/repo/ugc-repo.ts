@@ -165,6 +165,7 @@ function payoutOf(row: PayoutRow): Payout {
     status: row.status,
     paidAt: row.paidAt,
     paidBy: row.paidBy,
+    createdAt: row.createdAt,
   };
 }
 

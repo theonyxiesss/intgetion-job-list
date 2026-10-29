@@ -83,7 +83,11 @@ export default async function AdminCampaignsPage({
                 <p className="t-body-s mt-2">
                   {t("owedNote", { amount: usd(row.amountMinor) })}
                 </p>
-                {!row.fromWallet ? (
+                {row.disputeOpen ? (
+                  <p role="status" className="t-body-s font-medium">
+                    {t("adminPayoutDispute")}
+                  </p>
+                ) : !row.fromWallet ? (
                   <>
                     <p className="t-body-s text-fg-muted">
                       {h("admin.payoutManual")}

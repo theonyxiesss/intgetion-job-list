@@ -4245,6 +4245,15 @@
     "title": "Video UGC",
     "intro": "Video brevi di persone reali per pubblicità e social. Un brief, i creator si candidano, assumi chi scegli.",
     "moneyNote": "L’importo è registrato in centesimi. In questo passo non si addebita e non si paga nulla.",
+    "moneyHistoryTitle": "Denaro di questo ordine",
+    "moneyHistoryNote": "Sono mostrate solo le operazioni confermate. I pagamenti si fanno a mano e compaiono qui dopo la verifica del trasferimento.",
+    "adminPayoutDispute": "C’è un problema aperto su questo ordine. Chiudilo prima di pagare.",
+    "moneyEvent": {
+      "deposit": "Budget versato",
+      "accrued": "Compenso maturato",
+      "paid": "Compenso pagato",
+      "refund": "Resto restituito"
+    },
     "disputeTitle": "Problema con l’ordine",
     "disputeOpen": "Segnala un problema",
     "disputeReasonLabel": "Cosa è andato storto",

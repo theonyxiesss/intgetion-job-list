@@ -4752,6 +4752,15 @@
     "title": "UGC videos",
     "intro": "Short videos from real people for ads and social posts. One brief, creators apply, you hire the ones you pick.",
     "moneyNote": "The amount is recorded in cents. Nothing is charged or paid in this step.",
+    "moneyHistoryTitle": "Money in this order",
+    "moneyHistoryNote": "Only confirmed operations are shown. Payouts are made by hand and recorded here after the transfer is checked.",
+    "adminPayoutDispute": "A problem is open on this order. Close it before paying.",
+    "moneyEvent": {
+      "deposit": "Budget paid in",
+      "accrued": "Reward earned",
+      "paid": "Reward paid",
+      "refund": "Rest returned"
+    },
     "disputeTitle": "Problem with the order",
     "disputeOpen": "Report a problem",
     "disputeReasonLabel": "What went wrong",

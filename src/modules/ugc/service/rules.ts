@@ -33,6 +33,7 @@ export const UGC_ERRORS = {
   roomClosed: "UGC_ROOM_CLOSED",
   physicalOff: "UGC_PHYSICAL_OFF",
   disputeOpen: "UGC_DISPUTE_OPEN",
+  disputeOpenPayout: "UGC_DISPUTE_OPEN_PAYOUT",
   disputeNotReady: "UGC_DISPUTE_NOT_READY",
   roomNotReady: "UGC_ROOM_NOT_READY",
   termsMismatch: "UGC_TERMS_MISMATCH",

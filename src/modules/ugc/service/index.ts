@@ -152,6 +152,7 @@ export {
   createCampaignDeposit,
   listRefundsDue,
   listWalletPayouts,
+  orderMoneyHistory,
   owedWalletRewards,
   payRewardByTx,
   recheckCampaignDeposits,

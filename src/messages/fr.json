@@ -4245,6 +4245,15 @@
     "title": "Vidéos UGC",
     "intro": "Des vidéos courtes de vraies personnes pour la pub et les réseaux. Un brief, les créateurs postulent, vous embauchez ceux que vous choisissez.",
     "moneyNote": "Le montant est enregistré en centimes. Rien n’est débité ni payé à cette étape.",
+    "moneyHistoryTitle": "Argent de cette commande",
+    "moneyHistoryNote": "Seules les opérations confirmées sont affichées. Les paiements se font à la main et apparaissent ici après vérification du virement.",
+    "adminPayoutDispute": "Un problème est ouvert sur cette commande. Clôturez-le avant de payer.",
+    "moneyEvent": {
+      "deposit": "Budget versé",
+      "accrued": "Rémunération acquise",
+      "paid": "Rémunération payée",
+      "refund": "Reste restitué"
+    },
     "disputeTitle": "Problème avec la commande",
     "disputeOpen": "Signaler un problème",
     "disputeReasonLabel": "Ce qui a mal tourné",

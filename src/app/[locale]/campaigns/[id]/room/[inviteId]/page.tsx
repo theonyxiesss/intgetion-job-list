@@ -6,8 +6,9 @@ import { ButtonLink } from "@/components/ui/button";
 import { RouteMessages } from "@/components/shell/route-messages";
 import { HttpError } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { formatMinor } from "@/lib/money";
 import { getCurrentUser } from "@/modules/auth/service";
-import { getUgcRoom } from "@/modules/ugc/service";
+import { getUgcRoom, orderMoneyHistory } from "@/modules/ugc/service";
 import { DeliveryPanel } from "@/modules/ugc/ui/delivery-panel";
 import { DisputePanel } from "@/modules/ugc/ui/dispute-panel";
 import { ReportMessage } from "@/modules/ugc/ui/report-message";
@@ -41,6 +42,7 @@ export default async function UgcRoomPage({
     if (error instanceof HttpError && error.status === 404) notFound();
     throw error;
   }
+  const money = await orderMoneyHistory(user.id, inviteId);
   const stamp = new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
     timeStyle: "short",
@@ -65,6 +67,34 @@ export default async function UgcRoomPage({
             dispute={room.dispute}
             canOpen={room.canOpenDispute}
           />
+          {money.length > 0 ? (
+            <section
+              aria-labelledby="money-title"
+              className="flex flex-col gap-2 rounded-lg border border-line p-4"
+            >
+              <h2 id="money-title" className="t-h4">
+                {t("moneyHistoryTitle")}
+              </h2>
+              <ol className="t-body-s flex flex-col gap-1">
+                {money.map((event) => (
+                  <li key={`${event.kind}-${event.at}`}>
+                    <time dateTime={event.at} className="font-mono">
+                      {stamp.format(new Date(event.at))}
+                    </time>
+                    {" · "}
+                    {t(`moneyEvent.${event.kind}`)}
+                    {" · "}
+                    <span className="font-mono">
+                      {formatMinor(BigInt(event.amountMinor), "USD", locale, {
+                        wholeWhenEven: true,
+                      })}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+              <p className="t-body-s text-fg-muted">{t("moneyHistoryNote")}</p>
+            </section>
+          ) : null}
           {room.shipment || room.canShip ? (
             <DeliveryPanel
               inviteId={inviteId}

@@ -121,6 +121,8 @@ export type Payout = {
   status: "owed" | "paid";
   paidAt: Date | null;
   paidBy: string | null;
+  /** When the reward was recorded as owed (U7). */
+  createdAt?: Date;
 };
 
 export type CampaignVersion = {

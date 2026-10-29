@@ -1316,6 +1316,7 @@ export async function decideSubmission(
       status: "owed",
       paidAt: null,
       paidBy: null,
+      createdAt: store.now(),
     });
   }
   await store.notify({
@@ -1677,6 +1678,7 @@ export async function markPayoutPaid(input: {
       "This reward is already marked",
     );
   }
+  await assertNoOpenDispute(store, payout.inviteId);
   const invite = await store.getInvite(payout.inviteId);
   if (invite && (await store.confirmedDepositMinor(invite.campaignId))) {
     throw new HttpError(
@@ -1905,7 +1907,11 @@ export function isRoomTableMissing(error: unknown): boolean {
   return false;
 }
 
-async function roomParty(store: UgcStore, inviteId: string, userId: string) {
+export async function roomParty(
+  store: UgcStore,
+  inviteId: string,
+  userId: string,
+) {
   const invite = await store.getInvite(inviteId);
   if (!invite) throw notFound();
   const campaign = await store.getCampaign(invite.campaignId);
@@ -2657,4 +2663,30 @@ export async function decideDispute(input: {
     });
   }
   return { status: "resolved" as const, outcome };
+}
+
+/** Whether a problem is open on this order; false before migration 0083. */
+export async function hasOpenDispute(store: UgcStore, inviteId: string) {
+  try {
+    return (await store.listDisputes(inviteId)).some(
+      (row) => row.status !== "resolved",
+    );
+  } catch (error) {
+    if (hasPgCode(error, "42P01")) return false;
+    throw error;
+  }
+}
+
+/**
+ * A reward is not marked paid while a problem is open on its order (U7): the
+ * outcome may change who is owed. Support closes the problem first.
+ */
+export async function assertNoOpenDispute(store: UgcStore, inviteId: string) {
+  if (await hasOpenDispute(store, inviteId)) {
+    throw new HttpError(
+      409,
+      UGC_ERRORS.disputeOpenPayout,
+      "A problem is open on this order: close it before paying",
+    );
+  }
 }

@@ -161,6 +161,7 @@ export type PayoutTxRow = {
   created_at: string;
   campaign_id: string;
   creator_user_id: string;
+  invite_id: string;
 };
 
 export async function payoutForTx(
@@ -169,7 +170,7 @@ export async function payoutForTx(
   if (!/^[0-9a-f-]{36}$/i.test(payoutId)) return null;
   const rows = await getDb().execute<PayoutTxRow>(sql`
     select p.id, p.status, p.amount_minor::text, p.created_at::text,
-           i.campaign_id, i.creator_user_id
+           i.campaign_id, i.creator_user_id, p.invite_id
     from public.ugc_payouts p
     join public.ugc_invites i on i.id = p.invite_id
     where p.id = ${payoutId}

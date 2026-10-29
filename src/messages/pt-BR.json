@@ -4245,6 +4245,15 @@
     "title": "Vídeos UGC",
     "intro": "Vídeos curtos de pessoas reais para anúncios e redes. Um brief, criadores se candidatam, você contrata quem escolher.",
     "moneyNote": "O valor fica registrado em centavos. Neste passo nada é cobrado nem pago.",
+    "moneyHistoryTitle": "Dinheiro deste pedido",
+    "moneyHistoryNote": "Só aparecem operações confirmadas. Os pagamentos são feitos à mão e aparecem aqui depois que a transferência é conferida.",
+    "adminPayoutDispute": "Há um problema aberto neste pedido. Encerre-o antes de pagar.",
+    "moneyEvent": {
+      "deposit": "Orçamento depositado",
+      "accrued": "Recompensa ganha",
+      "paid": "Recompensa paga",
+      "refund": "Saldo devolvido"
+    },
     "disputeTitle": "Problema com o pedido",
     "disputeOpen": "Relatar um problema",
     "disputeReasonLabel": "O que deu errado",

@@ -4246,6 +4246,15 @@
     "title": "UGC-Videos",
     "intro": "Kurze Videos von echten Menschen für Anzeigen und soziale Netzwerke. Ein Briefing, Creator bewerben sich, Sie stellen die Gewählten ein.",
     "moneyNote": "Der Betrag wird in Cent gespeichert. In diesem Schritt wird nichts berechnet oder ausgezahlt.",
+    "moneyHistoryTitle": "Geld in diesem Auftrag",
+    "moneyHistoryNote": "Es werden nur bestätigte Vorgänge gezeigt. Auszahlungen erfolgen von Hand und erscheinen hier, nachdem die Überweisung geprüft wurde.",
+    "adminPayoutDispute": "Bei diesem Auftrag ist ein Problem offen. Schließe es vor der Zahlung.",
+    "moneyEvent": {
+      "deposit": "Budget eingezahlt",
+      "accrued": "Vergütung verdient",
+      "paid": "Vergütung ausgezahlt",
+      "refund": "Rest zurückgezahlt"
+    },
     "disputeTitle": "Problem mit dem Auftrag",
     "disputeOpen": "Problem melden",
     "disputeReasonLabel": "Was ist schiefgelaufen",
