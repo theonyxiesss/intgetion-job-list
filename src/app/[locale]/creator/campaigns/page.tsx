@@ -8,6 +8,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { listOpenCampaigns } from "@/modules/ugc/service";
 import { UgcAction } from "@/modules/ugc/ui/action";
+import { ApplyForm } from "@/modules/ugc/ui/apply-form";
 import { RouteMessages } from "@/components/shell/route-messages";
 
 export const dynamic = "force-dynamic";
@@ -57,12 +58,16 @@ export default async function OpenBriefsPage({
                   })}
                 </p>
                 <div className="mt-3">
-                  <UgcAction
-                    action="apply"
-                    label={t("apply")}
-                    body={{ campaignId: row.id }}
-                    primary
-                  />
+                  {row.questions.length ? (
+                    <ApplyForm campaignId={row.id} questions={row.questions} />
+                  ) : (
+                    <UgcAction
+                      action="apply"
+                      label={t("apply")}
+                      body={{ campaignId: row.id }}
+                      primary
+                    />
+                  )}
                 </div>
               </li>
             ))}

@@ -5,6 +5,7 @@ import type {
   UgcNiche,
   UgcParticipationStatus,
   UgcPlatform,
+  UgcDeclineReason,
   UgcRights,
   UgcSubmissionStatus,
 } from "@/config/ugc";
@@ -45,6 +46,8 @@ export type Campaign = {
   rights: UgcRights;
   pitch: string;
   exampleUrls: string[];
+  /** Questions asked at application; absent on briefs made before 0076. */
+  questions?: string[];
   createdAt: Date;
 };
 
@@ -65,6 +68,9 @@ export type Invite = {
   termsHash?: string | null;
   /** Company-only mark on an application; never shown to the creator. */
   shortlisted?: boolean;
+  /** Answers to the brief questions, in the order asked. */
+  answers?: string[];
+  declineReason?: UgcDeclineReason | null;
   agreedHash?: string | null;
   agreedAt?: Date | null;
   createdAt: Date;

@@ -4722,6 +4722,13 @@
     "title": "UGC videos",
     "intro": "Short videos from real people for ads and social posts. One brief, creators apply, you hire the ones you pick.",
     "moneyNote": "The amount is recorded in cents. Nothing is charged or paid in this step.",
+    "rejectApplication": "Turn down",
+    "rejectReasonLabel": "Reason",
+    "declineReason": {
+      "not_fit": "Not the right fit",
+      "filled": "The brief is filled",
+      "other": "Other reason"
+    },
     "shortlistAdd": "Add to shortlist",
     "shortlistRemove": "Remove from shortlist",
     "shortlisted": "Shortlisted",
@@ -4803,6 +4810,8 @@
       "rights": "Rights",
       "pitch": "Pitch",
       "examples": "Example links",
+      "questions": "Questions for applicants",
+      "questionsHint": "Up to 3, one per line. Creators answer them when they apply.",
       "displayName": "Display name",
       "inviteOptIn": "Email me when a company invites me",
       "paused": "Pause my profile",

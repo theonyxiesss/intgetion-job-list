@@ -221,6 +221,8 @@ async function detailsFor(
               reminders: invite.reminders,
               revisionUsed: invite.revisionUsed,
               shortlisted: invite.shortlisted ?? false,
+              answers: invite.answers ?? [],
+              declineReason: invite.declineReason ?? null,
               creator: profile ? publicCreatorCard(profile) : null,
               submission: forReader(submission),
               payout: moneyRecord(

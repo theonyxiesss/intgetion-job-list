@@ -72,6 +72,10 @@ export const UGC_SUBMISSION_HOSTS = [
   "youtu.be",
 ] as const;
 
+/** Safe reasons a company gives when it turns an application down (U3б). */
+export const UGC_DECLINE_REASONS = ["not_fit", "filled", "other"] as const;
+export type UgcDeclineReason = (typeof UGC_DECLINE_REASONS)[number];
+
 export const UGC_LIMITS = {
   videosMin: 1,
   videosMax: 30,
@@ -83,6 +87,10 @@ export const UGC_LIMITS = {
   offerSilenceDays: 7,
   /** D574: default licence and review terms shown to the creator. */
   licenseMonths: 6,
+  /** U3б: questions a brief asks at application, and the answer sizes. */
+  questionsMax: 3,
+  questionMax: 200,
+  answerMax: 500,
   reviewBusinessDays: 5,
   joinTokenDays: 14,
   offersPerCreatorPerDay: 3,

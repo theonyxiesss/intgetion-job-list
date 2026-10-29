@@ -60,6 +60,7 @@ function campaignOf(row: CampaignRow): Campaign {
     rights: row.rights,
     pitch: row.pitch,
     exampleUrls: row.exampleUrls,
+    questions: row.questions,
     createdAt: row.createdAt,
   };
 }
@@ -103,6 +104,8 @@ function inviteOf(row: InviteRow): Invite {
     terms: row.terms,
     termsHash: row.termsHash,
     shortlisted: row.shortlisted,
+    answers: row.answers,
+    declineReason: row.declineReason,
     agreedHash: row.agreedHash,
     agreedAt: row.agreedAt,
     createdAt: row.createdAt,
@@ -241,6 +244,7 @@ export function productionUgcStore(): UgcStore {
           mustSay: row.mustSay,
           mustNot: row.mustNot,
           exampleUrls: row.exampleUrls,
+          questions: row.questions ?? [],
           updatedAt: new Date(),
         })
         .where(eq(ugcCampaigns.id, row.id));
@@ -406,6 +410,8 @@ export function productionUgcStore(): UgcStore {
           terms: row.terms ?? null,
           termsHash: row.termsHash ?? null,
           shortlisted: row.shortlisted ?? false,
+          answers: row.answers ?? [],
+          declineReason: row.declineReason ?? null,
           agreedHash: row.agreedHash ?? null,
           agreedAt: row.agreedAt ?? null,
           updatedAt: new Date(),

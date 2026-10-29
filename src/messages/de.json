@@ -4216,6 +4216,13 @@
     "title": "UGC-Videos",
     "intro": "Kurze Videos von echten Menschen für Anzeigen und soziale Netzwerke. Ein Briefing, Creator bewerben sich, Sie stellen die Gewählten ein.",
     "moneyNote": "Der Betrag wird in Cent gespeichert. In diesem Schritt wird nichts berechnet oder ausgezahlt.",
+    "rejectApplication": "Ablehnen",
+    "rejectReasonLabel": "Grund",
+    "declineReason": {
+      "not_fit": "Passt nicht",
+      "filled": "Briefing ist besetzt",
+      "other": "Anderer Grund"
+    },
     "shortlistAdd": "In die Auswahl",
     "shortlistRemove": "Aus der Auswahl entfernen",
     "shortlisted": "In der Auswahl",
@@ -4297,6 +4304,8 @@
       "rights": "Rechte",
       "pitch": "Pitch",
       "examples": "Beispiel-Links",
+      "questions": "Fragen an Bewerber",
+      "questionsHint": "Bis zu 3, je eine pro Zeile. Creator beantworten sie bei der Bewerbung.",
       "displayName": "Anzeigename",
       "inviteOptIn": "E-Mail, wenn ein Unternehmen mich einlädt",
       "paused": "Profil pausieren",

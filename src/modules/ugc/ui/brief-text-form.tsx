@@ -22,6 +22,7 @@ export function BriefTextForm({
     mustSay: string;
     mustNot: string;
     exampleUrls: readonly string[];
+    questions: readonly string[];
   };
 }) {
   const t = useTranslations("ugc");
@@ -46,6 +47,10 @@ export function BriefTextForm({
         mustSay: read("mustSay"),
         mustNot: read("mustNot"),
         exampleUrls: read("exampleUrls").split(/\s+/).filter(Boolean),
+        questions: read("questions")
+          .split("\n")
+          .map((row) => row.trim())
+          .filter(Boolean),
       }),
     }).catch(() => null);
     setBusy(false);
@@ -96,6 +101,14 @@ export function BriefTextForm({
           defaultValue={initial.exampleUrls.join(" ")}
         />
       </Field>
+      <Field label={t("fields.questions")}>
+        <Textarea
+          name="questions"
+          defaultValue={initial.questions.join("\n")}
+          rows={3}
+        />
+      </Field>
+      <p className="t-body-s text-fg-muted">{t("fields.questionsHint")}</p>
       {note ? (
         <p
           role={note.ok ? "status" : "alert"}

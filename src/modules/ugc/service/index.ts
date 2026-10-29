@@ -56,6 +56,7 @@ export type {
 export {
   acceptInvite,
   setShortlist,
+  rejectApplication,
   applyToCampaign,
   campaignWriteAllowed,
   campaignBudget,

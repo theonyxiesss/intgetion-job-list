@@ -1,3 +1,4 @@
+import { cleanAnswers, cleanQuestions } from "./questions";
 import { assertTermsAgreed, buildTerms, termsHash } from "./terms";
 import { randomBytes, randomUUID } from "node:crypto";
 import {
@@ -5,7 +6,9 @@ import {
   UGC_LIMITS as L,
   UGC_NICHES,
   UGC_PLATFORMS,
+  UGC_DECLINE_REASONS,
   UGC_RIGHTS,
+  type UgcDeclineReason,
   type UgcNiche,
   type UgcPlatform,
   type UgcRights,
@@ -201,6 +204,7 @@ export function briefForReaders(campaign: Campaign) {
     deadline: campaign.deadline,
     rights: campaign.rights,
     status: campaign.status,
+    questions: campaign.questions ?? [],
   };
 }
 
@@ -454,6 +458,8 @@ export async function readCampaign(userId: string | null, campaignId: string) {
             reminders: invite.reminders,
             revisionUsed: invite.revisionUsed,
             shortlisted: invite.shortlisted ?? false,
+            answers: invite.answers ?? [],
+            declineReason: invite.declineReason ?? null,
             creator: profiles[index]
               ? publicCreatorCard(profiles[index])
               : null,
@@ -480,6 +486,7 @@ export async function readCampaign(userId: string | null, campaignId: string) {
       bountyMinor: invite.bountyMinor?.toString() ?? null,
       rights: invite.rights,
       pitch: invite.pitch,
+      declineReason: invite.declineReason ?? null,
       terms: invite.terms ?? null,
       termsHash: invite.termsHash ?? null,
       /** The brief no longer says what the offer said: the creator cannot accept it. */
@@ -550,6 +557,7 @@ export async function listOpenCampaigns(userId: string | null) {
       bountyMinor: row.bountyMinor.toString(),
       rights: row.rights,
       deadline: row.deadline,
+      questions: row.questions ?? [],
     }));
 }
 
@@ -709,6 +717,7 @@ async function requireReadyCreator(store: UgcStore, userId: string) {
 export async function applyToCampaign(
   userId: string | null,
   campaignId: string,
+  answers?: string[],
 ) {
   const id = requireUser(userId);
   const store = await db();
@@ -722,11 +731,13 @@ export async function applyToCampaign(
   });
   const existing = await store.findInvite(campaign.id, id);
   if (existing) return { inviteId: existing.id, status: existing.status };
+  const given = cleanAnswers(campaign.questions ?? [], answers);
   const invite: Invite = {
     id: randomUUID(),
     campaignId: campaign.id,
     creatorUserId: id,
     status: participationFromApply(),
+    answers: given,
     bountyMinor: null,
     rights: null,
     pitch: "",
@@ -1004,6 +1015,49 @@ export async function setShortlist(
     invite.id,
   );
   return { inviteId: invite.id, shortlisted: on };
+}
+
+/**
+ * The company turns an application down with a reason from a short safe list
+ * (U3б, TZ 48 §6). Only an application; an offer or a hire is not touched.
+ * The creator is told the result and the reason code, never a free text.
+ */
+export async function rejectApplication(
+  userId: string | null,
+  inviteId: string,
+  reason: UgcDeclineReason,
+) {
+  const id = requireUser(userId);
+  if (!UGC_DECLINE_REASONS.includes(reason)) {
+    throw validationError([{ path: "reason", problem: "invalid" }]);
+  }
+  const store = await db();
+  const invite = await store.getInvite(inviteId);
+  if (!invite) throw notFound();
+  const campaign = await store.getCampaign(invite.campaignId);
+  if (!campaign) throw notFound();
+  await campaignForMember(store, campaign.id, id);
+  checkParticipationTransition({
+    from: invite.status,
+    to: "declined",
+    actor: "company",
+  });
+  invite.status = "declined";
+  invite.declineReason = reason;
+  invite.shortlisted = false;
+  await store.saveInvite(invite);
+  await store.audit(id, "ugc.application_rejected", invite.id);
+  await store.notify({
+    type: "ugc.application",
+    userIds: [invite.creatorUserId],
+    payload: {
+      campaignId: campaign.id,
+      productName: campaign.productName,
+      inviteId: invite.id,
+    },
+    email: false,
+  });
+  return { inviteId: invite.id, status: invite.status, reason };
 }
 
 export async function declineInvite(userId: string | null, inviteId: string) {
@@ -1386,6 +1440,7 @@ export type BriefTextPatch = {
   mustSay?: string;
   mustNot?: string;
   exampleUrls?: string[];
+  questions?: string[];
 };
 
 /**
@@ -1435,6 +1490,8 @@ export async function updateCampaignText(
   }
   if (patch.exampleUrls !== undefined)
     next.exampleUrls = httpsExamples(patch.exampleUrls);
+  if (patch.questions !== undefined)
+    next.questions = cleanQuestions(patch.questions);
   await store.saveCampaignText(next);
   await store.audit(id, "ugc.campaign_text", campaign.id);
   return { status: next.status, productName: next.productName };

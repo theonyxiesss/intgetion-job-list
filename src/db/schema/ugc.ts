@@ -16,6 +16,7 @@ import {
 } from "drizzle-orm/pg-core";
 import type {
   UgcCampaignStatus,
+  UgcDeclineReason,
   UgcCreatorStatus,
   UgcGoal,
   UgcNiche,
@@ -131,6 +132,8 @@ export const ugcCampaigns = pgTable(
     rights: text("rights").$type<UgcRights>().notNull(),
     pitch: text("pitch").notNull().default(""),
     exampleUrls: text("example_urls").array().notNull().default([]),
+    /** Questions asked at application (U3б, 0076). */
+    questions: text("questions").array().notNull().default([]),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -193,6 +196,9 @@ export const ugcInvites = pgTable(
     termsHash: text("terms_hash"),
     /** The company's own mark on an application (U3б, 0075). The creator never sees it. */
     shortlisted: boolean("shortlisted").notNull().default(false),
+    /** Answers to the brief questions and the reason an application was turned down (0076). */
+    answers: text("answers").array().notNull().default([]),
+    declineReason: text("decline_reason").$type<UgcDeclineReason>(),
     /** The hash the creator agreed to and when; null until they accept. */
     agreedHash: text("agreed_hash"),
     agreedAt: timestamp("agreed_at", { withTimezone: true }),

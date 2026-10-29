@@ -4215,6 +4215,13 @@
     "title": "Vidéos UGC",
     "intro": "Des vidéos courtes de vraies personnes pour la pub et les réseaux. Un brief, les créateurs postulent, vous embauchez ceux que vous choisissez.",
     "moneyNote": "Le montant est enregistré en centimes. Rien n’est débité ni payé à cette étape.",
+    "rejectApplication": "Refuser",
+    "rejectReasonLabel": "Motif",
+    "declineReason": {
+      "not_fit": "Ne convient pas",
+      "filled": "Brief complet",
+      "other": "Autre motif"
+    },
     "shortlistAdd": "Ajouter à la sélection",
     "shortlistRemove": "Retirer de la sélection",
     "shortlisted": "Sélectionné",
@@ -4296,6 +4303,8 @@
       "rights": "Droits",
       "pitch": "Pitch",
       "examples": "Liens d’exemple",
+      "questions": "Questions aux candidats",
+      "questionsHint": "Jusqu’à 3, une par ligne. Les créateurs y répondent en postulant.",
       "displayName": "Nom affiché",
       "inviteOptIn": "M’écrire quand une entreprise m’invite",
       "paused": "Mettre mon profil en pause",

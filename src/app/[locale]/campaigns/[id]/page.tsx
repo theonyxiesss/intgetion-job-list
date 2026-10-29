@@ -20,6 +20,7 @@ import {
 } from "@/modules/ugc/service";
 import { StepTrack } from "@/modules/ugc/ui/step-track";
 import { UgcAction } from "@/modules/ugc/ui/action";
+import { RejectApplication } from "@/modules/ugc/ui/reject-application";
 import { BriefTextForm } from "@/modules/ugc/ui/brief-text-form";
 import { UgcReport, UgcSubmit } from "@/modules/ugc/ui/fields";
 import {
@@ -142,6 +143,12 @@ export default async function CampaignPage({
             ) : null}
             <div className="flex flex-col gap-3">
               <p className="font-mono">{t(`status.${view.invite.status}`)}</p>
+              {view.invite.status === "declined" &&
+              view.invite.declineReason ? (
+                <p className="t-body-s text-fg-muted">
+                  {t(`declineReason.${view.invite.declineReason}`)}
+                </p>
+              ) : null}
               {view.invite.status === "offered" && view.invite.termsChanged ? (
                 <p role="alert" className="t-body-s">
                   {t("termsChanged")}
@@ -447,6 +454,23 @@ export default async function CampaignPage({
                               .join(" — ")}
                           </p>
                         ) : null}
+                        {row.status === "applied" && row.answers.length ? (
+                          <dl className="t-body-s flex flex-col gap-1">
+                            {row.answers.map((answer, n) => (
+                              <div key={n}>
+                                <dt className="text-fg-muted">
+                                  {brief.questions[n]}
+                                </dt>
+                                <dd className="break-words">{answer}</dd>
+                              </div>
+                            ))}
+                          </dl>
+                        ) : null}
+                        {row.status === "declined" && row.declineReason ? (
+                          <p className="t-body-s text-fg-muted">
+                            {t(`declineReason.${row.declineReason}`)}
+                          </p>
+                        ) : null}
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 md:justify-end">
@@ -455,6 +479,9 @@ export default async function CampaignPage({
                         <span className="t-body-s font-mono">
                           {t("shortlisted")}
                         </span>
+                      ) : null}
+                      {row.status === "applied" ? (
+                        <RejectApplication inviteId={row.inviteId} />
                       ) : null}
                       {row.status === "applied" ? (
                         <UgcAction
@@ -581,6 +608,7 @@ export default async function CampaignPage({
                     mustSay: brief.mustSay,
                     mustNot: brief.mustNot,
                     exampleUrls: brief.exampleUrls,
+                    questions: brief.questions,
                   }}
                 />
               </div>

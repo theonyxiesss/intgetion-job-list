@@ -1,10 +1,17 @@
 import { z } from "zod";
-import { UGC_GOALS, UGC_NICHES, UGC_PLATFORMS, UGC_RIGHTS } from "@/config/ugc";
+import {
+  UGC_DECLINE_REASONS,
+  UGC_GOALS,
+  UGC_NICHES,
+  UGC_PLATFORMS,
+  UGC_RIGHTS,
+} from "@/config/ugc";
 import { readJson, toErrorResponse } from "@/lib/http";
 import { requireUser } from "@/lib/auth-guards";
 import {
   acceptInvite,
   setShortlist,
+  rejectApplication,
   applyToCampaign,
   closeCampaign,
   createCampaign,
@@ -60,7 +67,11 @@ const body = z.discriminatedUnion("action", [
     status: z.enum(["active", "paused"]),
   }),
   z.object({ action: z.literal("create"), ...brief }),
-  z.object({ action: z.literal("apply"), campaignId: z.uuid() }),
+  z.object({
+    action: z.literal("apply"),
+    campaignId: z.uuid(),
+    answers: z.array(z.string().max(600)).max(3).optional(),
+  }),
   z.object({
     action: z.literal("offer"),
     campaignId: z.uuid(),
@@ -72,6 +83,11 @@ const body = z.discriminatedUnion("action", [
     termsHash: z.string().length(64).optional(),
   }),
   z.object({ action: z.literal("decline"), inviteId: z.uuid() }),
+  z.object({
+    action: z.literal("reject"),
+    inviteId: z.uuid(),
+    reason: z.enum(UGC_DECLINE_REASONS),
+  }),
   z.object({
     action: z.literal("shortlist"),
     inviteId: z.uuid(),
@@ -112,6 +128,7 @@ const body = z.discriminatedUnion("action", [
     mustSay: z.string().max(1000).optional(),
     mustNot: z.string().max(1000).optional(),
     exampleUrls: z.array(z.string().max(500)).max(10).optional(),
+    questions: z.array(z.string().max(300)).max(5).optional(),
   }),
   z.object({ action: z.literal("join"), campaignId: z.uuid() }),
   z.object({ action: z.literal("redeem"), payload: z.string().max(64) }),
@@ -156,7 +173,9 @@ export async function POST(request: Request) {
       );
     }
     if (input.action === "apply") {
-      return Response.json(await applyToCampaign(id, input.campaignId));
+      return Response.json(
+        await applyToCampaign(id, input.campaignId, input.answers),
+      );
     }
     if (input.action === "offer") {
       return Response.json(
@@ -166,6 +185,11 @@ export async function POST(request: Request) {
     if (input.action === "accept") {
       return Response.json(
         await acceptInvite(id, input.inviteId, input.termsHash),
+      );
+    }
+    if (input.action === "reject") {
+      return Response.json(
+        await rejectApplication(id, input.inviteId, input.reason),
       );
     }
     if (input.action === "shortlist") {

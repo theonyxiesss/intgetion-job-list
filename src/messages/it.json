@@ -4215,6 +4215,13 @@
     "title": "Video UGC",
     "intro": "Video brevi di persone reali per pubblicità e social. Un brief, i creator si candidano, assumi chi scegli.",
     "moneyNote": "L’importo è registrato in centesimi. In questo passo non si addebita e non si paga nulla.",
+    "rejectApplication": "Rifiuta",
+    "rejectReasonLabel": "Motivo",
+    "declineReason": {
+      "not_fit": "Non adatto",
+      "filled": "Brief completo",
+      "other": "Altro motivo"
+    },
     "shortlistAdd": "Aggiungi alla selezione",
     "shortlistRemove": "Rimuovi dalla selezione",
     "shortlisted": "In selezione",
@@ -4296,6 +4303,8 @@
       "rights": "Diritti",
       "pitch": "Pitch",
       "examples": "Link di esempio",
+      "questions": "Domande ai candidati",
+      "questionsHint": "Fino a 3, una per riga. I creator rispondono quando si candidano.",
       "displayName": "Nome visibile",
       "inviteOptIn": "Scrivimi quando un’azienda mi invita",
       "paused": "Metti in pausa il profilo",
