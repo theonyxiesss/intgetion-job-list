@@ -28,17 +28,22 @@ export function TaskManagementActions({
       proposal?: { id: string };
     };
     const result = taskId
-      ? await callApi<ActionResult>(`/api/freelance/tasks/${taskId}`, { action: "close" })
-      : await callApi<ActionResult>(
-          `/api/freelance/proposals/${proposalId}`,
-          { action },
-        );
+      ? await callApi<ActionResult>(`/api/freelance/tasks/${taskId}`, {
+          action: "close",
+        })
+      : await callApi<ActionResult>(`/api/freelance/proposals/${proposalId}`, {
+          action,
+        });
     setBusy(false);
     if (!result.ok) {
       setError(errorText(copy, result.code));
       return;
     }
-    if (action === "accept" && "order" in result.data && result.data.order?.id) {
+    if (
+      action === "accept" &&
+      "order" in result.data &&
+      result.data.order?.id
+    ) {
       router.push(`/freelance/orders/${result.data.order.id}`);
       return;
     }
@@ -48,14 +53,36 @@ export function TaskManagementActions({
   return (
     <div className="flex flex-wrap items-center gap-2">
       {taskId ? (
-        <Button variant="secondary" disabled={busy} onClick={() => act("close")}>{copy.closeTask}</Button>
+        <Button
+          variant="secondary"
+          disabled={busy}
+          onClick={() => act("close")}
+        >
+          {copy.closeTask}
+        </Button>
       ) : (
         <>
-          <Button variant="secondary" disabled={busy} onClick={() => act("accept")}>{copy.acceptProposal}</Button>
-          <Button variant="secondary" disabled={busy} onClick={() => act("decline")}>{copy.declineProposal}</Button>
+          <Button
+            variant="secondary"
+            disabled={busy}
+            onClick={() => act("accept")}
+          >
+            {copy.acceptProposal}
+          </Button>
+          <Button
+            variant="secondary"
+            disabled={busy}
+            onClick={() => act("decline")}
+          >
+            {copy.declineProposal}
+          </Button>
         </>
       )}
-      {error ? <p role="alert" className="w-full text-sm text-danger">{error}</p> : null}
+      {error ? (
+        <p role="alert" className="w-full text-sm text-danger">
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

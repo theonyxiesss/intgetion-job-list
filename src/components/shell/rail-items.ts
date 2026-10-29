@@ -31,7 +31,8 @@ export function railHidden(pathname: string): boolean {
 export function railActive(pathname: string, href: string): boolean {
   if (
     href === "/freelance" &&
-    (pathname === "/freelance/tasks" || pathname.startsWith("/freelance/tasks/"))
+    (pathname === "/freelance/tasks" ||
+      pathname.startsWith("/freelance/tasks/"))
   ) {
     return false;
   }
