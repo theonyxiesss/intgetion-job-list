@@ -82,7 +82,7 @@ export function JobCard({
         companyHref ? (
           <Link
             href={companyHref}
-            className="t-body-s relative z-10 self-start text-fg-muted underline-offset-4 hover:underline"
+            className="t-body-s relative z-10 -my-[1.5px] inline-flex min-h-6 min-w-6 items-center self-start text-fg-muted underline-offset-4 hover:underline"
           >
             {companyName}
           </Link>

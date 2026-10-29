@@ -209,7 +209,7 @@ export default async function JobsPage({
               intro={t("subtitle")}
               actions={
                 <a
-                  className="t-label text-fg-muted"
+                  className="t-label -my-1 inline-flex min-h-6 min-w-6 items-center text-fg-muted"
                   href={`${localePrefix(locale)}/jobs/rss.xml`}
                 >
                   {markers("rss")}
