@@ -3863,3 +3863,10 @@
 - Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (254 файла, 1902 теста); `pnpm build` — в терминале основателя.
 - Не проверено: запросы `payoutForTx` с новой колонкой `invite_id` и `latestDeposit`/`findRefund` на настоящей базе (CI); вид под входом и на телефоне (квота Supabase).
 - Не сделано: автоматический рельс и цена плана UGC (п. 5 §14), срок реакции поддержки, экран сверки.
+
+## 2026-10-29 — Миграции 0071–0083 применены к облаку (D438) — DONE
+
+- По «да» основателя (после добавления им разрешения на `execute_sql`) применены 13 файлов по одному путём D438: временная роль `migrator`, текст файла без изменений, запись в `schema_migrations`, возврат прав — одна транзакция на файл. Ошибок и откатов не было.
+- Проверено чтением после применения: журнал 80 строк (было 67); 11 таблиц (`freelance_threads`, `freelance_messages`, `freelance_client_reviews`, `freelance_tasks`, `freelance_proposals`, `ugc_campaign_versions`, `ugc_room_messages`, `ugc_room_reports`, `ugc_submission_versions`, `ugc_shipments`, `ugc_disputes`) — владелец `migrator`, RLS включён и принудителен; 12 колонок в `ugc_invites`, `ugc_campaigns`, `ugc_submissions`; частичный уникальный индекс `ugc_disputes_one_unresolved_idx`; `app_rw` имеет `SELECT` и `INSERT` на всех новых таблицах; членство `migrator` — `supabase_admin`, set=false. `get_advisors` (security): только прежние замечания про четыре функции и защиту от утёкших паролей, новых нет.
+- Не проверено: интеграционные тесты CI на этой базе; сценарии под входом (вход блокирует квота Supabase).
+- Код не выложен: ветка `claude/ugc-workspace` не слита в `master`.
