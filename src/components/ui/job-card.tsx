@@ -33,6 +33,7 @@ export function JobCard({
   meta,
   summary,
   viewLabel,
+  headingLevel,
 }: {
   href: string;
   title: string;
@@ -59,6 +60,8 @@ export function JobCard({
   summary?: string | null;
   /** Visible "View job" control; the whole card stays the link. */
   viewLabel?: string;
+  /** H2 when the list sits straight under the page H1; H3 under a section H2. */
+  headingLevel?: 2 | 3;
 }) {
   const lead = stats.find((stat) => stat.lead) ?? null;
   const facts = [
@@ -107,6 +110,7 @@ export function JobCard({
       viewLabel={viewLabel}
       actions={actions}
       compact={compact}
+      headingLevel={headingLevel}
     />
   );
 }

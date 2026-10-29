@@ -25,9 +25,11 @@ function summaryOf(description: string | null): string | null {
 export async function PublicJobCard({
   job,
   locale,
+  headingLevel,
 }: {
   job: PublicJob;
   locale: string;
+  headingLevel?: 2 | 3;
 }) {
   const t = await getTranslations("jobs");
   const markers = await getTranslations("markers");
@@ -107,6 +109,7 @@ export async function PublicJobCard({
       moreSkillsLabel={(hidden) => `+${hidden + job.skillsMore}`}
       summary={summaryOf(job.description)}
       viewLabel={t("viewJob")}
+      headingLevel={headingLevel}
     />
   );
 }

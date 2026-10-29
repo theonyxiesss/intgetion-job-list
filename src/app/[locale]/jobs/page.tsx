@@ -474,7 +474,11 @@ export default async function JobsPage({
                     .filter((job) => !promotedIds.has(job.id))
                     .map((job) => (
                       <li key={job.id}>
-                        <PublicJobCard job={job} locale={locale} />
+                        <PublicJobCard
+                          job={job}
+                          locale={locale}
+                          headingLevel={2}
+                        />
                       </li>
                     ))}
                 </ul>
