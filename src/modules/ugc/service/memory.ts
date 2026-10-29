@@ -5,6 +5,7 @@ import type {
   Invite,
   JoinToken,
   Payout,
+  RoomMessage,
   Submission,
   UgcNotice,
 } from "./records";
@@ -211,6 +212,15 @@ export class MemoryUgcStore implements UgcStore {
         token.revokedAt = at;
       }
     }
+  }
+  roomMessages: RoomMessage[] = [];
+  async listRoomMessages(inviteId: string) {
+    return this.roomMessages
+      .filter((row) => row.inviteId === inviteId)
+      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+  }
+  async insertRoomMessage(row: RoomMessage) {
+    this.roomMessages.push(row);
   }
   versions: CampaignVersion[] = [];
   async listCampaignVersions(campaignId: string) {

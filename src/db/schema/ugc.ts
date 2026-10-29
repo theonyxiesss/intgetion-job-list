@@ -360,3 +360,28 @@ export const ugcCampaignVersions = pgTable(
     unique("ugc_campaign_versions_key").on(table.campaignId, table.version),
   ],
 );
+
+/** A message in the room of one participation (0078). */
+export const ugcRoomMessages = pgTable(
+  "ugc_room_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    inviteId: uuid("invite_id")
+      .notNull()
+      .references(() => ugcInvites.id, { onDelete: "cascade" }),
+    authorId: uuid("author_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    body: text("body").notNull(),
+    hiddenAt: timestamp("hidden_at", { withTimezone: true }),
+    hiddenBy: uuid("hidden_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("ugc_room_messages_invite_idx").on(table.inviteId, table.createdAt),
+  ],
+);

@@ -56,6 +56,9 @@ export type {
 export {
   acceptInvite,
   setShortlist,
+  getUgcRoom,
+  postUgcRoomMessage,
+  isRoomTableMissing,
   rejectApplication,
   applyToCampaign,
   campaignWriteAllowed,

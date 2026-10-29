@@ -1,4 +1,12 @@
 import { cleanAnswers, cleanQuestions } from "./questions";
+import { enforceRateLimit } from "@/lib/rate-limit";
+import {
+  buildRoomFeed,
+  checkRoomMessage,
+  UGC_ROOM_WRITABLE,
+  type RoomFeedItem,
+  type RoomSide,
+} from "./room";
 import { versionRows } from "./versions";
 import { assertTermsAgreed, buildTerms, termsHash } from "./terms";
 import { randomBytes, randomUUID } from "node:crypto";
@@ -61,6 +69,7 @@ import type {
   Invite,
   Payout,
   ProfileInput,
+  RoomMessage,
   Submission,
 } from "./records";
 import type { UgcStore } from "./store";
@@ -1786,4 +1795,113 @@ export async function campaignBudget(
     required: escrowOn(),
     paid: (await store.confirmedDepositMinor(campaign.id)) !== null,
   };
+}
+
+const UNDEFINED_TABLE = "42P01";
+
+/** Postgres "no such table": migration 0078 is not on the database yet. */
+export function isRoomTableMissing(error: unknown): boolean {
+  for (
+    let current: unknown = error, depth = 0;
+    current && depth < 4;
+    depth += 1
+  ) {
+    if ((current as { code?: unknown }).code === UNDEFINED_TABLE) return true;
+    current = (current as { cause?: unknown }).cause;
+  }
+  return false;
+}
+
+async function roomParty(store: UgcStore, inviteId: string, userId: string) {
+  const invite = await store.getInvite(inviteId);
+  if (!invite) throw notFound();
+  const campaign = await store.getCampaign(invite.campaignId);
+  if (!campaign) throw notFound();
+  if (invite.creatorUserId === userId) {
+    return { invite, campaign, side: "creator" as const };
+  }
+  const role = await store.memberRole(campaign.companyId, userId);
+  if (!role) throw notFound();
+  return { invite, campaign, side: "company" as const };
+}
+
+export type UgcRoom = {
+  /** False until migration 0078 is applied. */
+  ready: boolean;
+  writable: boolean;
+  side: RoomSide;
+  items: RoomFeedItem[];
+};
+
+/**
+ * The room of one participation for one of its two parties (U4, TZ 48 §8).
+ * A stranger gets 404. Before migration 0078 the feed comes without messages
+ * and posting answers 503, so the page keeps working.
+ */
+export async function getUgcRoom(
+  userId: string | null,
+  inviteId: string,
+): Promise<UgcRoom> {
+  const id = requireUser(userId);
+  const store = await db();
+  const { invite, side } = await roomParty(store, inviteId, id);
+  let ready = true;
+  let messages: RoomMessage[] = [];
+  try {
+    messages = await store.listRoomMessages(invite.id);
+  } catch (error) {
+    if (!isRoomTableMissing(error)) throw error;
+    ready = false;
+  }
+  return {
+    ready,
+    writable: ready && UGC_ROOM_WRITABLE.includes(invite.status),
+    side,
+    items: buildRoomFeed({
+      viewerId: id,
+      creatorId: invite.creatorUserId,
+      messages: messages.map((row) => ({
+        id: row.id,
+        authorId: row.authorId,
+        body: row.body,
+        createdAt: row.createdAt.toISOString(),
+        hiddenAt: row.hiddenAt?.toISOString() ?? null,
+      })),
+      offeredAt: invite.offeredAt?.toISOString() ?? null,
+      agreedAt: invite.agreedAt?.toISOString() ?? null,
+    }),
+  };
+}
+
+/** One message from a party; 30 an hour per account (D574). */
+export async function postUgcRoomMessage(
+  userId: string | null,
+  inviteId: string,
+  body: string,
+): Promise<UgcRoom> {
+  const id = requireUser(userId);
+  const store = await db();
+  const { invite } = await roomParty(store, inviteId, id);
+  const text = checkRoomMessage({ status: invite.status, body });
+  await enforceRateLimit("ugcMessage", id);
+  try {
+    await store.insertRoomMessage({
+      id: randomUUID(),
+      inviteId: invite.id,
+      authorId: id,
+      body: text,
+      hiddenAt: null,
+      createdAt: store.now(),
+    });
+  } catch (error) {
+    if (isRoomTableMissing(error)) {
+      throw new HttpError(
+        503,
+        UGC_ERRORS.roomNotReady,
+        "Messages in orders are not switched on yet",
+      );
+    }
+    throw error;
+  }
+  return getUgcRoom(id, invite.id);
 }

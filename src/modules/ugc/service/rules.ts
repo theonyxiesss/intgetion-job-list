@@ -30,6 +30,8 @@ export const UGC_ERRORS = {
   refundWait: "UGC_REFUND_WAIT",
   nothingToRefund: "UGC_NOTHING_TO_REFUND",
   termsChanged: "UGC_TERMS_CHANGED",
+  roomClosed: "UGC_ROOM_CLOSED",
+  roomNotReady: "UGC_ROOM_NOT_READY",
   termsMismatch: "UGC_TERMS_MISMATCH",
 } as const;
 

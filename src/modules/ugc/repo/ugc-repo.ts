@@ -7,6 +7,7 @@ import {
   ugcInvites,
   ugcJoinTokens,
   ugcPayouts,
+  ugcRoomMessages,
   ugcSubmissions,
   users,
   userProfiles,
@@ -29,6 +30,7 @@ import type {
   Invite,
   JoinToken,
   Payout,
+  RoomMessage,
   Submission,
 } from "../service/records";
 import type { UgcStore } from "../service/store";
@@ -519,6 +521,29 @@ export function productionUgcStore(): UgcStore {
             isNull(ugcJoinTokens.revokedAt),
           ),
         );
+    },
+    async listRoomMessages(inviteId) {
+      const rows = await db
+        .select()
+        .from(ugcRoomMessages)
+        .where(eq(ugcRoomMessages.inviteId, inviteId))
+        .orderBy(ugcRoomMessages.createdAt);
+      return rows.map((row): RoomMessage => ({
+        id: row.id,
+        inviteId: row.inviteId,
+        authorId: row.authorId,
+        body: row.body,
+        hiddenAt: row.hiddenAt,
+        createdAt: row.createdAt,
+      }));
+    },
+    async insertRoomMessage(row) {
+      await db.insert(ugcRoomMessages).values({
+        id: row.id,
+        inviteId: row.inviteId,
+        authorId: row.authorId,
+        body: row.body,
+      });
     },
     async listCampaignVersions(campaignId) {
       const rows = await db

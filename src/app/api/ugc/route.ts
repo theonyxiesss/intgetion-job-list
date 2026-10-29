@@ -11,6 +11,7 @@ import { requireUser } from "@/lib/auth-guards";
 import {
   acceptInvite,
   setShortlist,
+  postUgcRoomMessage,
   rejectApplication,
   applyToCampaign,
   closeCampaign,
@@ -83,6 +84,11 @@ const body = z.discriminatedUnion("action", [
     termsHash: z.string().length(64).optional(),
   }),
   z.object({ action: z.literal("decline"), inviteId: z.uuid() }),
+  z.object({
+    action: z.literal("roomPost"),
+    inviteId: z.uuid(),
+    body: z.string().max(4000),
+  }),
   z.object({
     action: z.literal("reject"),
     inviteId: z.uuid(),
@@ -185,6 +191,11 @@ export async function POST(request: Request) {
     if (input.action === "accept") {
       return Response.json(
         await acceptInvite(id, input.inviteId, input.termsHash),
+      );
+    }
+    if (input.action === "roomPost") {
+      return Response.json(
+        await postUgcRoomMessage(id, input.inviteId, input.body),
       );
     }
     if (input.action === "reject") {

@@ -111,6 +111,15 @@ export type CampaignVersion = {
   createdAt: Date;
 };
 
+export type RoomMessage = {
+  id: string;
+  inviteId: string;
+  authorId: string | null;
+  body: string;
+  hiddenAt: Date | null;
+  createdAt: Date;
+};
+
 export type JoinToken = {
   campaignId: string;
   tokenHash: string;

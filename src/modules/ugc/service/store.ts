@@ -5,6 +5,7 @@ import type {
   Invite,
   JoinToken,
   Payout,
+  RoomMessage,
   Submission,
   UgcNotice,
 } from "./records";
@@ -64,6 +65,9 @@ export interface UgcStore {
   /** Saved states of a brief's texts, oldest first (U3б). */
   listCampaignVersions(campaignId: string): Promise<CampaignVersion[]>;
   insertCampaignVersions(rows: readonly CampaignVersion[]): Promise<void>;
+  /** Messages of one participation's room, oldest first (U4). */
+  listRoomMessages(inviteId: string): Promise<RoomMessage[]>;
+  insertRoomMessage(row: RoomMessage): Promise<void>;
   revokeJoinTokens(campaignId: string, at: Date): Promise<void>;
   insertJoinToken(row: JoinToken): Promise<void>;
   findJoinToken(tokenHash: string): Promise<JoinToken | null>;

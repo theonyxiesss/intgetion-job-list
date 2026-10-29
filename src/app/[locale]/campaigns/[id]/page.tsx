@@ -221,6 +221,15 @@ export default async function CampaignPage({
               >
                 {t("thread")}
               </ButtonLink>
+              {view.invite.status === "offered" ||
+              view.invite.status === "hired" ? (
+                <ButtonLink
+                  href={`/campaigns/${view.brief.id}/room/${view.invite.id}`}
+                  variant="secondary"
+                >
+                  {t("roomOpen")}
+                </ButtonLink>
+              ) : null}
             </div>
           </Container>
         </main>
@@ -479,6 +488,14 @@ export default async function CampaignPage({
                         <span className="t-body-s font-mono">
                           {t("shortlisted")}
                         </span>
+                      ) : null}
+                      {row.status === "offered" || row.status === "hired" ? (
+                        <ButtonLink
+                          href={`/campaigns/${id}/room/${row.inviteId}`}
+                          variant="secondary"
+                        >
+                          {t("roomOpen")}
+                        </ButtonLink>
                       ) : null}
                       {row.status === "applied" ? (
                         <RejectApplication inviteId={row.inviteId} />
