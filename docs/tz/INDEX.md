@@ -39,5 +39,6 @@
 | [34-spoki-dock.md](34-spoki-dock.md)                             | D525: постоянная панель Spoki — один экземпляр `Chat` в layout, режимы по ширине, `/chat` как «во весь экран», телефон, раздел страницы в промпте; решения §8, как сделано §9. Ветка `claude/spoki-dock`, за `SPOKI_DOCK`                           |
 | [35-spoki-agent-roadmap.md](35-spoki-agent-roadmap.md)           | D540/D541: план Spoki в 5 этапов, ревью слабых мест и брейншторм сценария, workflow и памяти. Предложения не приняты автоматически.                                                                                                                 |
 | [36-spoki-live-work-and-next.md](36-spoki-live-work-and-next.md) | План (2026-10-27): A — живой ход работы Spoki (аналоги, AI Elements, assistant-ui); B — фронтенд платформы по списку основателя; C — модель Jev (TypeSafe) через OpenRouter для маршрутизации, выбора и оценки. Карта, где что появляется. Кода нет |
+| [43-freelance-escrow.md](43-freelance-escrow.md)                 | D562 (проект): эскроу фриланс-заказа на Smart Invoice (Base, USDC) — этапы, спор, возврат после срока; решения основателя §6; прототип только в Base Sepolia. Кода нет                                                                              |
 
 Новые D — только в [../DECISIONS.md](../DECISIONS.md). Как в коде — [../how-it-works/](../how-it-works/INDEX.md).
