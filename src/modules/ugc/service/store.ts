@@ -7,6 +7,7 @@ import type {
   Payout,
   RoomMessage,
   RoomReport,
+  Shipment,
   Submission,
   SubmissionVersion,
   UgcNotice,
@@ -81,6 +82,9 @@ export interface UgcStore {
   /** Messages of one participation's room, oldest first (U4). */
   listRoomMessages(inviteId: string): Promise<RoomMessage[]>;
   insertRoomMessage(row: RoomMessage): Promise<void>;
+  /** The shipment of one participation, or null (U6). */
+  getShipment(inviteId: string): Promise<Shipment | null>;
+  saveShipment(row: Shipment): Promise<void>;
   getRoomMessage(id: string): Promise<RoomMessage | null>;
   hideRoomMessage(id: string, by: string, at: Date): Promise<void>;
   /** Throws a Postgres 23505 when this person already reported the message. */

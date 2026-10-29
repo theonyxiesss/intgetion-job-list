@@ -12,6 +12,10 @@ import { requireUser } from "@/lib/auth-guards";
 import {
   acceptInvite,
   setShortlist,
+  UGC_DELIVERY_PROBLEMS,
+  markShipped,
+  confirmReceived,
+  reportDeliveryProblem,
   reportBrokenLink,
   postUgcRoomMessage,
   reportRoomMessage,
@@ -89,6 +93,19 @@ const body = z.discriminatedUnion("action", [
   }),
   z.object({ action: z.literal("decline"), inviteId: z.uuid() }),
   z.object({ action: z.literal("brokenLink"), inviteId: z.uuid() }),
+  z.object({
+    action: z.literal("ship"),
+    inviteId: z.uuid(),
+    carrier: z.string().max(120),
+    tracking: z.string().max(120),
+    expectedDate: z.string().max(10).optional(),
+  }),
+  z.object({ action: z.literal("received"), inviteId: z.uuid() }),
+  z.object({
+    action: z.literal("deliveryProblem"),
+    inviteId: z.uuid(),
+    reason: z.enum(UGC_DELIVERY_PROBLEMS),
+  }),
   z.object({
     action: z.literal("roomPost"),
     inviteId: z.uuid(),
@@ -225,6 +242,23 @@ export async function POST(request: Request) {
     }
     if (input.action === "brokenLink") {
       return Response.json(await reportBrokenLink(id, input.inviteId));
+    }
+    if (input.action === "ship") {
+      return Response.json(
+        await markShipped(id, input.inviteId, {
+          carrier: input.carrier,
+          tracking: input.tracking,
+          expectedDate: input.expectedDate ?? null,
+        }),
+      );
+    }
+    if (input.action === "received") {
+      return Response.json(await confirmReceived(id, input.inviteId));
+    }
+    if (input.action === "deliveryProblem") {
+      return Response.json(
+        await reportDeliveryProblem(id, input.inviteId, input.reason),
+      );
     }
     if (input.action === "roomPost") {
       return Response.json(

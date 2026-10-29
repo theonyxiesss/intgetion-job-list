@@ -7,6 +7,7 @@ import type {
   Payout,
   RoomMessage,
   RoomReport,
+  Shipment,
   Submission,
   SubmissionVersion,
   UgcNotice,
@@ -250,6 +251,13 @@ export class MemoryUgcStore implements UgcStore {
   }
   async insertRoomMessage(row: RoomMessage) {
     this.roomMessages.push(row);
+  }
+  shipments = new Map<string, Shipment>();
+  async getShipment(inviteId: string) {
+    return this.shipments.get(inviteId) ?? null;
+  }
+  async saveShipment(row: Shipment) {
+    this.shipments.set(row.inviteId, { ...row });
   }
   async getRoomMessage(id: string) {
     return this.roomMessages.find((row) => row.id === id) ?? null;

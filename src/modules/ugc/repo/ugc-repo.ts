@@ -9,6 +9,7 @@ import {
   ugcPayouts,
   ugcRoomMessages,
   ugcRoomReports,
+  ugcShipments,
   ugcSubmissionVersions,
   ugcSubmissions,
   users,
@@ -622,6 +623,31 @@ export function productionUgcStore(): UgcStore {
         authorId: row.authorId,
         body: row.body,
       });
+    },
+    async getShipment(inviteId) {
+      const [row] = await db
+        .select()
+        .from(ugcShipments)
+        .where(eq(ugcShipments.inviteId, inviteId))
+        .limit(1);
+      return row ?? null;
+    },
+    async saveShipment(row) {
+      await db
+        .insert(ugcShipments)
+        .values(row)
+        .onConflictDoUpdate({
+          target: ugcShipments.inviteId,
+          set: {
+            carrier: row.carrier,
+            tracking: row.tracking,
+            expectedDate: row.expectedDate,
+            shippedAt: row.shippedAt,
+            receivedAt: row.receivedAt,
+            problem: row.problem,
+            problemAt: row.problemAt,
+          },
+        });
     },
     async getRoomMessage(id) {
       const [row] = await db

@@ -23,6 +23,7 @@ export type CreatorProfile = {
   inviteOptIn: boolean;
   status: UgcCreatorStatus;
 };
+import type { UgcDeliveryProblem } from "./delivery";
 import type { TermsSnapshot } from "./terms";
 import type { BriefTextSnapshot } from "./versions";
 
@@ -145,6 +146,17 @@ export type RoomReport = {
   reason: UgcReportReason;
   status: "open" | "hidden" | "dismissed";
   createdAt: Date;
+};
+
+export type Shipment = {
+  inviteId: string;
+  carrier: string;
+  tracking: string;
+  expectedDate: string | null;
+  shippedAt: Date;
+  receivedAt: Date | null;
+  problem: UgcDeliveryProblem | null;
+  problemAt: Date | null;
 };
 
 export type JoinToken = {

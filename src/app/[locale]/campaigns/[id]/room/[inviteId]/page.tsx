@@ -8,6 +8,7 @@ import { HttpError } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getUgcRoom } from "@/modules/ugc/service";
+import { DeliveryPanel } from "@/modules/ugc/ui/delivery-panel";
 import { ReportMessage } from "@/modules/ugc/ui/report-message";
 import { RoomForm } from "@/modules/ugc/ui/room-form";
 
@@ -58,6 +59,15 @@ export default async function UgcRoomPage({
               {t("roomNotReady")}
             </p>
           ) : null}
+          {room.shipment || room.canShip ? (
+            <DeliveryPanel
+              inviteId={inviteId}
+              shipment={room.shipment}
+              canShip={room.canShip}
+              canConfirmReceipt={room.canConfirmReceipt}
+              canReportProblem={room.canReportProblem}
+            />
+          ) : null}
           {room.items.length === 0 ? (
             <p className="text-fg-muted">{t("roomEmpty")}</p>
           ) : (
@@ -70,9 +80,13 @@ export default async function UgcRoomPage({
                   {item.kind === "event" ? (
                     <p className="t-body-s text-fg-muted">
                       {t(
-                        item.event === "offered"
-                          ? "roomEventOffered"
-                          : "roomEventAgreed",
+                        {
+                          offered: "roomEventOffered",
+                          agreed: "roomEventAgreed",
+                          shipped: "roomEventShipped",
+                          received: "roomEventReceived",
+                          problem: "roomEventProblem",
+                        }[item.event],
                       )}{" "}
                       <time dateTime={item.at} className="font-mono">
                         {stamp.format(new Date(item.at))}

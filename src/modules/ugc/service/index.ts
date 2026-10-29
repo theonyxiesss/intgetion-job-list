@@ -56,6 +56,9 @@ export type {
 export {
   acceptInvite,
   setShortlist,
+  markShipped,
+  confirmReceived,
+  reportDeliveryProblem,
   reportBrokenLink,
   getUgcRoom,
   reportRoomMessage,
@@ -216,3 +219,5 @@ export type {
   WorkspaceSection,
   WorkspaceStage,
 } from "./creator-workspace";
+export { UGC_DELIVERY_PROBLEMS } from "./delivery";
+export type { DeliveryState, UgcDeliveryProblem } from "./delivery";

@@ -81,6 +81,14 @@ export const UGC_REPORT_REASONS = [
 ] as const;
 export type UgcReportReason = (typeof UGC_REPORT_REASONS)[number];
 
+/** What a creator may say is wrong with a product that was sent (U6). */
+export const UGC_DELIVERY_PROBLEMS = [
+  "not_arrived",
+  "damaged",
+  "wrong_item",
+] as const;
+export type UgcDeliveryProblem = (typeof UGC_DELIVERY_PROBLEMS)[number];
+
 /** Safe reasons a company gives when it turns an application down (U3б). */
 export const UGC_DECLINE_REASONS = ["not_fit", "filled", "other"] as const;
 export type UgcDeclineReason = (typeof UGC_DECLINE_REASONS)[number];
@@ -96,6 +104,10 @@ export const UGC_LIMITS = {
   offerSilenceDays: 7,
   /** D574: default licence and review terms shown to the creator. */
   licenseMonths: 6,
+  /** U6: sizes of what the company types about a shipment. */
+  carrierMax: 60,
+  trackingMax: 60,
+  expectedDeliveryMaxDays: 60,
   /** U3б: questions a brief asks at application, and the answer sizes. */
   questionsMax: 3,
   questionMax: 200,

@@ -58,7 +58,12 @@ export type RoomFeedItem =
       body: string | null;
       hidden: boolean;
     }
-  | { kind: "event"; id: string; at: string; event: "offered" | "agreed" };
+  | {
+      kind: "event";
+      id: string;
+      at: string;
+      event: "offered" | "agreed" | "shipped" | "received" | "problem";
+    };
 
 export type RoomFeedSources = {
   viewerId: string;
@@ -72,6 +77,10 @@ export type RoomFeedSources = {
   }[];
   offeredAt: string | null;
   agreedAt: string | null;
+  /** Delivery marks, when the order has a physical product (U6). */
+  shippedAt?: string | null;
+  receivedAt?: string | null;
+  problemAt?: string | null;
 };
 
 // Same instant: the event first, then the talk it started; messages keep
@@ -95,6 +104,13 @@ export function buildRoomFeed(source: RoomFeedSources): RoomFeedItem[] {
       at: source.agreedAt,
       event: "agreed",
     });
+  }
+  for (const [event, at] of [
+    ["shipped", source.shippedAt],
+    ["received", source.receivedAt],
+    ["problem", source.problemAt],
+  ] as const) {
+    if (at) items.push({ kind: "event", id: event, at, event });
   }
   for (const row of source.messages) {
     const side: RoomSide | "deleted" =

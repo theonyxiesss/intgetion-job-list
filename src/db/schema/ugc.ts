@@ -17,6 +17,7 @@ import {
 import type {
   UgcCampaignStatus,
   UgcDeclineReason,
+  UgcDeliveryProblem,
   UgcReportReason,
   UgcCreatorStatus,
   UgcGoal,
@@ -443,3 +444,19 @@ export const ugcSubmissionVersions = pgTable(
     unique("ugc_submission_versions_key").on(table.submissionId, table.version),
   ],
 );
+
+/** Delivery of a physical product to a hired creator (0082). */
+export const ugcShipments = pgTable("ugc_shipments", {
+  inviteId: uuid("invite_id")
+    .primaryKey()
+    .references(() => ugcInvites.id, { onDelete: "cascade" }),
+  carrier: text("carrier").notNull(),
+  tracking: text("tracking").notNull(),
+  expectedDate: date("expected_date"),
+  shippedAt: timestamp("shipped_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  receivedAt: timestamp("received_at", { withTimezone: true }),
+  problem: text("problem").$type<UgcDeliveryProblem>(),
+  problemAt: timestamp("problem_at", { withTimezone: true }),
+});

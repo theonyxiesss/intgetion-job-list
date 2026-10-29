@@ -1,3 +1,11 @@
+import {
+  checkShipment,
+  deliveryState,
+  UGC_DELIVERY_PROBLEMS,
+  type DeliveryState,
+  type ShipmentInput,
+  type UgcDeliveryProblem,
+} from "./delivery";
 import { cleanAnswers, cleanQuestions } from "./questions";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import {
@@ -74,6 +82,7 @@ import type {
   Payout,
   ProfileInput,
   RoomMessage,
+  Shipment,
   Submission,
   SubmissionVersion,
 } from "./records";
@@ -1909,6 +1918,17 @@ export type UgcRoom = {
   writable: boolean;
   side: RoomSide;
   items: RoomFeedItem[];
+  /** Delivery of the physical product, when the company marked it sent (U6). */
+  shipment: {
+    carrier: string;
+    tracking: string;
+    expectedDate: string | null;
+    state: DeliveryState;
+    problem: UgcDeliveryProblem | null;
+  } | null;
+  canShip: boolean;
+  canConfirmReceipt: boolean;
+  canReportProblem: boolean;
 };
 
 /**
@@ -1931,10 +1951,37 @@ export async function getUgcRoom(
     if (!isRoomTableMissing(error)) throw error;
     ready = false;
   }
+  let shipment: Shipment | null = null;
+  try {
+    shipment = await store.getShipment(invite.id);
+  } catch (error) {
+    if (!hasPgCode(error, "42P01")) throw error;
+  }
+  const state = shipment ? deliveryState(shipment) : null;
   return {
     ready,
     writable: ready && UGC_ROOM_WRITABLE.includes(invite.status),
     side,
+    shipment: shipment
+      ? {
+          carrier: shipment.carrier,
+          tracking: shipment.tracking,
+          expectedDate: shipment.expectedDate,
+          state: state!,
+          problem: shipment.problem,
+        }
+      : null,
+    canShip:
+      side === "company" &&
+      invite.status === "hired" &&
+      (state === null || state === "problem"),
+    canConfirmReceipt:
+      side === "creator" &&
+      invite.status === "hired" &&
+      state !== null &&
+      state !== "received",
+    canReportProblem:
+      side === "creator" && invite.status === "hired" && state === "shipped",
     items: buildRoomFeed({
       viewerId: id,
       creatorId: invite.creatorUserId,
@@ -1947,6 +1994,9 @@ export async function getUgcRoom(
       })),
       offeredAt: invite.offeredAt?.toISOString() ?? null,
       agreedAt: invite.agreedAt?.toISOString() ?? null,
+      shippedAt: shipment?.shippedAt.toISOString() ?? null,
+      receivedAt: shipment?.receivedAt?.toISOString() ?? null,
+      problemAt: shipment?.problemAt?.toISOString() ?? null,
     }),
   };
 }
@@ -2289,4 +2339,102 @@ export async function reportBrokenLink(
     email: true,
   });
   return { status: submission.status, linkReported: true as const };
+}
+
+/** The delivery marks may only be written once the creator is hired. */
+async function hiredRoom(store: UgcStore, inviteId: string, userId: string) {
+  const party = await roomParty(store, inviteId, userId);
+  if (party.invite.status !== "hired") {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "Delivery starts after the creator agreed to the order",
+    );
+  }
+  return party;
+}
+
+/**
+ * The company says the product was sent (U6, TZ 48 §8). One shipment per
+ * participation; a new one is possible only after the creator reported a
+ * problem. The company types the tracking number: nothing is looked up.
+ */
+export async function markShipped(
+  userId: string | null,
+  inviteId: string,
+  input: ShipmentInput,
+) {
+  const id = requireUser(userId);
+  const store = await db();
+  const { invite, side } = await hiredRoom(store, inviteId, id);
+  if (side !== "company") throw notFound();
+  const fields = checkShipment(input, day(store.now()));
+  const existing = await store.getShipment(invite.id);
+  if (existing && deliveryState(existing) !== "problem") {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "This product was already sent",
+    );
+  }
+  await store.saveShipment({
+    inviteId: invite.id,
+    ...fields,
+    shippedAt: store.now(),
+    receivedAt: null,
+    problem: null,
+    problemAt: null,
+  });
+  await store.audit(id, "ugc.shipment_sent", invite.id, "ugc_invite");
+  return { state: "shipped" as const };
+}
+
+/** The creator says the product arrived; also after a reported problem. */
+export async function confirmReceived(userId: string | null, inviteId: string) {
+  const id = requireUser(userId);
+  const store = await db();
+  const { invite, side } = await hiredRoom(store, inviteId, id);
+  if (side !== "creator") throw notFound();
+  const shipment = await store.getShipment(invite.id);
+  if (!shipment || deliveryState(shipment) === "received") {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "There is no product waiting to be received",
+    );
+  }
+  shipment.receivedAt = store.now();
+  shipment.problem = null;
+  shipment.problemAt = null;
+  await store.saveShipment(shipment);
+  await store.audit(id, "ugc.shipment_received", invite.id, "ugc_invite");
+  return { state: "received" as const };
+}
+
+/** The creator says something is wrong with a product that was sent. */
+export async function reportDeliveryProblem(
+  userId: string | null,
+  inviteId: string,
+  reason: UgcDeliveryProblem,
+) {
+  const id = requireUser(userId);
+  if (!UGC_DELIVERY_PROBLEMS.includes(reason)) {
+    throw validationError([{ path: "reason", problem: "invalid" }]);
+  }
+  const store = await db();
+  const { invite, side } = await hiredRoom(store, inviteId, id);
+  if (side !== "creator") throw notFound();
+  const shipment = await store.getShipment(invite.id);
+  if (!shipment || deliveryState(shipment) !== "shipped") {
+    throw new HttpError(
+      409,
+      errorCodes.invalidTransition,
+      "There is no sent product to report",
+    );
+  }
+  shipment.problem = reason;
+  shipment.problemAt = store.now();
+  await store.saveShipment(shipment);
+  await store.audit(id, "ugc.shipment_problem", invite.id, "ugc_invite");
+  return { state: "problem" as const, reason };
 }
