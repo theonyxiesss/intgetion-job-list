@@ -70,6 +70,7 @@ export {
   listMyCampaigns,
   listMyCampaignSummaries,
   ugcPriceGuide,
+  getCreatorWorkspace,
   listMyInvites,
   listOpenCampaigns,
   matchOpenCampaigns,
@@ -191,3 +192,10 @@ export type {
   OrderGroup,
   VideoPlatform,
 } from "./workspace-view";
+export type {
+  CreatorWorkspace,
+  WorkspaceAction,
+  WorkspaceItem,
+  WorkspaceSection,
+  WorkspaceStage,
+} from "./creator-workspace";

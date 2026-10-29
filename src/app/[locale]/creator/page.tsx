@@ -71,6 +71,7 @@ export default async function CreatorPage({
         }
       : undefined;
   const h = await getTranslations("ugcHub");
+  const w = await getTranslations("ugc.workspace");
   const payout = mine.profile
     ? { address: (await readAccountWallet(user.id))?.address ?? null }
     : null;
@@ -82,6 +83,15 @@ export default async function CreatorPage({
             title={t("profileTitle")}
             intro={mine.profile?.displayName ?? t("empty")}
           />
+          {mine.profile ? (
+            <ButtonLink
+              href="/creator/workspace"
+              variant="secondary"
+              className="self-start"
+            >
+              {w("title")}
+            </ButtonLink>
+          ) : null}
           <ProfileForm defaults={defaults} />
           {payout ? (
             <section

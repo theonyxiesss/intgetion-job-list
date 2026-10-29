@@ -4362,8 +4362,20 @@
       "deliveryDays": "{count} days",
       "alreadyProposed": "You already sent a proposal ({status}).",
       "signInToPropose": "Sign in to send a proposal",
-      "status": { "pending": "In review", "open": "Open", "hired": "Hired", "closed": "Closed", "expired": "Expired", "rejected": "Rejected" },
-      "proposalStatus": { "sent": "Sent", "accepted": "Accepted", "declined": "Declined", "withdrawn": "Withdrawn" },
+      "status": {
+        "pending": "In review",
+        "open": "Open",
+        "hired": "Hired",
+        "closed": "Closed",
+        "expired": "Expired",
+        "rejected": "Rejected"
+      },
+      "proposalStatus": {
+        "sent": "Sent",
+        "accepted": "Accepted",
+        "declined": "Declined",
+        "withdrawn": "Withdrawn"
+      },
       "sending": "Sending…",
       "failed": "Something went wrong. Try again.",
       "error_TASKS_NOT_READY": "Freelance tasks will be available soon.",
@@ -4834,7 +4846,65 @@
     "editTextTitle": "Brief text",
     "editTextHint": "You can change the description, pitch, what to say and not to say, and examples. Reward, rights, the number of videos and the deadline stay: hired creators agreed to them.",
     "editTextSave": "Save text",
-    "editTextSaved": "The brief text is saved."
+    "editTextSaved": "The brief text is saved.",
+    "workspace": {
+      "title": "My work",
+      "intro": "What needs you now, deadlines and money in one place.",
+      "now": "Needs you now",
+      "nowEmpty": "Nothing needs you right now.",
+      "noReward": "No reward yet",
+      "dueIn": "{date} · {days, plural, one {# day left} other {# days left}}",
+      "dueToday": "{date} · due today",
+      "overdueBy": "{date} · {days, plural, one {# day overdue} other {# days overdue}}",
+      "section": {
+        "offers": "Offers and applications",
+        "in_progress": "In progress",
+        "on_review": "On review",
+        "done": "Finished"
+      },
+      "stage": {
+        "offer": "Offer",
+        "applied": "Application sent",
+        "submit": "Send the video",
+        "changes": "Changes requested",
+        "overdue": "Deadline passed",
+        "review": "On review",
+        "payout_wait": "Accepted, transfer pending",
+        "paid": "Paid",
+        "rejected": "Not accepted",
+        "closed": "Closed"
+      },
+      "hint": {
+        "offer": "Look at the terms, then accept or decline in the chat.",
+        "applied": "The brand has not decided yet.",
+        "submit": "Send the link to your video for review.",
+        "changes": "The brand asked for one change. Send the new link.",
+        "overdue": "The deadline passed. Ask in the chat what to do.",
+        "review": "The brand is reviewing. Nothing to do now.",
+        "payout_wait": "The work is accepted. The transfer is not confirmed yet.",
+        "paid": "The transfer is confirmed.",
+        "rejected": "The video was not accepted.",
+        "closed": "This work is closed."
+      },
+      "action": {
+        "accept": "Review the offer",
+        "submit": "Send the video",
+        "send_changes": "Send the change",
+        "none": "Open the chat"
+      },
+      "money": {
+        "accepted": "For accepted work",
+        "owed": "Waiting for transfer",
+        "paid": "Paid",
+        "note": "These are amounts for accepted work and confirmed transfers, not a balance you can withdraw."
+      },
+      "empty": {
+        "title": "No work yet",
+        "text": "Apply to a brief that fits you. Offers, deadlines and money will appear here.",
+        "browse": "Open briefs",
+        "profile": "Creator profile"
+      }
+    }
   },
   "chatFreelance": {
     "focus": "We are discussing “{title}”.",

@@ -11,6 +11,10 @@ import {
   type UgcSubmissionStatus,
 } from "@/config/ugc";
 import {
+  buildCreatorWorkspace,
+  type WorkspaceInput,
+} from "./creator-workspace";
+import {
   errorCodes,
   HttpError,
   notFound,
@@ -632,6 +636,44 @@ export async function listMyInvites(userId: string | null) {
     });
   }
   return rows;
+}
+
+/**
+ * The creator's workspace (TZ 48 U1): what needs the creator now, the
+ * deadlines and the money, from the creator's own invites only. At most 100
+ * invites are read; the page that pages them is U2.
+ */
+export async function getCreatorWorkspace(userId: string | null) {
+  const id = requireUser(userId);
+  const store = await db();
+  const invites = (await store.listInvitesForCreator(id)).slice(0, 100);
+  const rows: WorkspaceInput["rows"][number][] = [];
+  for (const invite of invites) {
+    const campaign = await store.getCampaign(invite.campaignId);
+    if (!campaign) continue;
+    const submission = await store.getSubmission(invite.id);
+    const payout = submission
+      ? await store.getPayoutBySubmission(submission.id)
+      : null;
+    rows.push({
+      invite: {
+        id: invite.id,
+        status: invite.status,
+        bountyMinor: invite.bountyMinor,
+      },
+      campaign: {
+        id: campaign.id,
+        status: campaign.status,
+        productName: campaign.productName,
+        deadline: campaign.deadline,
+      },
+      submission: submission ? { status: submission.status } : null,
+      payout: payout
+        ? { status: payout.status, amountMinor: payout.amountMinor }
+        : null,
+    });
+  }
+  return buildCreatorWorkspace({ today: day(store.now()), rows });
 }
 
 async function requireReadyCreator(store: UgcStore, userId: string) {

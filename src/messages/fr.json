@@ -3855,8 +3855,20 @@
       "deliveryDays": "{count} jours",
       "alreadyProposed": "Vous avez déjà envoyé une proposition ({status}).",
       "signInToPropose": "Connectez-vous pour envoyer une proposition",
-      "status": { "pending": "En modération", "open": "Ouverte", "hired": "Prestataire choisi", "closed": "Fermée", "expired": "Expirée", "rejected": "Refusée" },
-      "proposalStatus": { "sent": "Envoyée", "accepted": "Acceptée", "declined": "Refusée", "withdrawn": "Retirée" },
+      "status": {
+        "pending": "En modération",
+        "open": "Ouverte",
+        "hired": "Prestataire choisi",
+        "closed": "Fermée",
+        "expired": "Expirée",
+        "rejected": "Refusée"
+      },
+      "proposalStatus": {
+        "sent": "Envoyée",
+        "accepted": "Acceptée",
+        "declined": "Refusée",
+        "withdrawn": "Retirée"
+      },
       "sending": "Envoi…",
       "failed": "Une erreur est survenue. Réessayez.",
       "error_TASKS_NOT_READY": "Les missions freelance seront bientôt disponibles.",
@@ -4327,7 +4339,65 @@
     "editTextTitle": "Texte du brief",
     "editTextHint": "Vous pouvez changer la description, le pitch, ce qu’il faut dire et ne pas dire, et les exemples. La rémunération, les droits, le nombre de vidéos et le délai restent : les créateurs engagés les ont acceptés.",
     "editTextSave": "Enregistrer le texte",
-    "editTextSaved": "Le texte du brief est enregistré."
+    "editTextSaved": "Le texte du brief est enregistré.",
+    "workspace": {
+      "title": "Mon travail",
+      "intro": "Ce qui demande votre attention, les délais et l’argent au même endroit.",
+      "now": "À faire maintenant",
+      "nowEmpty": "Rien ne demande votre attention pour l’instant.",
+      "noReward": "Pas encore de rémunération",
+      "dueIn": "{date} · {days, plural, one {# jour restant} other {# jours restants}}",
+      "dueToday": "{date} · échéance aujourd’hui",
+      "overdueBy": "{date} · {days, plural, one {# jour de retard} other {# jours de retard}}",
+      "section": {
+        "offers": "Offres et candidatures",
+        "in_progress": "En cours",
+        "on_review": "En vérification",
+        "done": "Terminé"
+      },
+      "stage": {
+        "offer": "Offre",
+        "applied": "Candidature envoyée",
+        "submit": "Envoyez la vidéo",
+        "changes": "Modification demandée",
+        "overdue": "Délai dépassé",
+        "review": "En vérification",
+        "payout_wait": "Accepté, virement en attente",
+        "paid": "Payé",
+        "rejected": "Non accepté",
+        "closed": "Clos"
+      },
+      "hint": {
+        "offer": "Consultez les conditions, puis acceptez ou refusez dans le chat.",
+        "applied": "La marque n’a pas encore décidé.",
+        "submit": "Envoyez le lien de votre vidéo pour vérification.",
+        "changes": "La marque a demandé une modification. Envoyez le nouveau lien.",
+        "overdue": "Le délai est dépassé. Demandez dans le chat quoi faire.",
+        "review": "La marque vérifie. Rien à faire pour l’instant.",
+        "payout_wait": "Le travail est accepté. Le virement n’est pas encore confirmé.",
+        "paid": "Le virement est confirmé.",
+        "rejected": "La vidéo n’a pas été acceptée.",
+        "closed": "Ce travail est clos."
+      },
+      "action": {
+        "accept": "Voir l’offre",
+        "submit": "Envoyer la vidéo",
+        "send_changes": "Envoyer la modification",
+        "none": "Ouvrir le chat"
+      },
+      "money": {
+        "accepted": "Pour le travail accepté",
+        "owed": "En attente de virement",
+        "paid": "Payé",
+        "note": "Ce sont des montants pour le travail accepté et des virements confirmés, pas un solde que vous pouvez retirer."
+      },
+      "empty": {
+        "title": "Pas encore de travail",
+        "text": "Postulez à un brief qui vous convient. Les offres, délais et l’argent apparaîtront ici.",
+        "browse": "Briefs ouverts",
+        "profile": "Profil de créateur"
+      }
+    }
   },
   "chatFreelance": {
     "focus": "Nous parlons de « {title} ».",

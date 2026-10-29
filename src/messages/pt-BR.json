@@ -3855,8 +3855,20 @@
       "deliveryDays": "{count} dias",
       "alreadyProposed": "Você já enviou uma proposta ({status}).",
       "signInToPropose": "Entre para enviar uma proposta",
-      "status": { "pending": "Em análise", "open": "Aberta", "hired": "Freelancer escolhido", "closed": "Fechada", "expired": "Expirada", "rejected": "Rejeitada" },
-      "proposalStatus": { "sent": "Enviada", "accepted": "Aceita", "declined": "Recusada", "withdrawn": "Retirada" },
+      "status": {
+        "pending": "Em análise",
+        "open": "Aberta",
+        "hired": "Freelancer escolhido",
+        "closed": "Fechada",
+        "expired": "Expirada",
+        "rejected": "Rejeitada"
+      },
+      "proposalStatus": {
+        "sent": "Enviada",
+        "accepted": "Aceita",
+        "declined": "Recusada",
+        "withdrawn": "Retirada"
+      },
       "sending": "Enviando…",
       "failed": "Ocorreu um erro. Tente novamente.",
       "error_TASKS_NOT_READY": "As tarefas freelance estarão disponíveis em breve.",
@@ -4327,7 +4339,65 @@
     "editTextTitle": "Texto do brief",
     "editTextHint": "Você pode mudar a descrição, o pitch, o que dizer e o que não dizer, e exemplos. Recompensa, direitos, número de vídeos e prazo não mudam: os criadores contratados já concordaram.",
     "editTextSave": "Salvar texto",
-    "editTextSaved": "O texto do brief foi salvo."
+    "editTextSaved": "O texto do brief foi salvo.",
+    "workspace": {
+      "title": "Meu trabalho",
+      "intro": "O que precisa de você agora, prazos e dinheiro em um só lugar.",
+      "now": "Precisa de você agora",
+      "nowEmpty": "Nada precisa de você agora.",
+      "noReward": "Sem recompensa ainda",
+      "dueIn": "{date} · {days, plural, one {falta # dia} other {faltam # dias}}",
+      "dueToday": "{date} · vence hoje",
+      "overdueBy": "{date} · {days, plural, one {# dia de atraso} other {# dias de atraso}}",
+      "section": {
+        "offers": "Ofertas e candidaturas",
+        "in_progress": "Em andamento",
+        "on_review": "Em revisão",
+        "done": "Concluído"
+      },
+      "stage": {
+        "offer": "Oferta",
+        "applied": "Candidatura enviada",
+        "submit": "Envie o vídeo",
+        "changes": "Ajustes solicitados",
+        "overdue": "Prazo vencido",
+        "review": "Em revisão",
+        "payout_wait": "Aceito, transferência pendente",
+        "paid": "Pago",
+        "rejected": "Não aceito",
+        "closed": "Encerrado"
+      },
+      "hint": {
+        "offer": "Veja as condições e aceite ou recuse no chat.",
+        "applied": "A marca ainda não decidiu.",
+        "submit": "Envie o link do seu vídeo para revisão.",
+        "changes": "A marca pediu um ajuste. Envie o novo link.",
+        "overdue": "O prazo venceu. Pergunte no chat o que fazer.",
+        "review": "A marca está revisando. Nada a fazer agora.",
+        "payout_wait": "O trabalho foi aceito. A transferência ainda não foi confirmada.",
+        "paid": "A transferência foi confirmada.",
+        "rejected": "O vídeo não foi aceito.",
+        "closed": "Este trabalho está encerrado."
+      },
+      "action": {
+        "accept": "Ver a oferta",
+        "submit": "Enviar o vídeo",
+        "send_changes": "Enviar o ajuste",
+        "none": "Abrir o chat"
+      },
+      "money": {
+        "accepted": "Por trabalho aceito",
+        "owed": "Aguardando transferência",
+        "paid": "Pago",
+        "note": "São valores de trabalho aceito e transferências confirmadas, não um saldo que você possa sacar."
+      },
+      "empty": {
+        "title": "Ainda sem trabalho",
+        "text": "Candidate-se a um briefing que combine com você. Ofertas, prazos e dinheiro aparecerão aqui.",
+        "browse": "Briefings abertos",
+        "profile": "Perfil de criador"
+      }
+    }
   },
   "chatFreelance": {
     "focus": "Estamos falando de “{title}”.",

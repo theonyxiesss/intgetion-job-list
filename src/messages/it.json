@@ -3855,8 +3855,20 @@
       "deliveryDays": "{count} giorni",
       "alreadyProposed": "Hai già inviato una proposta ({status}).",
       "signInToPropose": "Accedi per inviare una proposta",
-      "status": { "pending": "In revisione", "open": "Aperto", "hired": "Freelance scelto", "closed": "Chiuso", "expired": "Scaduto", "rejected": "Rifiutato" },
-      "proposalStatus": { "sent": "Inviata", "accepted": "Accettata", "declined": "Rifiutata", "withdrawn": "Ritirata" },
+      "status": {
+        "pending": "In revisione",
+        "open": "Aperto",
+        "hired": "Freelance scelto",
+        "closed": "Chiuso",
+        "expired": "Scaduto",
+        "rejected": "Rifiutato"
+      },
+      "proposalStatus": {
+        "sent": "Inviata",
+        "accepted": "Accettata",
+        "declined": "Rifiutata",
+        "withdrawn": "Ritirata"
+      },
       "sending": "Invio…",
       "failed": "Si è verificato un errore. Riprova.",
       "error_TASKS_NOT_READY": "Gli incarichi freelance saranno disponibili a breve.",
@@ -4327,7 +4339,65 @@
     "editTextTitle": "Testo del brief",
     "editTextHint": "Puoi cambiare descrizione, pitch, cosa dire e cosa non dire, ed esempi. Compenso, diritti, numero di video e scadenza restano: i creator assunti li hanno accettati.",
     "editTextSave": "Salva testo",
-    "editTextSaved": "Il testo del brief è salvato."
+    "editTextSaved": "Il testo del brief è salvato.",
+    "workspace": {
+      "title": "Il mio lavoro",
+      "intro": "Cosa richiede la tua attenzione, scadenze e denaro in un unico posto.",
+      "now": "Da fare adesso",
+      "nowEmpty": "Al momento nulla richiede la tua attenzione.",
+      "noReward": "Ancora nessun compenso",
+      "dueIn": "{date} · {days, plural, one {manca # giorno} other {mancano # giorni}}",
+      "dueToday": "{date} · scade oggi",
+      "overdueBy": "{date} · {days, plural, one {# giorno di ritardo} other {# giorni di ritardo}}",
+      "section": {
+        "offers": "Offerte e candidature",
+        "in_progress": "In corso",
+        "on_review": "In revisione",
+        "done": "Concluso"
+      },
+      "stage": {
+        "offer": "Offerta",
+        "applied": "Candidatura inviata",
+        "submit": "Invia il video",
+        "changes": "Modifica richiesta",
+        "overdue": "Scadenza superata",
+        "review": "In revisione",
+        "payout_wait": "Accettato, bonifico in attesa",
+        "paid": "Pagato",
+        "rejected": "Non accettato",
+        "closed": "Chiuso"
+      },
+      "hint": {
+        "offer": "Guarda le condizioni, poi accetta o rifiuta nella chat.",
+        "applied": "Il brand non ha ancora deciso.",
+        "submit": "Invia il link del tuo video per la revisione.",
+        "changes": "Il brand ha chiesto una modifica. Invia il nuovo link.",
+        "overdue": "La scadenza è passata. Chiedi nella chat cosa fare.",
+        "review": "Il brand sta controllando. Ora non c’è nulla da fare.",
+        "payout_wait": "Il lavoro è accettato. Il bonifico non è ancora confermato.",
+        "paid": "Il bonifico è confermato.",
+        "rejected": "Il video non è stato accettato.",
+        "closed": "Questo lavoro è chiuso."
+      },
+      "action": {
+        "accept": "Vedi l’offerta",
+        "submit": "Invia il video",
+        "send_changes": "Invia la modifica",
+        "none": "Apri la chat"
+      },
+      "money": {
+        "accepted": "Per il lavoro accettato",
+        "owed": "In attesa di bonifico",
+        "paid": "Pagato",
+        "note": "Sono importi per lavoro accettato e bonifici confermati, non un saldo che puoi prelevare."
+      },
+      "empty": {
+        "title": "Ancora nessun lavoro",
+        "text": "Candidati a un brief adatto a te. Offerte, scadenze e denaro compariranno qui.",
+        "browse": "Brief aperti",
+        "profile": "Profilo creator"
+      }
+    }
   },
   "chatFreelance": {
     "focus": "Parliamo di «{title}».",
