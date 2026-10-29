@@ -55,6 +55,8 @@ export interface UgcStore {
   listSubmissions(inviteIds: readonly string[]): Promise<Submission[]>;
   insertSubmission(row: Submission): Promise<void>;
   saveSubmission(row: Submission): Promise<void>;
+  /** Videos the company has not decided yet (U4б). */
+  listSubmissionsAwaitingReview(): Promise<Submission[]>;
   getPayout(id: string): Promise<Payout | null>;
   getPayoutBySubmission(submissionId: string): Promise<Payout | null>;
   listOwedPayouts(): Promise<Payout[]>;

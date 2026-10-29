@@ -233,6 +233,17 @@ export const NOTIFICATION_PAYLOAD_SCHEMAS = {
     campaignId: idSchema,
     productName: z.string().min(1).max(120),
   }),
+  ugcReviewDue: strict({
+    campaignId: idSchema,
+    productName: z.string().min(1).max(120),
+    inviteId: idSchema,
+    stage: z.enum(["reminder", "last_day", "overdue"]),
+  }),
+  ugcMessage: strict({
+    campaignId: idSchema,
+    productName: z.string().min(1).max(120),
+    inviteId: idSchema,
+  }),
 } as const;
 
 export const NOTIFICATION_TYPES = [
@@ -260,6 +271,8 @@ export const NOTIFICATION_TYPES = [
   "ugc.submission",
   "ugc.submission_decided",
   "ugc.deadline",
+  "ugc.review_due",
+  "ugc.message",
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
@@ -480,6 +493,22 @@ export const NOTIFICATION_CATALOG: Readonly<
     policy: "immediate",
     emailDefault: true,
     payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.ugcDeadline,
+  },
+  "ugc.review_due": {
+    type: "ugc.review_due",
+    i18nKey: "ugcReviewDue",
+    recipients: "ugcParty",
+    policy: "immediate",
+    emailDefault: true,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.ugcReviewDue,
+  },
+  "ugc.message": {
+    type: "ugc.message",
+    i18nKey: "ugcMessage",
+    recipients: "ugcParty",
+    policy: "immediate",
+    emailDefault: false,
+    payloadSchema: NOTIFICATION_PAYLOAD_SCHEMAS.ugcMessage,
   },
 };
 

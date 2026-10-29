@@ -89,6 +89,11 @@ export type Submission = {
   /** What the creator said they saw. Null until they report it. */
   reportedViews: number | null;
   reportedAt: Date | null;
+  /** U4б: when the video went to review; absent before 0079. */
+  submittedAt?: Date | null;
+  /** The reminder stage the company has had (0-3). */
+  reviewStage?: number;
+  escalatedAt?: Date | null;
 };
 
 export type Payout = {

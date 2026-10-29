@@ -137,6 +137,11 @@ export async function VideoReviewItem({
         {deciding ? (
           <div className="flex flex-col gap-3 border-t border-line pt-4">
             <p className="t-body-s text-fg-muted">{d("decideHint")}</p>
+            {submission.reviewDueAt ? (
+              <p className="t-body-s font-mono">
+                {t("reviewDue", { date: submission.reviewDueAt.slice(0, 10) })}
+              </p>
+            ) : null}
             <div className="flex flex-wrap gap-3">
               <UgcAction
                 action="decide"

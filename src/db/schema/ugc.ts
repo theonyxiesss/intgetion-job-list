@@ -242,6 +242,10 @@ export const ugcSubmissions = pgTable(
     liveUrl: text("live_url"),
     reportedViews: integer("reported_views"),
     reportedAt: timestamp("reported_at", { withTimezone: true }),
+    /** When the video went to review, the reminder stage 0-3 and the support escalation (0079). */
+    submittedAt: timestamp("submitted_at", { withTimezone: true }),
+    reviewStage: smallint("review_stage").notNull().default(0),
+    escalatedAt: timestamp("escalated_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),

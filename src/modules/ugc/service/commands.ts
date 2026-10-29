@@ -7,6 +7,7 @@ import {
   type RoomFeedItem,
   type RoomSide,
 } from "./room";
+import { REVIEW_STAGE_NAMES, reviewDueAt, reviewStage } from "./review-clock";
 import { versionRows } from "./versions";
 import { assertTermsAgreed, buildTerms, termsHash } from "./terms";
 import { randomBytes, randomUUID } from "node:crypto";
@@ -191,6 +192,11 @@ export function forReader(row: Submission | null) {
     liveUrl: row.liveUrl,
     reportedViews: row.reportedViews,
     viewsSource: "reported" as const,
+    /** When the company must decide, while the video waits for it (D574). */
+    reviewDueAt:
+      row.status === "submitted" && row.submittedAt
+        ? reviewDueAt(row.submittedAt).toISOString()
+        : null,
   };
 }
 
@@ -1144,6 +1150,9 @@ export async function submitVideo(
     existing.url = url;
     existing.hook = note;
     existing.status = "submitted";
+    existing.submittedAt = store.now();
+    existing.reviewStage = 0;
+    existing.escalatedAt = null;
     await store.saveSubmission(existing);
   } else {
     const submission: Submission = {
@@ -1156,6 +1165,9 @@ export async function submitVideo(
       liveUrl: null,
       reportedViews: null,
       reportedAt: null,
+      submittedAt: store.now(),
+      reviewStage: 0,
+      escalatedAt: null,
     };
     await store.insertSubmission(submission);
   }
@@ -1701,7 +1713,53 @@ export async function noteDeadlines() {
     });
   }
   const expired = await expireSilentOffers(store);
-  return { noted, expired };
+  const reviews = await remindReviews(store);
+  return { noted, expired, reviews };
+}
+
+/**
+ * The company's review clock (U4б, D574). One reminder on the third business
+ * day, one on the day before the end, and at the end support is told: an
+ * audit line and a note to the company. A video is never accepted by silence.
+ * A missed stage is not sent late: only the highest stage that has come is.
+ */
+export async function remindReviews(store: UgcStore) {
+  const now = store.now();
+  let reminded = 0;
+  let escalated = 0;
+  for (const submission of await store.listSubmissionsAwaitingReview()) {
+    if (!submission.submittedAt) continue;
+    const stage = reviewStage(now, submission.submittedAt);
+    if (stage <= (submission.reviewStage ?? 0)) continue;
+    const invite = await store.getInvite(submission.inviteId);
+    const campaign = invite ? await store.getCampaign(invite.campaignId) : null;
+    if (!invite || !campaign) continue;
+    submission.reviewStage = stage;
+    if (stage === 3) submission.escalatedAt = now;
+    await store.saveSubmission(submission);
+    await store.notify({
+      type: "ugc.review_due",
+      userIds: await store.memberIds(campaign.companyId),
+      payload: {
+        campaignId: campaign.id,
+        productName: campaign.productName,
+        inviteId: invite.id,
+        stage: REVIEW_STAGE_NAMES[stage],
+      },
+      email: true,
+    });
+    if (stage === 3) {
+      await store.audit(
+        invite.creatorUserId,
+        "ugc.review_escalated",
+        submission.id,
+        "ugc_submission",
+      );
+      escalated += 1;
+    }
+    reminded += 1;
+  }
+  return { reminded, escalated };
 }
 
 async function expireSilentOffers(store: UgcStore) {
@@ -1881,7 +1939,7 @@ export async function postUgcRoomMessage(
 ): Promise<UgcRoom> {
   const id = requireUser(userId);
   const store = await db();
-  const { invite } = await roomParty(store, inviteId, id);
+  const { invite, campaign, side } = await roomParty(store, inviteId, id);
   const text = checkRoomMessage({ status: invite.status, body });
   await enforceRateLimit("ugcMessage", id);
   try {
@@ -1903,5 +1961,18 @@ export async function postUgcRoomMessage(
     }
     throw error;
   }
+  await store.notify({
+    type: "ugc.message",
+    userIds:
+      side === "creator"
+        ? await store.memberIds(campaign.companyId)
+        : [invite.creatorUserId],
+    payload: {
+      campaignId: campaign.id,
+      productName: campaign.productName,
+      inviteId: invite.id,
+    },
+    email: false,
+  });
   return getUgcRoom(id, invite.id);
 }

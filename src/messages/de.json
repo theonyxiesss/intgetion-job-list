@@ -1271,6 +1271,26 @@
           "subject": "Frist: {productName}",
           "body": "Die Frist für „{productName}“ ist morgen, oder ein unbeantwortetes Angebot ist still geworden."
         }
+      },
+      "ugcReviewDue": {
+        "inapp": {
+          "title": "Ein Video wartet auf deine Entscheidung",
+          "body": "{stage, select, reminder {Ein Video zu „{productName}“ wartet auf deine Entscheidung.} last_day {Morgen ist der letzte Tag, über das Video zu „{productName}“ zu entscheiden.} other {Die Frist für das Video zu „{productName}“ ist abgelaufen. Der Support wurde informiert.}}"
+        },
+        "email": {
+          "subject": "Ein Video wartet auf deine Entscheidung",
+          "body": "{stage, select, reminder {Ein Video zu „{productName}“ wartet auf deine Entscheidung.} last_day {Morgen ist der letzte Tag, über das Video zu „{productName}“ zu entscheiden.} other {Die Frist für das Video zu „{productName}“ ist abgelaufen. Der Support wurde informiert.}}"
+        }
+      },
+      "ugcMessage": {
+        "inapp": {
+          "title": "Neue Nachricht in einem Auftrag",
+          "body": "Du hast eine neue Nachricht zu „{productName}“."
+        },
+        "email": {
+          "subject": "Neue Nachricht in einem Auftrag",
+          "body": "Du hast eine neue Nachricht zu „{productName}“."
+        }
       }
     },
     "freelance": {
@@ -4216,6 +4236,7 @@
     "title": "UGC-Videos",
     "intro": "Kurze Videos von echten Menschen für Anzeigen und soziale Netzwerke. Ein Briefing, Creator bewerben sich, Sie stellen die Gewählten ein.",
     "moneyNote": "Der Betrag wird in Cent gespeichert. In diesem Schritt wird nichts berechnet oder ausgezahlt.",
+    "reviewDue": "Das Unternehmen entscheidet bis {date}",
     "roomTitle": "Auftragsraum",
     "roomOpen": "Auftragsraum öffnen",
     "roomBack": "Zurück zum Briefing",

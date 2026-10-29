@@ -1271,6 +1271,26 @@
           "subject": "Deadline: {productName}",
           "body": "The deadline for “{productName}” is tomorrow, or an unanswered offer has gone quiet."
         }
+      },
+      "ugcReviewDue": {
+        "inapp": {
+          "title": "Video waiting for your decision",
+          "body": "{stage, select, reminder {A video for “{productName}” is waiting for your decision.} last_day {Tomorrow is the last day to decide on the video for “{productName}”.} other {The time to decide on the video for “{productName}” has passed. Support has been told.}}"
+        },
+        "email": {
+          "subject": "Video waiting for your decision",
+          "body": "{stage, select, reminder {A video for “{productName}” is waiting for your decision.} last_day {Tomorrow is the last day to decide on the video for “{productName}”.} other {The time to decide on the video for “{productName}” has passed. Support has been told.}}"
+        }
+      },
+      "ugcMessage": {
+        "inapp": {
+          "title": "New message in an order",
+          "body": "You have a new message about “{productName}”."
+        },
+        "email": {
+          "subject": "New message in an order",
+          "body": "You have a new message about “{productName}”."
+        }
       }
     },
     "freelance": {
@@ -4722,6 +4742,7 @@
     "title": "UGC videos",
     "intro": "Short videos from real people for ads and social posts. One brief, creators apply, you hire the ones you pick.",
     "moneyNote": "The amount is recorded in cents. Nothing is charged or paid in this step.",
+    "reviewDue": "The company decides by {date}",
     "roomTitle": "Order room",
     "roomOpen": "Open order room",
     "roomBack": "Back to the brief",

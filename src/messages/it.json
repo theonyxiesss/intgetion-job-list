@@ -1271,6 +1271,26 @@
           "subject": "Scadenza: {productName}",
           "body": "La scadenza di «{productName}» è domani, oppure un’offerta senza risposta è rimasta in silenzio."
         }
+      },
+      "ugcReviewDue": {
+        "inapp": {
+          "title": "Un video attende la tua decisione",
+          "body": "{stage, select, reminder {Un video per «{productName}» attende la tua decisione.} last_day {Domani è l’ultimo giorno per decidere sul video di «{productName}».} other {Il termine per decidere sul video di «{productName}» è scaduto. Il supporto è stato avvisato.}}"
+        },
+        "email": {
+          "subject": "Un video attende la tua decisione",
+          "body": "{stage, select, reminder {Un video per «{productName}» attende la tua decisione.} last_day {Domani è l’ultimo giorno per decidere sul video di «{productName}».} other {Il termine per decidere sul video di «{productName}» è scaduto. Il supporto è stato avvisato.}}"
+        }
+      },
+      "ugcMessage": {
+        "inapp": {
+          "title": "Nuovo messaggio in un ordine",
+          "body": "Hai un nuovo messaggio su «{productName}»."
+        },
+        "email": {
+          "subject": "Nuovo messaggio in un ordine",
+          "body": "Hai un nuovo messaggio su «{productName}»."
+        }
       }
     },
     "freelance": {
@@ -4215,6 +4235,7 @@
     "title": "Video UGC",
     "intro": "Video brevi di persone reali per pubblicità e social. Un brief, i creator si candidano, assumi chi scegli.",
     "moneyNote": "L’importo è registrato in centesimi. In questo passo non si addebita e non si paga nulla.",
+    "reviewDue": "L’azienda decide entro il {date}",
     "roomTitle": "Stanza dell’ordine",
     "roomOpen": "Apri la stanza dell’ordine",
     "roomBack": "Torna al brief",

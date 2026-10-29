@@ -43,11 +43,14 @@ const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
   ["ugc.submission", false],
   ["ugc.submission_decided", true],
   ["ugc.deadline", true],
+  // U4b (D574): review reminders and room messages.
+  ["ugc.review_due", true],
+  ["ugc.message", false],
 ];
 
 describe("notification catalog (15, D100)", () => {
   it("contains every configured event in catalog order", () => {
-    expect(NOTIFICATION_TYPES).toHaveLength(24);
+    expect(NOTIFICATION_TYPES).toHaveLength(26);
     expect([...NOTIFICATION_TYPES]).toEqual(
       SECTION_15_EMAIL_DEFAULTS.map(([type]) => type),
     );

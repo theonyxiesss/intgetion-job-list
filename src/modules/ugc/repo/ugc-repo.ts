@@ -127,6 +127,9 @@ function submissionOf(row: SubmissionRow): Submission {
     liveUrl: row.liveUrl,
     reportedViews: row.reportedViews,
     reportedAt: row.reportedAt,
+    submittedAt: row.submittedAt,
+    reviewStage: row.reviewStage,
+    escalatedAt: row.escalatedAt,
   };
 }
 
@@ -450,6 +453,13 @@ export function productionUgcStore(): UgcStore {
     async insertSubmission(row) {
       await db.insert(ugcSubmissions).values(row);
     },
+    async listSubmissionsAwaitingReview() {
+      const rows = await db
+        .select()
+        .from(ugcSubmissions)
+        .where(eq(ugcSubmissions.status, "submitted"));
+      return rows.map(submissionOf);
+    },
     async saveSubmission(row) {
       await db
         .update(ugcSubmissions)
@@ -461,6 +471,9 @@ export function productionUgcStore(): UgcStore {
           liveUrl: row.liveUrl,
           reportedViews: row.reportedViews,
           reportedAt: row.reportedAt,
+          submittedAt: row.submittedAt ?? null,
+          reviewStage: row.reviewStage ?? 0,
+          escalatedAt: row.escalatedAt ?? null,
           updatedAt: new Date(),
         })
         .where(eq(ugcSubmissions.id, row.id));

@@ -1271,6 +1271,26 @@
           "subject": "Prazo: {productName}",
           "body": "O prazo de “{productName}” é amanhã, ou uma oferta sem resposta ficou em silêncio."
         }
+      },
+      "ugcReviewDue": {
+        "inapp": {
+          "title": "Um vídeo aguarda sua decisão",
+          "body": "{stage, select, reminder {Um vídeo de “{productName}” aguarda sua decisão.} last_day {Amanhã é o último dia para decidir sobre o vídeo de “{productName}”.} other {O prazo para decidir sobre o vídeo de “{productName}” passou. O suporte foi avisado.}}"
+        },
+        "email": {
+          "subject": "Um vídeo aguarda sua decisão",
+          "body": "{stage, select, reminder {Um vídeo de “{productName}” aguarda sua decisão.} last_day {Amanhã é o último dia para decidir sobre o vídeo de “{productName}”.} other {O prazo para decidir sobre o vídeo de “{productName}” passou. O suporte foi avisado.}}"
+        }
+      },
+      "ugcMessage": {
+        "inapp": {
+          "title": "Nova mensagem em um pedido",
+          "body": "Você tem uma nova mensagem sobre “{productName}”."
+        },
+        "email": {
+          "subject": "Nova mensagem em um pedido",
+          "body": "Você tem uma nova mensagem sobre “{productName}”."
+        }
       }
     },
     "freelance": {
@@ -4215,6 +4235,7 @@
     "title": "Vídeos UGC",
     "intro": "Vídeos curtos de pessoas reais para anúncios e redes. Um brief, criadores se candidatam, você contrata quem escolher.",
     "moneyNote": "O valor fica registrado em centavos. Neste passo nada é cobrado nem pago.",
+    "reviewDue": "A empresa decide até {date}",
     "roomTitle": "Sala do pedido",
     "roomOpen": "Abrir sala do pedido",
     "roomBack": "Voltar ao briefing",

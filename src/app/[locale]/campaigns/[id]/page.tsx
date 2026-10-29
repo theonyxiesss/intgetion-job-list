@@ -184,6 +184,13 @@ export default async function CampaignPage({
               {view.submission ? (
                 <p className="t-body-s break-all">{view.submission.url}</p>
               ) : null}
+              {view.submission?.reviewDueAt ? (
+                <p className="t-body-s font-mono">
+                  {t("reviewDue", {
+                    date: view.submission.reviewDueAt.slice(0, 10),
+                  })}
+                </p>
+              ) : null}
               {view.submission &&
               (view.submission.status === "accepted" ||
                 view.submission.status === "winner") ? (

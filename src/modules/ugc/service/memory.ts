@@ -213,6 +213,11 @@ export class MemoryUgcStore implements UgcStore {
       }
     }
   }
+  async listSubmissionsAwaitingReview() {
+    return [...this.submissions.values()].filter(
+      (row) => row.status === "submitted",
+    );
+  }
   roomMessages: RoomMessage[] = [];
   async listRoomMessages(inviteId: string) {
     return this.roomMessages
