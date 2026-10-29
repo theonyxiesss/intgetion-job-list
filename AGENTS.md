@@ -123,6 +123,10 @@ If the change would break a rule from these files, stop and say so instead of wo
 
 Before writing a helper, search for one. Common ones: `src/lib/` (`money.ts`, `tz.ts`, `rate-limit.ts`, `auth-guards.ts`, `audit.ts`, `logger.ts`, `signed-token.ts`, `email-html.ts`, `http/`, `llm/`, `supabase/`), module services, existing keys in `src/messages/*.json`, `tests/e2e/fixtures.ts`. Extend what exists rather than adding a parallel version. A new npm dependency needs a reason in the report.
 
+Before designing a new feature, account flow, or visual element, inspect the existing project modules and design system, then compare relevant current products and maintained open-source implementations. Record what each candidate solves, its architecture and user flow, license, dependencies, fit with our stack and data model, and the cost of adapting it. Prefer a compatible existing pattern or module; explain when a new design is needed. Use REA for a shipped artifact or observed runtime behavior that source and documentation cannot establish, not as a substitute for reading available source. Do not copy third-party code or assets without checking the license.
+
+Use [docs/REFERENCE_SOLUTIONS.md](docs/REFERENCE_SOLUTIONS.md) for the short comparison record before implementation. It also records when REA and external context tools are useful; neither belongs in the application runtime by default.
+
 ## Checks after every change
 
 | Changed                         | Run                                                              |
