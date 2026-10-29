@@ -3480,3 +3480,11 @@
 - Этап 3: `sweepIdleJobGoals` подтверждён как подключённый к retention; тесты `job-goal-sweep.test.ts` (4 случая).
 - Тесты: full test 232 файла, 1682 теста — зелёные.
 - Выкладки и push не было.
+
+## 2026-10-27 — Дизайн-скиллы: поиск, проверка, установка
+
+- По «да» основателя скачаны в изолированную папку и прочитаны: anthropics/skills, nextlevelbuilder/ui-ux-pro-max-skill, Leonxlnx/taste-skill, pbakaus/impeccable, vercel-labs/agent-skills. Скачанное в репозиторий не входит.
+- Установлены в `~/.claude/skills/` (вне репозитория, как требует AGENTS.md): `frontend-design` (Anthropic, Apache 2.0, текст, суммы файлов сверены), `composition-patterns` (Vercel, MIT, текст), `web-design-guidelines` (Vercel; правила скопированы локально в `rules.md` после чтения, обращение в сеть при запуске убрано).
+- Не установлены: Impeccable (хуки на каждую правку, запись в проект и в `app/layout.tsx`), Taste Skill (запускает Chrome, качает ресурсы из сети), ui-ux-pro-max (скрипты через `${CLAUDE_PLUGIN_ROOT}`, `--persist` пишет `design-system/` — конфликт с `intgetion-design`), `ui-styling` (предлагает shadcn, у нас свой набор), `webapp-testing` (Python Playwright и Chromium; локально Chromium часто недоступен).
+- Приоритет прежний: `intgetion-design` ведёт вид, `AGENTS.md` главнее скиллов. Правило «Title Case» в `web-design-guidelines` не применять: тексты идут через `src/messages`.
+- Код проекта не менялся. Push и выкладки не было.
