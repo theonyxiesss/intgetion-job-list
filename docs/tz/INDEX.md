@@ -41,5 +41,6 @@
 | [36-spoki-live-work-and-next.md](36-spoki-live-work-and-next.md) | План (2026-10-27): A — живой ход работы Spoki (аналоги, AI Elements, assistant-ui); B — фронтенд платформы по списку основателя; C — модель Jev (TypeSafe) через OpenRouter для маршрутизации, выбора и оценки. Карта, где что появляется. Кода нет |
 | [43-freelance-escrow.md](43-freelance-escrow.md)                 | D562 (проект): эскроу фриланс-заказа на Smart Invoice (Base, USDC) — этапы, спор, возврат после срока; решения основателя §6; прототип только в Base Sepolia. Кода нет                                                                              |
 | [44-freelance-upwork-parity.md](44-freelance-upwork-parity.md)   | D565: фриланс на уровне Upwork — этапы A (переписка, отзывы, задачи и отклики, поиск, рейтинг), B (эскроу, споры, этапы, сроки), C (документы, фиат, налоги, почасовая). Кода нет                                                                   |
+| [45-freelance-order-room.md](45-freelance-order-room.md)         | D566: комната заказа — переписка сторон (A1) и одна лента событий под эскроу, споры, отклики, отзывы; фронтенд в две колонки и вкладки на телефоне. Ядро без базы сделано                                                                           |
 
 Новые D — только в [../DECISIONS.md](../DECISIONS.md). Как в коде — [../how-it-works/](../how-it-works/INDEX.md).
