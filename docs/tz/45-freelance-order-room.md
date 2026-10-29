@@ -113,3 +113,12 @@ Desktop (≥1024 px)                                   Телефон (<768 px)
 
 - Миграция, коммит, push и выкладка — по «да» основателя. Шаг 1 — локальный коммит.
 - После каждого шага обновлять `CURRENT.md`, `OPEN_TASKS.md`, `MISSION_LOG.md`, таблицу §1 ТЗ 44.
+
+## 10. Шаг 2 — сделано локально (2026-10-27, D567)
+
+- Миграция `src/db/migrations/0071_freelance_room.sql` — **в облако не применена**; схема в `src/db/schema/freelance.ts`.
+- `repo/room-repo.ts`, `service/order-room-service.ts` (`getRoomFeed`, `postRoomMessage`, `sweepClosedRoomMessages`), экспорт через `service/index.ts`; очистка подключена в `runRetention` (`privacy-service.ts`).
+- API `src/app/api/freelance/orders/[id]/messages/route.ts`: гость 401, чужой Origin 403 (проверено curl), чужой заказ 404 (тест).
+- Страница `orders/[id]`: шаги заказа (`aria-current="step"`), две колонки с `lg`, лента `ui/order-room.tsx` (`aria-live`, опрос 15 с при видимой вкладке, Enter — отправить, Shift+Enter — перенос), тексты `freelance.room` на 7 языках.
+- Тесты: `order-room.test.ts` (21), `order-room-service.test.ts` (13).
+- Не проверено: вид страницы под входом (вход на localhost заблокирован квотой Supabase), 375 px, скринридер; интеграционные тесты с базой (нужна применённая 0071, CI); уведомления о новом сообщении и жалоба на сообщение — шаг 4.

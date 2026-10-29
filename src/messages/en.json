@@ -4480,6 +4480,29 @@
         }
       }
     },
+    "room": {
+      "title": "Messages",
+      "empty": "No messages yet. Agree on details here: what is needed, by when, how to hand over the result.",
+      "message": "Message",
+      "link": "Link, optional",
+      "send": "Send",
+      "you": "You",
+      "buyer": "Client",
+      "seller": "Freelancer",
+      "deleted": "Deleted account",
+      "hidden": "Hidden by a moderator.",
+      "closed": "This order is closed. New messages are not accepted.",
+      "notReady": "Messages in orders will be switched on soon.",
+      "delivered": "Result delivered",
+      "paid": "Payment confirmed",
+      "steps": "Order steps",
+      "details": "Details",
+      "error_ROOM_CLOSED": "This order is closed. New messages are not accepted.",
+      "error_ROOM_NOT_READY": "Messages in orders are not switched on yet.",
+      "error_RATE_LIMITED": "Too many messages. Try again in an hour.",
+      "error_CONTACTS_IN_TEXT": "Contacts open after the request is accepted. Remove the email, phone, link or @name.",
+      "error_VALIDATION_ERROR": "Write 1–2,000 characters; a link must start with https://."
+    },
     "client": {
       "acceptingLabel": "Taking requests",
       "acceptingOn": "On. New requests can arrive.",

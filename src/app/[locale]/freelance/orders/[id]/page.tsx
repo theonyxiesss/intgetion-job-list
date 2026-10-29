@@ -12,18 +12,31 @@ import { intlLocale } from "@/i18n/locale";
 import { publicHttpUrl } from "@/lib/company-mark";
 import { HttpError } from "@/lib/http";
 import { clientIp } from "@/lib/request-ip";
+import type { FreelanceOrderStatus } from "@/config/freelance";
 import {
   canLeaveReview,
   getOrderView,
+  getRoomFeed,
   orderPayState,
 } from "@/modules/freelance/service";
 import { formatUsd } from "@/modules/freelance/ui/format";
 import { ReportForm } from "@/modules/freelance/ui/report-form";
 import { OrderActions, ReviewForm } from "@/modules/freelance/ui/order-actions";
+import { OrderRoom } from "@/modules/freelance/ui/order-room";
 import {
   freelanceClientCopy,
+  orderRoomCopy,
   userOrLogin,
 } from "@/modules/freelance/ui/server-copy";
+
+/** The main path of an order, shown as steps (TZ 45 §4). */
+const STEPS: readonly FreelanceOrderStatus[] = [
+  "sent",
+  "accepted",
+  "in_progress",
+  "delivered",
+  "completed",
+];
 
 export const dynamic = "force-dynamic";
 
@@ -55,18 +68,17 @@ export default async function FreelanceOrderPage({
   }
   const t = await getTranslations("freelance");
   const copy = await freelanceClientCopy(locale);
-  const dates = new Intl.DateTimeFormat(intlLocale(locale), {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  const roomCopy = await orderRoomCopy(locale);
   const canReview = canLeaveReview(order);
   const deliveryHref = publicHttpUrl(order.deliveryUrl);
   const contact = order.counterpart;
   const payState = await orderPayState(user.id, order.id);
+  const feed = await getRoomFeed(user.id, order.id);
+  const stepIndex = STEPS.indexOf(order.status);
 
   return (
     <main className="py-10 md:py-16">
-      <Container narrow className="flex flex-col gap-8">
+      <Container className="flex flex-col gap-8">
         <Link
           href={
             order.side === "buyer"
@@ -123,153 +135,181 @@ export default async function FreelanceOrderPage({
             value={String(order.revisionsLeft)}
           />
         </StatRow>
-        <section className="flex flex-col gap-2">
-          <h2 className="t-h3">{t("orders.task")}</h2>
-          <p className="max-w-[68ch] whitespace-pre-wrap">{order.task}</p>
-          {order.wantedBy ? (
-            <p className="t-body-s text-fg-muted">
-              {t("orders.wantedBy", { when: order.wantedBy })}
-            </p>
-          ) : null}
-          {order.buyerCompany ? (
-            <p className="t-body-s text-fg-muted">
-              {t("orders.fromCompany", { company: order.buyerCompany })}
-            </p>
-          ) : null}
-        </section>
-        {deliveryHref ? (
-          <section className="flex flex-col gap-2">
-            <h2 className="t-h3">{t("orders.result")}</h2>
-            <a
-              href={deliveryHref}
-              rel="noopener noreferrer nofollow ugc"
-              className="t-data self-start underline underline-offset-4"
-            >
-              {new URL(deliveryHref).host}
-            </a>
-          </section>
-        ) : null}
-        <section className="flex flex-col gap-3 rounded-lg border border-line p-4 md:p-6">
-          <h2 className="t-h3">{t("orders.contacts")}</h2>
-          {contact ? (
-            <dl className="grid gap-2 sm:grid-cols-[160px_minmax(0,1fr)]">
-              {contact.name ? (
-                <>
-                  <dt className="t-label text-fg-muted">
-                    {t("orders.contactName")}
-                  </dt>
-                  <dd>{contact.name}</dd>
-                </>
-              ) : null}
-              {contact.company ? (
-                <>
-                  <dt className="t-label text-fg-muted">
-                    {t("orders.contactCompany")}
-                  </dt>
-                  <dd>{contact.company}</dd>
-                </>
-              ) : null}
-              {contact.email ? (
-                <>
-                  <dt className="t-label text-fg-muted">
-                    {t("orders.contactEmail")}
-                  </dt>
-                  <dd className="t-data break-all">
-                    <a
-                      href={`mailto:${contact.email}`}
-                      className="underline underline-offset-4"
-                    >
-                      {contact.email}
-                    </a>
-                  </dd>
-                </>
-              ) : null}
-              {contact.telegram ? (
-                <>
-                  <dt className="t-label text-fg-muted">
-                    {t("orders.contactTelegram")}
-                  </dt>
-                  <dd className="t-data break-all">{contact.telegram}</dd>
-                </>
-              ) : null}
-              {contact.phone ? (
-                <>
-                  <dt className="t-label text-fg-muted">
-                    {t("orders.contactPhone")}
-                  </dt>
-                  <dd className="t-data">{contact.phone}</dd>
-                </>
-              ) : null}
-              {contact.linkedinUrl ? (
-                <>
-                  <dt className="t-label text-fg-muted">
-                    {t("orders.contactLinkedin")}
-                  </dt>
-                  <dd className="t-data break-all">{contact.linkedinUrl}</dd>
-                </>
-              ) : null}
-            </dl>
-          ) : (
-            <p className="text-fg-muted">{t("orders.contactsClosed")}</p>
-          )}
-        </section>
-        {payState.payment?.status === "paid" ? (
-          <p className="t-body-s text-success">{t("pay.paidLine")}</p>
-        ) : payState.payable ? (
-          <section className="flex flex-col gap-2 rounded-lg border border-line p-4">
-            <p className="t-body-s text-fg-muted">{t("pay.orderText")}</p>
-            <Link
-              href={`/billing/crypto?freelance=${order.id}`}
-              className={buttonClass("primary")}
-            >
-              {t("pay.payButton", {
-                price: formatUsd(order.priceMinor, locale),
-              })}
-            </Link>
-          </section>
-        ) : order.side === "buyer" &&
-          order.status === "accepted" &&
-          !payState.payoutReady ? (
-          <p className="t-body-s text-fg-muted">{t("pay.payoutMissing")}</p>
-        ) : null}
-        {order.next.length > 0 ? (
-          <section className="flex flex-col gap-3">
-            <OrderActions
-              orderId={order.id}
-              status={order.status}
-              next={order.next}
-              copy={copy}
-            />
-          </section>
-        ) : null}
-        {canReview ? <ReviewForm orderId={order.id} copy={copy} /> : null}
-        {order.reviewed ? (
-          <p className="t-body-s text-fg-muted">{t("orders.reviewLeft")}</p>
-        ) : null}
-        <section className="flex flex-col gap-2">
-          <h2 className="t-label text-fg-muted">{t("orders.history")}</h2>
-          <ol className="flex flex-col gap-1">
-            {order.history.map((row) => (
-              <li key={row.id} className="t-body-s flex flex-wrap gap-2">
-                <time
-                  className="t-data text-fg-muted"
-                  dateTime={row.createdAt.toISOString()}
+        {stepIndex >= 0 ? (
+          <nav aria-label={roomCopy.room_steps}>
+            <ol className="flex flex-wrap gap-x-4 gap-y-2">
+              {STEPS.map((step, index) => (
+                <li
+                  key={step}
+                  aria-current={index === stepIndex ? "step" : undefined}
+                  className={
+                    index === stepIndex
+                      ? "t-body-s flex items-center gap-2 text-fg"
+                      : "t-body-s flex items-center gap-2 text-fg-muted"
+                  }
                 >
-                  {dates.format(row.createdAt)}
-                </time>
-                <span>{t(`orders.status.${row.toStatus}`)}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
-        <Link
-          href={`/chat?order=${order.id}`}
-          className="t-body-s underline underline-offset-4"
-        >
-          {t("askSpoki")}
-        </Link>
-        <ReportForm kind="orders" id={order.id} copy={copy} />
-        <p className="t-body-s text-fg-muted">{t("payNote")}</p>
+                  <span
+                    aria-hidden="true"
+                    className={
+                      index <= stepIndex
+                        ? "size-1.5 rounded-full bg-accent"
+                        : "size-1.5 rounded-full border border-line-strong"
+                    }
+                  />
+                  {t(`orders.status.${step}`)}
+                </li>
+              ))}
+            </ol>
+          </nav>
+        ) : null}
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-start">
+          <aside
+            aria-label={roomCopy.room_details}
+            className="flex flex-col gap-8 lg:col-start-2 lg:row-start-1"
+          >
+            <section className="flex flex-col gap-2">
+              <h2 className="t-h3">{t("orders.task")}</h2>
+              <p className="max-w-[68ch] whitespace-pre-wrap">{order.task}</p>
+              {order.wantedBy ? (
+                <p className="t-body-s text-fg-muted">
+                  {t("orders.wantedBy", { when: order.wantedBy })}
+                </p>
+              ) : null}
+              {order.buyerCompany ? (
+                <p className="t-body-s text-fg-muted">
+                  {t("orders.fromCompany", { company: order.buyerCompany })}
+                </p>
+              ) : null}
+            </section>
+            {deliveryHref ? (
+              <section className="flex flex-col gap-2">
+                <h2 className="t-h3">{t("orders.result")}</h2>
+                <a
+                  href={deliveryHref}
+                  rel="noopener noreferrer nofollow ugc"
+                  className="t-data self-start underline underline-offset-4"
+                >
+                  {new URL(deliveryHref).host}
+                </a>
+              </section>
+            ) : null}
+            <section className="flex flex-col gap-3 rounded-lg border border-line p-4 md:p-6">
+              <h2 className="t-h3">{t("orders.contacts")}</h2>
+              {contact ? (
+                <dl className="grid gap-2 sm:grid-cols-[160px_minmax(0,1fr)]">
+                  {contact.name ? (
+                    <>
+                      <dt className="t-label text-fg-muted">
+                        {t("orders.contactName")}
+                      </dt>
+                      <dd>{contact.name}</dd>
+                    </>
+                  ) : null}
+                  {contact.company ? (
+                    <>
+                      <dt className="t-label text-fg-muted">
+                        {t("orders.contactCompany")}
+                      </dt>
+                      <dd>{contact.company}</dd>
+                    </>
+                  ) : null}
+                  {contact.email ? (
+                    <>
+                      <dt className="t-label text-fg-muted">
+                        {t("orders.contactEmail")}
+                      </dt>
+                      <dd className="t-data break-all">
+                        <a
+                          href={`mailto:${contact.email}`}
+                          className="underline underline-offset-4"
+                        >
+                          {contact.email}
+                        </a>
+                      </dd>
+                    </>
+                  ) : null}
+                  {contact.telegram ? (
+                    <>
+                      <dt className="t-label text-fg-muted">
+                        {t("orders.contactTelegram")}
+                      </dt>
+                      <dd className="t-data break-all">{contact.telegram}</dd>
+                    </>
+                  ) : null}
+                  {contact.phone ? (
+                    <>
+                      <dt className="t-label text-fg-muted">
+                        {t("orders.contactPhone")}
+                      </dt>
+                      <dd className="t-data">{contact.phone}</dd>
+                    </>
+                  ) : null}
+                  {contact.linkedinUrl ? (
+                    <>
+                      <dt className="t-label text-fg-muted">
+                        {t("orders.contactLinkedin")}
+                      </dt>
+                      <dd className="t-data break-all">
+                        {contact.linkedinUrl}
+                      </dd>
+                    </>
+                  ) : null}
+                </dl>
+              ) : (
+                <p className="text-fg-muted">{t("orders.contactsClosed")}</p>
+              )}
+            </section>
+            {payState.payment?.status === "paid" ? (
+              <p className="t-body-s text-success">{t("pay.paidLine")}</p>
+            ) : payState.payable ? (
+              <section className="flex flex-col gap-2 rounded-lg border border-line p-4">
+                <p className="t-body-s text-fg-muted">{t("pay.orderText")}</p>
+                <Link
+                  href={`/billing/crypto?freelance=${order.id}`}
+                  className={buttonClass("primary")}
+                >
+                  {t("pay.payButton", {
+                    price: formatUsd(order.priceMinor, locale),
+                  })}
+                </Link>
+              </section>
+            ) : order.side === "buyer" &&
+              order.status === "accepted" &&
+              !payState.payoutReady ? (
+              <p className="t-body-s text-fg-muted">{t("pay.payoutMissing")}</p>
+            ) : null}
+            {order.next.length > 0 ? (
+              <section className="flex flex-col gap-3">
+                <OrderActions
+                  orderId={order.id}
+                  status={order.status}
+                  next={order.next}
+                  copy={copy}
+                />
+              </section>
+            ) : null}
+            {canReview ? <ReviewForm orderId={order.id} copy={copy} /> : null}
+            {order.reviewed ? (
+              <p className="t-body-s text-fg-muted">{t("orders.reviewLeft")}</p>
+            ) : null}
+            <Link
+              href={`/chat?order=${order.id}`}
+              className="t-body-s inline-flex min-h-6 items-center self-start underline underline-offset-4"
+            >
+              {t("askSpoki")}
+            </Link>
+            <ReportForm kind="orders" id={order.id} copy={copy} />
+            <p className="t-body-s text-fg-muted">{t("payNote")}</p>
+          </aside>
+          <div className="lg:col-start-1 lg:row-start-1">
+            <OrderRoom
+              orderId={order.id}
+              locale={intlLocale(locale)}
+              initial={feed}
+              copy={roomCopy}
+            />
+          </div>
+        </div>
       </Container>
     </main>
   );

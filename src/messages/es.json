@@ -3974,6 +3974,29 @@
         }
       }
     },
+    "room": {
+      "title": "Mensajes",
+      "empty": "Aún no hay mensajes. Acordad aquí los detalles: qué se necesita, para cuándo y cómo entregar el resultado.",
+      "message": "Mensaje",
+      "link": "Enlace, opcional",
+      "send": "Enviar",
+      "you": "Tú",
+      "buyer": "Cliente",
+      "seller": "Freelancer",
+      "deleted": "Cuenta eliminada",
+      "hidden": "Oculto por un moderador.",
+      "closed": "Este pedido está cerrado. No se aceptan mensajes nuevos.",
+      "notReady": "Los mensajes en los pedidos se activarán pronto.",
+      "delivered": "Resultado entregado",
+      "paid": "Pago confirmado",
+      "steps": "Pasos del pedido",
+      "details": "Detalles",
+      "error_ROOM_CLOSED": "Este pedido está cerrado. No se aceptan mensajes nuevos.",
+      "error_ROOM_NOT_READY": "Los mensajes en los pedidos aún no están activados.",
+      "error_RATE_LIMITED": "Demasiados mensajes. Inténtalo dentro de una hora.",
+      "error_CONTACTS_IN_TEXT": "Los contactos se abren cuando se acepta la solicitud. Quita el correo, teléfono, enlace o @nombre.",
+      "error_VALIDATION_ERROR": "Escribe de 1 a 2000 caracteres; el enlace debe empezar por https://."
+    },
     "client": {
       "acceptingLabel": "Acepto solicitudes",
       "acceptingOn": "Activado. Pueden llegar solicitudes.",

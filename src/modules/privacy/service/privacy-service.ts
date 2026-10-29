@@ -90,6 +90,10 @@ export async function runRetention(now = new Date()) {
   // D553: a saved job goal left idle for 30 days is dropped.
   const { sweepIdleJobGoals } = await import("@/modules/bot/service");
   const jobGoals = await sweepIdleJobGoals(now);
+  // D567: order room messages go 180 days after the order closed.
+  const { sweepClosedRoomMessages } =
+    await import("@/modules/freelance/service");
+  const roomMessages = await sweepClosedRoomMessages(now);
   const since = new Date(
     now.getTime() - AUTH_DELETE_RETRY_DAYS * 24 * 60 * 60 * 1000,
   );
@@ -101,5 +105,12 @@ export async function runRetention(now = new Date()) {
       logger.warn("retention: auth user delete still failing");
     }
   }
-  return { ...purged, analyticsEvents, authRetried, botActions, jobGoals };
+  return {
+    ...purged,
+    analyticsEvents,
+    authRetried,
+    botActions,
+    jobGoals,
+    roomMessages,
+  };
 }

@@ -3974,6 +3974,29 @@
         }
       }
     },
+    "room": {
+      "title": "Nachrichten",
+      "empty": "Noch keine Nachrichten. Klärt hier die Details: was gebraucht wird, bis wann und wie das Ergebnis übergeben wird.",
+      "message": "Nachricht",
+      "link": "Link, optional",
+      "send": "Senden",
+      "you": "Du",
+      "buyer": "Auftraggeber",
+      "seller": "Freelancer",
+      "deleted": "Gelöschtes Konto",
+      "hidden": "Von einem Moderator ausgeblendet.",
+      "closed": "Dieser Auftrag ist abgeschlossen. Neue Nachrichten werden nicht angenommen.",
+      "notReady": "Nachrichten in Aufträgen werden bald freigeschaltet.",
+      "delivered": "Ergebnis geliefert",
+      "paid": "Zahlung bestätigt",
+      "steps": "Schritte des Auftrags",
+      "details": "Details",
+      "error_ROOM_CLOSED": "Dieser Auftrag ist abgeschlossen. Neue Nachrichten werden nicht angenommen.",
+      "error_ROOM_NOT_READY": "Nachrichten in Aufträgen sind noch nicht freigeschaltet.",
+      "error_RATE_LIMITED": "Zu viele Nachrichten. Versuche es in einer Stunde erneut.",
+      "error_CONTACTS_IN_TEXT": "Kontakte werden nach Annahme der Anfrage sichtbar. Entferne E-Mail, Telefon, Link oder @Name.",
+      "error_VALIDATION_ERROR": "Schreibe 1 bis 2000 Zeichen; ein Link muss mit https:// beginnen."
+    },
     "client": {
       "acceptingLabel": "Ich nehme Anfragen an",
       "acceptingOn": "An. Neue Anfragen können kommen.",

@@ -302,6 +302,66 @@ export const freelanceOrderHistory = pgTable(
   ],
 );
 
+/** One thread per subject: an order now, a proposal or dispute later (D566). */
+export const freelanceThreads = pgTable(
+  "freelance_threads",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    subjectType: text("subject_type").$type<"order">().notNull(),
+    subjectId: uuid("subject_id").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    check(
+      "freelance_threads_subject_type_check",
+      sql`${table.subjectType} IN ('order')`,
+    ),
+    unique("freelance_threads_subject_unique").on(
+      table.subjectType,
+      table.subjectId,
+    ),
+  ],
+);
+
+/** A party's message in the order room; never edited, hidden by a moderator. */
+export const freelanceMessages = pgTable(
+  "freelance_messages",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    threadId: uuid("thread_id")
+      .notNull()
+      .references(() => freelanceThreads.id, { onDelete: "cascade" }),
+    authorId: uuid("author_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    body: text("body").notNull(),
+    links: text("links")
+      .array()
+      .notNull()
+      .default(sql`'{}'`),
+    hiddenAt: timestamp("hidden_at", { withTimezone: true }),
+    hiddenBy: uuid("hidden_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("freelance_messages_thread_idx").on(table.threadId, table.createdAt),
+    check(
+      "freelance_messages_body_check",
+      sql`char_length(${table.body}) BETWEEN 1 AND 2000`,
+    ),
+    check(
+      "freelance_messages_links_check",
+      sql`cardinality(${table.links}) <= 5`,
+    ),
+  ],
+);
+
 /** One public review per completed order, without the buyer's name (28.5). */
 export const freelanceReviews = pgTable(
   "freelance_reviews",

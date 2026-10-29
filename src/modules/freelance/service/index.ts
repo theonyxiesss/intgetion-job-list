@@ -3,6 +3,14 @@
  * Other modules may import only this file, never this module's repo.
  */
 export {
+  getRoomFeed,
+  postRoomMessage,
+  ROOM_NOT_READY,
+  sweepClosedRoomMessages,
+} from "./order-room-service";
+export type { RoomFeed } from "./order-room-service";
+export type { RoomFeedItem } from "./order-room";
+export {
   CATALOG_PAGE_SIZE,
   createService,
   decideServiceModeration,
