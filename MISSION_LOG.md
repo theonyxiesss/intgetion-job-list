@@ -3532,3 +3532,10 @@
 - По умолчанию: статистика использования в Google включена, трассы могут отправлять URL в CrUX, раз в период проверяются обновления. Отключается флагами `--no-usage-statistics`, `--no-performance-crux` и переменной `CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS`. Сервер даёт агенту полный доступ к содержимому управляемого браузера.
 - Предложенная установка (после «да»): закрепить версию 1.12.0, `--isolated`, оба флага отказа от отправки, область «локально, только этот проект».
 - Не установлено. Код проекта не менялся.
+
+## 2026-10-27 — Chrome DevTools MCP установлен
+
+- По «да» основателя: `claude mcp add chrome-devtools --scope local -e CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS=1 -- cmd /c npx -y chrome-devtools-mcp@1.12.0 --isolated --no-usage-statistics --no-performance-crux`. Область «локально, только этот проект»; конфиг в `~/.claude.json`, в репозиторий не попал.
+- Первая попытка не подключилась: Git Bash превратил `/c` в `C:/`; сервер переустановлен с `MSYS_NO_PATHCONV=1`. `claude mcp get chrome-devtools` → Connected.
+- Не проверено: фактический замер (инструменты появляются в новой сессии). Откат: `claude mcp remove chrome-devtools -s local`.
+- Код проекта не менялся.
