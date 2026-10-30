@@ -2732,6 +2732,47 @@ export async function decideDispute(input: {
 }
 
 /** Whether a problem is open on this order; false before migration 0083. */
+/**
+ * The room of a disputed order, for support (U4, TZ 48 §8). Only the admin
+ * role reads it, only for a dispute that exists, and every read is audited.
+ * The company and the creator see the same room as before; support sees it
+ * as stored, hidden lines included, so a decision rests on the full talk.
+ */
+export async function readDisputeRoom(input: {
+  adminId: string | null;
+  isAdmin: boolean;
+  disputeId: string;
+}) {
+  if (!input.isAdmin) throw notFound();
+  const adminId = requireUser(input.adminId);
+  const store = await db();
+  const dispute = await store.getDispute(input.disputeId);
+  if (!dispute) throw notFound();
+  const messages = await store.listRoomMessages(dispute.inviteId);
+  await store.audit(
+    adminId,
+    "ugc.dispute_room_read",
+    dispute.id,
+    "ugc_dispute",
+  );
+  return {
+    dispute: {
+      id: dispute.id,
+      inviteId: dispute.inviteId,
+      status: dispute.status,
+      reason: dispute.reason,
+      side: dispute.side,
+    },
+    messages: messages.map((row) => ({
+      id: row.id,
+      at: row.createdAt.toISOString(),
+      authorId: row.authorId,
+      body: row.body,
+      hidden: row.hiddenAt !== null,
+    })),
+  };
+}
+
 export async function hasOpenDispute(store: UgcStore, inviteId: string) {
   try {
     return (await store.listDisputes(inviteId)).some(

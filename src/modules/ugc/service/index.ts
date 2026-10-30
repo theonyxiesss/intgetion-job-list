@@ -65,6 +65,7 @@ export {
   reportBrokenLink,
   getUgcRoom,
   markUgcRoomRead,
+  readDisputeRoom,
   reportRoomMessage,
   listRoomReportQueue,
   decideRoomReport,
