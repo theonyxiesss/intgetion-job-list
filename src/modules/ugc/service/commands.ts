@@ -1786,6 +1786,16 @@ export async function remindReviews(store: UgcStore) {
       email: true,
     });
     if (stage === 3) {
+      await store.notify({
+        type: "ugc.review_late",
+        userIds: [invite.creatorUserId],
+        payload: {
+          campaignId: campaign.id,
+          productName: campaign.productName,
+          inviteId: invite.id,
+        },
+        email: true,
+      });
       await store.audit(
         invite.creatorUserId,
         "ugc.review_escalated",
@@ -1949,6 +1959,11 @@ export type UgcRoom = {
     side: RoomSide;
   } | null;
   canOpenDispute: boolean;
+  /** The video link and its versions, for the "Материалы" section (U5). */
+  video: {
+    submission: NonNullable<ReturnType<typeof forReader>>;
+    versions: ReturnType<typeof linkVersionView>;
+  } | null;
 };
 
 /**
@@ -1963,6 +1978,7 @@ export async function getUgcRoom(
   const id = requireUser(userId);
   const store = await db();
   const { invite, side } = await roomParty(store, inviteId, id);
+  const submission = await store.getSubmission(invite.id);
   let ready = true;
   let messages: RoomMessage[] = [];
   try {
@@ -1992,6 +2008,12 @@ export async function getUgcRoom(
           reason: dispute.reason,
           outcome: dispute.outcome,
           side: dispute.side,
+        }
+      : null,
+    video: submission
+      ? {
+          submission: forReader(submission)!,
+          versions: await linkVersionsOf(store, submission),
         }
       : null,
     canOpenDispute:
@@ -2032,6 +2054,7 @@ export async function getUgcRoom(
       })),
       offeredAt: invite.offeredAt?.toISOString() ?? null,
       agreedAt: invite.agreedAt?.toISOString() ?? null,
+      videoSentAt: submission?.submittedAt?.toISOString() ?? null,
       shippedAt: shipment?.shippedAt.toISOString() ?? null,
       receivedAt: shipment?.receivedAt?.toISOString() ?? null,
       problemAt: shipment?.problemAt?.toISOString() ?? null,

@@ -1282,6 +1282,16 @@
           "body": "{stage, select, reminder {Un vídeo de «{productName}» espera tu decisión.} last_day {Mañana es el último día para decidir sobre el vídeo de «{productName}».} other {Ha pasado el plazo para decidir sobre el vídeo de «{productName}». Se avisó a soporte.}}"
         }
       },
+      "ugcReviewLate": {
+        "inapp": {
+          "title": "Decisión de la empresa vencida",
+          "body": "La empresa no decidió a tiempo sobre tu video de «{productName}». Soporte ha sido informado."
+        },
+        "email": {
+          "subject": "Decisión de la empresa vencida",
+          "body": "La empresa no decidió a tiempo sobre tu video de «{productName}». Soporte ha sido informado."
+        }
+      },
       "ugcMessage": {
         "inapp": {
           "title": "Mensaje nuevo en un pedido",
@@ -4286,6 +4296,15 @@
     "disputeSend": "Enviar a soporte",
     "roomEventDisputeOpened": "Se informó de un problema",
     "roomEventDisputeResolved": "Soporte cerró el problema",
+    "roomEventVideoSent": "Video enviado",
+    "roomTabOrder": "Pedido",
+    "roomTabMaterials": "Materiales",
+    "roomTabDiscussion": "Discusión",
+    "roomVideoTitle": "Enlace al video",
+    "roomVideoEmpty": "Aún no se ha enviado ningún video.",
+    "roomVideoVersion": "Versión {version}",
+    "roomVideoOpen": "Abrir enlace (otro sitio)",
+    "roomVideoLatest": "Última",
     "adminDisputesTitle": "Problemas en pedidos",
     "adminDisputesEmpty": "No hay problemas abiertos.",
     "adminDisputeTake": "Tomar en revisión",

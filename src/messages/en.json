@@ -1282,6 +1282,16 @@
           "body": "{stage, select, reminder {A video for “{productName}” is waiting for your decision.} last_day {Tomorrow is the last day to decide on the video for “{productName}”.} other {The time to decide on the video for “{productName}” has passed. Support has been told.}}"
         }
       },
+      "ugcReviewLate": {
+        "inapp": {
+          "title": "Company decision overdue",
+          "body": "The company did not decide on your video for “{productName}” in time. Support has been told."
+        },
+        "email": {
+          "subject": "Company decision overdue",
+          "body": "The company did not decide on your video for “{productName}” in time. Support has been told."
+        }
+      },
       "ugcMessage": {
         "inapp": {
           "title": "New message in an order",
@@ -4792,6 +4802,15 @@
     "disputeSend": "Send to support",
     "roomEventDisputeOpened": "A problem was reported",
     "roomEventDisputeResolved": "Support closed the problem",
+    "roomEventVideoSent": "Video sent",
+    "roomTabOrder": "Order",
+    "roomTabMaterials": "Materials",
+    "roomTabDiscussion": "Discussion",
+    "roomVideoTitle": "Video link",
+    "roomVideoEmpty": "No video sent yet.",
+    "roomVideoVersion": "Version {version}",
+    "roomVideoOpen": "Open link (opens another site)",
+    "roomVideoLatest": "Latest",
     "adminDisputesTitle": "Problems on orders",
     "adminDisputesEmpty": "No open problems.",
     "adminDisputeTake": "Take into review",

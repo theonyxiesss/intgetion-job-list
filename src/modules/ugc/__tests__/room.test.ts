@@ -117,6 +117,19 @@ describe("room feed (pure)", () => {
     expect(feed[3]).toMatchObject({ side: "company", mine: false });
   });
 
+  it("shows the latest video as an event between the agreement and the talk", () => {
+    const feed = buildRoomFeed({
+      ...base,
+      messages: [],
+      videoSentAt: "2026-10-02T09:00:00.000Z",
+    });
+    expect(feed.map((item) => item.kind === "event" && item.event)).toEqual([
+      "offered",
+      "agreed",
+      "video_sent",
+    ]);
+  });
+
   it("keeps a hidden line without its text and a deleted author's side", () => {
     const feed = buildRoomFeed({
       ...base,

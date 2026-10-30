@@ -8,6 +8,7 @@ import {
   applyToCampaign,
   createCampaign,
   decideCampaign,
+  getUgcRoom,
   offerHire,
   postUgcRoomMessage,
   readCampaign,
@@ -132,6 +133,9 @@ describe("review reminders and room notices (U4б, D574)", () => {
     expect(await remindReviews(store)).toEqual({ reminded: 1, escalated: 1 });
     expect(stageNotices()[2].payload.stage).toBe("overdue");
     expect(audits).toContain("ugc.review_escalated");
+    const late = notices.filter((row) => row.type === "ugc.review_late");
+    expect(late).toHaveLength(1);
+    expect(late[0].userIds).toEqual([CREATOR]);
     const saved = await store.getSubmission(inviteId);
     expect(saved?.escalatedAt).toEqual(now);
     expect(saved?.status).toBe("submitted");
@@ -177,6 +181,18 @@ describe("review reminders and room notices (U4б, D574)", () => {
     await store.saveSubmission(submission);
     now = new Date("2026-11-10T10:00:00.000Z");
     expect(await remindReviews(store)).toEqual({ reminded: 0, escalated: 0 });
+  });
+
+  it("shows the video link and its versions to both parties of the order", async () => {
+    const creatorView = await getUgcRoom(CREATOR, inviteId);
+    expect(creatorView.video?.submission.url).toBe(
+      "https://www.tiktok.com/@a/video/1",
+    );
+    expect(creatorView.video?.versions).toHaveLength(1);
+    const companyView = await getUgcRoom(MEMBER, inviteId);
+    expect(companyView.video?.submission.url).toBe(
+      "https://www.tiktok.com/@a/video/1",
+    );
   });
 
   it("tells the other side about a room message, not the writer", async () => {

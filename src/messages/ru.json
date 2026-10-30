@@ -1282,6 +1282,16 @@
           "body": "{stage, select, reminder {Видео по «{productName}» ждёт вашего решения.} last_day {Завтра последний день, чтобы решить по видео «{productName}».} other {Срок решения по видео «{productName}» прошёл. Поддержка уведомлена.}}"
         }
       },
+      "ugcReviewLate": {
+        "inapp": {
+          "title": "Решение компании просрочено",
+          "body": "Компания не приняла решение по вашему видео для «{productName}» в срок. Поддержка уведомлена."
+        },
+        "email": {
+          "subject": "Решение компании просрочено",
+          "body": "Компания не приняла решение по вашему видео для «{productName}» в срок. Поддержка уведомлена."
+        }
+      },
       "ugcMessage": {
         "inapp": {
           "title": "Новое сообщение в заказе",
@@ -4286,6 +4296,15 @@
     "disputeSend": "Отправить в поддержку",
     "roomEventDisputeOpened": "Сообщено о проблеме",
     "roomEventDisputeResolved": "Поддержка закрыла проблему",
+    "roomEventVideoSent": "Видео отправлено",
+    "roomTabOrder": "Заказ",
+    "roomTabMaterials": "Материалы",
+    "roomTabDiscussion": "Обсуждение",
+    "roomVideoTitle": "Ссылка на видео",
+    "roomVideoEmpty": "Видео ещё не отправлено.",
+    "roomVideoVersion": "Версия {version}",
+    "roomVideoOpen": "Открыть ссылку (откроется другой сайт)",
+    "roomVideoLatest": "Последняя",
     "adminDisputesTitle": "Проблемы в заказах",
     "adminDisputesEmpty": "Открытых проблем нет.",
     "adminDisputeTake": "Взять в работу",

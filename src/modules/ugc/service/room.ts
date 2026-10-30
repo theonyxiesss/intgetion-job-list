@@ -65,6 +65,7 @@ export type RoomFeedItem =
       event:
         | "offered"
         | "agreed"
+        | "video_sent"
         | "shipped"
         | "received"
         | "problem"
@@ -84,6 +85,8 @@ export type RoomFeedSources = {
   }[];
   offeredAt: string | null;
   agreedAt: string | null;
+  /** The latest video sent for review (U4, TZ 48 §8). */
+  videoSentAt?: string | null;
   /** Delivery marks, when the order has a physical product (U6). */
   shippedAt?: string | null;
   receivedAt?: string | null;
@@ -113,6 +116,14 @@ export function buildRoomFeed(source: RoomFeedSources): RoomFeedItem[] {
       id: "agreed",
       at: source.agreedAt,
       event: "agreed",
+    });
+  }
+  if (source.videoSentAt) {
+    items.push({
+      kind: "event",
+      id: "video_sent",
+      at: source.videoSentAt,
+      event: "video_sent",
     });
   }
   for (const [event, at] of [

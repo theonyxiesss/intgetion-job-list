@@ -1282,6 +1282,16 @@
           "body": "{stage, select, reminder {Une vidéo pour « {productName} » attend votre décision.} last_day {Demain est le dernier jour pour décider de la vidéo de « {productName} ».} other {Le délai pour décider de la vidéo de « {productName} » est dépassé. Le support a été prévenu.}}"
         }
       },
+      "ugcReviewLate": {
+        "inapp": {
+          "title": "Décision de l’entreprise en retard",
+          "body": "L’entreprise n’a pas décidé à temps de votre vidéo pour « {productName} ». Le support a été prévenu."
+        },
+        "email": {
+          "subject": "Décision de l’entreprise en retard",
+          "body": "L’entreprise n’a pas décidé à temps de votre vidéo pour « {productName} ». Le support a été prévenu."
+        }
+      },
       "ugcMessage": {
         "inapp": {
           "title": "Nouveau message dans une commande",
@@ -4285,6 +4295,15 @@
     "disputeSend": "Envoyer au support",
     "roomEventDisputeOpened": "Un problème a été signalé",
     "roomEventDisputeResolved": "Le support a clos le problème",
+    "roomEventVideoSent": "Vidéo envoyée",
+    "roomTabOrder": "Commande",
+    "roomTabMaterials": "Matériaux",
+    "roomTabDiscussion": "Discussion",
+    "roomVideoTitle": "Lien de la vidéo",
+    "roomVideoEmpty": "Aucune vidéo envoyée pour l’instant.",
+    "roomVideoVersion": "Version {version}",
+    "roomVideoOpen": "Ouvrir le lien (autre site)",
+    "roomVideoLatest": "Dernière",
     "adminDisputesTitle": "Problèmes dans les commandes",
     "adminDisputesEmpty": "Aucun problème ouvert.",
     "adminDisputeTake": "Prendre en charge",

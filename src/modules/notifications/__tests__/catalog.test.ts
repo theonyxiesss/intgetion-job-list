@@ -45,6 +45,7 @@ const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
   ["ugc.deadline", true],
   // U4b (D574): review reminders and room messages.
   ["ugc.review_due", true],
+  ["ugc.review_late", true],
   ["ugc.message", false],
   // U7: a problem raised on an order and its outcome.
   ["ugc.dispute", true],
@@ -52,7 +53,7 @@ const SECTION_15_EMAIL_DEFAULTS: [NotificationType, boolean][] = [
 
 describe("notification catalog (15, D100)", () => {
   it("contains every configured event in catalog order", () => {
-    expect(NOTIFICATION_TYPES).toHaveLength(27);
+    expect(NOTIFICATION_TYPES).toHaveLength(28);
     expect([...NOTIFICATION_TYPES]).toEqual(
       SECTION_15_EMAIL_DEFAULTS.map(([type]) => type),
     );

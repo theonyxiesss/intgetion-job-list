@@ -1282,6 +1282,16 @@
           "body": "{stage, select, reminder {Ein Video zu „{productName}“ wartet auf deine Entscheidung.} last_day {Morgen ist der letzte Tag, über das Video zu „{productName}“ zu entscheiden.} other {Die Frist für das Video zu „{productName}“ ist abgelaufen. Der Support wurde informiert.}}"
         }
       },
+      "ugcReviewLate": {
+        "inapp": {
+          "title": "Entscheidung des Unternehmens überfällig",
+          "body": "Das Unternehmen hat nicht rechtzeitig über dein Video für „{productName}“ entschieden. Der Support wurde informiert."
+        },
+        "email": {
+          "subject": "Entscheidung des Unternehmens überfällig",
+          "body": "Das Unternehmen hat nicht rechtzeitig über dein Video für „{productName}“ entschieden. Der Support wurde informiert."
+        }
+      },
       "ugcMessage": {
         "inapp": {
           "title": "Neue Nachricht in einem Auftrag",
@@ -4286,6 +4296,15 @@
     "disputeSend": "An den Support senden",
     "roomEventDisputeOpened": "Ein Problem wurde gemeldet",
     "roomEventDisputeResolved": "Der Support hat das Problem geschlossen",
+    "roomEventVideoSent": "Video gesendet",
+    "roomTabOrder": "Auftrag",
+    "roomTabMaterials": "Material",
+    "roomTabDiscussion": "Diskussion",
+    "roomVideoTitle": "Video-Link",
+    "roomVideoEmpty": "Noch kein Video gesendet.",
+    "roomVideoVersion": "Version {version}",
+    "roomVideoOpen": "Link öffnen (andere Website)",
+    "roomVideoLatest": "Neueste",
     "adminDisputesTitle": "Probleme in Aufträgen",
     "adminDisputesEmpty": "Keine offenen Probleme.",
     "adminDisputeTake": "In Prüfung nehmen",
