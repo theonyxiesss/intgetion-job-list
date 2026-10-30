@@ -2689,6 +2689,106 @@
     "failed": "Impossibile aprire il link. Riprova tra un minuto."
   },
   "pricing": {
+    "account": {
+      "title": "Un account. Tutto gratis. Meno commissioni su ogni affare.",
+      "intro": "Cercare lavoro, assumere, vendere servizi e lanciare UGC con un solo account, senza costi. La piattaforma guadagna con una commissione sugli affari; un piano la riduce e ti fa andare più veloce.",
+      "plansTitle": "Piani dell'account",
+      "payNote": "Pagamento in USDT o USDC. Il pulsante addebita il prezzo mensile e attiva il piano per 30 giorni; non si rinnova da solo. La commissione ridotta e le voci con «presto» arriveranno più avanti.",
+      "tiers": {
+        "free": {
+          "name": "Gratis",
+          "for": "Per tutti e per tutto.",
+          "points": {
+            "search": "Tutte le offerte, candidature e la selezione «Per te»",
+            "freelance": "Vendere servizi e accettare ordini",
+            "jobs": "2 offerte attive alla volta, 30 giorni ciascuna",
+            "ugc": "Lanciare campagne UGC o partecipare come creator",
+            "agent": "Spoki: 15 messaggi al giorno"
+          }
+        },
+        "plus": {
+          "name": "Plus",
+          "for": "Cerchi o vendi attivamente.",
+          "points": {
+            "agent": "Spoki: 100 messaggi al giorno",
+            "instant": "Offerte adatte appena compaiono",
+            "letters": "Una lettera di presentazione per ogni offerta",
+            "views": "Quali aziende hanno visto il profilo",
+            "commission": "Commissione del 5 % invece dell'8 % (presto)"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "for": "Punti a un ruolo forte o vendi ogni mese.",
+          "points": {
+            "agent": "Spoki: 300 messaggi al giorno",
+            "interview": "Colloqui di prova con feedback",
+            "salary": "Report sugli stipendi per negoziare",
+            "review": "Revisione completa del profilo con un piano",
+            "commission": "Commissione del 3 % (presto)"
+          }
+        },
+        "team": {
+          "name": "Team",
+          "for": "Assumi tutto l'anno, agenzia o studio.",
+          "points": {
+            "seats": "Fino a 10 persone nel team",
+            "jobs": "10 offerte attive alla volta, 45 giorni ciascuna",
+            "api": "API per le tue offerte",
+            "channel": "3 post al mese nel canale Telegram della piattaforma",
+            "commission": "0 % di commissione sul freelance, 2 % sull'UGC (presto)"
+          }
+        }
+      },
+      "commissionTitle": "Commissione sugli affari",
+      "commissionIntro": "La piattaforma trattiene una quota di un ordine freelance (dal venditore) o del budget di una campagna UGC (dal brand). Chi acquista servizi freelance non paga commissioni.",
+      "commissionDeal": "Affare",
+      "commission": {
+        "freelance": "Ordine freelance",
+        "ugc": "Campagna UGC"
+      },
+      "commissionNote": "La commissione partirà quando il pagamento passerà dal deposito a garanzia della piattaforma. Oggi gli ordini freelance si pagano direttamente al portafoglio del venditore, senza commissione.",
+      "oneOffTitle": "Acquisti singoli",
+      "oneOffIntro": "Si comprano quando servono, con qualsiasi piano.",
+      "oneOff": {
+        "hire": {
+          "name": "Assunzione",
+          "text": "Un'offerta con garanzia: 10 candidature adatte o rimborso"
+        },
+        "renew": {
+          "name": "Rinnovo Assunzione",
+          "text": "Altri 30 giorni per un'offerta Assunzione"
+        },
+        "urgent": {
+          "name": "Urgente",
+          "text": "Etichetta «urgente» per 14 giorni e un post nel canale Telegram"
+        },
+        "slot": {
+          "name": "Posto offerta extra",
+          "text": "Un'offerta attiva in più per 30 giorni"
+        },
+        "ugcBrief": {
+          "name": "Brief UGC",
+          "text": "Il brief di una campagna UGC senza il piano Team"
+        },
+        "lift": {
+          "name": "Spinta al servizio",
+          "text": "Il tuo servizio più in alto nella categoria per 7 giorni"
+        },
+        "top": {
+          "name": "Top di categoria",
+          "text": "Uno dei 3 posti in cima alla categoria per 7 giorni"
+        },
+        "showcase": {
+          "name": "Vetrina in home",
+          "text": "Uno dei 6 posti nella home page per 7 giorni"
+        },
+        "proposal": {
+          "name": "Proposta in evidenza",
+          "text": "Il cliente vede per prima la tua proposta"
+        }
+      }
+    },
     "metaTitle": "Prezzi — ricerca di lavoro gratuita, velocità a pagamento",
     "metaDescription": "Prezzi di INTGETION per aziende e candidati. Pubblicare offerte e cercare restano gratuiti; i piani a pagamento aggiungono velocità, visibilità e un rimborso se l’assunzione non va a buon fine.",
     "label": "Prezzi",

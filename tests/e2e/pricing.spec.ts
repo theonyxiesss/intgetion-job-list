@@ -1,20 +1,27 @@
 import { expect, test } from "./fixtures";
 
-// docs/PRICING_UX.md, section 2: the pricing page sells nothing yet.
-test("the pricing page shows three plans per audience and sells nothing yet", async ({
+// D587: one set of account plans, the deal commission and one-off purchases.
+// docs/PRICING_UX.md, section 2: with payments off nothing is on sale.
+test("the pricing page shows four account plans, the commission and one-offs", async ({
   page,
 }) => {
   await page.goto("/en/pricing");
   await expect(
-    page.getByRole("heading", { level: 1, name: /Free for everything/ }),
+    page.getByRole("heading", { level: 1, name: /One account/ }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { level: 3, name: "Plus" }),
-  ).toBeVisible();
-  await expect(page.getByText("Coming soon")).toHaveCount(2);
+  for (const name of ["Free", "Plus", "Pro", "Team"]) {
+    await expect(page.getByRole("heading", { level: 3, name })).toBeVisible();
+  }
+  // Three paid plans and the eight one-offs that do not sell yet.
+  await expect(page.getByText("Coming soon")).toHaveCount(11);
 
-  await page.getByRole("link", { name: "For companies" }).click();
-  await expect(page).toHaveURL(/for=companies/);
+  const freelance = page.getByRole("row", { name: /Freelance order/ });
+  await expect(freelance.getByRole("cell")).toHaveText([
+    "8%",
+    "5%",
+    "3%",
+    "0%",
+  ]);
   await expect(
     page.getByRole("heading", { level: 3, name: "Hire" }),
   ).toBeVisible();

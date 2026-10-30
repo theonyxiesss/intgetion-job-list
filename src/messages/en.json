@@ -2689,6 +2689,106 @@
     "failed": "Could not open the link. Try again in a minute."
   },
   "pricing": {
+    "account": {
+      "title": "One account. Everything free. Pay less on every deal.",
+      "intro": "Search, hire, sell services and run UGC from one account at no cost. The platform earns a commission on deals; a plan lowers it and adds speed.",
+      "plansTitle": "Account plans",
+      "payNote": "Paid in USDT or USDC. The button charges the monthly price and turns the plan on for 30 days; it does not renew by itself. Lower commission and the items marked «soon» start later.",
+      "tiers": {
+        "free": {
+          "name": "Free",
+          "for": "Everyone, for everything.",
+          "points": {
+            "search": "Every job, application and «For you» matching",
+            "freelance": "Sell services and take orders",
+            "jobs": "2 jobs live at a time, 30 days each",
+            "ugc": "Run UGC campaigns or take part as a creator",
+            "agent": "Spoki: 15 messages a day"
+          }
+        },
+        "plus": {
+          "name": "Plus",
+          "for": "Actively looking or selling.",
+          "points": {
+            "agent": "Spoki: 100 messages a day",
+            "instant": "New matching jobs the moment they appear",
+            "letters": "A cover letter written for each job",
+            "views": "Which companies viewed your profile",
+            "commission": "Deal commission 5% instead of 8% (soon)"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "for": "Going for a strong role or selling every month.",
+          "points": {
+            "agent": "Spoki: 300 messages a day",
+            "interview": "Mock interviews with feedback",
+            "salary": "A salary report for negotiating",
+            "review": "Full profile review with a plan",
+            "commission": "Deal commission 3% (soon)"
+          }
+        },
+        "team": {
+          "name": "Team",
+          "for": "Hiring all year, an agency or a studio.",
+          "points": {
+            "seats": "Up to 10 teammates",
+            "jobs": "10 jobs live at a time, 45 days each",
+            "api": "API for your own jobs",
+            "channel": "3 posts a month in the platform Telegram channel",
+            "commission": "0% freelance commission, 2% on UGC (soon)"
+          }
+        }
+      },
+      "commissionTitle": "Commission on deals",
+      "commissionIntro": "The platform takes a share of a freelance order (from the seller) or a UGC campaign budget (from the brand). Buyers of freelance services pay no fee.",
+      "commissionDeal": "Deal",
+      "commission": {
+        "freelance": "Freelance order",
+        "ugc": "UGC campaign"
+      },
+      "commissionNote": "Commission starts when payment goes through the platform's escrow. Today freelance orders are paid straight to the seller's wallet, with no commission.",
+      "oneOffTitle": "One-off purchases",
+      "oneOffIntro": "Bought when you need them, on any plan.",
+      "oneOff": {
+        "hire": {
+          "name": "Hire",
+          "text": "One job with a guarantee: 10 matching applications or your money back"
+        },
+        "renew": {
+          "name": "Hire renewal",
+          "text": "30 more days for a Hire job"
+        },
+        "urgent": {
+          "name": "Urgent",
+          "text": "An «urgent» mark for 14 days and one post in the Telegram channel"
+        },
+        "slot": {
+          "name": "Extra job slot",
+          "text": "One more job live at a time for 30 days"
+        },
+        "ugcBrief": {
+          "name": "UGC brief",
+          "text": "One UGC campaign brief without the Team plan"
+        },
+        "lift": {
+          "name": "Service lift",
+          "text": "Your service higher in its category for 7 days"
+        },
+        "top": {
+          "name": "Category top",
+          "text": "One of 3 places at the top of a category for 7 days"
+        },
+        "showcase": {
+          "name": "Home showcase",
+          "text": "One of 6 places on the home page for 7 days"
+        },
+        "proposal": {
+          "name": "Highlighted proposal",
+          "text": "Your proposal shown first to the client"
+        }
+      }
+    },
     "metaTitle": "Pricing — free job search, paid speed",
     "metaDescription": "INTGETION pricing for companies and candidates. Posting jobs and searching stay free; paid plans add speed, reach and a refund if hiring does not work.",
     "label": "Pricing",
