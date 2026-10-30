@@ -20,6 +20,35 @@ import { SpokiContext, type DockMode, type SpokiDock } from "./spoki-context";
 
 /** Desktop includes laptops: Spoki stays beside the page from 1024 px. */
 const WIDE = "(min-width: 1024px)";
+const HIDDEN_KEY = "spoki_dock_hidden";
+let volatileHidden = false;
+
+function getDockHidden() {
+  try {
+    return window.localStorage.getItem(HIDDEN_KEY) === "1";
+  } catch {
+    return volatileHidden;
+  }
+}
+
+function setDockHidden(hidden: boolean) {
+  volatileHidden = hidden;
+  try {
+    window.localStorage.setItem(HIDDEN_KEY, hidden ? "1" : "0");
+  } catch {
+    // Hiding stays for this page when storage is unavailable.
+  }
+  window.dispatchEvent(new Event("spoki-dock-hidden"));
+}
+
+function subscribeDockHidden(onChange: () => void) {
+  window.addEventListener("spoki-dock-hidden", onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener("spoki-dock-hidden", onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
 
 function useMedia(query: string): boolean {
   return useSyncExternalStore(
@@ -50,6 +79,11 @@ export function SpokiProvider({
   const pathname = usePathname();
   const wide = useMedia(WIDE);
   const large = wide;
+  const dockHidden = useSyncExternalStore(
+    subscribeDockHidden,
+    getDockHidden,
+    () => false,
+  );
   const [floating, setFloating] = useState(false);
   const [target, setTarget] = useState<ChatTarget | null>(null);
   const [wanted, setWanted] = useState(false);
@@ -70,11 +104,13 @@ export function SpokiProvider({
     }
   }
 
-  const desktopDocked = wide;
+  const desktopDocked = wide && !dockHidden;
   const mode: DockMode = expanded
     ? "expanded"
     : wide
-      ? "docked"
+      ? dockHidden
+        ? "hidden"
+        : "docked"
       : floating
         ? "sheet"
         : "hidden";
@@ -85,9 +121,8 @@ export function SpokiProvider({
   const open = useCallback((next?: ChatTarget) => {
     if (next) setTarget(next);
     setWanted(true);
-    if (!window.matchMedia(WIDE).matches) {
-      setFloating(true);
-    }
+    if (window.matchMedia(WIDE).matches) setDockHidden(false);
+    else setFloating(true);
   }, []);
 
   const collapse = useCallback(() => {
@@ -97,8 +132,9 @@ export function SpokiProvider({
 
   const close = useCallback(() => {
     if (window.matchMedia(WIDE).matches) {
-      // Desktop Spoki is part of the layout and cannot be dismissed (D531).
+      // Desktop: the full-screen chat goes back to the page, the column hides (D585).
       if (pathname === "/chat") router.push(lastPage ?? "/jobs");
+      else setDockHidden(true);
       return;
     }
     if (pathname === "/chat") {
@@ -131,6 +167,7 @@ export function SpokiProvider({
     () => ({
       signedIn,
       docked: desktopDocked,
+      dockHidden: wide && dockHidden,
       floating,
       expanded,
       mode,
@@ -150,6 +187,8 @@ export function SpokiProvider({
     [
       signedIn,
       desktopDocked,
+      wide,
+      dockHidden,
       floating,
       expanded,
       mode,

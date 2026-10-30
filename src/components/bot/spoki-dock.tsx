@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useSyncExternalStore } from "react";
-import { Maximize2, Minimize2, X } from "lucide-react";
+import {
+  MessageCircle,
+  Maximize2,
+  Minimize2,
+  PanelRightClose,
+  X,
+} from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import { Icon } from "@/components/ui/icon";
 import { SpokiChat } from "./spoki-chat-lazy";
@@ -78,6 +84,8 @@ export function SpokiDock({
     close: string;
     loading: string;
     resize: string;
+    hide: string;
+    show: string;
   };
 }) {
   const spoki = useSpoki();
@@ -126,7 +134,7 @@ export function SpokiDock({
   }, [floating, large]);
 
   if (!spoki) return null;
-  const { mode, docked, expanded, target, loaded } = spoki;
+  const { mode, docked, dockHidden, expanded, target, loaded } = spoki;
 
   return (
     <>
@@ -235,6 +243,16 @@ export function SpokiDock({
             >
               <Icon icon={X} size={16} />
             </button>
+          ) : !expanded ? (
+            <button
+              type="button"
+              className={tool}
+              onClick={spoki.close}
+              aria-label={labels.hide}
+              title={labels.hide}
+            >
+              <Icon icon={PanelRightClose} size={16} />
+            </button>
           ) : null}
         </div>
         {loaded ? (
@@ -247,6 +265,18 @@ export function SpokiDock({
           />
         ) : null}
       </aside>
+      {dockHidden && !expanded ? (
+        <button
+          type="button"
+          onClick={() => spoki.open()}
+          onPointerEnter={spoki.preload}
+          onFocus={spoki.preload}
+          className="fixed right-4 bottom-4 z-30 hidden min-h-11 items-center gap-2 rounded-full border border-line bg-bg px-4 text-sm font-medium text-fg shadow-sm transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent lg:inline-flex"
+        >
+          <Icon icon={MessageCircle} size={16} />
+          {labels.show}
+        </button>
+      ) : null}
     </>
   );
 }
