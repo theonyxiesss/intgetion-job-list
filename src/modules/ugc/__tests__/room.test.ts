@@ -9,6 +9,8 @@ import {
   decideCampaign,
   getUgcRoom,
   markUgcRoomRead,
+  readCampaign,
+  updateCampaignText,
   offerHire,
   postUgcRoomMessage,
   saveCreatorProfile,
@@ -200,6 +202,26 @@ describe("room through the service (U4, D574)", () => {
     }
     await applyToCampaign(CREATOR, campaignId);
     inviteId = (await offerHire(MEMBER, campaignId, CREATOR)).inviteId;
+  });
+
+  it("shows the agreed terms on the card and flags a later brief edit", async () => {
+    const companyView = async () =>
+      (await readCampaign(MEMBER, campaignId)) as Extract<
+        Awaited<ReturnType<typeof readCampaign>>,
+        { role: "company" }
+      >;
+    const offered = (await companyView()).participants.find(
+      (row) => row.inviteId === inviteId,
+    );
+    expect(offered?.terms?.pitch).toBe(brief.pitch);
+    expect(offered?.termsChanged).toBe(false);
+    await updateCampaignText(MEMBER, campaignId, { pitch: "Changed pitch" });
+    const edited = await companyView();
+    expect(
+      edited.participants.find((row) => row.inviteId === inviteId)
+        ?.termsChanged,
+    ).toBe(true);
+    expect(edited.versions.at(-1)?.snapshot.pitch).toBe("Changed pitch");
   });
 
   it("counts the other party's new messages until this party opens the room", async () => {

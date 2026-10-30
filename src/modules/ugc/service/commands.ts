@@ -485,6 +485,7 @@ export async function readCampaign(userId: string | null, campaignId: string) {
       versions: (await store.listCampaignVersions(campaign.id)).map((row) => ({
         version: row.version,
         changedFields: row.changedFields,
+        snapshot: row.snapshot,
         at: row.createdAt.toISOString(),
       })),
       participants: await Promise.all(
@@ -497,6 +498,12 @@ export async function readCampaign(userId: string | null, campaignId: string) {
             bountyMinor: invite.bountyMinor?.toString() ?? null,
             rights: invite.rights,
             pitch: invite.pitch,
+            /** What the company offered and the creator agreed to (U3). */
+            terms: invite.terms ?? null,
+            termsChanged:
+              !!invite.termsHash &&
+              invite.status === "offered" &&
+              termsHash(buildTerms(campaign)) !== invite.termsHash,
             reminders: invite.reminders,
             revisionUsed: invite.revisionUsed,
             shortlisted: invite.shortlisted ?? false,
