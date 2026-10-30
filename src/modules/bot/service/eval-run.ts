@@ -236,7 +236,7 @@ export function loadFreelance(): FreelanceCase[] {
 }
 
 /** Board plan prices the prompt may name: Hire, Team, Plus, Pro (cents). */
-const BOARD_PRICES = [7900, 19900, 500, 1500].map(BigInt);
+const BOARD_PRICES = [7900, 8000, 500, 1500].map(BigInt);
 
 /** Dollar amounts in a text, in cents: "$450", "$1,200.50", "300 USD". */
 export function pricesInText(text: string): bigint[] {

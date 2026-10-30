@@ -21,8 +21,8 @@ import {
 
 export const ROOM_NOT_READY = "ROOM_NOT_READY";
 
-/** D567: message text stays 180 days after the order closed. */
-export const ROOM_RETENTION_DAYS = 180;
+/** D567, D581: message text stays 365 days after the order closed. */
+export const ROOM_RETENTION_DAYS = 365;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

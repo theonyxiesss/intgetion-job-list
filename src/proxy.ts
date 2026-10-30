@@ -17,6 +17,7 @@ import {
   TELEGRAM_WEB_APP_SCRIPT,
 } from "./lib/security-headers";
 import { isCryptoPayPath } from "./lib/crypto-pay-path";
+import { isUgcRoomPath } from "./lib/ugc-room-path";
 import { siteUrl, supabaseUrl } from "./lib/supabase/env";
 import { flags } from "./config/flags";
 import { TELEGRAM_MINI_APP_BOUNCE_SCRIPT } from "./lib/telegram-web-app-boot";
@@ -176,6 +177,7 @@ export async function proxy(request: NextRequest) {
       : embedOriginForPath(request.nextUrl.pathname),
     // WalletConnect relay, verify, and the AppKit modal only while paying (D403, D406).
     allowWalletConnect: !adminHost && isCryptoPayPath(request.nextUrl.pathname),
+    allowVideoEmbeds: !adminHost && isUgcRoomPath(request.nextUrl.pathname),
   });
   // Next.js reads the nonce from the request CSP header while rendering.
   request.headers.set("x-nonce", nonce);

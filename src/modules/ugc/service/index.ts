@@ -64,6 +64,8 @@ export {
   reportDeliveryProblem,
   reportBrokenLink,
   getUgcRoom,
+  markUgcRoomRead,
+  readDisputeRoom,
   reportRoomMessage,
   listRoomReportQueue,
   decideRoomReport,
@@ -225,3 +227,5 @@ export type {
 } from "./creator-workspace";
 export { UGC_DELIVERY_PROBLEMS } from "./delivery";
 export type { DeliveryState, UgcDeliveryProblem } from "./delivery";
+
+export { videoEmbedUrl } from "./embed";

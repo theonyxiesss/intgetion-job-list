@@ -37,7 +37,8 @@ export default async function NewEmployerJobPage({
       company.origin === "internal" &&
       ["owner", "admin", "recruiter"].includes(company.role),
   );
-  if (!companies[0]) redirect(`${localePrefix(locale)}/employer/company`);
+  // No company yet: the post-job form asks for the company name and creates it on publish.
+  if (companies.length === 0) redirect(`${localePrefix(locale)}/post-job`);
   const query = await searchParams;
   const context = resolveEmployerCompany(
     companies,
@@ -67,18 +68,18 @@ export default async function NewEmployerJobPage({
           pathname="/employer/jobs/new"
           label={t("companySwitcher")}
         />
-        {context.companies.length > 1 && !context.selected ? (
-          <EmptyState
-            title={t("selectCompanyTitle")}
-            text={t("selectCompanyText")}
-          />
-        ) : context.selected ? (
+        {context.selected ? (
           <JobForm
             companyId={context.selected.id}
             text={t.raw("form")}
             options={await jobFormOptions()}
           />
-        ) : null}
+        ) : (
+          <EmptyState
+            title={t("selectCompanyTitle")}
+            text={t("selectCompanyText")}
+          />
+        )}
       </Container>
     </main>
   );

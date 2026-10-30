@@ -285,7 +285,7 @@
         "hire": "Hire · con reembolso",
         "hirePrice": "$79",
         "team": "Team · al mes",
-        "teamPrice": "$199"
+        "teamPrice": "$80"
       },
       "ctaTitle": "¿Listo para encontrar trabajo remoto?"
     }
@@ -1283,6 +1283,16 @@
         "email": {
           "subject": "Un vídeo espera tu decisión",
           "body": "{stage, select, reminder {Un vídeo de «{productName}» espera tu decisión.} last_day {Mañana es el último día para decidir sobre el vídeo de «{productName}».} other {Ha pasado el plazo para decidir sobre el vídeo de «{productName}». Se avisó a soporte.}}"
+        }
+      },
+      "ugcReviewLate": {
+        "inapp": {
+          "title": "Decisión de la empresa vencida",
+          "body": "La empresa no decidió a tiempo sobre tu video de «{productName}». Soporte ha sido informado."
+        },
+        "email": {
+          "subject": "Decisión de la empresa vencida",
+          "body": "La empresa no decidió a tiempo sobre tu video de «{productName}». Soporte ha sido informado."
         }
       },
       "ugcMessage": {
@@ -3065,7 +3075,7 @@
     "hireUntil": "Hire está activo para este empleo hasta {date}.",
     "teamUntil": "Team está activo hasta {date}.",
     "planUntil": "Este plan está activo hasta {date}.",
-    "startHint": "Start es gratis. Hire cuesta 79 $ por un empleo publicado. Team cuesta 199 $, Plus 5 $ y Pro 15 $, cada uno 30 días, en USDT o USDC.",
+    "startHint": "Start es gratis. Hire cuesta 79 $ por un empleo publicado. Team cuesta 80 $, Plus 5 $ y Pro 15 $, cada uno 30 días, en USDT o USDC.",
     "pay": "Pagar con USDT o USDC",
     "status": {
       "awaiting_payment": "Esperando la transferencia",
@@ -4289,9 +4299,23 @@
     "disputeSend": "Enviar a soporte",
     "roomEventDisputeOpened": "Se informó de un problema",
     "roomEventDisputeResolved": "Soporte cerró el problema",
+    "roomEventVideoSent": "Video enviado",
+    "roomEventDecided": "La empresa respondió sobre el video",
+    "termsCardTitle": "Condiciones ofrecidas",
+    "termsCardSummary": "{bounty} · plazo {deadline} · derechos: {rights} · licencia {months} meses · {days} días hábiles para decidir",
+    "termsCardChanged": "El brief cambió después de enviar esta oferta.",
+    "roomTabOrder": "Pedido",
+    "roomTabMaterials": "Materiales",
+    "roomTabDiscussion": "Discusión",
+    "roomVideoTitle": "Enlace al video",
+    "roomVideoEmpty": "Aún no se ha enviado ningún video.",
+    "roomVideoVersion": "Versión {version}",
+    "roomVideoOpen": "Abrir enlace (otro sitio)",
+    "roomVideoLatest": "Última",
     "adminDisputesTitle": "Problemas en pedidos",
     "adminDisputesEmpty": "No hay problemas abiertos.",
     "adminDisputeTake": "Tomar en revisión",
+    "adminDisputeRead": "Leer la conversación",
     "adminDisputeClose": "Cerrar: {outcome}",
     "disputeReason": {
       "no_response": "La otra parte no responde",

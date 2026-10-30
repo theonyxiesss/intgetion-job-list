@@ -495,6 +495,32 @@ export default async function CampaignPage({
                               .join(" — ")}
                           </p>
                         ) : null}
+                        {row.terms ? (
+                          <div className="t-body-s flex flex-col gap-1">
+                            <p className="font-medium text-fg">
+                              {t("termsCardTitle")}
+                            </p>
+                            <p className="text-fg-muted">
+                              {t("termsCardSummary", {
+                                bounty: formatMinor(
+                                  BigInt(row.terms.bountyMinor),
+                                  "USD",
+                                  locale,
+                                  { wholeWhenEven: true },
+                                ),
+                                deadline: row.terms.deadline,
+                                rights: t(`rights.${row.terms.rights}`),
+                                months: row.terms.licenseMonths,
+                                days: row.terms.reviewBusinessDays,
+                              })}
+                            </p>
+                            {row.termsChanged ? (
+                              <p role="status" className="text-fg">
+                                {t("termsCardChanged")}
+                              </p>
+                            ) : null}
+                          </div>
+                        ) : null}
                         {row.status === "applied" && row.answers.length ? (
                           <dl className="t-body-s flex flex-col gap-1">
                             {row.answers.map((answer, n) => (
@@ -671,6 +697,36 @@ export default async function CampaignPage({
                             .join(", ")
                         : t("versionFirst")}
                     </span>
+                    {(() => {
+                      const before = view.versions.find(
+                        (item) => item.version === row.version - 1,
+                      );
+                      if (!before || row.changedFields.length === 0)
+                        return null;
+                      const shown = (snapshot: object, field: string) => {
+                        const value = (snapshot as Record<string, unknown>)[
+                          field
+                        ];
+                        return Array.isArray(value)
+                          ? value.join("; ") || "—"
+                          : String(value || "—");
+                      };
+                      return (
+                        <ul className="text-fg-muted ms-5 list-disc">
+                          {row.changedFields.map((field) => (
+                            <li key={field} className="break-words">
+                              {t(
+                                `fields.${field === "exampleUrls" ? "examples" : field}`,
+                              )}
+                              {": "}
+                              {shown(before.snapshot, field)}
+                              {" → "}
+                              {shown(row.snapshot, field)}
+                            </li>
+                          ))}
+                        </ul>
+                      );
+                    })()}
                   </li>
                 ))}
               </ol>

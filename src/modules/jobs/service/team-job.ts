@@ -1,4 +1,4 @@
-import { billingMe } from "@/modules/billing/service";
+import { companyHasActiveTeam } from "@/modules/billing/service";
 import { requireActiveUserById } from "@/modules/auth/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
 import { createJob } from "../repo/jobs-repo";
@@ -61,11 +61,10 @@ export function teamJobFields(
  * unless this person is a platform admin.
  */
 export async function queueTeamJobBrief(userId: string, brief: TeamJobBrief) {
-  const billing = await billingMe(userId);
-  if (billing.plan !== "team")
-    return { posted: false as const, reason: "plan" as const };
   const companyId = pickPosterCompany(await getCompaniesForUser(userId));
   if (!companyId) return { posted: false as const, reason: "company" as const };
+  if (!(await companyHasActiveTeam(companyId)))
+    return { posted: false as const, reason: "plan" as const };
   const user = await requireActiveUserById(userId);
   if (!user) return { posted: false as const, reason: "account" as const };
   const created = await createJob(user, null, teamJobFields(companyId, brief));

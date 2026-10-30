@@ -8,6 +8,7 @@ import {
   integer,
   jsonb,
   pgTable,
+  primaryKey,
   smallint,
   text,
   timestamp,
@@ -253,6 +254,8 @@ export const ugcSubmissions = pgTable(
     escalatedAt: timestamp("escalated_at", { withTimezone: true }),
     /** The company said the link does not open; the creator may send a new one (0081). */
     linkReportedAt: timestamp("link_reported_at", { withTimezone: true }),
+    /** When the company answered the video: accepted, rejected or changes asked (0085). */
+    decidedAt: timestamp("decided_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -491,4 +494,19 @@ export const ugcDisputes = pgTable(
   (table) => [
     index("ugc_disputes_status_idx").on(table.status, table.createdAt),
   ],
+);
+
+/** Until when each party has read the room; newer messages count as unread (0085). */
+export const ugcRoomReads = pgTable(
+  "ugc_room_reads",
+  {
+    inviteId: uuid("invite_id")
+      .notNull()
+      .references(() => ugcInvites.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    readAt: timestamp("read_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.inviteId, table.userId] })],
 );

@@ -17,6 +17,7 @@ import { campaignProgress, countParticipants } from "./progress";
 import { ugcBudgetMinor } from "./pricing";
 import type { Campaign, Invite, Submission } from "./records";
 import type { UgcStore } from "./store";
+import { buildTerms, termsHash } from "./terms";
 import { campaignGroup, type CampaignGroup } from "./workspace-view";
 
 type CompanyView = Extract<
@@ -224,6 +225,11 @@ async function detailsFor(
               bountyMinor: invite.bountyMinor?.toString() ?? null,
               rights: invite.rights,
               pitch: invite.pitch,
+              terms: invite.terms ?? null,
+              termsChanged:
+                !!invite.termsHash &&
+                invite.status === "offered" &&
+                termsHash(buildTerms(campaign)) !== invite.termsHash,
               reminders: invite.reminders,
               revisionUsed: invite.revisionUsed,
               shortlisted: invite.shortlisted ?? false,

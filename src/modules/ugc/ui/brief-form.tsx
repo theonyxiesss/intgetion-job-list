@@ -112,6 +112,7 @@ export function BriefForm({
     const languages = list("languages", /,/);
     const mustSay = list("mustSay", /[;,\n]+/);
     const mustNot = list("mustNot", /[;,\n]+/);
+    const questions = list("questions", /\n+/);
     const links = list("exampleUrls", /\s+/);
     const count = Number(form.get("videosWanted"));
     const patch: Record<string, unknown> = {
@@ -125,6 +126,7 @@ export function BriefForm({
       platform: text("platforms") || undefined,
       mustSay: mustSay.length ? mustSay : undefined,
       mustNot: mustNot.length ? mustNot : undefined,
+      questions: questions.length ? questions : undefined,
       videoCount: Number.isInteger(count) && count > 0 ? count : undefined,
       rewardCents: /^\d+$/.test(dollars)
         ? Number(BigInt(dollars) * BigInt(100))
@@ -356,6 +358,18 @@ export function BriefForm({
               rows={3}
               defaultValue={
                 Array.isArray(values.mustNot) ? values.mustNot.join("; ") : ""
+              }
+            />
+          </Field>
+          <Field label={t("fields.questions")} help={t("fields.questionsHint")}>
+            <Textarea
+              name="questions"
+              maxLength={800}
+              rows={3}
+              defaultValue={
+                Array.isArray(values.questions)
+                  ? values.questions.join("\n")
+                  : ""
               }
             />
           </Field>

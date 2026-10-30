@@ -101,6 +101,8 @@ export type Submission = {
   escalatedAt?: Date | null;
   /** The company said the link does not open (U5, D573). */
   linkReportedAt?: Date | null;
+  /** When the company answered: accepted, rejected, winner or changes asked (0085). */
+  decidedAt?: Date | null;
 };
 
 export type SubmissionVersion = {
@@ -210,6 +212,8 @@ export type BriefInput = {
   rights: UgcRights;
   pitch: string;
   exampleUrls: string[];
+  /** Questions the brief asks at application (U3, TZ 48 §5). */
+  questions?: string[];
 };
 
 export type ProfileInput = {

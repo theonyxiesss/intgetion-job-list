@@ -163,10 +163,10 @@ export default async function AdminCampaignsPage({
                   <p className="break-words whitespace-pre-wrap">{row.note}</p>
                 ) : null}
                 <Link
-                  href={`/campaigns/${row.campaignId}/room/${row.inviteId}`}
+                  href={`/admin/campaigns/disputes/${row.id}`}
                   className="t-body-s underline underline-offset-4"
                 >
-                  {t("roomOpen")}
+                  {t("adminDisputeRead")}
                 </Link>
                 <div className="mt-3 flex flex-wrap gap-3">
                   {row.status === "open" ? (

@@ -11,6 +11,7 @@ import { privacyHash } from "./privacy-hash";
 import { retryAfterSeconds, windowStart } from "./rate-limit";
 import { clientIp } from "./request-ip";
 import { isCryptoPayPath } from "./crypto-pay-path";
+import { isUgcRoomPath } from "./ugc-room-path";
 import { buildCsp, createNonce } from "./security-headers";
 
 const site = "http://127.0.0.1:3000";
@@ -115,6 +116,33 @@ describe("buildCsp", () => {
 
   it("makes a fresh nonce each time", () => {
     expect(createNonce()).not.toBe(createNonce());
+  });
+
+  it("frames platform players only on the UGC room (D578)", () => {
+    expect(
+      isUgcRoomPath(
+        "/campaigns/11111111-1111-4111-8111-111111111111/room/22222222-2222-4222-8222-222222222222",
+      ),
+    ).toBe(true);
+    expect(isUgcRoomPath("/ru/campaigns/x/room/y")).toBe(true);
+    expect(isUgcRoomPath("/campaigns/x")).toBe(false);
+    expect(isUgcRoomPath("/ru/campaigns/x/room")).toBe(false);
+    const off = buildCsp({
+      nonce: "n",
+      supabaseUrl: "https://ref.supabase.co/",
+      isDev: false,
+    });
+    expect(off).not.toContain("youtube-nocookie");
+    const on = buildCsp({
+      nonce: "n",
+      supabaseUrl: "https://ref.supabase.co/",
+      isDev: false,
+      allowVideoEmbeds: true,
+    });
+    expect(on).toContain(
+      "frame-src https://www.tiktok.com https://www.instagram.com https://www.youtube-nocookie.com",
+    );
+    expect(on).toContain("default-src 'self'");
   });
 
   it("keeps WalletConnect off every page except crypto pay (D403)", () => {

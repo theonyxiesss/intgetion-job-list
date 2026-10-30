@@ -285,7 +285,7 @@
         "hire": "Найм · с возвратом",
         "hirePrice": "$79",
         "team": "Команда · в месяц",
-        "teamPrice": "$199"
+        "teamPrice": "$80"
       },
       "ctaTitle": "Готовы найти удалённую работу?"
     }
@@ -1283,6 +1283,16 @@
         "email": {
           "subject": "Видео ждёт вашего решения",
           "body": "{stage, select, reminder {Видео по «{productName}» ждёт вашего решения.} last_day {Завтра последний день, чтобы решить по видео «{productName}».} other {Срок решения по видео «{productName}» прошёл. Поддержка уведомлена.}}"
+        }
+      },
+      "ugcReviewLate": {
+        "inapp": {
+          "title": "Решение компании просрочено",
+          "body": "Компания не приняла решение по вашему видео для «{productName}» в срок. Поддержка уведомлена."
+        },
+        "email": {
+          "subject": "Решение компании просрочено",
+          "body": "Компания не приняла решение по вашему видео для «{productName}» в срок. Поддержка уведомлена."
         }
       },
       "ugcMessage": {
@@ -3065,7 +3075,7 @@
     "hireUntil": "«Найм» включён для этой вакансии до {date}.",
     "teamUntil": "«Команда» включена до {date}.",
     "planUntil": "Тариф включён до {date}.",
-    "startHint": "«Старт» бесплатный. «Найм» — $79 за одну опубликованную вакансию. «Команда» — $199, Plus — $5, Pro — $15, каждый на 30 дней, оплата в USDT или USDC.",
+    "startHint": "«Старт» бесплатный. «Найм» — $79 за одну опубликованную вакансию. «Команда» — $80, Plus — $5, Pro — $15, каждый на 30 дней, оплата в USDT или USDC.",
     "pay": "Оплатить USDT или USDC",
     "status": {
       "awaiting_payment": "Ждём перевод",
@@ -4289,9 +4299,23 @@
     "disputeSend": "Отправить в поддержку",
     "roomEventDisputeOpened": "Сообщено о проблеме",
     "roomEventDisputeResolved": "Поддержка закрыла проблему",
+    "roomEventVideoSent": "Видео отправлено",
+    "roomEventDecided": "Компания ответила по видео",
+    "termsCardTitle": "Предложенные условия",
+    "termsCardSummary": "{bounty} · срок {deadline} · права: {rights} · лицензия {months} мес. · {days} раб. дн. на решение",
+    "termsCardChanged": "Бриф изменился после отправки этого предложения.",
+    "roomTabOrder": "Заказ",
+    "roomTabMaterials": "Материалы",
+    "roomTabDiscussion": "Обсуждение",
+    "roomVideoTitle": "Ссылка на видео",
+    "roomVideoEmpty": "Видео ещё не отправлено.",
+    "roomVideoVersion": "Версия {version}",
+    "roomVideoOpen": "Открыть ссылку (откроется другой сайт)",
+    "roomVideoLatest": "Последняя",
     "adminDisputesTitle": "Проблемы в заказах",
     "adminDisputesEmpty": "Открытых проблем нет.",
     "adminDisputeTake": "Взять в работу",
+    "adminDisputeRead": "Открыть переписку",
     "adminDisputeClose": "Закрыть: {outcome}",
     "disputeReason": {
       "no_response": "Другая сторона не отвечает",

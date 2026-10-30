@@ -435,6 +435,7 @@ export async function createCampaign(userId: string | null, input: BriefInput) {
     rights: brief.rights,
     pitch: brief.pitch,
     exampleUrls: brief.exampleUrls,
+    questions: cleanQuestions(brief.questions ?? []),
     createdAt: now,
   };
   checkCampaignTransition({
@@ -485,6 +486,7 @@ export async function readCampaign(userId: string | null, campaignId: string) {
       versions: (await store.listCampaignVersions(campaign.id)).map((row) => ({
         version: row.version,
         changedFields: row.changedFields,
+        snapshot: row.snapshot,
         at: row.createdAt.toISOString(),
       })),
       participants: await Promise.all(
@@ -497,6 +499,12 @@ export async function readCampaign(userId: string | null, campaignId: string) {
             bountyMinor: invite.bountyMinor?.toString() ?? null,
             rights: invite.rights,
             pitch: invite.pitch,
+            /** What the company offered and the creator agreed to (U3). */
+            terms: invite.terms ?? null,
+            termsChanged:
+              !!invite.termsHash &&
+              invite.status === "offered" &&
+              termsHash(buildTerms(campaign)) !== invite.termsHash,
             reminders: invite.reminders,
             revisionUsed: invite.revisionUsed,
             shortlisted: invite.shortlisted ?? false,
@@ -1252,6 +1260,7 @@ export async function requestChanges(
   });
   submission.status = "changes_requested";
   submission.changeNote = text;
+  submission.decidedAt = store.now();
   invite.revisionUsed = true;
   await store.saveSubmission(submission);
   await store.saveInvite(invite);
@@ -1305,6 +1314,7 @@ export async function decideSubmission(
     );
   }
   submission.status = to;
+  submission.decidedAt = store.now();
   await store.saveSubmission(submission);
   if (owes) await snapshotAcceptedLink(store, submission);
   if (owes && invite.bountyMinor != null) {
@@ -1786,6 +1796,16 @@ export async function remindReviews(store: UgcStore) {
       email: true,
     });
     if (stage === 3) {
+      await store.notify({
+        type: "ugc.review_late",
+        userIds: [invite.creatorUserId],
+        payload: {
+          campaignId: campaign.id,
+          productName: campaign.productName,
+          inviteId: invite.id,
+        },
+        email: true,
+      });
       await store.audit(
         invite.creatorUserId,
         "ugc.review_escalated",
@@ -1949,6 +1969,13 @@ export type UgcRoom = {
     side: RoomSide;
   } | null;
   canOpenDispute: boolean;
+  /** Messages from the other party since this party last opened the room (U4). */
+  unread: number;
+  /** The video link and its versions, for the "Материалы" section (U5). */
+  video: {
+    submission: NonNullable<ReturnType<typeof forReader>>;
+    versions: ReturnType<typeof linkVersionView>;
+  } | null;
 };
 
 /**
@@ -1963,6 +1990,7 @@ export async function getUgcRoom(
   const id = requireUser(userId);
   const store = await db();
   const { invite, side } = await roomParty(store, inviteId, id);
+  const submission = await store.getSubmission(invite.id);
   let ready = true;
   let messages: RoomMessage[] = [];
   try {
@@ -1971,6 +1999,13 @@ export async function getUgcRoom(
     if (!isRoomTableMissing(error)) throw error;
     ready = false;
   }
+  const readAt = await roomReadAt(store, invite.id, id);
+  const unread = messages.filter(
+    (row) =>
+      row.authorId !== id &&
+      !row.hiddenAt &&
+      (readAt === null || row.createdAt > readAt),
+  ).length;
   let shipment: Shipment | null = null;
   try {
     shipment = await store.getShipment(invite.id);
@@ -1994,6 +2029,13 @@ export async function getUgcRoom(
           side: dispute.side,
         }
       : null,
+    video: submission
+      ? {
+          submission: forReader(submission)!,
+          versions: await linkVersionsOf(store, submission),
+        }
+      : null,
+    unread,
     canOpenDispute:
       invite.status === "hired" && (!dispute || dispute.status === "resolved"),
     ready,
@@ -2032,6 +2074,8 @@ export async function getUgcRoom(
       })),
       offeredAt: invite.offeredAt?.toISOString() ?? null,
       agreedAt: invite.agreedAt?.toISOString() ?? null,
+      videoSentAt: submission?.submittedAt?.toISOString() ?? null,
+      decidedAt: submission?.decidedAt?.toISOString() ?? null,
       shippedAt: shipment?.shippedAt.toISOString() ?? null,
       receivedAt: shipment?.receivedAt?.toISOString() ?? null,
       problemAt: shipment?.problemAt?.toISOString() ?? null,
@@ -2039,6 +2083,28 @@ export async function getUgcRoom(
       disputeResolvedAt: dispute?.resolvedAt?.toISOString() ?? null,
     }),
   };
+}
+
+/** When this party last opened the room; null before 0085 or never. */
+async function roomReadAt(store: UgcStore, inviteId: string, userId: string) {
+  try {
+    return await store.getRoomReadAt(inviteId, userId);
+  } catch (error) {
+    if (isRoomTableMissing(error)) return null;
+    throw error;
+  }
+}
+
+/** Marks the room as read by one party, after the page showed it. */
+export async function markUgcRoomRead(userId: string | null, inviteId: string) {
+  const id = requireUser(userId);
+  const store = await db();
+  const { invite } = await roomParty(store, inviteId, id);
+  try {
+    await store.markRoomRead(invite.id, id, store.now());
+  } catch (error) {
+    if (!isRoomTableMissing(error)) throw error;
+  }
 }
 
 /** One message from a party; 30 an hour per account (D574). */
@@ -2666,6 +2732,47 @@ export async function decideDispute(input: {
 }
 
 /** Whether a problem is open on this order; false before migration 0083. */
+/**
+ * The room of a disputed order, for support (U4, TZ 48 §8). Only the admin
+ * role reads it, only for a dispute that exists, and every read is audited.
+ * The company and the creator see the same room as before; support sees it
+ * as stored, hidden lines included, so a decision rests on the full talk.
+ */
+export async function readDisputeRoom(input: {
+  adminId: string | null;
+  isAdmin: boolean;
+  disputeId: string;
+}) {
+  if (!input.isAdmin) throw notFound();
+  const adminId = requireUser(input.adminId);
+  const store = await db();
+  const dispute = await store.getDispute(input.disputeId);
+  if (!dispute) throw notFound();
+  const messages = await store.listRoomMessages(dispute.inviteId);
+  await store.audit(
+    adminId,
+    "ugc.dispute_room_read",
+    dispute.id,
+    "ugc_dispute",
+  );
+  return {
+    dispute: {
+      id: dispute.id,
+      inviteId: dispute.inviteId,
+      status: dispute.status,
+      reason: dispute.reason,
+      side: dispute.side,
+    },
+    messages: messages.map((row) => ({
+      id: row.id,
+      at: row.createdAt.toISOString(),
+      authorId: row.authorId,
+      body: row.body,
+      hidden: row.hiddenAt !== null,
+    })),
+  };
+}
+
 export async function hasOpenDispute(store: UgcStore, inviteId: string) {
   try {
     return (await store.listDisputes(inviteId)).some(

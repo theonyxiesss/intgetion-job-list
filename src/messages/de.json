@@ -285,7 +285,7 @@
         "hire": "Hire · mit Erstattung",
         "hirePrice": "$79",
         "team": "Team · pro Monat",
-        "teamPrice": "$199"
+        "teamPrice": "$80"
       },
       "ctaTitle": "Bereit für Remote-Arbeit?"
     }
@@ -1283,6 +1283,16 @@
         "email": {
           "subject": "Ein Video wartet auf deine Entscheidung",
           "body": "{stage, select, reminder {Ein Video zu „{productName}“ wartet auf deine Entscheidung.} last_day {Morgen ist der letzte Tag, über das Video zu „{productName}“ zu entscheiden.} other {Die Frist für das Video zu „{productName}“ ist abgelaufen. Der Support wurde informiert.}}"
+        }
+      },
+      "ugcReviewLate": {
+        "inapp": {
+          "title": "Entscheidung des Unternehmens überfällig",
+          "body": "Das Unternehmen hat nicht rechtzeitig über dein Video für „{productName}“ entschieden. Der Support wurde informiert."
+        },
+        "email": {
+          "subject": "Entscheidung des Unternehmens überfällig",
+          "body": "Das Unternehmen hat nicht rechtzeitig über dein Video für „{productName}“ entschieden. Der Support wurde informiert."
         }
       },
       "ugcMessage": {
@@ -3065,7 +3075,7 @@
     "hireUntil": "Hire ist für diesen Job bis {date} aktiv.",
     "teamUntil": "Team ist bis {date} aktiv.",
     "planUntil": "Dieser Tarif ist bis {date} aktiv.",
-    "startHint": "Start ist kostenlos. Hire kostet $79 für einen veröffentlichten Job. Team kostet $199, Plus $5 und Pro $15, jeweils für 30 Tage, in USDT oder USDC.",
+    "startHint": "Start ist kostenlos. Hire kostet $79 für einen veröffentlichten Job. Team kostet $80, Plus $5 und Pro $15, jeweils für 30 Tage, in USDT oder USDC.",
     "pay": "Mit USDT oder USDC bezahlen",
     "status": {
       "awaiting_payment": "Warten auf die Überweisung",
@@ -4289,9 +4299,23 @@
     "disputeSend": "An den Support senden",
     "roomEventDisputeOpened": "Ein Problem wurde gemeldet",
     "roomEventDisputeResolved": "Der Support hat das Problem geschlossen",
+    "roomEventVideoSent": "Video gesendet",
+    "roomEventDecided": "Das Unternehmen hat auf das Video geantwortet",
+    "termsCardTitle": "Angebotene Bedingungen",
+    "termsCardSummary": "{bounty} · Frist {deadline} · Rechte: {rights} · Lizenz {months} Monate · {days} Werktage zur Entscheidung",
+    "termsCardChanged": "Das Briefing wurde nach dem Angebot geändert.",
+    "roomTabOrder": "Auftrag",
+    "roomTabMaterials": "Material",
+    "roomTabDiscussion": "Diskussion",
+    "roomVideoTitle": "Video-Link",
+    "roomVideoEmpty": "Noch kein Video gesendet.",
+    "roomVideoVersion": "Version {version}",
+    "roomVideoOpen": "Link öffnen (andere Website)",
+    "roomVideoLatest": "Neueste",
     "adminDisputesTitle": "Probleme in Aufträgen",
     "adminDisputesEmpty": "Keine offenen Probleme.",
     "adminDisputeTake": "In Prüfung nehmen",
+    "adminDisputeRead": "Unterhaltung lesen",
     "adminDisputeClose": "Schließen: {outcome}",
     "disputeReason": {
       "no_response": "Die andere Seite antwortet nicht",

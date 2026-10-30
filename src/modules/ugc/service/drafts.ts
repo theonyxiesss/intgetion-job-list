@@ -14,6 +14,7 @@ import {
 } from "@/modules/companies/service";
 import { UGC_GOALS, UGC_NICHES, UGC_PLATFORMS, UGC_RIGHTS } from "@/config/ugc";
 import { createCampaign, withdrawCampaign } from "./commands";
+import { cleanQuestions } from "./questions";
 
 export type BriefDraft = Record<string, unknown>;
 export type BriefDraftRow = {
@@ -208,7 +209,9 @@ function validatePatch(patch: BriefDraft) {
     "rights",
     "pitch",
     "links",
+    "questions",
   ]);
+  if (Array.isArray(patch.questions)) cleanQuestions(patch.questions);
   for (const [key, value] of Object.entries(patch)) {
     if (!allowed.has(key) || value === null || value === undefined) continue;
     const invalid =
@@ -519,6 +522,9 @@ export async function confirmBriefDraft(
       rights: d.rights as never,
       pitch: typeof d.pitch === "string" ? d.pitch : "",
       exampleUrls: links,
+      questions: cleanQuestions(
+        Array.isArray(d.questions) ? (d.questions as string[]) : [],
+      ),
     });
   } catch (error) {
     await getDb().insert(ugcBriefDrafts).values(claimed).onConflictDoNothing();

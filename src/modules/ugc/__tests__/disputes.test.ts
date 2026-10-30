@@ -13,6 +13,8 @@ import {
   listDisputeQueue,
   offerHire,
   openDispute,
+  postUgcRoomMessage,
+  readDisputeRoom,
   saveCreatorProfile,
   useUgcStore,
 } from "../service/commands";
@@ -102,6 +104,26 @@ describe("disputes on an order (U7)", () => {
     beforeEach(async () => {
       await acceptInvite(CREATOR, inviteId);
       notices.length = 0;
+    });
+
+    it("lets support read the room of a dispute only as an admin, and audits it", async () => {
+      await postUgcRoomMessage(MEMBER, inviteId, "Hello there");
+      await openDispute(CREATOR, inviteId, "payment", "Not paid yet");
+      const disputeId = store.disputes[0]!.id;
+      await expect(
+        readDisputeRoom({ adminId: MEMBER, isAdmin: false, disputeId }),
+      ).rejects.toMatchObject({ status: 404 });
+      const read = await readDisputeRoom({
+        adminId: ADMIN,
+        isAdmin: true,
+        disputeId,
+      });
+      expect(read.dispute).toMatchObject({
+        reason: "payment",
+        side: "creator",
+      });
+      expect(read.messages.map((row) => row.body)).toEqual(["Hello there"]);
+      expect(audits).toContain("ugc.dispute_room_read");
     });
 
     it("lets either side raise one, tells the other side, and shows both the same", async () => {

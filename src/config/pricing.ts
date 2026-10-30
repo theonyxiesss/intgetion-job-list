@@ -36,9 +36,9 @@ export const PRICING: Record<PricingAudience, readonly PricingTier[]> = {
     },
     {
       code: "team",
-      price: 199,
+      price: 80,
       per: "month",
-      yearly: 1990,
+      yearly: 800,
       points: ["jobs", "promoted", "team", "api", "channel"],
     },
   ],
