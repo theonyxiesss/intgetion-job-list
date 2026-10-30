@@ -156,6 +156,8 @@
     "more": "More",
     "rail": "Site sections",
     "railSections": "Sections",
+    "railCollapse": "Collapse the menu",
+    "railExpand": "Expand the menu",
     "railCategories": "Categories",
     "spokiPanel": "Spoki assistant panel",
     "spokiExpand": "Open Spoki full screen",
