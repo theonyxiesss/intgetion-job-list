@@ -25,12 +25,14 @@ export default async function NewEmployerJobPage({
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
   if (!user) redirect(`${localePrefix(locale)}/login`);
+  // No separate company account is needed: the form asks for the company
+  // name, and the first posting creates the company (hire-post.ts).
   const companies = (await getCompaniesForUser(user.id)).filter(
     (company) =>
       company.origin === "internal" &&
       ["owner", "admin", "recruiter"].includes(company.role),
   );
-  if (!companies[0]) redirect(`${localePrefix(locale)}/employer/company`);
+  const company = companies[0] ?? null;
   const t = await getTranslations("employerJobs");
   return (
     <main className="flex-1 py-10">
@@ -44,9 +46,9 @@ export default async function NewEmployerJobPage({
         >
           {t("back")}
         </ButtonLink>
-        <PageHeader label={companies[0].name} title={t("newJob")} />
+        <PageHeader label={company?.name} title={t("newJob")} />
         <JobForm
-          companyId={companies[0].id}
+          companyId={company?.id ?? null}
           text={t.raw("form")}
           options={await jobFormOptions()}
         />
