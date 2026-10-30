@@ -506,9 +506,7 @@ export const ugcRoomReads = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    readAt: timestamp("read_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+    readAt: timestamp("read_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [primaryKey({ columns: [table.inviteId, table.userId] })],
 );
