@@ -12,7 +12,6 @@ import { requireUser, sessionUserOnce } from "@/lib/auth-guards";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { hasSessionMark } from "@/lib/supabase/session-mark";
 import { sessionCard } from "@/modules/auth/service";
-import { isEmployer } from "@/modules/companies/service";
 import { countUnread } from "@/modules/notifications/service";
 import { BottomNav } from "./bottom-nav";
 import { SpokiButtonLink } from "@/components/bot/spoki-link";
@@ -35,14 +34,12 @@ export async function Header() {
   const signedIn = hasSessionMark(await headers());
   let unread = 0;
   let isAdmin = false;
-  let employer = false;
   let accountName = "";
   let accountEmail: string | null = null;
   if (signedIn) {
     try {
       const user = await requireUser(sessionUserOnce);
       isAdmin = user.platformRole === "admin";
-      employer = await isEmployer(user.id);
       unread = await countUnread(user.id);
       const card = await sessionCard((await createSupabaseServerClient()).auth);
       accountName = card?.name ?? "";
@@ -62,14 +59,16 @@ export async function Header() {
     { href: "/campaigns", label: t("nav.campaigns") },
     { href: "/services", label: t("nav.services") },
   ];
-  const main: NavItem[] = employer
+  // Every account gets every platform function (D582 follow-up): the
+  // company pages create or show a company, so nothing waits for membership.
+  const main: NavItem[] = signedIn
     ? [
         { href: "/employer/jobs", label: t("nav.myJobs") },
         { href: "/employer/company", label: t("nav.company") },
         { href: "/employer/billing", label: t("billing.nav") },
       ]
     : [];
-  const more: NavItem[] = employer
+  const more: NavItem[] = signedIn
     ? [
         { href: "/chat", label: t("nav.chatWithAgent") },
         { href: "/post-job", label: t("nav.postJob") },
@@ -111,12 +110,8 @@ export async function Header() {
         { href: "/saved-jobs", label: t("nav.saved") },
         { href: "/notifications", label: t("notifications.nav") },
         { href: "/settings/account", label: t("settings.title") },
-        ...(employer
-          ? [
-              { href: "/employer/jobs", label: t("nav.myJobs") },
-              { href: "/employer/company", label: t("nav.company") },
-            ]
-          : []),
+        { href: "/employer/jobs", label: t("nav.myJobs") },
+        { href: "/employer/company", label: t("nav.company") },
         ...(isAdmin
           ? [
               { href: "/admin", label: t("nav.admin") },
