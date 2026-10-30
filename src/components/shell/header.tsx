@@ -64,7 +64,6 @@ export async function Header() {
   const main: NavItem[] = signedIn
     ? [
         { href: "/employer/jobs", label: t("nav.myJobs") },
-        { href: "/employer/company", label: t("nav.company") },
         { href: "/employer/billing", label: t("billing.nav") },
       ]
     : [];
@@ -111,7 +110,6 @@ export async function Header() {
         { href: "/notifications", label: t("notifications.nav") },
         { href: "/settings/account", label: t("settings.title") },
         { href: "/employer/jobs", label: t("nav.myJobs") },
-        { href: "/employer/company", label: t("nav.company") },
         ...(isAdmin
           ? [
               { href: "/admin", label: t("nav.admin") },
