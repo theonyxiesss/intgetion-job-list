@@ -204,6 +204,16 @@ describe("room through the service (U4, D574)", () => {
     inviteId = (await offerHire(MEMBER, campaignId, CREATOR)).inviteId;
   });
 
+  it("keeps the questions a brief asks when it is created", async () => {
+    const created = await createCampaign(MEMBER, {
+      ...brief,
+      questions: ["Which device do you film on?"],
+    });
+    expect(store.campaigns.get(created.id)?.questions).toEqual([
+      "Which device do you film on?",
+    ]);
+  });
+
   it("shows the agreed terms on the card and flags a later brief edit", async () => {
     const companyView = async () =>
       (await readCampaign(MEMBER, campaignId)) as Extract<

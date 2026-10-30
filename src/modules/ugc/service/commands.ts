@@ -435,6 +435,7 @@ export async function createCampaign(userId: string | null, input: BriefInput) {
     rights: brief.rights,
     pitch: brief.pitch,
     exampleUrls: brief.exampleUrls,
+    questions: cleanQuestions(brief.questions ?? []),
     createdAt: now,
   };
   checkCampaignTransition({

@@ -212,6 +212,8 @@ export type BriefInput = {
   rights: UgcRights;
   pitch: string;
   exampleUrls: string[];
+  /** Questions the brief asks at application (U3, TZ 48 §5). */
+  questions?: string[];
 };
 
 export type ProfileInput = {
