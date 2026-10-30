@@ -162,7 +162,9 @@
     "spokiCollapse": "Zurück zur Seite",
     "spokiClose": "Spoki schließen",
     "spokiLoading": "Spoki wird geladen…",
-    "spokiResize": "Größe der Seite und des Spoki-Bereichs ändern"
+    "spokiResize": "Größe der Seite und des Spoki-Bereichs ändern",
+    "spokiHide": "Spoki ausblenden",
+    "spokiShow": "Spoki einblenden"
   },
   "locale": {
     "en": "Englisch",

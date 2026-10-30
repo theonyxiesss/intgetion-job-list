@@ -162,7 +162,9 @@
     "spokiCollapse": "Вернуться к странице",
     "spokiClose": "Закрыть Spoki",
     "spokiLoading": "Загружаем Spoki…",
-    "spokiResize": "Изменить размер страницы и панели Spoki"
+    "spokiResize": "Изменить размер страницы и панели Spoki",
+    "spokiHide": "Скрыть Spoki",
+    "spokiShow": "Показать Spoki"
   },
   "locale": {
     "en": "Английский",

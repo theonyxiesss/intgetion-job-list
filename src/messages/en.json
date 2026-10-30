@@ -162,7 +162,9 @@
     "spokiCollapse": "Back to the page",
     "spokiClose": "Close Spoki",
     "spokiLoading": "Loading Spoki…",
-    "spokiResize": "Resize the page and Spoki panels"
+    "spokiResize": "Resize the page and Spoki panels",
+    "spokiHide": "Hide Spoki",
+    "spokiShow": "Show Spoki"
   },
   "locale": {
     "en": "English",

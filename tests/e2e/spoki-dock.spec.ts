@@ -229,3 +229,25 @@ test("/chat?job= opens that job's thread in the full-screen Spoki", async ({
   expect((await panel(page).boundingBox())?.width).toBe(1600);
   await expect(page.getByRole("log", { name: "Conversation" })).toHaveCount(1);
 });
+
+test("wide screen: the person can hide the panel and bring it back, and the choice is remembered (D585)", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto("/en/jobs");
+  await expect(panel(page)).toBeVisible();
+
+  await panel(page).getByRole("button", { name: "Hide Spoki" }).click();
+  await expect(panel(page)).toBeHidden();
+  const show = page.getByRole("button", { name: "Show Spoki" });
+  await expect(show).toBeVisible();
+
+  // Remembered across a reload.
+  await page.reload();
+  await expect(show).toBeVisible();
+  await expect(panel(page)).toBeHidden();
+
+  await show.click();
+  await expect(panel(page)).toBeVisible();
+  await expect(show).toHaveCount(0);
+});

@@ -13,8 +13,10 @@ export type DockMode = "docked" | "sheet" | "expanded" | "hidden";
 
 export type SpokiDock = {
   signedIn: boolean;
-  /** The panel is permanently part of the desktop layout (D531). */
+  /** The panel is part of the desktop layout until the person hides it (D585). */
   docked: boolean;
+  /** The desktop panel was hidden by the person; a launcher brings it back. */
+  dockHidden: boolean;
   /** Opened over the page below 1024 px. */
   floating: boolean;
   /** `/chat`: the same chat over the whole page. */
