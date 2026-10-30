@@ -179,14 +179,14 @@ describe("posting to the order room (D567)", () => {
 });
 
 describe("retention of room messages (D567)", () => {
-  it("deletes messages of orders closed more than 180 days ago", async () => {
+  it("deletes messages of orders closed more than 365 days ago", async () => {
     mocks.deleteClosed.mockResolvedValue(3);
     const now = new Date("2026-10-27T00:00:00.000Z");
     await expect(sweepClosedRoomMessages(now)).resolves.toEqual({
       deleted: 3,
     });
     const [cutoff] = mocks.deleteClosed.mock.calls[0];
-    expect(cutoff.toISOString()).toBe("2026-04-30T00:00:00.000Z");
+    expect(cutoff.toISOString()).toBe("2025-10-27T00:00:00.000Z");
   });
 
   it("does nothing before migration 0071", async () => {
