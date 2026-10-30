@@ -18,6 +18,12 @@ const WALLETCONNECT_CONNECT = [
  * 'unsafe-inline' when a nonce is in the same list, so the pay page drops the
  * style nonce (D406, D420). script-src keeps its nonce.
  */
+/** Players of the three platforms a creator can link (D577). Room page only. */
+const VIDEO_EMBED_FRAMES = [
+  "https://www.tiktok.com",
+  "https://www.instagram.com",
+  "https://www.youtube-nocookie.com",
+];
 const WALLETCONNECT_STYLE = "'unsafe-inline'";
 
 /**
@@ -50,6 +56,7 @@ export function buildCsp({
   allowTelegramFrame = false,
   embedOrigin,
   allowWalletConnect = false,
+  allowVideoEmbeds = false,
 }: {
   nonce: string;
   supabaseUrl: string;
@@ -61,6 +68,7 @@ export function buildCsp({
   embedOrigin?: string;
   /** Relay, verify, and the AppKit modal, only on the crypto pay page (D403, D406). */
   allowWalletConnect?: boolean;
+  allowVideoEmbeds?: boolean;
 }): string {
   const supabase = new URL(supabaseUrl).origin;
   // Phone Mini Apps need telegram-web-app.js; Desktop often injects initData
@@ -89,6 +97,7 @@ export function buildCsp({
       ? ["'self'", embedOrigin]
       : []),
     ...(allowWalletConnect ? WALLETCONNECT_FRAME : []),
+    ...(allowVideoEmbeds ? VIDEO_EMBED_FRAMES : []),
   ];
   return [
     "default-src 'self'",

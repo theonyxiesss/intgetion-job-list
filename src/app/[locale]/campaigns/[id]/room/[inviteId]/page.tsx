@@ -12,6 +12,7 @@ import {
   getUgcRoom,
   markUgcRoomRead,
   orderMoneyHistory,
+  videoEmbedUrl,
 } from "@/modules/ugc/service";
 import { DeliveryPanel } from "@/modules/ugc/ui/delivery-panel";
 import { DisputePanel } from "@/modules/ugc/ui/dispute-panel";
@@ -115,6 +116,15 @@ export default async function UgcRoomPage({
       </h2>
       {video ? (
         <>
+          {videoEmbedUrl(video.submission.url) ? (
+            <iframe
+              src={videoEmbedUrl(video.submission.url) ?? undefined}
+              title={t("roomVideoTitle")}
+              loading="lazy"
+              referrerPolicy="no-referrer"
+              className="aspect-[9/16] w-full max-w-xs rounded-lg border border-line"
+            />
+          ) : null}
           <p className="break-all font-mono text-sm">{video.submission.url}</p>
           <ButtonLink
             href={video.submission.url}
