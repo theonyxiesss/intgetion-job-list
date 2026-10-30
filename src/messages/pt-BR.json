@@ -285,7 +285,7 @@
         "hire": "Hire · com reembolso",
         "hirePrice": "$79",
         "team": "Team · por mês",
-        "teamPrice": "$199"
+        "teamPrice": "$80"
       },
       "ctaTitle": "Pronto para encontrar trabalho remoto?"
     }
@@ -3072,7 +3072,7 @@
     "hireUntil": "Hire está ativo para esta vaga até {date}.",
     "teamUntil": "Team está ativo até {date}.",
     "planUntil": "Este plano está ativo até {date}.",
-    "startHint": "Start é grátis. Hire custa US$ 79 por uma vaga publicada. Team custa US$ 199, Plus US$ 5 e Pro US$ 15, cada um por 30 dias, em USDT ou USDC.",
+    "startHint": "Start é grátis. Hire custa US$ 79 por uma vaga publicada. Team custa US$ 80, Plus US$ 5 e Pro US$ 15, cada um por 30 dias, em USDT ou USDC.",
     "pay": "Pagar com USDT ou USDC",
     "status": {
       "awaiting_payment": "Aguardando a transferência",

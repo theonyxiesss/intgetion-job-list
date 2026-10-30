@@ -285,7 +285,7 @@
         "hire": "Hire · with refund",
         "hirePrice": "$79",
         "team": "Team · per month",
-        "teamPrice": "$199"
+        "teamPrice": "$80"
       },
       "ctaTitle": "Ready to find remote work?"
     }
@@ -3072,7 +3072,7 @@
     "hireUntil": "Hire is on for this job until {date}.",
     "teamUntil": "Team is on until {date}.",
     "planUntil": "This plan is on until {date}.",
-    "startHint": "Start is free. Hire is $79 for one published job. Team is $199, Plus is $5 and Pro is $15, each for 30 days, in USDT or USDC.",
+    "startHint": "Start is free. Hire is $79 for one published job. Team is $80, Plus is $5 and Pro is $15, each for 30 days, in USDT or USDC.",
     "pay": "Pay with USDT or USDC",
     "status": {
       "awaiting_payment": "Waiting for the transfer",

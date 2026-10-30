@@ -62,7 +62,7 @@ export const SALE_PLANS = {
   team: {
     code: "company_team",
     audience: "company",
-    priceMinor: BigInt(19900),
+    priceMinor: BigInt(8000),
     needsJob: false,
   },
   plus: {

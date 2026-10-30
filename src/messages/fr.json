@@ -285,7 +285,7 @@
         "hire": "Hire · avec remboursement",
         "hirePrice": "$79",
         "team": "Team · par mois",
-        "teamPrice": "$199"
+        "teamPrice": "$80"
       },
       "ctaTitle": "Prêt à trouver un travail à distance ?"
     }
@@ -3072,7 +3072,7 @@
     "hireUntil": "Hire est actif pour cette offre jusqu’au {date}.",
     "teamUntil": "Team est actif jusqu’au {date}.",
     "planUntil": "Cette formule est active jusqu’au {date}.",
-    "startHint": "Start est gratuit. Hire coûte 79 $ pour une offre publiée. Team coûte 199 $, Plus 5 $ et Pro 15 $, chacun pour 30 jours, en USDT ou en USDC.",
+    "startHint": "Start est gratuit. Hire coûte 79 $ pour une offre publiée. Team coûte 80 $, Plus 5 $ et Pro 15 $, chacun pour 30 jours, en USDT ou en USDC.",
     "pay": "Payer en USDT ou en USDC",
     "status": {
       "awaiting_payment": "En attente du virement",

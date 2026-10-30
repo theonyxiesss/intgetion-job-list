@@ -285,7 +285,7 @@
         "hire": "Hire · mit Erstattung",
         "hirePrice": "$79",
         "team": "Team · pro Monat",
-        "teamPrice": "$199"
+        "teamPrice": "$80"
       },
       "ctaTitle": "Bereit für Remote-Arbeit?"
     }
@@ -3072,7 +3072,7 @@
     "hireUntil": "Hire ist für diesen Job bis {date} aktiv.",
     "teamUntil": "Team ist bis {date} aktiv.",
     "planUntil": "Dieser Tarif ist bis {date} aktiv.",
-    "startHint": "Start ist kostenlos. Hire kostet $79 für einen veröffentlichten Job. Team kostet $199, Plus $5 und Pro $15, jeweils für 30 Tage, in USDT oder USDC.",
+    "startHint": "Start ist kostenlos. Hire kostet $79 für einen veröffentlichten Job. Team kostet $80, Plus $5 und Pro $15, jeweils für 30 Tage, in USDT oder USDC.",
     "pay": "Mit USDT oder USDC bezahlen",
     "status": {
       "awaiting_payment": "Warten auf die Überweisung",

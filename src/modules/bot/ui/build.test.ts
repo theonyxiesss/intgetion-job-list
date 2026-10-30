@@ -194,7 +194,7 @@ describe("blocks Spoki asks for (D523)", () => {
     expect(hire?.action).toBeUndefined();
     expect(JSON.stringify(props)).not.toMatch(/first .*free/i);
     expect(props.plans.find((plan) => plan.code === "team")?.priceCents).toBe(
-      19900,
+      8000,
     );
   });
 
@@ -216,8 +216,8 @@ describe("blocks Spoki asks for (D523)", () => {
     });
     expect(hiringPrices()).toEqual({
       hireCents: 7900,
-      teamMonthCents: 19900,
-      teamYearCents: 199000,
+      teamMonthCents: 8000,
+      teamYearCents: 80000,
     });
   });
 
