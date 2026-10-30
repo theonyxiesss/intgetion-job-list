@@ -147,6 +147,7 @@ export async function listForJob(
   jobId: string,
   cursor: EmployerListCursor | undefined,
   limit: number,
+  status?: ApplicationStatus,
   conn: Conn = getDb(),
 ) {
   const older = cursor
@@ -178,9 +179,11 @@ export async function listForJob(
     )
     .leftJoin(userProfiles, eq(userProfiles.userId, applications.candidateId))
     .where(
-      older
-        ? and(eq(applications.jobId, jobId), older)
-        : eq(applications.jobId, jobId),
+      and(
+        eq(applications.jobId, jobId),
+        status ? eq(applications.status, status) : undefined,
+        older,
+      ),
     )
     .orderBy(desc(applications.createdAt), desc(applications.id))
     .limit(limit);

@@ -48,6 +48,21 @@ export async function getCompaniesForUser(userId: string) {
   return repo.findCompaniesForUser(userId);
 }
 
+export function resolveEmployerCompany<
+  T extends { id: string; origin: string },
+>(companies: readonly T[], requestedCompanyId?: string) {
+  const available = companies.filter(
+    (company) => company.origin === "internal",
+  );
+  const selected = requestedCompanyId
+    ? available.find((company) => company.id === requestedCompanyId)
+    : available.length === 1
+      ? available[0]
+      : undefined;
+  if (requestedCompanyId && !selected) throw notFound();
+  return { companies: available, selected: selected ?? null };
+}
+
 export async function setCompanyLogo(
   companyId: string,
   bytes: Buffer,

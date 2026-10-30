@@ -75,7 +75,7 @@ export async function insertMessage(values: {
 
 /**
  * Retention (D567): message text of an order is kept while the order is open
- * and 365 days after it reached a final status (D580); then the messages go.
+ * and 365 days after it reached a final status (D581); then the messages go.
  */
 export async function deleteClosedRoomMessages(cutoff: Date): Promise<number> {
   const rows = await getDb().execute<{ id: string }>(sql`

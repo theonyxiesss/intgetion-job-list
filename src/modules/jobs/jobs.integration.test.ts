@@ -4,12 +4,19 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { getDb } from "@/db/client";
 import { rateKey, rateRules, windowStart } from "@/lib/rate-limit";
 import type { CurrentUser } from "@/modules/auth/service";
-import { createJob, transitionOwnedJob, updateJob } from "./service";
+import {
+  createJob,
+  listJobsForUser,
+  transitionOwnedJob,
+  updateJob,
+} from "./service";
 
 const ownerId = randomUUID();
 const outsiderId = randomUUID();
 const companyId = randomUUID();
+const secondCompanyId = randomUUID();
 const companySlug = `job-it-${companyId.slice(0, 8)}`;
+const secondCompanySlug = `job-it-${secondCompanyId.slice(0, 8)}`;
 const jobIds: string[] = [];
 const user: CurrentUser = {
   id: ownerId,
@@ -36,8 +43,12 @@ async function seed() {
     insert into public.companies (id, name, slug, domain, status, created_by)
     values (${companyId}, 'Jobs Integration Company', ${companySlug}, 'jobs-integration.example.com', 'verified', ${ownerId})
   `);
+  await getDb().execute(sql`
+    insert into public.companies (id, name, slug, domain, status, created_by)
+    values (${secondCompanyId}, 'Second Jobs Integration Company', ${secondCompanySlug}, 'jobs-integration-2.example.com', 'verified', ${ownerId})
+  `);
   await getDb().execute(
-    sql`insert into public.company_members (company_id, user_id, role) values (${companyId}, ${ownerId}, 'owner')`,
+    sql`insert into public.company_members (company_id, user_id, role) values (${companyId}, ${ownerId}, 'owner'), (${secondCompanyId}, ${ownerId}, 'owner')`,
   );
 }
 
@@ -60,7 +71,9 @@ afterAll(async () => {
   await db.execute(
     sql`delete from public.rate_limit_counters where key = ${key} and window_start = ${start.toISOString()}`,
   );
-  await db.execute(sql`delete from public.companies where id = ${companyId}`);
+  await db.execute(
+    sql`delete from public.companies where id in (${companyId}, ${secondCompanyId})`,
+  );
   await db.execute(
     sql`delete from public.users where id in (${ownerId}, ${outsiderId})`,
   );
@@ -88,6 +101,11 @@ describe("jobs CRUD and status history in Postgres", () => {
     );
     jobIds.push(created.id);
     expect(created.status).toBe("draft");
+    expect(
+      (await listJobsForUser(ownerId, companyId)).map(({ job }) => job.id),
+    ).toContain(created.id);
+    expect(await listJobsForUser(ownerId, secondCompanyId)).toEqual([]);
+    expect(await listJobsForUser(outsiderId, companyId)).toEqual([]);
     const edited = await updateJob(
       created.id,
       { title: "Senior Integration Test Engineer" },

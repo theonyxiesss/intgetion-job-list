@@ -18,7 +18,7 @@ const WALLETCONNECT_CONNECT = [
  * 'unsafe-inline' when a nonce is in the same list, so the pay page drops the
  * style nonce (D406, D420). script-src keeps its nonce.
  */
-/** Players of the three platforms a creator can link (D577). Room page only. */
+/** Players of the three platforms a creator can link (D578). Room page only. */
 const VIDEO_EMBED_FRAMES = [
   "https://www.tiktok.com",
   "https://www.instagram.com",

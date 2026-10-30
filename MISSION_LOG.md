@@ -3899,3 +3899,14 @@
 - Сайт: статус Vercel success, `dpl_HUWD2MmV3PaDaEMC7J5Xe2wjvGRV`; гостем `/api/health` 200, страницы фриланса, кампаний, вакансий и sitemap 200, закрытая страница задач ведёт на вход (307).
 - Не проверено: экраны под входом и на телефоне (квота Supabase 402), журнал ошибок Vercel (API 403). Запись выкладки в документах идёт отдельным коммитом при следующем пуше (D526: без `[skip ci]`).
 - Побочное: `npx vercel logs` скачал Vercel CLI в кэш npx (не в проект); зависимостей в репозитории не добавлено.
+
+## 2026-10-29 — Кабинеты вакансий P1.1 — DONE
+
+- Сделано локально в `codex/jobs-dashboard-p1`: фильтр статусов откликов работодателя выполняется до пагинации; сервер возвращает полные счётчики статусов и название вакансии; фильтр сохраняется при переходе между страницами. Добавлены проверки service и e2e, обновлены API-ТЗ и статус проекта.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (257 файлов, 1925 тестов; 3 skipped); `pnpm build` → 0; `pnpm exec prettier --check <11 изменённых файлов>` → 0. CI: `check` и `database` → success (push run 40955756834; PR run 40955765899), включая CI `format:check` и `gitleaks`.
+- P-тесты подфазы: unit → зелёный (257 файлов, 1925 тестов; 3 skipped); integration CI → 51 файл, 188 passed, 7 skipped; e2e CI → 98 passed; Lighthouse CI → home LCP median 2532 ms, catalog 3109 ms, job 2425 ms — все бюджеты пройдены.
+- Миграции: нет.
+- Изменённые файлы: `src/modules/applications/repo/applications.ts`, `src/modules/applications/service/employer-service.ts`, `src/modules/applications/schemas/index.ts`, `src/app/api/applications/route.ts`, `src/app/[locale]/employer/jobs/[id]/applications/page.tsx`, `src/modules/applications/employer.integration.test.ts`, `tests/e2e/employer-applications.spec.ts`, `docs/tz/06-api.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: нет.
+- Следующая подфаза: P1.2 — контекст компании при нескольких членствах; не начата.

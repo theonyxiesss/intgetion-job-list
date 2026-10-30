@@ -1,5 +1,5 @@
 /**
- * The player address of a video a creator linked (U5, D577). Only the three
+ * The player address of a video a creator linked (U5, D578). Only the three
  * platforms the room allows get one; any other link stays a plain link.
  * The id must match a strict pattern, so nothing else reaches the frame.
  */

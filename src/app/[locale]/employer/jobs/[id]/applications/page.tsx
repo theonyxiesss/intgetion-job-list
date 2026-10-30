@@ -19,27 +19,30 @@ import { Link } from "@/i18n/navigation";
 import { HttpError } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
-import { listEmployerApplications } from "@/modules/applications/service";
+import {
+  APPLICATION_STATUSES,
+  listEmployerApplications,
+  type ApplicationStatus,
+} from "@/modules/applications/service";
 import { EmployerJobTabs } from "../job-tabs";
 import { localePrefix } from "@/i18n/paths";
 
 /** DESIGN.md 9.0: application status tabs; «All» first. */
-const STATUS_TABS = [
-  "all",
-  "applied",
-  "viewed",
-  "shortlisted",
-  "interview",
-  "offer",
-  "rejected",
-] as const;
+const STATUS_TABS = ["all", ...APPLICATION_STATUSES] as const;
+
+function isApplicationStatus(value: string): value is ApplicationStatus {
+  return (APPLICATION_STATUSES as readonly string[]).includes(value);
+}
 
 export default async function EmployerApplicationsPage({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string; id: string }>;
-  searchParams: Promise<{ cursor?: string; status?: string }>;
+  searchParams: Promise<{
+    cursor?: string | string[];
+    status?: string | string[];
+  }>;
 }) {
   const { locale, id } = await params;
   const { cursor, status: requested } = await searchParams;
@@ -50,12 +53,17 @@ export default async function EmployerApplicationsPage({
 
   const t = await getTranslations("employerApplications");
   const jobsT = await getTranslations("employerJobs");
+  const status =
+    typeof requested === "string" && isApplicationStatus(requested)
+      ? requested
+      : "all";
   let page;
   try {
     page = await listEmployerApplications(user.id, {
       jobId: id,
-      cursor,
+      cursor: typeof cursor === "string" ? cursor : undefined,
       limit: 50,
+      status: status === "all" ? undefined : status,
     });
   } catch (error) {
     if (
@@ -67,18 +75,8 @@ export default async function EmployerApplicationsPage({
     throw error;
   }
 
-  const status = (STATUS_TABS as readonly string[]).includes(requested ?? "")
-    ? (requested as (typeof STATUS_TABS)[number])
-    : "all";
-  const count = (key: (typeof STATUS_TABS)[number]) =>
-    key === "all"
-      ? page.items.length
-      : page.items.filter((item) => item.status === key).length;
-  const shown =
-    status === "all"
-      ? page.items
-      : page.items.filter((item) => item.status === status);
-  const jobTitle = page.items[0]?.jobTitle;
+  const count = (key: (typeof STATUS_TABS)[number]) => page.counts[key];
+  const jobTitle = page.jobTitle;
 
   return (
     <main className="flex-1 py-10">
@@ -97,7 +95,7 @@ export default async function EmployerApplicationsPage({
           <h1 className="t-display-l">{t("title")}</h1>
         </header>
         <EmployerJobTabs jobId={id} active="applications" />
-        {page.items.length === 0 ? (
+        {page.counts.all === 0 ? (
           <EmptyState title={t("empty")} />
         ) : (
           <>
@@ -114,8 +112,10 @@ export default async function EmployerApplicationsPage({
                 count: count(key),
               }))}
             />
-            {shown.length === 0 ? (
-              <EmptyState title={t("emptyStatus")} />
+            {page.items.length === 0 ? (
+              <EmptyState
+                title={status === "all" ? t("empty") : t("emptyStatus")}
+              />
             ) : (
               <Table caption={t("title")}>
                 <thead>
@@ -126,7 +126,7 @@ export default async function EmployerApplicationsPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {shown.map((item) => (
+                  {page.items.map((item) => (
                     <Tr key={item.id}>
                       <Td>
                         <Link
@@ -154,7 +154,10 @@ export default async function EmployerApplicationsPage({
           <Link
             href={{
               pathname: `/employer/jobs/${id}/applications`,
-              query: { cursor: page.nextCursor },
+              query: {
+                cursor: page.nextCursor,
+                ...(status === "all" ? {} : { status }),
+              },
             }}
             className="t-nav inline-flex min-h-11 items-center self-start text-fg-muted underline-offset-4 hover:text-fg hover:underline"
           >

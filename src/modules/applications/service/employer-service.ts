@@ -9,12 +9,17 @@ import {
   findApplication,
   findJobForApply,
   isUuid,
+  countByStatusForJob,
   listForJob,
   viewerSharesApplication,
   type EmployerListCursor,
 } from "../repo/applications";
 import { transitionApplication } from "./transition-application";
-import type { ApplicationStatus, TransitionVia } from "./transitions";
+import {
+  APPLICATION_STATUSES,
+  type ApplicationStatus,
+  type TransitionVia,
+} from "./transitions";
 
 const PAGE_DEFAULT = 20;
 
@@ -60,8 +65,18 @@ function encodeCursor(createdAt: Date, id: string): string {
 
 export async function listEmployerApplications(
   userId: string,
-  input: { jobId: string; cursor?: string; limit?: number },
-): Promise<{ items: EmployerApplicationDto[]; nextCursor: string | null }> {
+  input: {
+    jobId: string;
+    cursor?: string;
+    limit?: number;
+    status?: ApplicationStatus;
+  },
+): Promise<{
+  items: EmployerApplicationDto[];
+  nextCursor: string | null;
+  jobTitle: string;
+  counts: Record<ApplicationStatus | "all", number>;
+}> {
   const job = await findJobForApply(input.jobId);
   if (!job) throw notFound();
   const role = await findMemberRole(job.companyId, userId);
@@ -69,14 +84,30 @@ export async function listEmployerApplications(
 
   const limit = input.limit ?? PAGE_DEFAULT;
   const cursor = input.cursor ? decodeCursor(input.cursor) : undefined;
-  const rows = await listForJob(job.id, cursor, limit + 1);
+  const [rows, countsByStatus] = await Promise.all([
+    listForJob(job.id, cursor, limit + 1, input.status),
+    countByStatusForJob(job.id),
+  ]);
   const page = rows.slice(0, limit);
   const last = page.at(-1);
   const nextCursor =
     rows.length > limit && last ? encodeCursor(last.createdAt, last.id) : null;
+  const counts = {
+    all: 0,
+    ...Object.fromEntries(
+      APPLICATION_STATUSES.map((status) => [
+        status,
+        countsByStatus[status] ?? 0,
+      ]),
+    ),
+  } as Record<ApplicationStatus | "all", number>;
+  for (const status of APPLICATION_STATUSES) counts.all += counts[status];
+
   return {
     items: page.map((row) => toEmployerApplicationDto(row)),
     nextCursor,
+    jobTitle: job.title,
+    counts,
   };
 }
 

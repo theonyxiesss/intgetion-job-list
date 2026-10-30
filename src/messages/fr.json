@@ -854,6 +854,9 @@
     "title": "Vos offres",
     "newJob": "Créer une offre",
     "empty": "Vous n’avez encore créé aucune offre.",
+    "companySwitcher": "Entreprise",
+    "selectCompanyTitle": "Choisissez une entreprise",
+    "selectCompanyText": "Choisissez l’entreprise dont vous souhaitez ouvrir l’espace de recrutement.",
     "status": "Statut",
     "edit": "Modifier l’offre",
     "back": "Retour aux offres",
@@ -4829,7 +4832,7 @@
       "text": "Offres en cours et ce qu’elles comprennent.",
       "change": "Changer d’offre",
       "personal": "Offre personnelle : {name}",
-      "company": "Offre de l’entreprise : {name}",
+      "company": "Offre de {company} : {name}",
       "until": "jusqu’au {date}"
     },
     "services": {

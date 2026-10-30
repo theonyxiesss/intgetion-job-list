@@ -1,7 +1,7 @@
 import { routing } from "@/i18n/routing";
 
 /**
- * `/campaigns/{id}/room/{inviteId}`, including a language prefix (D577).
+ * `/campaigns/{id}/room/{inviteId}`, including a language prefix (D578).
  * Only this page may frame a platform player; see security-headers.ts.
  */
 export function isUgcRoomPath(pathname: string): boolean {

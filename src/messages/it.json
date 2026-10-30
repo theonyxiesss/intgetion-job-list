@@ -854,6 +854,9 @@
     "title": "Le tue offerte",
     "newJob": "Crea un’offerta",
     "empty": "Non hai ancora creato offerte.",
+    "companySwitcher": "Azienda",
+    "selectCompanyTitle": "Scegli un’azienda",
+    "selectCompanyText": "Scegli l’azienda di cui vuoi aprire lo spazio di selezione.",
     "status": "Stato",
     "edit": "Modifica l’offerta",
     "back": "Torna alle offerte",
@@ -4829,7 +4832,7 @@
       "text": "Piani attivi e cosa includono.",
       "change": "Cambia piano",
       "personal": "Piano personale: {name}",
-      "company": "Piano dell’azienda: {name}",
+      "company": "Piano di {company}: {name}",
       "until": "fino al {date}"
     },
     "services": {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { videoEmbedUrl } from "../service/embed";
 
-describe("video player address (U5, D577)", () => {
+describe("video player address (U5, D578)", () => {
   it("builds the player for each allowed platform", () => {
     expect(
       videoEmbedUrl("https://www.tiktok.com/@a/video/7234567890123456789"),

@@ -59,7 +59,7 @@ export async function Header() {
     { href: "/campaigns", label: t("nav.campaigns") },
     { href: "/services", label: t("nav.services") },
   ];
-  // Every account gets every platform function (D582 follow-up): the
+  // Every account gets every platform function (D583 follow-up): the
   // company pages create or show a company, so nothing waits for membership.
   const main: NavItem[] = signedIn
     ? [

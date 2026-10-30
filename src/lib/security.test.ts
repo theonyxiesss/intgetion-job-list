@@ -118,7 +118,7 @@ describe("buildCsp", () => {
     expect(createNonce()).not.toBe(createNonce());
   });
 
-  it("frames platform players only on the UGC room (D577)", () => {
+  it("frames platform players only on the UGC room (D578)", () => {
     expect(
       isUgcRoomPath(
         "/campaigns/11111111-1111-4111-8111-111111111111/room/22222222-2222-4222-8222-222222222222",
