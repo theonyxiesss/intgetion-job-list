@@ -4312,6 +4312,7 @@
     "adminDisputesTitle": "Проблемы в заказах",
     "adminDisputesEmpty": "Открытых проблем нет.",
     "adminDisputeTake": "Взять в работу",
+    "adminDisputeRead": "Открыть переписку",
     "adminDisputeClose": "Закрыть: {outcome}",
     "disputeReason": {
       "no_response": "Другая сторона не отвечает",

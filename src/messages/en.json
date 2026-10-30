@@ -4818,6 +4818,7 @@
     "adminDisputesTitle": "Problems on orders",
     "adminDisputesEmpty": "No open problems.",
     "adminDisputeTake": "Take into review",
+    "adminDisputeRead": "Read the talk",
     "adminDisputeClose": "Close: {outcome}",
     "disputeReason": {
       "no_response": "No response from the other side",

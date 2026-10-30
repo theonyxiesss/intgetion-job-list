@@ -4312,6 +4312,7 @@
     "adminDisputesTitle": "Probleme in Aufträgen",
     "adminDisputesEmpty": "Keine offenen Probleme.",
     "adminDisputeTake": "In Prüfung nehmen",
+    "adminDisputeRead": "Unterhaltung lesen",
     "adminDisputeClose": "Schließen: {outcome}",
     "disputeReason": {
       "no_response": "Die andere Seite antwortet nicht",

@@ -4311,6 +4311,7 @@
     "adminDisputesTitle": "Problèmes dans les commandes",
     "adminDisputesEmpty": "Aucun problème ouvert.",
     "adminDisputeTake": "Prendre en charge",
+    "adminDisputeRead": "Lire les échanges",
     "adminDisputeClose": "Clore : {outcome}",
     "disputeReason": {
       "no_response": "L’autre partie ne répond pas",

@@ -4311,6 +4311,7 @@
     "adminDisputesTitle": "Problemi negli ordini",
     "adminDisputesEmpty": "Nessun problema aperto.",
     "adminDisputeTake": "Prendi in carico",
+    "adminDisputeRead": "Leggi la conversazione",
     "adminDisputeClose": "Chiudi: {outcome}",
     "disputeReason": {
       "no_response": "L’altra parte non risponde",
