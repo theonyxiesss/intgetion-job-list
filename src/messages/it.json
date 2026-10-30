@@ -4296,6 +4296,7 @@
     "roomEventDisputeOpened": "È stato segnalato un problema",
     "roomEventDisputeResolved": "Il supporto ha chiuso il problema",
     "roomEventVideoSent": "Video inviato",
+    "roomEventDecided": "L’azienda ha risposto sul video",
     "roomTabOrder": "Ordine",
     "roomTabMaterials": "Materiali",
     "roomTabDiscussion": "Discussione",

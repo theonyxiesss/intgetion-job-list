@@ -12,7 +12,13 @@ export function RoomTabs({
   sections,
 }: {
   label: string;
-  sections: readonly { key: string; title: string; content: ReactNode }[];
+  sections: readonly {
+    key: string;
+    title: string;
+    content: ReactNode;
+    /** New items in this section, shown as a count on its tab (U4). */
+    badge?: number;
+  }[];
 }) {
   const [active, setActive] = useState(sections[0]?.key ?? "");
   const base = useId();
@@ -41,6 +47,11 @@ export function RoomTabs({
               }`}
             >
               {section.title}
+              {section.badge ? (
+                <span className="ms-1 rounded-full bg-accent px-1.5 font-mono text-xs text-bg">
+                  {section.badge}
+                </span>
+              ) : null}
             </button>
           );
         })}

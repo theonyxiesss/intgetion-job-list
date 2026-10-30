@@ -253,6 +253,13 @@ export class MemoryUgcStore implements UgcStore {
   async insertRoomMessage(row: RoomMessage) {
     this.roomMessages.push(row);
   }
+  roomReads = new Map<string, Date>();
+  async getRoomReadAt(inviteId: string, userId: string) {
+    return this.roomReads.get(`${inviteId}:${userId}`) ?? null;
+  }
+  async markRoomRead(inviteId: string, userId: string, at: Date) {
+    this.roomReads.set(`${inviteId}:${userId}`, at);
+  }
   disputes: Dispute[] = [];
   async listDisputes(inviteId: string) {
     return this.disputes

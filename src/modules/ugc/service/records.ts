@@ -101,6 +101,8 @@ export type Submission = {
   escalatedAt?: Date | null;
   /** The company said the link does not open (U5, D573). */
   linkReportedAt?: Date | null;
+  /** When the company answered: accepted, rejected, winner or changes asked (0085). */
+  decidedAt?: Date | null;
 };
 
 export type SubmissionVersion = {

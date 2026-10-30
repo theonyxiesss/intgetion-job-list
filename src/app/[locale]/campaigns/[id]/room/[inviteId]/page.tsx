@@ -8,7 +8,11 @@ import { HttpError } from "@/lib/http";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { formatMinor } from "@/lib/money";
 import { getCurrentUser } from "@/modules/auth/service";
-import { getUgcRoom, orderMoneyHistory } from "@/modules/ugc/service";
+import {
+  getUgcRoom,
+  markUgcRoomRead,
+  orderMoneyHistory,
+} from "@/modules/ugc/service";
 import { DeliveryPanel } from "@/modules/ugc/ui/delivery-panel";
 import { DisputePanel } from "@/modules/ugc/ui/dispute-panel";
 import { ReportMessage } from "@/modules/ugc/ui/report-message";
@@ -43,6 +47,7 @@ export default async function UgcRoomPage({
     if (error instanceof HttpError && error.status === 404) notFound();
     throw error;
   }
+  await markUgcRoomRead(user.id, inviteId);
   const money = await orderMoneyHistory(user.id, inviteId);
   const stamp = new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
@@ -161,6 +166,7 @@ export default async function UgcRoomPage({
                       offered: "roomEventOffered",
                       agreed: "roomEventAgreed",
                       video_sent: "roomEventVideoSent",
+                      decided: "roomEventDecided",
                       shipped: "roomEventShipped",
                       received: "roomEventReceived",
                       problem: "roomEventProblem",
@@ -236,6 +242,7 @@ export default async function UgcRoomPage({
                 key: "discussion",
                 title: t("roomTabDiscussion"),
                 content: discussionSection,
+                badge: room.unread,
               },
             ]}
           />

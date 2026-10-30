@@ -4803,6 +4803,7 @@
     "roomEventDisputeOpened": "A problem was reported",
     "roomEventDisputeResolved": "Support closed the problem",
     "roomEventVideoSent": "Video sent",
+    "roomEventDecided": "The company answered the video",
     "roomTabOrder": "Order",
     "roomTabMaterials": "Materials",
     "roomTabDiscussion": "Discussion",

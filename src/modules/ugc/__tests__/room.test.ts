@@ -8,6 +8,7 @@ import {
   createCampaign,
   decideCampaign,
   getUgcRoom,
+  markUgcRoomRead,
   offerHire,
   postUgcRoomMessage,
   saveCreatorProfile,
@@ -117,6 +118,16 @@ describe("room feed (pure)", () => {
     expect(feed[3]).toMatchObject({ side: "company", mine: false });
   });
 
+  it("shows the company's answer to the video after it was sent", () => {
+    const feed = buildRoomFeed({
+      ...base,
+      messages: [],
+      videoSentAt: "2026-10-02T09:00:00.000Z",
+      decidedAt: "2026-10-03T09:00:00.000Z",
+    });
+    expect(feed.at(-1)).toMatchObject({ kind: "event", event: "decided" });
+  });
+
   it("shows the latest video as an event between the agreement and the talk", () => {
     const feed = buildRoomFeed({
       ...base,
@@ -189,6 +200,19 @@ describe("room through the service (U4, D574)", () => {
     }
     await applyToCampaign(CREATOR, campaignId);
     inviteId = (await offerHire(MEMBER, campaignId, CREATOR)).inviteId;
+  });
+
+  it("counts the other party's new messages until this party opens the room", async () => {
+    let clock = Date.parse("2026-10-27T10:00:00.000Z");
+    store.now = () => new Date((clock += 1000));
+    await postUgcRoomMessage(MEMBER, inviteId, "Hello");
+    await postUgcRoomMessage(MEMBER, inviteId, "Second");
+    expect((await getUgcRoom(CREATOR, inviteId)).unread).toBe(2);
+    expect((await getUgcRoom(MEMBER, inviteId)).unread).toBe(0);
+    await markUgcRoomRead(CREATOR, inviteId);
+    expect((await getUgcRoom(CREATOR, inviteId)).unread).toBe(0);
+    await postUgcRoomMessage(MEMBER, inviteId, "Third");
+    expect((await getUgcRoom(CREATOR, inviteId)).unread).toBe(1);
   });
 
   it("lets both parties talk in the same room", async () => {

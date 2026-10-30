@@ -9,6 +9,7 @@ import {
   ugcJoinTokens,
   ugcPayouts,
   ugcRoomMessages,
+  ugcRoomReads,
   ugcRoomReports,
   ugcShipments,
   ugcSubmissionVersions,
@@ -153,6 +154,7 @@ function submissionOf(row: SubmissionRow): Submission {
     reviewStage: row.reviewStage,
     escalatedAt: row.escalatedAt,
     linkReportedAt: row.linkReportedAt,
+    decidedAt: row.decidedAt,
   };
 }
 
@@ -558,6 +560,7 @@ export function productionUgcStore(): UgcStore {
           reviewStage: row.reviewStage ?? 0,
           escalatedAt: row.escalatedAt ?? null,
           linkReportedAt: row.linkReportedAt ?? null,
+          decidedAt: row.decidedAt ?? null,
           updatedAt: new Date(),
         })
         .where(eq(ugcSubmissions.id, row.id));
@@ -633,6 +636,28 @@ export function productionUgcStore(): UgcStore {
         hiddenAt: row.hiddenAt,
         createdAt: row.createdAt,
       }));
+    },
+    async getRoomReadAt(inviteId, userId) {
+      const [row] = await db
+        .select({ readAt: ugcRoomReads.readAt })
+        .from(ugcRoomReads)
+        .where(
+          and(
+            eq(ugcRoomReads.inviteId, inviteId),
+            eq(ugcRoomReads.userId, userId),
+          ),
+        )
+        .limit(1);
+      return row?.readAt ?? null;
+    },
+    async markRoomRead(inviteId, userId, at) {
+      await db
+        .insert(ugcRoomReads)
+        .values({ inviteId, userId, readAt: at })
+        .onConflictDoUpdate({
+          target: [ugcRoomReads.inviteId, ugcRoomReads.userId],
+          set: { readAt: at },
+        });
     },
     async insertRoomMessage(row) {
       await db.insert(ugcRoomMessages).values({

@@ -83,6 +83,9 @@ export interface UgcStore {
   /** Messages of one participation's room, oldest first (U4). */
   listRoomMessages(inviteId: string): Promise<RoomMessage[]>;
   insertRoomMessage(row: RoomMessage): Promise<void>;
+  /** When one party last opened the room, or null (U4). */
+  getRoomReadAt(inviteId: string, userId: string): Promise<Date | null>;
+  markRoomRead(inviteId: string, userId: string, at: Date): Promise<void>;
   /** The shipment of one participation, or null (U6). */
   getShipment(inviteId: string): Promise<Shipment | null>;
   /** Disputes of one participation, newest last (U7). */

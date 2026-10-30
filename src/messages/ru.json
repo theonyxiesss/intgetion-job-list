@@ -4297,6 +4297,7 @@
     "roomEventDisputeOpened": "Сообщено о проблеме",
     "roomEventDisputeResolved": "Поддержка закрыла проблему",
     "roomEventVideoSent": "Видео отправлено",
+    "roomEventDecided": "Компания ответила по видео",
     "roomTabOrder": "Заказ",
     "roomTabMaterials": "Материалы",
     "roomTabDiscussion": "Обсуждение",

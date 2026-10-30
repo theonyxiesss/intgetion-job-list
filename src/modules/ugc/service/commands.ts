@@ -1252,6 +1252,7 @@ export async function requestChanges(
   });
   submission.status = "changes_requested";
   submission.changeNote = text;
+  submission.decidedAt = store.now();
   invite.revisionUsed = true;
   await store.saveSubmission(submission);
   await store.saveInvite(invite);
@@ -1305,6 +1306,7 @@ export async function decideSubmission(
     );
   }
   submission.status = to;
+  submission.decidedAt = store.now();
   await store.saveSubmission(submission);
   if (owes) await snapshotAcceptedLink(store, submission);
   if (owes && invite.bountyMinor != null) {
@@ -1959,6 +1961,8 @@ export type UgcRoom = {
     side: RoomSide;
   } | null;
   canOpenDispute: boolean;
+  /** Messages from the other party since this party last opened the room (U4). */
+  unread: number;
   /** The video link and its versions, for the "Материалы" section (U5). */
   video: {
     submission: NonNullable<ReturnType<typeof forReader>>;
@@ -1987,6 +1991,13 @@ export async function getUgcRoom(
     if (!isRoomTableMissing(error)) throw error;
     ready = false;
   }
+  const readAt = await roomReadAt(store, invite.id, id);
+  const unread = messages.filter(
+    (row) =>
+      row.authorId !== id &&
+      !row.hiddenAt &&
+      (readAt === null || row.createdAt > readAt),
+  ).length;
   let shipment: Shipment | null = null;
   try {
     shipment = await store.getShipment(invite.id);
@@ -2016,6 +2027,7 @@ export async function getUgcRoom(
           versions: await linkVersionsOf(store, submission),
         }
       : null,
+    unread,
     canOpenDispute:
       invite.status === "hired" && (!dispute || dispute.status === "resolved"),
     ready,
@@ -2055,6 +2067,7 @@ export async function getUgcRoom(
       offeredAt: invite.offeredAt?.toISOString() ?? null,
       agreedAt: invite.agreedAt?.toISOString() ?? null,
       videoSentAt: submission?.submittedAt?.toISOString() ?? null,
+      decidedAt: submission?.decidedAt?.toISOString() ?? null,
       shippedAt: shipment?.shippedAt.toISOString() ?? null,
       receivedAt: shipment?.receivedAt?.toISOString() ?? null,
       problemAt: shipment?.problemAt?.toISOString() ?? null,
@@ -2062,6 +2075,28 @@ export async function getUgcRoom(
       disputeResolvedAt: dispute?.resolvedAt?.toISOString() ?? null,
     }),
   };
+}
+
+/** When this party last opened the room; null before 0085 or never. */
+async function roomReadAt(store: UgcStore, inviteId: string, userId: string) {
+  try {
+    return await store.getRoomReadAt(inviteId, userId);
+  } catch (error) {
+    if (isRoomTableMissing(error)) return null;
+    throw error;
+  }
+}
+
+/** Marks the room as read by one party, after the page showed it. */
+export async function markUgcRoomRead(userId: string | null, inviteId: string) {
+  const id = requireUser(userId);
+  const store = await db();
+  const { invite } = await roomParty(store, inviteId, id);
+  try {
+    await store.markRoomRead(invite.id, id, store.now());
+  } catch (error) {
+    if (!isRoomTableMissing(error)) throw error;
+  }
 }
 
 /** One message from a party; 30 an hour per account (D574). */
