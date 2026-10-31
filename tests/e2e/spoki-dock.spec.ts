@@ -251,3 +251,29 @@ test("wide screen: the person can hide the panel and bring it back, and the choi
   await expect(panel(page)).toBeVisible();
   await expect(show).toHaveCount(0);
 });
+
+test("wide screen: the left menu collapses to icons and opens again, and the choice is remembered", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto("/en/jobs");
+  const rail = page.locator("[data-rail]");
+  await expect(rail.getByText("Categories")).toBeVisible();
+
+  await rail.getByRole("button", { name: "Collapse the menu" }).click();
+  await expect(rail).toHaveAttribute("data-collapsed", "");
+  // The section title stays for screen readers (sr-only); categories go.
+  await expect(rail.getByText("Categories")).toHaveCount(0);
+  await expect(rail.getByText("Sections")).toHaveClass(/sr-only/);
+  // Still reachable by name for a screen reader and a tooltip.
+  await expect(
+    rail.getByRole("link", { name: "Freelance" }).first(),
+  ).toBeVisible();
+
+  await page.reload();
+  await expect(rail).toHaveAttribute("data-collapsed", "");
+
+  await rail.getByRole("button", { name: "Expand the menu" }).click();
+  await expect(rail).not.toHaveAttribute("data-collapsed", "");
+  await expect(rail.getByText("Categories")).toBeVisible();
+});

@@ -111,6 +111,8 @@ export default async function LocaleLayout({
     label: t("nav.rail"),
     sectionsTitle: t("nav.railSections"),
     categoriesTitle: t("nav.railCategories"),
+    collapse: t("nav.railCollapse"),
+    expand: t("nav.railExpand"),
     services: railServices.map((link) => ({
       href: link.href,
       label: t(link.label),
@@ -131,7 +133,7 @@ export default async function LocaleLayout({
   // both wrappers: the chat keeps the window height and scrolls its thread
   // instead of pushing the field down (D491).
   const pageColumn = (
-    <div className="flex min-h-0 w-full flex-1 flex-col xl:has-[>[data-rail]]:mx-auto xl:has-[>[data-rail]]:grid xl:has-[>[data-rail]]:max-w-[1376px] xl:has-[>[data-rail]]:grid-cols-[300px_minmax(0,1fr)]">
+    <div className="flex min-h-0 w-full flex-1 flex-col xl:has-[>[data-rail]]:mx-auto xl:has-[>[data-rail]]:grid xl:has-[>[data-rail]]:max-w-[1376px] xl:has-[>[data-rail]:not([data-collapsed])]:grid-cols-[300px_minmax(0,1fr)] xl:has-[>[data-rail][data-collapsed]]:grid-cols-[96px_minmax(0,1fr)]">
       <SiteRail data={rail} />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
     </div>

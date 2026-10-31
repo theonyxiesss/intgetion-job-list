@@ -156,6 +156,8 @@
     "more": "Mehr",
     "rail": "Bereiche der Website",
     "railSections": "Bereiche",
+    "railCollapse": "Menü einklappen",
+    "railExpand": "Menü ausklappen",
     "railCategories": "Kategorien",
     "spokiPanel": "Spoki-Bereich",
     "spokiExpand": "Spoki im Vollbild öffnen",
@@ -2687,6 +2689,106 @@
     "failed": "Der Link konnte nicht geöffnet werden. Versuchen Sie es in einer Minute erneut."
   },
   "pricing": {
+    "account": {
+      "title": "Ein Konto. Alles kostenlos. Weniger Provision bei jedem Auftrag.",
+      "intro": "Jobs suchen, einstellen, Leistungen verkaufen und UGC starten – kostenlos mit einem Konto. Die Plattform verdient an einer Provision auf Aufträge; ein Tarif senkt sie und macht dich schneller.",
+      "plansTitle": "Kontotarife",
+      "payNote": "Bezahlt in USDT oder USDC. Der Button belastet den Monatspreis und schaltet den Tarif für 30 Tage frei; er verlängert sich nicht von selbst. Niedrigere Provision und Punkte mit «bald» kommen später.",
+      "tiers": {
+        "free": {
+          "name": "Kostenlos",
+          "for": "Für alle und für alles.",
+          "points": {
+            "search": "Alle Jobs, Bewerbungen und «Für dich»-Abgleich",
+            "freelance": "Leistungen verkaufen und Aufträge annehmen",
+            "jobs": "2 Jobs gleichzeitig, je 30 Tage",
+            "ugc": "UGC-Kampagnen starten oder als Creator mitmachen",
+            "agent": "Spoki: 15 Nachrichten pro Tag"
+          }
+        },
+        "plus": {
+          "name": "Plus",
+          "for": "Aktiv auf Suche oder im Verkauf.",
+          "points": {
+            "agent": "Spoki: 100 Nachrichten pro Tag",
+            "instant": "Passende Jobs sofort, sobald sie erscheinen",
+            "letters": "Ein Anschreiben für jeden Job",
+            "views": "Welche Firmen dein Profil angesehen haben",
+            "commission": "Provision 5 % statt 8 % (bald)"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "for": "Für eine starke Rolle oder monatlichen Verkauf.",
+          "points": {
+            "agent": "Spoki: 300 Nachrichten pro Tag",
+            "interview": "Übungsinterviews mit Feedback",
+            "salary": "Gehaltsbericht für Verhandlungen",
+            "review": "Vollständige Profilprüfung mit Plan",
+            "commission": "Provision 3 % (bald)"
+          }
+        },
+        "team": {
+          "name": "Team",
+          "for": "Ganzjährig einstellen, Agentur oder Studio.",
+          "points": {
+            "seats": "Bis zu 10 Teammitglieder",
+            "jobs": "10 Jobs gleichzeitig, je 45 Tage",
+            "api": "API für eigene Jobs",
+            "channel": "3 Beiträge pro Monat im Telegram-Kanal der Plattform",
+            "commission": "0 % Provision auf Freelance, 2 % auf UGC (bald)"
+          }
+        }
+      },
+      "commissionTitle": "Provision auf Aufträge",
+      "commissionIntro": "Die Plattform erhält einen Anteil an einem Freelance-Auftrag (vom Anbieter) oder am Budget einer UGC-Kampagne (von der Marke). Käufer von Freelance-Leistungen zahlen keine Gebühr.",
+      "commissionDeal": "Auftrag",
+      "commission": {
+        "freelance": "Freelance-Auftrag",
+        "ugc": "UGC-Kampagne"
+      },
+      "commissionNote": "Die Provision gilt, sobald die Zahlung über das Treuhandkonto der Plattform läuft. Heute werden Freelance-Aufträge direkt an die Wallet des Anbieters gezahlt, ohne Provision.",
+      "oneOffTitle": "Einzelkäufe",
+      "oneOffIntro": "Bei Bedarf kaufen, in jedem Tarif.",
+      "oneOff": {
+        "hire": {
+          "name": "Hire",
+          "text": "Ein Job mit Garantie: 10 passende Bewerbungen oder Geld zurück"
+        },
+        "renew": {
+          "name": "Hire-Verlängerung",
+          "text": "30 weitere Tage für einen Hire-Job"
+        },
+        "urgent": {
+          "name": "Dringend",
+          "text": "Eine «Dringend»-Markierung für 14 Tage und ein Beitrag im Telegram-Kanal"
+        },
+        "slot": {
+          "name": "Zusätzlicher Job-Platz",
+          "text": "Ein weiterer gleichzeitiger Job für 30 Tage"
+        },
+        "ugcBrief": {
+          "name": "UGC-Briefing",
+          "text": "Ein UGC-Kampagnen-Briefing ohne Team-Tarif"
+        },
+        "lift": {
+          "name": "Leistung hervorheben",
+          "text": "Deine Leistung 7 Tage weiter oben in der Kategorie"
+        },
+        "top": {
+          "name": "Kategorie-Spitze",
+          "text": "Einer von 3 Plätzen oben in der Kategorie für 7 Tage"
+        },
+        "showcase": {
+          "name": "Startseiten-Schaufenster",
+          "text": "Einer von 6 Plätzen auf der Startseite für 7 Tage"
+        },
+        "proposal": {
+          "name": "Hervorgehobenes Angebot",
+          "text": "Dein Angebot sieht der Kunde zuerst"
+        }
+      }
+    },
     "metaTitle": "Preise — kostenlose Jobsuche, bezahltes Tempo",
     "metaDescription": "INTGETION-Preise für Unternehmen und Kandidaten. Jobs ausschreiben und suchen bleibt kostenlos; bezahlte Tarife bringen Tempo, Reichweite und eine Rückerstattung, wenn die Einstellung nicht klappt.",
     "label": "Preise",

@@ -156,6 +156,8 @@
     "more": "Más",
     "rail": "Secciones del sitio",
     "railSections": "Secciones",
+    "railCollapse": "Contraer el menú",
+    "railExpand": "Expandir el menú",
     "railCategories": "Categorías",
     "spokiPanel": "Panel de Spoki",
     "spokiExpand": "Abrir Spoki a pantalla completa",
@@ -2687,6 +2689,106 @@
     "failed": "No se ha podido abrir el enlace. Inténtalo de nuevo en un minuto."
   },
   "pricing": {
+    "account": {
+      "title": "Una cuenta. Todo gratis. Menos comisión en cada trato.",
+      "intro": "Buscar trabajo, contratar, vender servicios y lanzar UGC con una sola cuenta y sin coste. La plataforma gana una comisión por trato; un plan la reduce y te da velocidad.",
+      "plansTitle": "Planes de la cuenta",
+      "payNote": "Se paga en USDT o USDC. El botón cobra el precio mensual y activa el plan durante 30 días; no se renueva solo. La comisión reducida y lo marcado como «pronto» llegarán más adelante.",
+      "tiers": {
+        "free": {
+          "name": "Gratis",
+          "for": "Para todos y para todo.",
+          "points": {
+            "search": "Todos los empleos, candidaturas y la selección «Para ti»",
+            "freelance": "Vender servicios y aceptar pedidos",
+            "jobs": "2 ofertas a la vez, 30 días cada una",
+            "ugc": "Lanzar campañas UGC o participar como creador",
+            "agent": "Spoki: 15 mensajes al día"
+          }
+        },
+        "plus": {
+          "name": "Plus",
+          "for": "Buscas o vendes activamente.",
+          "points": {
+            "agent": "Spoki: 100 mensajes al día",
+            "instant": "Empleos afines en cuanto aparecen",
+            "letters": "Una carta de presentación para cada oferta",
+            "views": "Qué empresas vieron tu perfil",
+            "commission": "Comisión del 5 % en lugar del 8 % (pronto)"
+          }
+        },
+        "pro": {
+          "name": "Pro",
+          "for": "Vas a por un buen puesto o vendes cada mes.",
+          "points": {
+            "agent": "Spoki: 300 mensajes al día",
+            "interview": "Entrevistas de práctica con comentarios",
+            "salary": "Informe salarial para negociar",
+            "review": "Revisión completa del perfil con un plan",
+            "commission": "Comisión del 3 % (pronto)"
+          }
+        },
+        "team": {
+          "name": "Equipo",
+          "for": "Contratas todo el año, agencia o estudio.",
+          "points": {
+            "seats": "Hasta 10 personas en el equipo",
+            "jobs": "10 ofertas a la vez, 45 días cada una",
+            "api": "API para tus propias ofertas",
+            "channel": "3 publicaciones al mes en el canal de Telegram de la plataforma",
+            "commission": "0 % de comisión en freelance, 2 % en UGC (pronto)"
+          }
+        }
+      },
+      "commissionTitle": "Comisión por trato",
+      "commissionIntro": "La plataforma se queda una parte de un pedido freelance (del vendedor) o del presupuesto de una campaña UGC (de la marca). Quien compra servicios freelance no paga comisión.",
+      "commissionDeal": "Trato",
+      "commission": {
+        "freelance": "Pedido freelance",
+        "ugc": "Campaña UGC"
+      },
+      "commissionNote": "La comisión empezará cuando el pago pase por el depósito de garantía de la plataforma. Hoy los pedidos freelance se pagan directamente a la billetera del vendedor, sin comisión.",
+      "oneOffTitle": "Compras sueltas",
+      "oneOffIntro": "Se compran cuando hacen falta, con cualquier plan.",
+      "oneOff": {
+        "hire": {
+          "name": "Contratación",
+          "text": "Una oferta con garantía: 10 candidaturas afines o te devolvemos el dinero"
+        },
+        "renew": {
+          "name": "Renovar Contratación",
+          "text": "30 días más para una oferta de Contratación"
+        },
+        "urgent": {
+          "name": "Urgente",
+          "text": "Marca «urgente» durante 14 días y una publicación en el canal de Telegram"
+        },
+        "slot": {
+          "name": "Hueco extra",
+          "text": "Una oferta más a la vez durante 30 días"
+        },
+        "ugcBrief": {
+          "name": "Brief UGC",
+          "text": "El brief de una campaña UGC sin el plan Equipo"
+        },
+        "lift": {
+          "name": "Impulso del servicio",
+          "text": "Tu servicio más arriba en su categoría durante 7 días"
+        },
+        "top": {
+          "name": "Top de categoría",
+          "text": "Uno de 3 puestos arriba en la categoría durante 7 días"
+        },
+        "showcase": {
+          "name": "Escaparate en portada",
+          "text": "Uno de 6 puestos en la página de inicio durante 7 días"
+        },
+        "proposal": {
+          "name": "Propuesta destacada",
+          "text": "El cliente ve tu propuesta primero"
+        }
+      }
+    },
     "metaTitle": "Precios: búsqueda de empleo gratis, rapidez de pago",
     "metaDescription": "Precios de INTGETION para empresas y candidatos. Publicar empleos y buscar siguen siendo gratis; los planes de pago añaden rapidez, alcance y un reembolso si la contratación no funciona.",
     "label": "Precios",
