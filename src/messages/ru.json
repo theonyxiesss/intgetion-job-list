@@ -1730,6 +1730,8 @@
       }
     },
     "work": {
+      "thinking": "Думаю",
+      "thought": "Подумал за {seconds} с",
       "noSteps": "Вызовы инструментов для этого ответа не зафиксированы.",
       "title": "Ход работы",
       "running": "Выполняю",
@@ -1797,7 +1799,6 @@
     },
     "title": "Spoki Assistant",
     "welcome": "С чего начнём?",
-    "disclaimer": "Spoki может ошибаться. Важное проверьте. Ещё в Telegram:",
     "jobFocus": {
       "discussing": "Обсуждаем: {title} — {company}",
       "back": "Вернуться к вакансии"
@@ -1858,7 +1859,6 @@
     "you": "Вы",
     "agent": "Spoki Assistant",
     "telegramHint": "Вы можете для удобства общаться в Telegram, если он у вас подключён.",
-    "telegramBot": "@intgetion_bot",
     "emptyGuest": "Напишите Spoki, где вы находитесь и какую работу ищете.",
     "emptySignedIn": "Напишите Spoki, что хотите найти. Разговор продолжится с того же места.",
     "searchPlatform": "Найди вакансии на платформе",

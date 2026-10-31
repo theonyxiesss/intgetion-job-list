@@ -2163,17 +2163,6 @@ export function Chat({
                 </button>
               )}
             </div>
-            <p data-chat-note className="t-body-s text-center text-fg-subtle">
-              {t("disclaimer")}{" "}
-              <a
-                href={TELEGRAM_BOT_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-4"
-              >
-                {t("telegramBot")}
-              </a>
-            </p>
           </form>
         </div>
         {welcome && (

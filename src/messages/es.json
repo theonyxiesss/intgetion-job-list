@@ -1730,6 +1730,8 @@
       }
     },
     "work": {
+      "thinking": "Pensando",
+      "thought": "Pensó durante {seconds} s",
       "noSteps": "No se registraron pasos de herramientas para esta respuesta.",
       "title": "Progreso",
       "running": "En curso",
@@ -1797,7 +1799,6 @@
     },
     "title": "Agente de carrera",
     "welcome": "¿Por dónde empezamos?",
-    "disclaimer": "Spoki puede equivocarse. Comprueba lo importante. También en Telegram:",
     "jobFocus": {
       "discussing": "Hablamos de: {title} — {company}",
       "back": "Volver a la vacante"
@@ -1858,7 +1859,6 @@
     "you": "Tú",
     "agent": "Agente",
     "telegramHint": "Si tienes Telegram conectado, puedes hablar allí por comodidad.",
-    "telegramBot": "@intgetion_bot",
     "emptyGuest": "Prueba: «empleos remotos de backend con Python». Como invitado puedes buscar; regístrate para guardar empleos y postularte.",
     "emptySignedIn": "Prueba: «encuentra empleos remotos de diseño» o «¿en qué estado están mis candidaturas?»",
     "searchPlatform": "Buscar empleos en la plataforma",

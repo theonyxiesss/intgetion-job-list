@@ -1,7 +1,16 @@
 "use client";
 
-import { Check, Circle, CircleAlert, Clock, LoaderCircle } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  Circle,
+  CircleAlert,
+  Clock,
+  LoaderCircle,
+  Sparkles,
+} from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import type { StepSummary } from "@/modules/bot/ui/step-summary";
 import { stepForTool } from "./thinking-status";
@@ -29,7 +38,41 @@ export function WorkProgressCard({
   );
   const active = steps.find((step) => step.status === "running");
   const seconds = workSeconds(steps);
+  const running = state === "running";
+  // Open while Spoki works and folded once it is done, unless the person
+  // opened or closed it themselves (D588).
+  const [chosen, setChosen] = useState<boolean | null>(null);
+  const open = chosen ?? running;
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (!running) return;
+    const start = performance.now();
+    const timer = window.setInterval(
+      () => setElapsed(performance.now() - start),
+      100,
+    );
+    return () => window.clearInterval(timer);
+  }, [running]);
+  const tenths = (ms: number) =>
+    format.number(Math.max(0.1, ms / 1000), {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
+  // The live clock of this turn; an answer from the history has the steps' sum.
+  const total = elapsed > 0 ? tenths(elapsed) : seconds;
   const stateLabel = t(state === "done" && attention ? "attention" : state);
+  const thought = state === "done" && !attention && total !== null;
+  const headline = thought
+    ? t("thought", { seconds: total })
+    : `${t("title")} · ${stateLabel}`;
+  const stateIcon =
+    state === "running"
+      ? Sparkles
+      : state === "failed" || attention
+        ? CircleAlert
+        : state === "stopped"
+          ? Circle
+          : Check;
 
   function summaryText(summary: StepSummary): string {
     switch (summary.kind) {
@@ -62,31 +105,58 @@ export function WorkProgressCard({
 
   return (
     <details
-      className="rounded-lg border border-line bg-surface px-3"
+      open={open}
+      onToggle={(event) => {
+        const next = event.currentTarget.open;
+        if (next !== open) setChosen(next);
+      }}
+      className={`rounded-lg border border-line bg-surface px-3 transition-colors duration-200 ${running ? "spoki-beam" : ""}`}
       data-work-progress
     >
       <summary
-        className="min-h-11 cursor-pointer py-3 text-sm text-fg-muted"
+        className="group relative flex min-h-12 cursor-pointer list-none items-center gap-3 py-2.5 text-left text-sm text-fg-muted marker:content-none"
         aria-label={`${t("title")} · ${stateLabel}`}
       >
-        <span role="status">
-          {t("title")} · {stateLabel}
+        <span
+          className={`flex size-8 shrink-0 items-center justify-center rounded-full border border-line bg-surface-2 ${state === "failed" || attention ? "text-fg-muted" : "text-signal"}`}
+          aria-hidden="true"
+        >
+          <Icon icon={stateIcon} size={16} />
         </span>
-        {steps.length > 0 ? (
-          <span className="ml-2">
-            {t("steps", { count: steps.length })}
-            {seconds !== null && state !== "running" ? (
-              <span className="t-data ml-1 tabular-nums">
-                · {t("seconds", { seconds })}
+        <span className="min-w-0 flex-1">
+          <span role="status" className="block font-medium text-fg">
+            {running ? (
+              <span className="spoki-shimmer">{t("thinking")}</span>
+            ) : thought ? (
+              <span className="spoki-done">{headline}</span>
+            ) : (
+              headline
+            )}
+          </span>
+          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs">
+            {steps.length > 0 ? t("steps", { count: steps.length }) : null}
+            {running ? (
+              <span className="t-data tabular-nums">
+                {t("seconds", { seconds: tenths(elapsed) })}
+              </span>
+            ) : total !== null && !thought ? (
+              <span className="t-data tabular-nums">
+                {t("seconds", { seconds: total })}
+              </span>
+            ) : null}
+            {running && active ? (
+              <span className="spoki-shimmer">
+                {t(`tools.${stepForTool(active.name)}`)}
               </span>
             ) : null}
           </span>
-        ) : null}
-        {state === "running" && active ? (
-          <span className="spoki-shimmer mt-1 block">
-            {t(`tools.${stepForTool(active.name)}`)}
-          </span>
-        ) : null}
+        </span>
+        <Icon
+          icon={ChevronDown}
+          size={16}
+          className="shrink-0 text-fg-subtle transition-transform duration-200 group-open:rotate-180"
+          aria-hidden="true"
+        />
       </summary>
       <div className="grid gap-3 pb-3">
         {steps.length === 0 ? (
@@ -94,9 +164,9 @@ export function WorkProgressCard({
             {t(state === "running" ? "preparing" : "noSteps")}
           </p>
         ) : (
-          <ol className="grid">
+          <ol className="spoki-feather grid max-h-56 overflow-y-auto py-2">
             {steps.map((step, index) => (
-              <li key={step.id} className="flex gap-3 text-sm">
+              <li key={step.id} className="spoki-step-in flex gap-3 text-sm">
                 {/* The rail: a status mark and a thin line to the next step. */}
                 <span className="flex flex-col items-center">
                   <span

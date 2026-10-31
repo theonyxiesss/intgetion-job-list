@@ -54,6 +54,11 @@ describe("chat status while Spoki works (D490)", () => {
     expect(idleStep(-5)).toBe("thinking");
   });
 
+  it("advances the live idle label on the same cadence", () => {
+    expect(idleStep(IDLE_STEP_MS * 2)).toBe("considering");
+    expect(idleStep(IDLE_STEP_MS * 3)).toBe("mulling");
+  });
+
   it("shows seconds only after a noticeable wait", () => {
     expect(elapsedLabel(0)).toBeNull();
     expect(elapsedLabel(1999)).toBeNull();
