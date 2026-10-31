@@ -10,7 +10,9 @@ test("the pricing page shows four account plans, the commission and one-offs", a
     page.getByRole("heading", { level: 1, name: /One account/ }),
   ).toBeVisible();
   for (const name of ["Free", "Plus", "Pro", "Team"]) {
-    await expect(page.getByRole("heading", { level: 3, name })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 3, name, exact: true }),
+    ).toBeVisible();
   }
   // Three paid plans and the eight one-offs that do not sell yet.
   await expect(page.getByText("Coming soon")).toHaveCount(11);
@@ -23,7 +25,7 @@ test("the pricing page shows four account plans, the commission and one-offs", a
     "0%",
   ]);
   await expect(
-    page.getByRole("heading", { level: 3, name: "Hire" }),
+    page.getByRole("heading", { level: 3, name: "Hire", exact: true }),
   ).toBeVisible();
   await expect(page.getByText("What no plan ever sells")).toBeVisible();
 
