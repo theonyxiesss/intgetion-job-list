@@ -6,28 +6,21 @@ import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "re
 import { ConfirmCard } from "@/components/ui/dialog";
 import { controlClass } from "@/components/ui/field";
 import { Alert } from "@/components/ui/feedback";
+import {
+  ChatJobCard,
+  type ChatJob,
+  type ChatJobCardText,
+} from "./chat-job-card";
 import { Icon } from "@/components/ui/icon";
 import { TELEGRAM_BOT_URL } from "@/config/telegram";
 import { localePath } from "@/i18n/paths";
 import { Link, useRouter } from "@/i18n/navigation";
 import { isOfferAction, offerPath, type OfferAction } from "@/modules/bot/service/offers";
 
-type ExplainLine = {
-  detail: { key: string; params: Record<string, string | number> };
-};
-
-type JobCard = {
-  id: string;
-  title: string;
-  companyName: string;
-  workFormat: string;
-  score?: number;
-  explain?: ExplainLine[];
-};
 
 type Entry =
   | { key: string; kind: "user" | "assistant" | "event"; text: string }
-  | { key: string; kind: "jobs" | "matches"; jobs: JobCard[] }
+  | { key: string; kind: "jobs" | "matches"; jobs: ChatJob[] }
   | { key: string; kind: "offer"; action: OfferAction }
   | { key: string; kind: "notice"; code: string }
   | {
@@ -85,9 +78,14 @@ async function* readEvents(body: ReadableStream<Uint8Array>) {
  * pages. Streamed tokens grow one answer instead of stacking one bubble per
  * token.
  */
-export function Chat({ signedIn }: { signedIn: boolean }) {
+export function Chat({
+  signedIn,
+  cardText,
+}: {
+  signedIn: boolean;
+  cardText: ChatJobCardText;
+}) {
   const t = useTranslations("chat");
-  const explain = useTranslations("explain");
   const locale = useLocale();
   const router = useRouter();
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -206,7 +204,7 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
           add({
             key: nextKey(),
             kind: data.kind,
-            jobs: data.data as JobCard[],
+            jobs: data.data as ChatJob[],
           });
         } else if (data.type === "tool_result" && data.kind === "offer") {
           const action = (data.data as { action?: unknown } | null)?.action;
@@ -382,35 +380,8 @@ export function Chat({ signedIn }: { signedIn: boolean }) {
             return (
               <ul key={entry.key} className="grid gap-2">
                 {entry.jobs.map((job) => (
-                  <li
-                    key={job.id}
-                    className="border border-line bg-surface-2 px-4 py-3"
-                  >
-                    <div className="flex items-baseline justify-between gap-3">
-                      <Link
-                        href={`/jobs/${job.id}`}
-                        className="font-medium underline-offset-4 hover:underline"
-                      >
-                        {job.title}
-                      </Link>
-                      {job.score !== undefined && (
-                        <span className="t-label shrink-0 text-signal">
-                          {t("score", { score: Math.round(job.score * 100) })}
-                        </span>
-                      )}
-                    </div>
-                    <p className="t-body-s text-fg-muted">{job.companyName}</p>
-                    {job.explain?.slice(0, 3).map((line) => (
-                      <p
-                        key={line.detail.key}
-                        className="t-body-s text-fg-subtle"
-                      >
-                        {explain(
-                          line.detail.key.replace(/^explain\./, ""),
-                          line.detail.params,
-                        )}
-                      </p>
-                    ))}
+                  <li key={job.id}>
+                    <ChatJobCard job={job} text={cardText} />
                   </li>
                 ))}
               </ul>
