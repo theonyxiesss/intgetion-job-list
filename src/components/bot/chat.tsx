@@ -88,19 +88,11 @@ import {
   pickStarterKeys,
   type StarterLane,
 } from "@/modules/bot/service/starters";
-
-type ExplainLine = {
-  detail: { key: string; params: Record<string, string | number> };
-};
-
-type JobCard = {
-  id: string;
-  title: string;
-  companyName: string;
-  workFormat: string;
-  score?: number;
-  explain?: ExplainLine[];
-};
+import {
+  ChatJobCard,
+  type ChatJob,
+  type ChatJobCardText,
+} from "./chat-job-card";
 
 type Entry =
   | {
@@ -121,7 +113,7 @@ type Entry =
       /** The stored answer, for 👍 / 👎 (D514). */
       messageId?: string;
     }
-  | { key: string; kind: "jobs" | "matches"; jobs: JobCard[] }
+  | { key: string; kind: "jobs" | "matches"; jobs: ChatJob[] }
   | { key: string; kind: "offer"; action: OfferAction }
   /** Fill something in with Spoki here or alone in the form (D516). */
   | { key: string; kind: "fill_choice"; fill: FillKind }
@@ -349,6 +341,7 @@ async function* readEvents(body: ReadableStream<Uint8Array>) {
  */
 export function Chat({
   signedIn,
+  jobCardText,
   jobId,
   fromServices = false,
   fromCampaigns = false,
@@ -367,6 +360,8 @@ export function Chat({
   section,
 }: {
   signedIn: boolean;
+  /** Card labels from the `jobs` namespace, read where the chat is rendered (D377). */
+  jobCardText: ChatJobCardText;
   /**
    * `page` is the `/chat` page; `panel` lives in the Spoki panel of the
    * layout (D525), which owns the title, the position and the phone screen.
@@ -398,7 +393,6 @@ export function Chat({
   const t = useTranslations("chat");
   const goalText = useTranslations("chat.jobGoal");
   const ugcText = useTranslations("ugc");
-  const explain = useTranslations("explain");
   const locale = useLocale();
   const router = useRouter();
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -907,7 +901,7 @@ export function Chat({
           (data.kind === "jobs" || data.kind === "matches")
         ) {
           setThinking(false);
-          const jobs = Array.isArray(data.data) ? (data.data as JobCard[]) : [];
+          const jobs = Array.isArray(data.data) ? (data.data as ChatJob[]) : [];
           jobsSeen = afterJobResults(jobsSeen, jobs.length);
           setNoJobsFound(jobsSeen.offerWeb);
           add({
@@ -1590,39 +1584,8 @@ export function Chat({
                 return (
                   <ul key={entry.key} className="grid gap-2">
                     {entry.jobs.map((job) => (
-                      <li
-                        key={job.id}
-                        className="rounded-2xl border border-line bg-surface-2 px-4 py-3"
-                      >
-                        <div className="flex items-baseline justify-between gap-3">
-                          <Link
-                            href={`/jobs/${job.id}`}
-                            className="font-medium underline-offset-4 hover:underline"
-                          >
-                            {job.title}
-                          </Link>
-                          {job.score !== undefined && (
-                            <span className="t-label shrink-0 text-signal">
-                              {t("score", {
-                                score: Math.round(job.score * 100),
-                              })}
-                            </span>
-                          )}
-                        </div>
-                        <p className="t-body-s text-fg-muted">
-                          {job.companyName}
-                        </p>
-                        {job.explain?.slice(0, 3).map((line) => (
-                          <p
-                            key={line.detail.key}
-                            className="t-body-s text-fg-subtle"
-                          >
-                            {explain(
-                              line.detail.key.replace(/^explain\./, ""),
-                              line.detail.params,
-                            )}
-                          </p>
-                        ))}
+                      <li key={job.id}>
+                        <ChatJobCard job={job} text={jobCardText} />
                       </li>
                     ))}
                   </ul>
