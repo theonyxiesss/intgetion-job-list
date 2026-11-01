@@ -3,6 +3,7 @@ import { z } from "zod";
 import { EVENT_KINDS, EVENT_TOPICS } from "@/config/events";
 import { EMPLOYMENT_TYPES } from "@/config/markers";
 import { HttpError } from "@/lib/http";
+import type { MoneyDto } from "@/lib/money";
 import {
   JOB_LLM_FIELDS,
   PROFILE_LLM_FIELDS,
@@ -250,17 +251,42 @@ function jobForLlm(job: {
   return wrapUntrusted(`job:${job.id}`, JSON.stringify(fields));
 }
 
-function jobCard(job: {
+type CardSource = {
   id: string;
   title: string;
-  company: { name: string };
+  company: {
+    id: string;
+    name: string;
+    slug: string;
+    logoPath: string | null;
+  };
   workFormat: string;
-}) {
+  location: string | null;
+  locationCountry: string | null;
+  salaryMin: MoneyDto | null;
+  salaryMax: MoneyDto | null;
+};
+
+/**
+ * The chat card, from the public search DTO only (D377): the catalog's
+ * company mark, salary and place. `companyName` stays for Telegram (D362).
+ * No source or "imported" flag: the public site does not show it (D376).
+ */
+export function jobCard(job: CardSource) {
   return {
     id: job.id,
     title: job.title,
     companyName: job.company.name,
+    company: {
+      id: job.company.id,
+      slug: job.company.slug,
+      logoPath: job.company.logoPath,
+    },
     workFormat: job.workFormat,
+    location: job.location,
+    locationCountry: job.locationCountry,
+    salaryMin: job.salaryMin,
+    salaryMax: job.salaryMax,
   };
 }
 
@@ -711,10 +737,7 @@ export const TOOLS: readonly BotTool[] = [
         client: {
           kind: "matches",
           data: items.map((item) => ({
-            id: item.job.id,
-            title: item.job.title,
-            companyName: item.job.company.name,
-            workFormat: item.job.workFormat,
+            ...jobCard(item.job),
             score: item.score,
             explain: topExplain(item.explain),
           })),

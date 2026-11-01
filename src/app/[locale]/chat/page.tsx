@@ -55,6 +55,19 @@ export default async function ChatPage({
     await searchParams;
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
+  // D377: job cards in the chat use the catalog's labels.
+  const jobs = await getTranslations({ locale, namespace: "jobs" });
+  const cardText = {
+    salary: jobs("salaryMin"),
+    worldwide: jobs("worldwide"),
+    viewJob: jobs("viewJob"),
+    formats: {
+      remote: jobs("remote"),
+      hybrid: jobs("hybrid"),
+      onsite: jobs("onsite"),
+    },
+    periods: { hour: jobs("hour"), month: jobs("month"), year: jobs("year") },
+  };
   const jobId = job && JOB_ID.test(job) ? job : undefined;
   const campaignId = campaign && JOB_ID.test(campaign) ? campaign : undefined;
   const inviteId = invite && JOB_ID.test(invite) ? invite : undefined;
@@ -103,6 +116,7 @@ export default async function ChatPage({
       <main className="flex min-h-0 flex-1 flex-col">
         <Chat
           signedIn={user !== null}
+          jobCardText={cardText}
           jobId={row?.id}
           fromServices={from === "services" && !row && !ugcProduct}
           fromCampaigns={
