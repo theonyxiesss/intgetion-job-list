@@ -1730,6 +1730,8 @@
       }
     },
     "work": {
+      "thinking": "Réflexion",
+      "thought": "A réfléchi {seconds} s",
       "noSteps": "Aucune étape d’outil enregistrée pour cette réponse.",
       "title": "Progression",
       "running": "En cours",
@@ -1797,7 +1799,6 @@
     },
     "title": "Spoki Assistant",
     "welcome": "Par où on commence ?",
-    "disclaimer": "Spoki peut se tromper. Vérifie ce qui compte. Aussi sur Telegram :",
     "jobFocus": {
       "discussing": "Discussion : {title} — {company}",
       "back": "Retour à l’offre"
@@ -1858,7 +1859,6 @@
     "you": "Vous",
     "agent": "Spoki Assistant",
     "telegramHint": "Vous pouvez discuter dans Telegram pour plus de commodité si vous l’avez connecté.",
-    "telegramBot": "@intgetion_bot",
     "emptyGuest": "Dites à Spoki où vous êtes et quel travail vous voulez.",
     "emptySignedIn": "Dites à Spoki ce que vous voulez trouver. La conversation reprend là où vous l’avez laissée.",
     "searchPlatform": "Chercher des offres sur la plateforme",

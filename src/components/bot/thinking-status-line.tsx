@@ -2,13 +2,11 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { elapsedLabel, stepForTool } from "./thinking-status";
+import { elapsedLabel, idleStep, stepForTool } from "./thinking-status";
 
 /**
- * The live line under the conversation while Spoki works (D490): a pulsing
- * spark, the step in English with a light sweeping over it, and the seconds
- * so far. Idle text stays neutral; only a running tool names a step.
- * Screen readers hear tool changes, not the elapsed-time counter.
+ * Compact live status with a rotating idle label, active tool, and elapsed time.
+ * It reports observed activity, never model reasoning.
  */
 export function ThinkingStatusLine({ tool }: { tool: string | null }) {
   const t = useTranslations("chat.status");
@@ -23,21 +21,27 @@ export function ThinkingStatusLine({ tool }: { tool: string | null }) {
     return () => window.clearInterval(timer);
   }, []);
 
-  const step = tool ? stepForTool(tool) : "thinking";
+  const step = tool ? stepForTool(tool) : idleStep(elapsed);
   const seconds = elapsedLabel(elapsed);
   return (
-    <div className="t-body-s flex items-center gap-2" data-thinking>
-      <span aria-hidden="true" className="spoki-spark text-[15px] leading-none">
-        ✦
-      </span>
+    <div
+      className="t-body-s flex min-h-11 items-center gap-3 border-l-2 border-signal pl-3"
+      data-thinking
+      aria-busy="true"
+    >
       <span aria-hidden="true" key={step} className="spoki-shimmer">
         {t(step)}…
       </span>
-      {seconds && (
-        <span aria-hidden="true" className="t-data text-fg-muted tabular-nums">
-          {seconds}
+      <span aria-hidden="true" className="ml-auto flex items-center gap-2">
+        <span className="flex items-center gap-1">
+          <span className="size-1 rounded-full bg-signal motion-safe:animate-pulse" />
+          <span className="size-1 rounded-full bg-signal [animation-delay:150ms] motion-safe:animate-pulse" />
+          <span className="size-1 rounded-full bg-signal [animation-delay:300ms] motion-safe:animate-pulse" />
         </span>
-      )}
+        {seconds && (
+          <span className="t-data text-fg-muted tabular-nums">{seconds}</span>
+        )}
+      </span>
       <span role="status" className="sr-only">
         {t(tool ? stepForTool(tool) : "thinking")}…
       </span>
