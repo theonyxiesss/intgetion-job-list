@@ -71,7 +71,7 @@ function run(query: SQL) {
         ...state.order,
         status: String(params[0]),
         reason: (params[1] as string | null) ?? null,
-        tx_hash: String(params[2]),
+        tx_hash: (params[2] as string | null) ?? null,
       };
     }
     return [];
