@@ -673,9 +673,12 @@ export async function confirmHireOrder(
     : await verifyEvmOrder(order, txHash);
   const next = settlement(verified);
   if (!next.grant) {
+    // D589: a failed check proved the hash is not this order's payment (other
+    // payer, recipient or no transfer), so the order does not keep it.
+    const keptHash = next.status === "failed" ? null : txHash;
     await getDb().execute(sql`
       update crypto_orders
-      set status = ${next.status}, reason = ${next.reason}, tx_hash = ${txHash}
+      set status = ${next.status}, reason = ${next.reason}, tx_hash = ${keptHash}
       where id = ${order.id} and status <> 'confirmed'
     `);
     if (next.status === "frozen" && order.status !== "frozen") {
