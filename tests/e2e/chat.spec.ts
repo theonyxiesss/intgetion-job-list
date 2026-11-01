@@ -1,6 +1,95 @@
+import { createServer } from "node:http";
 import { expect, test } from "./fixtures";
 
 const sameOrigin = { origin: "http://127.0.0.1:3000" };
+
+test("Spoki shows the live tool and the finished work timeline", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  let receivedPost = false;
+  const mock = createServer(async (request, response) => {
+    const origin = request.headers.origin ?? "http://127.0.0.1:3000";
+    response.setHeader("access-control-allow-origin", origin);
+    response.setHeader("access-control-allow-credentials", "true");
+    response.setHeader("access-control-allow-methods", "POST, OPTIONS");
+    response.setHeader(
+      "access-control-allow-headers",
+      request.headers["access-control-request-headers"] ?? "content-type",
+    );
+    if (request.method === "OPTIONS") {
+      response.writeHead(204).end();
+      return;
+    }
+    if (request.method !== "POST") {
+      response.writeHead(404).end();
+      return;
+    }
+
+    receivedPost = true;
+    response.writeHead(200, { "content-type": "text/event-stream" });
+    response.flushHeaders();
+    response.write(
+      'event: tool_start\ndata: {"type":"tool_start","id":"lookup-1","name":"search_jobs"}\n\n',
+    );
+    await new Promise((resolve) => setTimeout(resolve, 1800));
+    response.write(
+      'event: tool_end\ndata: {"type":"tool_end","id":"lookup-1","status":"completed","ms":1400,"summary":{"kind":"jobs","count":5,"remote":true}}\n\n' +
+        'event: token\ndata: {"type":"token","text":"Нашёл пять удалённых вакансий."}\n\n' +
+        'event: done\ndata: {"type":"done","conversationId":"00000000-0000-4000-8000-000000000000"}\n\n',
+    );
+    response.end();
+  });
+  await new Promise<void>((resolve) => mock.listen(0, "127.0.0.1", resolve));
+  const address = mock.address();
+  if (!address || typeof address === "string")
+    throw new Error("Could not start the local mock SSE server");
+
+  try {
+    await page.route("**/api/bot/conversation**", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ messages: [], pending: [] }),
+      }),
+    );
+    await page.route("**/api/bot/message", (route) =>
+      route.continue({ url: `http://127.0.0.1:${address.port}/message` }),
+    );
+    await page.goto("/ru/chat");
+
+    await expect(
+      page.getByText(/Spoki может ошибаться|@intgetion_bot/),
+    ).toHaveCount(0);
+    const field = page.getByLabel("Напишите сообщение");
+    await field.fill("Найди удалённые вакансии");
+    await field.press("Enter");
+
+    const progress = page.locator("[data-work-progress]");
+    // Open while Spoki works, with a live clock (D588).
+    await expect(progress).toHaveAttribute("open", "");
+    await expect(progress.locator("summary")).toContainText("Думаю");
+    await expect(page.locator("[data-thinking]")).toContainText(
+      "Searching jobs",
+    );
+    await expect(page.locator("[data-thinking]")).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
+
+    // Folded once done, with the time it took.
+    await expect(progress.locator("summary")).toContainText("Подумал за");
+    await expect(progress).not.toHaveAttribute("open", "");
+    await progress.locator("summary").click();
+    await expect(progress.getByText("Поиск вакансий")).toBeVisible();
+    await expect(progress.getByText("удалённо → 5 вакансий")).toBeVisible();
+    expect(receivedPost).toBe(true);
+  } finally {
+    await new Promise<void>((resolve, reject) =>
+      mock.close((error) => (error ? reject(error) : resolve())),
+    );
+  }
+});
 
 test("7A: a guest chats; without a model the agent says it is unavailable", async ({
   page,

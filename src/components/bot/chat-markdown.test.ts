@@ -87,3 +87,25 @@ describe("Spoki answers as Markdown (D514)", () => {
     expect(draftCardDue(undefined, false)).toBe(false);
   });
 });
+
+describe("a typing answer fades its newest word in (D588)", () => {
+  const live = async (text: string) => {
+    const { LiveMarkdown } = await import("./chat-markdown");
+    return renderToStaticMarkup(createElement(LiveMarkdown, { text }));
+  };
+
+  it("wraps only the last word", async () => {
+    const out = await live("Нашёл пять вакансий");
+    expect(out).toContain('<span class="spoki-word">вакансий</span>');
+    expect(out).toContain("Нашёл пять ");
+  });
+
+  it("finds the last word inside bold and lists", async () => {
+    expect(await live("Это **важно**")).toContain(
+      '<strong class="font-semibold"><span class="spoki-word">важно</span></strong>',
+    );
+    expect(await live("- один\n- два")).toContain(
+      '<span class="spoki-word">два</span>',
+    );
+  });
+});

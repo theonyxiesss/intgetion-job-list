@@ -353,10 +353,10 @@
 
 @keyframes spoki-shimmer {
   from {
-    background-position: 100% 0;
+    background-position: 200% 0;
   }
   to {
-    background-position: -100% 0;
+    background-position: -200% 0;
   }
 }
 
@@ -368,18 +368,19 @@
 
 .spoki-shimmer {
   background: linear-gradient(
-      90deg,
+      100deg,
       var(--fg-muted) 0%,
-      var(--fg-muted) 40%,
-      var(--fg) 50%,
-      var(--fg-muted) 60%,
+      var(--fg-muted) 28%,
+      var(--fg) 42%,
+      var(--fg) 61%,
+      var(--fg-muted) 66%,
       var(--fg-muted) 100%
     )
     0 0 / 200% 100%;
   background-clip: text;
   color: transparent;
   animation:
-    spoki-shimmer 2s linear infinite,
+    spoki-shimmer 2.4s linear infinite,
     ui-fade-in var(--d-base) ease-out;
 }
 
@@ -390,6 +391,105 @@
   }
   .spoki-shimmer {
     color: var(--fg-muted);
+    background: none;
+  }
+}
+
+/* Spoki thinking, Grok-like (D588): light runs along the text and around
+   the live card's border, new words of an answer come out of a blur, long
+   step lists fade at the edges, and the finished label shifts slowly. */
+@property --spoki-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes spoki-beam {
+  to {
+    --spoki-angle: 360deg;
+  }
+}
+
+@keyframes spoki-blur-in {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+  }
+}
+
+@keyframes spoki-gradient {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.spoki-beam {
+  position: relative;
+}
+
+.spoki-beam::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--spoki-angle),
+    transparent 0 70%,
+    var(--accent) 85%,
+    var(--signal) 92%,
+    transparent 100%
+  );
+  mask:
+    linear-gradient(black 0 0) content-box exclude,
+    linear-gradient(black 0 0);
+  pointer-events: none;
+  animation: spoki-beam 3s linear infinite;
+}
+
+.spoki-step-in {
+  animation: ui-fade-down var(--d-base) var(--ease-out-quint) both;
+}
+
+.spoki-word {
+  animation: spoki-blur-in 150ms ease both;
+}
+
+.spoki-feather {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 12px,
+    black calc(100% - 12px),
+    transparent
+  );
+}
+
+.spoki-done {
+  background: linear-gradient(-45deg, var(--fg), var(--signal), var(--fg)) 0 0 /
+    400% 400%;
+  background-clip: text;
+  color: transparent;
+  animation: spoki-gradient 5s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spoki-beam::before,
+  .spoki-step-in,
+  .spoki-word,
+  .spoki-done {
+    animation: none;
+  }
+  .spoki-done {
+    color: var(--fg);
     background: none;
   }
 }

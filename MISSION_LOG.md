@@ -3910,3 +3910,15 @@
 - Отклонения от ТЗ: нет.
 - OPEN QUESTION: нет.
 - Следующая подфаза: P1.2 — контекст компании при нескольких членствах; не начата.
+
+## 2026-10-31 — Чат Spoki: оформление хода работы — DONE локально
+
+- Сделано: из поля ввода удалены нижняя подпись и ссылка на Telegram во всех семи языках. Оформлены динамическая строка выполнения и свёрнутый таймлайн реальных шагов; idle-статус сменяется каждые 2,4 с, доступны индикатор активности и секунды. Сырые рассуждения модели не показываются (D490, D538).
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test -- --configLoader native --pool=threads` → 0 (258 файлов, 1939 passed, 3 skipped); `pnpm build` → 0; локальный Playwright E2E mock SSE → 0 (1 passed); Prettier и `git diff --check` → 0; локальный `/ru/chat` открылся, подпись отсутствует.
+- Примечание проверки: стандартный запуск Vitest использует child process, запрещённый sandbox (`spawn EPERM`), поэтому весь набор повторён без изменения конфигурации проекта на worker threads. Production build использовал защищённый SWC-кэш из `C:\Users\Admin\.swc-cache-spoki`. E2E проверил активное состояние с инструментом, `aria-busy`, завершённый ответ и раскрытие таймлайна на локальном mock SSE; внешний LLM-провайдер и база не вызывались. Для E2E использовался временный конфиг с уже установленным Chromium 1217, конфиг удалён после запуска.
+- P-тесты подфазы: unit ✅; build ✅; локальный пустой экран чата ✅; активный и завершённый mock SSE сценарии ✅.
+- Миграции: нет.
+- Изменённые файлы: `src/components/bot/chat.tsx`, `src/components/bot/thinking-status-line.tsx`, `src/components/bot/work-progress-card.tsx`, `src/components/bot/thinking-status.test.ts`, `src/messages/{en,ru,de,es,fr,it,pt-BR}.json`, `tests/e2e/chat.spec.ts`, `docs/CURRENT.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет. На сайт не выкладывалось.
+- OPEN QUESTION: нет.
+- Следующая подфаза: только по отдельной команде основателя.

@@ -247,7 +247,68 @@ const components: Components = {
     <td className="border-b border-line px-3 py-2 align-top">{children}</td>
   ),
   img: ({ alt }) => (alt ? <span>{alt}</span> : null),
+  // Only `lastWordTail` makes spans (raw HTML is skipped). A new key per
+  // word remounts it, so each new word comes out of a blur once (D588).
+  span: ({ className, children, ...props }) => (
+    <span
+      key={String((props as Record<string, unknown>)["data-word"] ?? "")}
+      className={className}
+    >
+      {children}
+    </span>
+  ),
 };
+
+type HastNode = {
+  type: string;
+  value?: string;
+  tagName?: string;
+  properties?: Record<string, unknown>;
+  children?: HastNode[];
+};
+
+/** The deepest last text with something in it, and the node that holds it. */
+function lastText(node: HastNode): [HastNode, HastNode] | null {
+  const kids = node.children ?? [];
+  for (let index = kids.length - 1; index >= 0; index -= 1) {
+    const kid = kids[index]!;
+    if (kid.type === "text" && kid.value?.trim()) return [node, kid];
+    const found = kid.children ? lastText(kid) : null;
+    if (found) return found;
+  }
+  return null;
+}
+
+/**
+ * Rehype step for a typing answer: wraps its last word in a span keyed by
+ * its number in the text, so the key changes only when a new word starts.
+ */
+function lastWordTail(options: { words: number }) {
+  return (tree: HastNode) => {
+    const found = lastText(tree);
+    if (!found) return;
+    const [owner, text] = found;
+    const value = text.value ?? "";
+    const cut = value.search(/\S+\s*$/);
+    if (cut < 0) return;
+    const word: HastNode = {
+      type: "element",
+      tagName: "span",
+      properties: {
+        className: ["spoki-word"],
+        dataWord: String(options.words),
+      },
+      children: [{ type: "text", value: value.slice(cut) }],
+    };
+    const kids = owner.children ?? [];
+    kids.splice(
+      kids.indexOf(text),
+      1,
+      ...(cut > 0 ? [{ type: "text", value: value.slice(0, cut) }] : []),
+      word,
+    );
+  };
+}
 
 const remarkPlugins = [remarkGfm];
 
@@ -260,6 +321,29 @@ export const ChatMarkdown = memo(function ChatMarkdown({
   return (
     <ReactMarkdown
       remarkPlugins={remarkPlugins}
+      components={components}
+      skipHtml
+    >
+      {text}
+    </ReactMarkdown>
+  );
+});
+
+type RehypePlugins = ComponentPropsWithoutRef<
+  typeof ReactMarkdown
+>["rehypePlugins"];
+
+/** The part of an answer typed so far; its newest word fades in (D588). */
+export const LiveMarkdown = memo(function LiveMarkdown({
+  text,
+}: {
+  text: string;
+}) {
+  const words = text.trim().split(/\s+/).length;
+  return (
+    <ReactMarkdown
+      remarkPlugins={remarkPlugins}
+      rehypePlugins={[[lastWordTail, { words }]] as RehypePlugins}
       components={components}
       skipHtml
     >
@@ -322,9 +406,13 @@ export function AssistantAnswer({
   return (
     <div className="group/answer min-w-0">
       <div className="max-w-full break-words leading-7">
-        <ChatMarkdown
-          text={typing ? closeOpenMarks(text.slice(0, shown)) : text}
-        />
+        {animate ? (
+          <LiveMarkdown
+            text={typing ? closeOpenMarks(text.slice(0, shown)) : text}
+          />
+        ) : (
+          <ChatMarkdown text={text} />
+        )}
       </div>
       {typing ? null : (
         <div className="-mb-2 -ml-3 flex">
