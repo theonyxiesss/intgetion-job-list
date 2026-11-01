@@ -104,7 +104,10 @@ export function ChatJobCard({
       />
       {job.explain?.slice(0, 3).map((line) => (
         <p key={line.detail.key} className="t-body-s px-1 text-fg-subtle">
-          {explain(line.detail.key.replace(/^explain\./, ""), line.detail.params)}
+          {explain(
+            line.detail.key.replace(/^explain\./, ""),
+            line.detail.params,
+          )}
         </p>
       ))}
     </div>
@@ -115,7 +118,9 @@ export function ChatJobCard({
  * The card labels from the `jobs` namespace messages (D377). Used where the
  * namespace is already loaded on the client, such as the Spoki panel.
  */
-export function cardTextOf(jobs: Partial<Record<string, unknown>>): ChatJobCardText {
+export function cardTextOf(
+  jobs: Partial<Record<string, unknown>>,
+): ChatJobCardText {
   const label = (key: string) => String(jobs[key] ?? "");
   return {
     salary: label("salaryMin"),
@@ -126,6 +131,10 @@ export function cardTextOf(jobs: Partial<Record<string, unknown>>): ChatJobCardT
       hybrid: label("hybrid"),
       onsite: label("onsite"),
     },
-    periods: { hour: label("hour"), month: label("month"), year: label("year") },
+    periods: {
+      hour: label("hour"),
+      month: label("month"),
+      year: label("year"),
+    },
   };
 }
