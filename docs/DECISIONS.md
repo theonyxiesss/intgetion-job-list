@@ -2458,3 +2458,5 @@ OPEN QUESTION (не блокирует фазу 1): позже — настро�
 `confirmHireOrder`: при статусе `failed` (другой плательщик или получатель, нет перевода, откат, старый блок) хэш в заказ не пишется, `tx_hash = null`. `submitted` и `frozen` хэш хранят: по нему идёт перепроверка и разбор владельцем.
 
 Порядок выкладки любой: старый код работает с новым индексом, новый — со старым. Тесты: `src/modules/billing/__tests__/hash-squat.test.ts`, интеграционный `src/modules/billing/billing-hash.integration.test.ts` (CI). Написано как D425 в ветке `claude/relaxed-dubinsky-64ce8a` (2026-10-14); номер D425 в master занят окном WalletConnect, миграция `0049` — событиями, поэтому здесь D589 и `0086`.
+
+На облако `0086` применена 2026-11-01 по D438: индекс `crypto_orders_confirmed_tx_idx` у `migrator`, старый удалён, журнал 83 строки, членство вернулось к `supabase_admin:set=false`, новых предупреждений советников нет.
