@@ -773,17 +773,17 @@ w3m-modal.open {
   );
 }
 
-/* Home platform showcase (D594). CSS motion only: tiles rise in as they
+/* Home platform showcase (D594). CSS motion only: tiles slide up as they
    scroll into view where the browser supports scroll timelines, the jobs
    list and languages loop, a dot runs along a freelance order. Everything
    is still under reduced motion and readable without animation. */
+/* Motion only, never transparency: text stays at full contrast at every
+   moment, which the axe contrast check in e2e measures. */
 @keyframes home-reveal {
   from {
-    opacity: 0;
     transform: translateY(1.5rem);
   }
   to {
-    opacity: 1;
     transform: none;
   }
 }
@@ -811,18 +811,15 @@ w3m-modal.open {
   }
 }
 
+/* Each line of the Spoki sample "types in" from the left (a clip, not
+   opacity, so the text keeps its contrast). */
 @keyframes home-seq {
   0% {
-    opacity: 0;
-    transform: translateY(0.5rem);
+    clip-path: inset(0 100% 0 0);
   }
-  6%,
-  88% {
-    opacity: 1;
-    transform: none;
-  }
+  8%,
   100% {
-    opacity: 0;
+    clip-path: inset(0 0 0 0);
   }
 }
 
@@ -878,7 +875,7 @@ w3m-modal.open {
 }
 
 .home-seq > * {
-  animation: home-seq 9s ease-out infinite both;
+  animation: home-seq 9s steps(24, end) infinite both;
 }
 
 .home-seq > :nth-child(2) {
