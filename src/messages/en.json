@@ -4490,7 +4490,6 @@
       "person": "Individual client",
       "createIntro": "Describe the work and budget. Your task will appear after moderation.",
       "taskDetails": "Task details",
-      "taskDetails": "Task details",
       "taskTitle": "Task title",
       "taskTitleHint": "10–120 characters.",
       "description": "Task description",
@@ -5221,6 +5220,32 @@
         "browse": "Open briefs",
         "profile": "Creator profile"
       }
+    },
+    "disputeDue": "Support answers by {date}",
+    "adminDisputeDue": "Answer by {date}",
+    "adminDisputeOverdue": "Response time passed on {date}",
+    "adminLedgerLink": "Money reconciliation",
+    "ledgerTitle": "UGC money reconciliation",
+    "ledgerNote": "Paid in = rewards recorded + returned + rest. Only confirmed operations. Payouts and refunds are still made by hand.",
+    "ledgerEmpty": "No briefs with a paid-in budget yet.",
+    "ledgerBack": "Back to the queues",
+    "ledgerTotal": "Total",
+    "ledgerCol": {
+      "brief": "Brief",
+      "deposit": "Paid in",
+      "accrued": "Rewards recorded",
+      "paid": "Rewards paid",
+      "owed": "Owed",
+      "refund": "Returned",
+      "rest": "Rest",
+      "state": "State"
+    },
+    "ledgerState": {
+      "over": "Mismatch: more recorded than paid in",
+      "running": "Brief is running",
+      "owed": "Reward not paid",
+      "refund_due": "Rest not returned",
+      "settled": "Balanced"
     }
   },
   "chatFreelance": {

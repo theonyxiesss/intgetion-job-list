@@ -18,6 +18,8 @@ import {
   userProfiles,
 } from "@/db/schema";
 import { recordAudit } from "@/lib/audit";
+import { logger } from "@/lib/logger";
+import { notifyPlatformOwners } from "@/modules/admin-console/service";
 import { writeSharedFacts } from "@/modules/users/service";
 import {
   findMemberRole,
@@ -872,6 +874,14 @@ export function productionUgcStore(): UgcStore {
         notice.payload,
         notice.email ? undefined : { email: false },
       );
+    },
+    async notifySupport(subject, text) {
+      logger.warn({ alert: "ugc_support" }, subject);
+      try {
+        await notifyPlatformOwners(subject, text);
+      } catch (error) {
+        logger.error({ err: error }, "ugc: support note failed");
+      }
     },
     async audit(actorId, action, entityId, entityType = "ugc_campaign") {
       await recordAudit({

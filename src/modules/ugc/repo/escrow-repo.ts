@@ -306,3 +306,43 @@ export async function owedWalletRewards(creatorId: string): Promise<number> {
   `);
   return rows[0]?.n ?? 0;
 }
+
+export type LedgerRow = {
+  campaign_id: string;
+  product_name: string;
+  status: string;
+  deposit_minor: string;
+  accrued_minor: string;
+  paid_minor: string;
+  refund_minor: string;
+};
+
+/**
+ * The money of every brief with a paid-in budget, summed in one read for the
+ * reconciliation screen (U7): confirmed budget, rewards recorded and paid,
+ * and what went back. Newest briefs first.
+ */
+export async function campaignLedger(limit = 200): Promise<LedgerRow[]> {
+  return getDb().execute<LedgerRow>(sql`
+    select c.id as campaign_id, c.product_name, c.status,
+      coalesce((select sum(d.amount_minor) from public.ugc_deposits d
+        where d.campaign_id = c.id and d.status = 'confirmed'), 0)::text
+        as deposit_minor,
+      coalesce((select sum(p.amount_minor) from public.ugc_payouts p
+        join public.ugc_invites i on i.id = p.invite_id
+        where i.campaign_id = c.id), 0)::text as accrued_minor,
+      coalesce((select sum(p.amount_minor) from public.ugc_payouts p
+        join public.ugc_invites i on i.id = p.invite_id
+        where i.campaign_id = c.id and p.status = 'paid'), 0)::text
+        as paid_minor,
+      coalesce((select sum(r.amount_minor) from public.ugc_refunds r
+        where r.campaign_id = c.id), 0)::text as refund_minor
+    from public.ugc_campaigns c
+    where exists (
+      select 1 from public.ugc_deposits d
+      where d.campaign_id = c.id and d.status = 'confirmed'
+    )
+    order by c.updated_at desc
+    limit ${limit}
+  `);
+}

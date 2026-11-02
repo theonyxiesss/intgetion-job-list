@@ -126,6 +126,8 @@ export const UGC_LIMITS = {
   licenseMonths: 6,
   /** U7: size of the note that comes with a dispute. */
   disputeNoteMax: 500,
+  /** D590: support takes a new problem into review within this many business days. */
+  disputeResponseBusinessDays: 3,
   /** U6: sizes of what the company types about a shipment. */
   carrierMax: 60,
   trackingMax: 60,
