@@ -47,6 +47,12 @@ export default async function AdminCampaignsPage({
     <main className="py-10 md:py-16">
       <Container className="flex flex-col gap-6">
         <PageHeader title={t("adminTitle")} />
+        <Link
+          href="/admin/campaigns/ledger"
+          className="t-body-s self-start underline underline-offset-4"
+        >
+          {t("adminLedgerLink")}
+        </Link>
         {rows.length === 0 ? (
           <p className="text-fg-muted">{t("adminEmpty")}</p>
         ) : null}
@@ -159,6 +165,22 @@ export default async function AdminCampaignsPage({
                   {t(`disputeReason.${row.reason}`)} ·{" "}
                   {t(`disputeStatus.${row.status}`)}
                 </p>
+                {row.dueAt ? (
+                  <p
+                    className={
+                      row.overdue
+                        ? "t-body-s font-medium text-danger"
+                        : "t-body-s font-mono"
+                    }
+                  >
+                    {t(
+                      row.overdue ? "adminDisputeOverdue" : "adminDisputeDue",
+                      {
+                        date: row.dueAt.slice(0, 10),
+                      },
+                    )}
+                  </p>
+                ) : null}
                 {row.note ? (
                   <p className="break-words whitespace-pre-wrap">{row.note}</p>
                 ) : null}

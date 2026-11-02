@@ -17,6 +17,7 @@ import {
   type RoomSide,
 } from "./room";
 import { REVIEW_STAGE_NAMES, reviewDueAt, reviewStage } from "./review-clock";
+import { disputeDueAt, disputeOverdue } from "./dispute-clock";
 import { versionRows } from "./versions";
 import { assertTermsAgreed, buildTerms, termsHash } from "./terms";
 import { randomBytes, randomUUID } from "node:crypto";
@@ -1761,7 +1762,40 @@ export async function noteDeadlines() {
   }
   const expired = await expireSilentOffers(store);
   const reviews = await remindReviews(store);
-  return { noted, expired, reviews };
+  const support = await remindSupport(store);
+  return { noted, expired, reviews, support };
+}
+
+/**
+ * Support's response time (D590): once a day, while problems on orders wait
+ * past it, the people who run the platform get one note with how many and
+ * since when. Nothing changes on the problem itself; the queue on
+ * /admin/campaigns shows the same ones first.
+ */
+export async function remindSupport(store: UgcStore) {
+  const now = store.now();
+  let disputes: Dispute[] = [];
+  try {
+    disputes = await store.listUnresolvedDisputes();
+  } catch (error) {
+    if (!hasPgCode(error, "42P01")) throw error;
+  }
+  const late = disputes
+    .filter((row) => disputeOverdue(now, row))
+    .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+  if (late.length === 0) return { overdue: 0 };
+  await store.notifySupport(
+    `UGC: ${late.length} problem(s) on orders wait for support`,
+    [
+      `Support answers a problem within ${L.disputeResponseBusinessDays} business days (D590).`,
+      ...late.map(
+        (row) =>
+          `- dispute ${row.id}, raised ${row.createdAt.toISOString().slice(0, 10)}, due ${disputeDueAt(row.createdAt).toISOString().slice(0, 10)}`,
+      ),
+      "Open /admin/campaigns to take them into review.",
+    ].join("\n"),
+  );
+  return { overdue: late.length };
 }
 
 /**
@@ -1967,6 +2001,8 @@ export type UgcRoom = {
     reason: UgcDisputeReason;
     outcome: UgcDisputeOutcome | null;
     side: RoomSide;
+    /** While nobody from support has answered: when they must (D590). */
+    dueAt: string | null;
   } | null;
   canOpenDispute: boolean;
   /** Messages from the other party since this party last opened the room (U4). */
@@ -2027,6 +2063,10 @@ export async function getUgcRoom(
           reason: dispute.reason,
           outcome: dispute.outcome,
           side: dispute.side,
+          dueAt:
+            dispute.status === "open"
+              ? disputeDueAt(dispute.createdAt).toISOString()
+              : null,
         }
       : null,
     video: submission
@@ -2630,10 +2670,14 @@ export async function openDispute(
   return { status: "open" as const };
 }
 
-/** Unresolved disputes for support (U7). */
+/**
+ * Unresolved disputes for support (U7), the ones past the response time
+ * first, then by when support must answer (D590).
+ */
 export async function listDisputeQueue(isAdmin: boolean) {
   if (!isAdmin) throw notFound();
   const store = await db();
+  const now = store.now();
   const rows = [];
   let disputes: Dispute[] = [];
   try {
@@ -2652,12 +2696,22 @@ export async function listDisputeQueue(isAdmin: boolean) {
       reason: dispute.reason,
       note: dispute.note,
       at: dispute.createdAt.toISOString(),
+      dueAt:
+        dispute.status === "open"
+          ? disputeDueAt(dispute.createdAt).toISOString()
+          : null,
+      overdue: disputeOverdue(now, dispute),
       campaignId: campaign.id,
       inviteId: invite.id,
       productName: campaign.productName,
     });
   }
-  return rows;
+  return rows.sort(
+    (a, b) =>
+      Number(b.overdue) - Number(a.overdue) ||
+      (a.dueAt ?? "~").localeCompare(b.dueAt ?? "~") ||
+      a.at.localeCompare(b.at),
+  );
 }
 
 /**

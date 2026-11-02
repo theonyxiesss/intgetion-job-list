@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Textarea } from "@/components/ui/input";
@@ -12,6 +12,8 @@ type Dispute = {
   reason: string;
   outcome: string | null;
   side: "company" | "creator";
+  /** While support has not answered: when it must (D590). */
+  dueAt: string | null;
 };
 
 /** A problem on the order: raise it, and see where support is with it (U7). */
@@ -25,6 +27,7 @@ export function DisputePanel({
   canOpen: boolean;
 }) {
   const t = useTranslations("ugc");
+  const format = useFormatter();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -81,6 +84,15 @@ export function DisputePanel({
             {t(`disputeWho.${dispute.side}`)} ·{" "}
             {t(`disputeReason.${dispute.reason}`)}
           </p>
+          {dispute.dueAt ? (
+            <p className="text-fg-muted">
+              {t("disputeDue", {
+                date: format.dateTime(new Date(dispute.dueAt), {
+                  dateStyle: "medium",
+                }),
+              })}
+            </p>
+          ) : null}
         </div>
       ) : null}
       {canOpen && !open ? (

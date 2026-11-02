@@ -4714,6 +4714,32 @@
         "browse": "Briefs ouverts",
         "profile": "Profil de créateur"
       }
+    },
+    "disputeDue": "Le support répond avant le {date}",
+    "adminDisputeDue": "Répondre avant le {date}",
+    "adminDisputeOverdue": "Délai de réponse dépassé le {date}",
+    "adminLedgerLink": "Rapprochement des fonds",
+    "ledgerTitle": "Rapprochement des fonds UGC",
+    "ledgerNote": "Versé = récompenses enregistrées + remboursé + reste. Opérations confirmées uniquement. Paiements et remboursements restent manuels.",
+    "ledgerEmpty": "Aucun brief avec un budget versé pour l’instant.",
+    "ledgerBack": "Retour aux files",
+    "ledgerTotal": "Total",
+    "ledgerCol": {
+      "brief": "Brief",
+      "deposit": "Versé",
+      "accrued": "Enregistré",
+      "paid": "Payé",
+      "owed": "À payer",
+      "refund": "Remboursé",
+      "rest": "Reste",
+      "state": "État"
+    },
+    "ledgerState": {
+      "over": "Écart : plus enregistré que versé",
+      "running": "Brief en cours",
+      "owed": "Récompense non payée",
+      "refund_due": "Reste non remboursé",
+      "settled": "Équilibré"
     }
   },
   "chatFreelance": {
