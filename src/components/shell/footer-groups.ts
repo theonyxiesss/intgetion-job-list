@@ -1,5 +1,6 @@
 /**
- * Footer groups (D333, D388, D396). Real routes only: an item without
+ * Footer groups (D333, D388, D396, D596). Hire and find work mirror the
+ * header menu, with the same action words. Real routes only: an item without
  * `href` is shown as plain text, not as a link to a page that does not
  * exist. The six Company items without an address are an open question
  * with no code task until the founder names an address (D396, D404).
@@ -9,20 +10,32 @@ export type FooterGroup = { title: string; items: readonly FooterItem[] };
 
 export const footerGroups: readonly FooterGroup[] = [
   {
-    title: "footer.platform",
+    title: "headerNav.hire",
     items: [
-      { href: "/jobs", label: "nav.jobs" },
       { href: "/post-job", label: "nav.postJob" },
+      { href: "/freelance", label: "headerNav.findFreelancer" },
+      { href: "/campaigns", label: "headerNav.orderUgc" },
+      { href: "/services", label: "headerNav.orderService" },
       { href: "/pricing", label: "nav.pricing" },
-      { href: "/chat", label: "nav.chat" },
+    ],
+  },
+  {
+    title: "headerNav.findWork",
+    items: [
+      { href: "/jobs", label: "headerNav.remoteJobs" },
+      { href: "/freelance/tasks", label: "headerNav.freelanceTasks" },
+      { href: "/creator/workspace", label: "headerNav.creatorWork" },
+      { href: "/events", label: "headerNav.eventsConfs" },
+      { href: "/salaries", label: "footer.salaries" },
     ],
   },
   {
     title: "footer.resources",
     items: [
+      { href: "/chat", label: "headerNav.spokiAgent" },
       { href: "/for-employers", label: "nav.employers" },
-      { href: "/salaries", label: "footer.salaries" },
       { href: "/#faq", label: "footer.faq" },
+      { href: "/portfolio", label: "footer.portfolio" },
     ],
   },
   {
@@ -37,10 +50,6 @@ export const footerGroups: readonly FooterGroup[] = [
       { label: "footer.verifyOfficialAccounts" },
       { href: "/terms", label: "footer.termsPrivacy" },
     ],
-  },
-  {
-    title: "footer.sites",
-    items: [{ href: "/portfolio", label: "footer.portfolio" }],
   },
   {
     title: "footer.legal",

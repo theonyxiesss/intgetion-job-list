@@ -29,14 +29,33 @@ function group(title: string) {
 }
 
 describe("footer groups (D396)", () => {
-  it("keeps five groups in order", () => {
+  it("keeps five groups in order, the first two as in the header (D596)", () => {
     expect(footerGroups.map((g) => g.title)).toEqual([
-      "footer.platform",
+      "headerNav.hire",
+      "headerNav.findWork",
       "footer.resources",
       "footer.companyGroup",
-      "footer.sites",
       "footer.legal",
     ]);
+  });
+
+  it("reaches every platform section from the footer (D596)", () => {
+    const hrefs = footerGroups.flatMap((g) => g.items.map((item) => item.href));
+    for (const href of [
+      "/jobs",
+      "/post-job",
+      "/freelance",
+      "/freelance/tasks",
+      "/campaigns",
+      "/creator/workspace",
+      "/services",
+      "/events",
+      "/chat",
+      "/pricing",
+      "/portfolio",
+    ]) {
+      expect(hrefs).toContain(href);
+    }
   });
 
   it("shows the founder's Company words in order, in English as given", () => {
@@ -70,16 +89,12 @@ describe("footer groups (D396)", () => {
     });
   });
 
-  it("keeps Legal, Portfolio, Platform and Resources (D241, D388)", () => {
+  it("keeps Legal and Resources (D241, D388)", () => {
     expect(group("footer.legal").items).toEqual([
       { href: "/terms", label: "legal.terms" },
       { href: "/privacy", label: "legal.privacy" },
       { href: "/privacy#cookie-settings", label: "legal.cookies" },
     ]);
-    expect(group("footer.sites").items).toEqual([
-      { href: "/portfolio", label: "footer.portfolio" },
-    ]);
-    expect(group("footer.platform").items.length).toBeGreaterThan(0);
     expect(group("footer.resources").items.length).toBeGreaterThan(0);
   });
 
