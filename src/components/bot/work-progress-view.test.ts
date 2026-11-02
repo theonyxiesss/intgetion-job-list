@@ -125,3 +125,65 @@ describe("the work timeline (TZ 36, task A)", () => {
     expect(html).toContain("nothing found");
   });
 });
+
+describe("Spoki at work (D593)", () => {
+  it("reads the request before any tool runs, with no old status words", () => {
+    const html = render(
+      createElement(WorkProgressCard, { steps: [], state: "running" }),
+    );
+    expect(html).toContain("Understanding the request");
+    expect(html).toContain("spoki-orb");
+    expect(html).toContain('aria-busy="true"');
+    expect(html).not.toContain("Pondering");
+  });
+
+  it("names the running search and shows card placeholders", () => {
+    const html = render(
+      createElement(WorkProgressCard, {
+        steps: [{ id: "a", name: "search_jobs", status: "running" }],
+        state: "running",
+      }),
+    );
+    expect(html).toContain("Searching jobs");
+    expect(html.match(/spoki-skeleton/g)).toHaveLength(3);
+  });
+
+  it("shows a finished search as filter chips and a count", () => {
+    const html = render(
+      createElement(WorkProgressCard, {
+        steps: [
+          {
+            id: "a",
+            name: "search_jobs",
+            status: "completed",
+            summary: {
+              kind: "jobs",
+              count: 5,
+              category: "design",
+              remote: true,
+            },
+          },
+        ],
+        state: "running",
+      }),
+    );
+    expect(html).toContain("Writing the answer");
+    expect(html).toContain(">Design<");
+    expect(html).toContain(">remote<");
+    expect(html).toContain("5 jobs");
+    expect(html).not.toContain("spoki-skeleton");
+  });
+
+  it("folds a finished turn into one pill", () => {
+    const html = render(
+      createElement(WorkProgressCard, {
+        steps: [
+          { id: "a", name: "search_jobs", status: "completed", ms: 2000 },
+        ],
+        state: "done",
+      }),
+    );
+    expect(html).toContain("Thought for 2 s · 1 step");
+    expect(html).not.toContain("spoki-orb");
+  });
+});

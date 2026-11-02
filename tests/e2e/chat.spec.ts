@@ -66,12 +66,9 @@ test("Spoki shows the live tool and the finished work timeline", async ({
     await field.press("Enter");
 
     const progress = page.locator("[data-work-progress]");
-    // Open while Spoki works, with a live clock (D588).
+    // One living line while Spoki works: the current step and a clock (D593).
     await expect(progress).toHaveAttribute("open", "");
-    await expect(progress.locator("summary")).toContainText("Думаю");
-    await expect(page.locator("[data-thinking]")).toContainText(
-      "Searching jobs",
-    );
+    await expect(page.locator("[data-thinking]")).toContainText("Ищу вакансии");
     await expect(page.locator("[data-thinking]")).toHaveAttribute(
       "aria-busy",
       "true",
