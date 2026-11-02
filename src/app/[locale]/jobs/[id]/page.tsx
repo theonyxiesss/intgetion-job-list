@@ -32,6 +32,8 @@ import { localePrefix } from "@/i18n/paths";
 import { intlLocale } from "@/i18n/locale";
 import { publicHttpUrl } from "@/lib/company-mark";
 import { publicJobText } from "@/lib/public-job-text";
+import { markdownToPlain } from "@/lib/rich-text";
+import { RichText } from "@/components/ui/rich-text";
 
 export const dynamic = "force-dynamic";
 
@@ -45,7 +47,9 @@ export async function generateMetadata({
   const job = await getJobForPublic(id, { locale });
   if (!job) return {};
   const title = `${job.title} — ${job.company.name}`;
-  const description = metaDescription(publicJobText(job.description));
+  const description = metaDescription(
+    markdownToPlain(publicJobText(job.description)),
+  );
   return {
     title,
     description,
@@ -165,9 +169,10 @@ export default async function JobPage({
               </div>
             </div>
             {job.company.description ? (
-              <p className="max-w-[68ch] whitespace-pre-wrap text-fg-muted">
-                {job.company.description}
-              </p>
+              <RichText
+                text={job.company.description}
+                className="text-fg-muted"
+              />
             ) : null}
             {job.publishedAt ? (
               <time dateTime={job.publishedAt} className="t-data text-fg-muted">
@@ -291,11 +296,7 @@ export default async function JobPage({
             </section>
           ) : null}
           {user ? <WhyItFits userId={user.id} jobId={job.id} /> : null}
-          {description ? (
-            <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
-              {description}
-            </div>
-          ) : null}
+          {description ? <RichText text={description} /> : null}
           {job.skills.length > 0 ? (
             <ul className="flex flex-wrap gap-2">
               {job.skills.map((skill) => (

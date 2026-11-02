@@ -43,6 +43,23 @@ export type SkillResolver = (value: string) => Promise<string | null>;
 const squash = (value: string) => value.trim().replace(/\s+/g, " ");
 
 /**
+ * Like `squash`, but keeps line breaks, list indents and blank lines, so
+ * the Markdown of a description survives (D591).
+ */
+const squashLines = (value: string) =>
+  value
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map((line) => {
+      const indent = line.match(/^[ \t]*/)?.[0].replace(/\t/g, "  ") ?? "";
+      const body = line.trim().replace(/\s+/g, " ");
+      return body ? indent + body : "";
+    })
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+/**
  * D416: place only as the source states it. An office or hybrid job
  * without a place is published as remote: the database needs a location
  * for those, and we do not invent one.
@@ -80,7 +97,7 @@ export async function normalizeImportedJob(
     if (id && !skillIds.includes(id)) skillIds.push(id);
   }
   const title = squash(raw.title);
-  const description = squash(raw.description);
+  const description = squashLines(raw.description);
   const markers = inferImportedMarkers(
     `${title}\n${description}\n${raw.category}`,
   );

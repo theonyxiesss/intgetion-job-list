@@ -20,6 +20,7 @@ import { JobActions } from "@/modules/jobs/ui/job-actions";
 import { EmployerJobTabs } from "./job-tabs";
 import { localePrefix } from "@/i18n/paths";
 import { hireForJob } from "@/modules/billing/service";
+import { RichText } from "@/components/ui/rich-text";
 
 const date = (value: Date | null) =>
   value ? value.toISOString().slice(0, 10) : "—";
@@ -115,9 +116,7 @@ export default async function EmployerJobPage({
           <Stat label={t("colPublished")} value={date(job.publishedAt)} />
           <Stat label={t("colExpires")} value={date(job.expiresAt)} />
         </StatRow>
-        <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
-          {dto.description}
-        </div>
+        <RichText text={dto.description} />
         <section className="flex flex-col gap-3">
           <h2 className="t-h2">{matched("title")}</h2>
           <p className="text-fg-muted">{matched("text")}</p>

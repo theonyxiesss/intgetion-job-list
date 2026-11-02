@@ -424,7 +424,8 @@ function leverLists(value: unknown): string[] {
     if (!item || typeof item !== "object") return [];
     const list = item as { text?: unknown; content?: unknown };
     const body = plain(text(list.content));
-    return body ? [`${text(list.text)}\n${body}`.trim()] : [];
+    const heading = text(list.text);
+    return body ? [heading ? `### ${heading}\n\n${body}` : body] : [];
   });
 }
 
@@ -447,9 +448,9 @@ export function mapLeverJob(
     companyDomain: null,
     title,
     description:
-      withFacts(text(row.descriptionPlain), [
+      withFacts(plain(text(row.description)) || text(row.descriptionPlain), [
         ...leverLists(row.lists),
-        text(row.additionalPlain),
+        plain(text(row.additional)) || text(row.additionalPlain),
         salary
           ? salaryLine(
               salary.min,
@@ -523,7 +524,7 @@ export function mapAshbyJob(
     title,
     description:
       withFacts(
-        text(row.descriptionPlain) || plain(text(row.descriptionHtml)),
+        plain(text(row.descriptionHtml)) || text(row.descriptionPlain),
         [
           compensation ? `Compensation: ${compensation}` : null,
           location ? `Location: ${location}` : null,

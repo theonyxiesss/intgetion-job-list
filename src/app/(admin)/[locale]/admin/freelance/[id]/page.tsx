@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { HttpError } from "@/lib/http";
 import { getServiceForReview } from "@/modules/freelance/service";
 import { formatUsd } from "@/modules/freelance/ui/format";
+import { RichText } from "@/components/ui/rich-text";
 
 /** A freelance service as the moderator reads it before deciding (28.9). */
 export default async function AdminFreelanceServicePage({
@@ -53,16 +54,12 @@ export default async function AdminFreelanceServicePage({
       </p>
       <section className="flex flex-col gap-2">
         <h2 className="t-h3">{t("description")}</h2>
-        <p className="max-w-[68ch] whitespace-pre-wrap">
-          {service.description}
-        </p>
+        <RichText text={service.description} className="" />
       </section>
       {service.buyerNeeds ? (
         <section className="flex flex-col gap-2">
           <h2 className="t-h3">{t("needs")}</h2>
-          <p className="max-w-[68ch] whitespace-pre-wrap">
-            {service.buyerNeeds}
-          </p>
+          <RichText text={service.buyerNeeds} className="" />
         </section>
       ) : null}
       <section className="flex flex-col gap-2">

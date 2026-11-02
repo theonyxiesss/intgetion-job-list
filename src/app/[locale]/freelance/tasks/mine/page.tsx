@@ -22,6 +22,7 @@ import {
   freelanceTasksCopy,
   userOrLogin,
 } from "@/modules/freelance/ui/server-copy";
+import { RichText } from "@/components/ui/rich-text";
 
 export const dynamic = "force-dynamic";
 
@@ -149,9 +150,10 @@ export default async function MyFreelanceTasksPage({
                   </div>
                   <Badge>{t(`status.${task.status}`)}</Badge>
                 </div>
-                <p className="mt-4 whitespace-pre-wrap text-fg-muted">
-                  {task.description}
-                </p>
+                <RichText
+                  text={task.description}
+                  className="mt-4 text-fg-muted"
+                />
                 {task.status === "open" ? (
                   <TaskManagementActions taskId={task.id} copy={copy} />
                 ) : null}

@@ -30,6 +30,7 @@ import {
   orderRoomCopy,
   userOrLogin,
 } from "@/modules/freelance/ui/server-copy";
+import { RichText } from "@/components/ui/rich-text";
 
 /** The main path of an order, shown as steps (TZ 45 §4). */
 const STEPS: readonly FreelanceOrderStatus[] = [
@@ -187,7 +188,7 @@ export default async function FreelanceOrderPage({
           >
             <section className="flex flex-col gap-2">
               <h2 className="t-h3">{t("orders.task")}</h2>
-              <p className="max-w-[68ch] whitespace-pre-wrap">{order.task}</p>
+              <RichText text={order.task} className="" />
               {order.wantedBy ? (
                 <p className="t-body-s text-fg-muted">
                   {t("orders.wantedBy", { when: order.wantedBy })}
