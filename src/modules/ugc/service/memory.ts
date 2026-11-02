@@ -35,6 +35,7 @@ export class MemoryUgcStore implements UgcStore {
   deposits = new Map<string, bigint>();
   tokens: JoinToken[] = [];
   notices: UgcNotice[] = [];
+  supportNotes: { subject: string; text: string }[] = [];
   audits: {
     actorId: string;
     action: string;
@@ -359,6 +360,9 @@ export class MemoryUgcStore implements UgcStore {
   }
   async notify(notice: UgcNotice) {
     this.notices.push(notice);
+  }
+  async notifySupport(subject: string, text: string) {
+    this.supportNotes.push({ subject, text });
   }
   async audit(
     actorId: string,

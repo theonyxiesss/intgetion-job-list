@@ -3984,7 +3984,6 @@
       "person": "Privater Auftraggeber",
       "createIntro": "Beschreibe die Arbeit und das Budget. Die Aufgabe erscheint nach der Moderation.",
       "taskDetails": "Aufgabendetails",
-      "taskDetails": "Aufgabendetails",
       "taskTitle": "Aufgabentitel",
       "taskTitleHint": "10–120 Zeichen.",
       "description": "Aufgabenbeschreibung",
@@ -4715,6 +4714,32 @@
         "browse": "Offene Briefings",
         "profile": "Creator-Profil"
       }
+    },
+    "disputeDue": "Der Support antwortet bis {date}",
+    "adminDisputeDue": "Antworten bis {date}",
+    "adminDisputeOverdue": "Antwortfrist abgelaufen am {date}",
+    "adminLedgerLink": "Geldabgleich",
+    "ledgerTitle": "UGC-Geldabgleich",
+    "ledgerNote": "Eingezahlt = erfasste Prämien + zurückgezahlt + Rest. Nur bestätigte Vorgänge. Auszahlungen und Erstattungen erfolgen weiterhin manuell.",
+    "ledgerEmpty": "Noch keine Briefs mit eingezahltem Budget.",
+    "ledgerBack": "Zurück zu den Warteschlangen",
+    "ledgerTotal": "Summe",
+    "ledgerCol": {
+      "brief": "Brief",
+      "deposit": "Eingezahlt",
+      "accrued": "Erfasst",
+      "paid": "Ausgezahlt",
+      "owed": "Offen",
+      "refund": "Zurückgezahlt",
+      "rest": "Rest",
+      "state": "Status"
+    },
+    "ledgerState": {
+      "over": "Abweichung: mehr erfasst als eingezahlt",
+      "running": "Brief läuft",
+      "owed": "Prämie nicht ausgezahlt",
+      "refund_due": "Rest nicht zurückgezahlt",
+      "settled": "Stimmt"
     }
   },
   "chatFreelance": {

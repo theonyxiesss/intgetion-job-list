@@ -3984,7 +3984,6 @@
       "person": "Cliente particular",
       "createIntro": "Describe el trabajo y el presupuesto. La tarea aparecerá después de la moderación.",
       "taskDetails": "Detalles de la tarea",
-      "taskDetails": "Detalles de la tarea",
       "taskTitle": "Título de la tarea",
       "taskTitleHint": "De 10 a 120 caracteres.",
       "description": "Descripción de la tarea",
@@ -4715,6 +4714,32 @@
         "browse": "Briefs abiertos",
         "profile": "Perfil de creador"
       }
+    },
+    "disputeDue": "Soporte responde antes del {date}",
+    "adminDisputeDue": "Responder antes del {date}",
+    "adminDisputeOverdue": "El plazo de respuesta venció el {date}",
+    "adminLedgerLink": "Conciliación de dinero",
+    "ledgerTitle": "Conciliación de dinero UGC",
+    "ledgerNote": "Depositado = recompensas registradas + devuelto + resto. Solo operaciones confirmadas. Los pagos y reembolsos siguen siendo manuales.",
+    "ledgerEmpty": "Aún no hay briefs con presupuesto depositado.",
+    "ledgerBack": "Volver a las colas",
+    "ledgerTotal": "Total",
+    "ledgerCol": {
+      "brief": "Brief",
+      "deposit": "Depositado",
+      "accrued": "Registrado",
+      "paid": "Pagado",
+      "owed": "Pendiente",
+      "refund": "Devuelto",
+      "rest": "Resto",
+      "state": "Estado"
+    },
+    "ledgerState": {
+      "over": "Discrepancia: más registrado que depositado",
+      "running": "Brief en curso",
+      "owed": "Recompensa sin pagar",
+      "refund_due": "Resto sin devolver",
+      "settled": "Cuadra"
     }
   },
   "chatFreelance": {

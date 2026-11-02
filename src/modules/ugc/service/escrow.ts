@@ -35,6 +35,7 @@ import {
   roomParty,
 } from "./commands";
 import { buildMoneyHistory } from "./money-history";
+import { ledgerOrder, reconcileLedger, type LedgerState } from "./ledger";
 import { campaignWalletAddress, escrowOn } from "./escrow-gate";
 import { refundableMinor, refundBlocked } from "./escrow-rules";
 import { ugcBudgetMinor } from "./pricing";
@@ -705,4 +706,86 @@ export async function orderMoneyHistory(
         }
       : null,
   });
+}
+
+export type LedgerView = {
+  campaignId: string;
+  productName: string;
+  status: string;
+  depositMinor: string;
+  accruedMinor: string;
+  paidMinor: string;
+  refundMinor: string;
+  restMinor: string;
+  owedMinor: string;
+  state: LedgerState;
+};
+
+/**
+ * Reconciliation for support (U7): for every brief with a paid-in budget,
+ * "paid in = rewards recorded + returned + rest", with the briefs that need
+ * a look first. Reads only; money still moves by hand (D466).
+ */
+export async function listMoneyLedger(isAdmin: boolean): Promise<{
+  rows: LedgerView[];
+  totals: Pick<
+    LedgerView,
+    | "depositMinor"
+    | "accruedMinor"
+    | "paidMinor"
+    | "refundMinor"
+    | "restMinor"
+    | "owedMinor"
+  >;
+}> {
+  if (!isAdmin) throw notFound();
+  const sum = {
+    deposit: BigInt(0),
+    accrued: BigInt(0),
+    paid: BigInt(0),
+    refund: BigInt(0),
+    rest: BigInt(0),
+    owed: BigInt(0),
+  };
+  const rows: LedgerView[] = [];
+  for (const row of await repo.campaignLedger()) {
+    const input = {
+      status: row.status,
+      depositMinor: BigInt(row.deposit_minor),
+      accruedMinor: BigInt(row.accrued_minor),
+      paidMinor: BigInt(row.paid_minor),
+      refundMinor: BigInt(row.refund_minor),
+    };
+    const line = reconcileLedger(input);
+    sum.deposit += input.depositMinor;
+    sum.accrued += input.accruedMinor;
+    sum.paid += input.paidMinor;
+    sum.refund += input.refundMinor;
+    sum.rest += line.restMinor;
+    sum.owed += line.owedMinor;
+    rows.push({
+      campaignId: row.campaign_id,
+      productName: row.product_name,
+      status: row.status,
+      depositMinor: row.deposit_minor,
+      accruedMinor: row.accrued_minor,
+      paidMinor: row.paid_minor,
+      refundMinor: row.refund_minor,
+      restMinor: line.restMinor.toString(),
+      owedMinor: line.owedMinor.toString(),
+      state: line.state,
+    });
+  }
+  rows.sort((a, b) => ledgerOrder(a.state, b.state));
+  return {
+    rows,
+    totals: {
+      depositMinor: sum.deposit.toString(),
+      accruedMinor: sum.accrued.toString(),
+      paidMinor: sum.paid.toString(),
+      refundMinor: sum.refund.toString(),
+      restMinor: sum.rest.toString(),
+      owedMinor: sum.owed.toString(),
+    },
+  };
 }

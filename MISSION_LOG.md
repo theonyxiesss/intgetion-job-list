@@ -3923,6 +3923,14 @@
 - OPEN QUESTION: нет.
 - Следующая подфаза: только по отдельной команде основателя.
 
+## 2026-11-02 — UGC ТЗ 48: U7 доделана (D590), выкладка
+
+- Сверка: всё из U1–U7 уже в `master` (хвосты U3/U4 слиты коммитами `db24fd63`, `4ec9057c`, `2b4c7ec5`, `29097d5e`, `28e127d3`, `5caf7b06`); локальных несслитых UGC-коммитов нет. Миграции `0074`–`0086` в облаке (read-only `information_schema` через Supabase MCP); новых миграций нет.
+- Сделано: срок реакции поддержки 3 рабочих дня (`dispute-clock.ts`, `UGC_LIMITS.disputeResponseBusinessDays`), дата в блоке проблемы, сортировка и пометка просроченных в очереди, ежедневное письмо владельцам площадки из крона `/api/cron/ugc` (`remindSupport`, `notifySupport` в хранилище). Сверка денег: `campaignLedger` (один запрос), `reconcileLedger`, `listMoneyLedger`, страница `/admin/campaigns/ledger`. Тексты на 7 языках; из `en/de/es/ru.json` убран дубль ключа `taskDetails` (значения совпадали).
+- Тесты: `support-clock-ledger.test.ts` (8). `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (260 файлов, 1955 passed, 3 skipped); `pnpm build` → 0 (с `SWC_NATIVE_BINDING_CACHE=C:/Users/Admin/.swc-cache`); `prettier --check` изменённых файлов → 0. Полный `pnpm format:check` локально не показателен (CRLF рабочей копии Windows) — проверяется в CI.
+- OPEN QUESTION: срок реакции поддержки не задан основателем — взято 3 рабочих дня (как D583), записано D590.
+- Не делалось (ждёт основателя): рельс выплат и юрист (п. 5 §14), биллинг плана UGC, U6, другие плееры предпросмотра.
+
 ## 2026-11-02 — Описания как Markdown (D591) — DONE локально
 
 - Сделано: `src/lib/rich-text.ts` (HTML→Markdown для импорта, нормализатор старых текстов, выжимка без разметки), `src/components/ui/rich-text.tsx` (серверный безопасный рендер на `react-markdown` + `remark-gfm`). Импорт: `plain()` → Markdown, Lever/Ashby берут HTML-поля, `normalize.ts` больше не склеивает строки. Подключено на страницах вакансии, работодателя, компании, события, услуги, задачи, заказа фриланса и админки услуги; карточки — выжимка `markdownToPlain`.
