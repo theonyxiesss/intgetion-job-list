@@ -4726,6 +4726,32 @@
         "browse": "Briefings abertos",
         "profile": "Perfil de criador"
       }
+    },
+    "disputeDue": "O suporte responde até {date}",
+    "adminDisputeDue": "Responder até {date}",
+    "adminDisputeOverdue": "O prazo de resposta venceu em {date}",
+    "adminLedgerLink": "Conciliação de dinheiro",
+    "ledgerTitle": "Conciliação de dinheiro UGC",
+    "ledgerNote": "Depositado = recompensas registradas + devolvido + saldo. Só operações confirmadas. Pagamentos e reembolsos continuam manuais.",
+    "ledgerEmpty": "Ainda não há briefs com orçamento depositado.",
+    "ledgerBack": "Voltar às filas",
+    "ledgerTotal": "Total",
+    "ledgerCol": {
+      "brief": "Brief",
+      "deposit": "Depositado",
+      "accrued": "Registrado",
+      "paid": "Pago",
+      "owed": "A pagar",
+      "refund": "Devolvido",
+      "rest": "Saldo",
+      "state": "Situação"
+    },
+    "ledgerState": {
+      "over": "Divergência: mais registrado que depositado",
+      "running": "Brief em andamento",
+      "owed": "Recompensa não paga",
+      "refund_due": "Saldo não devolvido",
+      "settled": "Confere"
     }
   },
   "chatFreelance": {

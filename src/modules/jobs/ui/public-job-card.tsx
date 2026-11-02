@@ -7,18 +7,13 @@ import { JobCard } from "@/components/ui/job-card";
 import type { searchJobs } from "../service";
 import { intlLocale } from "@/i18n/locale";
 import { publicJobText } from "@/lib/public-job-text";
+import { markdownToPlain } from "@/lib/rich-text";
 
 type PublicJob = Awaited<ReturnType<typeof searchJobs>>["items"][number];
 
 /** Plain first lines of the description; the card clamps it to two lines. */
 function summaryOf(description: string | null): string | null {
-  const visible = publicJobText(description);
-  if (!visible) return null;
-  const plain = visible
-    .replace(/<[^>]*>/g, " ")
-    .replace(/[#*_`>[\]]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
+  const plain = markdownToPlain(publicJobText(description));
   return plain ? plain.slice(0, 240) : null;
 }
 

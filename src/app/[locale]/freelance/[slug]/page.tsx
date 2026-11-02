@@ -34,6 +34,7 @@ import {
   metaDescription,
   siteUrl,
 } from "@/modules/seo/site";
+import { RichText } from "@/components/ui/rich-text";
 
 export const dynamic = "force-dynamic";
 
@@ -174,16 +175,12 @@ export default async function FreelanceServicePage({
             ) : null}
             <section className="flex flex-col gap-3">
               <h2 className="t-h3">{t("aboutTitle")}</h2>
-              <p className="t-body-l max-w-[68ch] whitespace-pre-wrap">
-                {page.description}
-              </p>
+              <RichText text={page.description} />
             </section>
             {page.buyerNeeds ? (
               <section className="flex flex-col gap-3">
                 <h2 className="t-h3">{t("needsTitle")}</h2>
-                <p className="max-w-[68ch] whitespace-pre-wrap text-fg-muted">
-                  {page.buyerNeeds}
-                </p>
+                <RichText text={page.buyerNeeds} className="text-fg-muted" />
               </section>
             ) : null}
             {links.length > 0 ? (

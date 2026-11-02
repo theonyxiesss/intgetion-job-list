@@ -187,7 +187,7 @@ describe("Lever", () => {
       employmentType: "full_time",
       category: "engineering",
     });
-    expect(job?.description).toContain("Requirements\nSQL");
+    expect(job?.description).toContain("### Requirements\n\n- SQL");
     expect(job?.description).toContain("Salary: 90000 – 120000 GBP / year");
   });
 });

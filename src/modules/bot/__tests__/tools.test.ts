@@ -9,6 +9,7 @@ import {
   type ToolContext,
 } from "../service";
 import { offerPath } from "../service/offers";
+import { jobCard } from "../service/tools";
 
 const jobId = "00000000-0000-4000-8000-000000000001";
 const guest: ToolContext = {
@@ -241,6 +242,45 @@ describe("bot history (7A)", () => {
     await expect(
       runTool(guest, "offer_step", { action: "https://evil.test" }),
     ).rejects.toMatchObject({ status: 400 });
+  });
+
+  it("D377: a chat job card carries the catalog mark, salary and place, never the source", () => {
+    const salary = {
+      amountMinor: "500000",
+      currency: "USD",
+      period: "month" as const,
+      basis: "gross" as const,
+    };
+    const job = {
+      id: jobId,
+      title: "Engineer",
+      company: {
+        id: "c1",
+        name: "Acme",
+        slug: "acme",
+        logoPath: null,
+        isTrusted: false,
+      },
+      workFormat: "remote",
+      location: null,
+      locationCountry: "DE",
+      salaryMin: salary,
+      salaryMax: null,
+      source: { type: "imported", name: "Remotive", url: "https://x" },
+    };
+    const card = jobCard(job);
+    expect(card).toEqual({
+      id: jobId,
+      title: "Engineer",
+      companyName: "Acme",
+      company: { id: "c1", slug: "acme", logoPath: null },
+      workFormat: "remote",
+      location: null,
+      locationCountry: "DE",
+      salaryMin: salary,
+      salaryMax: null,
+    });
+    expect(JSON.stringify(card)).not.toMatch(/imported|Remotive|source/i);
   });
 
   it("starts the context at a user turn", () => {

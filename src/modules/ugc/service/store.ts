@@ -115,6 +115,8 @@ export interface UgcStore {
   findJoinToken(tokenHash: string): Promise<JoinToken | null>;
   listPendingReview(): Promise<Campaign[]>;
   notify(notice: UgcNotice): Promise<void>;
+  /** A plain note to the people who run the platform (support, D590). */
+  notifySupport(subject: string, text: string): Promise<void>;
   audit(
     actorId: string,
     action: string,

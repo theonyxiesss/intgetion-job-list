@@ -123,9 +123,23 @@ describe("live adapters (8B, D375)", () => {
     expect(mapRemoteOkJob(rows[0]!)).toBeNull();
   });
 
-  it("plain() keeps paragraphs and drops markup", () => {
+  it("plain() turns the source's HTML into Markdown (D591)", () => {
     expect(plain("<p>One</p><p>Two &lt;3</p><br>Three")).toBe(
-      "One\nTwo <3\nThree",
+      "One\n\nTwo \\<3\n\nThree",
+    );
+    expect(
+      plain(
+        '<h2>About</h2><p>We <b>build</b> <a href="https://x.dev/a">tools</a>.</p>' +
+          "<h3>You will</h3><ul><li>Ship <strong>APIs</strong></li><li>Review</li></ul>" +
+          '<p><img src="https://x.dev/t.gif"><iframe src="https://x.dev"></iframe>' +
+          '<a href="javascript:alert(1)">Apply</a></p>',
+      ),
+    ).toBe(
+      "### About\n\nWe **build** [tools](https://x.dev/a).\n\n" +
+        "### You will\n\n- Ship **APIs**\n- Review\n\nApply",
+    );
+    expect(plain(`<p>${"word ".repeat(3000)}</p>`).length).toBeLessThanOrEqual(
+      8000,
     );
   });
 

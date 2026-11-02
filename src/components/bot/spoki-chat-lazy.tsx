@@ -6,6 +6,7 @@ import type { PageSection } from "@/config/page-sections";
 import { FetchedMessages } from "@/components/shell/fetched-messages";
 import type { FreelanceCardCopy } from "./freelance-copy";
 import type { ChatTarget } from "./spoki-dock-model";
+import { cardTextOf } from "./chat-job-card";
 
 /** Warms the chat code, for a hover or a focus on a way into Spoki. */
 export function preloadSpokiChat() {
@@ -56,6 +57,7 @@ export function SpokiChat({
           variant="panel"
           section={section}
           signedIn={signedIn}
+          jobCardText={cardTextOf(messages.jobs ?? {})}
           jobId={target?.job}
           campaignId={target?.campaign}
           inviteId={target?.invite}

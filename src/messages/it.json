@@ -4726,6 +4726,32 @@
         "browse": "Brief aperti",
         "profile": "Profilo creator"
       }
+    },
+    "disputeDue": "Il supporto risponde entro il {date}",
+    "adminDisputeDue": "Rispondere entro il {date}",
+    "adminDisputeOverdue": "Tempo di risposta scaduto il {date}",
+    "adminLedgerLink": "Riconciliazione dei fondi",
+    "ledgerTitle": "Riconciliazione dei fondi UGC",
+    "ledgerNote": "Versato = compensi registrati + rimborsato + resto. Solo operazioni confermate. Pagamenti e rimborsi restano manuali.",
+    "ledgerEmpty": "Ancora nessun brief con budget versato.",
+    "ledgerBack": "Torna alle code",
+    "ledgerTotal": "Totale",
+    "ledgerCol": {
+      "brief": "Brief",
+      "deposit": "Versato",
+      "accrued": "Registrato",
+      "paid": "Pagato",
+      "owed": "Da pagare",
+      "refund": "Rimborsato",
+      "rest": "Resto",
+      "state": "Stato"
+    },
+    "ledgerState": {
+      "over": "Discrepanza: registrato più del versato",
+      "running": "Brief in corso",
+      "owed": "Compenso non pagato",
+      "refund_due": "Resto non rimborsato",
+      "settled": "Torna"
     }
   },
   "chatFreelance": {
