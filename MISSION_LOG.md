@@ -3967,3 +3967,7 @@
 
 - Сделано: `src/components/shell/header.tsx` (без поиска, новые подписи, меню с xl), удалён `header-search.tsx`, `footer-groups.ts` и его тест перестроены, ключи `headerNav` в 7 языках.
 - Проверки: `pnpm typecheck` → 0; `eslint src tests scripts` → 0; `pnpm test` → 0 (1978 passed); `pnpm build` → 0; prettier по своим файлам → 0. Браузер: 1024 px (ru) и 1280 px (ru, de) — без наложений и горизонтальной прокрутки; футер — пять групп с новыми подписями.
+
+## 2026-11-02 — Бюджет LCP главной 2800 мс (D597)
+
+- PR #38 (D596) упал в CI `database` только на Lighthouse главной: медиана 2639 мс при бюджете 2600 (e2e: 102 passed, 1 flaky `spoki-blocks`, прошёл повтором). Причина — вес витрины D594. Основатель выбрал поднять бюджет до 2800 мс; правка в `scripts/ci-ui.sh`.

@@ -45,8 +45,9 @@ fi
 
 # Simulated LCP on a shared runner swings by several hundred ms between runs.
 # The first run after start is cold (median ~2620 ms, up to ~4200 in 47 CI
-# runs), so it warms up and is not counted; the 2600 ms budget applies to the
-# median of the next seven (D41, D145, D528).
+# runs), so it warms up and is not counted; the 2800 ms budget applies to the
+# median of the next seven (D41, D145, D528; 2800 since D597, founder's
+# choice after the platform showcase D594 put the median at ~2640).
 # Measured on `/`, the address people open: on `/en` Lighthouse also counted
 # the 308 hop, ~600 ms of simulated time (D461).
 # Chrome on the runner sometimes exits before the debugging port is ready; retry once.
@@ -105,7 +106,7 @@ const runs = [1, 2, 3, 4, 5, 6, 7].map((run) => {
 if (!runs.every((lcp) => typeof lcp === "number")) process.exit(1);
 const median = [...runs].sort((a, b) => a - b)[Math.floor(runs.length / 2)];
 console.log(`lcp_ms ${median} (median of ${runs.length})`);
-if (!(median < 2600)) process.exit(1);
+if (!(median < 2800)) process.exit(1);
 EOF
 
 # Catalog and one job, mobile form factor, five-run median (D288).
