@@ -43,7 +43,6 @@ import {
 } from "@/components/bot/job-goal-panel";
 import type { JobGoal } from "@/modules/bot/service/job-goal";
 import { draftCardDue } from "@/components/bot/draft-card";
-import { ThinkingStatusLine } from "@/components/bot/thinking-status-line";
 import { WorkProgressCard } from "@/components/bot/work-progress-card";
 import {
   advanceWork,
@@ -402,9 +401,6 @@ export function Chat({
   const [noJobsFound, setNoJobsFound] = useState(false);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
-  const [thinking, setThinking] = useState(false);
-  /** The tool Spoki runs right now, named in the status line (D490). */
-  const [activity, setActivity] = useState<string | null>(null);
   /** The thread's subject from the server, when the address named none (D525). */
   const [serverFocus, setServerFocus] = useState<ServerFocus | null>(null);
   const [jobGoal, setJobGoal] = useState<JobGoal | null>(null);
@@ -813,8 +809,6 @@ export function Chat({
     const controller = new AbortController();
     abortRef.current = controller;
     setSending(true);
-    setThinking(true);
-    setActivity(null);
     const answerKey = nextKey();
     const workKey = nextKey();
     let turnState: WorkState = "failed";
@@ -861,14 +855,12 @@ export function Chat({
             ),
           );
         }
-        if (data.type === "tool_end") setActivity(null);
         if (data.type === "error") hadError = true;
         if (data.type === "done") turnState = hadError ? "failed" : "done";
         if (data.type === "job_goal") {
           setJobGoal((data.goal as JobGoal | null) ?? null);
         }
         if (data.type === "token") {
-          setThinking(false);
           appendAnswer(
             answerKey,
             String(data.text),
@@ -879,7 +871,6 @@ export function Chat({
         } else if (data.type === "ui") {
           const block = blockOf(data.block);
           if (block) {
-            setThinking(false);
             // Job cards come as a block when interactive UI is on (D523).
             if (block.component === "job_cards") {
               jobsSeen = afterJobResults(jobsSeen, 1);
@@ -894,13 +885,10 @@ export function Chat({
             });
           }
         } else if (data.type === "tool_start") {
-          setActivity(String(data.name));
-          setThinking(true);
         } else if (
           data.type === "tool_result" &&
           (data.kind === "jobs" || data.kind === "matches")
         ) {
-          setThinking(false);
           const jobs = Array.isArray(data.data) ? (data.data as ChatJob[]) : [];
           jobsSeen = afterJobResults(jobsSeen, jobs.length);
           setNoJobsFound(jobsSeen.offerWeb);
@@ -915,7 +903,6 @@ export function Chat({
             typeof payload === "string" &&
             /^ugc_[A-Za-z0-9_-]+$/.test(payload)
           ) {
-            setThinking(false);
             add({ key: nextKey(), kind: "ugc_join", payload });
           }
         } else if (
@@ -934,7 +921,6 @@ export function Chat({
             UUID.test(draft.id) &&
             draftCardDue(draft.missingRequired, draft.showCard)
           ) {
-            setThinking(false);
             put({
               key: `ugc-draft-${draft.id}`,
               kind: "ugc_brief_draft",
@@ -951,27 +937,22 @@ export function Chat({
         } else if (data.type === "tool_result" && data.kind === "fill_choice") {
           const fill = (data.data as { kind?: unknown } | null)?.kind;
           if (isFillKind(fill)) {
-            setThinking(false);
             add({ key: nextKey(), kind: "fill_choice", fill });
           }
         } else if (data.type === "tool_result" && data.kind === "offer") {
           const action = (data.data as { action?: unknown } | null)?.action;
           const fill = isOfferAction(action) ? fillKindOf(action) : null;
           if (fill) {
-            setThinking(false);
             add({ key: nextKey(), kind: "fill_choice", fill });
           } else if (isOfferAction(action) && offerPath(action, signedIn)) {
-            setThinking(false);
             add({ key: nextKey(), kind: "offer", action });
           }
         } else if (
           data.type === "tool_result" &&
           freelanceEntry(data.kind, data.data)
         ) {
-          setThinking(false);
           add(freelanceEntry(data.kind, data.data)!);
         } else if (data.type === "confirm_request") {
-          setThinking(false);
           add({
             ...confirmEntry({
               confirmationId: String(data.confirmationId),
@@ -983,7 +964,6 @@ export function Chat({
             key: nextKey(),
           });
         } else if (data.type === "error") {
-          setThinking(false);
           if (!quiet)
             add({ key: nextKey(), kind: "notice", code: String(data.code) });
         } else if (
@@ -991,7 +971,6 @@ export function Chat({
           data.type === "signup_hint" ||
           data.type === "profile_saved"
         ) {
-          setThinking(false);
           add({ key: nextKey(), kind: "assistant", text: String(data.text) });
           if (data.type === "signup_hint") {
             setActions((current) => ({ ...current, signup: true }));
@@ -1019,7 +998,6 @@ export function Chat({
             UUID.test(draft.id) &&
             draftCardDue(draft.missingRequired, draft.showCard)
           ) {
-            setThinking(false);
             put({
               key: `freelance-draft-${draft.id}`,
               kind: "freelance_service_draft",
@@ -1043,7 +1021,6 @@ export function Chat({
             UUID.test(draft.id) &&
             draftCardDue(draft.missingRequired, draft.showCard)
           ) {
-            setThinking(false);
             put({
               key: `job-draft-${draft.id}`,
               kind: "job_draft",
@@ -1064,7 +1041,6 @@ export function Chat({
         ) {
           const saved = data.data as { id?: unknown };
           if (typeof saved.id === "string" && UUID.test(saved.id)) {
-            setThinking(false);
             add({
               key: nextKey(),
               kind: "freelance_link",
@@ -1090,8 +1066,6 @@ export function Chat({
         ),
       );
       abortRef.current = null;
-      setThinking(false);
-      setActivity(null);
       setSending(false);
     }
     return turnState === "done";
@@ -2026,7 +2000,6 @@ export function Chat({
                 />
               </div>
             )}
-            {thinking && <ThinkingStatusLine tool={activity} />}
             <div ref={endRef} />
           </div>
           {isAtBottom ? null : (

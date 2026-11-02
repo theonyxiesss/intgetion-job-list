@@ -5,6 +5,8 @@ import { ButtonLink, Icon, Logo, ScrollFrame, navFade } from "@/components/ui";
 import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
 import { AccountMenu, type AccountLink } from "./account-menu";
 import { HeaderAuth } from "./header-auth";
+import { HeaderMenu, type HeaderMenuGroup } from "./header-menu";
+import { HeaderSearch } from "./header-search";
 import { Suspense } from "react";
 import { NavProgress } from "./nav-progress";
 import { Link } from "@/i18n/navigation";
@@ -118,6 +120,37 @@ export async function Header() {
           : []),
       ]
     : [];
+  // Upwork-style groups (D592): hire, find work, the agent, the platform, plans.
+  const menuGroups: HeaderMenuGroup[] = [
+    {
+      label: t("headerNav.hire"),
+      links: [
+        { href: "/post-job", label: t("nav.postJob") },
+        { href: "/freelance", label: t("nav.freelance") },
+        { href: "/campaigns", label: t("nav.campaigns") },
+        { href: "/services", label: t("nav.services") },
+        ...main,
+      ],
+    },
+    {
+      label: t("headerNav.findWork"),
+      links: [
+        { href: "/jobs", label: t("nav.jobs") },
+        { href: "/freelance/tasks", label: t("nav.taskBoard") },
+        { href: "/creator/workspace", label: t("headerNav.creatorWork") },
+        { href: "/events", label: t("nav.events") },
+      ],
+    },
+    { href: "/chat", label: t("nav.chat") },
+    {
+      label: t("headerNav.about"),
+      links: [
+        { href: "/company", label: t("headerNav.aboutCompany") },
+        { href: "/for-employers", label: t("nav.employers") },
+      ],
+    },
+    { href: "/pricing", label: t("nav.pricing") },
+  ];
 
   return (
     <ScrollFrame className="sticky top-0 z-40 border-b border-transparent bg-bg transition-colors duration-200 data-[scrolled]:border-line">
@@ -132,24 +165,26 @@ export async function Header() {
           <Logo name={t("product.wordmark")} />
         </Link>
 
-        {main.length > 0 && (
-          <nav
-            aria-label={t("nav.main")}
-            className="ml-4 hidden min-w-0 flex-1 items-center gap-3 xl:flex 2xl:ml-6 2xl:gap-6"
-          >
-            {main.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="t-nav inline-flex min-h-11 shrink-0 items-center whitespace-nowrap text-fg-muted transition-colors hover:text-fg"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        )}
+        {/* Sections with dropdowns from lg up (D592, after the Upwork bar);
+            below that the menu sheet and tab bar keep them. */}
+        <div className="ml-4 hidden min-w-0 lg:flex 2xl:ml-8">
+          <HeaderMenu label={t("nav.main")} groups={menuGroups} />
+        </div>
 
-        <div className="ml-auto flex shrink-0 items-center gap-1 max-md:ml-0 max-md:w-full">
+        <div className="ml-auto hidden min-w-0 flex-1 justify-end pl-4 xl:flex">
+          <HeaderSearch
+            label={t("headerNav.searchLabel")}
+            placeholder={t("headerNav.searchPlaceholder")}
+            scopeLabel={t("headerNav.searchScope")}
+            scopes={[
+              { path: "/jobs", label: t("nav.jobs") },
+              { path: "/freelance", label: t("nav.freelance") },
+              { path: "/events", label: t("nav.events") },
+            ]}
+          />
+        </div>
+
+        <div className="ml-auto flex shrink-0 items-center gap-1 max-md:ml-0 max-md:w-full xl:ml-2">
           <span
             data-header-chat
             className={cn(
@@ -180,7 +215,8 @@ export async function Header() {
               />
             )}
           </span>
-          <span className="mr-1 inline-flex max-md:mr-auto">
+          {/* Both actions live in the dropdowns from lg up (D592). */}
+          <span className="mr-1 inline-flex max-md:mr-auto lg:hidden">
             <ButtonLink
               {...navFade}
               href="/post-job"
@@ -190,7 +226,7 @@ export async function Header() {
               {t("nav.postJob")}
             </ButtonLink>
           </span>
-          <span className="mr-1 inline-flex">
+          <span className="mr-1 inline-flex lg:hidden">
             <ButtonLink
               {...navFade}
               href="/pricing"
@@ -230,7 +266,7 @@ export async function Header() {
                 </span>
               </>
             ) : (
-              <span className="hidden sm:inline-flex">
+              <span className="hidden items-center gap-1 sm:inline-flex">
                 <HeaderAuth social={<SocialSignInStubs />} />
               </span>
             )}

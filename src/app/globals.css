@@ -395,21 +395,8 @@
   }
 }
 
-/* Spoki thinking, Grok-like (D588): light runs along the text and around
-   the live card's border, new words of an answer come out of a blur, long
-   step lists fade at the edges, and the finished label shifts slowly. */
-@property --spoki-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-
-@keyframes spoki-beam {
-  to {
-    --spoki-angle: 360deg;
-  }
-}
-
+/* Spoki answers (D588): new words come out of a blur, long step lists fade
+   at the edges. */
 @keyframes spoki-blur-in {
   from {
     opacity: 0;
@@ -419,40 +406,6 @@
     opacity: 1;
     filter: none;
   }
-}
-
-@keyframes spoki-gradient {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-.spoki-beam {
-  position: relative;
-}
-
-.spoki-beam::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  padding: 1px;
-  border-radius: inherit;
-  background: conic-gradient(
-    from var(--spoki-angle),
-    transparent 0 70%,
-    var(--accent) 85%,
-    var(--signal) 92%,
-    transparent 100%
-  );
-  mask:
-    linear-gradient(black 0 0) content-box exclude,
-    linear-gradient(black 0 0);
-  pointer-events: none;
-  animation: spoki-beam 3s linear infinite;
 }
 
 .spoki-step-in {
@@ -473,24 +426,105 @@
   );
 }
 
-.spoki-done {
-  background: linear-gradient(-45deg, var(--fg), var(--signal), var(--fg)) 0 0 /
-    400% 400%;
-  background-clip: text;
-  color: transparent;
-  animation: spoki-gradient 5s ease infinite;
+/* Spoki live work (D593): one living mark instead of a status line and a
+   card. A ring turns around a breathing core; the current step rises in;
+   placeholder cards glow while a search runs; the finished turn folds into
+   a pill. Everything stops under reduced motion. */
+@keyframes spoki-ring {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spoki-breathe {
+  0%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+@keyframes spoki-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes spoki-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.spoki-orb {
+  position: relative;
+  display: inline-flex;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: none;
+}
+
+.spoki-orb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1.5px solid var(--line);
+  border-top-color: var(--accent);
+  border-right-color: var(--signal);
+  animation: spoki-ring 1.1s linear infinite;
+}
+
+.spoki-orb::after {
+  content: "";
+  position: absolute;
+  inset: 0.5rem;
+  border-radius: 9999px;
+  background: var(--accent);
+  animation: spoki-breathe 1.6s ease-in-out infinite;
+}
+
+.spoki-rise {
+  animation: spoki-rise 280ms var(--ease-out-quint) both;
+}
+
+.spoki-skeleton {
+  height: 2.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  animation: spoki-glow 1.2s ease-in-out infinite;
+}
+
+.spoki-skeleton:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.spoki-skeleton:nth-child(3) {
+  animation-delay: 0.4s;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .spoki-beam::before,
   .spoki-step-in,
   .spoki-word,
-  .spoki-done {
+  .spoki-rise,
+  .spoki-skeleton,
+  .spoki-orb::before,
+  .spoki-orb::after {
     animation: none;
-  }
-  .spoki-done {
-    color: var(--fg);
-    background: none;
   }
 }
 

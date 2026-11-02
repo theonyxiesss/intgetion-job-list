@@ -3941,3 +3941,17 @@
 - Отклонения: UGC-брифы не тронуты (параллельная работа ТЗ 48).
 - OPEN QUESTION: нет.
 - Следующее: commit, merge в master и deploy — только после «да» основателя.
+
+## 2026-11-02 — Шапка по образцу Upwork (D592) — DONE локально
+
+- Сделано: выпадающие разделы «Нанять», «Найти работу», «Spoki», «О платформе», «Тарифы» с 1024 px; поиск с выбором раздела с 1280 px; «Войти» + «Регистрация» для гостя. Новые файлы `src/components/shell/header-menu.tsx`, `src/components/shell/header-search.tsx`; правки `header.tsx`, `header-auth.tsx`; ключ `headerNav` в 7 языках.
+- Проверки: `pnpm typecheck` → 0; `eslint src tests scripts` → 0 (полный `pnpm lint` → 1 только из-за копий агентов в `.claude/worktrees`); `pnpm test` → 0; `pnpm build` → 0 (SWC-кэш `.swc-cache-claude`); prettier по своим файлам → 0. Браузер: 1600/1024/375 px, меню открывается кликом и наведением, Esc закрывает и возвращает фокус, поиск «Фриланс» + «design» → `/ru/freelance?q=design`, горизонтальной прокрутки нет.
+- Миграции: нет. Не закоммичено, на сайт не выложено.
+- OPEN QUESTION: состав групп меню — выбор агента; `.claude/worktrees` стоит исключить из eslint.
+
+## 2026-11-02 — Spoki: живой индикатор работы (D593) — DONE локально
+
+- Сделано: `src/components/bot/work-progress-card.tsx` переписан (живое ядро, шаг с подъёмом, чипы и счётчик, заготовки карточек, плашка после ответа); `src/components/bot/thinking-status-line.tsx` удалён, в `chat.tsx` убраны строка статуса и состояния `thinking`/`activity`; стили в `src/app/globals.css`; ключи `chat.work.live` в 7 языках; тесты `work-progress-view.test.ts` (+4) и `tests/e2e/chat.spec.ts`.
+- Проверки: `pnpm typecheck` → 0; `eslint src tests scripts` → 0; `pnpm test` → 0 (258 файлов, 1945 passed); `pnpm build` → 0; prettier по своим файлам → 0. Браузер `/ru/chat` с подменённым потоком событий: шаги, заготовки, счётчик до 12, плашка «Подумал за 7,8 с · 2 шага»; ошибок в консоли нет. Один тестовый запрос «Ещё раз» ушёл в настоящий локальный Spoki (бесплатная модель OpenRouter) после перезагрузки страницы, сбросившей подмену.
+- e2e (Playwright) локально не запускался — проверит CI.
+- Не закоммичено, на сайт не выложено.

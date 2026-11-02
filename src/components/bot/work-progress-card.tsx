@@ -7,19 +7,61 @@ import {
   CircleAlert,
   Clock,
   LoaderCircle,
-  Sparkles,
 } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import type { StepSummary } from "@/modules/bot/ui/step-summary";
-import { stepForTool } from "./thinking-status";
+import { stepForTool, type ToolStep } from "./thinking-status";
 import { workSeconds, type WorkState, type WorkStep } from "./work-progress";
 
+/** Steps whose results are cards; placeholders glow while they run (D593). */
+const CARD_STEPS: ReadonlySet<ToolStep> = new Set([
+  "searchJobs",
+  "services",
+  "events",
+]);
+
+const stepIcon = (status: WorkStep["status"]) =>
+  status === "completed"
+    ? Check
+    : status === "running"
+      ? LoaderCircle
+      : status === "waiting"
+        ? Clock
+        : status === "failed"
+          ? CircleAlert
+          : Circle;
+
 /**
- * The turn's work as a timeline (TZ 36, task A): observed tool steps with
- * what each did and how long it took, never generated reasoning. Folded to
- * one line ("3 steps · 6 s"); the running step glints until it ends.
+ * A count that runs up once, unless motion is reduced. A timer, not
+ * animation frames: a background tab pauses frames and would leave the
+ * count half way. It starts at 1 so a search never reads "nothing found".
+ */
+function useCountUp(target: number): number {
+  const [value, setValue] = useState(target);
+  useEffect(() => {
+    if (
+      target <= 1 ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
+    const start = Date.now();
+    const timer = window.setInterval(() => {
+      const progress = Math.min(1, (Date.now() - start) / 600);
+      setValue(Math.max(1, Math.round(target * (1 - (1 - progress) ** 3))));
+      if (progress >= 1) window.clearInterval(timer);
+    }, 30);
+    return () => window.clearInterval(timer);
+  }, [target]);
+  return value;
+}
+
+/**
+ * The turn's work (TZ 36 task A, D593): observed tool steps, never generated
+ * reasoning. While Spoki works it is one living line — a breathing mark, the
+ * current step and a clock — with each finished step's real result below.
+ * Once done it folds into a pill ("Thought for 6 s · 3 steps").
  */
 export function WorkProgressCard({
   steps,
@@ -42,7 +84,7 @@ export function WorkProgressCard({
   // Open while Spoki works and folded once it is done, unless the person
   // opened or closed it themselves (D588).
   const [chosen, setChosen] = useState<boolean | null>(null);
-  const open = chosen ?? running;
+  const open = running || (chosen ?? false);
   const [elapsed, setElapsed] = useState(0);
   useEffect(() => {
     if (!running) return;
@@ -65,26 +107,31 @@ export function WorkProgressCard({
   const headline = thought
     ? t("thought", { seconds: total })
     : `${t("title")} · ${stateLabel}`;
-  const stateIcon =
-    state === "running"
-      ? Sparkles
-      : state === "failed" || attention
-        ? CircleAlert
-        : state === "stopped"
-          ? Circle
-          : Check;
+  const activeStep = active ? stepForTool(active.name) : null;
+  // What Spoki does now, in plain words: read the request, run a tool, write.
+  const phase = activeStep
+    ? t(`live.${activeStep}`)
+    : steps.length === 0
+      ? t("live.understanding")
+      : t("live.writing");
+
+  function filters(summary: Extract<StepSummary, { kind: "jobs" }>) {
+    return [
+      summary.category ? categories(summary.category as never) : null,
+      summary.remote ? t("summary.remote") : null,
+      summary.country ?? null,
+    ].filter((value): value is string => Boolean(value));
+  }
 
   function summaryText(summary: StepSummary): string {
     switch (summary.kind) {
       case "jobs": {
-        const filters = [
-          summary.category ? categories(summary.category as never) : null,
-          summary.remote ? t("summary.remote") : null,
-          summary.country ?? null,
-        ].filter(Boolean);
         const found = t("summary.jobs", { count: summary.count });
+        const chosenFilters = filters(summary);
         return [
-          filters.length ? `${filters.join(" · ")} → ${found}` : found,
+          chosenFilters.length
+            ? `${chosenFilters.join(" · ")} → ${found}`
+            : found,
           summary.dropped ? t("summary.dropped") : null,
         ]
           .filter(Boolean)
@@ -103,6 +150,76 @@ export function WorkProgressCard({
     }
   }
 
+  if (running) {
+    return (
+      <details
+        open
+        className="w-full"
+        data-work-progress
+        data-thinking
+        aria-busy="true"
+      >
+        <summary
+          className="flex min-h-11 list-none items-center gap-3 marker:content-none"
+          // The live line stays open until the turn ends.
+          onClick={(event) => event.preventDefault()}
+        >
+          <span className="spoki-orb" aria-hidden="true" />
+          <span role="status" className="min-w-0 flex-1 text-sm">
+            <span key={phase} className="spoki-rise inline-block">
+              <span className="spoki-shimmer">{phase}</span>
+            </span>
+          </span>
+          <span className="t-data text-xs text-fg-subtle tabular-nums">
+            {t("seconds", { seconds: tenths(elapsed) })}
+          </span>
+        </summary>
+        {steps.some((step) => step.status !== "running") ? (
+          <ol className="ml-10 grid gap-1 pt-1">
+            {steps
+              .filter((step) => step.status !== "running")
+              .map((step) => (
+                <LiveStep
+                  key={step.id}
+                  step={step}
+                  label={
+                    step.status === "running"
+                      ? t(`live.${stepForTool(step.name)}`)
+                      : t(`tools.${stepForTool(step.name)}`)
+                  }
+                  chips={
+                    step.summary?.kind === "jobs" ? filters(step.summary) : []
+                  }
+                  result={(count) =>
+                    step.summary
+                      ? summaryText(
+                          step.summary.kind === "jobs"
+                            ? { ...step.summary, dropped: false }
+                            : "count" in step.summary
+                              ? { ...step.summary, count }
+                              : step.summary,
+                        )
+                      : t(`step.${step.status}`)
+                  }
+                  found={(count) => t("summary.jobs", { count })}
+                />
+              ))}
+          </ol>
+        ) : null}
+        {activeStep && CARD_STEPS.has(activeStep) ? (
+          <div className="ml-10 grid gap-2 pt-2" aria-hidden="true">
+            <div className="spoki-skeleton" />
+            <div className="spoki-skeleton" />
+            <div className="spoki-skeleton" />
+          </div>
+        ) : null}
+        {fallback ? (
+          <p className="t-body-s ml-10 pt-1 text-fg-muted">{t("fallback")}</p>
+        ) : null}
+      </details>
+    );
+  }
+
   return (
     <details
       open={open}
@@ -110,59 +227,43 @@ export function WorkProgressCard({
         const next = event.currentTarget.open;
         if (next !== open) setChosen(next);
       }}
-      className={`rounded-lg border border-line bg-surface px-3 transition-colors duration-200 ${running ? "spoki-beam" : ""}`}
+      className="spoki-rise w-full"
       data-work-progress
     >
       <summary
-        className="group relative flex min-h-12 cursor-pointer list-none items-center gap-3 py-2.5 text-left text-sm text-fg-muted marker:content-none"
+        className="group inline-flex min-h-9 cursor-pointer list-none items-center gap-2 rounded-full border border-line px-3 text-sm text-fg-muted transition-colors duration-150 marker:content-none hover:border-line-strong hover:text-fg"
         aria-label={`${t("title")} · ${stateLabel}`}
       >
-        <span
-          className={`flex size-8 shrink-0 items-center justify-center rounded-full border border-line bg-surface-2 ${state === "failed" || attention ? "text-fg-muted" : "text-signal"}`}
-          aria-hidden="true"
-        >
-          <Icon icon={stateIcon} size={16} />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span role="status" className="block font-medium text-fg">
-            {running ? (
-              <span className="spoki-shimmer">{t("thinking")}</span>
-            ) : thought ? (
-              <span className="spoki-done">{headline}</span>
-            ) : (
-              headline
-            )}
-          </span>
-          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs">
-            {steps.length > 0 ? t("steps", { count: steps.length }) : null}
-            {running ? (
-              <span className="t-data tabular-nums">
-                {t("seconds", { seconds: tenths(elapsed) })}
-              </span>
-            ) : total !== null && !thought ? (
-              <span className="t-data tabular-nums">
-                {t("seconds", { seconds: total })}
-              </span>
-            ) : null}
-            {running && active ? (
-              <span className="spoki-shimmer">
-                {t(`tools.${stepForTool(active.name)}`)}
-              </span>
-            ) : null}
-          </span>
+        <Icon
+          icon={
+            state === "failed" || attention
+              ? CircleAlert
+              : state === "stopped"
+                ? Circle
+                : Check
+          }
+          size={16}
+          className={
+            state === "failed" || attention ? "text-fg-muted" : "text-signal"
+          }
+        />
+        <span role="status">
+          {headline}
+          {steps.length > 0 ? ` · ${t("steps", { count: steps.length })}` : ""}
+          {total !== null && !thought
+            ? ` · ${t("seconds", { seconds: total })}`
+            : ""}
         </span>
         <Icon
           icon={ChevronDown}
           size={16}
-          className="shrink-0 text-fg-subtle transition-transform duration-200 group-open:rotate-180"
+          className="text-fg-subtle transition-transform duration-200 group-open:rotate-180"
           aria-hidden="true"
         />
       </summary>
-      <div className="grid gap-3 pb-3">
+      <div className="grid gap-3 pt-3 pl-1">
         {steps.length === 0 ? (
-          <p className="t-body-s text-fg-muted">
-            {t(state === "running" ? "preparing" : "noSteps")}
-          </p>
+          <p className="t-body-s text-fg-muted">{t("noSteps")}</p>
         ) : (
           <ol className="spoki-feather grid max-h-56 overflow-y-auto py-2">
             {steps.map((step, index) => (
@@ -171,27 +272,12 @@ export function WorkProgressCard({
                 <span className="flex flex-col items-center">
                   <span
                     className={
-                      step.status === "running"
-                        ? "mt-0.5 text-accent motion-safe:animate-spin"
-                        : step.status === "completed"
-                          ? "mt-0.5 text-fg"
-                          : "mt-0.5 text-fg-muted"
+                      step.status === "completed"
+                        ? "mt-0.5 text-fg"
+                        : "mt-0.5 text-fg-muted"
                     }
                   >
-                    <Icon
-                      size={16}
-                      icon={
-                        step.status === "completed"
-                          ? Check
-                          : step.status === "running"
-                            ? LoaderCircle
-                            : step.status === "waiting"
-                              ? Clock
-                              : step.status === "failed"
-                                ? CircleAlert
-                                : Circle
-                      }
-                    />
+                    <Icon size={16} icon={stepIcon(step.status)} />
                   </span>
                   {index < steps.length - 1 ? (
                     <span
@@ -202,24 +288,10 @@ export function WorkProgressCard({
                 </span>
                 <span className="min-w-0 flex-1 pb-3">
                   <span className="flex flex-wrap items-baseline justify-between gap-x-2">
-                    <span
-                      className={
-                        step.status === "running" ? "spoki-shimmer" : undefined
-                      }
-                    >
-                      {t(`tools.${stepForTool(step.name)}`)}
-                    </span>
+                    <span>{t(`tools.${stepForTool(step.name)}`)}</span>
                     {step.ms !== undefined ? (
                       <span className="t-data text-fg-muted tabular-nums">
-                        {t("seconds", {
-                          seconds: format.number(
-                            Math.max(0.1, step.ms / 1000),
-                            {
-                              minimumFractionDigits: 1,
-                              maximumFractionDigits: 1,
-                            },
-                          ),
-                        })}
+                        {t("seconds", { seconds: tenths(step.ms) })}
                       </span>
                     ) : null}
                   </span>
@@ -242,5 +314,66 @@ export function WorkProgressCard({
         ) : null}
       </div>
     </details>
+  );
+}
+
+/** One step while Spoki works: what runs now, or what a finished one found. */
+function LiveStep({
+  step,
+  label,
+  chips,
+  result,
+  found,
+}: {
+  step: WorkStep;
+  label: string;
+  chips: string[];
+  result: (count: number) => string;
+  found: (count: number) => string;
+}) {
+  const summary = step.summary;
+  const target = summary && "count" in summary ? summary.count : 0;
+  const count = useCountUp(target);
+  const done = step.status === "completed";
+  return (
+    <li
+      className={`spoki-rise flex min-h-8 flex-wrap items-center gap-x-2 gap-y-1 text-sm ${done ? "text-fg" : "text-fg-muted"}`}
+    >
+      <Icon
+        size={16}
+        icon={stepIcon(step.status)}
+        className={
+          step.status === "running"
+            ? "text-accent motion-safe:animate-spin"
+            : done
+              ? "text-signal"
+              : undefined
+        }
+      />
+      {step.status === "running" ? (
+        <span className="spoki-shimmer">{label}</span>
+      ) : summary?.kind === "jobs" ? (
+        <>
+          {chips.map((chip) => (
+            <span
+              key={chip}
+              className="t-data rounded-full bg-surface-2 px-2 py-0.5 text-xs text-fg-muted"
+            >
+              {chip}
+            </span>
+          ))}
+          {chips.length > 0 ? (
+            <span aria-hidden="true" className="text-fg-subtle">
+              →
+            </span>
+          ) : null}
+          <span className="tabular-nums">{found(count)}</span>
+        </>
+      ) : summary ? (
+        <span className="tabular-nums">{result(count)}</span>
+      ) : (
+        <span>{label}</span>
+      )}
+    </li>
   );
 }
