@@ -33,8 +33,8 @@ export function HeaderAuth({ social }: { social: ReactNode }) {
   return (
     <>
       <Button
-        variant="secondary"
-        className="min-h-9! px-4! text-[14px]!"
+        variant="ghost"
+        className="min-h-10! px-4! text-[15px]! text-fg!"
         type="button"
         onPointerEnter={preloadForms}
         onFocus={preloadForms}
@@ -44,6 +44,18 @@ export function HeaderAuth({ social }: { social: ReactNode }) {
         }}
       >
         {nav("login")}
+      </Button>
+      <Button
+        className="min-h-10! px-5! text-[15px]!"
+        type="button"
+        onPointerEnter={preloadForms}
+        onFocus={preloadForms}
+        onClick={() => {
+          setMode("register");
+          setOpen(true);
+        }}
+      >
+        {nav("register")}
       </Button>
       {open ? (
         <Dialog

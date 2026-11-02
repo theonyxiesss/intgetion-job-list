@@ -1740,6 +1740,18 @@
       "stopped": "Response stopped",
       "attention": "Needs attention",
       "preparing": "Preparing a response",
+      "live": {
+        "understanding": "Understanding the request",
+        "writing": "Writing the answer",
+        "searchJobs": "Searching jobs",
+        "readJob": "Reading the job",
+        "events": "Looking for events",
+        "services": "Finding providers",
+        "account": "Checking your account",
+        "memory": "Updating memory",
+        "ugc": "Working on UGC",
+        "working": "Working on the platform"
+      },
       "interrupted": "Stopping the chat may not stop a server action. Check its status before trying again.",
       "customReply": "Answer in my own words",
       "step": {
@@ -5750,5 +5762,15 @@
       "draftNote": "Nothing is charged when you send a brief.",
       "fieldProblem": "Check the field “{field}”."
     }
+  },
+  "headerNav": {
+    "hire": "Hire talent",
+    "findWork": "Find work",
+    "about": "Why INTGETION",
+    "aboutCompany": "About us",
+    "creatorWork": "Work for UGC creators",
+    "searchLabel": "Site search",
+    "searchPlaceholder": "Search",
+    "searchScope": "Where to search"
   }
 }

@@ -1740,6 +1740,18 @@
       "stopped": "Resposta interrompida",
       "attention": "Precisa de atenção",
       "preparing": "Preparando a resposta",
+      "live": {
+        "understanding": "Entendendo o pedido",
+        "writing": "Escrevendo a resposta",
+        "searchJobs": "Buscando vagas",
+        "readJob": "Lendo a vaga",
+        "events": "Procurando eventos",
+        "services": "Procurando profissionais",
+        "account": "Verificando sua conta",
+        "memory": "Atualizando a memória",
+        "ugc": "Trabalhando no UGC",
+        "working": "Trabalhando na plataforma"
+      },
       "interrupted": "Uma ação do servidor pode continuar após interromper o chat. Confira o status antes de tentar novamente.",
       "customReply": "Responder com minhas palavras",
       "step": {
@@ -5243,5 +5255,15 @@
       "draftNote": "Nada é cobrado ao enviar um brief.",
       "fieldProblem": "Verifique o campo “{field}”."
     }
+  },
+  "headerNav": {
+    "hire": "Contratar talentos",
+    "findWork": "Encontrar trabalho",
+    "about": "Por que a INTGETION",
+    "aboutCompany": "Sobre nós",
+    "creatorWork": "Trabalho para criadores UGC",
+    "searchLabel": "Busca no site",
+    "searchPlaceholder": "Buscar",
+    "searchScope": "Onde buscar"
   }
 }
