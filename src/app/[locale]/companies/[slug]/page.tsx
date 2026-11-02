@@ -24,6 +24,7 @@ import {
 } from "@/modules/seo/site";
 import { localePrefix } from "@/i18n/paths";
 import { RouteMessages } from "@/components/shell/route-messages";
+import { RichText } from "@/components/ui/rich-text";
 
 export const dynamic = "force-dynamic";
 
@@ -164,7 +165,7 @@ export default async function CompanyPage({
                 ]}
               />
               {company.description ? (
-                <p className="whitespace-pre-wrap">{company.description}</p>
+                <RichText text={company.description} className="" />
               ) : null}
             </div>
           ) : (

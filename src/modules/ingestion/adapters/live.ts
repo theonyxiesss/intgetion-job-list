@@ -1,3 +1,4 @@
+import { htmlToMarkdown } from "@/lib/rich-text";
 import type { RawImportedJob } from "./types";
 
 /**
@@ -57,23 +58,12 @@ export async function fetchJson(
   }
 }
 
-/** HTML into plain text with paragraph breaks, at most 8000 characters. */
+/**
+ * A source's HTML as Markdown, at most 8000 characters (D591): headings,
+ * paragraphs, lists, bold and links stay; scripts, frames and images go.
+ */
 export function plain(html: string): string {
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style[\s\S]*?<\/style>/gi, " ")
-    .replace(/<\/(p|li|h[1-6]|div)>|<br\s*\/?>/gi, "\n")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&#0?39;|&apos;/gi, "'")
-    .replace(/&quot;/g, '"')
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&amp;/g, "&")
-    .replace(/[ \t]+/g, " ")
-    .replace(/\s*\n\s*/g, "\n")
-    .trim()
-    .slice(0, 8000);
+  return htmlToMarkdown(html);
 }
 
 export function text(value: unknown): string {

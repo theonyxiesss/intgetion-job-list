@@ -3930,3 +3930,14 @@
 - Тесты: `support-clock-ledger.test.ts` (8). `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (260 файлов, 1955 passed, 3 skipped); `pnpm build` → 0 (с `SWC_NATIVE_BINDING_CACHE=C:/Users/Admin/.swc-cache`); `prettier --check` изменённых файлов → 0. Полный `pnpm format:check` локально не показателен (CRLF рабочей копии Windows) — проверяется в CI.
 - OPEN QUESTION: срок реакции поддержки не задан основателем — взято 3 рабочих дня (как D583), записано D590.
 - Не делалось (ждёт основателя): рельс выплат и юрист (п. 5 §14), биллинг плана UGC, U6, другие плееры предпросмотра.
+
+## 2026-11-02 — Описания как Markdown (D591) — DONE локально
+
+- Сделано: `src/lib/rich-text.ts` (HTML→Markdown для импорта, нормализатор старых текстов, выжимка без разметки), `src/components/ui/rich-text.tsx` (серверный безопасный рендер на `react-markdown` + `remark-gfm`). Импорт: `plain()` → Markdown, Lever/Ashby берут HTML-поля, `normalize.ts` больше не склеивает строки. Подключено на страницах вакансии, работодателя, компании, события, услуги, задачи, заказа фриланса и админки услуги; карточки — выжимка `markdownToPlain`.
+- Причина «сплошного куска»: `plain()` срезал HTML в текст, а `squash` в `normalizeImportedJob` превращал все переводы строк в пробелы.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm lint` → 0; `pnpm test` → 0 (261 файл, 1965 passed, 3 skipped); `pnpm build` → 0 (SWC-кэш `~/.swc-cache`); `prettier --check` по изменённым файлам → 0. Визуально: компонент отрендерен на сервере с CSS сборки, скриншоты до/после.
+- Не проверено: живые страницы с базой (в worktree нет `.env.local`, копировать секреты без «да» нельзя); integration/e2e — CI.
+- Миграции: нет. Новых зависимостей нет: `pnpm add node-html-markdown` заблокирован автопроверкой окружения, конвертер написан сам.
+- Отклонения: UGC-брифы не тронуты (параллельная работа ТЗ 48).
+- OPEN QUESTION: нет.
+- Следующее: commit, merge в master и deploy — только после «да» основателя.

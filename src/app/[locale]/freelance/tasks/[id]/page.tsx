@@ -10,6 +10,7 @@ import { getTaskView, wasInvited } from "@/modules/freelance/service";
 import { TaskProposalForm } from "@/modules/freelance/ui/task-proposal-form";
 import { formatUsd } from "@/modules/freelance/ui/format";
 import { freelanceTasksCopy } from "@/modules/freelance/ui/server-copy";
+import { RichText } from "@/components/ui/rich-text";
 
 export const dynamic = "force-dynamic";
 
@@ -88,9 +89,7 @@ export default async function FreelanceTaskPage({
             {task.wantedBy}
           </p>
         ) : null}
-        <p className="max-w-[68ch] whitespace-pre-wrap leading-relaxed">
-          {task.description}
-        </p>
+        <RichText text={task.description} className="leading-relaxed" />
         {task.own ? (
           <Link
             href="/freelance/tasks/mine"

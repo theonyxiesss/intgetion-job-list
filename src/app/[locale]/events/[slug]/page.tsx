@@ -24,6 +24,7 @@ import {
   metaDescription,
   siteUrl,
 } from "@/modules/seo/site";
+import { RichText } from "@/components/ui/rich-text";
 
 export const dynamic = "force-dynamic";
 
@@ -143,11 +144,7 @@ export default async function EventPage({
               </ul>
             </section>
           ) : null}
-          {event.description ? (
-            <div className="t-body-l max-w-[68ch] whitespace-pre-wrap">
-              {event.description}
-            </div>
-          ) : null}
+          {event.description ? <RichText text={event.description} /> : null}
           <p className="max-w-[68ch] text-fg-muted">{t("networking")}</p>
           {organizerHref && !ended ? (
             <div className="flex flex-col gap-2">

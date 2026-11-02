@@ -15,6 +15,7 @@ import { HttpError } from "@/lib/http";
 import { listOpenTasks } from "@/modules/freelance/service";
 import { formatUsd } from "@/modules/freelance/ui/format";
 import { freelanceTasksCopy } from "@/modules/freelance/ui/server-copy";
+import { markdownToPlain } from "@/lib/rich-text";
 
 export const dynamic = "force-dynamic";
 
@@ -132,8 +133,8 @@ export default async function FreelanceTasksPage({
                         <span className="t-h3">{task.title}</span>
                         <Badge>{copy[`category_${task.category}`]}</Badge>
                       </span>
-                      <span className="line-clamp-3 whitespace-pre-wrap text-fg-muted">
-                        {task.description}
+                      <span className="line-clamp-3 text-fg-muted">
+                        {markdownToPlain(task.description)}
                       </span>
                       <span className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-fg-muted">
                         <span className="font-mono">
