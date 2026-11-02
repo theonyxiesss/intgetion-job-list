@@ -6,7 +6,6 @@ import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
 import { AccountMenu, type AccountLink } from "./account-menu";
 import { HeaderAuth } from "./header-auth";
 import { HeaderMenu, type HeaderMenuGroup } from "./header-menu";
-import { HeaderSearch } from "./header-search";
 import { Suspense } from "react";
 import { NavProgress } from "./nav-progress";
 import { Link } from "@/i18n/navigation";
@@ -120,28 +119,33 @@ export async function Header() {
           : []),
       ]
     : [];
-  // Upwork-style groups (D592): hire, find work, the agent, the platform, plans.
+  // Upwork-style groups (D592); each item says what it does (D596).
   const menuGroups: HeaderMenuGroup[] = [
     {
       label: t("headerNav.hire"),
       links: [
         { href: "/post-job", label: t("nav.postJob") },
-        { href: "/freelance", label: t("nav.freelance") },
-        { href: "/campaigns", label: t("nav.campaigns") },
-        { href: "/services", label: t("nav.services") },
-        ...main,
+        { href: "/freelance", label: t("headerNav.findFreelancer") },
+        { href: "/campaigns", label: t("headerNav.orderUgc") },
+        { href: "/services", label: t("headerNav.orderService") },
+        ...(signedIn
+          ? [
+              { href: "/employer/jobs", label: t("nav.myJobs") },
+              { href: "/employer/billing", label: t("headerNav.billing") },
+            ]
+          : []),
       ],
     },
     {
       label: t("headerNav.findWork"),
       links: [
-        { href: "/jobs", label: t("nav.jobs") },
-        { href: "/freelance/tasks", label: t("nav.taskBoard") },
+        { href: "/jobs", label: t("headerNav.remoteJobs") },
+        { href: "/freelance/tasks", label: t("headerNav.freelanceTasks") },
         { href: "/creator/workspace", label: t("headerNav.creatorWork") },
-        { href: "/events", label: t("nav.events") },
+        { href: "/events", label: t("headerNav.eventsConfs") },
       ],
     },
-    { href: "/chat", label: t("nav.chat") },
+    { href: "/chat", label: t("headerNav.spokiAgent") },
     {
       label: t("headerNav.about"),
       links: [
@@ -165,26 +169,13 @@ export async function Header() {
           <Logo name={t("product.wordmark")} />
         </Link>
 
-        {/* Sections with dropdowns from lg up (D592, after the Upwork bar);
+        {/* Sections with dropdowns from xl up (D592, D596: action words need room);
             below that the menu sheet and tab bar keep them. */}
-        <div className="ml-4 hidden min-w-0 lg:flex 2xl:ml-8">
+        <div className="ml-4 hidden min-w-0 xl:flex 2xl:ml-8">
           <HeaderMenu label={t("nav.main")} groups={menuGroups} />
         </div>
 
-        <div className="ml-auto hidden min-w-0 flex-1 justify-end pl-4 xl:flex">
-          <HeaderSearch
-            label={t("headerNav.searchLabel")}
-            placeholder={t("headerNav.searchPlaceholder")}
-            scopeLabel={t("headerNav.searchScope")}
-            scopes={[
-              { path: "/jobs", label: t("nav.jobs") },
-              { path: "/freelance", label: t("nav.freelance") },
-              { path: "/events", label: t("nav.events") },
-            ]}
-          />
-        </div>
-
-        <div className="ml-auto flex shrink-0 items-center gap-1 max-md:ml-0 max-md:w-full xl:ml-2">
+        <div className="ml-auto flex shrink-0 items-center gap-1 max-md:ml-0 max-md:w-full">
           <span
             data-header-chat
             className={cn(
@@ -215,8 +206,8 @@ export async function Header() {
               />
             )}
           </span>
-          {/* Both actions live in the dropdowns from lg up (D592). */}
-          <span className="mr-1 inline-flex max-md:mr-auto lg:hidden">
+          {/* Both actions live in the dropdowns from xl up (D592, D596). */}
+          <span className="mr-1 inline-flex max-md:mr-auto xl:hidden">
             <ButtonLink
               {...navFade}
               href="/post-job"
@@ -226,7 +217,7 @@ export async function Header() {
               {t("nav.postJob")}
             </ButtonLink>
           </span>
-          <span className="mr-1 inline-flex lg:hidden">
+          <span className="mr-1 inline-flex xl:hidden">
             <ButtonLink
               {...navFade}
               href="/pricing"

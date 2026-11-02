@@ -5363,9 +5363,14 @@
     "findWork": "Найти работу",
     "about": "О платформе",
     "aboutCompany": "О компании",
-    "creatorWork": "Работа для UGC-креаторов",
-    "searchLabel": "Поиск по сайту",
-    "searchPlaceholder": "Поиск",
-    "searchScope": "Где искать"
+    "findFreelancer": "Найти фрилансера",
+    "orderUgc": "Заказать UGC-видео",
+    "orderService": "Заказать проект под ключ",
+    "remoteJobs": "Удалённые вакансии",
+    "freelanceTasks": "Задачи для фрилансеров",
+    "creatorWork": "Снимать UGC-видео",
+    "eventsConfs": "События и конференции",
+    "spokiAgent": "ИИ-агент Spoki",
+    "billing": "Оплата и счета"
   }
 }

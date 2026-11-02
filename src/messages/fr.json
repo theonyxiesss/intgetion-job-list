@@ -5363,9 +5363,14 @@
     "findWork": "Trouver du travail",
     "about": "Pourquoi INTGETION",
     "aboutCompany": "À propos",
-    "creatorWork": "Missions pour créateurs UGC",
-    "searchLabel": "Recherche sur le site",
-    "searchPlaceholder": "Rechercher",
-    "searchScope": "Où chercher"
+    "findFreelancer": "Trouver un freelance",
+    "orderUgc": "Commander des vidéos UGC",
+    "orderService": "Commander un projet clé en main",
+    "remoteJobs": "Emplois à distance",
+    "freelanceTasks": "Missions pour freelances",
+    "creatorWork": "Tourner des vidéos UGC",
+    "eventsConfs": "Événements et conférences",
+    "spokiAgent": "Agent IA Spoki",
+    "billing": "Paiements et factures"
   }
 }
