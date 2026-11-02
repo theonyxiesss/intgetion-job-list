@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { HeroWordmark } from "@/components/home/hero-wordmark";
+import { LandingPlatform } from "@/components/home/platform";
 import {
   LandingCta,
   LandingFeatures,
@@ -26,7 +27,7 @@ import { localePrefix } from "@/i18n/paths";
 /**
  * The home page is the job feed (D332): top jobs, then the long feed. Since
  * D428 a hero sits above it and the features and pricing sit between the top
- * jobs and the rest.
+ * jobs and the rest. Since D594 the platform showcase follows the hero.
  */
 const FEED_SIZE = 50;
 const TOP_SIZE = 3;
@@ -261,6 +262,8 @@ export default async function HomePage({
           </form>
         </Container>
       </section>
+
+      <LandingPlatform />
 
       <Suspense fallback={null}>
         <JobFeed

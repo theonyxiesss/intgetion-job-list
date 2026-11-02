@@ -291,6 +291,82 @@
         "team": "Team · por mês",
         "teamPrice": "$80"
       },
+      "platform": {
+        "label": "Uma plataforma",
+        "title": "Vagas, trabalhos e criadores em uma só conta",
+        "lead": "Vagas remotas, freelance, vídeos UGC e eventos. O Spoki guia você por tudo, e você paga em USDC ou USDT.",
+        "open": "Abrir",
+        "spoki": {
+          "title": "Spoki, seu agente de carreira",
+          "text": "Descreva o que precisa com suas palavras. O Spoki busca, compara e explica por que uma opção combina. Ele lembra de você e avisa no Telegram.",
+          "ask": "Encontre uma vaga remota de design",
+          "step": "Buscando vagas",
+          "chipOne": "Design",
+          "chipTwo": "remoto",
+          "found": "12 vagas",
+          "fit": "87% de compatibilidade: Figma, UTC+2, 6 h em comum"
+        },
+        "jobs": {
+          "title": "Vagas remotas",
+          "text": "Novas vagas a cada hora de fontes confiáveis e direto das empresas.",
+          "remote": "Remoto",
+          "roles": {
+            "one": "Product designer",
+            "two": "Engenheiro frontend",
+            "three": "Growth marketer",
+            "four": "Analista de dados"
+          },
+          "pay": {
+            "one": "$4–6k",
+            "two": "$5–7k",
+            "three": "$3–5k",
+            "four": "$4–5k"
+          }
+        },
+        "freelance": {
+          "title": "Freelance com preço claro",
+          "text": "Pacotes de serviços e tarefas com orçamento. Sala do pedido, entrega e avaliação em uma página.",
+          "price": "A partir de $10",
+          "steps": {
+            "request": "Pedido",
+            "work": "Trabalho",
+            "delivery": "Entrega",
+            "review": "Avaliação"
+          }
+        },
+        "ugc": {
+          "title": "Vídeos UGC para marcas",
+          "text": "Briefing, escolha de criadores, uma revisão e o pagamento. O orçamento fica claro desde o início.",
+          "accepted": "Aceito"
+        },
+        "events": {
+          "title": "Eventos e conferências",
+          "text": "Centenas de conferências e prazos de submissão, filtrados por tema e formato.",
+          "dates": {
+            "one": "18 nov",
+            "two": "3 dez",
+            "three": "21 jan"
+          },
+          "names": {
+            "one": "Web3 builders summit · online",
+            "two": "AI engineering conf",
+            "three": "Product design week"
+          }
+        },
+        "pay": {
+          "title": "Pague com cripto",
+          "text": "USDC e USDT direto da sua carteira. Sem cartões nem tarifas bancárias."
+        },
+        "langs": {
+          "title": "Sete idiomas",
+          "text": "A interface, os e-mails e o Spoki falam o seu idioma."
+        },
+        "reach": {
+          "title": "Telegram e assistentes de IA",
+          "text": "Entre e converse pelo @intgetion_bot. Assistentes de IA buscam nossas vagas via MCP."
+        }
+      },
+
       "ctaTitle": "Pronto para encontrar trabalho remoto?"
     }
   },

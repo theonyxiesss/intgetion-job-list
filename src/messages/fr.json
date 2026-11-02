@@ -291,6 +291,82 @@
         "team": "Team · par mois",
         "teamPrice": "$80"
       },
+      "platform": {
+        "label": "Une plateforme",
+        "title": "Emplois, missions et créateurs dans un seul compte",
+        "lead": "Emplois à distance, freelance, vidéos UGC et événements. Spoki vous guide partout, et vous payez en USDC ou USDT.",
+        "open": "Ouvrir",
+        "spoki": {
+          "title": "Spoki, votre agent carrière",
+          "text": "Décrivez votre besoin avec vos mots. Spoki cherche, compare et explique pourquoi une option convient. Il se souvient de vous et vous rappelle dans Telegram.",
+          "ask": "Trouve-moi un poste de designer à distance",
+          "step": "Je cherche des offres",
+          "chipOne": "Design",
+          "chipTwo": "à distance",
+          "found": "12 offres",
+          "fit": "Correspond à 87 % : Figma, UTC+2, 6 h en commun"
+        },
+        "jobs": {
+          "title": "Emplois à distance",
+          "text": "De nouveaux postes chaque heure, de sources fiables et directement des entreprises.",
+          "remote": "À distance",
+          "roles": {
+            "one": "Product designer",
+            "two": "Ingénieur frontend",
+            "three": "Growth marketer",
+            "four": "Analyste de données"
+          },
+          "pay": {
+            "one": "$4–6k",
+            "two": "$5–7k",
+            "three": "$3–5k",
+            "four": "$4–5k"
+          }
+        },
+        "freelance": {
+          "title": "Freelance au prix clair",
+          "text": "Offres de services et missions avec budget. Salle de commande, livraison et avis sur une seule page.",
+          "price": "Dès 10 $",
+          "steps": {
+            "request": "Demande",
+            "work": "Travail",
+            "delivery": "Livraison",
+            "review": "Avis"
+          }
+        },
+        "ugc": {
+          "title": "Vidéos UGC pour les marques",
+          "text": "Brief, choix des créateurs, une retouche et le paiement. Le budget est clair dès le départ.",
+          "accepted": "Accepté"
+        },
+        "events": {
+          "title": "Événements et conférences",
+          "text": "Des centaines de conférences et d’appels à communications, filtrés par thème et format.",
+          "dates": {
+            "one": "18 nov.",
+            "two": "3 déc.",
+            "three": "21 janv."
+          },
+          "names": {
+            "one": "Web3 builders summit · en ligne",
+            "two": "AI engineering conf",
+            "three": "Product design week"
+          }
+        },
+        "pay": {
+          "title": "Payez en crypto",
+          "text": "USDC et USDT directement depuis votre portefeuille. Sans carte ni frais bancaires."
+        },
+        "langs": {
+          "title": "Sept langues",
+          "text": "L’interface, les e-mails et Spoki parlent votre langue."
+        },
+        "reach": {
+          "title": "Telegram et assistants IA",
+          "text": "Connexion et chat via @intgetion_bot. Les assistants IA cherchent nos offres via MCP."
+        }
+      },
+
       "ctaTitle": "Prêt à trouver un travail à distance ?"
     }
   },
