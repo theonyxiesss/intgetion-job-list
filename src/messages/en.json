@@ -118,8 +118,8 @@
   },
   "meta": {
     "description": "Remote jobs and tech events. Real matches.",
-    "homeTitle": "Remote Web3 Jobs & Tech Events",
-    "homeDescription": "An aggregator of remote jobs in Web3, crypto and tech, plus summits, meetups, hackathons and career events for networking. Salary ranges, time-zone overlap and matches to your profile.",
+    "homeTitle": "Remote Work Platform: Jobs, Freelance & UGC",
+    "homeDescription": "Remote jobs and freelance tasks, freelancers and UGC creators to hire, plus Web3 and tech events. Spoki, the AI agent, guides every step; pay in USDC or USDT.",
     "ogAlt": "INTGETION Job List — remote work in Web3"
   },
   "nav": {
@@ -196,32 +196,27 @@
     "it": "Italian"
   },
   "home": {
-    "tagline": "Remote jobs and tech events. Real matches.",
-    "searchLabel": "Search",
-    "searchPlaceholder": "Role, skill, or company",
-    "searchSubmit": "Search",
-    "latestEmpty": "Published vacancies will appear here.",
+    "tagline": "One platform for remote work: jobs, freelance, UGC and events.",
     "feedTitle": "Remote jobs",
     "topJobs": "Top jobs",
-    "allJobs": "All jobs",
     "moreJobs": "Show more jobs",
     "faqTitle": "Questions",
     "faq": {
       "what": {
         "q": "What is INTGETION JOB LIST?",
-        "a": "An aggregator of remote jobs and of Web3 and tech events. Search jobs, find summits and meetups to network at, and let the Spoki assistant suggest what fits your profile."
+        "a": "A platform for remote work: jobs, freelance services and tasks, UGC videos for brands, and Web3 and tech events in one account. The Spoki agent helps both sides."
       },
       "free": {
         "q": "Is it free?",
         "a": "Yes. Searching, applying and posting jobs are free. Paid plans add speed and reach — see Pricing."
       },
-      "apply": {
-        "q": "How do I apply?",
-        "a": "Open a job and press Apply. For imported jobs you apply on the employer’s own site."
+      "spoki": {
+        "q": "What can Spoki do?",
+        "a": "Spoki searches jobs, services, tasks and events, drafts a job post, a service or a UGC brief with you, and sends reminders in Telegram. Anything that changes your account waits for your confirmation."
       },
-      "post": {
-        "q": "How do I post a job?",
-        "a": "Press Post a job, sign in and fill in the form. The job appears in the feed after review."
+      "pay": {
+        "q": "How do payments work?",
+        "a": "Plans, freelance orders and UGC budgets are paid in USDC or USDT from your wallet. A freelance order is paid straight to the freelancer’s address."
       },
       "contacts": {
         "q": "Who sees my contacts?",
@@ -229,76 +224,27 @@
       }
     },
     "landing": {
-      "heroTitle": "Remote jobs. Real matches.",
-      "heroLead": "Jobs matched to your skills, salary and working hours. Spoki, the career agent, finds roles that fit and tells you why.",
-      "findJobs": "Find remote jobs",
-      "featuresTitle": "Everything you need to find remote work",
-      "tz": {
-        "title": "Time zone matching",
-        "text": "Matching by skills and working hours, not keywords. You see how many hours you overlap with the team.",
-        "you": "You · UTC+3",
-        "team": "Team · UTC−1",
-        "overlap": "Overlap 5 h"
-      },
-      "salary": {
-        "title": "Salary you can compare",
-        "text": "Every range is shown in your currency with taxes taken into account. Fewer off-target applications.",
-        "range": "USD 4 200–5 600 / mo",
-        "net": "After tax"
-      },
-      "agent": {
-        "title": "Spoki, the career agent",
-        "text": "A conversation that learns what work you want and keeps looking. Also in Telegram.",
-        "match": "Match 87%",
-        "why": "Solidity · UTC+2 · 6 h"
-      },
-      "more": {
-        "mutual": {
-          "title": "Mutual interest",
-          "text": "A company sees your contacts only after mutual interest."
-        },
-        "verified": {
-          "title": "Verified companies",
-          "text": "Corporate email or a DNS record. The badge is earned, never bought."
-        },
-        "alerts": {
-          "title": "Saved searches",
-          "text": "Up to 10 searches with alerts by email and in Telegram."
-        },
-        "telegram": {
-          "title": "Telegram",
-          "text": "Sign in, chat with @intgetion_bot and follow the Jobs Alert channel."
-        },
-        "salaries": {
-          "title": "Salaries",
-          "text": "Salary pages by role and level, open to everyone."
-        },
-        "web3": {
-          "title": "Web3 and regular remote",
-          "text": "Both in one place, in seven languages."
+      "heroTitle": "One platform for remote work",
+      "heroLead": "Remote jobs, freelance, UGC videos and events in one account. Tell Spoki what you need, and it takes it from there.",
+      "ask": {
+        "label": "Tell Spoki what you need",
+        "placeholder": "What do you need? For example, a designer for a landing page",
+        "submit": "Ask Spoki",
+        "examplesLabel": "Try:",
+        "examples": {
+          "work": "Help me find a remote job",
+          "hire": "I want to hire a freelancer",
+          "ugc": "I want to order UGC videos",
+          "task": "Find me a freelance task"
         }
       },
-      "pricing": {
-        "label": "Pricing",
-        "title": "Post a job for free.",
-        "link": "See pricing",
-        "boards": "Big remote boards",
-        "boardsPrice": "$250–300",
-        "start": "Start",
-        "startPrice": "$0",
-        "hire": "Hire · with refund",
-        "hirePrice": "$79",
-        "team": "Team · per month",
-        "teamPrice": "$80"
-      },
-      "platform": {
-        "label": "One platform",
-        "title": "Jobs, gigs and creators in one account",
-        "lead": "Remote jobs, freelance, UGC videos and events. Spoki guides you through all of it, and you pay in USDC or USDT.",
-        "open": "Open",
+      "services": {
+        "label": "One account",
+        "title": "Work or hire with the same account",
+        "lead": "No second sign-up and no role to pick. Your profile and wallet work across every service.",
         "spoki": {
-          "title": "Spoki, your career agent",
-          "text": "Describe what you need in your own words. Spoki searches, compares and explains why an option fits. It remembers you and reminds you in Telegram.",
+          "title": "Spoki, your AI agent",
+          "text": "Describe the task in your own words. Spoki searches jobs, freelancers, tasks and events, compares them and explains why an option fits. It remembers you and reminds you in Telegram.",
           "ask": "Find me a remote design job",
           "step": "Searching jobs",
           "chipOne": "Design",
@@ -352,6 +298,24 @@
             "two": "AI engineering conf",
             "three": "Product design week"
           }
+        }
+      },
+      "platform": {
+        "label": "How it works",
+        "title": "One conversation instead of five sites",
+        "steps": {
+          "one": {
+            "title": "Describe the task",
+            "text": "In your own words, on the site or in Telegram."
+          },
+          "two": {
+            "title": "Spoki finds options",
+            "text": "Jobs, freelancers, tasks or creators, and why each one fits."
+          },
+          "three": {
+            "title": "You decide",
+            "text": "Spoki asks before every action on your account. You agree on terms, pay and leave a review."
+          }
         },
         "pay": {
           "title": "Pay with crypto",
@@ -366,8 +330,7 @@
           "text": "Sign in and chat via @intgetion_bot. AI assistants can search our jobs over MCP."
         }
       },
-
-      "ctaTitle": "Ready to find remote work?"
+      "ctaTitle": "Ready to get started?"
     }
   },
   "categories": {

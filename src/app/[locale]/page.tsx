@@ -1,21 +1,14 @@
 import type { Metadata } from "next";
-import { Search } from "lucide-react";
-import { Suspense, type ReactNode } from "react";
+import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { HeroWordmark } from "@/components/home/hero-wordmark";
-import { LandingPlatform } from "@/components/home/platform";
-import {
-  LandingCta,
-  LandingFeatures,
-  LandingPricing,
-} from "@/components/home/landing";
-import { Button, ButtonLink, buttonClass } from "@/components/ui/button";
+import { HomeAsk } from "@/components/home/home-ask";
+import { LandingPlatform, LandingServices } from "@/components/home/platform";
+import { LandingCta } from "@/components/home/landing";
+import { buttonClass } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { EmptyState } from "@/components/ui/feedback";
-import { Icon } from "@/components/ui/icon";
-import { Input } from "@/components/ui/input";
 import { navForward } from "@/components/ui/page-transition";
 import { listPromotedJobs, searchJobs } from "@/modules/jobs/service";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
@@ -25,13 +18,14 @@ import { languageAlternates, siteUrl } from "@/modules/seo/site";
 import { localePrefix } from "@/i18n/paths";
 
 /**
- * The home page is the job feed (D332): top jobs, then the long feed. Since
- * D428 a hero sits above it and the features and pricing sit between the top
- * jobs and the rest. Since D594 the platform showcase follows the hero.
+ * The home page presents the platform for remote work (D601, replacing the
+ * job feed of D332): the hero hands a task to Spoki, then a tile for each
+ * service, how it works, a few top jobs and the questions.
  */
 const FEED_SIZE = 50;
 const TOP_SIZE = 3;
-const FAQ = ["what", "free", "apply", "post", "contacts"] as const;
+const FAQ = ["what", "free", "spoki", "pay", "contacts"] as const;
+const EXAMPLES = ["work", "hire", "ugc", "task"] as const;
 
 type FeedJob = Awaited<ReturnType<typeof searchJobs>>["items"][number];
 
@@ -46,13 +40,8 @@ function pickTop(jobs: readonly FeedJob[]): FeedJob[] {
     .map(({ job }) => job);
 }
 
-async function JobFeed({
-  locale,
-  between,
-}: {
-  locale: string;
-  between: ReactNode;
-}) {
+/** Promoted jobs and the top three, then the catalog (D601). */
+async function JobFeed({ locale }: { locale: string }) {
   const t = await getTranslations("home");
   const jobsT = await getTranslations("jobs");
   const promoted = await listPromotedJobs(locale);
@@ -61,25 +50,16 @@ async function JobFeed({
     { limit: FEED_SIZE, minOverlap: 3, sort: "newest" },
     locale,
   );
-  if (result.items.length === 0 && promoted.length === 0) {
-    return (
-      <>
-        <Container>
-          <EmptyState title={t("latestEmpty")} />
-        </Container>
-        {between}
-      </>
-    );
-  }
-  const feed = result.items.filter((job) => !promotedIds.has(job.id));
-  const top = pickTop(feed);
-  const topIds = new Set(top.map((job) => job.id));
-  const rest = feed.filter((job) => !topIds.has(job.id));
+  const top = pickTop(result.items.filter((job) => !promotedIds.has(job.id)));
+  if (top.length === 0 && promoted.length === 0) return null;
   return (
-    <>
-      {promoted.length > 0 ? (
-        <section aria-labelledby="promoted-jobs" className="pt-8 pb-2 md:pt-10">
-          <Container className="flex flex-col gap-6">
+    <section
+      aria-labelledby="top-jobs"
+      className="border-t border-line py-16 md:py-24"
+    >
+      <Container className="flex flex-col gap-6">
+        {promoted.length > 0 ? (
+          <>
             <h2 id="promoted-jobs" className="t-h2">
               {jobsT("promotedHeading")}
             </h2>
@@ -90,60 +70,29 @@ async function JobFeed({
                 </li>
               ))}
             </ul>
-          </Container>
-        </section>
-      ) : null}
-      {top.length > 0 ? (
-        <section
-          aria-labelledby="top-jobs"
-          className="pt-8 pb-6 md:pt-10 md:pb-8"
+          </>
+        ) : null}
+        <h2 id="top-jobs" className="t-h2">
+          {t("topJobs")}
+        </h2>
+        {top.length > 0 ? (
+          <ul className="grid gap-4">
+            {top.map((job) => (
+              <li key={job.id}>
+                <PublicJobCard job={job} locale={locale} />
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <Link
+          href="/jobs"
+          {...navForward}
+          className={buttonClass("secondary", "md", "self-start")}
         >
-          <Container className="flex flex-col gap-6">
-            <h2 id="top-jobs" className="t-h2">
-              {t("topJobs")}
-            </h2>
-            <ul className="grid gap-4">
-              {top.map((job) => (
-                <li key={job.id}>
-                  <PublicJobCard job={job} locale={locale} />
-                </li>
-              ))}
-            </ul>
-          </Container>
-        </section>
-      ) : null}
-      {between}
-      {rest.length > 0 ? (
-        <section
-          aria-labelledby="all-jobs"
-          className="pt-6 pb-12 md:pt-8 md:pb-16"
-        >
-          <Container className="flex flex-col gap-6">
-            <h2 id="all-jobs" className="t-h2">
-              {t("allJobs")}
-            </h2>
-            <ul className="grid gap-4">
-              {rest.map((job) => (
-                <li key={job.id}>
-                  <PublicJobCard job={job} locale={locale} />
-                </li>
-              ))}
-            </ul>
-            <Link
-              href={
-                result.nextCursor
-                  ? `/jobs?cursor=${encodeURIComponent(result.nextCursor)}`
-                  : "/jobs"
-              }
-              {...navForward}
-              className={buttonClass("secondary", "md", "self-start")}
-            >
-              {t("moreJobs")}
-            </Link>
-          </Container>
-        </section>
-      ) : null}
-    </>
+          {t("moreJobs")}
+        </Link>
+      </Container>
+    </section>
   );
 }
 
@@ -179,18 +128,13 @@ export async function generateMetadata({
 
 export default async function HomePage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ q?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("home");
   const product = await getTranslations("product");
-  const nav = await getTranslations("nav");
-  const { q } = await searchParams;
-  const query = q?.trim() ?? "";
 
   return (
     <main>
@@ -218,63 +162,29 @@ export default async function HomePage({
           <HeroWordmark name={product("wordmark")} />
           <h1
             id="home-title"
-            className="t-display-xl relative -mt-[0.25em] max-w-[16ch]"
+            className="t-display-xl relative -mt-[0.25em] max-w-[18ch]"
           >
             {t("landing.heroTitle")}
           </h1>
           <p className="t-body-l mt-6 max-w-[42ch] text-fg-muted md:text-[21px]">
             {t("landing.heroLead")}
           </p>
-          <div className="mt-8 flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
-            <ButtonLink href="/jobs" size="lg">
-              {t("landing.findJobs")}
-            </ButtonLink>
-            <ButtonLink href="/post-job" size="lg" variant="secondary">
-              {nav("postJob")}
-            </ButtonLink>
-          </div>
-          <form
-            id="search"
-            action={`${localePrefix(locale)}/jobs`}
-            method="get"
-            className="mt-8 flex w-full max-w-xl items-center gap-2 rounded-lg border border-line-strong bg-surface py-1 pr-1 pl-4 has-[#q:focus-visible]:outline-2 has-[#q:focus-visible]:outline-offset-2 has-[#q:focus-visible]:outline-accent"
-          >
-            <span aria-hidden="true" className="text-fg-subtle">
-              <Icon icon={Search} size={16} />
-            </span>
-            <label className="sr-only" htmlFor="q">
-              {t("searchLabel")}
-            </label>
-            <Input
-              id="q"
-              name="q"
-              defaultValue={query}
-              placeholder={t("searchPlaceholder")}
-              className="min-w-0 flex-1 border-0! bg-transparent! px-1! font-mono text-[14px] focus-visible:outline-none"
-            />
-            <Button
-              type="submit"
-              variant="secondary"
-              className="px-4! text-[14px]!"
-            >
-              {t("searchSubmit")}
-            </Button>
-          </form>
+          <HomeAsk
+            action={`${localePrefix(locale)}/chat`}
+            label={t("landing.ask.label")}
+            placeholder={t("landing.ask.placeholder")}
+            submit={t("landing.ask.submit")}
+            examplesLabel={t("landing.ask.examplesLabel")}
+            examples={EXAMPLES.map((key) => t(`landing.ask.examples.${key}`))}
+          />
         </Container>
       </section>
 
+      <LandingServices />
       <LandingPlatform />
 
       <Suspense fallback={null}>
-        <JobFeed
-          locale={locale}
-          between={
-            <>
-              <LandingFeatures />
-              <LandingPricing />
-            </>
-          }
-        />
+        <JobFeed locale={locale} />
       </Suspense>
 
       <section
