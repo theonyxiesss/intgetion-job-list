@@ -32,7 +32,9 @@ describe("order stage accessibility", () => {
   ] as const)("names exactly one current stage for %s", (status) => {
     const html = render(status);
     expect(html.match(/aria-current="step"/g)).toHaveLength(1);
-    const current = html.match(/<li[^>]*aria-current="step"[^>]*>(.*?)<\/li>/)?.[1];
+    const current = html.match(
+      /<li[^>]*aria-current="step"[^>]*>(.*?)<\/li>/,
+    )?.[1];
     expect(current).toContain(labels[status]);
     expect(html).toContain('aria-label="Order steps"');
   });
