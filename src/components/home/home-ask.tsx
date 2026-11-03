@@ -1,5 +1,7 @@
 "use client";
 
+import { ServiceIcon } from "@/components/ui/service-icon";
+
 import { ArrowUp } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { useSpoki } from "@/components/bot/spoki-context";
@@ -57,7 +59,7 @@ export function HomeAsk({
         onFocus={spoki?.preload}
         className="flex w-full items-center gap-3 rounded-xl border border-line-strong bg-surface py-2 pr-2 pl-4 has-[#home-ask:focus-visible]:outline-2 has-[#home-ask:focus-visible]:outline-offset-2 has-[#home-ask:focus-visible]:outline-accent"
       >
-        <span aria-hidden="true" className="spoki-orb" />
+        <ServiceIcon name="spoki" size={28} className="text-signal" />
         <label className="sr-only" htmlFor="home-ask">
           {label}
         </label>

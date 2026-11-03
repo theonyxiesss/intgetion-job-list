@@ -1,4 +1,5 @@
-import { Bell, Bot, Plus } from "lucide-react";
+import { ServiceIcon } from "@/components/ui/service-icon";
+import { Bell, Plus } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { ButtonLink, Icon, Logo, ScrollFrame, navFade } from "@/components/ui";
@@ -188,7 +189,7 @@ export async function Header() {
               <SpokiButtonLink
                 variant="secondary"
                 size="icon"
-                icon={<Icon icon={Bot} size={16} />}
+                icon={<ServiceIcon name="spoki" size={20} />}
                 className="size-11! p-0!"
                 title={t("nav.chatWithAgent")}
                 aria-label={t("nav.chatWithAgent")}
@@ -199,7 +200,7 @@ export async function Header() {
                 href="/chat"
                 variant="secondary"
                 size="icon"
-                icon={<Icon icon={Bot} size={16} />}
+                icon={<ServiceIcon name="spoki" size={20} />}
                 className="size-11! p-0!"
                 title={t("nav.chatWithAgent")}
                 aria-label={t("nav.chatWithAgent")}

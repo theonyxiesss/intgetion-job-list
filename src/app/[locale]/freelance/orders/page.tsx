@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Badge } from "@/components/ui/badge";
 import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
-import { navForward } from "@/components/ui/page-transition";
 import { LinkTabs } from "@/components/ui/tabs";
 import { Link } from "@/i18n/navigation";
 import { listOrders } from "@/modules/freelance/service";
-import { formatUsd } from "@/modules/freelance/ui/format";
+import { OrderCard } from "@/modules/freelance/ui/order-card";
 import { userOrLogin } from "@/modules/freelance/ui/server-copy";
 
 export const dynamic = "force-dynamic";
@@ -21,8 +19,6 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "freelance.orders" });
   return { title: t("title"), robots: { index: false } };
 }
-
-const WAITING = new Set(["sent", "accepted", "in_progress", "delivered"]);
 
 /** Orders of the signed-in person, as buyer or as seller (28.4). */
 export default async function FreelanceOrdersPage({
@@ -39,7 +35,7 @@ export default async function FreelanceOrdersPage({
   const side = rawSide === "seller" ? "seller" : "buyer";
   const t = await getTranslations("freelance");
   const orders = await listOrders(user.id, side);
-  const dates = new Intl.DateTimeFormat(locale, { dateStyle: "medium" });
+  const now = new Date();
 
   return (
     <main className="py-10 md:py-16">
@@ -82,38 +78,10 @@ export default async function FreelanceOrdersPage({
             }
           />
         ) : (
-          <ul className="flex flex-col divide-y divide-line rounded-lg border border-line">
+          <ul className="grid gap-4">
             {orders.map((order) => (
               <li key={order.id}>
-                <Link
-                  href={`/freelance/orders/${order.id}`}
-                  {...navForward}
-                  className="flex flex-wrap items-center justify-between gap-3 p-4 hover:bg-surface"
-                >
-                  <span className="flex min-w-0 flex-col gap-1">
-                    <span className="font-medium">{order.serviceTitle}</span>
-                    <span className="t-data text-fg-muted">
-                      {t(`tiers.${order.packageTier}`)} ·{" "}
-                      {formatUsd(order.priceMinor, locale)} ·{" "}
-                      <time dateTime={order.createdAt.toISOString()}>
-                        {dates.format(order.createdAt)}
-                      </time>
-                    </span>
-                  </span>
-                  <Badge
-                    tone={
-                      WAITING.has(order.status)
-                        ? order.next.length > 0
-                          ? "new"
-                          : "pending"
-                        : order.status === "completed"
-                          ? "success"
-                          : "neutral"
-                    }
-                  >
-                    {t(`orders.status.${order.status}`)}
-                  </Badge>
-                </Link>
+                <OrderCard order={order} locale={locale} now={now} />
               </li>
             ))}
           </ul>

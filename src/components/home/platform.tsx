@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/container";
 import { cn } from "@/components/ui/cn";
 import { Icon } from "@/components/ui/icon";
 import {
+  ServiceIcon,
   ServiceIconBox,
   type ServiceIconName,
 } from "@/components/ui/service-icon";
@@ -119,7 +120,7 @@ export async function LandingServices() {
                 {t("spoki.ask")}
               </p>
               <p className="flex items-center gap-3 text-sm">
-                <span className="spoki-orb" />
+                <ServiceIcon name="spoki" size={28} className="text-signal" />
                 <span className="spoki-shimmer">{t("spoki.step")}</span>
               </p>
               <p className="ml-10 flex flex-wrap items-center gap-2 text-sm text-fg">

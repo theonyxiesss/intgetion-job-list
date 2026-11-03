@@ -1,3 +1,4 @@
+import { ServiceIconBox } from "@/components/ui/service-icon";
 import { getTranslations } from "next-intl/server";
 import { ListingCard } from "@/components/ui/listing-card";
 import type { CatalogCard } from "../service";
@@ -48,13 +49,14 @@ export async function ServiceCard({
       href={`/freelance/${card.slug}`}
       title={card.title}
       headingLevel={2}
+      mark={<ServiceIconBox name="freelance" />}
       label={t(`categories.${card.category}`)}
       subtitle={<SellerLine card={card} />}
       tags={card.skills}
       tagLimit={3}
       moreTagsLabel={(hidden) => `+${hidden}`}
       lead={
-        <p className="t-data-l">
+        <p className="font-mono text-2xl font-medium tracking-tight">
           {t("from", { price: formatUsd(card.fromMinor, locale) })}
         </p>
       }

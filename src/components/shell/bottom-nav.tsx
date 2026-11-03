@@ -1,13 +1,10 @@
 "use client";
 
+import { Menu } from "lucide-react";
 import {
-  Bot,
-  Briefcase,
-  Clapperboard,
-  Laptop,
-  Menu,
-  type LucideIcon,
-} from "lucide-react";
+  ServiceIcon,
+  type ServiceIconName,
+} from "@/components/ui/service-icon";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/components/ui/cn";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -18,11 +15,11 @@ export type BottomNavItem = { href: string; label: string };
 /** Asks the one phone menu in the header to open (D468). */
 export const OPEN_MENU_EVENT = "intgetion:open-menu";
 
-const ICONS: Record<string, LucideIcon> = {
-  "/jobs": Briefcase,
-  "/freelance": Laptop,
-  "/chat": Bot,
-  "/campaigns": Clapperboard,
+const ICONS: Record<string, ServiceIconName> = {
+  "/jobs": "jobs",
+  "/freelance": "freelance",
+  "/chat": "spoki",
+  "/campaigns": "ugc",
 };
 
 const JOB_PAGE = /^\/jobs\/[0-9a-f-]{36}$/;
@@ -64,7 +61,7 @@ export function BottomNav({
                   aria-current={active ? "page" : undefined}
                   className={cn(tab, active ? "text-fg" : "text-fg-muted")}
                 >
-                  <Icon icon={Bot} size={20} />
+                  <ServiceIcon name="spoki" size={24} />
                   <span className="max-w-full truncate">{item.label}</span>
                 </SpokiLink>
               ) : (
@@ -73,7 +70,7 @@ export function BottomNav({
                   aria-current={active ? "page" : undefined}
                   className={cn(tab, active ? "text-fg" : "text-fg-muted")}
                 >
-                  <Icon icon={ICONS[item.href] ?? Briefcase} size={20} />
+                  <ServiceIcon name={ICONS[item.href] ?? "jobs"} size={24} />
                   <span className="max-w-full truncate">{item.label}</span>
                 </Link>
               )}
