@@ -764,16 +764,7 @@ w3m-modal.open {
   }
 }
 
-/* Thin vertical rules behind the price list, like the nextjs.org grid. */
-.home-lines {
-  background-image: repeating-linear-gradient(
-    90deg,
-    var(--line) 0 1px,
-    transparent 1px 32px
-  );
-}
-
-/* Home platform showcase (D594). CSS motion only: tiles slide up as they
+/* Home platform showcase (D594, D601 keeps the service tiles). CSS motion only: tiles slide up as they
    scroll into view where the browser supports scroll timelines, the jobs
    list and languages loop, a dot runs along a freelance order. Everything
    is still under reduced motion and readable without animation. */
