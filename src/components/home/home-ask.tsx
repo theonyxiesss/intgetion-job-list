@@ -89,7 +89,7 @@ export function HomeAsk({
             type="button"
             onClick={() => handOff(example)}
             onMouseEnter={spoki?.preload}
-            className="min-h-9 rounded-full border border-line px-3 text-sm text-fg-muted transition-colors duration-200 hover:border-fg-subtle hover:text-fg"
+            className="min-h-11 rounded-full border border-line px-4 text-sm text-fg-muted transition-colors duration-200 hover:border-fg-subtle hover:text-fg"
           >
             {example}
           </button>
