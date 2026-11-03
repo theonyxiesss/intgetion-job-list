@@ -28,3 +28,15 @@ claude mcp add --transport http intgetion https://intgetion.com/api/mcp
 ```
 
 Локально (`pnpm dev`, база облачная, общая с сайтом): адрес `http://localhost:3000/api/mcp`.
+
+## Модуль коротко
+
+- **Вход:** `src/modules/mcp/service/index.ts` — `handleMcpRequest`, `allowedHosts`, `allowedOrigins`, `MCP_MAX_BODY_BYTES`, `MCP_SERVER_NAME`, `MCP_SERVER_VERSION`.
+- **Таблиц нет:** только чтение через инструменты Spoki (модуль bot).
+- **Маршрут:** `/api/mcp`.
+- **Env:** своих нет; `NODE_ENV` (вне production разрешён loopback). Лимит — `mcpGuest` в `src/lib/rate-limit.ts`.
+- **D:** 480, 484–487.
+
+## Что не сделано
+
+Сделана фаза 1 — публичное чтение без входа. Фазы 2 (вход и чтение своего), 3 (действия с подтверждением), 4 (работодатель и исполнитель), 5 и 6 — план в [../MCP.md](../MCP.md) §6, кода нет.
