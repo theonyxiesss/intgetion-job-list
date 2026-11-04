@@ -4,7 +4,7 @@
 
 ## Что делает
 
-- **analytics**: браузер шлёт маячок на `/api/a`, сервер пишет просмотр страницы и то, что из него следует (просмотр вакансии, поиск); ботов и чужие адреса отбрасывает (`trackPageView`). Серверные события — `trackServerEvent` (регистрация, отклик). Посетитель — cookie `VISITOR_COOKIE`, идентификаторы хэшируются секретом (`PRIVACY_HASH_SECRET`). Человек может стереть свой след (`forgetVisitor`, `/api/a/forget`). Отчёты: `analyticsReport`, `trafficReport` (админка), `jobViews` (статистика вакансии у работодателя). Старые строки чистит `purgeAnalytics` из ежечасной чистки модуля privacy.
+- **analytics**: браузер шлёт маячок на `/api/a`, сервер пишет просмотр страницы и то, что из него следует (просмотр вакансии, поиск); ботов и чужие адреса отбрасывает (`trackPageView`). Серверные события — `trackServerEvent` (регистрация, отклик). Посетитель — cookie `VISITOR_COOKIE`, идентификаторы хэшируются секретом (`PRIVACY_HASH_SECRET`). Человек может стереть свой след (`forgetVisitor`, `/api/a/forget`). Отчёты: `analyticsReport`, `trafficReport` (админка), `jobViews` (статистика вакансии у работодателя). Старые строки чистит `purgeAnalytics` из ежечасной чистки модуля privacy. Страна посетителя — `country` из `x-vercel-ip-country` (D607, `0087`), без IP. Часовая сводка новых посетителей владельцам в Telegram — `runVisitorDigest` (`service/visitor-digest.ts`) в кроне `/api/cron/telegram`; получатели — `ownerAlertRecipients` модуля admin-console и `OWNER_ALERT_TELEGRAM_ID`.
 - **metrics**: `getMetrics` — счётчики пользователей, вакансий, откликов, подборов и писем; `envStatus` — какие настройки production заданы (только имя и режим, значение никогда, D229).
 
 ## Главные файлы
@@ -16,10 +16,10 @@
 
 ## Таблицы и миграции
 
-| Таблица                                                                                          | Миграция                    |
-| ------------------------------------------------------------------------------------------------ | --------------------------- |
-| `analytics_events`                                                                               | `0022_analytics_events.sql` |
-| metrics только читает `users`, `jobs`, `applications`, `matching_results`, `notification_emails` | —                           |
+| Таблица                                                                                          | Миграция                                                  |
+| ------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| `analytics_events`                                                                               | `0022_analytics_events.sql`, `0087_analytics_country.sql` |
+| metrics только читает `users`, `jobs`, `applications`, `matching_results`, `notification_emails` | —                                                         |
 
 ## Маршруты и страницы
 
@@ -28,13 +28,13 @@
 
 ## Env
 
-analytics: `PRIVACY_HASH_SECRET`, `NEXT_PUBLIC_SITE_URL`. metrics (`envStatus`) показывает, заданы ли `DATABASE_URL` (и режим пулера), `NEXT_PUBLIC_SITE_URL`, ключ Supabase admin, `RESEND_API_KEY` с `EMAIL_FROM`, `TELEGRAM_BOT_TOKEN` (и заморожен ли вход через виджет), ключ LLM, секреты и `SENTRY_DSN` — значения секретов не показывает.
+analytics: `PRIVACY_HASH_SECRET`, `NEXT_PUBLIC_SITE_URL`, `OWNER_ALERT_TELEGRAM_ID` (сводка, D607). metrics (`envStatus`) показывает, заданы ли `DATABASE_URL` (и режим пулера), `NEXT_PUBLIC_SITE_URL`, ключ Supabase admin, `RESEND_API_KEY` с `EMAIL_FROM`, `TELEGRAM_BOT_TOKEN` (и заморожен ли вход через виджет), ключ LLM, секреты и `SENTRY_DSN` — значения секретов не показывает.
 
 ## ТЗ и решения
 
 ТЗ: [18-ops.md](../tz/18-ops.md), [../ADMIN.md](../ADMIN.md) §6.2 и §6.12, приватность — [17-gdpr.md](../tz/17-gdpr.md).
 
-D: 225–227, 232, 247, 293 (свой счётчик), 229 (статус env), 335.
+D: 225–227, 232, 247, 293 (свой счётчик), 229 (статус env), 335, 607 (страна и часовая сводка).
 
 ## Что не сделано
 

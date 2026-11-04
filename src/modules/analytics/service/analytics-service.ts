@@ -1,3 +1,4 @@
+import { countryFromHeader } from "@/admin/session-policy";
 import { consentAllows, readConsent, readCookie } from "@/lib/consent";
 import { logger } from "@/lib/logger";
 import { clientIp } from "@/lib/request-ip";
@@ -40,6 +41,8 @@ function visitorOf(request: Request, now: Date) {
   return {
     bot: isBot(userAgent),
     device: deviceOf(userAgent),
+    // Country only, never the IP or the city (D607).
+    country: countryFromHeader(request.headers.get("x-vercel-ip-country")),
     dayVisitor: dailyVisitorKey({
       secret: process.env.PRIVACY_HASH_SECRET ?? "",
       day: now.toISOString().slice(0, 10),
@@ -79,6 +82,7 @@ export async function trackPageView(
     referrerHost: referrerHost(input.referrer, siteHost()),
     utm: utmOf(input.search),
     device: visitor.device,
+    country: visitor.country,
     dayVisitor: visitor.dayVisitor,
     visitorId: visitor.visitorId,
     occurredAt: now,
@@ -125,6 +129,7 @@ export async function trackServerEvent(
         referrerHost: null,
         utm: {},
         device: visitor.device,
+        country: visitor.country,
         dayVisitor: visitor.dayVisitor,
         visitorId: visitor.visitorId,
         occurredAt: now,

@@ -12,6 +12,8 @@ export type EventRow = {
   referrerHost: string | null;
   utm: Record<string, string>;
   device: Device;
+  /** Two letters from the Vercel edge header, or null (D607). */
+  country: string | null;
   dayVisitor: string;
   visitorId: string | null;
   occurredAt: Date;
@@ -23,7 +25,7 @@ export async function insertEvents(rows: readonly EventRow[]): Promise<void> {
     insert into public.analytics_events (
       occurred_at, name, path, locale, job_id, search_term, search_filters,
       referrer_host, utm_source, utm_medium, utm_campaign, device,
-      day_visitor, visitor_id
+      country, day_visitor, visitor_id
     ) values ${sql.join(
       rows.map(
         (row) => sql`(
@@ -31,7 +33,8 @@ export async function insertEvents(rows: readonly EventRow[]): Promise<void> {
           ${row.locale}, ${row.jobId}, ${row.searchTerm},
           ${row.searchFilters ? sql`${`{${row.searchFilters.join(",")}}`}::text[]` : null},
           ${row.referrerHost}, ${row.utm.source ?? null}, ${row.utm.medium ?? null},
-          ${row.utm.campaign ?? null}, ${row.device}, ${row.dayVisitor}, ${row.visitorId}
+          ${row.utm.campaign ?? null}, ${row.device}, ${row.country},
+          ${row.dayVisitor}, ${row.visitorId}
         )`,
       ),
       sql`, `,
@@ -89,9 +92,18 @@ export async function readReport(since: Date) {
       (select count(*)::int from known) as consented,
       (select count(*)::int from known where days > 1) as returning
   `);
-  const [daily, pages, searches, jobs, sources, devices, funnel, crossVisit] =
-    await Promise.all([
-      db.execute<{ day: string; visitors: number; views: number }>(sql`
+  const [
+    daily,
+    pages,
+    searches,
+    jobs,
+    sources,
+    devices,
+    countries,
+    funnel,
+    crossVisit,
+  ] = await Promise.all([
+    db.execute<{ day: string; visitors: number; views: number }>(sql`
         select to_char(date_trunc('day', occurred_at), 'YYYY-MM-DD') as day,
                count(distinct day_visitor)::int as visitors,
                count(*) filter (where name = 'page_view')::int as views
@@ -99,51 +111,57 @@ export async function readReport(since: Date) {
         where occurred_at >= ${from}::timestamptz
         group by 1 order by 1
       `),
-      top(sql`
+    top(sql`
         select path as label, count(*)::int as count from public.analytics_events
         where occurred_at >= ${from}::timestamptz and name = 'page_view'
         group by path order by count desc limit 10
       `),
-      top(sql`
+    top(sql`
         select search_term as label, count(*)::int as count from public.analytics_events
         where occurred_at >= ${from}::timestamptz and name = 'search'
           and search_term is not null
         group by search_term order by count desc limit 10
       `),
-      db.execute<{ jobId: string; title: string | null; count: number }>(sql`
+    db.execute<{ jobId: string; title: string | null; count: number }>(sql`
         select e.job_id as "jobId", j.title, count(*)::int as count
         from public.analytics_events e
         left join public.jobs j on j.id = e.job_id
         where e.occurred_at >= ${from}::timestamptz and e.name = 'job_view'
         group by e.job_id, j.title order by count desc limit 10
       `),
-      top(sql`
+    top(sql`
         select coalesce(utm_source, referrer_host, 'direct') as label,
                count(distinct day_visitor)::int as count
         from public.analytics_events
         where occurred_at >= ${from}::timestamptz
         group by 1 order by count desc limit 10
       `),
-      top(sql`
+    top(sql`
         select device as label, count(distinct day_visitor)::int as count
         from public.analytics_events
         where occurred_at >= ${from}::timestamptz
         group by device order by count desc
       `),
-      db.execute<{ step: string; count: number }>(sql`
+    top(sql`
+        select country as label, count(distinct day_visitor)::int as count
+        from public.analytics_events
+        where occurred_at >= ${from}::timestamptz
+        group by country order by count desc limit 10
+      `),
+    db.execute<{ step: string; count: number }>(sql`
         select name as step, count(distinct day_visitor)::int as count
         from public.analytics_events
         where occurred_at >= ${from}::timestamptz
         group by name
       `),
-      // Cross-visit funnel for consented visitors only (D226).
-      db.execute<{ step: string; count: number }>(sql`
+    // Cross-visit funnel for consented visitors only (D226).
+    db.execute<{ step: string; count: number }>(sql`
         select name as step, count(distinct visitor_id)::int as count
         from public.analytics_events
         where occurred_at >= ${from}::timestamptz and visitor_id is not null
         group by name
       `),
-    ]);
+  ]);
   return {
     totals: totals ?? { visitors: 0, views: 0, consented: 0, returning: 0 },
     daily: [...daily],
@@ -152,6 +170,7 @@ export async function readReport(since: Date) {
     jobs: [...jobs],
     sources,
     devices,
+    countries,
     funnel: Object.fromEntries(funnel.map((row) => [row.step, row.count])),
     crossVisit: Object.fromEntries(
       crossVisit.map((row) => [row.step, row.count]),
@@ -254,6 +273,43 @@ export async function readLandingPages(since: Date): Promise<LandingRow[]> {
     group by 1, 2, 3, 4
     order by visitors desc
     limit 500
+  `);
+  return [...rows];
+}
+
+export type NewVisitorRow = {
+  occurredAt: string;
+  path: string;
+  country: string | null;
+  device: Device;
+  referrerHost: string | null;
+  utmSource: string | null;
+};
+
+/**
+ * Visitors whose first page view of the UTC day falls in [from, to) (D607).
+ * A visitor is the daily key, so "new" means new for that day.
+ */
+export async function readNewVisitors(
+  from: Date,
+  to: Date,
+): Promise<NewVisitorRow[]> {
+  const rows = await getDb().execute<NewVisitorRow>(sql`
+    with firsts as (
+      select distinct on (day_visitor)
+             occurred_at, path, country, device, referrer_host, utm_source
+      from public.analytics_events
+      where name = 'page_view'
+        and occurred_at >= date_trunc('day', ${from.toISOString()}::timestamptz)
+        and occurred_at < ${to.toISOString()}::timestamptz
+      order by day_visitor, occurred_at
+    )
+    select to_char(occurred_at at time zone 'UTC', 'HH24:MI') as "occurredAt",
+           path, country, device,
+           referrer_host as "referrerHost", utm_source as "utmSource"
+    from firsts
+    where occurred_at >= ${from.toISOString()}::timestamptz
+    order by occurred_at
   `);
   return [...rows];
 }

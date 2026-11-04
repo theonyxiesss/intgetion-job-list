@@ -2628,7 +2628,10 @@
         "mobile": "Phone",
         "tablet": "Tablet",
         "desktop": "Computer"
-      }
+      },
+      "countries": "Countries",
+      "country": "Country",
+      "unknownCountry": "Unknown"
     },
     "env": {
       "title": "Production settings",
@@ -2678,6 +2681,11 @@
       "day": "Day",
       "fromSearch": "From search",
       "allVisitors": "All visitors"
+    },
+    "visitorDigest": {
+      "title": "New visitors {from}–{to} UTC: {count}",
+      "more": "…and {count} more",
+      "direct": "direct"
     }
   },
   "digest": {

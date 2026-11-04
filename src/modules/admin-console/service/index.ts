@@ -18,6 +18,7 @@ export {
   needsRecoveryCodes,
   noteAdminLoginFailure,
   notifyPlatformOwners,
+  ownerAlertRecipients,
   readLiveSession,
   requestAuditContext,
   revokeAdminSession,

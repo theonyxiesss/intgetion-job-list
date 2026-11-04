@@ -2628,7 +2628,10 @@
         "mobile": "Telefono",
         "tablet": "Tablet",
         "desktop": "Computer"
-      }
+      },
+      "countries": "Paesi",
+      "country": "Paese",
+      "unknownCountry": "Sconosciuto"
     },
     "env": {
       "title": "Impostazioni di produzione",
@@ -2678,6 +2681,11 @@
       "day": "Giorno",
       "fromSearch": "Dalla ricerca",
       "allVisitors": "Tutti i visitatori"
+    },
+    "visitorDigest": {
+      "title": "Nuovi visitatori {from}–{to} UTC: {count}",
+      "more": "…e altri {count}",
+      "direct": "diretto"
     }
   },
   "digest": {

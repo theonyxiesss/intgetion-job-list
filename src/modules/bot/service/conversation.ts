@@ -21,7 +21,11 @@ import {
 import { logger } from "@/lib/logger";
 import type { PageSection } from "@/config/page-sections";
 import { isValidTimeZone } from "@/lib/tz";
-import { botMessageBucket, enforceRateLimit } from "@/lib/rate-limit";
+import {
+  botMessageBucket,
+  enforceRateLimit,
+  guestBotBuckets,
+} from "@/lib/rate-limit";
 import { billingMe } from "@/modules/billing/service";
 import {
   candidatePatchInput,
@@ -1039,7 +1043,9 @@ async function enforceMessageLimits(
   now: Date,
 ) {
   if (!userId) {
-    await enforceRateLimit("botGuest", `${ip}:${tokenHash}`, now);
+    for (const [bucket, subject] of guestBotBuckets(ip, tokenHash)) {
+      await enforceRateLimit(bucket, subject, now);
+    }
     return;
   }
   let plan: "free" | "plus" | "pro" = "free";

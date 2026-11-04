@@ -1,5 +1,8 @@
 import { timingSafeEqual } from "node:crypto";
 import { notFound, toErrorResponse } from "@/lib/http";
+import { logger } from "@/lib/logger";
+import { ownerAlertRecipients } from "@/modules/admin-console/service";
+import { runVisitorDigest } from "@/modules/analytics/service";
 import { siteUrl } from "@/lib/supabase/env";
 import { telegramActionSecret } from "@/lib/telegram-actions";
 import { telegramSender } from "@/lib/telegram-bot";
@@ -38,7 +41,24 @@ export async function GET(request: Request) {
       host: new URL(siteUrl()).host,
       chatIdRaw: process.env.JOBS_ALERT_CHAT_ID,
     });
-    return Response.json({ ok: true, ...dispatch, reminders, jobsAlert });
+    // Hourly new-visitor digest to the owners (D607); never blocks the rest.
+    let visitorDigest: Awaited<ReturnType<typeof runVisitorDigest>> | null =
+      null;
+    try {
+      visitorDigest = await runVisitorDigest({
+        sender,
+        recipients: await ownerAlertRecipients(),
+      });
+    } catch (err) {
+      logger.warn({ err }, "visitor digest failed");
+    }
+    return Response.json({
+      ok: true,
+      ...dispatch,
+      reminders,
+      jobsAlert,
+      visitorDigest,
+    });
   } catch (error) {
     return toErrorResponse(error);
   }

@@ -16,6 +16,20 @@ export function botMessageBucket(
   return "botUser";
 }
 
+/**
+ * A guest's Spoki message counts twice (D607): per IP and session, and per
+ * IP alone, so a new cookie does not bring five fresh messages.
+ */
+export function guestBotBuckets(
+  ip: string,
+  sessionHash: string,
+): readonly ["botGuest" | "botGuestIp", string][] {
+  return [
+    ["botGuest", `${ip}:${sessionHash}`],
+    ["botGuestIp", ip],
+  ];
+}
+
 /** Section 6 limits that exist so far. Other rows arrive with their features. */
 export const rateRules = {
   /** login, keyed by IP + email: 5 per 15 minutes */
@@ -39,6 +53,8 @@ export const rateRules = {
   dataExport: { limit: 5, windowSeconds: 24 * 60 * 60 },
   /** bot messages from a guest, keyed by IP + bot session (7A) */
   botGuest: { limit: 5, windowSeconds: 24 * 60 * 60 },
+  /** all guest bot messages from one IP, whatever the cookie (D607) */
+  botGuestIp: { limit: 20, windowSeconds: 24 * 60 * 60 },
   /** bot messages from a user, keyed by user id (7A); free tier, D323 */
   botUser: { limit: 15, windowSeconds: 24 * 60 * 60 },
   /** Plus plan: 100 Spoki messages a day (D323, D364) */
@@ -83,6 +99,8 @@ export const rateRules = {
   freelanceProposal: { limit: 20, windowSeconds: 24 * 60 * 60 },
   /** «Accept»/«Decline» taps in Telegram, keyed by Telegram id (D456). */
   freelanceTelegramAction: { limit: 30, windowSeconds: 60 * 60 },
+  /** Hourly new-visitor digest to owners, keyed by the hour: once (D607). */
+  visitorDigest: { limit: 1, windowSeconds: 24 * 60 * 60 },
   /** "Tell me when I can pay", keyed by IP. */
   billingInterest: { limit: 5, windowSeconds: 60 * 60 },
 } as const satisfies Record<string, RateRule>;
