@@ -18,7 +18,7 @@
 | Matching + /matches               | OK             |                                                                                           |
 | Notifications in-app + email      | OK             | Resend + prefs                                                                            |
 | Admin moderation                  | OK             | admin host                                                                                |
-| Freelance tasks + proposals       | PARTIAL        | A3.1–A3.3 локально; разрешение на 0071–0073 и deploy получено; ждёт Supabase MCP по D438  |
+| Freelance tasks + proposals       | PARTIAL        | на сайте, 0071–0083 в облаке (D438); под входом не проверено (402)                        |
 | Bot web chat                      | PARTIAL        | нужен OpenRouter/бюджет                                                                   |
 | Telegram bot webhook              | PARTIAL        | вебхук чинили; phone Mini App OPEN                                                        |
 | Phone Mini App session            | PARTIAL / OPEN | [OPEN_TASKS](../OPEN_TASKS.md)                                                            |
