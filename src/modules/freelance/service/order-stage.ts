@@ -2,7 +2,7 @@ import type { FreelanceOrderStatus } from "@/config/freelance";
 import type { OrderStage } from "@/lib/order-stage";
 
 /**
- * A freelance order on the card's four steps (D603). A request not yet
+ * A freelance order on the card's four steps (D605). A request not yet
  * answered waits before the line; a refused, cancelled or expired one is
  * off it. Delivered work is "on review": the buyer accepts or asks again.
  */

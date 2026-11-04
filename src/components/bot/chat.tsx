@@ -5,11 +5,13 @@ import { useLocale, useTranslations } from "next-intl";
 import { useStickToBottom } from "use-stick-to-bottom";
 import {
   useEffect,
+  useEffectEvent,
   useLayoutEffect,
   useRef,
   useState,
   type FormEvent,
 } from "react";
+import { onSpokiAsk, takeSpokiAsk } from "@/components/bot/spoki-ask";
 import {
   keyboardOverlaps,
   nextKeyboardPhase,
@@ -1074,6 +1076,26 @@ export function Chat({
   useLayoutEffect(() => {
     if (fieldRef.current) fitComposer(fieldRef.current);
   }, [text]);
+
+  // A question handed over from another page, the home page field (D601).
+  // Asked once the history is in, so the history never covers it; during an
+  // answer it waits in the field instead.
+  const askHanded = useEffectEvent(() => {
+    const message = takeSpokiAsk();
+    if (!message) return;
+    if (sending) setText(message);
+    else void ask(message);
+  });
+  useEffect(() => {
+    if (!historyReady) return;
+    // After the history has painted; later questions come by the event.
+    const first = window.setTimeout(askHanded, 0);
+    const off = onSpokiAsk(askHanded);
+    return () => {
+      window.clearTimeout(first);
+      off();
+    };
+  }, [historyReady]);
 
   function send(event: FormEvent) {
     event.preventDefault();

@@ -14,7 +14,7 @@ const LINE: Record<OrderTone, string> = {
   closed: "border-line-strong",
 };
 
-/** The four steps as a line: past, current, still ahead (D603). */
+/** The four steps as a line: past, current, still ahead (D605). */
 export function OrderSteps({
   stage,
   labels,

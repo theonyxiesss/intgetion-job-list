@@ -38,6 +38,23 @@
 
 `SPOKI_INTERACTIVE_UI=true` — блоки Spoki (D529): сервер строит их в `src/modules/bot/ui/build.ts` из ответов инструментов данных (веб) и из `show_ui` (`service/ui-tool.ts`), проверяет `ui/schemas.ts`, шлёт событием `ui` и хранит в `tool_call.ui` строки инструмента (24 ч, D471). Чат рисует их `src/components/bot/blocks/`; кнопки — `POST /api/bot/ui/action` (`service/ui-action.ts`: блок владельца, список инструментов, журнал D521, 409 для устаревших данных). Промпт 47, строка BLOCKS. Подробно — `docs/tz/33-spoki-interactive-ui.md` §10.
 
+## Модуль коротко
+
+- **Вход:** `src/modules/bot/service/index.ts` — `handleMessage`, `confirmAction`, `continueAfterCard`, `resolveConversation`, открытие нитей (`openServiceConversation`, `openUgcThread`, `openJobDraftConversation`…), реестр инструментов (`TOOLS`, `runTool`, `toolsFor`, `mcpTools`, `runMcpTool`), память (`rememberFact`, `forgetFact`, `listMemory`), журнал (`listOwnBotActions`, `sweepBotActions`), напоминания (`runReminderDispatch`), Telegram (`handleTelegramAgentUpdate`), блоки (`runUiAction`). Промпт — `prompts/system.ts`.
+- **Таблицы:** `bot_conversations`, `bot_messages`, `bot_confirmations` (`0018_bot.sql`; фокус вакансии — `0047`, нити UGC — `0052`), `bot_memory_facts` (`0058_bot_memory.sql`), `bot_reminders` (`0059_bot_reminders.sql`), `bot_actions` (`0070_bot_actions.sql`). Схема — `src/db/schema/bot.ts`.
+- **Маршруты:** страница `/chat`, память — `/settings/privacy`; API `/api/bot/message`, `confirm`, `continue`, `conversation`, `feedback`, `fill`, `goal`, `memory`, `memory/[id]`, `ui/action`; `/api/telegram/webhook`; cron `/api/cron/telegram` (напоминания), `/api/cron/retention` (переписка 24 часа).
+- **Env (без значений):** `LLM_PROVIDER`, `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`, `LLM_MODEL_CHAT`, `LLM_MODEL_EXTRACT`, `LLM_PRICES_MICRO_USD`, `LLM_DAILY_BUDGET_USD`, `PRIVACY_HASH_SECRET`, флаги `SPOKI_DOCK`, `SPOKI_INTERACTIVE_UI`, `SPOKI_TOOL_ROUTING` (по умолчанию включён, `false` выключает).
+- **Проверки ответов:** `pnpm eval`, наборы в `evals/` (account, adversarial, freelance, memory, onboarding, pitch, ugc); живые прогоны — `pnpm eval:live`, `pnpm eval:routing` (нужен ключ LLM).
+- **ТЗ:** [12-bot.md](../tz/12-bot.md), [29-spoki-cards.md](../tz/29-spoki-cards.md), [31-spoki-core.md](../tz/31-spoki-core.md)–[36-spoki-live-work-and-next.md](../tz/36-spoki-live-work-and-next.md). Telegram целиком — [telegram.md](telegram.md).
+
+## Что не сделано
+
+- D550 — цель поиска работы в чате: связь цели с инструментами чтения сделана локально (D552), включение цели только по просьбе человека и показ следующего шага — открыты.
+- D538/D539 — живая проверка Spoki перед выпуском не закончена; live baseline модели не снят.
+- D537 — настоящий поиск вакансий в интернете: нужен выбор поискового провайдера.
+- D527 — запасные модели OpenRouter на ветке `claude/llm-fallbacks`, не слиты.
+- SEC-20261014-3 — гостевой лимит Spoki обходится удалением cookie; нужен лимит по IP, число решает основатель.
+
 ## Статус
 
 Web chat — OK при валидном LLM-ключе. Phone Mini App — OPEN ([../OPEN_TASKS.md](../OPEN_TASKS.md)).

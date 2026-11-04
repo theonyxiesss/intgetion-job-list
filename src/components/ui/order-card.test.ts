@@ -22,7 +22,7 @@ function steps(stage: Parameters<typeof OrderSteps>[0]["stage"]): string {
   );
 }
 
-describe("OrderSteps (D603)", () => {
+describe("OrderSteps (D605)", () => {
   it("marks the current step and leaves the later ones ahead", () => {
     const html = steps({ step: 1, tone: "work" });
     expect(html).toContain('aria-label="Order steps"');
@@ -52,7 +52,7 @@ describe("OrderSteps (D603)", () => {
   });
 });
 
-describe("OrderCard (D603)", () => {
+describe("OrderCard (D605)", () => {
   const base = {
     href: "/freelance/orders/abc",
     icon: "freelance" as const,

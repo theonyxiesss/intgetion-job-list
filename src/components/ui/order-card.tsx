@@ -9,7 +9,7 @@ import { navForward } from "./page-transition";
 import { ServiceIconBox, type ServiceIconName } from "./service-icon";
 
 /**
- * One order, freelance or UGC (D603, from the D602 mockup): service mark
+ * One order, freelance or UGC (D605, from the D602 mockup): service mark
  * and short number, status as a 6 px dot and a word, title, the money in
  * mono, a date, the four steps, then who and what to do next. The title
  * link covers the card; the footer and the "next step" toggle sit above
@@ -26,7 +26,7 @@ const DOT: Record<OrderTone, string> = {
 
 /**
  * The word stays in text colours: warning and success on the light surface
- * are under 4.5:1 as small text (D603); the dot carries the colour.
+ * are under 4.5:1 as small text (D605); the dot carries the colour.
  */
 const TEXT: Record<OrderTone, string> = {
   waiting: "text-fg-muted",

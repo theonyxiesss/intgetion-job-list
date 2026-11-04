@@ -1,3 +1,4 @@
+import { ServiceIconBox } from "@/components/ui/service-icon";
 import { getTranslations } from "next-intl/server";
 import { ListingCard } from "@/components/ui/listing-card";
 import { ServiceIcon } from "@/components/ui/service-icon";
@@ -37,7 +38,7 @@ export async function TrackRecord({ card }: { card: CatalogCard }) {
 
 /**
  * One service in the catalog (28.11 C), on the shared card (D479), with the
- * service mark and labelled price and term from the D602 mockup (D603).
+ * service mark and labelled price and term from the D602 mockup (D605).
  */
 export async function ServiceCard({
   card,
@@ -52,6 +53,7 @@ export async function ServiceCard({
       href={`/freelance/${card.slug}`}
       title={card.title}
       headingLevel={2}
+      mark={<ServiceIconBox name="freelance" />}
       label={t(`categories.${card.category}`)}
       art={<ServiceIcon name="freelance" size={40} className="text-fg" />}
       subtitle={<SellerLine card={card} />}

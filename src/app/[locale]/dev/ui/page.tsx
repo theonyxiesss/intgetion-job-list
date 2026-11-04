@@ -261,7 +261,7 @@ export default async function UiShowcase({
           </div>
         </Block>
 
-        <Block title="Order cards (D603)">
+        <Block title="Order cards (D605)">
           <div className="grid gap-4 md:grid-cols-2">
             <OrderCard
               href="/freelance/orders"

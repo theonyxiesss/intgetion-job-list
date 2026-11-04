@@ -143,7 +143,7 @@ export default async function CreatorWorkspacePage({
                 {ws.now.length === 0 ? (
                   <p className="text-fg-muted">{t("nowEmpty")}</p>
                 ) : (
-                  <ul className="grid gap-4 md:grid-cols-2">
+                  <ul className="grid gap-4 lg:grid-cols-2">
                     {ws.now.map(line)}
                   </ul>
                 )}
@@ -161,7 +161,7 @@ export default async function CreatorWorkspacePage({
                         {ws.sections[section].length}
                       </span>
                     </h2>
-                    <ul className="grid gap-4 md:grid-cols-2">
+                    <ul className="grid gap-4 lg:grid-cols-2">
                       {ws.sections[section].map(line)}
                     </ul>
                   </section>

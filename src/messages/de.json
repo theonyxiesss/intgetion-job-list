@@ -118,8 +118,8 @@
   },
   "meta": {
     "description": "Remote-Arbeit und Tech-Events. Echte Treffer.",
-    "homeTitle": "Remote-Jobs in Web3 & Tech-Events",
-    "homeDescription": "Ein Aggregator für Remote-Jobs in Web3, Krypto und Tech sowie für Summits, Meetups, Hackathons und Karriere-Events zum Networking. Gehaltsspannen, Überschneidung der Zeitzonen und Treffer passend zu Ihrem Profil.",
+    "homeTitle": "Plattform für Remote-Arbeit: Jobs, Freelance & UGC",
+    "homeDescription": "Remote-Jobs und Freelance-Aufgaben, Freelancer und UGC-Creator zum Beauftragen sowie Web3- und Tech-Events. Der KI-Agent Spoki begleitet jeden Schritt; Zahlung in USDC oder USDT.",
     "ogAlt": "INTGETION Job List — Remote-Arbeit in Web3"
   },
   "nav": {
@@ -196,32 +196,27 @@
     "it": "Italienisch"
   },
   "home": {
-    "tagline": "Remote-Arbeit und Tech-Events. Echte Treffer.",
-    "searchLabel": "Suche",
-    "searchPlaceholder": "Rolle, Skill oder Unternehmen",
-    "searchSubmit": "Suchen",
-    "latestEmpty": "Veröffentlichte Stellen erscheinen hier.",
+    "tagline": "Eine Plattform für Remote-Arbeit: Jobs, Freelance, UGC und Events.",
     "feedTitle": "Remote-Jobs",
     "topJobs": "Top-Jobs",
-    "allJobs": "Alle Jobs",
     "moreJobs": "Mehr Jobs anzeigen",
     "faqTitle": "Fragen",
     "faq": {
       "what": {
         "q": "Was ist INTGETION JOB LIST?",
-        "a": "Ein Aggregator für Remote-Jobs und für Web3- und Tech-Events. Jobs suchen, Summits und Meetups zum Networking finden und den Assistenten Spoki vorschlagen lassen, was zu Ihrem Profil passt."
+        "a": "Eine Plattform für Remote-Arbeit: Jobs, Freelance-Leistungen und -Aufgaben, UGC-Videos für Marken sowie Web3- und Tech-Events in einem Konto. Der Agent Spoki hilft beiden Seiten."
       },
       "free": {
         "q": "Ist es kostenlos?",
         "a": "Ja. Suchen, Bewerben und Ausschreiben von Jobs sind kostenlos. Bezahlte Tarife bringen Tempo und Reichweite — siehe Preise."
       },
-      "apply": {
-        "q": "Wie bewerbe ich mich?",
-        "a": "Öffnen Sie einen Job und klicken Sie auf Bewerben. Bei importierten Jobs bewerben Sie sich auf der Website des Arbeitgebers."
+      "spoki": {
+        "q": "Was kann Spoki?",
+        "a": "Spoki sucht Jobs, Leistungen, Aufgaben und Events, erstellt mit dir eine Stellenanzeige, eine Leistung oder ein UGC-Briefing und erinnert dich in Telegram. Alles, was dein Konto ändert, wartet auf deine Bestätigung."
       },
-      "post": {
-        "q": "Wie schreibe ich einen Job aus?",
-        "a": "Klicken Sie auf Job ausschreiben, melden Sie sich an und füllen Sie das Formular aus. Der Job erscheint nach der Prüfung im Feed."
+      "pay": {
+        "q": "Wie funktioniert die Bezahlung?",
+        "a": "Tarife, Freelance-Aufträge und UGC-Budgets werden in USDC oder USDT aus deiner Wallet bezahlt. Ein Freelance-Auftrag geht direkt an die Adresse des Freelancers."
       },
       "contacts": {
         "q": "Wer sieht meine Kontaktdaten?",
@@ -229,76 +224,27 @@
       }
     },
     "landing": {
-      "heroTitle": "Remote-Jobs. Echte Treffer.",
-      "heroLead": "Jobs passend zu deinen Skills, deinem Gehalt und deinen Arbeitszeiten. Spoki, der Karriere-Agent, findet passende Stellen und erklärt, warum sie passen.",
-      "findJobs": "Remote-Jobs finden",
-      "featuresTitle": "Alles, was du für die Suche nach Remote-Arbeit brauchst",
-      "tz": {
-        "title": "Abgleich nach Zeitzone",
-        "text": "Abgleich nach Skills und Arbeitszeiten, nicht nach Stichwörtern. Du siehst, wie viele Stunden du dich mit dem Team überschneidest.",
-        "you": "Du · UTC+3",
-        "team": "Team · UTC−1",
-        "overlap": "Überschneidung 5 h"
-      },
-      "salary": {
-        "title": "Vergleichbares Gehalt",
-        "text": "Jede Spanne wird in deiner Währung und mit Steuern angezeigt. Weniger Bewerbungen ins Leere.",
-        "range": "USD 4 200–5 600 / Monat",
-        "net": "Nach Steuern"
-      },
-      "agent": {
-        "title": "Spoki, der Karriere-Agent",
-        "text": "Ein Gespräch, das lernt, welche Arbeit du willst, und weitersucht. Auch in Telegram.",
-        "match": "Treffer 87%",
-        "why": "Solidity · UTC+2 · 6 h"
-      },
-      "more": {
-        "mutual": {
-          "title": "Gegenseitiges Interesse",
-          "text": "Ein Unternehmen sieht deine Kontakte erst nach gegenseitigem Interesse."
-        },
-        "verified": {
-          "title": "Geprüfte Unternehmen",
-          "text": "Firmen-E-Mail oder DNS-Eintrag. Das Abzeichen wird verdient, nie gekauft."
-        },
-        "alerts": {
-          "title": "Gespeicherte Suchen",
-          "text": "Bis zu 10 Suchen mit Benachrichtigungen per E-Mail und in Telegram."
-        },
-        "telegram": {
-          "title": "Telegram",
-          "text": "Anmelden, mit @intgetion_bot schreiben und dem Kanal Jobs Alert folgen."
-        },
-        "salaries": {
-          "title": "Gehälter",
-          "text": "Gehaltsseiten nach Rolle und Level, für alle offen."
-        },
-        "web3": {
-          "title": "Web3 und klassische Remote-Arbeit",
-          "text": "Beides an einem Ort, in sieben Sprachen."
+      "heroTitle": "Eine Plattform für Remote-Arbeit",
+      "heroLead": "Remote-Jobs, Freelance, UGC-Videos und Events in einem Konto. Sag Spoki, was du brauchst – den Rest übernimmt Spoki.",
+      "ask": {
+        "label": "Sag Spoki, was du brauchst",
+        "placeholder": "Was brauchst du? Zum Beispiel einen Designer für eine Landingpage",
+        "submit": "Spoki fragen",
+        "examplesLabel": "Zum Beispiel:",
+        "examples": {
+          "work": "Hilf mir, einen Remote-Job zu finden",
+          "hire": "Ich möchte einen Freelancer beauftragen",
+          "ugc": "Ich möchte UGC-Videos bestellen",
+          "task": "Finde mir eine Freelance-Aufgabe"
         }
       },
-      "pricing": {
-        "label": "Preise",
-        "title": "Stellen kostenlos veröffentlichen.",
-        "link": "Preise ansehen",
-        "boards": "Große Remote-Jobbörsen",
-        "boardsPrice": "$250–300",
-        "start": "Start",
-        "startPrice": "$0",
-        "hire": "Hire · mit Erstattung",
-        "hirePrice": "$79",
-        "team": "Team · pro Monat",
-        "teamPrice": "$80"
-      },
-      "platform": {
-        "label": "Eine Plattform",
-        "title": "Jobs, Aufträge und Creator in einem Konto",
-        "lead": "Remote-Jobs, Freelance, UGC-Videos und Events. Spoki führt dich durch alles, und du zahlst in USDC oder USDT.",
-        "open": "Öffnen",
+      "services": {
+        "label": "Ein Konto",
+        "title": "Arbeiten oder einstellen mit demselben Konto",
+        "lead": "Keine zweite Registrierung, keine Rollenwahl. Profil und Wallet gelten in allen Diensten.",
         "spoki": {
-          "title": "Spoki, dein Karriere-Agent",
-          "text": "Beschreibe in eigenen Worten, was du brauchst. Spoki sucht, vergleicht und erklärt, warum etwas passt. Spoki merkt sich dich und erinnert dich in Telegram.",
+          "title": "Spoki, dein KI-Agent",
+          "text": "Beschreibe die Aufgabe in eigenen Worten. Spoki sucht Jobs, Freelancer, Aufgaben und Events, vergleicht sie und erklärt, warum eine Option passt. Spoki merkt sich dich und erinnert dich in Telegram.",
           "ask": "Finde mir einen Remote-Designjob",
           "step": "Suche Jobs",
           "chipOne": "Design",
@@ -352,6 +298,24 @@
             "two": "AI engineering conf",
             "three": "Product design week"
           }
+        }
+      },
+      "platform": {
+        "label": "So funktioniert es",
+        "title": "Ein Gespräch statt fünf Websites",
+        "steps": {
+          "one": {
+            "title": "Aufgabe beschreiben",
+            "text": "In eigenen Worten, auf der Website oder in Telegram."
+          },
+          "two": {
+            "title": "Spoki findet Optionen",
+            "text": "Jobs, Freelancer, Aufgaben oder Creator – und warum sie passen."
+          },
+          "three": {
+            "title": "Du entscheidest",
+            "text": "Vor jeder Aktion in deinem Konto fragt Spoki nach. Du einigst dich, zahlst und bewertest."
+          }
         },
         "pay": {
           "title": "Mit Krypto zahlen",
@@ -366,8 +330,7 @@
           "text": "Anmelden und chatten über @intgetion_bot. KI-Assistenten durchsuchen unsere Jobs per MCP."
         }
       },
-
-      "ctaTitle": "Bereit für Remote-Arbeit?"
+      "ctaTitle": "Bereit loszulegen?"
     }
   },
   "categories": {

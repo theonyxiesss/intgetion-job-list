@@ -118,8 +118,8 @@
   },
   "meta": {
     "description": "Trabalho remoto e eventos tech. Correspondências reais.",
-    "homeTitle": "Vagas remotas em Web3 e eventos tech",
-    "homeDescription": "Um agregador de vagas remotas em Web3, cripto e tecnologia, e de cúpulas, meetups, hackathons e eventos de carreira para networking. Faixas salariais, sobreposição de fuso horário e correspondências com o seu perfil.",
+    "homeTitle": "Plataforma de trabalho remoto: vagas, freelance e UGC",
+    "homeDescription": "Vagas remotas e tarefas freelance, freelancers e criadores UGC para contratar, além de eventos Web3 e tech. Spoki, o agente de IA, guia cada passo; pague em USDC ou USDT.",
     "ogAlt": "INTGETION Job List — trabalho remoto em Web3"
   },
   "nav": {
@@ -196,32 +196,27 @@
     "it": "Italiano"
   },
   "home": {
-    "tagline": "Trabalho remoto e eventos tech. Correspondências reais.",
-    "searchLabel": "Pesquisar",
-    "searchPlaceholder": "Cargo, habilidade ou empresa",
-    "searchSubmit": "Pesquisar",
-    "latestEmpty": "As vagas publicadas aparecerão aqui.",
+    "tagline": "Uma plataforma para trabalho remoto: vagas, freelance, UGC e eventos.",
     "feedTitle": "Vagas remotas",
     "topJobs": "Vagas em destaque",
-    "allJobs": "Todas as vagas",
     "moreJobs": "Mostrar mais vagas",
     "faqTitle": "Perguntas",
     "faq": {
       "what": {
         "q": "O que é o INTGETION JOB LIST?",
-        "a": "Um agregador de vagas remotas e de eventos Web3 e tech. Procure vagas, encontre cúpulas e meetups para fazer networking e deixe o assistente Spoki sugerir o que combina com o seu perfil."
+        "a": "Uma plataforma para trabalho remoto: vagas, serviços e tarefas freelance, vídeos UGC para marcas e eventos Web3 e tech em uma só conta. O agente Spoki ajuda os dois lados."
       },
       "free": {
         "q": "É gratuito?",
         "a": "Sim. Pesquisar, se candidatar e publicar vagas é gratuito. Os planos pagos trazem mais velocidade e alcance — veja Preços."
       },
-      "apply": {
-        "q": "Como me candidato?",
-        "a": "Abra uma vaga e toque em Candidatar-se. Nas vagas importadas, a candidatura é feita no site do próprio empregador."
+      "spoki": {
+        "q": "O que o Spoki faz?",
+        "a": "O Spoki busca vagas, serviços, tarefas e eventos, escreve com você uma vaga, um serviço ou um briefing UGC e envia lembretes no Telegram. Tudo o que muda a sua conta espera a sua confirmação."
       },
-      "post": {
-        "q": "Como publico uma vaga?",
-        "a": "Toque em Publicar vaga, entre e preencha o formulário. A vaga aparece no feed após a revisão."
+      "pay": {
+        "q": "Como funcionam os pagamentos?",
+        "a": "Planos, pedidos freelance e orçamentos UGC são pagos em USDC ou USDT pela sua carteira. Um pedido freelance é pago direto no endereço do freelancer."
       },
       "contacts": {
         "q": "Quem vê meus contatos?",
@@ -229,76 +224,27 @@
       }
     },
     "landing": {
-      "heroTitle": "Vagas remotas. Combinações reais.",
-      "heroLead": "Vagas de acordo com suas habilidades, salário e horário. Spoki, o agente de carreira, encontra vagas que combinam e explica por quê.",
-      "findJobs": "Encontrar vagas remotas",
-      "featuresTitle": "Tudo o que você precisa para encontrar trabalho remoto",
-      "tz": {
-        "title": "Combinação por fuso horário",
-        "text": "Combinação por habilidades e horário, não por palavras-chave. Você vê quantas horas se sobrepõe com a equipe.",
-        "you": "Você · UTC+3",
-        "team": "Equipe · UTC−1",
-        "overlap": "Sobreposição 5 h"
-      },
-      "salary": {
-        "title": "Salário comparável",
-        "text": "Cada faixa aparece na sua moeda, com impostos considerados. Menos candidaturas fora do alvo.",
-        "range": "USD 4 200–5 600 / mês",
-        "net": "Após impostos"
-      },
-      "agent": {
-        "title": "Spoki, o agente de carreira",
-        "text": "Uma conversa que aprende que trabalho você quer e continua procurando. Também no Telegram.",
-        "match": "Combinação 87%",
-        "why": "Solidity · UTC+2 · 6 h"
-      },
-      "more": {
-        "mutual": {
-          "title": "Interesse mútuo",
-          "text": "Uma empresa vê seus contatos só depois do interesse mútuo."
-        },
-        "verified": {
-          "title": "Empresas verificadas",
-          "text": "E-mail corporativo ou registro DNS. O selo é conquistado, nunca comprado."
-        },
-        "alerts": {
-          "title": "Buscas salvas",
-          "text": "Até 10 buscas com alertas por e-mail e no Telegram."
-        },
-        "telegram": {
-          "title": "Telegram",
-          "text": "Entre, converse com @intgetion_bot e siga o canal Jobs Alert."
-        },
-        "salaries": {
-          "title": "Salários",
-          "text": "Páginas de salários por cargo e nível, abertas a todos."
-        },
-        "web3": {
-          "title": "Web3 e remoto tradicional",
-          "text": "Os dois em um só lugar, em sete idiomas."
+      "heroTitle": "Uma plataforma para trabalho remoto",
+      "heroLead": "Vagas remotas, freelance, vídeos UGC e eventos em uma só conta. Diga ao Spoki o que você precisa, e ele cuida do resto.",
+      "ask": {
+        "label": "Diga ao Spoki o que você precisa",
+        "placeholder": "Do que você precisa? Por exemplo, um designer para uma landing page",
+        "submit": "Perguntar ao Spoki",
+        "examplesLabel": "Por exemplo:",
+        "examples": {
+          "work": "Me ajude a encontrar um trabalho remoto",
+          "hire": "Quero contratar um freelancer",
+          "ugc": "Quero encomendar vídeos UGC",
+          "task": "Encontre uma tarefa freelance para mim"
         }
       },
-      "pricing": {
-        "label": "Preços",
-        "title": "Publique vagas de graça.",
-        "link": "Ver preços",
-        "boards": "Grandes sites de vagas remotas",
-        "boardsPrice": "$250–300",
-        "start": "Start",
-        "startPrice": "$0",
-        "hire": "Hire · com reembolso",
-        "hirePrice": "$79",
-        "team": "Team · por mês",
-        "teamPrice": "$80"
-      },
-      "platform": {
-        "label": "Uma plataforma",
-        "title": "Vagas, trabalhos e criadores em uma só conta",
-        "lead": "Vagas remotas, freelance, vídeos UGC e eventos. O Spoki guia você por tudo, e você paga em USDC ou USDT.",
-        "open": "Abrir",
+      "services": {
+        "label": "Uma conta",
+        "title": "Trabalhe ou contrate com a mesma conta",
+        "lead": "Sem segundo cadastro e sem papel para escolher. Seu perfil e sua carteira valem em todos os serviços.",
         "spoki": {
-          "title": "Spoki, seu agente de carreira",
-          "text": "Descreva o que precisa com suas palavras. O Spoki busca, compara e explica por que uma opção combina. Ele lembra de você e avisa no Telegram.",
+          "title": "Spoki, seu agente de IA",
+          "text": "Descreva a tarefa com suas palavras. O Spoki busca vagas, freelancers, tarefas e eventos, compara e explica por que uma opção combina. Ele lembra de você e avisa no Telegram.",
           "ask": "Encontre uma vaga remota de design",
           "step": "Buscando vagas",
           "chipOne": "Design",
@@ -352,6 +298,24 @@
             "two": "AI engineering conf",
             "three": "Product design week"
           }
+        }
+      },
+      "platform": {
+        "label": "Como funciona",
+        "title": "Uma conversa em vez de cinco sites",
+        "steps": {
+          "one": {
+            "title": "Descreva a tarefa",
+            "text": "Com suas palavras, no site ou no Telegram."
+          },
+          "two": {
+            "title": "O Spoki encontra opções",
+            "text": "Vagas, freelancers, tarefas ou criadores, e por que cada um combina."
+          },
+          "three": {
+            "title": "Você decide",
+            "text": "O Spoki pergunta antes de cada ação na sua conta. Você combina as condições, paga e deixa uma avaliação."
+          }
         },
         "pay": {
           "title": "Pague com cripto",
@@ -366,8 +330,7 @@
           "text": "Entre e converse pelo @intgetion_bot. Assistentes de IA buscam nossas vagas via MCP."
         }
       },
-
-      "ctaTitle": "Pronto para encontrar trabalho remoto?"
+      "ctaTitle": "Pronto para começar?"
     }
   },
   "categories": {

@@ -26,7 +26,7 @@ export async function generateMetadata({
   return { title: t("title"), robots: { index: false } };
 }
 
-/** The date that matters now, by status (D603). */
+/** The date that matters now, by status (D605). */
 function keyDate(
   order: PartyOrder,
   now: Date,
@@ -121,7 +121,7 @@ export default async function FreelanceOrdersPage({
             }
           />
         ) : (
-          <ul className="grid gap-4 md:grid-cols-2">
+          <ul className="grid gap-4 lg:grid-cols-2">
             {orders.map((order) => {
               const date = keyDate(order, now);
               return (

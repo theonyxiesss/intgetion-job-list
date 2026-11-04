@@ -3,7 +3,7 @@ import type { OrderStage } from "@/lib/order-stage";
 import type { WorkspaceStage } from "./creator-workspace";
 
 /**
- * UGC work on the order card's four steps (D603). Hired is "accepted";
+ * UGC work on the order card's four steps (D605). Hired is "accepted";
  * hired with no video, or with a change asked, is "in work"; a sent video
  * is "on review"; an accepted or winning one is "done". A response or an
  * offer waits before the line; a refusal of either side is off it.

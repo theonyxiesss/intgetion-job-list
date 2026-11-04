@@ -1,5 +1,5 @@
 /**
- * Where an order stands on the four-step line of the order card (D603):
+ * Where an order stands on the four-step line of the order card (D605):
  * accepted → in work → on review → done. Freelance orders and UGC
  * participations map their own statuses onto it; a status before
  * acceptance or after a refusal has no step.

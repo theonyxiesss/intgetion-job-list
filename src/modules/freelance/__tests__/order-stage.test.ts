@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { FREELANCE_ORDER_STATUSES } from "@/config/freelance";
 import { orderStage } from "../service/order-stage";
 
-describe("freelance orderStage (D603)", () => {
+describe("freelance orderStage (D605)", () => {
   it("puts the live statuses on the four steps in order", () => {
     expect(orderStage("accepted")).toEqual({ step: 0, tone: "work" });
     expect(orderStage("in_progress")).toEqual({ step: 1, tone: "work" });

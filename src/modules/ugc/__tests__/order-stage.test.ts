@@ -5,7 +5,7 @@ import {
   workspaceOrderStage,
 } from "../service/order-stage";
 
-describe("UGC participationStage (D603)", () => {
+describe("UGC participationStage (D605)", () => {
   it("keeps a response or an offer before the line", () => {
     for (const status of ["applied", "offered"] as const) {
       expect(participationStage({ status, submission: null })).toEqual({
@@ -41,7 +41,7 @@ describe("UGC participationStage (D603)", () => {
   });
 });
 
-describe("UGC workspaceOrderStage (D603)", () => {
+describe("UGC workspaceOrderStage (D605)", () => {
   it("maps the creator's stages onto the same steps", () => {
     expect(workspaceOrderStage("offer").step).toBeNull();
     expect(workspaceOrderStage("applied").step).toBeNull();

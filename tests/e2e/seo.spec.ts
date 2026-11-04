@@ -102,10 +102,13 @@ test("the home page carries search wording, x-default and a social image", async
   request,
 }) => {
   await page.goto("/en");
-  await expect(page).toHaveTitle(/Remote Web3 Jobs & Tech Events — INTGETION/);
+  // The platform wording since D601.
+  await expect(page).toHaveTitle(
+    /Remote Work Platform: Jobs, Freelance & UGC — INTGETION/,
+  );
   await expect(page.locator('meta[name="description"]')).toHaveAttribute(
     "content",
-    /remote jobs in Web3, crypto and tech, plus summits, meetups/,
+    /Remote jobs and freelance tasks, freelancers and UGC creators to hire/,
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
