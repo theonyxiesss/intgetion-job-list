@@ -120,6 +120,16 @@ const reminderInput = z
   })
   .strict();
 
+/** Read-only MCP view; caller must supply the authenticated owner id. */
+export async function listMcpReminders(userId: string) {
+  return (await repo.listPending(userId)).map((row) => ({
+    id: row.id,
+    text: row.text,
+    at: new Date(row.remind_at).toISOString(),
+    timeZone: row.time_zone,
+  }));
+}
+
 function user(ctx: ToolContext): string {
   return ctx.userId!;
 }

@@ -5,7 +5,7 @@ import { LinkTabs } from "@/components/ui";
 export async function SettingsTabs({
   active,
 }: {
-  active: "notifications" | "privacy" | "account";
+  active: "notifications" | "privacy" | "account" | "assistants";
 }) {
   const t = await getTranslations("settings");
   return (
@@ -27,6 +27,11 @@ export async function SettingsTabs({
           label: t("tabAccount"),
           href: "/settings/account",
           active: active === "account",
+        },
+        {
+          label: t("tabAssistants"),
+          href: "/settings/assistants",
+          active: active === "assistants",
         },
       ]}
     />

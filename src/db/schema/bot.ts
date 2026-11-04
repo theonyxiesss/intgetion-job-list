@@ -58,7 +58,10 @@ export const botConversations = pgTable(
       .where(
         sql`${table.userId} is not null and ${table.inviteId} is not null`,
       ),
-    check("bot_conversations_channel_check", sql`${table.channel} in ('web')`),
+    check(
+      "bot_conversations_channel_check",
+      sql`${table.channel} in ('web', 'mcp')`,
+    ),
   ],
 );
 

@@ -553,6 +553,37 @@
       }
     }
   },
+  "mcp": {
+    "consentTitle": "Collega un assistente",
+    "consentClient": "{client} richiede l’accesso a INTGETION",
+    "consentDescription": "Scegli quali dati del tuo account può leggere l’assistente. Puoi scollegarlo dalle impostazioni in qualsiasi momento.",
+    "consentAccount": "L’ID dell’account termina con {id}",
+    "allow": "Consenti accesso",
+    "deny": "Annulla",
+    "settingsTitle": "Assistenti collegati",
+    "tokensTitle": "Token di accesso personali",
+    "tokensHint": "Crea un token per un assistente che supporta gli header Bearer. Viene mostrato una sola volta.",
+    "tokenOnce": "Copia subito questo token. Non verrà mostrato di nuovo.",
+    "tokenLabel": "Nome del token",
+    "permissions": "Autorizzazioni di accesso",
+    "createToken": "Crea token",
+    "copy": "Copia token",
+    "connectionsTitle": "Assistenti collegati",
+    "connectionsHint": "Gli assistenti OAuth possono leggere solo i dati elencati qui.",
+    "noConnections": "Nessun assistente collegato.",
+    "disconnect": "Revoca accesso",
+    "settingsError": "Impossibile modificare l’accesso MCP. Riprova.",
+    "scope": {
+      "profile:read": "Leggere il profilo e le competenze",
+      "applications:read": "Leggere le candidature",
+      "saved:read": "Leggere offerte, ricerche e aziende seguite",
+      "saved:write": "Gestire offerte e ricerche salvate",
+      "freelance:read": "Leggere ordini e servizi freelance",
+      "ugc:read": "Leggere le campagne UGC dell’azienda",
+      "reminders:read": "Leggere i promemoria in attesa",
+      "reminders:write": "Gestire i promemoria"
+    }
+  },
   "profile": {
     "nav": "Profilo",
     "title": "Profilo",
@@ -1663,6 +1694,7 @@
     "tabNotifications": "Notifiche",
     "tabPrivacy": "Privacy",
     "tabAccount": "Account",
+    "tabAssistants": "Assistenti",
     "saved": "Salvato.",
     "failed": "Impossibile salvare. Riprova.",
     "cancel": "Annulla",

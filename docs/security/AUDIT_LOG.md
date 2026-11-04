@@ -21,6 +21,15 @@
 
 ---
 
+## 2026-11-04 — MCP Phase 2 OAuth/CIMD — рабочая папка `codex/mcp-phase2`
+
+Проверено по изменённым после последней записи файлам: OAuth authorize/token/revoke, consent, personal-token/connection routes, auth service, CIMD resolver/fetch, `0087_mcp_authorization.sql`, MCP service tests и rate limit. Метод: ручной проход security checklist `intgetion-security` после чтения этого журнала и TZ 16.
+
+- CIMD: только HTTPS URL, без userinfo/IP literal/fragment; каждый DNS A/AAAA должен быть public; соединение пинится на один проверенный IP с исходным hostname для TLS; redirects запрещены; общий таймаут 2,5 с, ответ ≤64 КБ и JSON content type; client_id и redirect URI валидируются. Unit tests проверяют публичные/специальные диапазоны и структуру документа.
+- OAuth: PKCE S256, exact redirect URI, hashed one-use code/token storage, refresh rotation, audience/scope checks, consent requires authenticated user; mutation routes remain under shared Origin guard. OAuth endpoints are rate-limited. Personal token creation initially had no user bucket; fixed with `mcpPersonalToken` (10/hour) in `rateRules` and route. Token and connection reads/revokes are scoped to authenticated user; audit records contain IDs/actions, never raw token values.
+- Migration: all six new tables enable forced deny-all RLS in `0087`; DML granted to `app_rw`; no permissive anon/authenticated policies. No secrets or external dependencies added.
+- Результат: OK после добавления лимита. Ограничение проверки: DB behavior/RLS and migration-from-scratch не запускались — нужны CI/БД; внешний review не запускался; security review CI остаётся обязательным до выкладки.
+
 ## 2026-10-15 — вход Mini App с телефона, рабочая папка (D429)
 
 Не полный аудит. Область: `POST /api/auth/telegram/miniapp`, `verifyTelegramInitData` в `src/modules/auth/service/telegram.ts`. Способ: чек-лист скилла `intgetion-security` по этому диффу.

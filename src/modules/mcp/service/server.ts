@@ -1,7 +1,10 @@
 import {
+  bearerAuthChallengeResponse,
   createMcpHandler,
   hostHeaderValidationResponse,
   McpServer,
+  OAuthError,
+  OAuthErrorCode,
   originValidationResponse,
 } from "@modelcontextprotocol/server";
 import { PRODUCT_NAME } from "@/config/product";
@@ -12,11 +15,18 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/request-ip";
 import { siteUrl } from "@/lib/supabase/env";
 import { mcpTools, runMcpTool, UNTRUSTED_NOTE } from "@/modules/bot/service";
+import {
+  enforceMcpUserLimit,
+  verifyMcpToken,
+  type McpPrincipal,
+} from "./auth-service";
+import { runUserMcpTool, userMcpTools } from "./user-tools";
 
 /**
- * MCP server of INTGETION JOB LIST, phase 1 (D486): public reads over
- * stateless Streamable HTTP. Tools come from the Spoki registry (D480);
- * this file only speaks the protocol. No sign-in, no writes, no cookies.
+ * MCP server of INTGETION JOB LIST: public and scoped account reads over
+ * stateless Streamable HTTP. Public tools come from the Spoki registry;
+ * account tools are registered only after scoped bearer-token validation.
+ * Cookie sessions are never read and no write tools are exposed.
  */
 
 export const MCP_SERVER_NAME = "intgetion";
@@ -77,7 +87,10 @@ function logCall(input: {
   logger.info({ event: "mcp_tool_call", ...input });
 }
 
-function buildServer(ipHash: string | undefined): McpServer {
+function buildServer(
+  ipHash: string | undefined,
+  principal?: McpPrincipal,
+): McpServer {
   const server = new McpServer(
     { name: MCP_SERVER_NAME, title: PRODUCT_NAME, version: MCP_SERVER_VERSION },
     {
@@ -139,12 +152,84 @@ function buildServer(ipHash: string | undefined): McpServer {
       },
     );
   }
+  if (principal) {
+    for (const definition of userMcpTools(principal)) {
+      server.registerTool(
+        definition.name,
+        {
+          title: definition.title,
+          description: definition.description,
+          inputSchema: definition.input,
+          annotations: { title: definition.title, ...READ_ONLY },
+        },
+        async (args: unknown) => {
+          const started = performance.now();
+          try {
+            const data = await runUserMcpTool(definition.name, args, principal);
+            logCall({
+              tool: definition.name,
+              ok: true,
+              ms: Math.round(performance.now() - started),
+              ipHash,
+            });
+            return {
+              content: [
+                {
+                  type: "text" as const,
+                  text: `${UNTRUSTED_NOTE}\n${JSON.stringify(data)}`,
+                },
+              ],
+              structuredContent: data,
+            };
+          } catch (error) {
+            logCall({
+              tool: definition.name,
+              ok: false,
+              ms: Math.round(performance.now() - started),
+              ipHash,
+              code: error instanceof HttpError ? error.code : "INTERNAL",
+            });
+            return {
+              isError: true,
+              content: [
+                {
+                  type: "text" as const,
+                  text:
+                    error instanceof HttpError
+                      ? error.message
+                      : "The tool failed. Try again later.",
+                },
+              ],
+            };
+          }
+        },
+      );
+    }
+  }
   return server;
 }
 
 const handler = createMcpHandler(
-  ({ requestInfo }) =>
-    buildServer(requestInfo ? ipHashOf(requestInfo) : undefined),
+  ({ requestInfo, authInfo }) => {
+    const userId = authInfo?.extra?.userId;
+    const principal =
+      authInfo && typeof userId === "string"
+        ? {
+            userId,
+            clientId: authInfo.clientId,
+            scopes: authInfo.scopes as McpPrincipal["scopes"],
+            expiresAt: authInfo.expiresAt ?? 0,
+            resource: authInfo.resource?.toString() ?? "",
+            ...(typeof authInfo.extra?.grantId === "string"
+              ? { grantId: authInfo.extra.grantId }
+              : {}),
+          }
+        : undefined;
+    return buildServer(
+      requestInfo ? ipHashOf(requestInfo) : undefined,
+      principal,
+    );
+  },
   {
     // Default "auto": one JSON body; tools here never send progress first.
     maxRequestBodySize: MCP_MAX_BODY_BYTES,
@@ -163,8 +248,42 @@ export async function handleMcpRequest(request: Request): Promise<Response> {
     originValidationResponse(request, allowedOrigins());
   if (rejected) return rejected;
   try {
+    const authorization = request.headers.get("authorization");
+    if (authorization) {
+      const [scheme, token, ...extra] = authorization.split(" ");
+      if (scheme?.toLowerCase() !== "bearer" || !token || extra.length) {
+        throw new OAuthError(
+          OAuthErrorCode.InvalidToken,
+          "Invalid access token",
+        );
+      }
+      const resource = new URL("/api/mcp", request.url).toString();
+      const principal = await verifyMcpToken(token, resource);
+      if (!principal) {
+        throw new OAuthError(
+          OAuthErrorCode.InvalidToken,
+          "Invalid access token",
+        );
+      }
+      await enforceMcpUserLimit(principal.userId, principal.clientId);
+      return handler.fetch(request, {
+        authInfo: {
+          token,
+          clientId: principal.clientId,
+          scopes: principal.scopes,
+          expiresAt: principal.expiresAt,
+          resource: new URL(principal.resource),
+          extra: { userId: principal.userId, grantId: principal.grantId },
+        },
+      });
+    }
     await enforceRateLimit("mcpGuest", clientIp(request.headers));
   } catch (error) {
+    if (OAuthError[Symbol.hasInstance](error)) {
+      return bearerAuthChallengeResponse(error, {
+        resourceMetadataUrl: `${siteUrl()}/.well-known/oauth-protected-resource/api/mcp`,
+      });
+    }
     return toErrorResponse(error);
   }
   return handler.fetch(request);

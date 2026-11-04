@@ -553,6 +553,37 @@
       }
     }
   },
+  "mcp": {
+    "consentTitle": "Connect an assistant",
+    "consentClient": "{client} wants access to INTGETION",
+    "consentDescription": "Choose which account data this assistant may read. You can disconnect it in settings at any time.",
+    "consentAccount": "Account ID ending {id}",
+    "allow": "Allow access",
+    "deny": "Cancel",
+    "settingsTitle": "Connected assistants",
+    "tokensTitle": "Personal access tokens",
+    "tokensHint": "Use a personal token for an assistant that supports bearer headers. The token is shown only once.",
+    "tokenOnce": "Copy this token now. It will not be shown again.",
+    "tokenLabel": "Token name",
+    "permissions": "Access permissions",
+    "createToken": "Create token",
+    "copy": "Copy token",
+    "connectionsTitle": "Connected assistants",
+    "connectionsHint": "OAuth assistants you approved can read only the data listed here.",
+    "noConnections": "No assistants are connected.",
+    "disconnect": "Revoke access",
+    "settingsError": "Could not update MCP access. Try again.",
+    "scope": {
+      "profile:read": "Read your candidate profile and skills",
+      "applications:read": "Read your job applications",
+      "saved:read": "Read saved jobs, searches, and followed companies",
+      "saved:write": "Manage saved jobs and searches",
+      "freelance:read": "Read your freelance orders and services",
+      "ugc:read": "Read your company's UGC campaigns",
+      "reminders:read": "Read pending reminders",
+      "reminders:write": "Manage your reminders"
+    }
+  },
   "profile": {
     "nav": "Profile",
     "title": "Profile",
@@ -1663,6 +1694,7 @@
     "tabNotifications": "Notifications",
     "tabPrivacy": "Privacy",
     "tabAccount": "Account",
+    "tabAssistants": "Assistants",
     "saved": "Saved.",
     "failed": "Could not save. Try again.",
     "cancel": "Cancel",

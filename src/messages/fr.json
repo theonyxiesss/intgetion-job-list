@@ -553,6 +553,37 @@
       }
     }
   },
+  "mcp": {
+    "consentTitle": "Connecter un assistant",
+    "consentClient": "{client} demande l’accès à INTGETION",
+    "consentDescription": "Choisissez les données du compte que l’assistant peut lire. Vous pouvez le déconnecter dans les paramètres à tout moment.",
+    "consentAccount": "L’identifiant du compte se termine par {id}",
+    "allow": "Autoriser l’accès",
+    "deny": "Annuler",
+    "settingsTitle": "Assistants connectés",
+    "tokensTitle": "Jetons d’accès personnels",
+    "tokensHint": "Créez un jeton pour un assistant compatible avec les en-têtes Bearer. Il ne sera affiché qu’une fois.",
+    "tokenOnce": "Copiez ce jeton maintenant. Il ne sera plus affiché.",
+    "tokenLabel": "Nom du jeton",
+    "permissions": "Autorisations d’accès",
+    "createToken": "Créer un jeton",
+    "copy": "Copier le jeton",
+    "connectionsTitle": "Assistants connectés",
+    "connectionsHint": "Les assistants OAuth ne peuvent lire que les données listées ici.",
+    "noConnections": "Aucun assistant connecté.",
+    "disconnect": "Révoquer l’accès",
+    "settingsError": "Impossible de modifier l’accès MCP. Réessayez.",
+    "scope": {
+      "profile:read": "Lire votre profil et vos compétences",
+      "applications:read": "Lire vos candidatures",
+      "saved:read": "Lire les offres, recherches et entreprises suivies",
+      "saved:write": "Gérer les offres et recherches enregistrées",
+      "freelance:read": "Lire vos commandes et services freelance",
+      "ugc:read": "Lire les campagnes UGC de votre entreprise",
+      "reminders:read": "Lire les rappels en attente",
+      "reminders:write": "Gérer vos rappels"
+    }
+  },
   "profile": {
     "nav": "Profil",
     "title": "Profil",
@@ -1663,6 +1694,7 @@
     "tabNotifications": "Notifications",
     "tabPrivacy": "Confidentialité",
     "tabAccount": "Compte",
+    "tabAssistants": "Assistants",
     "saved": "Enregistré.",
     "failed": "Enregistrement impossible. Réessayez.",
     "cancel": "Annuler",
