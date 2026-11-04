@@ -1,13 +1,16 @@
-import { ServiceIconBox } from "@/components/ui/service-icon";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Table, Td, Th, Tr } from "@/components/ui/table";
+import { OrderCard } from "@/components/ui/order-card";
 import { Link } from "@/i18n/navigation";
+import { intlLocale } from "@/i18n/locale";
+import { ORDER_STEPS } from "@/lib/order-stage";
 import { RouteMessages } from "@/components/shell/route-messages";
 import {
+  monogram,
   ORDER_GROUPS,
   orderGroup,
+  participationStage,
   pickGroup,
   usdLabel,
   type WorkspaceCampaign,
@@ -21,9 +24,7 @@ import {
   DeskPager,
   DeskShell,
   DeskSkeleton,
-  Monogram,
   NeedCompany,
-  ParticipationStatus,
 } from "@/modules/ugc/ui/desk";
 import { requireDeskUser, loadDesk, offerOpen } from "../desk-data";
 import { deskPath, paginate } from "../desk-query";
@@ -59,6 +60,7 @@ export default async function OrdersPage({
   return (
     <Suspense fallback={<DeskSkeleton />}>
       <OrdersBody
+        locale={locale}
         userId={userId}
         view={query.view}
         companyId={query.company}
@@ -69,11 +71,13 @@ export default async function OrdersPage({
 }
 
 async function OrdersBody({
+  locale,
   userId,
   view: rawView,
   companyId,
   page: rawPage,
 }: {
+  locale: string;
   userId: string;
   view?: string;
   companyId?: string;
@@ -81,6 +85,17 @@ async function OrdersBody({
 }) {
   const t = await getTranslations("ugc");
   const d = await getTranslations("ugcDesk");
+  const card = await getTranslations("ui.orderCard");
+  const stepLabels = {
+    accepted: card("steps.accepted"),
+    work: card("steps.work"),
+    review: card("steps.review"),
+    done: card("steps.done"),
+  };
+  const dates = new Intl.DateTimeFormat(intlLocale(locale), {
+    dateStyle: "medium",
+    timeZone: "UTC",
+  });
   const desk = await loadDesk(userId, companyId);
   const view = pickGroup(ORDER_GROUPS, rawView);
   const here = (over: {
@@ -158,7 +173,7 @@ async function OrdersBody({
         </Link>
       );
     }
-    return <span className="text-fg-muted">—</span>;
+    return null;
   }
 
   return (
@@ -201,83 +216,49 @@ async function OrdersBody({
               />
             ) : (
               <>
-                <Table caption={d("nav.orders")} className="hidden md:block">
-                  <thead>
-                    <tr>
-                      <Th>{d("col.creator")}</Th>
-                      <Th>{d("col.brief")}</Th>
-                      <Th>{d("col.status")}</Th>
-                      <Th numeric>{d("col.reward")}</Th>
-                      <Th>{d("col.rights")}</Th>
-                      <Th>{d("col.action")}</Th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rows.map((row) => {
-                      const name =
-                        row.participant.creator?.displayName || t("creator");
-                      return (
-                        <Tr key={row.participant.inviteId}>
-                          <Td>
-                            <span className="flex items-center gap-3">
-                              <Monogram name={name} />
-                              <span className="font-medium break-words">
-                                {name}
-                              </span>
-                            </span>
-                          </Td>
-                          <Td className="max-w-[16rem]">
-                            <Link
-                              href={`/campaigns/${row.campaign.id}#ugc-people`}
-                              className="break-words underline-offset-4 hover:underline"
-                            >
-                              {row.campaign.productName}
-                            </Link>
-                          </Td>
-                          <Td>
-                            <ParticipationStatus
-                              status={row.participant.status}
-                            />
-                          </Td>
-                          <Td numeric>{reward(row)}</Td>
-                          <Td>{rights(row)}</Td>
-                          <Td className="py-3">{actions(row)}</Td>
-                        </Tr>
-                      );
-                    })}
-                  </tbody>
-                </Table>
-                <ul className="grid gap-4 md:hidden">
+                <ul className="grid gap-4 lg:grid-cols-2">
                   {rows.map((row) => {
+                    const { campaign, participant } = row;
                     const name =
-                      row.participant.creator?.displayName || t("creator");
+                      participant.creator?.displayName || t("creator");
+                    const stage = participationStage(participant);
+                    const deadline = new Date(
+                      `${campaign.deadline}T00:00:00.000Z`,
+                    );
                     return (
-                      <li
-                        key={row.participant.inviteId}
-                        className="flex flex-col gap-4 rounded-lg border border-line bg-surface p-5"
-                      >
-                        <div className="flex items-center gap-3">
-                          <ServiceIconBox name="ugc" />
-                          <div className="flex min-w-0 flex-col">
-                            <p className="font-medium break-words">{name}</p>
-                            <Link
-                              href={`/campaigns/${row.campaign.id}#ugc-people`}
-                              className="t-body-s break-words text-fg-muted underline-offset-4 hover:underline"
-                            >
-                              {row.campaign.productName}
-                            </Link>
-                          </div>
-                        </div>
-                        <div className="t-body-s flex flex-wrap items-center gap-x-4 gap-y-1">
-                          <ParticipationStatus
-                            status={row.participant.status}
-                          />
-                          <span className="font-mono text-2xl tracking-tight">
-                            {reward(row)}
-                          </span>
-                          <span className="text-fg-muted">{rights(row)}</span>
-                        </div>
-                        {actions(row)}
+                      <li key={participant.inviteId}>
+                        <OrderCard
+                          href={`/campaigns/${campaign.id}#ugc-people`}
+                          icon="ugc"
+                          code={`UGC / ${participant.inviteId
+                            .slice(0, 4)
+                            .toUpperCase()}`}
+                          status={
+                            participant.status === "hired" &&
+                            participant.submission
+                              ? t(`status.${participant.submission.status}`)
+                              : stage.step !== null
+                                ? stepLabels[ORDER_STEPS[stage.step]]
+                                : t(`status.${participant.status}`)
+                          }
+                          stage={stage}
+                          stepLabels={stepLabels}
+                          stepsLabel={card("stepsLabel")}
+                          title={campaign.productName}
+                          headingLevel={2}
+                          subtitle={rights(row)}
+                          price={{ label: card("reward"), value: reward(row) }}
+                          date={{
+                            label: card("deadline"),
+                            value: (
+                              <time dateTime={campaign.deadline}>
+                                {dates.format(deadline)}
+                              </time>
+                            ),
+                          }}
+                          person={{ name, initials: monogram(name) }}
+                          actions={actions(row)}
+                        />
                       </li>
                     );
                   })}

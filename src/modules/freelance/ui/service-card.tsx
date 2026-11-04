@@ -1,6 +1,7 @@
 import { ServiceIconBox } from "@/components/ui/service-icon";
 import { getTranslations } from "next-intl/server";
 import { ListingCard } from "@/components/ui/listing-card";
+import { ServiceIcon } from "@/components/ui/service-icon";
 import type { CatalogCard } from "../service";
 import { formatUsd, utcLabel } from "./format";
 
@@ -35,7 +36,10 @@ export async function TrackRecord({ card }: { card: CatalogCard }) {
   );
 }
 
-/** One service in the catalog (28.11 C), on the shared card (D479). */
+/**
+ * One service in the catalog (28.11 C), on the shared card (D479), with the
+ * service mark and labelled price and term from the D602 mockup (D605).
+ */
 export async function ServiceCard({
   card,
   locale,
@@ -51,20 +55,23 @@ export async function ServiceCard({
       headingLevel={2}
       mark={<ServiceIconBox name="freelance" />}
       label={t(`categories.${card.category}`)}
+      art={<ServiceIcon name="freelance" size={40} className="text-fg" />}
       subtitle={<SellerLine card={card} />}
       tags={card.skills}
       tagLimit={3}
       moreTagsLabel={(hidden) => `+${hidden}`}
       lead={
-        <p className="font-mono text-2xl font-medium tracking-tight">
-          {t("from", { price: formatUsd(card.fromMinor, locale) })}
+        <p className="flex flex-col gap-1.5">
+          <span className="t-label text-fg-muted">{t("fromLabel")}</span>
+          <span className="font-mono text-2xl tracking-tight tabular-nums">
+            {formatUsd(card.fromMinor, locale)}
+          </span>
         </p>
       }
       trail={
-        <p className="flex flex-col items-end gap-1 text-right">
-          <span className="t-data text-fg-muted">
-            {t("days", { count: card.fromDays })}
-          </span>
+        <p className="flex flex-col items-end gap-1.5 text-right">
+          <span className="t-label text-fg-muted">{t("termLabel")}</span>
+          <span className="t-data">{t("days", { count: card.fromDays })}</span>
           <TrackRecord card={card} />
         </p>
       }

@@ -17,6 +17,7 @@ import {
   Input,
   JobCard,
   LinkTabs,
+  ListingCard,
   OrbitBackdrop,
   PageHeader,
   Reveal,
@@ -35,7 +36,16 @@ import {
   Th,
   Tr,
 } from "@/components/ui";
+import { OrderCard } from "@/components/ui/order-card";
+import { ServiceIcon } from "@/components/ui/service-icon";
 import { InteractiveDemo } from "./interactive";
+
+const STEP_LABELS = {
+  accepted: "Accepted",
+  work: "In work",
+  review: "On review",
+  done: "Done",
+};
 
 export const dynamic = "force-dynamic";
 
@@ -247,6 +257,91 @@ export default async function UiShowcase({
                 { label: "Format", value: "Remote" },
               ]}
               skills={["Figma"]}
+            />
+          </div>
+        </Block>
+
+        <Block title="Order cards (D605)">
+          <div className="grid gap-4 md:grid-cols-2">
+            <OrderCard
+              href="/freelance/orders"
+              icon="freelance"
+              code="FR / 0284"
+              status="In work"
+              stage={{ step: 1, tone: "work" }}
+              stepLabels={STEP_LABELS}
+              stepsLabel="Order steps"
+              title="Landing page for a product launch"
+              subtitle="Standard · 7 days"
+              price={{ label: "Order price", value: "$850" }}
+              date={{ label: "Due by", value: "Nov 12, 2026" }}
+              next={{
+                label: "Next step",
+                text: "The seller is working. When the result is ready, a link comes here.",
+                open: "Open order",
+                yours: true,
+              }}
+            />
+            <OrderCard
+              href="/campaigns/orders"
+              icon="ugc"
+              code="UGC / 0091"
+              status="Submitted"
+              stage={{ step: 2, tone: "review" }}
+              stepLabels={STEP_LABELS}
+              stepsLabel="Order steps"
+              title="Short vertical video for a brand"
+              subtitle="Ads for 12 months"
+              price={{ label: "Reward", value: "$150" }}
+              date={{ label: "Deadline", value: "Nov 3, 2026" }}
+              person={{ name: "Maria S", initials: "MS" }}
+              actions={<Button variant="secondary">Remind</Button>}
+            />
+            <OrderCard
+              href="/freelance/orders"
+              icon="freelance"
+              code="FR / 0268"
+              status="Done"
+              stage={{ step: 3, tone: "done" }}
+              stepLabels={STEP_LABELS}
+              stepsLabel="Order steps"
+              title="Audience research"
+              subtitle="Basic · 3 days"
+              price={{ label: "Order price", value: "$320" }}
+              date={{ label: "Completed", value: "Oct 28, 2026" }}
+              next={{
+                label: "Next step",
+                text: "The service is complete.",
+                open: "Open order",
+              }}
+            />
+            <ListingCard
+              href="/freelance"
+              title="An interface for your Web3 product"
+              headingLevel={3}
+              label="Development"
+              art={
+                <ServiceIcon name="freelance" size={40} className="text-fg" />
+              }
+              subtitle={
+                <p className="t-body-s text-fg-muted">Alex K · UTC+3</p>
+              }
+              tags={["React", "Web3", "Wallets"]}
+              lead={
+                <p className="flex flex-col gap-1.5">
+                  <span className="t-label text-fg-muted">Price from</span>
+                  <span className="font-mono text-2xl tracking-tight tabular-nums">
+                    $450
+                  </span>
+                </p>
+              }
+              trail={
+                <p className="flex flex-col items-end gap-1.5 text-right">
+                  <span className="t-label text-fg-muted">Delivery</span>
+                  <span className="t-data">7 days</span>
+                </p>
+              }
+              viewLabel="Open"
             />
           </div>
         </Block>

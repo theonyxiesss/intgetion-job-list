@@ -2,10 +2,16 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
+import { OrderCard } from "@/components/ui/order-card";
 import { LinkTabs } from "@/components/ui/tabs";
 import { Link } from "@/i18n/navigation";
-import { listOrders } from "@/modules/freelance/service";
-import { OrderCard } from "@/modules/freelance/ui/order-card";
+import {
+  listOrders,
+  orderDeadline,
+  orderStage,
+  type PartyOrder,
+} from "@/modules/freelance/service";
+import { formatUsd } from "@/modules/freelance/ui/format";
 import { userOrLogin } from "@/modules/freelance/ui/server-copy";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +24,35 @@ export async function generateMetadata({
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "freelance.orders" });
   return { title: t("title"), robots: { index: false } };
+}
+
+/** The date that matters now, by status (D605). */
+function keyDate(
+  order: PartyOrder,
+  now: Date,
+): { key: string; at: Date } | null {
+  switch (order.status) {
+    case "sent":
+      return { key: "answerBy", at: order.expiresAt };
+    case "accepted":
+      return order.acceptedAt
+        ? { key: "acceptedOn", at: order.acceptedAt }
+        : null;
+    case "in_progress": {
+      const due = orderDeadline(order, now);
+      return due ? { key: "dueBy", at: due.dueAt } : null;
+    }
+    case "delivered":
+      return order.deliveredAt
+        ? { key: "deliveredOn", at: order.deliveredAt }
+        : null;
+    case "completed":
+      return order.completedAt
+        ? { key: "completedOn", at: order.completedAt }
+        : null;
+    default:
+      return { key: "closedOn", at: order.closedAt ?? order.updatedAt };
+  }
 }
 
 /** Orders of the signed-in person, as buyer or as seller (28.4). */
@@ -34,8 +69,16 @@ export default async function FreelanceOrdersPage({
   const user = await userOrLogin(locale);
   const side = rawSide === "seller" ? "seller" : "buyer";
   const t = await getTranslations("freelance");
+  const card = await getTranslations("ui.orderCard");
   const orders = await listOrders(user.id, side);
   const now = new Date();
+  const stepLabels = {
+    accepted: card("steps.accepted"),
+    work: card("steps.work"),
+    review: card("steps.review"),
+    done: card("steps.done"),
+  };
+  const dates = new Intl.DateTimeFormat(locale, { dateStyle: "medium" });
 
   return (
     <main className="py-10 md:py-16">
@@ -78,12 +121,51 @@ export default async function FreelanceOrdersPage({
             }
           />
         ) : (
-          <ul className="grid gap-4">
-            {orders.map((order) => (
-              <li key={order.id}>
-                <OrderCard order={order} locale={locale} now={now} />
-              </li>
-            ))}
+          <ul className="grid gap-4 lg:grid-cols-2">
+            {orders.map((order) => {
+              const date = keyDate(order, now);
+              return (
+                <li key={order.id}>
+                  <OrderCard
+                    href={`/freelance/orders/${order.id}`}
+                    icon="freelance"
+                    code={`FR / ${order.id.slice(0, 4).toUpperCase()}`}
+                    status={t(`orders.status.${order.status}`)}
+                    stage={orderStage(order.status)}
+                    stepLabels={stepLabels}
+                    stepsLabel={card("stepsLabel")}
+                    title={order.serviceTitle}
+                    headingLevel={2}
+                    subtitle={`${t(`tiers.${order.packageTier}`)} · ${t(
+                      "days",
+                      { count: order.deliveryDays },
+                    )}`}
+                    price={{
+                      label: card("price"),
+                      value: formatUsd(order.priceMinor, locale),
+                    }}
+                    date={
+                      date
+                        ? {
+                            label: card(date.key),
+                            value: (
+                              <time dateTime={date.at.toISOString()}>
+                                {dates.format(date.at)}
+                              </time>
+                            ),
+                          }
+                        : undefined
+                    }
+                    next={{
+                      label: card("next"),
+                      text: t(`orders.hint.${side}.${order.status}`),
+                      open: card("open"),
+                      yours: order.next.length > 0,
+                    }}
+                  />
+                </li>
+              );
+            })}
           </ul>
         )}
       </Container>

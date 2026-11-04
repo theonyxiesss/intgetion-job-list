@@ -18,6 +18,7 @@ export function ListingCard({
   transitionName,
   label,
   badges,
+  art,
   mark,
   subtitle,
   facts = [],
@@ -41,6 +42,8 @@ export function ListingCard({
   /** Kind or category, uppercase mono from `t-label`. */
   label?: string;
   badges?: ReactNode;
+  /** Large service mark at the top right, as on the catalog card (D605). */
+  art?: ReactNode;
   /** Logo or stand-in mark beside the title. */
   mark?: ReactNode;
   /** Who: company or seller. May hold its own link. */
@@ -86,17 +89,20 @@ export function ListingCard({
         compact && "md:p-4",
       )}
     >
-      {label || badges ? (
-        <div
-          className={cn(
-            "flex flex-wrap items-center gap-2",
-            actions ? "@min-[640px]:pr-28" : undefined,
-          )}
-        >
-          {label ? (
-            <span className="t-label text-fg-muted">{label}</span>
-          ) : null}
-          {badges}
+      {label || badges || art ? (
+        <div className="flex items-start justify-between gap-3">
+          <div
+            className={cn(
+              "flex flex-wrap items-center gap-2",
+              actions ? "@min-[640px]:pr-28" : undefined,
+            )}
+          >
+            {label ? (
+              <span className="t-label text-fg-muted">{label}</span>
+            ) : null}
+            {badges}
+          </div>
+          {art}
         </div>
       ) : null}
       <div

@@ -1633,7 +1633,27 @@
     "previous": "Back",
     "next": "Next",
     "copy": "Copy",
-    "copied": "Copied"
+    "copied": "Copied",
+    "orderCard": {
+      "steps": {
+        "accepted": "Accepted",
+        "work": "In work",
+        "review": "On review",
+        "done": "Done"
+      },
+      "stepsLabel": "Order steps",
+      "next": "Next step",
+      "open": "Open order",
+      "price": "Order price",
+      "reward": "Reward",
+      "dueBy": "Due by",
+      "answerBy": "Answer by",
+      "acceptedOn": "Accepted",
+      "deliveredOn": "Delivered",
+      "completedOn": "Completed",
+      "closedOn": "Closed",
+      "deadline": "Deadline"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -4937,7 +4957,8 @@
       "orderText": "Pay in USDC or USDT straight to the freelancer’s confirmed address. The order moves to work once the network confirms it.",
       "payoutMissing": "The freelancer has not confirmed a payout address yet. Agree on payment directly; the freelancer starts the work.",
       "paidLine": "Paid to the freelancer’s address. The order is in work."
-    }
+    },
+    "fromLabel": "Price from"
   },
   "ugc": {
     "title": "UGC videos",
