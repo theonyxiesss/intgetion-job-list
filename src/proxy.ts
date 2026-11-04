@@ -195,6 +195,12 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   // Skips Next.js internals and files with an extension, except robots.txt
-  // so the admin host can refuse crawlers (D251).
-  matcher: ["/((?!_next|_vercel|.*\\..*).*)", "/robots.txt"],
+  // so the admin host can refuse crawlers (D251), and the English job feeds:
+  // without a locale prefix (D345) they need the locale rewrite to be found.
+  matcher: [
+    "/((?!_next|_vercel|.*\\..*).*)",
+    "/robots.txt",
+    "/jobs/rss.xml",
+    "/jobs/t/:slug/rss.xml",
+  ],
 };
