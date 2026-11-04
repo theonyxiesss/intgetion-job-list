@@ -1587,6 +1587,7 @@
   },
   "ui": {
     "close": "Закрыть",
+    "loading": "Загрузка…",
     "requestId": "ID запроса",
     "moreSkills": "+{count}",
     "notSpecified": "Не указано",

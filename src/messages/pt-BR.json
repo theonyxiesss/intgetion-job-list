@@ -1587,6 +1587,7 @@
   },
   "ui": {
     "close": "Fechar",
+    "loading": "Carregando…",
     "requestId": "ID da solicitação",
     "moreSkills": "+{count}",
     "notSpecified": "Não informado",
