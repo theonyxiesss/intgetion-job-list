@@ -1,7 +1,8 @@
+import { ServiceIcon } from "@/components/ui/service-icon";
 import type { ReactNode } from "react";
 
 /**
- * Original marks for the phone menu (D393). Thin geometry, currentColor,
+ * Service marks (D602) and utility marks for the phone menu (D393).
  * stroke 1.5, square corners. Not Lucide, and not the product orbit.
  * Keys are the hrefs Header puts into MobileNav.
  */
@@ -37,22 +38,11 @@ function Frame({
 }
 
 function JobsMark(props: NavMarkProps) {
-  return (
-    <Frame {...props}>
-      <rect x="3" y="8.5" width="18" height="12" />
-      <path d="M9 8.5 V4.5 H15 V8.5" />
-      <path d="M4.5 13 H19.5" />
-    </Frame>
-  );
+  return <ServiceIcon name="jobs" {...props} />;
 }
 
 function EventsMark(props: NavMarkProps) {
-  return (
-    <Frame {...props}>
-      <rect x="3.5" y="5.5" width="17" height="15" />
-      <path d="M3.5 10 H20.5 M8 3 V7.5 M16 3 V7.5 M7.5 14.5 H10.5" />
-    </Frame>
-  );
+  return <ServiceIcon name="events" {...props} />;
 }
 
 function MatchesMark(props: NavMarkProps) {
@@ -86,20 +76,11 @@ function CompanyMark(props: NavMarkProps) {
 }
 
 function BillingMark(props: NavMarkProps) {
-  return (
-    <Frame {...props}>
-      <rect x="2.5" y="6.5" width="19" height="11" />
-      <path d="M2.5 10.5 H21.5" />
-    </Frame>
-  );
+  return <ServiceIcon name="wallet" {...props} />;
 }
 
 function ChatMark(props: NavMarkProps) {
-  return (
-    <Frame {...props}>
-      <path d="M4 4 H20 V14.5 H13 L8 20 V14.5 H4 Z" />
-    </Frame>
-  );
+  return <ServiceIcon name="spoki" {...props} />;
 }
 
 function PostJobMark(props: NavMarkProps) {
@@ -200,21 +181,11 @@ function ServicesMark(props: NavMarkProps) {
 
 /** A ready piece of work: a tag with a price hole (D446). */
 function FreelanceMark(props: NavMarkProps) {
-  return (
-    <Frame {...props}>
-      <path d="M3.5 12 L12 3.5 H20.5 V12 L12 20.5 Z" />
-      <path d="M15.5 7.5 H16.5 V8.5 H15.5 Z" />
-    </Frame>
-  );
+  return <ServiceIcon name="freelance" {...props} />;
 }
 
 function CampaignsMark(props: NavMarkProps) {
-  return (
-    <Frame {...props}>
-      <path d="M4 5 H20 V19 H4 Z" />
-      <path d="M10 9 L15 12 L10 15 Z" />
-    </Frame>
-  );
+  return <ServiceIcon name="ugc" {...props} />;
 }
 
 function LoginMark(props: NavMarkProps) {

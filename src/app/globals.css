@@ -4,7 +4,7 @@
  * Design tokens (docs/DESIGN.md, D428). Components use these only:
  * no raw hex colours or Tailwind palette classes outside this file and
  * src/components/ui (D140). The look follows nextjs.org: black page, hairline
- * grey lines, Geist type, one blue for the main action and focus.
+ * grey lines, Manrope type (D602), one blue for the main action and focus.
  */
 
 /* Dark is the default theme; light only on explicit choice (D141). */
@@ -77,12 +77,12 @@
   --color-foreground: var(--fg);
 
   --font-text:
-    var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, sans-serif;
-  /* One family now: display text is Geist too, set tighter (D428). */
+  /* One family: display text is Manrope too, set tighter (D428, D602). */
   --font-display: var(--font-text);
   --font-mono:
-    var(--font-geist-mono), ui-monospace, "SF Mono", "Cascadia Mono",
+    var(--font-ibm-plex-mono), ui-monospace, "SF Mono", "Cascadia Mono",
     "Roboto Mono", Menlo, Consolas, monospace;
 
   --radius-none: 0;
@@ -131,7 +131,7 @@
 
 @layer components {
   /*
-   * Type scale (DESIGN.md 4.2, D428): Geist, sentence case, tight tracking on
+   * Type scale (DESIGN.md 4.2, D428, D602): Manrope, sentence case, tight tracking on
    * large sizes. Only labels are capitals, in mono, and they come from CSS.
    */
   .t-display-xl {

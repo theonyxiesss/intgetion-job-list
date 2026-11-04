@@ -26,7 +26,7 @@ Decisions for the look: D428 first, then D140–D149, D155–D159 where D428 doe
 
 ## Look
 
-The look follows nextjs.org (D428): black page by default, hairline grey lines, Geist and Geist Mono, one blue (`--accent`) for the main action and focus, type instead of decoration. The product name stays white on the dark theme (`text-wordmark`). Do not copy Vercel or Next.js marks, names or artwork.
+The look follows nextjs.org (D428): black page by default, hairline grey lines, Manrope for text and IBM Plex Mono for figures (D602, was Geist), Phosphor Duotone service marks and the Spoki "ray" star from `src/components/ui/service-icon.tsx`, one blue (`--accent`) for the main action and focus, type instead of decoration. The product name stays white on the dark theme (`text-wordmark`). Do not copy Vercel or Next.js marks, names or artwork.
 
 - Tokens only, from `src/app/globals.css`: `bg-bg`, `bg-surface`, `text-fg`, `text-fg-muted`, `border-line`. No hex, no `text-gray-*`, no `bg-black`, no `text-white` in pages and components.
 - No inline `style`. CSP drops it. Widths and gaps are Tailwind classes.

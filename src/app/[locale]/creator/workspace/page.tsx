@@ -1,3 +1,4 @@
+import { ServiceIconBox } from "@/components/ui/service-icon";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
@@ -70,26 +71,34 @@ export default async function CreatorWorkspacePage({
     return (
       <li
         key={item.inviteId}
-        className="flex flex-col gap-3 rounded-lg border border-line p-4 sm:flex-row sm:items-center sm:justify-between"
+        className="flex flex-col gap-4 rounded-lg border border-line bg-surface p-5"
       >
-        <div className="flex min-w-0 flex-col gap-1">
-          <p className="font-medium break-words">{item.productName}</p>
-          <p className="t-body-s flex flex-wrap items-center gap-x-3 gap-y-1 text-fg-muted">
-            <Badge tone={item.action === "none" ? "neutral" : "new"}>
-              {t(`stage.${item.stage}`)}
-            </Badge>
-            <span className="t-data">{usd(item.rewardMinor)}</span>
-            <span className="t-data">{deadline(item)}</span>
-          </p>
-          <p className="t-body-s text-fg-muted">{t(`hint.${item.stage}`)}</p>
+        <div className="flex items-start gap-3">
+          <ServiceIconBox name="ugc" />
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <h3 className="t-h3 break-words">{item.productName}</h3>
+            <p className="t-body-s flex flex-wrap items-center gap-x-3 gap-y-1 text-fg-muted">
+              <Badge tone={item.action === "none" ? "neutral" : "new"}>
+                {t(`stage.${item.stage}`)}
+              </Badge>
+
+              <span className="t-data">{deadline(item)}</span>
+            </p>
+            <p className="t-body-s text-fg-muted">{t(`hint.${item.stage}`)}</p>
+          </div>
         </div>
-        <ButtonLink
-          href={`/chat?invite=${item.inviteId}`}
-          variant={item.action === "none" ? "secondary" : "strong"}
-          className="self-start sm:self-center"
-        >
-          {t(`action.${item.action}`)}
-        </ButtonLink>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+          <span className="font-mono text-2xl tracking-tight">
+            {usd(item.rewardMinor)}
+          </span>
+          <ButtonLink
+            href={`/chat?invite=${item.inviteId}`}
+            variant={item.action === "none" ? "secondary" : "strong"}
+            className="self-start sm:self-center"
+          >
+            {t(`action.${item.action}`)}
+          </ButtonLink>
+        </div>
       </li>
     );
   }
@@ -132,7 +141,9 @@ export default async function CreatorWorkspacePage({
                 {ws.now.length === 0 ? (
                   <p className="text-fg-muted">{t("nowEmpty")}</p>
                 ) : (
-                  <ul className="flex flex-col gap-3">{ws.now.map(line)}</ul>
+                  <ul className="grid gap-4 lg:grid-cols-2">
+                    {ws.now.map(line)}
+                  </ul>
                 )}
               </section>
               {SECTIONS.map((section) =>
@@ -148,7 +159,7 @@ export default async function CreatorWorkspacePage({
                         {ws.sections[section].length}
                       </span>
                     </h2>
-                    <ul className="flex flex-col gap-3">
+                    <ul className="grid gap-4 lg:grid-cols-2">
                       {ws.sections[section].map(line)}
                     </ul>
                   </section>
