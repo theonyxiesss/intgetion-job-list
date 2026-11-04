@@ -395,6 +395,7 @@
     "forgotPassword": "Forgot password?",
     "toRegister": "Register",
     "toLogin": "Sign in",
+    "requestId": "Support code:",
     "resetHint": "We will email a reset link if an account exists for this address.",
     "errors": {
       "invalid_email": "Enter a valid email address.",
@@ -414,7 +415,9 @@
       "telegram_failed": "Telegram sign-in did not work. Try again or use email.",
       "telegram_taken": "This Telegram is already linked to another account.",
       "account_type_required": "Choose who you are.",
-      "oauth_unavailable": "This sign-in is not available yet. Use email or Telegram."
+      "oauth_unavailable": "This sign-in is not available yet. Use email or Telegram.",
+      "auth_unavailable": "Sign-in is temporarily down for everyone: our sign-in service is not working right now. This is not a problem with your details. Please try again later.",
+      "network": "No connection to the site. Check your internet and try again — what you typed is kept."
     },
     "social": {
       "title": "Or continue with",

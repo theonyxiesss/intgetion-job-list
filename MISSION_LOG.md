@@ -4274,3 +4274,20 @@
 - Не закоммичено, на сайт не выложено — ждёт «да» основателя.
 - 2026-11-04, выкладка по слову основателя «Да, оба»: работа закоммичена, влит master `45cc63ef`. Конфликты: страницы заказов — общая карточка этой работы, сетка `lg:grid-cols-2` из master; `service-icon.tsx` — версия master (D602). Удалены `src/modules/freelance/ui/order-card.tsx`, `order-steps.tsx`, `order-steps.test.ts` — старая карточка D602 больше нигде не используется. Номер D603 → D605 (D603 занят ТЗ 52). Убраны два неиспользуемых импорта `ServiceIconBox`.
 - Проверки после слияния: `pnpm typecheck` → 0; `eslint --max-warnings 0 src tests` → 0; `pnpm test` → 0 (265 файлов, 1993 passed, 3 skipped); prettier `--end-of-line auto` по изменённым файлам → 0; `pnpm build` → 0. Браузер (`next dev`, `/ru/dev/ui`): три карточки заказа в Manrope и IBM Plex Mono, по 4 шага; 1024 и 375 px без горизонтального переполнения. Страницы заказов под входом не проверены (Supabase 402).
+
+## 2026-11-04 — Понятные ошибки входа и проверка Supabase Auth в /api/health (D606) — DONE (выкладка по «да» основателя)
+
+- Сделано: правило «402 / 5xx / нет ответа = Auth недоступен у всех» (`src/lib/supabase/auth-health.ts`), код `AUTH_UNAVAILABLE` 503 (`src/lib/http/errors.ts`). Пароль и ссылка на почту (`auth-service.ts`) больше не превращают 402 в «неверный пароль» и не делают вид, что письмо ушло; Telegram подтверждает отказ отдельной проверкой `/auth/v1/health`. Google/X (`oauth-redirect.ts`): Auth лежит → `/login?error=auth_unavailable&ref=<x-request-id>`, отключённый провайдер — прежний `oauth_unavailable`. Формы: `auth-failure.ts` разделяет сеть / Auth / данные; `FormAlert` показывает код обращения; `TelegramFinish` и кнопка Telegram показывают отказ Auth. `reportWarning` в `logger.ts` пишет `requestId` в строки «auth provider unavailable». `/api/health` → `{ok, db, auth}`, 503 при любом `down`; `scripts/ci-ui.sh` под новый ответ. Тексты `auth.errors.auth_unavailable`, `auth.errors.network`, `auth.requestId` на 7 языках.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm exec eslint src tests eslint-rules scripts evals --max-warnings 0` → 0 (полный `pnpm lint` в этой папке зависает на вложенных `.claude/worktrees`, остановлен); `pnpm test` → 0 (266 файлов, 1999 passed, 3 skipped); `pnpm build` (с `SWC_NATIVE_BINDING_CACHE`) → 0; prettier по изменённым файлам → 0.
+- Браузер (локально, `master-dev`, облачный Auth действительно 402): `/api/health` → 503 `{"ok":false,"db":"up","auth":"down"}`; `/ru/login` с выдуманными данными → «Вход временно недоступен для всех…» и код обращения, ввод сохранён; «Войти через Google» → то же сообщение; `x-request-id` из ответа найден в строке журнала.
+- P-тесты подфазы: `auth-health.test.ts`, `auth-failure.test.ts`, `oauth-probe.test.ts`, `telegram-outage.test.ts`, новые случаи в `auth-service.test.ts`.
+- Миграции: нет. D606.
+- Отклонения: сброс пароля и регистрация получили только общий разбор кода; привязка Google/X в настройках сохраняет прежнее уведомление.
+- OPEN QUESTION: нет.
+- Git: ветка `claude/auth-errors-d606` от `origin/master`, только свои правки; PR и выкладка по «Да, всё вместе».
+
+## 2026-11-04 — Выкладка D595 и D605 — DONE
+
+- По слову основателя «Да, оба». D595 (скелеты загрузки): PR #42, merge `6d849499`, CI зелёный, Vercel Production — success. D605 (общая карточка заказа, заменила карточку фриланса D602; номер D603 был занят ТЗ 52): PR #43, merge `b48bab54`, CI зелёный, Vercel Production — success.
+- Проверки на сайте: `/api/health` → 200; `/ru/freelance`, `/ru/jobs` → 200; `/ru/freelance/orders`, `/ru/campaigns/orders`, `/ru/creator/workspace` для гостя → 307 на вход. Под входом не проверено (Supabase 402).
+- Подробности проверок — записи D595 и D605 выше (ветки `claude/practical-bhaskara-e0f845`, `claude/jolly-hamilton-28864a`).

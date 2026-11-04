@@ -395,6 +395,7 @@
     "forgotPassword": "Mot de passe oublié ?",
     "toRegister": "S’inscrire",
     "toLogin": "Se connecter",
+    "requestId": "Code pour le support :",
     "resetHint": "Nous enverrons un lien de réinitialisation si un compte existe pour cette adresse.",
     "errors": {
       "invalid_email": "Saisissez une adresse e-mail valide.",
@@ -414,7 +415,9 @@
       "telegram_failed": "La connexion avec Telegram n’a pas fonctionné. Réessayez ou utilisez l’e-mail.",
       "telegram_taken": "Ce Telegram est déjà lié à un autre compte.",
       "account_type_required": "Indiquez qui vous êtes.",
-      "oauth_unavailable": "Cette connexion n’est pas encore disponible. Utilisez l’e-mail ou Telegram."
+      "oauth_unavailable": "Cette connexion n’est pas encore disponible. Utilisez l’e-mail ou Telegram.",
+      "auth_unavailable": "La connexion est temporairement indisponible pour tout le monde : notre service de connexion ne répond pas. Le problème ne vient pas de vos informations. Réessayez plus tard.",
+      "network": "Pas de connexion au site. Vérifiez votre connexion internet et réessayez — votre saisie est conservée."
     },
     "social": {
       "title": "Ou continuer avec",

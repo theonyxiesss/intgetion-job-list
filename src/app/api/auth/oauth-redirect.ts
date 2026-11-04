@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { HttpError, toErrorResponse } from "@/lib/http";
+import { reportWarning } from "@/lib/logger";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { clientIp } from "@/lib/request-ip";
+import { REQUEST_ID_HEADER } from "@/lib/request-id";
+import { isAuthOutageStatus } from "@/lib/supabase/auth-health";
 import { siteUrl } from "@/lib/supabase/env";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { oauthNext } from "@/components/auth/login-next";
@@ -41,16 +44,47 @@ export function isXAuthorizeHost(host: string): boolean {
   );
 }
 
+export type OAuthProbe = "ok" | "auth_unavailable" | "oauth_unavailable";
+
+/**
+ * What the Supabase authorize answer means (D606). A redirect to the
+ * provider is "ok"; 402/5xx/no answer is all of Auth being down, so the
+ * login page must not suggest another method; anything else (provider off,
+ * bad redirect) is only this provider.
+ */
+export function oauthProbeOutcome(
+  status: number,
+  location: string | null,
+  accept: (host: string) => boolean,
+): OAuthProbe {
+  if (authorizeHostOk(location, accept)) return "ok";
+  if (isAuthOutageStatus(status)) return "auth_unavailable";
+  return "oauth_unavailable";
+}
+
+function oauthFailed(
+  request: Request,
+  locale: string,
+  link: boolean,
+  reason: Exclude<OAuthProbe, "ok">,
+): Response {
+  const path = link ? `/${locale}/settings/account` : `/${locale}/login`;
+  const target = new URL(path, siteUrl());
+  // Linking keeps its own notice; the settings page knows only this one.
+  const code = link ? "oauth_unavailable" : reason;
+  target.searchParams.set("error", code);
+  // Support id that matches this request's server log line (D606).
+  const requestId = request.headers.get(REQUEST_ID_HEADER);
+  if (code === "auth_unavailable" && requestId) {
+    target.searchParams.set("ref", requestId);
+  }
+  return NextResponse.redirect(target);
+}
+
 /**
  * Starts Google or X and comes back through `/auth/callback`.
  * Opening the authorize link spends that attempt, so a live provider gets a second link.
  */
-function oauthUnavailable(locale: string, link: boolean): Response {
-  const path = link ? `/${locale}/settings/account` : `/${locale}/login`;
-  const target = new URL(path, siteUrl());
-  target.searchParams.set("error", "oauth_unavailable");
-  return NextResponse.redirect(target);
-}
 
 export async function redirectToOAuth(
   request: Request,
@@ -70,9 +104,21 @@ export async function redirectToOAuth(
       return NextResponse.redirect(new URL(`/${locale}/login`, siteUrl()));
     }
     const probe = await start(supabase.auth, { locale, next, link });
-    const probed = await fetch(probe.url, { redirect: "manual" });
-    if (!authorizeHostOk(probed.headers.get("location"), accept)) {
-      return oauthUnavailable(locale, link);
+    const probed = await fetch(probe.url, {
+      redirect: "manual",
+      signal: AbortSignal.timeout(10_000),
+    }).catch(() => null);
+    const outcome = probed
+      ? oauthProbeOutcome(probed.status, probed.headers.get("location"), accept)
+      : "auth_unavailable";
+    if (outcome !== "ok") {
+      if (outcome === "auth_unavailable") {
+        reportWarning(
+          { provider, status: probed?.status ?? 0 },
+          "auth provider unavailable",
+        );
+      }
+      return oauthFailed(request, locale, link, outcome);
     }
     const started = await start(supabase.auth, { locale, next, link });
     const response = NextResponse.redirect(started.url);
@@ -92,6 +138,6 @@ export async function redirectToOAuth(
     if (error instanceof HttpError && error.status === 429) {
       return toErrorResponse(error);
     }
-    return oauthUnavailable(locale, link);
+    return oauthFailed(request, locale, link, "oauth_unavailable");
   }
 }

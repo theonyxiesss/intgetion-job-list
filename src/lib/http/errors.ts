@@ -17,6 +17,7 @@ export const errorCodes = {
   botBudgetExceeded: "BOT_BUDGET_EXCEEDED",
   stepUp: "STEP_UP",
   reasonRequired: "REASON_REQUIRED",
+  authUnavailable: "AUTH_UNAVAILABLE",
 } as const;
 
 export type ErrorCode = (typeof errorCodes)[keyof typeof errorCodes];
@@ -98,4 +99,19 @@ export function notFound(message = "Not found"): HttpError {
 /** The object is visible to the caller, but this action is not allowed. */
 export function forbidden(message = "Forbidden"): HttpError {
   return new HttpError(403, errorCodes.forbidden, message);
+}
+
+/**
+ * Supabase Auth itself is down or restricted, so no sign-in method works
+ * for anyone right now (D606). Not the person's fault; nothing to retry
+ * with another method.
+ */
+export function authUnavailable(): HttpError {
+  return new HttpError(
+    503,
+    errorCodes.authUnavailable,
+    "Sign-in is temporarily unavailable",
+    { reason: "auth_unavailable" },
+    { "Retry-After": "60" },
+  );
 }

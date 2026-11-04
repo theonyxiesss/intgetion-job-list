@@ -9,10 +9,12 @@ import {
 } from "@/components/auth/login-next";
 import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
 import { Link } from "@/i18n/navigation";
+import { isRequestId } from "@/lib/request-id";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 
 const callbackErrors = new Set([
+  "auth_unavailable",
   "invalid_link",
   "missing_terms",
   "oauth_unavailable",
@@ -23,16 +25,19 @@ export default async function LoginPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ error?: string; next?: string }>;
+  searchParams: Promise<{ error?: string; next?: string; ref?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("auth");
-  const { error, next: rawNext } = await searchParams;
+  const { error, next: rawNext, ref } = await searchParams;
   const next: LoginNext | undefined = isLoginNext(rawNext)
     ? rawNext
     : undefined;
   const failed = error && callbackErrors.has(error) ? error : undefined;
+  // Only an id-shaped `ref` is echoed back (D606).
+  const requestId =
+    failed === "auth_unavailable" && isRequestId(ref) ? ref : undefined;
   if (!failed) {
     const supabase = await createSupabaseServerClient();
     const user = await getCurrentUser(supabase.auth);
@@ -61,7 +66,11 @@ export default async function LoginPage({
         </>
       }
     >
-      <LoginForm initialError={failed} next={next} />
+      <LoginForm
+        initialError={failed}
+        initialRequestId={requestId}
+        next={next}
+      />
       <SocialSignInStubs next={next} />
     </AuthPage>
   );

@@ -395,6 +395,7 @@
     "forgotPassword": "Password dimenticata?",
     "toRegister": "Registrati",
     "toLogin": "Accedi",
+    "requestId": "Codice per l’assistenza:",
     "resetHint": "Invieremo un link di reimpostazione se esiste un account per questo indirizzo.",
     "errors": {
       "invalid_email": "Inserisci un indirizzo email valido.",
@@ -414,7 +415,9 @@
       "telegram_failed": "L’accesso con Telegram non ha funzionato. Riprova oppure usa l’email.",
       "telegram_taken": "Questo Telegram è già collegato a un altro account.",
       "account_type_required": "Indica chi sei.",
-      "oauth_unavailable": "Questo accesso non è ancora disponibile. Usa l’email o Telegram."
+      "oauth_unavailable": "Questo accesso non è ancora disponibile. Usa l’email o Telegram.",
+      "auth_unavailable": "L’accesso è temporaneamente non disponibile per tutti: il nostro servizio di accesso non risponde. Non è un problema dei tuoi dati. Riprova più tardi.",
+      "network": "Nessuna connessione al sito. Controlla internet e riprova: i dati inseriti restano nei campi."
     },
     "social": {
       "title": "Oppure continua con",

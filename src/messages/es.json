@@ -395,6 +395,7 @@
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "toRegister": "Crear una cuenta",
     "toLogin": "Iniciar sesión",
+    "requestId": "Código de soporte:",
     "resetHint": "Te enviaremos un enlace de restablecimiento si existe una cuenta con esta dirección.",
     "errors": {
       "invalid_email": "Introduce una dirección de correo válida.",
@@ -414,7 +415,9 @@
       "telegram_failed": "El inicio de sesión con Telegram no ha funcionado. Inténtalo de nuevo o usa el correo.",
       "telegram_taken": "Este Telegram ya está vinculado a otra cuenta.",
       "account_type_required": "Elige quién eres.",
-      "oauth_unavailable": "Este acceso aún no está disponible. Usa el correo o Telegram."
+      "oauth_unavailable": "Este acceso aún no está disponible. Usa el correo o Telegram.",
+      "auth_unavailable": "El inicio de sesión no está disponible temporalmente para nadie: nuestro servicio de acceso no responde. No es un problema de tus datos. Inténtalo más tarde.",
+      "network": "No hay conexión con el sitio. Revisa tu internet e inténtalo de nuevo; lo que escribiste se conserva."
     },
     "social": {
       "title": "O continúa con",

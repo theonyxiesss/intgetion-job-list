@@ -395,6 +395,7 @@
     "forgotPassword": "Passwort vergessen?",
     "toRegister": "Registrieren",
     "toLogin": "Anmelden",
+    "requestId": "Support-Code:",
     "resetHint": "Wir senden einen Link zum Zurücksetzen, falls für diese Adresse ein Konto existiert.",
     "errors": {
       "invalid_email": "Geben Sie eine gültige E-Mail-Adresse ein.",
@@ -414,7 +415,9 @@
       "telegram_failed": "Die Anmeldung mit Telegram hat nicht funktioniert. Versuchen Sie es erneut oder nutzen Sie E-Mail.",
       "telegram_taken": "Dieses Telegram ist bereits mit einem anderen Konto verknüpft.",
       "account_type_required": "Wählen Sie, wer Sie sind.",
-      "oauth_unavailable": "Diese Anmeldung ist noch nicht verfügbar. Nutzen Sie E-Mail oder Telegram."
+      "oauth_unavailable": "Diese Anmeldung ist noch nicht verfügbar. Nutzen Sie E-Mail oder Telegram.",
+      "auth_unavailable": "Die Anmeldung ist vorübergehend für alle nicht möglich: Unser Anmeldedienst antwortet nicht. Das liegt nicht an Ihren Angaben. Bitte versuchen Sie es später erneut.",
+      "network": "Keine Verbindung zur Website. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut – Ihre Eingaben bleiben erhalten."
     },
     "social": {
       "title": "Oder weiter mit",

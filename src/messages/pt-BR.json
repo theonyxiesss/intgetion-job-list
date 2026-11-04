@@ -395,6 +395,7 @@
     "forgotPassword": "Esqueceu a senha?",
     "toRegister": "Cadastrar",
     "toLogin": "Entrar",
+    "requestId": "Código para o suporte:",
     "resetHint": "Enviaremos um link de redefinição se houver uma conta com este endereço.",
     "errors": {
       "invalid_email": "Informe um endereço de e-mail válido.",
@@ -414,7 +415,9 @@
       "telegram_failed": "O login pelo Telegram não funcionou. Tente novamente ou use o e-mail.",
       "telegram_taken": "Este Telegram já está vinculado a outra conta.",
       "account_type_required": "Escolha quem você é.",
-      "oauth_unavailable": "Esta forma de login ainda não está disponível. Use e-mail ou Telegram."
+      "oauth_unavailable": "Esta forma de login ainda não está disponível. Use e-mail ou Telegram.",
+      "auth_unavailable": "O login está temporariamente indisponível para todos: nosso serviço de login não está respondendo. O problema não está nos seus dados. Tente novamente mais tarde.",
+      "network": "Sem conexão com o site. Verifique sua internet e tente novamente — o que você digitou foi mantido."
     },
     "social": {
       "title": "Ou continue com",

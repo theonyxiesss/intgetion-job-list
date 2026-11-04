@@ -99,3 +99,16 @@ export function reportError(error: unknown, context?: string): void {
     );
   })();
 }
+
+/**
+ * Logs an expected failure (warn) with the request id, so a support code
+ * shown to the person finds this line (D606). Fire and forget.
+ */
+export function reportWarning(
+  fields: Record<string, unknown>,
+  message: string,
+): void {
+  void (async () => {
+    logger.warn({ requestId: await currentRequestId(), ...fields }, message);
+  })();
+}

@@ -36,6 +36,7 @@ async function telegramHref(): Promise<string | null> {
  */
 export async function SocialSignInStubs({ next }: { next?: LoginNext }) {
   const t = await getTranslations("auth.social");
+  const tErrors = await getTranslations("auth.errors");
   const locale = await getLocale();
   const telegram = await telegramHref();
   const oauthParams = new URLSearchParams({ locale });
@@ -78,6 +79,7 @@ export async function SocialSignInStubs({ next }: { next?: LoginNext }) {
           label={t("telegram")}
           waiting={t("telegramWaiting")}
           failed={t("telegramFailed")}
+          unavailable={tErrors("auth_unavailable")}
           openLabel={t("telegramOpen")}
           icon={<SocialMark name="telegram" />}
         />
