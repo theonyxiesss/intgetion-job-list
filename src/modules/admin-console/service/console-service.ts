@@ -380,6 +380,28 @@ async function notifyOwnersLocked(): Promise<void> {
   );
 }
 
+/** A Telegram chat id: digits, optionally negative for a group. */
+const CHAT_ID = /^-?\d{1,19}$/;
+
+/**
+ * Who gets owner alerts in Telegram (D607): every active owner with a
+ * linked Telegram, plus `OWNER_ALERT_TELEGRAM_ID` while no owner can link
+ * one. That id gets the language of the first owner. Duplicates go once.
+ */
+export async function ownerAlertRecipients(): Promise<
+  { chatId: number; locale: string }[]
+> {
+  const byId = new Map<string, string>();
+  for (const row of await repo.listOwnerTelegramRecipients()) {
+    if (CHAT_ID.test(row.telegramId)) byId.set(row.telegramId, row.locale);
+  }
+  const extra = process.env.OWNER_ALERT_TELEGRAM_ID?.trim() ?? "";
+  if (CHAT_ID.test(extra) && !byId.has(extra)) {
+    byId.set(extra, (await repo.firstOwnerLocale()) ?? "en");
+  }
+  return [...byId].map(([id, locale]) => ({ chatId: Number(id), locale }));
+}
+
 /** Plain email to every platform owner; silent when mail is not set up. */
 export async function notifyPlatformOwners(
   subject: string,

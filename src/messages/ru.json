@@ -2628,7 +2628,10 @@
         "mobile": "Телефон",
         "tablet": "Планшет",
         "desktop": "Компьютер"
-      }
+      },
+      "countries": "Страны",
+      "country": "Страна",
+      "unknownCountry": "Не определена"
     },
     "env": {
       "title": "Настройки прода",
@@ -2678,6 +2681,11 @@
       "day": "День",
       "fromSearch": "Из поиска",
       "allVisitors": "Всего посетителей"
+    },
+    "visitorDigest": {
+      "title": "Новые посетители {from}–{to} UTC: {count}",
+      "more": "…и ещё {count}",
+      "direct": "прямой заход"
     }
   },
   "digest": {

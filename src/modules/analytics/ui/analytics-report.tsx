@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Stat, Table, Td, Th, Tr } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import type { AnalyticsReport } from "../service";
@@ -71,6 +71,9 @@ export async function AnalyticsReportView({
   days: number;
 }) {
   const t = await getTranslations("metrics.analytics");
+  const regionNames = new Intl.DisplayNames([await getLocale()], {
+    type: "region",
+  });
   const { totals, funnel, crossVisit } = report;
   const maxDaily = Math.max(0, ...report.daily.map((row) => row.visitors));
   const steps = ["page_view", "search", "job_view", "signup", "apply"] as const;
@@ -210,6 +213,17 @@ export async function AnalyticsReportView({
           rows={report.devices.map((row) => ({
             key: row.label ?? "",
             label: row.label ? t(`deviceNames.${row.label}`) : "",
+            count: row.count,
+          }))}
+        />
+        <TopTable
+          title={t("countries")}
+          head={[t("country"), t("visitors")]}
+          rows={report.countries.map((row) => ({
+            key: row.label ?? "unknown",
+            label: row.label
+              ? (regionNames.of(row.label) ?? row.label)
+              : t("unknownCountry"),
             count: row.count,
           }))}
         />

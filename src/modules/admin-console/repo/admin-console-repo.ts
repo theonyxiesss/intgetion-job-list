@@ -177,3 +177,33 @@ export async function listOwnerIds(): Promise<string[]> {
     );
   return rows.map((row) => row.userId);
 }
+
+/** Active platform owners with a linked Telegram, for owner alerts (D607). */
+export async function listOwnerTelegramRecipients(): Promise<
+  { telegramId: string; locale: string }[]
+> {
+  const rows = await getDb().execute<{
+    telegramId: string;
+    locale: string;
+  }>(sql`
+    select ta.telegram_id::text as "telegramId", u.locale
+    from public.admin_members am
+    join public.users u on u.id = am.user_id and u.status = 'active'
+    join public.telegram_accounts ta on ta.user_id = am.user_id
+    where am.role = 'owner' and am.disabled_at is null
+  `);
+  return [...rows];
+}
+
+/** The language of the first active owner, for alerts without an account. */
+export async function firstOwnerLocale(): Promise<string | null> {
+  const rows = await getDb().execute<{ locale: string }>(sql`
+    select u.locale
+    from public.admin_members am
+    join public.users u on u.id = am.user_id and u.status = 'active'
+    where am.role = 'owner' and am.disabled_at is null
+    order by am.created_at
+    limit 1
+  `);
+  return rows[0]?.locale ?? null;
+}
