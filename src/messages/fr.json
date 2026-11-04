@@ -118,8 +118,8 @@
   },
   "meta": {
     "description": "Travail à distance et événements tech. De vraies correspondances.",
-    "homeTitle": "Emplois à distance Web3 et événements tech",
-    "homeDescription": "Un agrégateur d’emplois à distance dans le Web3, la crypto et la tech, ainsi que de sommets, meetups, hackathons et événements carrière pour le networking. Fourchettes de salaire, chevauchement des fuseaux horaires et correspondances avec votre profil.",
+    "homeTitle": "Plateforme de travail à distance : emplois, freelance et UGC",
+    "homeDescription": "Emplois à distance et missions freelance, freelances et créateurs UGC à engager, ainsi que des événements Web3 et tech. Spoki, l’agent IA, vous guide à chaque étape ; paiement en USDC ou USDT.",
     "ogAlt": "INTGETION Job List — travail à distance dans le Web3"
   },
   "nav": {
@@ -196,32 +196,27 @@
     "it": "Italien"
   },
   "home": {
-    "tagline": "Travail à distance et événements tech. De vraies correspondances.",
-    "searchLabel": "Recherche",
-    "searchPlaceholder": "Poste, compétence ou entreprise",
-    "searchSubmit": "Rechercher",
-    "latestEmpty": "Les offres publiées apparaîtront ici.",
+    "tagline": "Une plateforme pour le travail à distance : emplois, freelance, UGC et événements.",
     "feedTitle": "Emplois à distance",
     "topJobs": "Meilleures offres",
-    "allJobs": "Toutes les offres",
     "moreJobs": "Afficher plus d’offres",
     "faqTitle": "Questions",
     "faq": {
       "what": {
         "q": "Qu’est-ce que INTGETION JOB LIST ?",
-        "a": "Un agrégateur d’emplois à distance et d’événements Web3 et tech. Cherchez un emploi, trouvez des sommets et des meetups pour réseauter, et laissez l’assistant Spoki vous proposer ce qui correspond à votre profil."
+        "a": "Une plateforme pour le travail à distance : emplois, services et missions freelance, vidéos UGC pour les marques et événements Web3 et tech dans un seul compte. L’agent Spoki aide les deux côtés."
       },
       "free": {
         "q": "Est-ce gratuit ?",
         "a": "Oui. Rechercher, postuler et publier des offres est gratuit. Les formules payantes ajoutent rapidité et visibilité — voir Tarifs."
       },
-      "apply": {
-        "q": "Comment postuler ?",
-        "a": "Ouvrez une offre et cliquez sur Postuler. Pour les offres importées, vous postulez sur le site de l’employeur."
+      "spoki": {
+        "q": "Que peut faire Spoki ?",
+        "a": "Spoki recherche des emplois, services, missions et événements, rédige avec vous une offre d’emploi, un service ou un brief UGC et vous envoie des rappels dans Telegram. Tout ce qui modifie votre compte attend votre confirmation."
       },
-      "post": {
-        "q": "Comment publier une offre ?",
-        "a": "Cliquez sur Publier une offre, connectez-vous et remplissez le formulaire. L’offre apparaît dans le fil après vérification."
+      "pay": {
+        "q": "Comment fonctionnent les paiements ?",
+        "a": "Les formules, les commandes freelance et les budgets UGC se paient en USDC ou USDT depuis votre portefeuille. Une commande freelance est payée directement à l’adresse du freelance."
       },
       "contacts": {
         "q": "Qui voit mes coordonnées ?",
@@ -229,69 +224,113 @@
       }
     },
     "landing": {
-      "heroTitle": "Emplois à distance. De vraies correspondances.",
-      "heroLead": "Des offres selon vos compétences, votre salaire et vos horaires. Spoki, l’agent de carrière, trouve les postes qui conviennent et explique pourquoi.",
-      "findJobs": "Trouver un emploi à distance",
-      "featuresTitle": "Tout ce qu’il faut pour trouver un travail à distance",
-      "tz": {
-        "title": "Correspondance par fuseau horaire",
-        "text": "Correspondance par compétences et horaires, pas par mots-clés. Vous voyez combien d’heures vous partagez avec l’équipe.",
-        "you": "Vous · UTC+3",
-        "team": "Équipe · UTC−1",
-        "overlap": "Chevauchement 5 h"
-      },
-      "salary": {
-        "title": "Un salaire comparable",
-        "text": "Chaque fourchette s’affiche dans votre devise, impôts compris. Moins de candidatures à côté.",
-        "range": "USD 4 200–5 600 / mois",
-        "net": "Après impôts"
-      },
-      "agent": {
-        "title": "Spoki, l’agent de carrière",
-        "text": "Une conversation qui apprend quel travail vous voulez et continue à chercher. Aussi dans Telegram.",
-        "match": "Correspondance 87%",
-        "why": "Solidity · UTC+2 · 6 h"
-      },
-      "more": {
-        "mutual": {
-          "title": "Intérêt mutuel",
-          "text": "Une entreprise voit vos coordonnées seulement après un intérêt mutuel."
-        },
-        "verified": {
-          "title": "Entreprises vérifiées",
-          "text": "E-mail professionnel ou enregistrement DNS. Le badge se mérite, il ne s’achète pas."
-        },
-        "alerts": {
-          "title": "Recherches enregistrées",
-          "text": "Jusqu’à 10 recherches avec alertes par e-mail et dans Telegram."
-        },
-        "telegram": {
-          "title": "Telegram",
-          "text": "Connectez-vous, écrivez à @intgetion_bot et suivez la chaîne Jobs Alert."
-        },
-        "salaries": {
-          "title": "Salaires",
-          "text": "Des pages de salaires par poste et niveau, ouvertes à tous."
-        },
-        "web3": {
-          "title": "Web3 et télétravail classique",
-          "text": "Les deux au même endroit, en sept langues."
+      "heroTitle": "Une plateforme pour le travail à distance",
+      "heroLead": "Emplois à distance, freelance, vidéos UGC et événements dans un seul compte. Dites à Spoki ce dont vous avez besoin, il s’occupe du reste.",
+      "ask": {
+        "label": "Dites à Spoki ce dont vous avez besoin",
+        "placeholder": "De quoi avez-vous besoin ? Par exemple, un designer pour une landing page",
+        "submit": "Demander à Spoki",
+        "examplesLabel": "Par exemple :",
+        "examples": {
+          "work": "Aide-moi à trouver un emploi à distance",
+          "hire": "Je veux engager un freelance",
+          "ugc": "Je veux commander des vidéos UGC",
+          "task": "Trouve-moi une mission freelance"
         }
       },
-      "pricing": {
-        "label": "Tarifs",
-        "title": "Publiez vos offres gratuitement.",
-        "link": "Voir les tarifs",
-        "boards": "Grands sites d’emploi à distance",
-        "boardsPrice": "$250–300",
-        "start": "Start",
-        "startPrice": "$0",
-        "hire": "Hire · avec remboursement",
-        "hirePrice": "$79",
-        "team": "Team · par mois",
-        "teamPrice": "$80"
+      "services": {
+        "label": "Un seul compte",
+        "title": "Travaillez ou recrutez avec le même compte",
+        "lead": "Pas de seconde inscription ni de rôle à choisir. Votre profil et votre portefeuille servent dans tous les services.",
+        "spoki": {
+          "title": "Spoki, votre agent IA",
+          "text": "Décrivez la tâche avec vos mots. Spoki cherche emplois, freelances, missions et événements, les compare et explique pourquoi une option convient. Il se souvient de vous et vous relance dans Telegram.",
+          "ask": "Trouve-moi un poste de designer à distance",
+          "step": "Je cherche des offres",
+          "chipOne": "Design",
+          "chipTwo": "à distance",
+          "found": "12 offres",
+          "fit": "Correspond à 87 % : Figma, UTC+2, 6 h en commun"
+        },
+        "jobs": {
+          "title": "Emplois à distance",
+          "text": "De nouveaux postes chaque heure, de sources fiables et directement des entreprises.",
+          "remote": "À distance",
+          "roles": {
+            "one": "Product designer",
+            "two": "Ingénieur frontend",
+            "three": "Growth marketer",
+            "four": "Analyste de données"
+          },
+          "pay": {
+            "one": "$4–6k",
+            "two": "$5–7k",
+            "three": "$3–5k",
+            "four": "$4–5k"
+          }
+        },
+        "freelance": {
+          "title": "Freelance au prix clair",
+          "text": "Offres de services et missions avec budget. Salle de commande, livraison et avis sur une seule page.",
+          "price": "Dès 10 $",
+          "steps": {
+            "request": "Demande",
+            "work": "Travail",
+            "delivery": "Livraison",
+            "review": "Avis"
+          }
+        },
+        "ugc": {
+          "title": "Vidéos UGC pour les marques",
+          "text": "Brief, choix des créateurs, une retouche et le paiement. Le budget est clair dès le départ.",
+          "accepted": "Accepté"
+        },
+        "events": {
+          "title": "Événements et conférences",
+          "text": "Des centaines de conférences et d’appels à communications, filtrés par thème et format.",
+          "dates": {
+            "one": "18 nov.",
+            "two": "3 déc.",
+            "three": "21 janv."
+          },
+          "names": {
+            "one": "Web3 builders summit · en ligne",
+            "two": "AI engineering conf",
+            "three": "Product design week"
+          }
+        }
       },
-      "ctaTitle": "Prêt à trouver un travail à distance ?"
+      "platform": {
+        "label": "Comment ça marche",
+        "title": "Une conversation au lieu de cinq sites",
+        "steps": {
+          "one": {
+            "title": "Décrivez la tâche",
+            "text": "Avec vos mots, sur le site ou dans Telegram."
+          },
+          "two": {
+            "title": "Spoki trouve des options",
+            "text": "Emplois, freelances, missions ou créateurs, et pourquoi chacun convient."
+          },
+          "three": {
+            "title": "Vous décidez",
+            "text": "Spoki demande avant chaque action sur votre compte. Vous convenez des conditions, payez et laissez un avis."
+          }
+        },
+        "pay": {
+          "title": "Payez en crypto",
+          "text": "USDC et USDT directement depuis votre portefeuille. Sans carte ni frais bancaires."
+        },
+        "langs": {
+          "title": "Sept langues",
+          "text": "L’interface, les e-mails et Spoki parlent votre langue."
+        },
+        "reach": {
+          "title": "Telegram et assistants IA",
+          "text": "Connexion et chat via @intgetion_bot. Les assistants IA cherchent nos offres via MCP."
+        }
+      },
+      "ctaTitle": "Prêt à commencer ?"
     }
   },
   "categories": {
@@ -5288,9 +5327,14 @@
     "findWork": "Trouver du travail",
     "about": "Pourquoi INTGETION",
     "aboutCompany": "À propos",
-    "creatorWork": "Missions pour créateurs UGC",
-    "searchLabel": "Recherche sur le site",
-    "searchPlaceholder": "Rechercher",
-    "searchScope": "Où chercher"
+    "findFreelancer": "Trouver un freelance",
+    "orderUgc": "Commander des vidéos UGC",
+    "orderService": "Commander un projet clé en main",
+    "remoteJobs": "Emplois à distance",
+    "freelanceTasks": "Missions pour freelances",
+    "creatorWork": "Tourner des vidéos UGC",
+    "eventsConfs": "Événements et conférences",
+    "spokiAgent": "Agent IA Spoki",
+    "billing": "Paiements et factures"
   }
 }

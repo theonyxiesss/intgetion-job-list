@@ -30,6 +30,7 @@ export function ListingCard({
   viewLabel,
   actions,
   compact = false,
+  children,
 }: {
   href: string;
   title: string;
@@ -61,6 +62,8 @@ export function ListingCard({
   /** Buttons above the link layer, top right on wide cards. */
   actions?: ReactNode;
   compact?: boolean;
+  /** Optional module-specific status details before the price footer. */
+  children?: ReactNode;
 }) {
   const Heading = headingLevel === 2 ? "h2" : "h3";
   const titleLink = (
@@ -143,6 +146,7 @@ export function ListingCard({
           ) : null}
         </ul>
       ) : null}
+      {children}
       {hasFooter ? (
         <div className="mt-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line pt-3">
           <div className="min-w-0">{lead}</div>

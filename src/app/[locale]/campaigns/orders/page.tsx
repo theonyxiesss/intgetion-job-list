@@ -1,3 +1,4 @@
+import { ServiceIconBox } from "@/components/ui/service-icon";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -246,17 +247,17 @@ async function OrdersBody({
                     })}
                   </tbody>
                 </Table>
-                <ul className="flex flex-col divide-y divide-line rounded-lg border border-line md:hidden">
+                <ul className="grid gap-4 md:hidden">
                   {rows.map((row) => {
                     const name =
                       row.participant.creator?.displayName || t("creator");
                     return (
                       <li
                         key={row.participant.inviteId}
-                        className="flex flex-col gap-3 p-4"
+                        className="flex flex-col gap-4 rounded-lg border border-line bg-surface p-5"
                       >
                         <div className="flex items-center gap-3">
-                          <Monogram name={name} />
+                          <ServiceIconBox name="ugc" />
                           <div className="flex min-w-0 flex-col">
                             <p className="font-medium break-words">{name}</p>
                             <Link
@@ -271,7 +272,9 @@ async function OrdersBody({
                           <ParticipationStatus
                             status={row.participant.status}
                           />
-                          <span className="font-mono">{reward(row)}</span>
+                          <span className="font-mono text-2xl tracking-tight">
+                            {reward(row)}
+                          </span>
                           <span className="text-fg-muted">{rights(row)}</span>
                         </div>
                         {actions(row)}

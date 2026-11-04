@@ -45,3 +45,16 @@
 ## ccfddl (D440)
 
 Один файл `allconf.json`: серия конференций с категорией CCF и годами. Событие — год (`AAAI 2027`), `externalId` — id года (`aaai27`). Даты из строки «June 21-25, 2027» и похожих; «TBD» не берётся. Место: страна — последний кусок через запятую, город — первый. Тема — из категории CCF, приём статей — ближайший будущий `deadline` в поясе серии.
+
+## Модуль коротко
+
+- **Вход:** `src/modules/events/service/index.ts` — `searchEvents`, `getEventBySlug`, `findEventsForPerson` (для Spoki), `listEventCountries`, `listEventSitemapEntries`, `runEventImports`, `eventJsonLd`.
+- **Таблица:** `events` (`0049_events.sql`, на облаке с 2026-10-15). Источники и прогоны — общие `import_sources` и `import_runs` модуля ingestion.
+- **Маршруты:** `/events`, `/events/[slug]`, cron `/api/cron/events`, адреса в `src/app/sitemap.ts`.
+- **Env:** `EVENTS_IMPORT_SOURCES` (на production — `confs.tech,ccfddl`), `DATABASE_URL` (фикстура только на локальной базе), `CRON_SECRET`.
+- **D:** 18, 412, 435, 436, 440, 479.
+
+## Что не сделано
+
+- Web3-событий почти нет (по одному в каждом источнике); второй источник для Web3 — открытый вопрос D435.
+- Регистрации на событие нет (ТЗ 26).

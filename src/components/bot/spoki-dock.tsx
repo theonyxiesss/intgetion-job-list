@@ -1,5 +1,7 @@
 "use client";
 
+import { ServiceIcon } from "@/components/ui/service-icon";
+
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import {
   MessageCircle,
@@ -209,6 +211,7 @@ export function SpokiDock({
           </div>
         ) : null}
         <div className="flex h-14 shrink-0 items-center gap-1 border-b border-line pr-2 pl-4">
+          <ServiceIcon name="spoki" size={24} className="mr-2 text-signal" />
           <h2 className="flex-1 truncate text-sm font-medium">
             {labels.title}
           </h2>

@@ -4,7 +4,7 @@
  * Design tokens (docs/DESIGN.md, D428). Components use these only:
  * no raw hex colours or Tailwind palette classes outside this file and
  * src/components/ui (D140). The look follows nextjs.org: black page, hairline
- * grey lines, Geist type, one blue for the main action and focus.
+ * grey lines, Manrope type (D602), one blue for the main action and focus.
  */
 
 /* Dark is the default theme; light only on explicit choice (D141). */
@@ -77,12 +77,12 @@
   --color-foreground: var(--fg);
 
   --font-text:
-    var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, sans-serif;
-  /* One family now: display text is Geist too, set tighter (D428). */
+  /* One family: display text is Manrope too, set tighter (D428, D602). */
   --font-display: var(--font-text);
   --font-mono:
-    var(--font-geist-mono), ui-monospace, "SF Mono", "Cascadia Mono",
+    var(--font-ibm-plex-mono), ui-monospace, "SF Mono", "Cascadia Mono",
     "Roboto Mono", Menlo, Consolas, monospace;
 
   --radius-none: 0;
@@ -131,7 +131,7 @@
 
 @layer components {
   /*
-   * Type scale (DESIGN.md 4.2, D428): Geist, sentence case, tight tracking on
+   * Type scale (DESIGN.md 4.2, D428, D602): Manrope, sentence case, tight tracking on
    * large sizes. Only labels are capitals, in mono, and they come from CSS.
    */
   .t-display-xl {
@@ -764,11 +764,164 @@ w3m-modal.open {
   }
 }
 
-/* Thin vertical rules behind the price list, like the nextjs.org grid. */
-.home-lines {
-  background-image: repeating-linear-gradient(
-    90deg,
-    var(--line) 0 1px,
-    transparent 1px 32px
+/* Home platform showcase (D594, D601 keeps the service tiles). CSS motion only: tiles slide up as they
+   scroll into view where the browser supports scroll timelines, the jobs
+   list and languages loop, a dot runs along a freelance order. Everything
+   is still under reduced motion and readable without animation. */
+/* Motion only, never transparency: text stays at full contrast at every
+   moment, which the axe contrast check in e2e measures. */
+@keyframes home-reveal {
+  from {
+    transform: translateY(1.5rem);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes home-ticker {
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes home-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes home-runner {
+  0%,
+  8% {
+    left: 0;
+  }
+  92%,
+  100% {
+    left: calc(100% - 0.75rem);
+  }
+}
+
+/* Each line of the Spoki sample "types in" from the left (a clip, not
+   opacity, so the text keeps its contrast). */
+@keyframes home-seq {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  8%,
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes home-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes home-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.home-tile {
+  transition:
+    border-color 200ms ease,
+    transform 200ms var(--ease-out-quint);
+}
+
+.home-tile:hover {
+  border-color: var(--fg-subtle);
+  transform: translateY(-2px);
+}
+
+@supports (animation-timeline: view()) {
+  .home-reveal {
+    animation: home-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 22%;
+  }
+}
+
+.home-ticker {
+  animation: home-ticker 14s linear infinite;
+}
+
+.home-marquee {
+  animation: home-marquee 18s linear infinite;
+}
+
+.home-runner {
+  animation: home-runner 4s ease-in-out infinite alternate;
+}
+
+.home-seq > * {
+  animation: home-seq 9s steps(24, end) infinite both;
+}
+
+.home-seq > :nth-child(2) {
+  animation-delay: 0.8s;
+}
+
+.home-seq > :nth-child(3) {
+  animation-delay: 2s;
+}
+
+.home-seq > :nth-child(4) {
+  animation-delay: 2.8s;
+}
+
+.home-pulse {
+  animation: home-pulse 2s ease-in-out infinite;
+}
+
+.home-blink {
+  animation: home-blink 1.4s ease-in-out infinite;
+}
+
+.home-fade-y {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 18%,
+    black 82%,
+    transparent
   );
+}
+
+.home-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 12%,
+    black 88%,
+    transparent
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-tile,
+  .home-reveal,
+  .home-ticker,
+  .home-marquee,
+  .home-runner,
+  .home-seq > *,
+  .home-pulse,
+  .home-blink {
+    animation: none;
+    transition: none;
+  }
+  .home-tile:hover {
+    transform: none;
+  }
 }

@@ -3,7 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import pg from "pg";
 import { expect, test } from "./fixtures";
 
-/** Published jobs of one verified company, so the feed has more than the top three. */
+/** Published jobs of one verified company, more than the top three. */
 async function seedPublishedJobs(count: number) {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString)
@@ -43,9 +43,9 @@ async function seedPublishedJobs(count: number) {
 
 test("home renders the English shell", async ({ page }) => {
   await page.goto("/en");
-  // The hero heading since D428.
+  // The hero heading since D601.
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Remote jobs. Real matches.",
+    "One platform for remote work",
   );
   // The footer repeats the logo link; this one is the header's.
   await expect(
@@ -56,20 +56,37 @@ test("home renders the English shell", async ({ page }) => {
 test("home renders the Russian shell", async ({ page }) => {
   await page.goto("/ru");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Удалённые вакансии. Настоящие совпадения.",
+    "Одна платформа для удалённой работы",
   );
 });
 
-test("home is the job feed: top jobs, the feed, FAQ, footer, no pricing (D332)", async ({
+test("home is the platform: service tiles, top jobs, FAQ, footer (D601)", async ({
   page,
 }) => {
-  // "All jobs" lists what is left after the top three.
   await seedPublishedJobs(4);
   await page.goto("/en");
+  // One tile per service, each with a way in for both sides.
+  for (const name of [
+    "Remote jobs",
+    "Freelance with a clear price",
+    "UGC videos for brands",
+    "Events and conferences",
+  ]) {
+    await expect(page.getByRole("heading", { name, level: 3 })).toBeVisible();
+  }
+  await expect(
+    page.getByRole("link", { name: "Find a freelancer" }).first(),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Make UGC videos" }).first(),
+  ).toBeVisible();
   await expect(page.getByRole("heading", { name: "Top jobs" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "All jobs" })).toBeVisible();
+  // Three top jobs and the catalog link, not the long feed of D332.
+  await expect(page.locator("#all-jobs")).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: "Show more jobs" }),
+  ).toBeVisible();
   await expect(page.getByRole("heading", { name: "Questions" })).toBeVisible();
-  await expect(page.locator("#home-pricing-title")).toHaveCount(0);
   const question = page.getByText("Is it free?");
   await question.click();
   await expect(
@@ -77,6 +94,28 @@ test("home is the job feed: top jobs, the feed, FAQ, footer, no pricing (D332)",
   ).toBeVisible();
   await page.locator("footer").scrollIntoViewIfNeeded();
   await expect(page.locator("footer")).toBeInViewport();
+});
+
+test("the home field hands the task to Spoki, not the address (D601)", async ({
+  page,
+}) => {
+  const sent: { text?: string }[] = [];
+  await page.route("**/api/bot/message", async (route) => {
+    sent.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 200,
+      headers: { "content-type": "text/event-stream" },
+      body:
+        'event: token\ndata: {"type":"token","text":"Stubbed answer."}\n\n' +
+        'event: done\ndata: {"type":"done","conversationId":"00000000-0000-4000-8000-000000000000"}\n\n',
+    });
+  });
+  await page.goto("/en");
+  await page.getByLabel("Tell Spoki what you need").fill("Find me a designer");
+  await page.getByRole("button", { name: "Ask Spoki" }).click();
+  await expect(page.getByText("Stubbed answer.")).toBeVisible();
+  expect(sent.map((body) => body.text)).toEqual(["Find me a designer"]);
+  await expect(page).not.toHaveURL(/designer/);
 });
 
 test("unknown routes use the localized not-found page", async ({ page }) => {
