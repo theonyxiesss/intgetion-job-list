@@ -18,16 +18,17 @@
 ## Авторизация (фаза 2, локальная ветка)
 
 - `src/modules/mcp/service/auth-service.ts`: OAuth public clients, PKCE S256, одноразовые коды, короткие opaque access tokens, rotating refresh tokens с отзывом цепочки при повторном использовании; в БД хранятся только SHA-256 токенов. Resource/audience проверяется при создании согласия, обмене кода, refresh и каждом MCP-вызове.
-- `src/modules/mcp/service/oauth-http.ts`: `/api/mcp?oauth=authorize|register|token|revoke`, DCR с ограниченными redirect URI, IP rate limits и лимитом тела; metadata публикуются через `.well-known` и объявляют поддержку CIMD. URL `client_id` разрешается через `cimd.ts`: HTTPS, только публичные A/AAAA, DNS pinning на сокете, запрет redirect, максимум 64 КБ и 2,5 с; документ проверяется и сохраняется как клиент (D607).
+- `src/modules/mcp/service/oauth-http.ts`: `/api/mcp?oauth=authorize|register|token|revoke`, DCR с ограниченными redirect URI, IP rate limits и лимитом тела; metadata публикуются через `.well-known` и объявляют поддержку CIMD. URL `client_id` разрешается через `cimd.ts`: HTTPS, только публичные A/AAAA, DNS pinning на сокете, запрет redirect, максимум 64 КБ и 2,5 с; документ проверяется и сохраняется как клиент (D608).
 - Личный токен годовой, показывается один раз, хранится хешом и отзывается в настройках. Страница настроек «Ассистенты» показывает токены и OAuth-подключения.
 - Read scopes: `profile:read`, `applications:read`, `saved:read`, `freelance:read`, `ugc:read`, `reminders:read`. Scoped tools читают профиль, сводку/матчи, отклики, сохранённые вакансии/поиски, подписки, заказы/услуги фриланса, UGC-кампании/приглашения и ожидающие напоминания. Write scope не выдаются.
 - Пользовательские MCP-ответы помечаются `UNTRUSTED_NOTE`; профиль формируется из явного списка полей без контактов.
 - Страница согласия `/oauth/consent` повторно проверяет пользователя и Origin в серверных действиях. Settings API требуют входа и используют MCP service barrel.
-- Миграция `0087_mcp_authorization.sql` создаёт таблицы клиентов, запросов, грантов, кодов и токенов с RLS deny-all; доступ к ним у `app_rw`. На облако миграция не применялась.
+- Миграция `0088_mcp_authorization.sql` создаёт таблицы клиентов, запросов, грантов, кодов и токенов с RLS deny-all; доступ к ним у `app_rw`. На облако миграция не применялась.
 
 ## Тесты
 
 - `src/modules/mcp/__tests__/server.test.ts` — обе версии протокола через настоящий обработчик SDK, Host, Origin, 429, 413, D484, отсутствие контактов, лог без аргументов.
+- `src/modules/mcp/__tests__/auth-service.integration.test.ts` — consent, PKCE exchange, неверные verifier/client/resource, replay кода и refresh token, principal/scopes/audience и хранение только хэшей; запускается в CI после clean migration.
 - `src/modules/bot/__tests__/mcp-tools.test.ts` — состав MCP, только чтение, Spoki не получает MCP-инструменты.
 - `src/lib/security.test.ts` — исключение Origin только для `/api/mcp`.
 
@@ -49,4 +50,4 @@ claude mcp add --transport http intgetion https://intgetion.com/api/mcp
 
 ## Что не сделано
 
-Фаза 2 не завершена: интеграционные OAuth-тесты с БД, миграция с нуля в CI и security review. CIMD реализован локально (D607), но проверка безопасности остаётся обязательной до выкладки. До закрытия остальных пунктов код не вливать и не выкладывать. Фазы 3 (действия с подтверждением), 4 (работодатель и исполнитель), 5 и 6 — план в [../MCP.md](../MCP.md) §6.
+Фаза 2 реализована в PR #47, CI run `41934060059` зелёный: clean migration, OAuth DB integration, 104 e2e, unit, typecheck, lint, format и build. Ручная security-проверка OAuth/CIMD/consent/settings выполнена; независимый внешний review не проводился. Фаза не включена в production: после штатного merge требуется применить `0088_mcp_authorization.sql` и выполнить production deploy. Фазы 3 (действия с подтверждением), 4 (работодатель и исполнитель), 5 и 6 остаются планом в [../MCP.md](../MCP.md) §6.
