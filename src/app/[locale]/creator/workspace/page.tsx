@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
-import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { Container, PageHeader } from "@/components/ui/container";
+import { OrderCard } from "@/components/ui/order-card";
 import { Stat, StatRow } from "@/components/ui/stat";
 import { RouteMessages } from "@/components/shell/route-messages";
 import { intlLocale } from "@/i18n/locale";
@@ -12,6 +12,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import {
   getCreatorWorkspace,
+  workspaceOrderStage,
   type WorkspaceItem,
   type WorkspaceSection,
 } from "@/modules/ugc/service";
@@ -50,6 +51,13 @@ export default async function CreatorWorkspacePage({
     return null;
   }
   const t = await getTranslations("ugc.workspace");
+  const card = await getTranslations("ui.orderCard");
+  const stepLabels = {
+    accepted: card("steps.accepted"),
+    work: card("steps.work"),
+    review: card("steps.review"),
+    done: card("steps.done"),
+  };
   const ws = await getCreatorWorkspace(user.id);
   const dates = new Intl.DateTimeFormat(intlLocale(locale), {
     dateStyle: "medium",
@@ -68,28 +76,31 @@ export default async function CreatorWorkspacePage({
 
   function line(item: WorkspaceItem) {
     return (
-      <li
-        key={item.inviteId}
-        className="flex flex-col gap-3 rounded-lg border border-line p-4 sm:flex-row sm:items-center sm:justify-between"
-      >
-        <div className="flex min-w-0 flex-col gap-1">
-          <p className="font-medium break-words">{item.productName}</p>
-          <p className="t-body-s flex flex-wrap items-center gap-x-3 gap-y-1 text-fg-muted">
-            <Badge tone={item.action === "none" ? "neutral" : "new"}>
-              {t(`stage.${item.stage}`)}
-            </Badge>
-            <span className="t-data">{usd(item.rewardMinor)}</span>
-            <span className="t-data">{deadline(item)}</span>
-          </p>
-          <p className="t-body-s text-fg-muted">{t(`hint.${item.stage}`)}</p>
-        </div>
-        <ButtonLink
+      <li key={item.inviteId}>
+        <OrderCard
           href={`/chat?invite=${item.inviteId}`}
-          variant={item.action === "none" ? "secondary" : "strong"}
-          className="self-start sm:self-center"
-        >
-          {t(`action.${item.action}`)}
-        </ButtonLink>
+          icon="ugc"
+          code={`UGC / ${item.inviteId.slice(0, 4).toUpperCase()}`}
+          status={t(`stage.${item.stage}`)}
+          stage={workspaceOrderStage(item.stage)}
+          stepLabels={stepLabels}
+          stepsLabel={card("stepsLabel")}
+          title={item.productName}
+          subtitle={t(`hint.${item.stage}`)}
+          price={{ label: card("reward"), value: usd(item.rewardMinor) }}
+          date={{
+            label: card("deadline"),
+            value: <time dateTime={item.deadline}>{deadline(item)}</time>,
+          }}
+          actions={
+            <ButtonLink
+              href={`/chat?invite=${item.inviteId}`}
+              variant={item.action === "none" ? "secondary" : "strong"}
+            >
+              {t(`action.${item.action}`)}
+            </ButtonLink>
+          }
+        />
       </li>
     );
   }
@@ -132,7 +143,9 @@ export default async function CreatorWorkspacePage({
                 {ws.now.length === 0 ? (
                   <p className="text-fg-muted">{t("nowEmpty")}</p>
                 ) : (
-                  <ul className="flex flex-col gap-3">{ws.now.map(line)}</ul>
+                  <ul className="grid gap-4 md:grid-cols-2">
+                    {ws.now.map(line)}
+                  </ul>
                 )}
               </section>
               {SECTIONS.map((section) =>
@@ -148,7 +161,7 @@ export default async function CreatorWorkspacePage({
                         {ws.sections[section].length}
                       </span>
                     </h2>
-                    <ul className="flex flex-col gap-3">
+                    <ul className="grid gap-4 md:grid-cols-2">
                       {ws.sections[section].map(line)}
                     </ul>
                   </section>

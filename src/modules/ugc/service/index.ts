@@ -227,6 +227,7 @@ export type {
   WorkspaceSection,
   WorkspaceStage,
 } from "./creator-workspace";
+export { participationStage, workspaceOrderStage } from "./order-stage";
 export { UGC_DELIVERY_PROBLEMS } from "./delivery";
 export type { DeliveryState, UgcDeliveryProblem } from "./delivery";
 

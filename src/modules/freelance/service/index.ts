@@ -82,6 +82,7 @@ export {
   type SuggestedSeller,
 } from "./task-invite-service";
 export { orderDeadline } from "./order-deadline";
+export { orderStage } from "./order-stage";
 export type { DeadlineState, OrderDeadline } from "./order-deadline";
 export { getSellerRecord } from "./seller-record-service";
 export type { SellerBadge, SellerRecord } from "./seller-score";

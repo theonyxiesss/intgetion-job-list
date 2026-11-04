@@ -1669,7 +1669,27 @@
     "previous": "Indietro",
     "next": "Avanti",
     "copy": "Copia",
-    "copied": "Copiato"
+    "copied": "Copiato",
+    "orderCard": {
+      "steps": {
+        "accepted": "Accettato",
+        "work": "In lavorazione",
+        "review": "In revisione",
+        "done": "Concluso"
+      },
+      "stepsLabel": "Fasi dell'ordine",
+      "next": "Prossimo passo",
+      "open": "Apri ordine",
+      "price": "Prezzo dell'ordine",
+      "reward": "Compenso",
+      "dueBy": "Consegna entro",
+      "answerBy": "Risposta entro",
+      "acceptedOn": "Accettato",
+      "deliveredOn": "Consegnato",
+      "completedOn": "Concluso",
+      "closedOn": "Chiuso",
+      "deadline": "Scadenza"
+    }
   },
   "settings": {
     "title": "Impostazioni",
@@ -4467,7 +4487,8 @@
       "orderText": "Paga in USDC o USDT direttamente all’indirizzo confermato del freelance. L’ordine passa in lavorazione quando la rete conferma.",
       "payoutMissing": "Il freelance non ha ancora confermato un indirizzo di pagamento. Accordatevi sul pagamento direttamente; il freelance inizia il lavoro.",
       "paidLine": "Pagato all’indirizzo del freelance. L’ordine è in lavorazione."
-    }
+    },
+    "fromLabel": "Prezzo da"
   },
   "ugc": {
     "title": "Video UGC",

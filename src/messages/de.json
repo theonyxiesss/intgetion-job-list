@@ -1669,7 +1669,27 @@
     "previous": "Zurück",
     "next": "Weiter",
     "copy": "Kopieren",
-    "copied": "Kopiert"
+    "copied": "Kopiert",
+    "orderCard": {
+      "steps": {
+        "accepted": "Angenommen",
+        "work": "In Arbeit",
+        "review": "In Prüfung",
+        "done": "Fertig"
+      },
+      "stepsLabel": "Auftragsschritte",
+      "next": "Nächster Schritt",
+      "open": "Auftrag öffnen",
+      "price": "Auftragspreis",
+      "reward": "Vergütung",
+      "dueBy": "Fällig am",
+      "answerBy": "Antwort bis",
+      "acceptedOn": "Angenommen",
+      "deliveredOn": "Geliefert",
+      "completedOn": "Abgeschlossen",
+      "closedOn": "Geschlossen",
+      "deadline": "Frist"
+    }
   },
   "settings": {
     "title": "Einstellungen",
@@ -4467,7 +4487,8 @@
       "orderText": "Zahlen Sie in USDC oder USDT direkt an die bestätigte Adresse der Person. Der Auftrag geht in Arbeit, sobald das Netz bestätigt.",
       "payoutMissing": "Die Person hat noch keine Auszahlungsadresse bestätigt. Vereinbaren Sie die Zahlung direkt; die Person beginnt die Arbeit.",
       "paidLine": "An die Adresse der Person bezahlt. Der Auftrag ist in Arbeit."
-    }
+    },
+    "fromLabel": "Preis ab"
   },
   "ugc": {
     "title": "UGC-Videos",
