@@ -10,7 +10,8 @@ const source = fs.readFileSync(
   "utf8",
 );
 const literal = /matcher:\s*(\[[\s\S]*?\])/.exec(source)?.[1] ?? "[]";
-const matchers = JSON.parse(literal) as string[];
+// Prettier leaves a trailing comma in a multi-line array; JSON has none.
+const matchers = JSON.parse(literal.replace(/,\s*\]$/, "]")) as string[];
 const matcher = matchers[0] ?? "";
 const lookahead = /^\/\(\(\?!(.*)\)\.\*\)$/.exec(matcher)?.[1] ?? "";
 const excluded = new RegExp(`^(?:${lookahead})`);
@@ -38,6 +39,13 @@ describe("proxy matcher", () => {
 
   it("also matches robots.txt so the admin host can refuse crawlers", () => {
     expect(matchers).toContain("/robots.txt");
+  });
+
+  it("routes the English job feeds, which have no locale prefix", () => {
+    // /jobs/rss.xml answered 404: the first pattern skips any path with a dot.
+    expect(excluded.test("jobs/rss.xml")).toBe(true);
+    expect(matchers).toContain("/jobs/rss.xml");
+    expect(matchers).toContain("/jobs/t/:slug/rss.xml");
   });
 
   it("waits for the phone bridge before the Mini App bounce leaves", () => {

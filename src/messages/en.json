@@ -3184,7 +3184,6 @@
       "startLong": "Keep the start to a short note.",
       "send": "Send the task",
       "sending": "Sending",
-      "done": "Received. We will reply on the contact you gave.",
       "error": "This could not be saved yet. Use Telegram, Discord, or LinkedIn below.",
       "taskShort": "Describe the problem in a few sentences.",
       "taskLong": "Keep the task description under 4,000 characters.",
