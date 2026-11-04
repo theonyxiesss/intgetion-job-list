@@ -1,5 +1,13 @@
 # OPEN_TASKS
 
+### D602 — внедрение выбранного дизайна после отдельной команды
+
+2026-11-04: внедрено и на сайте — PR #40 слит в master (`ae4b653c`), Vercel Production. Осталось: страницы заказов фриланса и UGC под входом (вход блокирует Supabase 402).
+
+### Выбор подфазы после исследования Web3 и ИИ (2026-11-03, D600)
+
+[Обзор и предлагаемый план](WEB3_AI_TECH_RESEARCH.md) завершён как исследование. Следующая реализация не начата: выбрать baseline Spoki либо тестовый эскроу; для внешнего поиска отдельно определить бюджет и провайдера после сравнения. Для переносимых подтверждений нужен проверяющий/издатель, для CV import — разрешение V2. Новые технологии не заменяют существующие хвосты ТЗ 35/43/50/51 и не считаются утверждённым scope.
+
 Открытые хвосты вне (или поверх) roadmap. Закрыл — вычеркни и обнови [CURRENT.md](CURRENT.md) + [status/INDEX.md](status/INDEX.md).
 
 ## OPEN
@@ -44,7 +52,7 @@
 
 ### D569 — задачи фриланса (ТЗ 47)
 
-A3.1–A3.3 завершены локально: сервер и UI, уведомления о новом/принятом отклике, поиск задач и подтверждение отклика через Spoki, sitemap. Лента и миграционный fallback проверены браузером; экраны под входом не проверялись из-за отсутствия локальной вошедшей сессии. Основатель разрешил применить `0071`–`0073` и deploy, но в сессии недоступен Supabase MCP `execute_sql`, обязательный по D438. Миграции не применены, deploy не выполнялся; продолжить после подключения MCP.
+A3.1–A3.3 на сайте: миграции `0071`–`0083` применены к облаку 2026-10-29 (D438), код в master с `705c6b0d` (D576). Не проверено: экраны под входом (Supabase 402).
 
 Пересмотренный план и брейншторм Spoki: [D540/D541 / ТЗ 35](tz/35-spoki-agent-roadmap.md). D548: подготовлен воспроизводимый набор ответов по пяти доменам (10 синтетических случаев), локальный оценщик и отдельный live runner; D549: исправлен разбор вложенной JSON-строки аргумента инструмента. Обычные тесты сеть не вызывают. Live baseline модели ещё не снят: 2026-10-27 основатель выбрал только локальные проверки. Для продолжения нужно новое явное разрешение на вызов OpenRouter с описанным payload и пределом 20 запросов; затем рассмотреть метрики и согласовать пороги. Для этапа 3 выбран первый сценарий и политика сохранения D550; подключение модели цели к чату остаётся открытым. Для этапа 5 открыты провайдер, стоимость и точный payload. Ниже — открытые хвосты первого этапа, надёжности модели и реального внешнего поиска.
 
@@ -54,11 +62,11 @@ A3.1–A3.3 завершены локально: сервер и UI, уведо�
 
 ### D568 — отзывы о заказчике (ТЗ 46)
 
-Сделано локально: миграция `0072` (не применена), сервис, API `/api/freelance/client-reviews`, форма и сводка на странице заказа, 7 языков, 10 тестов. Разрешение на `0071`–`0073` и deploy получено; выпуск ждёт подключения Supabase MCP `execute_sql` для миграции по D438. Остаются проверка вида под входом и ответы D568 (тексты, своя сводка, «слепая» публикация).
+На сайте: `0072` в облаке с 2026-10-29 (D438), код в master с `705c6b0d`. Остаются проверка вида под входом и ответы D568 (тексты, своя сводка, «слепая» публикация).
 
 ### D566 — комната заказа, переписка сторон (ТЗ 45)
 
-Решения приняты (D567). Сделано локально: миграция `0071` (в облако не применена), сервис, API, страница заказа с лентой, тексты на 7 языках, 34 теста. Разрешение на миграции `0071`–`0073` и deploy получено; выпуск ждёт подключения Supabase MCP `execute_sql` для D438. Также остаются проверка вида под входом, уведомления о новом сообщении, жалоба на сообщение и интеграционные тесты в CI.
+Решения приняты (D567). На сайте: `0071` в облаке с 2026-10-29 (D438), код в master с `705c6b0d`. Остаются проверка вида под входом, уведомления о новом сообщении, жалоба на сообщение и интеграционные тесты в CI.
 
 ### D562 — эскроу фриланс-заказа (ТЗ 43), ждёт решений
 
@@ -101,21 +109,18 @@ D537 реализует согласие и честное сообщение о
 
 - Spoki's `/chat?from=post_job`, `/post_job` in Telegram, and the `/post-job` form share `job_drafts`; chat facts appear in the review form and form edits are read in later chat turns.
 - `patch_job_draft` stores only supplied fields. `confirm_job_draft` waits for explicit consent and then uses the existing hire submission/moderation workflow. Private contact fields stay in the form.
-- Migration `0063_job_drafts.sql` is local and not deployed. Production requires migrations `0061`–`0063` in order, then a deploy.
+- 2026-11-04: migrations `0061`–`0063` are in the cloud since 2026-10-20 (D438, ledger 60); the code shipped later.
 - Telegram uses the same Spoki conversation and draft. Guests receive a sign-in link; linked users can start with `/post_job` or an explicit job-posting request. Final review/submission uses the site card/form.
-- Cloud migration, commit, and deploy need the founder's explicit yes under the safe zone.
 
 ### Freelance service draft (D493) — local implementation
 
 - Spoki's `/chat?from=freelance_sell` and the new-service form now share `freelance_service_drafts`; the explicit confirmation submits the listing to moderation.
-- Migration `0062_freelance_service_drafts.sql` is local and not deployed. Production requires migrations `0061` and `0062` in order, then a deploy.
+- 2026-11-04: migrations `0061`–`0062` are in the cloud since 2026-10-20 (D438).
 - Existing listing edits are not included in this subphase.
-- Cloud migration, commit, and deploy need the founder's explicit yes under the safe zone.
 
 ### UGC-brief draft (D492) — local implementation
 
-- Architecture and code are in the working tree. Migration `0061_ugc_brief_drafts.sql` is not applied to the cloud, and the change is not deployed. The new chat/card flow requires that migration before it works on the live site.
-- Cloud migration and deploy require the founder's explicit yes under the safe zone.
+- 2026-11-04: migration `0061` is in the cloud since 2026-10-20 (D438); the code shipped with the D495 release.
 
 ### Spoki как ассистент (D469) — подфазы 1–5 сделаны
 
