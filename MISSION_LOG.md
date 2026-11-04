@@ -4251,3 +4251,15 @@
 - Документы: исправлены устаревшие статусы миграций `0061`–`0063` и `0071`–`0073` в `docs/OPEN_TASKS.md` (D492–D494, D566, D568, D569, D602) и `docs/status/INDEX.md`; `docs/CURRENT.md`. `prettier --check` по изменённым md → 0.
 - Миграции: нет. Навыки: intgetion-vercel (порядок выкладки через master), built-in-browser.
 - Git: master `ae4b653c`; документы — отдельный PR из `claude/header-no-search` (без `.claude/launch.json` и `scripts/set-openrouter-key.ps1`, это чужие правки).
+
+## 2026-11-02 — Быстрые переходы между страницами (D595) — DONE локально
+
+- Сделано: `src/components/ui/page-skeleton.tsx` (скелеты списка, деталей, секций, чата), `src/components/ui/loading-status.tsx` (строка для скринридера), `Skeleton` получил `radius` (`feedback.tsx`), экспорт в `index.ts`, ключ `ui.loading` в 7 языках. `loading.tsx` для `/jobs`, `/freelance`, `/freelance/tasks`, `/events` — страницы списков перенесены в группы `(list)` без смены URL; `/services`, `/chat` — напрямую.
+- Не сделано по ТЗ сессии и почему: скелет у `/jobs/[id]`, `/account`, `/campaigns` — стриминг превращает 404/307 в 200 (документация Next, D519, e2e `jobs.spec.ts:210`).
+- Замер до/после (медиана реакции на клик): 962→22, 398→29, 262→23, 937→12, 136→31 мс; телефон 36 мс. Подробно в D595.
+- Проверки: `pnpm typecheck` → 0 (первый прогон → 2 на старых типах `.next` после переноса, после сборки → 0); `eslint src tests scripts` → 0; `pnpm test` → 0 (262 файла, 1977 passed, 3 skipped); `pnpm build` → 0; prettier `--end-of-line auto` по своим файлам → 0. Коды ответов на `next start`: 404 у несуществующих вакансии, тега, события, услуги, задачи; 307 у `/account` для гостя.
+- Окружение: сборка шла вне песочницы с `SWC_NATIVE_BINDING_CACHE=~/.swc-cache`, переменные из `.env.local` основной папки читались в процесс (файл не копировался).
+- e2e/integration — CI.
+- OPEN QUESTION: включать ли Cache Components + Partial Prefetching (отдельная подфаза, затрагивает `next.config.ts`, корневой макет, шапку, `proxy.ts`/CSP nonce).
+- Не закоммичено, на сайт не выложено — ждёт «да» основателя.
+- 2026-11-04, выкладка по слову основателя «Да, оба»: работа закоммичена (`8b4ed357`), влит master `45cc63ef` без конфликтов (перенесённые страницы совпадают с master). Проверки после слияния: `pnpm typecheck` → 0; `eslint --max-warnings 0 src tests` → 0; `pnpm test` → 0 (263 файла, 1987 passed, 3 skipped); prettier `--end-of-line auto` по изменённым файлам → 0; `pnpm build` → 0. Дальше — PR, CI, слияние, Vercel.
