@@ -32,7 +32,8 @@ fi
 
 health="$(curl -sf "http://127.0.0.1:3000/api/health")"
 echo "$health"
-if [[ "$health" != '{"ok":true}' ]]; then
+# D606: {"ok":true,"db":"up","auth":"up"} — Auth is checked too.
+if [[ "$health" != '{"ok":true,"db":"up","auth":"up"}' ]]; then
   echo "GET /api/health did not return ok" >&2
   exit 1
 fi

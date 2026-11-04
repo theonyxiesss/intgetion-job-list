@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { controlClass } from "@/components/ui/field";
+import { authFailureOf } from "./auth-failure";
 
 /** Message for a zod or Supabase error code; unknown codes get the generic text. */
 export function useAuthError() {
@@ -51,15 +52,28 @@ export function Field({ id, label, hint, error, ...input }: FieldProps) {
   );
 }
 
-export function FormAlert({ children }: { children?: ReactNode }) {
+export function FormAlert({
+  children,
+  requestId,
+}: {
+  children?: ReactNode;
+  /** `x-request-id` of the failed answer, for support (D606). */
+  requestId?: string;
+}) {
+  const t = useTranslations("auth");
   if (!children) return null;
   return (
-    <p
+    <div
       role="alert"
-      className="border border-danger px-3 py-2 break-words text-danger"
+      className="flex flex-col gap-1 border border-danger px-3 py-2 break-words text-danger"
     >
-      {children}
-    </p>
+      <p>{children}</p>
+      {requestId && (
+        <p className="t-caption text-fg-muted">
+          {t("requestId")} <span className="t-data">{requestId}</span>
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -79,25 +93,5 @@ export function SubmitButton({
 
 /** Reads `error.code` from a JSON error body (section 6), if there is one. */
 export async function apiErrorCode(response: Response) {
-  try {
-    const body = (await response.json()) as {
-      error?: { code?: string; details?: unknown };
-    };
-    const details = body.error?.details;
-    if (body.error?.code === "VALIDATION_ERROR" && Array.isArray(details)) {
-      const message = (details[0] as { message?: string } | undefined)?.message;
-      if (message) return message;
-    }
-    if (body.error?.code === "UNAUTHENTICATED") {
-      const reason = (details as { reason?: string } | undefined)?.reason;
-      return reason ?? "invalid_credentials";
-    }
-    if (body.error?.code === "EMAIL_ALREADY_REGISTERED") {
-      return "email_already_registered";
-    }
-    if (body.error?.code === "RATE_LIMITED") return "rate_limited";
-    return "generic";
-  } catch {
-    return "generic";
-  }
+  return (await authFailureOf(response)).code;
 }

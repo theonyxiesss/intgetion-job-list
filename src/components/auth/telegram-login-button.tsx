@@ -26,6 +26,7 @@ export function TelegramLoginButton({
   label,
   waiting,
   failed,
+  unavailable,
   openLabel,
   taken,
   icon,
@@ -37,6 +38,8 @@ export function TelegramLoginButton({
   label: string;
   waiting: string;
   failed: string;
+  /** Shown when Supabase Auth is down for everyone (503, D606). */
+  unavailable?: string;
   /** Shown when the browser would not open Telegram by itself. */
   openLabel: string;
   /** Shown when this Telegram already belongs to another account. */
@@ -50,9 +53,9 @@ export function TelegramLoginButton({
   buttonClassName?: string;
 }) {
   const router = useRouter();
-  const [phase, setPhase] = useState<"idle" | "waiting" | "failed" | "taken">(
-    "idle",
-  );
+  const [phase, setPhase] = useState<
+    "idle" | "waiting" | "failed" | "taken" | "unavailable"
+  >("idle");
   const [openUrl, setOpenUrl] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   const lock = useRef(false);
@@ -85,6 +88,11 @@ export function TelegramLoginButton({
       }
       if (response.status === 409 && purpose === "link") {
         setPhase("taken");
+        lock.current = false;
+        return;
+      }
+      if (response.status === 503 && afterClick) {
+        setPhase("unavailable");
         lock.current = false;
         return;
       }
@@ -228,6 +236,11 @@ export function TelegramLoginButton({
       {phase === "failed" && (
         <p className="t-caption text-danger" role="alert">
           {failed}
+        </p>
+      )}
+      {phase === "unavailable" && (
+        <p className="t-caption text-danger" role="alert">
+          {unavailable ?? failed}
         </p>
       )}
       {phase === "taken" && (

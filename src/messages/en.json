@@ -395,6 +395,7 @@
     "forgotPassword": "Forgot password?",
     "toRegister": "Register",
     "toLogin": "Sign in",
+    "requestId": "Support code:",
     "resetHint": "We will email a reset link if an account exists for this address.",
     "errors": {
       "invalid_email": "Enter a valid email address.",
@@ -414,7 +415,9 @@
       "telegram_failed": "Telegram sign-in did not work. Try again or use email.",
       "telegram_taken": "This Telegram is already linked to another account.",
       "account_type_required": "Choose who you are.",
-      "oauth_unavailable": "This sign-in is not available yet. Use email or Telegram."
+      "oauth_unavailable": "This sign-in is not available yet. Use email or Telegram.",
+      "auth_unavailable": "Sign-in is temporarily down for everyone: our sign-in service is not working right now. This is not a problem with your details. Please try again later.",
+      "network": "No connection to the site. Check your internet and try again — what you typed is kept."
     },
     "social": {
       "title": "Or continue with",
@@ -3176,7 +3179,66 @@
       "done": "Received. We will reply on the contact you gave.",
       "error": "This could not be saved yet. Use Telegram, Discord, or LinkedIn below.",
       "taskShort": "Describe the problem in a few sentences.",
+      "taskLong": "Keep the task description under 4,000 characters.",
       "replyBad": "Enter an email or a Telegram name.",
+      "orgLong": "Keep the company name under 120 characters.",
+      "doneTitle": "Your request is saved",
+      "steps": { "goal": "Goal", "brief": "Brief", "review": "Review" },
+      "goalTitle": "What are you trying to achieve?",
+      "goalLead": "Start with the outcome. INTGETION will suggest a team after reviewing the request.",
+      "goals": [
+        {
+          "id": "launch",
+          "title": "Launch a new product",
+          "hint": "From idea to market launch"
+        },
+        {
+          "id": "grow",
+          "title": "Grow customer acquisition",
+          "hint": "Marketing, sales, and analytics"
+        },
+        {
+          "id": "improve",
+          "title": "Improve an existing product",
+          "hint": "Product, design, and development"
+        },
+        {
+          "id": "team",
+          "title": "Build a team for a project",
+          "hint": "Find and coordinate specialists"
+        },
+        {
+          "id": "clarify",
+          "title": "Help me define the task",
+          "hint": "We can shape the brief together"
+        }
+      ],
+      "goalRequired": "Choose a goal or at least one team area to continue.",
+      "directionsTitle": "Team areas (optional)",
+      "directionsHint": "Choose any areas you already have in mind. You can leave this blank.",
+      "spokiTitle": "Tell Spoki about the task",
+      "spokiName": "Spoki",
+      "spokiQuestion": "What should we create or improve, and what would a successful result look like?",
+      "spokiHint": "After saving, Spoki opens with the task context. Your contact details stay in the request and are not sent to chat.",
+      "reviewTitle": "Review your brief",
+      "reviewLead": "Check the task and contact details. INTGETION will suggest the scope, team, timeline, and price after reviewing it.",
+      "goalLabel": "Goal",
+      "directionsLabel": "Team areas",
+      "taskLabel": "Task and outcome",
+      "organizationLabel": "Company",
+      "budgetLabel": "Approximate budget",
+      "durationLabel": "Collaboration length",
+      "startLabel": "Start",
+      "replyLabel": "Reply to",
+      "unspecified": "Not provided",
+      "anyDirection": "Suggest based on the task",
+      "continue": "Continue",
+      "back": "Back",
+      "review": "Review request",
+      "editBrief": "Edit the brief",
+      "discuss": "Send request and open Spoki",
+      "chatHandoff": "I submitted a request for an INTGETION managed team. Help me discuss the task and clarify the outcome. Do not ask for my email or Telegram contact; I provided it in the request.",
+      "done": "The request is saved. Spoki is open to help you clarify the task; your contact details were kept out of the chat.",
       "trap": "Website"
     },
     "links": [
@@ -4866,6 +4928,7 @@
       "failed": "Could not save. Try again.",
       "requestTitle": "Send a request",
       "package": "Package",
+      "packageIncludes": "Included in this package",
       "task": "The task",
       "taskHint": "20–2,000 characters.",
       "taskShort": "Write at least 20 characters.",
@@ -4874,6 +4937,8 @@
       "from": "From",
       "fromMe": "Myself",
       "requestNote": "One open request per service. Contacts open after it is accepted. You pay the freelancer directly.",
+      "beforeYouSend": "Before you send",
+      "requestNextStep": "The freelancer has 72 hours to reply. You are not charged when you send the request; after acceptance, you can discuss the details and pay the freelancer directly.",
       "send": "Send request",
       "deliveryUrl": "Result link",
       "deliveryHint": "https only.",

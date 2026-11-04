@@ -8,13 +8,8 @@ import { z } from "zod";
 import { useRouter } from "@/i18n/navigation";
 import { RETURN_PATHS, type LoginNext } from "./login-next";
 import { emailSchema } from "@/modules/auth/schemas";
-import {
-  apiErrorCode,
-  Field,
-  FormAlert,
-  SubmitButton,
-  useAuthError,
-} from "./fields";
+import { authFailureOf, postJson, type AuthFailure } from "./auth-failure";
+import { Field, FormAlert, SubmitButton, useAuthError } from "./fields";
 
 const passwordLogin = z.object({
   email: emailSchema,
@@ -24,9 +19,12 @@ const magicLogin = z.object({ email: emailSchema });
 
 export function LoginForm({
   initialError,
+  initialRequestId,
   next,
 }: {
   initialError?: string;
+  /** `ref` from an OAuth redirect when Auth was down (D606). */
+  initialRequestId?: string;
   next?: LoginNext;
 }) {
   const t = useTranslations("auth");
@@ -34,24 +32,21 @@ export function LoginForm({
   const locale = useLocale();
   const router = useRouter();
   const [magic, setMagic] = useState(false);
-  const [formError, setFormError] = useState(initialError);
+  const [failure, setFailure] = useState<AuthFailure | undefined>(
+    initialError
+      ? { code: initialError, requestId: initialRequestId }
+      : undefined,
+  );
 
   const passwordForm = useForm({ resolver: zodResolver(passwordLogin) });
   const magicForm = useForm({ resolver: zodResolver(magicLogin) });
 
-  async function post(path: string, body: unknown) {
-    return fetch(path, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-    });
-  }
-
+  // Input stays in the fields on every failure, so a retry is one click.
   const signInWithPassword = passwordForm.handleSubmit(async (values) => {
-    setFormError(undefined);
-    const response = await post("/api/auth/login", values);
-    if (!response.ok) {
-      setFormError(await apiErrorCode(response));
+    setFailure(undefined);
+    const response = await postJson("/api/auth/login", values);
+    if (!response?.ok) {
+      setFailure(await authFailureOf(response));
       return;
     }
     router.replace(next ? RETURN_PATHS[next] : "/");
@@ -59,14 +54,14 @@ export function LoginForm({
   });
 
   const sendMagicLink = magicForm.handleSubmit(async ({ email }) => {
-    setFormError(undefined);
-    const response = await post("/api/auth/magic-link", {
+    setFailure(undefined);
+    const response = await postJson("/api/auth/magic-link", {
       email,
       locale,
       next,
     });
-    if (!response.ok) {
-      setFormError(await apiErrorCode(response));
+    if (!response?.ok) {
+      setFailure(await authFailureOf(response));
       return;
     }
     router.push("/auth/check-email");
@@ -74,7 +69,9 @@ export function LoginForm({
 
   return (
     <div className="flex flex-col gap-4">
-      <FormAlert>{errorText(formError)}</FormAlert>
+      <FormAlert requestId={failure?.requestId}>
+        {errorText(failure?.code)}
+      </FormAlert>
 
       {!magic ? (
         <form
@@ -127,7 +124,7 @@ export function LoginForm({
         className="min-h-11 self-start text-fg-muted underline underline-offset-4"
         onClick={() => {
           setMagic((value) => !value);
-          setFormError(undefined);
+          setFailure(undefined);
         }}
       >
         {magic ? t("usePassword") : t("useMagicLink")}

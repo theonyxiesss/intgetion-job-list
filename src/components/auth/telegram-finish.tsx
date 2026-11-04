@@ -3,6 +3,8 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
+import { authFailureOf, postJson, type AuthFailure } from "./auth-failure";
+import { FormAlert } from "./fields";
 
 /**
  * oauth.telegram.org returns to `/auth/telegram#tgAuthResult=…`. The
@@ -12,9 +14,7 @@ export function TelegramFinish() {
   const t = useTranslations("auth");
   const locale = useLocale();
   const router = useRouter();
-  const [failed, setFailed] = useState<
-    "telegram_failed" | "telegram_taken" | null
-  >(null);
+  const [failed, setFailed] = useState<AuthFailure | null>(null);
   const started = useRef(false);
 
   useEffect(() => {
@@ -28,33 +28,43 @@ export function TelegramFinish() {
     // Drop the signed data from the address bar and history.
     window.history.replaceState(null, "", window.location.pathname);
     const request = result
-      ? fetch("/api/auth/telegram", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            result,
-            locale,
-            mode: link ? "link" : "signin",
-          }),
+      ? postJson("/api/auth/telegram", {
+          result,
+          locale,
+          mode: link ? "link" : "signin",
         })
-      : Promise.reject(new Error("no tgAuthResult"));
-    request
-      .then((response) => {
-        if (response.status === 409) {
-          setFailed("telegram_taken");
-          return;
-        }
-        if (!response.ok) throw new Error(String(response.status));
+      : Promise.resolve(undefined);
+    void request.then(async (response) => {
+      if (response === undefined) {
+        setFailed({ code: "telegram_failed" });
+        return;
+      }
+      if (response?.ok) {
         router.replace(link ? "/settings/account" : "/");
         router.refresh();
-      })
-      .catch(() => setFailed("telegram_failed"));
+        return;
+      }
+      if (response?.status === 409) {
+        setFailed({ code: "telegram_taken" });
+        return;
+      }
+      // Auth down for everyone and no connection get their own text (D606);
+      // anything else stays "Telegram did not work".
+      const failure = await authFailureOf(response);
+      setFailed(
+        failure.code === "auth_unavailable" || failure.code === "network"
+          ? failure
+          : { code: "telegram_failed", requestId: failure.requestId },
+      );
+    });
   }, [locale, router]);
 
   if (!failed) return <p role="status">{t("social.telegramProgress")}</p>;
   return (
     <div className="flex flex-col gap-3">
-      <p role="alert">{t(`errors.${failed}`)}</p>
+      <FormAlert requestId={failed.requestId}>
+        {t(`errors.${failed.code}`)}
+      </FormAlert>
       <Link href="/login" className="underline">
         {t("toLogin")}
       </Link>

@@ -27,6 +27,7 @@
 - Auth-письма Supabase и каталог уведомлений — разные домены типов (см. `catalog.ts`).
 - Cross-device handoff (D328) — **DEFERRED**, см. [../OPEN_TASKS.md](../OPEN_TASKS.md).
 - Смена пароля требует свежей сессии (`secure_password_change = true`, D487): Supabase меняет пароль без кода, только если сессия моложе 24 часов. На сайте пароль меняется только по ссылке сброса (`/reset-password` → `POST /api/auth/password` → `changePassword`), она открывает новую сессию. Письмо `reauthentication` хук `send-email` не отправляет (`authEmailKindFromAction` его не знает), поэтому старым или украденным токеном пароль не сменить.
+- Ошибки входа (D606): `isAuthOutageStatus` (`src/lib/supabase/auth-health.ts`) — 402, 5xx или нет ответа значат «Auth недоступен у всех» → `503 AUTH_UNAVAILABLE`. Форма разбирает ответ через `src/components/auth/auth-failure.ts`: сеть, Auth недоступен, неверные данные — разные тексты `auth.errors.*`. Google/X при общей блокировке → `/login?error=auth_unavailable&ref=<x-request-id>`. `checkAuthHealth` (кэш 30 с) используют `/api/health` и Telegram-вход.
 - Один аккаунт (D517): «Мой аккаунт» (`/account`) — «Обо мне» (обязательно только имя, остальное свёрнуто), тарифы из `billingMe` (личный; тариф компании — её членам), «Мои сервисы» без ролей, «Вход и безопасность» (`AccountSignIn` + кошелёк). `/profile` ведёт сюда, анкета поиска работы — `/profile/edit`. Права остаются там, где были: членство в компании, тариф.
 - Страница «Аккаунт» целиком (модули users, candidates, privacy) — [account.md](account.md); Telegram целиком — [telegram.md](telegram.md).
 - Кошелёк аккаунта (D518): `user_wallets` (0068), сервис `src/modules/users/service/wallet.ts`, API `GET|DELETE /api/me/wallet`, `POST /api/me/wallet/nonce`, `POST /api/me/wallet/verify` (лимит `accountWallet`). Подключение — существующие WalletConnect / кошелёк браузера (`connect-wallet.ts`), привязка — только по SIWE-подписи, проверенной на сервере; адрес на одном аккаунте (уникальный индекс), санкционный — не сохраняется. Фриланс и UGC читают адрес выплат через `readAccountWallet`. Смена и отключение запрещены, пока UGC-награды из оплаченного бюджета ждут выплаты на этот адрес; платежи фриланса хранят своего получателя и не перенаправляются. Каждая привязка, смена и отключение — строка `audit_logs`.
@@ -42,7 +43,7 @@
 
 ## Что не сделано
 
-- Supabase Auth отвечает 402 `exceed_egress_quota` (с 2026-10-29): вход по почте, Google и завершение входа через Telegram на сайте не работают; нужно действие владельца в кабинете Supabase.
+- Supabase Auth отвечает 402 `exceed_egress_quota` (с 2026-10-29): вход по почте, Google и завершение входа через Telegram на сайте не работают; нужно действие владельца в кабинете Supabase. С D606 человек видит «вход временно недоступен для всех» с кодом обращения (`x-request-id`), а `/api/health` — `{"ok":false,"db":"up","auth":"down"}` (503).
 - D328 (ссылка с телефона — вход на компьютере) отложен.
 - X-вход не проверен; свой домен `auth.intgetion.com` не включён (платное дополнение Supabase).
 - SEC-20261014-6: проверка утёкших паролей в Supabase Auth не включена.

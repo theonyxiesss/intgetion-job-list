@@ -395,6 +395,7 @@
     "forgotPassword": "Esqueceu a senha?",
     "toRegister": "Cadastrar",
     "toLogin": "Entrar",
+    "requestId": "Código para o suporte:",
     "resetHint": "Enviaremos um link de redefinição se houver uma conta com este endereço.",
     "errors": {
       "invalid_email": "Informe um endereço de e-mail válido.",
@@ -414,7 +415,9 @@
       "telegram_failed": "O login pelo Telegram não funcionou. Tente novamente ou use o e-mail.",
       "telegram_taken": "Este Telegram já está vinculado a outra conta.",
       "account_type_required": "Escolha quem você é.",
-      "oauth_unavailable": "Esta forma de login ainda não está disponível. Use e-mail ou Telegram."
+      "oauth_unavailable": "Esta forma de login ainda não está disponível. Use e-mail ou Telegram.",
+      "auth_unavailable": "O login está temporariamente indisponível para todos: nosso serviço de login não está respondendo. O problema não está nos seus dados. Tente novamente mais tarde.",
+      "network": "Sem conexão com o site. Verifique sua internet e tente novamente — o que você digitou foi mantido."
     },
     "social": {
       "title": "Ou continue com",
@@ -3176,7 +3179,66 @@
       "done": "Recebido. Responderemos no contato que você deixou.",
       "error": "Ainda não foi possível salvar. Escreva no Telegram, Discord ou LinkedIn abaixo.",
       "taskShort": "Descreva a tarefa em algumas frases.",
+      "taskLong": "A descrição precisa ter menos de 4.000 caracteres.",
       "replyBad": "Informe um e-mail ou um nome no Telegram.",
+      "orgLong": "O nome da empresa precisa ter menos de 120 caracteres.",
+      "doneTitle": "Solicitação salva",
+      "steps": { "goal": "Objetivo", "brief": "Briefing", "review": "Revisão" },
+      "goalTitle": "Que resultado você quer alcançar?",
+      "goalLead": "Comece pelo resultado. A INTGETION vai sugerir uma equipe após avaliar a solicitação.",
+      "goals": [
+        {
+          "id": "launch",
+          "title": "Lançar um novo produto",
+          "hint": "Da ideia ao lançamento no mercado"
+        },
+        {
+          "id": "grow",
+          "title": "Atrair clientes e crescer",
+          "hint": "Marketing, vendas e análise"
+        },
+        {
+          "id": "improve",
+          "title": "Melhorar um produto existente",
+          "hint": "Produto, design e desenvolvimento"
+        },
+        {
+          "id": "team",
+          "title": "Montar uma equipe para o projeto",
+          "hint": "Encontrar e coordenar especialistas"
+        },
+        {
+          "id": "clarify",
+          "title": "Ajude-me a definir a tarefa",
+          "hint": "Podemos montar o briefing juntos"
+        }
+      ],
+      "goalRequired": "Escolha um objetivo ou pelo menos uma área da equipe.",
+      "directionsTitle": "Áreas da equipe (opcional)",
+      "directionsHint": "Marque as áreas que já tem em mente ou deixe em branco.",
+      "spokiTitle": "Conte a tarefa para o Spoki",
+      "spokiName": "Spoki",
+      "spokiQuestion": "O que precisamos criar ou melhorar? Como você vai saber que deu certo?",
+      "spokiHint": "Depois de salvar, o Spoki abre com o contexto da tarefa. Seus contatos ficam na solicitação e não são enviados ao chat.",
+      "reviewTitle": "Revise o briefing",
+      "reviewLead": "Confira a tarefa e o contato. Após avaliar, a INTGETION sugere escopo, equipe, prazo e preço.",
+      "goalLabel": "Objetivo",
+      "directionsLabel": "Áreas da equipe",
+      "taskLabel": "Tarefa e resultado",
+      "organizationLabel": "Empresa",
+      "budgetLabel": "Orçamento aproximado",
+      "durationLabel": "Duração da colaboração",
+      "startLabel": "Início",
+      "replyLabel": "Resposta para",
+      "unspecified": "Não informado",
+      "anyDirection": "A sugerir com base na tarefa",
+      "continue": "Continuar",
+      "back": "Voltar",
+      "review": "Revisar solicitação",
+      "editBrief": "Editar briefing",
+      "discuss": "Enviar solicitação e abrir o Spoki",
+      "chatHandoff": "Enviei uma solicitação para uma equipe gerenciada pela INTGETION. Ajude-me a conversar sobre a tarefa e esclarecer o resultado esperado. Não peça meu e-mail nem contato do Telegram; informei isso na solicitação.",
+      "done": "A solicitação foi salva. O Spoki está aberto para ajudar a esclarecer a tarefa. Os contatos não são enviados ao chat.",
       "trap": "Site"
     },
     "links": [
@@ -4360,6 +4422,7 @@
       "failed": "Não salvou. Tente de novo.",
       "requestTitle": "Enviar um pedido",
       "package": "Pacote",
+      "packageIncludes": "Incluído neste pacote",
       "task": "A tarefa",
       "taskHint": "20–2 000 caracteres.",
       "taskShort": "Escreva pelo menos 20 caracteres.",
@@ -4368,6 +4431,8 @@
       "from": "De quem",
       "fromMe": "De mim",
       "requestNote": "Um pedido aberto por serviço. Os contatos abrem depois da aceitação. Você paga o freelancer direto.",
+      "beforeYouSend": "Antes de enviar",
+      "requestNextStep": "O freelancer tem 72 horas para responder. Você não paga ao enviar o pedido; após a aceitação, vocês podem combinar os detalhes e pagar diretamente ao freelancer.",
       "send": "Enviar pedido",
       "deliveryUrl": "Link do resultado",
       "deliveryHint": "Só https.",

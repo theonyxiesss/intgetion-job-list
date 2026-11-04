@@ -1,4 +1,5 @@
 export {
+  authUnavailable,
   errorCodes,
   forbidden,
   HttpError,

@@ -272,35 +272,37 @@ export default async function FreelanceServicePage({
             aria-label={t("packagesTitle")}
           >
             <h2 className="t-label text-fg-muted">{t("packagesTitle")}</h2>
-            <ul className="flex flex-col gap-3">
-              {page.packages.map((pkg) => (
-                <li
-                  key={pkg.tier}
-                  className="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4"
-                >
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <h3 className="t-h3">{t(`tiers.${pkg.tier}`)}</h3>
-                    <p className="t-data-l">
-                      {formatUsd(pkg.priceMinor, locale)}
+            {!viewer || viewer.id === page.seller.userId ? (
+              <ul className="flex flex-col gap-3">
+                {page.packages.map((pkg) => (
+                  <li
+                    key={pkg.tier}
+                    className="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4"
+                  >
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <h3 className="t-h3">{t(`tiers.${pkg.tier}`)}</h3>
+                      <p className="t-data-l">
+                        {formatUsd(pkg.priceMinor, locale)}
+                      </p>
+                    </div>
+                    <p className="t-data text-fg-muted">
+                      {t("days", { count: pkg.deliveryDays })} ·{" "}
+                      {t("revisions", { count: pkg.revisions })}
                     </p>
-                  </div>
-                  <p className="t-data text-fg-muted">
-                    {t("days", { count: pkg.deliveryDays })} ·{" "}
-                    {t("revisions", { count: pkg.revisions })}
-                  </p>
-                  <ul className="t-body-s flex flex-col gap-1">
-                    {pkg.includes.map((item) => (
-                      <li key={item} className="flex gap-2">
-                        <span aria-hidden="true" className="text-success">
-                          ✓
-                        </span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
+                    <ul className="t-body-s flex flex-col gap-1">
+                      {pkg.includes.map((item) => (
+                        <li key={item} className="flex gap-2">
+                          <span aria-hidden="true" className="text-success">
+                            ✓
+                          </span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
             <div className="flex flex-col gap-3 rounded-lg border border-line-strong p-4">
               {!viewer ? (
                 <>
@@ -316,7 +318,11 @@ export default async function FreelanceServicePage({
                   serviceId={page.id}
                   tiers={page.packages.map((pkg) => ({
                     tier: pkg.tier,
-                    label: `${t(`tiers.${pkg.tier}`)} · ${formatUsd(pkg.priceMinor, locale)}`,
+                    label: t(`tiers.${pkg.tier}`),
+                    price: formatUsd(pkg.priceMinor, locale),
+                    days: t("days", { count: pkg.deliveryDays }),
+                    revisions: t("revisions", { count: pkg.revisions }),
+                    includes: pkg.includes,
                   }))}
                   companies={await companiesToOrderFrom(viewer.id)}
                   copy={await freelanceClientCopy(locale)}
