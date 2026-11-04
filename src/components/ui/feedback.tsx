@@ -119,13 +119,30 @@ export function ErrorState({
   );
 }
 
-/** Loading placeholder block; shape it with className (DESIGN.md 8.10). */
-export function Skeleton({ className }: { className?: string }) {
+const radiusClass = {
+  md: "rounded-md",
+  lg: "rounded-lg",
+  full: "rounded-full",
+} as const;
+
+/**
+ * Loading placeholder block; size it with className, round it with `radius`
+ * (`cn` does not merge, so a second rounded-* class would not win).
+ * DESIGN.md 8.10.
+ */
+export function Skeleton({
+  className,
+  radius = "md",
+}: {
+  className?: string;
+  radius?: keyof typeof radiusClass;
+}) {
   return (
     <span
       aria-hidden="true"
       className={cn(
-        "block animate-[ui-pulse_1600ms_ease-in-out_infinite] rounded-md bg-surface-2",
+        "block animate-[ui-pulse_1600ms_ease-in-out_infinite] bg-surface-2",
+        radiusClass[radius],
         className,
       )}
     />

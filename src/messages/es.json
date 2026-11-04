@@ -1626,6 +1626,7 @@
   },
   "ui": {
     "close": "Cerrar",
+    "loading": "Cargando…",
     "requestId": "ID de la solicitud",
     "moreSkills": "+{count}",
     "notSpecified": "No indicado",
