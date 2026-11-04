@@ -3179,7 +3179,70 @@
       "done": "Reçu. Nous répondrons au contact que vous avez indiqué.",
       "error": "L’enregistrement n’a pas encore abouti. Écrivez via Telegram, Discord ou LinkedIn ci-dessous.",
       "taskShort": "Décrivez la tâche en quelques phrases.",
+      "taskLong": "La description doit faire moins de 4 000 caractères.",
       "replyBad": "Indiquez un e-mail ou un nom Telegram.",
+      "orgLong": "Le nom de l’entreprise doit faire moins de 120 caractères.",
+      "doneTitle": "Votre demande est enregistrée",
+      "steps": {
+        "goal": "Objectif",
+        "brief": "Brief",
+        "review": "Vérification"
+      },
+      "goalTitle": "Quel résultat souhaitez-vous atteindre ?",
+      "goalLead": "Commencez par le résultat. INTGETION proposera une équipe adaptée après examen de la demande.",
+      "goals": [
+        {
+          "id": "launch",
+          "title": "Lancer un nouveau produit",
+          "hint": "De l’idée au lancement"
+        },
+        {
+          "id": "grow",
+          "title": "Attirer des clients et grandir",
+          "hint": "Marketing, ventes et analyse"
+        },
+        {
+          "id": "improve",
+          "title": "Améliorer un produit existant",
+          "hint": "Produit, design et développement"
+        },
+        {
+          "id": "team",
+          "title": "Constituer une équipe projet",
+          "hint": "Trouver et coordonner des spécialistes"
+        },
+        {
+          "id": "clarify",
+          "title": "Aidez-moi à définir la tâche",
+          "hint": "Nous pouvons préparer le brief ensemble"
+        }
+      ],
+      "goalRequired": "Choisissez un objectif ou au moins un domaine d’équipe.",
+      "directionsTitle": "Domaines de l’équipe (facultatif)",
+      "directionsHint": "Sélectionnez les domaines déjà identifiés, ou laissez la liste vide.",
+      "spokiTitle": "Parlez de la tâche à Spoki",
+      "spokiName": "Spoki",
+      "spokiQuestion": "Que faut-il créer ou améliorer ? À quoi ressemblera un résultat réussi ?",
+      "spokiHint": "Après l’enregistrement, Spoki s’ouvre avec le contexte de la tâche. Vos coordonnées restent dans la demande et ne sont pas envoyées au chat.",
+      "reviewTitle": "Vérifiez votre brief",
+      "reviewLead": "Vérifiez la tâche et les coordonnées. Après examen, INTGETION proposera le périmètre, l’équipe, les délais et le prix.",
+      "goalLabel": "Objectif",
+      "directionsLabel": "Domaines de l’équipe",
+      "taskLabel": "Tâche et résultat",
+      "organizationLabel": "Entreprise",
+      "budgetLabel": "Budget approximatif",
+      "durationLabel": "Durée de la collaboration",
+      "startLabel": "Début",
+      "replyLabel": "Réponse à",
+      "unspecified": "Non indiqué",
+      "anyDirection": "À proposer selon la tâche",
+      "continue": "Continuer",
+      "back": "Retour",
+      "review": "Vérifier la demande",
+      "editBrief": "Modifier le brief",
+      "discuss": "Envoyer la demande et ouvrir Spoki",
+      "chatHandoff": "J’ai envoyé une demande pour une équipe INTGETION accompagnée. Aide-moi à discuter de la tâche et à préciser le résultat attendu. Ne demande pas mon e-mail ni mon contact Telegram ; je les ai indiqués dans le formulaire.",
+      "done": "La demande est enregistrée. Spoki est ouvert pour vous aider à préciser la tâche. Les coordonnées ne sont pas envoyées dans le chat.",
       "trap": "Site web"
     },
     "links": [
@@ -4363,6 +4426,7 @@
       "failed": "Pas enregistré. Réessayez.",
       "requestTitle": "Envoyer une demande",
       "package": "Forfait",
+      "packageIncludes": "Inclus dans ce forfait",
       "task": "La tâche",
       "taskHint": "20–2 000 caractères.",
       "taskShort": "Écrivez au moins 20 caractères.",
@@ -4371,6 +4435,8 @@
       "from": "De la part de",
       "fromMe": "De moi",
       "requestNote": "Une demande ouverte par service. Les contacts s’ouvrent après l’acceptation. Vous payez le freelance directement.",
+      "beforeYouSend": "Avant l’envoi",
+      "requestNextStep": "Le freelance a 72 heures pour répondre. Aucun paiement n’est prélevé à l’envoi ; après acceptation, vous pouvez convenir des détails et le payer directement.",
       "send": "Envoyer la demande",
       "deliveryUrl": "Lien du résultat",
       "deliveryHint": "https seulement.",

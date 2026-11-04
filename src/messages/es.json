@@ -3179,7 +3179,66 @@
       "done": "Recibido. Responderemos al contacto que indicaste.",
       "error": "Aún no se pudo guardar. Escribe por Telegram, Discord o LinkedIn abajo.",
       "taskShort": "Describe la tarea en unas frases.",
+      "taskLong": "La descripción debe tener menos de 4.000 caracteres.",
       "replyBad": "Escribe un correo o un nombre de Telegram.",
+      "orgLong": "El nombre de la empresa debe tener menos de 120 caracteres.",
+      "doneTitle": "Solicitud guardada",
+      "steps": { "goal": "Objetivo", "brief": "Brief", "review": "Revisión" },
+      "goalTitle": "¿Qué resultado quieres conseguir?",
+      "goalLead": "Empieza por el resultado. INTGETION propondrá un equipo adecuado tras revisar la solicitud.",
+      "goals": [
+        {
+          "id": "launch",
+          "title": "Lanzar un producto nuevo",
+          "hint": "De la idea al lanzamiento"
+        },
+        {
+          "id": "grow",
+          "title": "Conseguir clientes y crecer",
+          "hint": "Marketing, ventas y análisis"
+        },
+        {
+          "id": "improve",
+          "title": "Mejorar un producto existente",
+          "hint": "Producto, diseño y desarrollo"
+        },
+        {
+          "id": "team",
+          "title": "Formar un equipo para el proyecto",
+          "hint": "Buscar y coordinar especialistas"
+        },
+        {
+          "id": "clarify",
+          "title": "Ayuda para definir la tarea",
+          "hint": "Podemos preparar el brief juntos"
+        }
+      ],
+      "goalRequired": "Elige un objetivo o al menos un área del equipo.",
+      "directionsTitle": "Áreas del equipo (opcional)",
+      "directionsHint": "Marca las áreas que ya tienes en mente o déjalo en blanco.",
+      "spokiTitle": "Cuéntale la tarea a Spoki",
+      "spokiName": "Spoki",
+      "spokiQuestion": "¿Qué hay que crear o mejorar? ¿Cómo sabrás que se ha conseguido?",
+      "spokiHint": "Al guardar, Spoki se abrirá con el contexto de la tarea. Tus datos de contacto se quedan en la solicitud y no se envían al chat.",
+      "reviewTitle": "Revisa el brief",
+      "reviewLead": "Comprueba la tarea y el contacto. Tras revisarla, INTGETION propondrá el alcance, el equipo, los plazos y el precio.",
+      "goalLabel": "Objetivo",
+      "directionsLabel": "Áreas del equipo",
+      "taskLabel": "Tarea y resultado",
+      "organizationLabel": "Empresa",
+      "budgetLabel": "Presupuesto aproximado",
+      "durationLabel": "Duración de la colaboración",
+      "startLabel": "Inicio",
+      "replyLabel": "Responder a",
+      "unspecified": "No indicado",
+      "anyDirection": "Se propondrá según la tarea",
+      "continue": "Continuar",
+      "back": "Atrás",
+      "review": "Revisar solicitud",
+      "editBrief": "Editar el brief",
+      "discuss": "Enviar solicitud y abrir Spoki",
+      "chatHandoff": "He enviado una solicitud para un equipo gestionado por INTGETION. Ayúdame a conversar sobre la tarea y aclarar el resultado esperado. No me pidas el correo ni el contacto de Telegram; lo indiqué en la solicitud.",
+      "done": "La solicitud está guardada. Spoki se ha abierto para ayudarte a concretar la tarea. Los datos de contacto no se envían al chat.",
       "trap": "Sitio web"
     },
     "links": [
@@ -4363,6 +4422,7 @@
       "failed": "No se guardó. Inténtalo de nuevo.",
       "requestTitle": "Enviar una solicitud",
       "package": "Paquete",
+      "packageIncludes": "Incluido en este paquete",
       "task": "La tarea",
       "taskHint": "20–2 000 caracteres.",
       "taskShort": "Escribe al menos 20 caracteres.",
@@ -4371,6 +4431,8 @@
       "from": "De parte de",
       "fromMe": "De mí",
       "requestNote": "Una solicitud abierta por servicio. Los contactos se abren al aceptarla. Pagas al freelancer directamente.",
+      "beforeYouSend": "Antes de enviar",
+      "requestNextStep": "El freelancer tiene 72 horas para responder. No se cobra nada al enviar la solicitud; tras aceptarla, podéis hablar de los detalles y pagarle directamente.",
       "send": "Enviar solicitud",
       "deliveryUrl": "Enlace del resultado",
       "deliveryHint": "Solo https.",

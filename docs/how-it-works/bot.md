@@ -21,6 +21,7 @@
 - Напоминания (D473): `service/reminders.ts`, `repo/reminder-repo.ts`, таблица `bot_reminders` (`0059`); отправка `runReminderDispatch` из `/api/cron/telegram`; тексты `reminders.telegram`, карточки `chat.account.create_reminder`/`cancel_reminder`. Промпт 29 (`NOW` — местное время человека)
 - Переписка 24 часа (D471): `listMessages` читает только последние сутки; крон `/api/cron/retention` каждый час стирает текст и `tool_call` старше суток (счётчики токенов и расходов остаются до 180 дней) и удаляет карточки подтверждения старше суток. Срок — `src/config/retention.ts`
 - Web chat SSE: `/api/bot/**`, UI `/[locale]/chat`
+- `/services` после сохранения брифа открывает существующую панель Spoki (или `/chat?from=services`, если панель выключена) и передаёт контекст через `handSpokiAsk`. В диалог входят только цель, выбранные направления и текст задачи; почта/Telegram, организация и бюджет остаются в заявке. Отдельной переписки клиент—команда здесь нет.
 - LLM: `src/lib/llm/**`, провайдер через env (OpenRouter по D317)
 - Telegram-бот: скилл `.claude/skills/intgetion-telegram-bot/` (D410). Вход, Mini App и канал: `.claude/skills/intgetion-telegram/`
 - Telegram: webhook routes + Mini App session helpers (D311–D322)

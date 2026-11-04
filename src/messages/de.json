@@ -3179,7 +3179,66 @@
       "done": "Erhalten. Wir antworten über den Kontakt, den Sie angegeben haben.",
       "error": "Das konnte noch nicht gespeichert werden. Schreiben Sie unten über Telegram, Discord oder LinkedIn.",
       "taskShort": "Beschreiben Sie die Aufgabe in ein paar Sätzen.",
+      "taskLong": "Die Aufgabenbeschreibung muss unter 4.000 Zeichen bleiben.",
       "replyBad": "Geben Sie eine E-Mail oder einen Telegram-Namen an.",
+      "orgLong": "Der Unternehmensname darf höchstens 120 Zeichen haben.",
+      "doneTitle": "Ihre Anfrage wurde gespeichert",
+      "steps": { "goal": "Ziel", "brief": "Briefing", "review": "Prüfen" },
+      "goalTitle": "Was möchten Sie erreichen?",
+      "goalLead": "Beginnen Sie mit dem Ergebnis. INTGETION schlägt nach Prüfung eine passende Teamzusammenstellung vor.",
+      "goals": [
+        {
+          "id": "launch",
+          "title": "Ein neues Produkt starten",
+          "hint": "Von der Idee bis zur Markteinführung"
+        },
+        {
+          "id": "grow",
+          "title": "Mehr Kunden gewinnen und wachsen",
+          "hint": "Marketing, Vertrieb und Analyse"
+        },
+        {
+          "id": "improve",
+          "title": "Ein bestehendes Produkt verbessern",
+          "hint": "Produkt, Design und Entwicklung"
+        },
+        {
+          "id": "team",
+          "title": "Ein Team für ein Projekt aufbauen",
+          "hint": "Fachkräfte finden und koordinieren"
+        },
+        {
+          "id": "clarify",
+          "title": "Hilfe bei der Aufgabenklärung",
+          "hint": "Wir erstellen das Briefing gemeinsam"
+        }
+      ],
+      "goalRequired": "Wählen Sie ein Ziel oder mindestens einen Team-Bereich.",
+      "directionsTitle": "Team-Bereiche (optional)",
+      "directionsHint": "Wählen Sie passende Bereiche aus oder lassen Sie die Auswahl leer.",
+      "spokiTitle": "Erzählen Sie Spoki von der Aufgabe",
+      "spokiName": "Spoki",
+      "spokiQuestion": "Was soll entstehen oder verbessert werden? Woran erkennen Sie ein erfolgreiches Ergebnis?",
+      "spokiHint": "Nach dem Speichern öffnet sich Spoki mit dem Aufgabenkontext. Ihre Kontaktdaten bleiben in der Anfrage und werden nicht an den Chat gesendet.",
+      "reviewTitle": "Briefing prüfen",
+      "reviewLead": "Prüfen Sie Aufgabe und Kontakt. Nach der Bewertung schlägt INTGETION Umfang, Team, Zeitplan und Preis vor.",
+      "goalLabel": "Ziel",
+      "directionsLabel": "Team-Bereiche",
+      "taskLabel": "Aufgabe und Ergebnis",
+      "organizationLabel": "Unternehmen",
+      "budgetLabel": "Ungefähres Budget",
+      "durationLabel": "Zusammenarbeitsdauer",
+      "startLabel": "Start",
+      "replyLabel": "Antwort an",
+      "unspecified": "Nicht angegeben",
+      "anyDirection": "Wird anhand der Aufgabe vorgeschlagen",
+      "continue": "Weiter",
+      "back": "Zurück",
+      "review": "Anfrage prüfen",
+      "editBrief": "Briefing bearbeiten",
+      "discuss": "Anfrage senden und Spoki öffnen",
+      "chatHandoff": "Ich habe eine Anfrage für ein betreutes INTGETION-Team gesendet. Hilf mir, die Aufgabe und das gewünschte Ergebnis zu klären. Frage nicht nach meiner E-Mail oder Telegram-Kontaktangabe; ich habe sie im Formular angegeben.",
+      "done": "Die Anfrage wurde gespeichert. Spoki ist geöffnet und hilft Ihnen, die Aufgabe zu klären. Kontaktdaten werden nicht an den Chat übergeben.",
       "trap": "Website"
     },
     "links": [
@@ -4363,6 +4422,7 @@
       "failed": "Nicht gespeichert. Versuch es noch einmal.",
       "requestTitle": "Anfrage senden",
       "package": "Paket",
+      "packageIncludes": "Im Paket enthalten",
       "task": "Die Aufgabe",
       "taskHint": "20–2 000 Zeichen.",
       "taskShort": "Schreib mindestens 20 Zeichen.",
@@ -4371,6 +4431,8 @@
       "from": "Von wem",
       "fromMe": "Von mir",
       "requestNote": "Eine offene Anfrage pro Leistung. Kontakte öffnen sich nach der Annahme. Du zahlst direkt.",
+      "beforeYouSend": "Vor dem Senden",
+      "requestNextStep": "Der Freelancer antwortet innerhalb von 72 Stunden. Beim Senden wird nichts berechnet. Nach der Annahme könnt ihr Details besprechen und direkt an den Freelancer zahlen.",
       "send": "Anfrage senden",
       "deliveryUrl": "Link zum Ergebnis",
       "deliveryHint": "Nur https.",

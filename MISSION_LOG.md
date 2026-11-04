@@ -4291,3 +4291,10 @@
 - По слову основателя «Да, оба». D595 (скелеты загрузки): PR #42, merge `6d849499`, CI зелёный, Vercel Production — success. D605 (общая карточка заказа, заменила карточку фриланса D602; номер D603 был занят ТЗ 52): PR #43, merge `b48bab54`, CI зелёный, Vercel Production — success.
 - Проверки на сайте: `/api/health` → 200; `/ru/freelance`, `/ru/jobs` → 200; `/ru/freelance/orders`, `/ru/campaigns/orders`, `/ru/creator/workspace` для гостя → 307 на вход. Под входом не проверено (Supabase 402).
 - Подробности проверок — записи D595 и D605 выше (ветки `claude/practical-bhaskara-e0f845`, `claude/jolly-hamilton-28864a`).
+
+## 2026-11-04 — Выкладка: `/services` по шагам и выбор пакета фриланс-услуги (работа Codex) вместе с D606
+
+- По слову основателя «выложи». Правки Codex из основной папки перенесены в ветку `claude/codex-services-freelance` поверх D606 (`c7598166`): код целиком, `src/messages/*.json` и документы трёхсторонним слиянием без конфликтов.
+- Проверки в ветке: `pnpm typecheck` → 0; `eslint src tests eslint-rules scripts evals --max-warnings 0` → 0; `pnpm test` → 0 (269 файлов, 2014 passed, 3 skipped); `pnpm build` (SWC_NATIVE_BINDING_CACHE) → 0; prettier по изменённым файлам → 0.
+- Браузер (локально): `/ru/services` — шаги цель → бриф → проверка, цель и поля переносятся, задача правится на шаге проверки; заявку не отправлял. `/freelance/[slug]` глазами не проверен: каталог пуст.
+- Облако: `engagement_briefs` нет (`0048` не применена, read-only проверка). Без неё отправка брифа не сохраняется. Миграция не применялась — ждёт отдельного «да».
