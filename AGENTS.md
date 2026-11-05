@@ -12,10 +12,31 @@ Map: [docs/README.md](docs/README.md). Protocol: [docs/tz/00-protocol.md](docs/t
 
 **Do not** load: full archived MISSION_LOG, full DECISIONS ranges, monolith TZ (`docs/archive/tz/`).
 
+All projects on this machine (shared by Claude, Codex, Cursor, Hermes): `C:\Users\Admin\PROJECTS.md`. Only this platform is in scope.
+
+## Environments and where to test
+
+| What            | Where                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| Production      | https://intgetion.com — deployed from `master` (`origin/master` = what is live)                         |
+| Vercel          | project `intgetion-job-list`, team `marks-projects-a1f8edb6`. Every push to `master` deploys production |
+| Preview deploys | skipped on purpose (`vercel.json` `ignoreCommand`, D524): Preview env holds production secrets          |
+| Local           | `pnpm dev` in your own worktree (port 3000; named configs in `.claude/launch.json`)                     |
+| Database        | Supabase; cloud project `hwcdscobnmxatmjbmect`; local via `supabase start` (CI)                         |
+| Health          | `GET https://intgetion.com/api/health` → `{"ok":true}`; `auth:"down"` means Supabase Auth is failing    |
+
+On production: read-only checks only (GET pages, `/api/health`). No test sign-ups, briefs, leads, payments or other writes without the founder's yes.
+
+## Folders and worktrees
+
+- The main folder `C:\Users\Admin\Documents\Integetion jobs` stays on `master`, clean, equal to `origin/master`. Do not work or leave changes in it; run `git pull --ff-only` there before reading code.
+- Each agent works in its own worktree and branch (`claude/*`, `codex/*`, `cursor/*`), see [docs/PARALLEL_WORK.md](docs/PARALLEL_WORK.md). Remove your worktree after its branch is merged.
+
 ## Session end
 
 - Append [MISSION_LOG.md](MISSION_LOG.md) (template in `docs/tz/00-protocol.md`)
-- Update `docs/CURRENT.md`
+- Update `docs/CURRENT.md` — one screen of "now"; history goes to MISSION_LOG, not here
+- If you changed a module, update its page in [docs/how-it-works/](docs/how-it-works/INDEX.md) in the same PR; a PR that changes a module without it is not done
 - If unfinished: `docs/OPEN_TASKS.md` and/or `docs/status/INDEX.md`
 
 ## Commands (real)

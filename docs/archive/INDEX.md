@@ -10,6 +10,7 @@
 | Decisions D101–D200    | [decisions/D101-D200.md](decisions/D101-D200.md)             | поиск D101–D200                                                              |
 | Decisions D201–D300    | [decisions/D201-D300.md](decisions/D201-D300.md)             | поиск D201–D300                                                              |
 | Decisions D301+        | [decisions/D301-plus.md](decisions/D301-plus.md)             | копия хвоста; живой append в [../DECISIONS.md](../DECISIONS.md)              |
+| CURRENT до 2026-11-05  | [current-until-2026-11-05.md](current-until-2026-11-05.md)   | старый длинный CURRENT; живой — [../CURRENT.md](../CURRENT.md)               |
 | Промпты агентов (done) | [prompts-done/](prompts-done/)                               | повтор подфазы / ревью; пока пусто или перенос из [../prompts/](../prompts/) |
 
 Research и content остаются в `docs/research/`, `docs/content/` — не архив.
