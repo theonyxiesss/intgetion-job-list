@@ -2,11 +2,11 @@
 
 ## [2026-11-05] — MCP Phase 2 — NOT DONE (D608)
 
-- Сделано: OAuth DB integration покрывает consent, PKCE, ошибки verifier/client/resource, replay кода и refresh token, principal/scopes/audience, хэширование и отзыв refresh-цепочки. Выполнен ручной security-review OAuth/CIMD/consent/settings. Документация и security audit log обновлены.
-- Команды проверки: `node node_modules/typescript/bin/tsc --noEmit` → 0; `node node_modules/eslint/bin/eslint.js . --max-warnings 0` → 0; `pnpm test` → 0 (2033 passed, 3 skipped); `git diff --check` → 0; Prettier → 0. CI `41934060059` → check зелёный, database красный: OAuth DB test превысил 5s timeout, cleanup превысил 10s hook timeout. В тесте заданы лимиты 30s; повторный CI запускается на последнем коммите. Ранее повторный Lighthouse LCP 2763.55 ms, порог не менялся. Локальный build не пройден: Windows SWC native binding недоступен.
-- P-тесты подфазы: unit — ✅; OAuth DB integration — локально не запускался (нет локального Supabase), CI не прошёл из-за timeout; миграция с нуля прошла, e2e повторно не дошли.
+- Сделано: OAuth DB integration покрывает consent, PKCE, ошибки verifier/client/resource, replay кода и refresh token, principal/scopes/audience, хэширование и отзыв refresh-цепочки. Исправлено зависание: внутри транзакции approve не выполняется запрос к БД через внешний пул; ответ строится из уже прочитанных строк транзакции. Выполнен ручной security-review OAuth/CIMD/consent/settings.
+- Команды проверки: `node node_modules/typescript/bin/tsc --noEmit` → 0; `node node_modules/eslint/bin/eslint.js . --max-warnings 0` → 0; `pnpm test` → 0 (2033 passed, 3 skipped); `git diff --check` → 0; Prettier → 0. CI #42013334275: check упал на gitleaks (1 finding, без file/line в доступном логе); database job на старом коде упал на transaction deadlock даже с 30s timeout. Новая версия сервиса готова, следующий CI запустится после push. Ранее повторный Lighthouse LCP 2763.55 ms, порог не менялся. Локальный build не пройден: Windows SWC native binding недоступен.
+- P-тесты подфазы: unit — ✅; OAuth DB integration — локально не запускался (нет локального Supabase), CI подтвердил deadlock на старом коде; migration-from-scratch прошла, e2e не дошли.
 - Миграции: `0088_mcp_authorization.sql` в репозитории; на облако не применялась.
-- Изменённые файлы: `src/modules/mcp/__tests__/auth-service.integration.test.ts`; `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `docs/MCP.md`, `docs/how-it-works/mcp.md`, `docs/security/AUDIT_LOG.md`, `MISSION_LOG.md`.
+- Изменённые файлы: `src/modules/mcp/service/auth-service.ts`, `src/modules/mcp/__tests__/auth-service.integration.test.ts`; `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `docs/MCP.md`, `docs/how-it-works/mcp.md`, `docs/security/AUDIT_LOG.md`, `MISSION_LOG.md`.
 - Отклонения от ТЗ: нет.
 - OPEN QUESTION: независимый внешний security review не проводился. PR #47 ожидает штатного merge; облачная миграция и production deploy после merge выполняются Claude Code согласно `docs/PARALLEL_WORK.md` §8–9.
 - Следующая подфаза: применить migration и deploy через штатный post-merge процесс; фаза 3 — только отдельной командой основателя.

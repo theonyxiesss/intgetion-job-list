@@ -357,11 +357,21 @@ export async function approveMcpAuthorization(input: {
       .where(eq(mcpAuthorizationRequests.id, request.id));
 
     return {
-      request: await getMcpAuthorizationRequestOutsideTx(request.id, now),
+      request: {
+        id: request.id,
+        clientId: request.clientId,
+        clientName: client.name,
+        redirectUri: request.redirectUri,
+        scopes: scopesOf(request.scopes),
+        state: request.state,
+        codeChallenge: request.codeChallenge,
+        resource: request.resource,
+        expiresAt: request.expiresAt,
+      },
       grantId: grant.id,
     };
   });
-  if (!result?.request) return null;
+  if (!result) return null;
   await recordAudit({
     actorId: input.userId,
     action: "mcp.grant.approved",
@@ -369,42 +379,6 @@ export async function approveMcpAuthorization(input: {
     entityId: result.grantId,
   });
   return { request: result.request, code };
-}
-
-async function getMcpAuthorizationRequestOutsideTx(
-  id: string,
-  now: Date,
-): Promise<McpAuthorizationRequest | null> {
-  const [row] = await getDb()
-    .select({
-      id: mcpAuthorizationRequests.id,
-      clientId: mcpAuthorizationRequests.clientId,
-      clientName: mcpClients.name,
-      redirectUri: mcpAuthorizationRequests.redirectUri,
-      scopes: mcpAuthorizationRequests.scopes,
-      state: mcpAuthorizationRequests.state,
-      codeChallenge: mcpAuthorizationRequests.codeChallenge,
-      resource: mcpAuthorizationRequests.resource,
-      expiresAt: mcpAuthorizationRequests.expiresAt,
-      consumedAt: mcpAuthorizationRequests.consumedAt,
-      active: mcpClients.active,
-    })
-    .from(mcpAuthorizationRequests)
-    .innerJoin(mcpClients, eq(mcpClients.id, mcpAuthorizationRequests.clientId))
-    .where(eq(mcpAuthorizationRequests.id, id))
-    .limit(1);
-  if (!row || row.active !== "active" || row.expiresAt <= now) return null;
-  return {
-    id: row.id,
-    clientId: row.clientId,
-    clientName: row.clientName,
-    redirectUri: row.redirectUri,
-    scopes: scopesOf(row.scopes),
-    state: row.state,
-    codeChallenge: row.codeChallenge,
-    resource: row.resource,
-    expiresAt: row.expiresAt,
-  };
 }
 
 /** Decline only consumes the pending request; no grant is created. */
