@@ -1,5 +1,16 @@
 # MISSION_LOG
 
+## [2026-11-05] — MCP Phase 2 — NOT DONE (D608)
+
+- Сделано: OAuth DB integration покрывает consent, PKCE, ошибки verifier/client/resource, replay кода и refresh token, principal/scopes/audience, хэширование и отзыв refresh-цепочки. Исправлено зависание: внутри транзакции approve не выполняется запрос к БД через внешний пул; ответ строится из уже прочитанных строк транзакции. Выполнен ручной security-review OAuth/CIMD/consent/settings.
+- Команды проверки: `node node_modules/typescript/bin/tsc --noEmit` → 0; `node node_modules/eslint/bin/eslint.js . --max-warnings 0` → 0; `pnpm test` → 0 (2033 passed, 3 skipped); `git diff --check` → 0; Prettier → 0; Gitleaks detect с точечным ignore → 0. CI #42016775368 полностью зелёный: lint, format, typecheck, unit, build, gitleaks, чистая миграция и 194 DB integration tests; OAuth integration прошёл. E2E: 102 passed, 2 flaky; Lighthouse бюджеты пройдены. CI выявил transaction deadlock на старом коде; исправлено в сервисе. Gitleaks fingerprint был историческим false positive в документации; добавлено точечное исключение в `.gitleaksignore`. Локальный build не прошёл из-за недоступного Windows SWC native binding; CI build успешен.
+- P-тесты подфазы: unit — ✅; OAuth DB integration — локально не запускался (нет локального Supabase), CI прошёл; migration-from-scratch — ✅ в CI; e2e — 102 пройдены, 2 flaky.
+- Миграции: `0088_mcp_authorization.sql` в репозитории; на облако не применялась.
+- Изменённые файлы: `src/modules/mcp/service/auth-service.ts`, `src/modules/mcp/__tests__/auth-service.integration.test.ts`, `.gitleaksignore`; `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `docs/MCP.md`, `docs/how-it-works/mcp.md`, `docs/security/AUDIT_LOG.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет.
+- OPEN QUESTION: независимый внешний security review не проводился. PR #47 ожидает штатного merge; облачная миграция и production deploy после merge выполняются Claude Code согласно `docs/PARALLEL_WORK.md` §8–9.
+- Следующая подфаза: применить migration и deploy через штатный post-merge процесс; фаза 3 — только отдельной командой основателя.
+
 ## [2026-10-16] — креативные тесты B и C: проверка под входом (D458, D459) — DONE
 
 - Сделано: e2e `tests/e2e/ugc.spec.ts`. Компания, автор и админ проходят бриф, модерацию, найм, сдачу и победителя. Долг 1500 пишется как `owed`. Просмотры до решения дают 409, от компании 404, с чужого хоста 422. Страница победителей показывает «Reported views: 900», автору отвечает 404. Отметку компании и автора не принимает (404), админа принимает (`sent: false`), повтор даёт 409. Автор видит «An admin marked this paid». Отформатирован `src/modules/ugc/ui/profile-form.tsx`, последний файл фазы A, на котором падал `format:check`.

@@ -553,6 +553,37 @@
       }
     }
   },
+  "mcp": {
+    "consentTitle": "Conectar un asistente",
+    "consentClient": "{client} solicita acceso a INTGETION",
+    "consentDescription": "Elige qué datos de tu cuenta puede leer el asistente. Puedes desconectarlo desde ajustes cuando quieras.",
+    "consentAccount": "El ID de la cuenta termina en {id}",
+    "allow": "Permitir acceso",
+    "deny": "Cancelar",
+    "settingsTitle": "Asistentes conectados",
+    "tokensTitle": "Tokens personales de acceso",
+    "tokensHint": "Crea un token para asistentes compatibles con encabezados Bearer. Solo se muestra una vez.",
+    "tokenOnce": "Copia este token ahora. No volverá a mostrarse.",
+    "tokenLabel": "Nombre del token",
+    "permissions": "Permisos de acceso",
+    "createToken": "Crear token",
+    "copy": "Copiar token",
+    "connectionsTitle": "Asistentes conectados",
+    "connectionsHint": "Los asistentes conectados por OAuth solo pueden leer los datos indicados aquí.",
+    "noConnections": "No hay asistentes conectados.",
+    "disconnect": "Revocar acceso",
+    "settingsError": "No se pudo cambiar el acceso MCP. Inténtalo de nuevo.",
+    "scope": {
+      "profile:read": "Leer tu perfil y habilidades",
+      "applications:read": "Leer tus candidaturas",
+      "saved:read": "Leer empleos, búsquedas y empresas guardados",
+      "saved:write": "Gestionar empleos y búsquedas guardados",
+      "freelance:read": "Leer tus pedidos y servicios freelance",
+      "ugc:read": "Leer las campañas UGC de tu empresa",
+      "reminders:read": "Leer recordatorios pendientes",
+      "reminders:write": "Gestionar tus recordatorios"
+    }
+  },
   "profile": {
     "nav": "Perfil",
     "title": "Perfil",
@@ -1663,6 +1694,7 @@
     "tabNotifications": "Notificaciones",
     "tabPrivacy": "Privacidad",
     "tabAccount": "Cuenta",
+    "tabAssistants": "Asistentes",
     "saved": "Guardado.",
     "failed": "No se ha podido guardar. Inténtalo de nuevo.",
     "cancel": "Cancelar",

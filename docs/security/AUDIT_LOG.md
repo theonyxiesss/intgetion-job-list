@@ -1,5 +1,15 @@
 # Журнал проверок безопасности
 
+## 2026-11-05 — MCP Phase 2, commit `4cccb3c6` / PR #47
+
+Повторно проверены OAuth/CIMD изменения ветки после предыдущей ручной проверки: consent page/actions, settings page, personal token и connection routes, OAuth HTTP endpoints, auth service и `0088_mcp_authorization.sql`. Полный diff security checklist выполнен; CI run `41934060059` подтвердил clean migration, integration и RLS/e2e workflow.
+
+- Consent: сервер повторно получает текущую сессию, валидирует Origin в approve/decline, читает одноразовый request id из HttpOnly/SameSite cookie, возвращает callback только на заранее зарегистрированный redirect URI.
+- Settings routes: чтение/отзыв требуют `requireUser`; операции сервисов ограничены `userId`; создание personal token имеет rate limit; JSON ограничен и валидируется, GET responses no-store.
+- OAuth: host/origin guards; body limit 16 KB; exact redirect, PKCE S256, resource equality, throttling; tokens only as hashes, refresh replay revokes chain; integration assertions cover invalid verifier/client/resource, code replay, principal/scopes/audience and token hashes.
+- CIMD and RLS review from prior entry remains valid. Corrected prior entry: MCP RLS migration is `0088`, not `0087`.
+- Результат: ручной diff review — OK. CI выявил вложенный внешний запрос БД внутри транзакции согласия; исправлено, теперь ответ строится из строк транзакции. Gitleaks находка была ложным срабатыванием `generic-api-key` на длинное имя тестового файла в документации. Текст документа сокращён; точечное исключение для fingerprint commit/path/rule/line добавлено в `.gitleaksignore` по существующему шаблону репозитория. CI #42016775368 полностью зелёный, включая чистую миграцию, интеграционные тесты, build и gitleaks. Независимый внешний review не проводился. Облачная БД не изменялась; production release не выполнен.
+
 Читать **перед** любым аудитом безопасности (скилл [`intgetion-security`](../../.claude/skills/intgetion-security/SKILL.md), D419). Журнал говорит, что уже проверено и на каком коммите, чтобы следующий аудит не повторял ту же работу.
 
 ## Как пользоваться
@@ -20,6 +30,15 @@
 Серьёзность: **High** — эксплуатируется сразу (обход входа, утечка данных, деньги). **Medium** — нужны условия, но последствия заметные. **Low** — усиление защиты. **Info** — заметка без риска сейчас.
 
 ---
+
+## 2026-11-04 — MCP Phase 2 OAuth/CIMD — рабочая папка `codex/mcp-phase2`
+
+Проверено по изменённым после последней записи файлам: OAuth authorize/token/revoke, consent, personal-token/connection routes, auth service, CIMD resolver/fetch, `0088_mcp_authorization.sql`, MCP service tests и rate limit. Метод: ручной проход security checklist `intgetion-security` после чтения этого журнала и TZ 16.
+
+- CIMD: только HTTPS URL, без userinfo/IP literal/fragment; каждый DNS A/AAAA должен быть public; соединение пинится на один проверенный IP с исходным hostname для TLS; redirects запрещены; общий таймаут 2,5 с, ответ ≤64 КБ и JSON content type; client_id и redirect URI валидируются. Unit tests проверяют публичные/специальные диапазоны и структуру документа.
+- OAuth: PKCE S256, exact redirect URI, hashed one-use code/token storage, refresh rotation, audience/scope checks, consent requires authenticated user; mutation routes remain under shared Origin guard. OAuth endpoints are rate-limited. Personal token creation initially had no user bucket; fixed with `mcpPersonalToken` (10/hour) in `rateRules` and route. Token and connection reads/revokes are scoped to authenticated user; audit records contain IDs/actions, never raw token values.
+- Migration: all six new tables enable forced deny-all RLS in `0088`; DML granted to `app_rw`; no permissive anon/authenticated policies. No secrets or external dependencies added.
+- Результат: OK после добавления лимита. На тот момент DB behavior/RLS and migration-from-scratch не запускались; теперь их покрывают зелёные CI integration/clean migration. Внешний review не запускался.
 
 ## 2026-10-15 — вход Mini App с телефона, рабочая папка (D429)
 

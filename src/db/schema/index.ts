@@ -24,3 +24,4 @@ export * from "./events";
 export * from "./freelance";
 export * from "./ugc";
 export * from "./user-profiles";
+export * from "./mcp";

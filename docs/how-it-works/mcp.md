@@ -2,9 +2,9 @@
 
 План и фазы: [../MCP.md](../MCP.md). Решения: D480, D484–D486.
 
-## Код (фаза 1)
+## Код
 
-- Адрес: `POST https://intgetion.com/api/mcp` (`src/app/api/mcp/route.ts`). Streamable HTTP без состояния. GET и DELETE отвечают 405: сессий нет.
+- Адрес: `https://intgetion.com/api/mcp` (`src/app/api/mcp/route.ts`). Streamable HTTP без состояния. OAuth authorization открывается GET с `?oauth=authorize`; серверный MCP transport остаётся stateless и не использует сессии.
 - SDK: `@modelcontextprotocol/server` 2.3.1 (официальный v2), `createMcpHandler`. Сервер на каждый запрос новый. Клиенты 2026-07-28 и 2025-era (`initialize`, до 2025-11-25) обслуживаются одной фабрикой.
 - Сервер объявляет `tools.listChanged: false`: список меняется только с выкладкой. Поток `subscriptions/listen` получает пустое подтверждение и сразу закрывается, функция Vercel не висит до `maxDuration`.
 - Протокол: `src/modules/mcp/service/server.ts`. Порядок на запросе: Host (только хост сайта, вне production ещё loopback) → Origin (нет Origin — можно, иной Origin — 403, `null` — 403) → лимит `mcpGuest` 60 в минуту на IP → тело до 64 КБ → вызов.
@@ -15,9 +15,20 @@
 - Proxy: `/api/mcp` вне общей проверки Origin (`needsOriginCheck` в `src/lib/origin.ts`). Все остальные `/api/*`, включая `/api/mcp/...`, под ней. Cookie маршрут не читает.
 - Лог: одна строка `mcp_tool_call` на вызов: инструмент, `ok`, время, `ipHash` (`privacyHash`). Без аргументов. Ошибки SDK — только имя (`mcp_error`).
 
+## Авторизация (фаза 2, локальная ветка)
+
+- `src/modules/mcp/service/auth-service.ts`: OAuth public clients, PKCE S256, одноразовые коды, короткие opaque access tokens, rotating refresh tokens с отзывом цепочки при повторном использовании; в БД хранятся только SHA-256 токенов. Resource/audience проверяется при создании согласия, обмене кода, refresh и каждом MCP-вызове.
+- `src/modules/mcp/service/oauth-http.ts`: `/api/mcp?oauth=authorize|register|token|revoke`, DCR с ограниченными redirect URI, IP rate limits и лимитом тела; metadata публикуются через `.well-known` и объявляют поддержку CIMD. URL `client_id` разрешается через `cimd.ts`: HTTPS, только публичные A/AAAA, DNS pinning на сокете, запрет redirect, максимум 64 КБ и 2,5 с; документ проверяется и сохраняется как клиент (D608).
+- Личный токен годовой, показывается один раз, хранится хешом и отзывается в настройках. Страница настроек «Ассистенты» показывает токены и OAuth-подключения.
+- Read scopes: `profile:read`, `applications:read`, `saved:read`, `freelance:read`, `ugc:read`, `reminders:read`. Scoped tools читают профиль, сводку/матчи, отклики, сохранённые вакансии/поиски, подписки, заказы/услуги фриланса, UGC-кампании/приглашения и ожидающие напоминания. Write scope не выдаются.
+- Пользовательские MCP-ответы помечаются `UNTRUSTED_NOTE`; профиль формируется из явного списка полей без контактов.
+- Страница согласия `/oauth/consent` повторно проверяет пользователя и Origin в серверных действиях. Settings API требуют входа и используют MCP service barrel.
+- Миграция `0088_mcp_authorization.sql` создаёт таблицы клиентов, запросов, грантов, кодов и токенов с RLS deny-all; доступ к ним у `app_rw`. На облако миграция не применялась.
+
 ## Тесты
 
 - `src/modules/mcp/__tests__/server.test.ts` — обе версии протокола через настоящий обработчик SDK, Host, Origin, 429, 413, D484, отсутствие контактов, лог без аргументов.
+- CI запускает интеграционный сценарий OAuth после чистой миграции БД.
 - `src/modules/bot/__tests__/mcp-tools.test.ts` — состав MCP, только чтение, Spoki не получает MCP-инструменты.
 - `src/lib/security.test.ts` — исключение Origin только для `/api/mcp`.
 
@@ -39,4 +50,4 @@ claude mcp add --transport http intgetion https://intgetion.com/api/mcp
 
 ## Что не сделано
 
-Сделана фаза 1 — публичное чтение без входа. Фазы 2 (вход и чтение своего), 3 (действия с подтверждением), 4 (работодатель и исполнитель), 5 и 6 — план в [../MCP.md](../MCP.md) §6, кода нет.
+Фаза 2 реализована в PR #47. CI #42016775368 полностью зелёный: проверены чистая миграция, 194 DB integration tests, OAuth integration, lint, format, typecheck, unit, build и gitleaks. E2E завершились с 102 пройденными и 2 нестабильными тестами; Lighthouse бюджеты пройдены. Исправлен deadlock из-за внешнего запроса БД внутри consent transaction; ответ строится из строк этой транзакции. Ручная security-проверка OAuth/CIMD/consent/settings выполнена; независимый внешний review не проводился. Фаза не включена в production: после штатного merge требуется применить `0088_mcp_authorization.sql` и выполнить production deploy. Фазы 3 (действия с подтверждением), 4 (работодатель и исполнитель), 5 и 6 остаются планом в [../MCP.md](../MCP.md) §6.

@@ -553,6 +553,37 @@
       }
     }
   },
+  "mcp": {
+    "consentTitle": "Assistent verbinden",
+    "consentClient": "{client} möchte auf INTGETION zugreifen",
+    "consentDescription": "Wähle aus, welche Kontodaten der Assistent lesen darf. Du kannst ihn jederzeit in den Einstellungen trennen.",
+    "consentAccount": "Konto-ID endet auf {id}",
+    "allow": "Zugriff erlauben",
+    "deny": "Abbrechen",
+    "settingsTitle": "Verbundene Assistenten",
+    "tokensTitle": "Persönliche Zugriffstoken",
+    "tokensHint": "Erstelle ein Token für Assistenten mit Bearer-Header. Das Token wird nur einmal angezeigt.",
+    "tokenOnce": "Kopiere dieses Token jetzt. Es wird nicht erneut angezeigt.",
+    "tokenLabel": "Tokenname",
+    "permissions": "Zugriffsrechte",
+    "createToken": "Token erstellen",
+    "copy": "Token kopieren",
+    "connectionsTitle": "Verbundene Assistenten",
+    "connectionsHint": "Per OAuth verbundene Assistenten können nur die hier aufgeführten Daten lesen.",
+    "noConnections": "Keine Assistenten verbunden.",
+    "disconnect": "Zugriff widerrufen",
+    "settingsError": "MCP-Zugriff konnte nicht geändert werden. Bitte erneut versuchen.",
+    "scope": {
+      "profile:read": "Kandidatenprofil und Kenntnisse lesen",
+      "applications:read": "Deine Bewerbungen lesen",
+      "saved:read": "Gespeicherte Stellen, Suchen und Unternehmen lesen",
+      "saved:write": "Gespeicherte Stellen und Suchen verwalten",
+      "freelance:read": "Deine Freelance-Aufträge und Services lesen",
+      "ugc:read": "UGC-Kampagnen deines Unternehmens lesen",
+      "reminders:read": "Ausstehende Erinnerungen lesen",
+      "reminders:write": "Deine Erinnerungen verwalten"
+    }
+  },
   "profile": {
     "nav": "Profil",
     "title": "Profil",
@@ -1663,6 +1694,7 @@
     "tabNotifications": "Benachrichtigungen",
     "tabPrivacy": "Datenschutz",
     "tabAccount": "Konto",
+    "tabAssistants": "Assistenten",
     "saved": "Gespeichert.",
     "failed": "Speichern fehlgeschlagen. Versuchen Sie es erneut.",
     "cancel": "Abbrechen",

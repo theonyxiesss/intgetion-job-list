@@ -3,6 +3,7 @@ import { localePath } from "@/i18n/paths";
 /** Pages a sign-in may return to (allowlist: no open redirect). */
 export const RETURN_PATHS = {
   chat: "/chat",
+  "mcp-consent": "/oauth/consent",
   "post-job": "/post-job",
   billing: "/billing/crypto?plan=hire",
   "billing-team": "/billing/crypto?plan=team",

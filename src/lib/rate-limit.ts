@@ -75,6 +75,8 @@ export const rateRules = {
   publicApi: { limit: 120, windowSeconds: 60 },
   /** MCP calls without sign-in, keyed by IP (D486) */
   mcpGuest: { limit: 60, windowSeconds: 60 },
+  /** Personal MCP token creation, keyed by user id (D607). */
+  mcpPersonalToken: { limit: 10, windowSeconds: 60 * 60 },
   /** admin host sign-in failures, keyed by account and by IP (D252) */
   adminLogin: { limit: 5, windowSeconds: 15 * 60 },
   /** Linking, changing or disconnecting the account wallet (D518). */
