@@ -689,6 +689,33 @@ describe("signIn (server password login, D38)", () => {
     });
   });
 
+  it("Auth down (402 quota, 5xx, no answer) is 503, never a wrong password (D606)", async () => {
+    for (const status of [402, 500, 503, 0]) {
+      const auth = fakeAuth(null);
+      auth.signInWithPassword.mockResolvedValue({
+        data: { user: null },
+        error: { status, code: undefined },
+      });
+      await expect(signIn(asAuth(auth), input)).rejects.toMatchObject({
+        status: 503,
+        code: "AUTH_UNAVAILABLE",
+        details: { reason: "auth_unavailable" },
+      });
+    }
+  });
+
+  it("a 400 from Auth stays a wrong password, not an outage", async () => {
+    const auth = fakeAuth(null);
+    auth.signInWithPassword.mockResolvedValue({
+      data: { user: null },
+      error: { status: 400, code: "invalid_credentials" },
+    });
+    await expect(signIn(asAuth(auth), input)).rejects.toMatchObject({
+      status: 401,
+      details: { reason: "invalid_credentials" },
+    });
+  });
+
   it("signs a suspended account straight back out", async () => {
     const auth = fakeAuth(confirmed);
     repo.findUserByAuthUid.mockResolvedValue({ ...row, status: "suspended" });
@@ -708,6 +735,17 @@ describe("logout", () => {
 });
 
 describe("sendMagicLink", () => {
+  it("tells the form when Auth is down instead of pretending the letter left (D606)", async () => {
+    const auth = fakeAuth(null);
+    auth.signInWithOtp.mockResolvedValue({
+      data: { user: null },
+      error: { status: 402 },
+    });
+    await expect(
+      sendMagicLink(asAuth(auth), { email: "ana@example.com", locale: "ru" }),
+    ).rejects.toMatchObject({ status: 503, code: "AUTH_UNAVAILABLE" });
+  });
+
   it("never creates a user from the sign-in page", async () => {
     const auth = fakeAuth(null);
     await sendMagicLink(asAuth(auth), {

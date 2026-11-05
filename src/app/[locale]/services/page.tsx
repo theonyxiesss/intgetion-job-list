@@ -86,7 +86,10 @@ export default async function ServicesPage({
             </dl>
             <p className="px-4 py-4 text-fg-muted md:px-6">{t("else")}</p>
             <div className="border-t border-line px-4 py-6 md:px-6">
-              <BriefForm copy={form} />
+              <BriefForm
+                copy={form}
+                directionGroups={groups.map((group) => group.name)}
+              />
             </div>
           </div>
           <div className="flex flex-wrap gap-3">

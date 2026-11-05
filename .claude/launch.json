@@ -197,7 +197,25 @@
       "runtimeArgs": ["dev", "--port", "3000"],
       "port": 3000,
       "env": {
-        "SWC_NATIVE_BINDING_CACHE": "C:/Users/Admin/.swc-cache"
+        "SWC_NATIVE_BINDING_CACHE": "C:/Users/Admin/.swc-cache",
+        "SPOKI_INTERACTIVE_UI": "true"
+      }
+    },
+    {
+      "name": "brand-symbols-prod",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--dir",
+        "../Integetion jobs brand-symbols",
+        "start",
+        "--port",
+        "3301"
+      ],
+      "port": 3301,
+      "env": {
+        "SWC_NATIVE_BINDING_CACHE": "C:\\Users\\Admin\\.swc-cache-claude",
+        "NEXT_PUBLIC_SITE_URL": "http://localhost:3301",
+        "PORT": "3301"
       }
     }
   ]

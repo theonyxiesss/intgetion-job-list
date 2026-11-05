@@ -7,7 +7,7 @@ import type {
 import { TERMS_VERSION } from "@/config/legal";
 import type { AppLocale } from "@/i18n/routing";
 import { recordAudit } from "@/lib/audit";
-import { logger } from "@/lib/logger";
+import { logger, reportWarning } from "@/lib/logger";
 import {
   createConfirmedAuthUser,
   findAuthUserByEmail,
@@ -17,6 +17,11 @@ import {
 } from "@/lib/supabase/admin";
 import { siteUrl } from "@/lib/supabase/env";
 import {
+  checkAuthHealth,
+  isAuthOutageStatus,
+} from "@/lib/supabase/auth-health";
+import {
+  authUnavailable,
   HttpError,
   errorCodes,
   unauthenticated,
@@ -225,7 +230,20 @@ export function isEmailConfirmed(user: Pick<User, "email_confirmed_at">) {
   return Boolean(user.email_confirmed_at);
 }
 
+/**
+ * Supabase answered with an outage status (D606): log the status only,
+ * then a 503 the form shows as "sign-in is down for everyone".
+ */
+function authOutage(error: { status?: number; code?: string }): HttpError {
+  reportWarning(
+    { status: error.status, code: error.code },
+    "auth provider unavailable",
+  );
+  return authUnavailable();
+}
+
 function authFailure(error: { status?: number; code?: string }): HttpError {
+  if (isAuthOutageStatus(error.status)) return authOutage(error);
   if (error.status === 429) {
     return new HttpError(429, errorCodes.rateLimited, "Too many requests");
   }
@@ -323,7 +341,10 @@ export async function signIn(
 ): Promise<CurrentUser> {
   const { data, error } = await auth.signInWithPassword(input);
   if (error) {
-    if (error.status === 429) throw authFailure(error);
+    // 402/5xx/no answer is Auth being down, never "wrong password" (D606).
+    if (error.status === 429 || isAuthOutageStatus(error.status)) {
+      throw authFailure(error);
+    }
     const reason =
       error.code === "email_not_confirmed"
         ? "email_not_confirmed"
@@ -356,7 +377,9 @@ export async function sendMagicLink(
       emailRedirectTo: callbackUrl(input.locale, input.next, input.wait),
     },
   });
-  if (error?.status === 429) throw authFailure(error);
+  if (error && (error.status === 429 || isAuthOutageStatus(error.status))) {
+    throw authFailure(error);
+  }
 }
 
 /** Section 16.1: admin sign-ins are audited. Others are not recorded. */
@@ -561,6 +584,16 @@ function authProviderError(): HttpError {
   return new HttpError(502, "AUTH_PROVIDER_ERROR", "Auth provider error");
 }
 
+/**
+ * The Auth admin call failed without saying why. A separate health check
+ * tells "Auth is down for everyone" apart from a one-off failure (D606).
+ */
+async function authProviderOrOutage(): Promise<HttpError> {
+  return (await checkAuthHealth()) === "down"
+    ? authUnavailable()
+    : authProviderError();
+}
+
 function verifiedTelegram(result: string, botToken: string, now: Date) {
   const telegram = verifyTelegramAuth(
     decodeTelegramResult(result),
@@ -574,11 +607,12 @@ function verifiedTelegram(result: string, botToken: string, now: Date) {
 /** Opens a session for an existing login email without sending mail. */
 async function openSession(auth: AuthClient, email: string): Promise<void> {
   const tokenHash = await magicLinkTokenHash(email);
-  if (!tokenHash) throw authProviderError();
+  if (!tokenHash) throw await authProviderOrOutage();
   const { error } = await auth.verifyOtp({
     token_hash: tokenHash,
     type: "magiclink",
   });
+  if (error && isAuthOutageStatus(error.status)) throw authOutage(error);
   if (error) throw telegramFailed();
 }
 
@@ -633,7 +667,7 @@ export async function signInWithTelegramProfile(
     telegram_username: username,
   });
   if (created === "unavailable" || created === "failed") {
-    throw authProviderError();
+    throw await authProviderOrOutage();
   }
   await openSession(auth, email);
 

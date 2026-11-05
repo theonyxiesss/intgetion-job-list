@@ -4251,3 +4251,79 @@
 - Документы: исправлены устаревшие статусы миграций `0061`–`0063` и `0071`–`0073` в `docs/OPEN_TASKS.md` (D492–D494, D566, D568, D569, D602) и `docs/status/INDEX.md`; `docs/CURRENT.md`. `prettier --check` по изменённым md → 0.
 - Миграции: нет. Навыки: intgetion-vercel (порядок выкладки через master), built-in-browser.
 - Git: master `ae4b653c`; документы — отдельный PR из `claude/header-no-search` (без `.claude/launch.json` и `scripts/set-openrouter-key.ps1`, это чужие правки).
+
+## 2026-11-04 — Идеи улучшения платформы и MCP — DONE (запись предложений)
+
+- Сделано: идеи основателя по поиску/matching, доверию, коммуникации, монетизации, фоновым задачам и MCP/Spoki записаны в `docs/OPEN_TASKS.md`; в `docs/CURRENT.md` добавлена ссылка. Сохранены как неутверждённые предложения, без изменения scope или кода.
+- Команды проверки: `pnpm exec prettier --check docs/OPEN_TASKS.md docs/CURRENT.md MISSION_LOG.md` → ожидается запуск.
+- P-тесты подфазы: нет.
+- Миграции: нет.
+- Изменённые файлы: `docs/OPEN_TASKS.md`, `docs/CURRENT.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет; замечено, что идея чата требует сверки с запретом из `docs/tz/00-protocol.md`.
+- OPEN QUESTION: какие предложения выбирать в отдельные подфазы — нет, реализация не запрошена.
+- Следующая подфаза: только по команде основателя.
+
+## 2026-11-04 — Концепция внутреннего мессенджера рядом со Spoki — DONE (запись пожелания)
+
+- Сделано: в идеях `docs/OPEN_TASKS.md` зафиксировано пожелание: единое окно с режимами Spoki и «Сообщения»; Spoki помогает по запросу черновиками и итогами, отправку делает пользователь. Указано, что это концепция, требует ТЗ и пересмотра запрета на мессенджер.
+- Команды проверки: документация сверена чтением; форматирование не запускалось (pnpm/prettier ранее недоступен в окружении).
+- P-тесты подфазы: нет.
+- Миграции: нет.
+- Изменённые файлы: `docs/OPEN_TASKS.md`, `docs/CURRENT.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет; реализация не запрошена.
+- OPEN QUESTION: детали приватности и привязки переписки к заказу — для отдельного ТЗ.
+- Следующая подфаза: только по команде основателя.
+
+## 2026-11-04 — Улучшение заказа фриланс-услуги — NOT DONE (сборка заблокирована окружением)
+
+- Сделано: сверены ТЗ 28, `RequestForm` и страница услуги; по официальным материалам Upwork Project Catalog/Fiverr выбран UX-паттерн Upwork. В форме пакет выбирается карточкой с ценой, сроком и правками; показывается состав выбранного пакета и что произойдёт после отправки. Существующий API и денежные правила не менялись.
+- Команды проверки: `pnpm typecheck` → 0; точечный ESLint двух изменённых TSX → 0; Prettier по изменённым TSX/JSON/MD → 0; `git diff --check` → 0. `pnpm build` → 1: отсутствует `@swc/core` native binding `swc.win32-x64-msvc.node`, системный кеш недоступен; попытка с кешем внутри рабочей папки отклонена проверкой DACL. Полный `pnpm lint` был прерван: ESLint сканировал вложенные worktree; точечный ESLint прошёл.
+- P-тесты подфазы: не запускались по инструкции верхнего уровня; UI/e2e не проверялись в браузере.
+- Миграции: нет.
+- Изменённые файлы: `src/modules/freelance/ui/request-form.tsx`, `src/app/[locale]/freelance/[slug]/page.tsx`, `src/messages/{ru,en,de,es,fr,it,pt-BR}.json`, `docs/REFERENCE_SOLUTIONS.md`, `docs/OPEN_TASKS.md`, `docs/CURRENT.md`, `MISSION_LOG.md`.
+- Отклонения от ТЗ: нет; визуальный паттерн — рекомендация, бизнес-правила ТЗ 28 сохранены.
+- OPEN QUESTION: сборку можно повторить после восстановления native binding; production-выкладка не запрошена.
+- Следующая подфаза: только по команде основателя.
+
+## 2026-11-04 — Понятные ошибки входа и проверка Supabase Auth в /api/health (D606) — NOT DONE (нужно «да» на коммит, PR и выкладку)
+
+- Сделано: правило «402 / 5xx / нет ответа = Auth недоступен у всех» (`src/lib/supabase/auth-health.ts`), код `AUTH_UNAVAILABLE` 503 (`src/lib/http/errors.ts`). Пароль и ссылка на почту (`auth-service.ts`) больше не превращают 402 в «неверный пароль» и не делают вид, что письмо ушло; Telegram подтверждает отказ отдельной проверкой `/auth/v1/health`. Google/X (`oauth-redirect.ts`): Auth лежит → `/login?error=auth_unavailable&ref=<x-request-id>`, отключённый провайдер — прежний `oauth_unavailable`. Формы: `auth-failure.ts` разделяет сеть / Auth / данные; `FormAlert` показывает код обращения; `TelegramFinish` и кнопка Telegram показывают отказ Auth. `reportWarning` в `logger.ts` пишет `requestId` в строки «auth provider unavailable». `/api/health` → `{ok, db, auth}`, 503 при любом `down`; `scripts/ci-ui.sh` под новый ответ. Тексты `auth.errors.auth_unavailable`, `auth.errors.network`, `auth.requestId` на 7 языках.
+- Команды проверки: `pnpm typecheck` → 0; `pnpm exec eslint src tests eslint-rules scripts evals --max-warnings 0` → 0 (полный `pnpm lint` в этой папке зависает на вложенных `.claude/worktrees`, остановлен); `pnpm test` → 0 (266 файлов, 1999 passed, 3 skipped); `pnpm build` (с `SWC_NATIVE_BINDING_CACHE`) → 0; prettier по изменённым файлам → 0.
+- Браузер (локально, `master-dev`, облачный Auth действительно 402): `/api/health` → 503 `{"ok":false,"db":"up","auth":"down"}`; `/ru/login` с выдуманными данными → «Вход временно недоступен для всех…» и код обращения, ввод сохранён; «Войти через Google» → то же сообщение; `x-request-id` из ответа найден в строке журнала.
+- P-тесты подфазы: `auth-health.test.ts`, `auth-failure.test.ts`, `oauth-probe.test.ts`, `telegram-outage.test.ts`, новые случаи в `auth-service.test.ts`.
+- Миграции: нет. D606.
+- Отклонения: сброс пароля и регистрация получили только общий разбор кода; привязка Google/X в настройках сохраняет прежнее уведомление.
+- OPEN QUESTION: нет.
+- Git: не закоммичено, ветка `claude/header-no-search`; в `src/messages/*.json`, `docs/CURRENT.md`, `MISSION_LOG.md` есть чужие правки — коммитить только свои куски.
+
+## 2026-11-04 — Выкладка D595 и D605 — DONE
+
+- По слову основателя «Да, оба». D595 (скелеты загрузки): PR #42, merge `6d849499`, CI зелёный, Vercel Production — success. D605 (общая карточка заказа, заменила карточку фриланса D602; номер D603 был занят ТЗ 52): PR #43, merge `b48bab54`, CI зелёный, Vercel Production — success.
+- Проверки на сайте: `/api/health` → 200; `/ru/freelance`, `/ru/jobs` → 200; `/ru/freelance/orders`, `/ru/campaigns/orders`, `/ru/creator/workspace` для гостя → 307 на вход. Под входом не проверено (Supabase 402).
+- Подробности проверок — записи D595 и D605 выше (ветки `claude/practical-bhaskara-e0f845`, `claude/jolly-hamilton-28864a`).
+
+## 2026-11-04 — Заявка на услуги INTGETION с переходом в Spoki — NOT DONE (не выложено)
+
+- Сделано локально: `/services` проходит по шагам цель → бриф со Spoki → проверка; пользователь выбирает направления, редактирует описание и проверяет контакт/условия перед отправкой. После успешного POST в существующий `/api/company/briefs` открывается Spoki с `from=services`; в чат передаются только цель, направления и задача. Контакт, компания и бюджет остаются в заявке. Нового мессенджера и миграции нет. Использованы D413, D417, D423.
+- Команды: `pnpm typecheck` → 0; точечный ESLint изменённых TSX → 0; Prettier по изменённым TSX/JSON/MD → 0; JSON и согласованность `services.form` на 7 локалях → 0; `git diff --check` → 0. Полный `pnpm lint` остановлен: ESLint рекурсивно сканировал `.claude/worktrees` и собранные артефакты; точечный ESLint прошёл. `pnpm build` → 1: отсутствует `swc.win32-x64-msvc.node`; и системный, и заданный в workspace SWC-кеш недоступны по DACL. Тесты не запускались; визуальная проверка в браузере невозможна без сборки.
+- Навык: `intgetion-design`; прочитаны актуальные документы Next.js для App Router. `react-best-practices` не найден в установленных скиллах, ничего не устанавливалось.
+- Миграции: `0048_engagement_briefs.sql` существует, но, согласно документации, не применена к облаку; никаких cloud writes не выполнялось. До её штатного применения сохранение брифа на production остаётся недоступным.
+- Изменённые файлы: `src/components/company/brief-form.tsx`, `src/app/[locale]/services/page.tsx`, `src/messages/{en,ru,de,es,fr,it,pt-BR}.json`, `docs/how-it-works/{companies,bot}.md`, `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `MISSION_LOG.md`.
+- Отклонения: существующий Spoki — единственный чат; отдельная переписка клиента с командой не построена (её запрещает текущий `docs/tz/00-protocol.md` без отдельного ТЗ). Production не выкладывался.
+- OPEN QUESTION: требуется отдельное согласие на cloud migration/deploy; по `docs/PARALLEL_WORK.md` миграцию после слияния применяет Claude Code.
+- Git: без коммита, ветка `claude/header-no-search`; рабочая копия содержит чужие несвязанные изменения.
+
+## 2026-11-04 — Выкладка PR #45 и миграция 0048 — DONE
+
+- По словам основателя «Да, слей» и «Да, применить». PR #45 (D606 + `/services` по шагам + выбор пакета фриланс-услуги, работа Codex) слит, merge `adeb019c`; CI check/database зелёные; Vercel Production — success (deployment `6ZWzGfaqD64mR5MPpqgHgzeALNg6`). intgetion.com: `/ru/services` с новой формой, `/ru/login`, `/ru/freelance`, `/jobs` → 200; `/api/health` → 503 `{"ok":false,"db":"up","auth":"down"}` — ожидаемо при Supabase Auth 402.
+- `0048_engagement_briefs.sql` применена к облаку путём D438 одной транзакцией: журнал сверен с папкой (кроме `0048` расхождение только известное `0020_telegram_login.sql`), после — 84 строки; владелец `migrator`, RLS включён и принудителен, 3 политики, `app_rw` SELECT/INSERT/UPDATE/DELETE, членство `supabase_admin:set=false,admin=true`, строк 0. `get_advisors` security — только прежние предупреждения (search_path четырёх функций, утёкшие пароли).
+- Не проверено: живая отправка брифа (не создавал запись в проде), `/freelance/[slug]` глазами (каталог пуст), экраны под входом (Supabase 402).
+
+## 2026-11-04 — D607: гостевой лимит Spoki по IP, страна посетителя, часовая сводка — DONE (кроме получателя сводки)
+
+- Основатель: «сделай» + выбор «Telegram, сводка раз в час» и «20 в сутки», затем «Да, всё». Ветка `claude/visitor-digest`, PR #46, merge `e3199525`; CI check/database зелёные; Vercel Production — success (`7p49GqDxXX13Z24FVJX1pLKLtkFQ`).
+- Код: `botGuestIp` и `guestBotBuckets` (`src/lib/rate-limit.ts`, `conversation.ts`); `analytics_events.country` (`0087`), таблица «Страны» в `/admin/metrics`; `runVisitorDigest` (`src/modules/analytics/service/visitor-digest.ts`) в кроне `/api/cron/telegram`; `ownerAlertRecipients` (admin-console) + `OWNER_ALERT_TELEGRAM_ID` (env-rules, `.env.example`, RUNBOOK). Тексты на 7 языках. D607; SEC-20261014-3 закрыта в AUDIT_LOG.
+- Проверки: typecheck, eslint, test (271 файл, 2028 passed, 3 skipped), build — 0.
+- Миграция `0087_analytics_country.sql` — путь D438 до слияния: колонка, проверка, индекс, владелец `migrator`, RLS, `app_rw` INSERT, журнал 85, членство вернулось; советники — только прежние предупреждения.
+- На сайте: page view `/ru/jobs` записан с `country`; страницы 200; крон без секрета 404. Vercel MCP runtime errors → 403 (известно), не прочитаны.
+- Не сделано: получатель сводки — у владельца нет привязанного Telegram; нужен числовой id основателя в `OWNER_ALERT_TELEGRAM_ID` (Vercel production) и `/start` в боте. Не проверено: `/admin/metrics` под входом (402), живой лимит 20/сутки.
