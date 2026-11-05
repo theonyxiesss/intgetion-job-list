@@ -3,8 +3,8 @@
 ## [2026-11-05] — MCP Phase 2 — NOT DONE (D608)
 
 - Сделано: OAuth DB integration покрывает consent, PKCE, ошибки verifier/client/resource, replay кода и refresh token, principal/scopes/audience, хэширование и отзыв refresh-цепочки. Выполнен ручной security-review OAuth/CIMD/consent/settings. Документация и security audit log обновлены.
-- Команды проверки: `node node_modules/typescript/bin/tsc --noEmit` → 0; `node node_modules/eslint/bin/eslint.js . --max-warnings 0` → 0; `pnpm test` → 0 (2033 passed, 3 skipped); `git diff --check` → 0. CI `41934060059` → check и database зелёные: build, clean migration, integration, 104 e2e; повторный Lighthouse LCP 2763.55 ms, порог не менялся. Локальный build не пройден: Windows SWC native binding недоступен.
-- P-тесты подфазы: OAuth service DB integration, unit, миграция с нуля и e2e в CI — ✅.
+- Команды проверки: `node node_modules/typescript/bin/tsc --noEmit` → 0; `node node_modules/eslint/bin/eslint.js . --max-warnings 0` → 0; `pnpm test` → 0 (2033 passed, 3 skipped); `git diff --check` → 0; Prettier → 0. CI `41934060059` → check зелёный, database красный: OAuth DB test превысил 5s timeout, cleanup превысил 10s hook timeout. В тесте заданы лимиты 30s; повторный CI запускается на последнем коммите. Ранее повторный Lighthouse LCP 2763.55 ms, порог не менялся. Локальный build не пройден: Windows SWC native binding недоступен.
+- P-тесты подфазы: unit — ✅; OAuth DB integration — локально не запускался (нет локального Supabase), CI не прошёл из-за timeout; миграция с нуля прошла, e2e повторно не дошли.
 - Миграции: `0088_mcp_authorization.sql` в репозитории; на облако не применялась.
 - Изменённые файлы: `src/modules/mcp/__tests__/auth-service.integration.test.ts`; `docs/CURRENT.md`, `docs/OPEN_TASKS.md`, `docs/MCP.md`, `docs/how-it-works/mcp.md`, `docs/security/AUDIT_LOG.md`, `MISSION_LOG.md`.
 - Отклонения от ТЗ: нет.

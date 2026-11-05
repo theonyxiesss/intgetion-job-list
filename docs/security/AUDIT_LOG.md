@@ -8,7 +8,7 @@
 - Settings routes: чтение/отзыв требуют `requireUser`; операции сервисов ограничены `userId`; создание personal token имеет rate limit; JSON ограничен и валидируется, GET responses no-store.
 - OAuth: host/origin guards; body limit 16 KB; exact redirect, PKCE S256, resource equality, throttling; tokens only as hashes, refresh replay revokes chain; integration assertions cover invalid verifier/client/resource, code replay, principal/scopes/audience and token hashes.
 - CIMD and RLS review from prior entry remains valid. Corrected prior entry: MCP RLS migration is `0088`, not `0087`.
-- Результат: ручной diff review — OK; CI security-related checks — зелёные. Не проводился независимый внешний review. Облачная БД не изменялась; production release не выполнен.
+- Результат: ручной diff review — OK. В CI clean migration и check job прошли, но database job завершился с timeout теста/cleanup; timeout увеличен для интеграционного сценария до 30 секунд, повторный CI ожидается. Не проводился независимый внешний review. Облачная БД не изменялась; production release не выполнен.
 
 Читать **перед** любым аудитом безопасности (скилл [`intgetion-security`](../../.claude/skills/intgetion-security/SKILL.md), D419). Журнал говорит, что уже проверено и на каком коммите, чтобы следующий аудит не повторял ту же работу.
 

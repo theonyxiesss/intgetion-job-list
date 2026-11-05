@@ -50,4 +50,4 @@ claude mcp add --transport http intgetion https://intgetion.com/api/mcp
 
 ## Что не сделано
 
-Фаза 2 реализована в PR #47, CI run `41934060059` зелёный: clean migration, OAuth DB integration, 104 e2e, unit, typecheck, lint, format и build. Ручная security-проверка OAuth/CIMD/consent/settings выполнена; независимый внешний review не проводился. Фаза не включена в production: после штатного merge требуется применить `0088_mcp_authorization.sql` и выполнить production deploy. Фазы 3 (действия с подтверждением), 4 (работодатель и исполнитель), 5 и 6 остаются планом в [../MCP.md](../MCP.md) §6.
+Фаза 2 реализована в PR #47. CI run `41934060059`: check job зелёный; database job упал на тестовом/cleanup timeout (5s/10s). Лимиты именно этого DB integration test увеличены до 30s; новый CI ожидается. Ручная security-проверка OAuth/CIMD/consent/settings выполнена; независимый внешний review не проводился. Фаза не включена в production: после зелёного CI и штатного merge требуется применить `0088_mcp_authorization.sql` и выполнить production deploy. Фазы 3 (действия с подтверждением), 4 (работодатель и исполнитель), 5 и 6 остаются планом в [../MCP.md](../MCP.md) §6.

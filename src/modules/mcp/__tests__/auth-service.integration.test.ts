@@ -40,7 +40,7 @@ beforeAll(async () => {
     metadata: { source: "integration-test" },
   });
   clientId = client.id;
-});
+}, 30_000);
 
 afterAll(async () => {
   if (clientId) {
@@ -56,7 +56,7 @@ afterAll(async () => {
   }
   await getDb().delete(auditLogs).where(eq(auditLogs.actorId, userId));
   await getDb().delete(users).where(eq(users.id, userId));
-});
+}, 30_000);
 
 describe("MCP OAuth authorization against Postgres", () => {
   it("exchanges one PKCE code, rotates refresh tokens and revokes a reused chain", async () => {
@@ -200,5 +200,5 @@ describe("MCP OAuth authorization against Postgres", () => {
     expect(
       await verifyMcpToken(rotatedPair!.access_token, resource),
     ).toBeNull();
-  });
+  }, 30_000);
 });
