@@ -2,7 +2,7 @@
 
 ### MCP Phase 2 — PR #47, ожидает merge и production release (2026-11-05, D608)
 
-CI #42016775368 прошёл на коде фазы: clean migration, 194 DB integration tests, OAuth integration, lint, format, typecheck, unit, build и gitleaks; e2e 102 passed, 2 flaky, Lighthouse бюджеты пройдены. GitHub показывает PR конфликтным с актуальным `master`; требуется завершить синхронизацию ветки и повторно пройти CI до merge. Затем migration `0088_mcp_authorization.sql` и deploy — по штатному post-merge процессу. Облачная БД не менялась.
+CI #42016775368 прошёл на коде фазы: clean migration, 194 DB integration tests, OAuth integration, lint, format, typecheck, unit, build и gitleaks; e2e 102 passed, 2 flaky, Lighthouse бюджеты пройдены. Ветка перебазирована на актуальный `master`; номер MCP-миграции закреплён как `0088`, поскольку `0087` используется аналитикой. На синхронизированном head нужны CI checks перед merge. Затем migration `0088_mcp_authorization.sql` и deploy — по штатному post-merge процессу. Облачная БД не менялась.
 
 ### Идеи основателя: улучшения платформы и MCP (2026-11-04) — НЕ утверждено
 
