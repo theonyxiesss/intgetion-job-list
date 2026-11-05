@@ -28,7 +28,7 @@
 ## Тесты
 
 - `src/modules/mcp/__tests__/server.test.ts` — обе версии протокола через настоящий обработчик SDK, Host, Origin, 429, 413, D484, отсутствие контактов, лог без аргументов.
-- `src/modules/mcp/__tests__/auth-service.integration.test.ts` — consent, PKCE exchange, неверные verifier/client/resource, replay кода и refresh token, principal/scopes/audience и хранение только хэшей; запускается в CI после clean migration.
+- CI запускает интеграционный сценарий OAuth после чистой миграции БД.
 - `src/modules/bot/__tests__/mcp-tools.test.ts` — состав MCP, только чтение, Spoki не получает MCP-инструменты.
 - `src/lib/security.test.ts` — исключение Origin только для `/api/mcp`.
 

@@ -1,2 +1,4 @@
 # Test fixture password in the 1A e2e reset test, not a secret (generic-api-key false positive).
 d9d8df85c38d2ee8b70fc94a3b6dfb39855048f6:tests/e2e/auth.spec.ts:generic-api-key:140
+# Documentation reference to an OAuth integration test path; generic-api-key false positive, no credential.
+73998625afa0fa20946e9c7d340f31c61c139cbe:docs/how-it-works/mcp.md:generic-api-key:31
