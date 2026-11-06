@@ -6068,6 +6068,10 @@
     "attachCv": "Attach CV or portfolio",
     "dialogues": "YOUR DIALOGUES",
     "searchDialogues": "Find a conversation…",
-    "noDialogues": "No conversations found."
+    "noDialogues": "No conversations found.",
+    "newConversation": "New conversation",
+    "untitled": "New conversation",
+    "deleteDialogue": "Delete “{title}”",
+    "deleteConfirm": "Delete “{title}”? The conversation and its messages will be removed."
   }
 }

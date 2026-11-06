@@ -139,6 +139,45 @@ test("a file attached in the chat is read and sent with the message (TZ 53)", as
   expect(sent[0].text).toContain("cv.txt");
 });
 
+test("New conversation starts an empty thread from the sidebar (TZ 53)", async ({
+  page,
+}) => {
+  let created = 0;
+  await page.route("**/api/bot/conversations*", async (route) => {
+    if (route.request().method() === "POST") {
+      created += 1;
+      await route.fulfill({
+        status: 201,
+        contentType: "application/json",
+        body: JSON.stringify({ conversationId: "new" }),
+      });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ conversations: [] }),
+    });
+  });
+  await page.route("**/api/bot/message", (route) =>
+    route.fulfill({
+      status: 200,
+      headers: { "content-type": "text/event-stream" },
+      body:
+        'event: token\ndata: {"type":"token","text":"Stubbed answer."}\n\n' +
+        'event: done\ndata: {"type":"done","conversationId":"00000000-0000-4000-8000-000000000000"}\n\n',
+    }),
+  );
+  await page.goto("/en");
+  await page.getByLabel("Write a message").fill("Hello");
+  await page.getByRole("button", { name: "Send" }).click();
+  await expect(page.getByText("Stubbed answer.")).toBeVisible();
+  await page.getByRole("button", { name: "New conversation" }).click();
+  await expect.poll(() => created).toBe(1);
+  await expect(page.getByText("Stubbed answer.")).toBeHidden();
+  await expect(page.getByLabel("Write a message")).toBeVisible();
+});
+
 test("unknown routes use the localized not-found page", async ({ page }) => {
   const response = await page.goto("/en/missing-page");
   expect(response?.status()).toBe(404);

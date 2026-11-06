@@ -5562,6 +5562,10 @@
     "attachCv": "Прикрепить резюме или портфолио",
     "dialogues": "ВАШИ ДИАЛОГИ",
     "searchDialogues": "Найти диалог…",
-    "noDialogues": "Диалоги не найдены."
+    "noDialogues": "Диалоги не найдены.",
+    "newConversation": "Новый разговор",
+    "untitled": "Новый разговор",
+    "deleteDialogue": "Удалить «{title}»",
+    "deleteConfirm": "Удалить «{title}»? Разговор и его сообщения будут удалены."
   }
 }

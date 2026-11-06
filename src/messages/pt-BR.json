@@ -5562,6 +5562,10 @@
     "attachCv": "Anexar currículo ou portfólio",
     "dialogues": "SEUS DIÁLOGOS",
     "searchDialogues": "Encontrar uma conversa…",
-    "noDialogues": "Nenhuma conversa encontrada."
+    "noDialogues": "Nenhuma conversa encontrada.",
+    "newConversation": "Nova conversa",
+    "untitled": "Nova conversa",
+    "deleteDialogue": "Excluir “{title}”",
+    "deleteConfirm": "Excluir “{title}”? A conversa e suas mensagens serão removidas."
   }
 }

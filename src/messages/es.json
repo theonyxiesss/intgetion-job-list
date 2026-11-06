@@ -5562,6 +5562,10 @@
     "attachCv": "Adjuntar CV o portafolio",
     "dialogues": "TUS DIÁLOGOS",
     "searchDialogues": "Buscar una conversación…",
-    "noDialogues": "No se encontraron conversaciones."
+    "noDialogues": "No se encontraron conversaciones.",
+    "newConversation": "Nueva conversación",
+    "untitled": "Nueva conversación",
+    "deleteDialogue": "Eliminar «{title}»",
+    "deleteConfirm": "¿Eliminar «{title}»? Se borrarán la conversación y sus mensajes."
   }
 }

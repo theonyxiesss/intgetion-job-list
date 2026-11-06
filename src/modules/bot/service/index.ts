@@ -8,6 +8,13 @@ export {
   extractAttachmentText,
 } from "./attachment";
 export {
+  deleteMyConversation,
+  listMyConversations,
+  openMyConversation,
+  startNewConversation,
+  type MyConversation,
+} from "./threads";
+export {
   BOT_SESSION_COOKIE,
   CONFIRMATION_TTL_MS,
   MAX_TOOL_ROUNDS,

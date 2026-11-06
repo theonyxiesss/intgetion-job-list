@@ -8,7 +8,8 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowUpRight,
   Banknote,
@@ -25,9 +26,11 @@ import {
   MoreHorizontal,
   PanelLeftClose,
   Paperclip,
+  Plus,
   Search,
   Sparkles,
   Sun,
+  Trash2,
   UserRound,
   Users,
   type LucideIcon,
@@ -40,6 +43,7 @@ import {
   SPOKI_TURN_DONE,
 } from "@/components/bot/spoki-ask";
 import type { ChatThread } from "@/app/api/me/threads/route";
+import type { MyConversation } from "@/modules/bot/service";
 import { ContactRoom, type StatusLabels } from "./contact-room";
 
 type Item = { key: string; icon: LucideIcon };
@@ -58,6 +62,9 @@ const EMPLOYER: Item[] = [
   { key: "postJob", icon: FilePlus2 },
   { key: "myJobs", icon: Users },
 ];
+
+/** The mockup's easing for the menu's change of shape. */
+const EASE = [0.22, 1, 0.36, 1] as const;
 
 function noSubscribe() {
   return () => {};
@@ -78,17 +85,21 @@ function watchTheme(onChange: () => void) {
 
 const PHONE = "(max-width: 760px)";
 
-function watchPhone(onChange: () => void) {
-  const query = window.matchMedia(PHONE);
-  query.addEventListener("change", onChange);
-  return () => query.removeEventListener("change", onChange);
+function watchViewport(onChange: () => void) {
+  window.addEventListener("resize", onChange);
+  return () => window.removeEventListener("resize", onChange);
+}
+
+/** "width height", a string so the store compares by value. */
+function readViewport() {
+  return `${window.innerWidth} ${window.innerHeight}`;
 }
 
 /**
  * The chat home of TZ 53, built on the Morrow mockup: a round menu button
  * that opens "about" before the chat starts and turns into the sidebar
  * once it has, and the platform chat as the whole screen. Every item asks
- * the one chat; threads with clients and recruiters open beside it.
+ * the chat; dialogues and threads with clients and recruiters open beside it.
  */
 export function MorrowHome({
   signedIn,
@@ -102,9 +113,18 @@ export function MorrowHome({
   children: ReactNode;
 }) {
   const t = useTranslations("morrow");
+  const locale = useLocale();
+  const reduceMotion = useReducedMotion();
   const light = useSyncExternalStore(watchTheme, readLight, () => false);
+  const [width, height] = useSyncExternalStore(
+    watchViewport,
+    readViewport,
+    () => "1024 768",
+  )
+    .split(" ")
+    .map(Number);
   const phone = useSyncExternalStore(
-    watchPhone,
+    watchViewport,
     () => window.matchMedia(PHONE).matches,
     () => false,
   );
@@ -119,21 +139,43 @@ export function MorrowHome({
   const [infoOpen, setInfoOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [threads, setThreads] = useState<ChatThread[]>([]);
+  const [dialogues, setDialogues] = useState<MyConversation[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
+  /** Changing it remounts the chat on the thread the cookie now names. */
+  const [chatKey, setChatKey] = useState(0);
+  const [busy, setBusy] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const open = threads.find((thread) => thread.id === openId) ?? null;
-  const hasConversation = started || open !== null;
+  const hasConversation =
+    started || open !== null || dialogues.some((row) => !row.current);
   const expanded = hasConversation && sidebar && (!phone || infoOpen);
   const showInfo = !hasConversation && infoOpen;
   const query = search.trim().toLowerCase();
-  const shown = threads.filter((thread) =>
+  const shownThreads = threads.filter((thread) =>
     `${thread.kind === "recruiter" ? thread.company : ""} ${thread.title}`
       .toLowerCase()
       .includes(query),
   );
+  const shownDialogues = dialogues.filter((row) =>
+    (row.title ?? t("untitled")).toLowerCase().includes(query),
+  );
+  const duration = reduceMotion ? 0 : 0.38;
 
-  const loadThreads = useCallback(async () => {
+  const loadLists = useCallback(async () => {
+    try {
+      const response = await fetch("/api/bot/conversations", {
+        cache: "no-store",
+      });
+      if (response.ok) {
+        const body = (await response.json()) as {
+          conversations?: MyConversation[];
+        };
+        setDialogues(body.conversations ?? []);
+      }
+    } catch {
+      // The list stays as it was.
+    }
     if (!signedIn) return;
     try {
       const response = await fetch("/api/me/threads", { cache: "no-store" });
@@ -146,7 +188,7 @@ export function MorrowHome({
   }, [signedIn]);
 
   useEffect(() => {
-    const refresh = () => void loadThreads();
+    const refresh = () => void loadLists();
     const first = window.setTimeout(refresh, 0);
     const conversation = (event: Event) =>
       setStarted((event as CustomEvent<boolean>).detail === true);
@@ -159,7 +201,7 @@ export function MorrowHome({
       window.removeEventListener("focus", refresh);
       window.removeEventListener(SPOKI_CONVERSATION, conversation);
     };
-  }, [loadThreads]);
+  }, [loadLists]);
 
   useEffect(() => {
     if (!expanded && !showInfo) return;
@@ -205,6 +247,57 @@ export function MorrowHome({
       setOpenId(null);
       handSpokiAsk(t(`prompts.${key}`));
     });
+  }
+
+  /** Points the chat at another thread and draws it again. */
+  async function switchTo(request: () => Promise<Response>) {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const response = await request();
+      if (!response.ok) return;
+      setOpenId(null);
+      setStarted(false);
+      setChatKey((key) => key + 1);
+      await loadLists();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function newConversation() {
+    act(
+      () =>
+        void switchTo(() =>
+          fetch(`/api/bot/conversations?locale=${encodeURIComponent(locale)}`, {
+            method: "POST",
+          }),
+        ),
+    );
+  }
+
+  function openDialogue(row: MyConversation) {
+    if (row.current) {
+      act(() => setOpenId(null));
+      return;
+    }
+    act(
+      () =>
+        void switchTo(() =>
+          fetch(`/api/bot/conversations/${row.id}`, { method: "POST" }),
+        ),
+    );
+  }
+
+  async function deleteDialogue(row: MyConversation) {
+    const title = row.title ?? t("untitled");
+    if (!window.confirm(t("deleteConfirm", { title }))) return;
+    const response = await fetch(`/api/bot/conversations/${row.id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) return;
+    if (row.current) newConversation();
+    else await loadLists();
   }
 
   function onTrigger() {
@@ -309,25 +402,41 @@ export function MorrowHome({
 
   return (
     <div className={`morrow app ${expanded ? "sidebar-expanded" : ""}`}>
-      {expanded && phone ? (
-        <button
-          type="button"
-          className="sidebar-scrim"
-          aria-label={t("closeMenu")}
-          onClick={() => {
-            setInfoOpen(false);
-            setSidebar(false);
-          }}
-        />
-      ) : null}
-      <div
+      <AnimatePresence>
+        {expanded && phone ? (
+          <motion.button
+            key="scrim"
+            type="button"
+            className="sidebar-scrim"
+            aria-label={t("closeMenu")}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.2 }}
+            onClick={() => {
+              setInfoOpen(false);
+              setSidebar(false);
+            }}
+          />
+        ) : null}
+      </AnimatePresence>
+      <motion.div
         ref={root}
         className={`chat-menu ${expanded ? "is-sidebar" : ""}`}
         role={expanded && phone ? "dialog" : undefined}
         aria-modal={expanded && phone ? true : undefined}
         aria-label={expanded && phone ? t("menu") : undefined}
+        initial={false}
+        animate={{
+          width: expanded ? Math.min(300, width - 40) : 44,
+          height: expanded ? height : 44,
+          top: expanded ? 0 : 20,
+          left: expanded ? 0 : 20,
+          borderRadius: expanded ? 0 : 22,
+        }}
+        transition={{ duration, ease: EASE }}
       >
-        <button
+        <motion.button
           ref={trigger}
           type="button"
           className="menu-trigger"
@@ -339,13 +448,27 @@ export function MorrowHome({
                 ? "morrow-info"
                 : undefined
           }
+          initial={false}
+          animate={{ left: expanded ? 16 : 0, top: expanded ? 16 : 0 }}
+          transition={{ duration, ease: EASE }}
+          whileTap={reduceMotion ? undefined : { scale: 0.92 }}
           onClick={onTrigger}
         >
-          {expanded ? (
-            <PanelLeftClose size={18} aria-hidden="true" />
-          ) : (
-            <MoreHorizontal size={21} aria-hidden="true" />
-          )}
+          <AnimatePresence initial={false} mode="wait">
+            <motion.span
+              key={expanded ? "collapse" : "dots"}
+              initial={{ opacity: 0, rotate: -45 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              exit={{ opacity: 0, rotate: 45 }}
+              transition={{ duration: reduceMotion ? 0 : 0.1 }}
+            >
+              {expanded ? (
+                <PanelLeftClose size={18} aria-hidden="true" />
+              ) : (
+                <MoreHorizontal size={21} aria-hidden="true" />
+              )}
+            </motion.span>
+          </AnimatePresence>
           <span className="sr-only">
             {expanded
               ? t("closeMenu")
@@ -353,110 +476,178 @@ export function MorrowHome({
                 ? t("openMenu")
                 : t("about")}
           </span>
-        </button>
-        {expanded ? (
-          <nav
-            id="workspace-sidebar"
-            aria-label={t("menu")}
-            className="sidebar-content"
-          >
-            <div className="sidebar-brand">{wordmark}</div>
-            <div className="sidebar-scroll">
-              <div className="menu-label">{t("discover")}</div>
-              {shortcuts}
-              {actions(MORE)}
-              <div className="menu-label">{t("employer")}</div>
-              {actions(EMPLOYER)}
-              <div className="menu-divider" />
-              <div className="menu-label">
-                <Clock3 size={12} aria-hidden="true" />
-                {t("dialogues")}
-              </div>
-              <label className="menu-search">
-                <Search size={14} aria-hidden="true" />
-                <input
-                  aria-label={t("searchDialogues")}
-                  placeholder={t("searchDialogues")}
-                  value={search}
-                  onChange={(event) => setSearch(event.target.value)}
-                />
-              </label>
-              <div className="menu-history">
-                <div className="dialogue-row">
-                  <button
-                    type="button"
-                    className="menu-action"
-                    aria-current={open ? undefined : "page"}
-                    onClick={() => act(() => setOpenId(null))}
-                  >
-                    <span>{t("contacts.assistant")}</span>
-                    {open ? null : <Check size={13} aria-hidden="true" />}
-                  </button>
-                </div>
-                <div
-                  className={`contact-conversations ${threads.length ? "has-contacts" : ""}`}
+        </motion.button>
+        <AnimatePresence>
+          {expanded ? (
+            <motion.nav
+              key="sidebar"
+              id="workspace-sidebar"
+              aria-label={t("menu")}
+              className="sidebar-content"
+              initial={{ opacity: 0, x: reduceMotion ? 0 : -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{
+                opacity: 0,
+                transition: { duration: reduceMotion ? 0 : 0.08 },
+              }}
+              transition={{
+                delay: reduceMotion ? 0 : 0.1,
+                duration: reduceMotion ? 0 : 0.22,
+              }}
+            >
+              <div className="sidebar-brand">{wordmark}</div>
+              <motion.div className="sidebar-scroll" layoutScroll>
+                <button
+                  type="button"
+                  className="menu-action new-dialogue"
+                  disabled={!hydrated || busy}
+                  onClick={newConversation}
                 >
-                  <div className="contact-heading">{t("contacts.heading")}</div>
-                  {shown.map((thread) => (
-                    <div className="dialogue-row" key={thread.id}>
-                      <button
-                        type="button"
-                        className="menu-action"
-                        aria-current={thread.id === openId ? "page" : undefined}
-                        onClick={() => act(() => setOpenId(thread.id))}
-                      >
-                        <span>
-                          {thread.kind === "recruiter"
-                            ? `${thread.company} · ${thread.title}`
-                            : thread.title}
-                        </span>
-                        <small>
-                          {thread.kind === "recruiter"
-                            ? (statusLabels.application[thread.status] ??
-                              thread.status)
-                            : (statusLabels.order[thread.status] ??
-                              thread.status)}
-                        </small>
-                      </button>
-                    </div>
-                  ))}
-                  {threads.length === 0 ? (
-                    <p className="menu-note">
-                      {signedIn ? t("contacts.empty") : t("contacts.guest")}
-                    </p>
-                  ) : shown.length === 0 ? (
+                  <Plus size={16} aria-hidden="true" />
+                  <span>{t("newConversation")}</span>
+                </button>
+                <div className="menu-label">{t("discover")}</div>
+                {shortcuts}
+                {actions(MORE)}
+                <div className="menu-label">{t("employer")}</div>
+                {actions(EMPLOYER)}
+                <div className="menu-divider" />
+                <div className="menu-label">
+                  <Clock3 size={12} aria-hidden="true" />
+                  {t("dialogues")}
+                </div>
+                <label className="menu-search">
+                  <Search size={14} aria-hidden="true" />
+                  <input
+                    aria-label={t("searchDialogues")}
+                    placeholder={t("searchDialogues")}
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                  />
+                </label>
+                <div className="menu-history">
+                  {shownDialogues.map((row) => {
+                    const title = row.title ?? t("untitled");
+                    const current = row.current && open === null;
+                    return (
+                      <div className="dialogue-row" key={row.id}>
+                        <button
+                          type="button"
+                          className="menu-action"
+                          aria-current={current ? "page" : undefined}
+                          disabled={busy}
+                          onClick={() => openDialogue(row)}
+                        >
+                          <span>{title}</span>
+                          {current ? (
+                            <Check size={13} aria-hidden="true" />
+                          ) : null}
+                        </button>
+                        {signedIn ? (
+                          <button
+                            type="button"
+                            className="delete-dialogue"
+                            title={t("deleteDialogue", { title })}
+                            onClick={() => void deleteDialogue(row)}
+                          >
+                            <Trash2 size={14} aria-hidden="true" />
+                            <span className="sr-only">
+                              {t("deleteDialogue", { title })}
+                            </span>
+                          </button>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                  {query &&
+                  shownDialogues.length + shownThreads.length === 0 ? (
                     <p className="menu-note">{t("noDialogues")}</p>
                   ) : null}
+                  <motion.div
+                    layout="position"
+                    transition={{
+                      layout: {
+                        duration: reduceMotion ? 0 : 0.28,
+                        ease: "easeOut",
+                      },
+                    }}
+                    className={`contact-conversations ${threads.length ? "has-contacts" : ""}`}
+                  >
+                    <div className="contact-heading">
+                      {t("contacts.heading")}
+                    </div>
+                    {shownThreads.map((thread) => (
+                      <div className="dialogue-row" key={thread.id}>
+                        <button
+                          type="button"
+                          className="menu-action"
+                          aria-current={
+                            thread.id === openId ? "page" : undefined
+                          }
+                          onClick={() => act(() => setOpenId(thread.id))}
+                        >
+                          <span>
+                            {thread.kind === "recruiter"
+                              ? `${thread.company} · ${thread.title}`
+                              : thread.title}
+                          </span>
+                          <small>
+                            {thread.kind === "recruiter"
+                              ? (statusLabels.application[thread.status] ??
+                                thread.status)
+                              : (statusLabels.order[thread.status] ??
+                                thread.status)}
+                          </small>
+                        </button>
+                      </div>
+                    ))}
+                    {threads.length === 0 ? (
+                      <p className="menu-note">
+                        {signedIn ? t("contacts.empty") : t("contacts.guest")}
+                      </p>
+                    ) : null}
+                  </motion.div>
                 </div>
+              </motion.div>
+              <div className="sidebar-footer">{footer}</div>
+            </motion.nav>
+          ) : null}
+          {showInfo ? (
+            <motion.div
+              key="info"
+              id="morrow-info"
+              role="dialog"
+              aria-label={t("about")}
+              className="menu-panel"
+              initial={{
+                opacity: 0,
+                scale: reduceMotion ? 1 : 0.9,
+                y: reduceMotion ? 0 : -8,
+              }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: reduceMotion ? 1 : 0.95 }}
+              transition={{ duration: reduceMotion ? 0 : 0.2 }}
+              style={{ transformOrigin: "top left" }}
+            >
+              <div className="menu-name">
+                {t("aboutTitle", { name: wordmark })}
+                <span>{t("aboutLead")}</span>
               </div>
-            </div>
-            <div className="sidebar-footer">{footer}</div>
-          </nav>
-        ) : null}
-        {showInfo ? (
-          <div
-            id="morrow-info"
-            role="dialog"
-            aria-label={t("about")}
-            className="menu-panel"
-          >
-            <div className="menu-name">
-              {t("aboutTitle", { name: wordmark })}
-              <span>{t("aboutLead")}</span>
-            </div>
-            {shortcuts}
-            <p className="menu-note">{t("aboutText")}</p>
-            <div className="menu-divider" />
-            {footer}
-          </div>
-        ) : null}
-      </div>
+              {shortcuts}
+              <p className="menu-note">{t("aboutText")}</p>
+              <div className="menu-divider" />
+              {footer}
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </motion.div>
       <section className="workspace-host">
         {open ? (
           <ContactRoom key={open.id} thread={open} labels={statusLabels} />
         ) : null}
-        {/* The chat stays mounted under a thread, so its turn is not lost. */}
-        <div className="morrow-chat" hidden={open !== null}>
+        {/* The chat stays mounted under a thread, so its turn is not lost;
+            a new key draws it again on another dialogue. */}
+        <div key={chatKey} className="morrow-chat" hidden={open !== null}>
           {children}
         </div>
       </section>

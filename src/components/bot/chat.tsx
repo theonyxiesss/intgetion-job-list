@@ -50,6 +50,7 @@ import {
   ApplyCardText,
   isAccountCardTool,
 } from "@/components/bot/account-card";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { AssistantAnswer } from "@/components/bot/chat-markdown";
 import { MorrowJobCard } from "@/components/morrow/morrow-job-card";
 import { MorrowMark } from "@/components/morrow/morrow-mark";
@@ -460,6 +461,13 @@ export function Chat({
   const fieldRef = useRef<HTMLTextAreaElement>(null);
   /** Empty chat sits mid-screen; a started conversation pins the field to the bottom. */
   const welcome = entries.length === 0;
+  const reduceMotion = useReducedMotion();
+  /** The mockup's entrance for one message row (TZ 53). */
+  const rowMotion = {
+    initial: { opacity: 0, y: 8 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: reduceMotion ? 0 : 0.24 },
+  };
   const suggestionMessages = entries.flatMap((entry) =>
     entry.kind === "user" || entry.kind === "assistant"
       ? [{ id: entry.key, role: entry.kind, text: entry.text }]
@@ -1603,11 +1611,15 @@ export function Chat({
             {entries.map((entry) => {
               if (entry.kind === "user" && morrow) {
                 return (
-                  <div key={entry.key} className="message-row user">
+                  <motion.div
+                    key={entry.key}
+                    className="message-row user"
+                    {...rowMotion}
+                  >
                     <div className="message-body">
                       <div className="user-bubble">{entry.text}</div>
                     </div>
-                  </div>
+                  </motion.div>
                 );
               }
               if (entry.kind === "user") {
@@ -1621,9 +1633,11 @@ export function Chat({
                 );
               }
               if (entry.kind === "assistant") {
+                const Row = morrow ? motion.div : "div";
                 return (
-                  <div
+                  <Row
                     key={entry.key}
+                    {...(morrow ? rowMotion : {})}
                     className={
                       morrow
                         ? "message-row assistant message-body assistant-text"
@@ -1642,7 +1656,7 @@ export function Chat({
                       }
                       onTyping={setAnswerTyping}
                     />
-                  </div>
+                  </Row>
                 );
               }
               if (entry.kind === "event") {
@@ -1701,7 +1715,11 @@ export function Chat({
                 if (entry.jobs.length === 0) return null;
                 if (morrow) {
                   return (
-                    <div key={entry.key} className="message-row assistant">
+                    <motion.div
+                      key={entry.key}
+                      className="message-row assistant"
+                      {...rowMotion}
+                    >
                       <div className="message-body results-list">
                         {entry.jobs.map((job) => (
                           <MorrowJobCard
@@ -1711,7 +1729,7 @@ export function Chat({
                           />
                         ))}
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 }
                 return (
@@ -2174,22 +2192,38 @@ export function Chat({
             </div>
           )}
         </div>
-        <div
+        <motion.div
+          layout={morrow ? "position" : false}
+          transition={{
+            layout: {
+              duration: reduceMotion ? 0 : 0.4,
+              ease: [0.22, 1, 0.36, 1],
+            },
+          }}
           className={
             morrow
               ? "composer-wrap flex flex-col gap-3"
               : "mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-3 px-4 md:px-6"
           }
         >
-          {morrow && welcome ? (
-            <div className="welcome-brand">
-              <p className="welcome-title">
-                <MorrowMark />
-                <span>{morrow.wordmark}</span>
-              </p>
-              <p>{morrow.tagline}</p>
-            </div>
-          ) : null}
+          <AnimatePresence initial={false}>
+            {morrow && welcome ? (
+              <motion.div
+                key="brand"
+                className="welcome-brand"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0, y: -8 }}
+                transition={{ duration: reduceMotion ? 0 : 0.2 }}
+              >
+                <p className="welcome-title">
+                  <MorrowMark />
+                  <span>{morrow.wordmark}</span>
+                </p>
+                <p>{morrow.tagline}</p>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
           {actions.signup && !signedIn && (
             <p className="flex flex-col items-start gap-2">
               <Link
@@ -2449,7 +2483,7 @@ export function Chat({
               </div>
             </form>
           )}
-        </div>
+        </motion.div>
         {welcome && !morrow && (
           <div
             aria-hidden="true"

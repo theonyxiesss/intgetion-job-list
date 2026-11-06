@@ -130,6 +130,69 @@ export async function latestGeneralConversationForUser(
   return row;
 }
 
+/**
+ * A user's general web threads, newest first, each with its first typed
+ * line as a title (TZ 53). Attached files are not titles.
+ */
+export async function listGeneralConversationsForUser(
+  userId: string,
+  limit = 50,
+): Promise<{ id: string; lastMessageAt: Date; firstLine: string | null }[]> {
+  const rows = await getDb()
+    .select({
+      id: botConversations.id,
+      lastMessageAt: botConversations.lastMessageAt,
+    })
+    .from(botConversations)
+    .where(
+      and(
+        eq(botConversations.userId, userId),
+        eq(botConversations.channel, "web"),
+        isNull(botConversations.jobId),
+        isNull(botConversations.campaignId),
+        isNull(botConversations.inviteId),
+      ),
+    )
+    .orderBy(desc(botConversations.lastMessageAt))
+    .limit(limit);
+  if (rows.length === 0) return [];
+  const firsts = await getDb()
+    .selectDistinctOn([botMessages.conversationId], {
+      conversationId: botMessages.conversationId,
+      content: botMessages.content,
+    })
+    .from(botMessages)
+    .where(
+      and(
+        inArray(
+          botMessages.conversationId,
+          rows.map((row) => row.id),
+        ),
+        eq(botMessages.role, "user"),
+        isNull(botMessages.toolCall),
+      ),
+    )
+    .orderBy(botMessages.conversationId, asc(botMessages.createdAt));
+  const byId = new Map(firsts.map((row) => [row.conversationId, row.content]));
+  return rows.map((row) => ({ ...row, firstLine: byId.get(row.id) ?? null }));
+}
+
+export async function findConversationById(
+  id: string,
+): Promise<ConversationRow | undefined> {
+  const [row] = await getDb()
+    .select()
+    .from(botConversations)
+    .where(eq(botConversations.id, id))
+    .limit(1);
+  return row;
+}
+
+/** Removes a thread and, by cascade, its messages and cards. */
+export async function deleteConversation(id: string) {
+  await getDb().delete(botConversations).where(eq(botConversations.id, id));
+}
+
 /** Points an existing conversation at a new session cookie. */
 export async function replaceSessionToken(id: string, tokenHash: string) {
   await getDb()

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowUp,
   Bookmark,
@@ -33,6 +34,7 @@ export function MorrowJobCard({
   const explain = useTranslations("explain");
   const money = intlLocale(useLocale());
   const [open, setOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
   const [details, setDetails] = useState<Details | null>(null);
   const subject = { title: job.title, company: job.companyName, id: job.id };
 
@@ -102,38 +104,47 @@ export function MorrowJobCard({
           {open ? t("less") : t("more")} <ChevronRight size={13} />
         </span>
       </button>
-      {open ? (
-        <div className="op-detail">
-          {details?.state === "ready" ? (
-            <p>{details.text || t("empty")}</p>
-          ) : (
-            <p role="status">
-              {details?.state === "error" ? t("error") : t("loading")}
-            </p>
-          )}
-          {reasons.length > 0 ? (
-            <div className="why-match">
-              <Sparkles size={14} aria-hidden="true" />
-              <span>{reasons.join(" ")}</span>
+      <AnimatePresence initial={false}>
+        {open ? (
+          <motion.div
+            key="detail"
+            className="op-detail"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0 : 0.18, ease: "easeOut" }}
+          >
+            {details?.state === "ready" ? (
+              <p>{details.text || t("empty")}</p>
+            ) : (
+              <p role="status">
+                {details?.state === "error" ? t("error") : t("loading")}
+              </p>
+            )}
+            {reasons.length > 0 ? (
+              <div className="why-match">
+                <Sparkles size={14} aria-hidden="true" />
+                <span>{reasons.join(" ")}</span>
+              </div>
+            ) : null}
+            <div className="detail-actions">
+              <button
+                type="button"
+                onClick={() => handSpokiAsk(t("askLetter", subject))}
+              >
+                <FileText size={13} aria-hidden="true" />
+                {t("letter")}
+              </button>
+              <button
+                type="button"
+                onClick={() => handSpokiAsk(t("askApply", subject))}
+              >
+                {t("apply")} <ArrowUp size={13} aria-hidden="true" />
+              </button>
             </div>
-          ) : null}
-          <div className="detail-actions">
-            <button
-              type="button"
-              onClick={() => handSpokiAsk(t("askLetter", subject))}
-            >
-              <FileText size={13} aria-hidden="true" />
-              {t("letter")}
-            </button>
-            <button
-              type="button"
-              onClick={() => handSpokiAsk(t("askApply", subject))}
-            >
-              {t("apply")} <ArrowUp size={13} aria-hidden="true" />
-            </button>
-          </div>
-        </div>
-      ) : null}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
       <div className="op-actions">
         <span>{job.score !== undefined ? t("forYou") : t("opportunity")}</span>
         <button

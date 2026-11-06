@@ -5562,6 +5562,10 @@
     "attachCv": "Lebenslauf oder Portfolio anhängen",
     "dialogues": "DEINE DIALOGE",
     "searchDialogues": "Gespräch finden…",
-    "noDialogues": "Keine Gespräche gefunden."
+    "noDialogues": "Keine Gespräche gefunden.",
+    "newConversation": "Neues Gespräch",
+    "untitled": "Neues Gespräch",
+    "deleteDialogue": "„{title}“ löschen",
+    "deleteConfirm": "„{title}“ löschen? Das Gespräch und seine Nachrichten werden entfernt."
   }
 }
