@@ -5463,5 +5463,42 @@
     "eventsConfs": "Événements et conférences",
     "spokiAgent": "Agent IA Spoki",
     "billing": "Paiements et factures"
+  },
+  "morrow": {
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "discover": "Découvrir",
+    "mine": "Vos éléments",
+    "employer": "Pour les employeurs",
+    "themeLight": "Thème clair",
+    "themeDark": "Thème sombre",
+    "signIn": "Se connecter",
+    "voice": "La saisie vocale arrive bientôt",
+    "items": {
+      "jobs": "Trouver un emploi",
+      "jobsHint": "Selon vos compétences et préférences",
+      "freelance": "Trouver une mission freelance",
+      "freelanceHint": "Missions et services",
+      "events": "Événements",
+      "salaries": "Salaires",
+      "saved": "Offres enregistrées",
+      "applications": "Mes candidatures",
+      "profile": "Mon profil",
+      "settings": "Notifications",
+      "postJob": "Publier une offre",
+      "myJobs": "Mes offres et candidats"
+    },
+    "prompts": {
+      "jobs": "Trouve des offres adaptées à mon profil",
+      "freelance": "Trouve-moi des missions freelance",
+      "events": "Montre les prochains événements Web3 et IT",
+      "salaries": "Quels salaires sont proposés pour mon poste ?",
+      "saved": "Montre mes offres enregistrées",
+      "applications": "Montre mes candidatures et leur statut",
+      "profile": "Montre mon profil",
+      "settings": "Montre mes paramètres de notification",
+      "postJob": "Je veux publier une offre",
+      "myJobs": "Montre mes offres et leurs candidats"
+    }
   }
 }

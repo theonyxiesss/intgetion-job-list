@@ -130,7 +130,7 @@ test("notifications feed, preferences, and unsubscribe", async ({
     items: { id: string }[];
   };
   expect(body.unreadCount).toBeGreaterThan(0);
-  await employer.goto("/en");
+  await employer.goto("/en/jobs");
   await expect(
     employer.getByRole("link", { name: /Notifications/ }),
   ).toContainText(String(body.unreadCount));

@@ -139,7 +139,7 @@ test("the cron endpoint hides itself without the secret", async ({
 
 test("a forged session header does not sign a guest in", async ({ page }) => {
   await page.setExtraHTTPHeaders({ "x-intgetion-session": "1" });
-  await page.goto("/en");
+  await page.goto("/en/jobs");
   const account = page.getByRole("navigation", { name: "Account" });
   await expect(account.getByRole("button", { name: "Sign in" })).toBeVisible();
   await expect(account.getByRole("button", { name: "Sign out" })).toHaveCount(

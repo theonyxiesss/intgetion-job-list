@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, ArrowUp, RotateCcw, Square } from "lucide-react";
+import { ArrowDown, ArrowUp, Mic, RotateCcw, Square } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useStickToBottom } from "use-stick-to-bottom";
 import {
@@ -359,8 +359,11 @@ export function Chat({
   freelanceCopy = {},
   variant = "page",
   section,
+  voiceSoon,
 }: {
   signedIn: boolean;
+  /** Shows a microphone stub with this hint (TZ 53); voice is not built yet. */
+  voiceSoon?: string;
   /** Card labels from the `jobs` namespace, read where the chat is rendered (D377). */
   jobCardText: ChatJobCardText;
   /**
@@ -2101,6 +2104,17 @@ export function Chat({
                 }}
                 className="max-h-[min(10rem,30dvh)] min-h-11 flex-1 resize-none overflow-x-hidden bg-transparent py-3 leading-5 text-fg placeholder:text-fg-subtle focus-visible:outline-none"
               />
+              {voiceSoon ? (
+                <button
+                  type="button"
+                  aria-disabled="true"
+                  title={voiceSoon}
+                  className="flex size-11 shrink-0 cursor-default items-center justify-center rounded-full text-fg-subtle"
+                >
+                  <Icon icon={Mic} size={20} />
+                  <span className="sr-only">{voiceSoon}</span>
+                </button>
+              ) : null}
               {sending ? (
                 <button
                   type="button"

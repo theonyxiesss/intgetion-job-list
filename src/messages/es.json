@@ -3222,7 +3222,11 @@
       "replyBad": "Escribe un correo o un nombre de Telegram.",
       "orgLong": "El nombre de la empresa debe tener menos de 120 caracteres.",
       "doneTitle": "Solicitud guardada",
-      "steps": { "goal": "Objetivo", "brief": "Brief", "review": "Revisión" },
+      "steps": {
+        "goal": "Objetivo",
+        "brief": "Brief",
+        "review": "Revisión"
+      },
       "goalTitle": "¿Qué resultado quieres conseguir?",
       "goalLead": "Empieza por el resultado. INTGETION propondrá un equipo adecuado tras revisar la solicitud.",
       "goals": [
@@ -5459,5 +5463,42 @@
     "eventsConfs": "Eventos y conferencias",
     "spokiAgent": "Agente de IA Spoki",
     "billing": "Pagos y facturas"
+  },
+  "morrow": {
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "discover": "Descubrir",
+    "mine": "Lo tuyo",
+    "employer": "Para empresas",
+    "themeLight": "Tema claro",
+    "themeDark": "Tema oscuro",
+    "signIn": "Iniciar sesión",
+    "voice": "La entrada por voz llegará pronto",
+    "items": {
+      "jobs": "Buscar empleo",
+      "jobsHint": "Según tus habilidades y preferencias",
+      "freelance": "Buscar freelance",
+      "freelanceHint": "Tareas y servicios",
+      "events": "Eventos",
+      "salaries": "Salarios",
+      "saved": "Empleos guardados",
+      "applications": "Mis candidaturas",
+      "profile": "Mi perfil",
+      "settings": "Notificaciones",
+      "postJob": "Publicar empleo",
+      "myJobs": "Mis empleos y candidatos"
+    },
+    "prompts": {
+      "jobs": "Busca empleos que encajen con mi perfil",
+      "freelance": "Busca tareas freelance para mí",
+      "events": "Muestra los próximos eventos de Web3 e IT",
+      "salaries": "¿Qué salarios se ofrecen para mi puesto?",
+      "saved": "Muestra mis empleos guardados",
+      "applications": "Muestra mis candidaturas y sus estados",
+      "profile": "Muestra mi perfil",
+      "settings": "Muestra mis ajustes de notificaciones",
+      "postJob": "Quiero publicar un empleo",
+      "myJobs": "Muestra mis empleos y sus candidatos"
+    }
   }
 }

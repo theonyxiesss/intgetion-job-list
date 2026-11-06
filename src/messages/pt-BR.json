@@ -3222,7 +3222,11 @@
       "replyBad": "Informe um e-mail ou um nome no Telegram.",
       "orgLong": "O nome da empresa precisa ter menos de 120 caracteres.",
       "doneTitle": "Solicitação salva",
-      "steps": { "goal": "Objetivo", "brief": "Briefing", "review": "Revisão" },
+      "steps": {
+        "goal": "Objetivo",
+        "brief": "Briefing",
+        "review": "Revisão"
+      },
       "goalTitle": "Que resultado você quer alcançar?",
       "goalLead": "Comece pelo resultado. A INTGETION vai sugerir uma equipe após avaliar a solicitação.",
       "goals": [
@@ -5459,5 +5463,42 @@
     "eventsConfs": "Eventos e conferências",
     "spokiAgent": "Agente de IA Spoki",
     "billing": "Pagamentos e faturas"
+  },
+  "morrow": {
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu",
+    "discover": "Descobrir",
+    "mine": "Seus",
+    "employer": "Para empresas",
+    "themeLight": "Tema claro",
+    "themeDark": "Tema escuro",
+    "signIn": "Entrar",
+    "voice": "Entrada por voz em breve",
+    "items": {
+      "jobs": "Encontrar vaga",
+      "jobsHint": "Com base nas suas habilidades e preferências",
+      "freelance": "Encontrar freelance",
+      "freelanceHint": "Tarefas e serviços",
+      "events": "Eventos",
+      "salaries": "Salários",
+      "saved": "Vagas salvas",
+      "applications": "Minhas candidaturas",
+      "profile": "Meu perfil",
+      "settings": "Notificações",
+      "postJob": "Publicar vaga",
+      "myJobs": "Minhas vagas e candidatos"
+    },
+    "prompts": {
+      "jobs": "Encontre vagas que combinem com meu perfil",
+      "freelance": "Encontre tarefas freelance para mim",
+      "events": "Mostre os próximos eventos de Web3 e TI",
+      "salaries": "Quais salários são oferecidos para a minha função?",
+      "saved": "Mostre minhas vagas salvas",
+      "applications": "Mostre minhas candidaturas e seus status",
+      "profile": "Mostre meu perfil",
+      "settings": "Mostre minhas configurações de notificação",
+      "postJob": "Quero publicar uma vaga",
+      "myJobs": "Mostre minhas vagas e seus candidatos"
+    }
   }
 }

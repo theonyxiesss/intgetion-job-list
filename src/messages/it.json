@@ -3222,7 +3222,11 @@
       "replyBad": "Indica un’email o un nome Telegram.",
       "orgLong": "Il nome dell’azienda deve contenere meno di 120 caratteri.",
       "doneTitle": "La richiesta è stata salvata",
-      "steps": { "goal": "Obiettivo", "brief": "Brief", "review": "Verifica" },
+      "steps": {
+        "goal": "Obiettivo",
+        "brief": "Brief",
+        "review": "Verifica"
+      },
       "goalTitle": "Quale risultato vuoi raggiungere?",
       "goalLead": "Parti dal risultato. Dopo aver valutato la richiesta, INTGETION proporrà il team più adatto.",
       "goals": [
@@ -5459,5 +5463,42 @@
     "eventsConfs": "Eventi e conferenze",
     "spokiAgent": "Agente IA Spoki",
     "billing": "Pagamenti e fatture"
+  },
+  "morrow": {
+    "openMenu": "Apri menu",
+    "closeMenu": "Chiudi menu",
+    "discover": "Scopri",
+    "mine": "I tuoi",
+    "employer": "Per le aziende",
+    "themeLight": "Tema chiaro",
+    "themeDark": "Tema scuro",
+    "signIn": "Accedi",
+    "voice": "L'input vocale arriverà presto",
+    "items": {
+      "jobs": "Trova lavoro",
+      "jobsHint": "In base a competenze e preferenze",
+      "freelance": "Trova lavori freelance",
+      "freelanceHint": "Incarichi e servizi",
+      "events": "Eventi",
+      "salaries": "Stipendi",
+      "saved": "Offerte salvate",
+      "applications": "Le mie candidature",
+      "profile": "Il mio profilo",
+      "settings": "Notifiche",
+      "postJob": "Pubblica un'offerta",
+      "myJobs": "Le mie offerte e i candidati"
+    },
+    "prompts": {
+      "jobs": "Trova offerte adatte al mio profilo",
+      "freelance": "Trova incarichi freelance per me",
+      "events": "Mostra i prossimi eventi Web3 e IT",
+      "salaries": "Quali stipendi vengono offerti per il mio ruolo?",
+      "saved": "Mostra le mie offerte salvate",
+      "applications": "Mostra le mie candidature e il loro stato",
+      "profile": "Mostra il mio profilo",
+      "settings": "Mostra le mie impostazioni di notifica",
+      "postJob": "Voglio pubblicare un'offerta",
+      "myJobs": "Mostra le mie offerte e i loro candidati"
+    }
   }
 }

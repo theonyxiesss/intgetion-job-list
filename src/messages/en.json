@@ -3222,7 +3222,11 @@
       "replyBad": "Enter an email or a Telegram name.",
       "orgLong": "Keep the company name under 120 characters.",
       "doneTitle": "Your request is saved",
-      "steps": { "goal": "Goal", "brief": "Brief", "review": "Review" },
+      "steps": {
+        "goal": "Goal",
+        "brief": "Brief",
+        "review": "Review"
+      },
       "goalTitle": "What are you trying to achieve?",
       "goalLead": "Start with the outcome. INTGETION will suggest a team after reviewing the request.",
       "goals": [
@@ -5965,5 +5969,42 @@
     "eventsConfs": "Events and conferences",
     "spokiAgent": "AI agent Spoki",
     "billing": "Payments and invoices"
+  },
+  "morrow": {
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "discover": "Discover",
+    "mine": "Yours",
+    "employer": "For employers",
+    "themeLight": "Light theme",
+    "themeDark": "Dark theme",
+    "signIn": "Sign in",
+    "voice": "Voice input is coming soon",
+    "items": {
+      "jobs": "Find a job",
+      "jobsHint": "Based on your skills and preferences",
+      "freelance": "Find freelance work",
+      "freelanceHint": "Tasks and services",
+      "events": "Events",
+      "salaries": "Salaries",
+      "saved": "Saved jobs",
+      "applications": "My applications",
+      "profile": "My profile",
+      "settings": "Notifications",
+      "postJob": "Post a job",
+      "myJobs": "My jobs and candidates"
+    },
+    "prompts": {
+      "jobs": "Find jobs that match my profile",
+      "freelance": "Find freelance tasks for me",
+      "events": "Show upcoming Web3 and IT events",
+      "salaries": "What salaries are offered for my role?",
+      "saved": "Show my saved jobs",
+      "applications": "Show my applications and their statuses",
+      "profile": "Show my profile",
+      "settings": "Show my notification settings",
+      "postJob": "I want to post a job",
+      "myJobs": "Show my jobs and their candidates"
+    }
   }
 }

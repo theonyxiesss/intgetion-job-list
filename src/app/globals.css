@@ -925,3 +925,230 @@ w3m-modal.open {
     transform: none;
   }
 }
+
+/* Chat home in the Morrow style (TZ 53). The chat keeps its own classes;
+   the palette and the face change through the tokens inside `.morrow`. */
+:root {
+  --font-manrope-base: var(--font-manrope);
+}
+
+.morrow {
+  --bg: #101010;
+  --surface: #171717;
+  --surface-2: #1c1c1c;
+  --line: #292929;
+  --line-strong: #343434;
+  --fg: #f4f4f4;
+  --fg-muted: #999999;
+  --fg-subtle: #8a8a8a;
+  --signal: #f4f4f4;
+  --signal-fg: #101010;
+  --accent: #f4f4f4;
+  --accent-fg: #101010;
+  --font-manrope: var(--font-dm-sans), var(--font-manrope-base);
+  --font-text:
+    var(--font-dm-sans), var(--font-manrope-base), ui-sans-serif, system-ui,
+    sans-serif;
+  --font-display: var(--font-text);
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  display: flex;
+  height: 100dvh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-text);
+  font-size: 15px;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] .morrow {
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --surface-2: #f0f0f0;
+  --line: #e5e5e5;
+  --line-strong: #d8d8d8;
+  --fg: #1b1b1b;
+  --fg-muted: #666666;
+  --fg-subtle: #6b6b6b;
+  --signal: #1b1b1b;
+  --signal-fg: #ffffff;
+  --accent: #1b1b1b;
+  --accent-fg: #ffffff;
+  color-scheme: light;
+}
+
+/* The chat home is the whole screen: the site chrome under it is removed,
+   so keyboard and screen readers never reach it. */
+body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
+  display: none;
+}
+
+.morrow-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 280px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px 12px;
+  gap: 12px;
+}
+
+.morrow-sidebar-head,
+.morrow-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 8px;
+}
+
+.morrow-logo {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+}
+
+.morrow-nav {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  scrollbar-width: thin;
+}
+
+.morrow-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.morrow-group-title {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--fg-subtle);
+}
+
+.morrow-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  text-align: left;
+  font-size: 14px;
+  color: var(--fg);
+  transition: background-color 0.15s;
+}
+
+.morrow-item:hover {
+  background: var(--surface-2);
+}
+
+.morrow-item svg {
+  flex-shrink: 0;
+  color: var(--fg-muted);
+}
+
+.morrow-item-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.morrow-item-text small {
+  font-size: 12px;
+  color: var(--fg-subtle);
+}
+
+.morrow-sidebar-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.morrow-workspace {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.morrow-workspace > main {
+  min-height: 0;
+}
+
+.morrow-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  color: var(--fg);
+}
+
+.morrow-icon-button:hover {
+  background: var(--surface-2);
+}
+
+.morrow-scrim {
+  display: none;
+}
+
+.morrow-only-mobile {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .morrow-only-mobile {
+    display: flex;
+  }
+
+  .morrow-topbar {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    justify-content: flex-start;
+  }
+
+  .morrow-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 2;
+    width: min(300px, 86vw);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0.3s;
+  }
+
+  .morrow-menu-open .morrow-sidebar {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .morrow-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: var(--overlay);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .morrow-sidebar,
+  .morrow-item {
+    transition: none;
+  }
+}

@@ -238,7 +238,7 @@ test("the sign-in session is kept across reloads, tabs and a restart", async ({
   await page.goto("/en/jobs");
   await expectSignedIn(page);
   const second = await context.newPage();
-  await second.goto("/en");
+  await second.goto("/en/jobs");
   await expectSignedIn(second);
   await second.close();
 
@@ -249,7 +249,7 @@ test("the sign-in session is kept across reloads, tabs and a restart", async ({
   });
   if (!restarted) throw new Error("no browser for the restart check");
   const after = await restarted.newPage();
-  await after.goto("/en");
+  await after.goto("/en/jobs");
   await expectSignedIn(after);
   await restarted.close();
 });

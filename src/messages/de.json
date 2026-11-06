@@ -3222,7 +3222,11 @@
       "replyBad": "Geben Sie eine E-Mail oder einen Telegram-Namen an.",
       "orgLong": "Der Unternehmensname darf höchstens 120 Zeichen haben.",
       "doneTitle": "Ihre Anfrage wurde gespeichert",
-      "steps": { "goal": "Ziel", "brief": "Briefing", "review": "Prüfen" },
+      "steps": {
+        "goal": "Ziel",
+        "brief": "Briefing",
+        "review": "Prüfen"
+      },
       "goalTitle": "Was möchten Sie erreichen?",
       "goalLead": "Beginnen Sie mit dem Ergebnis. INTGETION schlägt nach Prüfung eine passende Teamzusammenstellung vor.",
       "goals": [
@@ -5459,5 +5463,42 @@
     "eventsConfs": "Events und Konferenzen",
     "spokiAgent": "KI-Agent Spoki",
     "billing": "Zahlungen und Rechnungen"
+  },
+  "morrow": {
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "discover": "Entdecken",
+    "mine": "Deins",
+    "employer": "Für Arbeitgeber",
+    "themeLight": "Helles Design",
+    "themeDark": "Dunkles Design",
+    "signIn": "Anmelden",
+    "voice": "Spracheingabe kommt bald",
+    "items": {
+      "jobs": "Job finden",
+      "jobsHint": "Passend zu deinen Fähigkeiten und Wünschen",
+      "freelance": "Freelance finden",
+      "freelanceHint": "Aufträge und Services",
+      "events": "Events",
+      "salaries": "Gehälter",
+      "saved": "Gespeicherte Jobs",
+      "applications": "Meine Bewerbungen",
+      "profile": "Mein Profil",
+      "settings": "Benachrichtigungen",
+      "postJob": "Job veröffentlichen",
+      "myJobs": "Meine Jobs und Kandidaten"
+    },
+    "prompts": {
+      "jobs": "Finde Jobs, die zu meinem Profil passen",
+      "freelance": "Finde Freelance-Aufträge für mich",
+      "events": "Zeige kommende Web3- und IT-Events",
+      "salaries": "Welche Gehälter gibt es für meine Rolle?",
+      "saved": "Zeige meine gespeicherten Jobs",
+      "applications": "Zeige meine Bewerbungen und ihren Status",
+      "profile": "Zeige mein Profil",
+      "settings": "Zeige meine Benachrichtigungseinstellungen",
+      "postJob": "Ich möchte einen Job veröffentlichen",
+      "myJobs": "Zeige meine Jobs und ihre Kandidaten"
+    }
   }
 }

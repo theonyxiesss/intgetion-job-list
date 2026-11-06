@@ -4,7 +4,8 @@ import { expect, test } from "./fixtures";
 // D204: the employers page and the RSS feed.
 // D332: the header top level is jobs and pricing; employers sit in the footer.
 test("a guest reaches the employers page from the footer", async ({ page }) => {
-  await page.goto("/en");
+  // The home page is the chat (TZ 53); the footer lives on the other pages.
+  await page.goto("/en/jobs");
   await page
     .getByRole("contentinfo")
     .getByRole("link", { name: "For employers" })

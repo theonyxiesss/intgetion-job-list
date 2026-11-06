@@ -116,7 +116,7 @@ test("phone tab bar shows the main services to everyone (D468)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 800 });
-  await page.goto("/en");
+  await page.goto("/en/jobs");
   const bar = page.locator("[data-bottom-nav]");
   await expect(bar).toBeVisible();
   await expect(bar.locator('a[href$="/freelance"]')).toBeVisible();
@@ -149,6 +149,6 @@ test("phone has no footer, and the language switch is in the menu (D470)", async
   await expect(menu.locator('a[hreflang="es"]')).toBeVisible();
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.keyboard.press("Escape");
-  await page.goto("/");
+  await page.goto("/en/jobs");
   await expect(page.locator("footer")).toBeVisible();
 });
