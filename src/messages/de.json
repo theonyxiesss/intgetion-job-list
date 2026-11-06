@@ -2107,7 +2107,8 @@
         "mustSay": "Was gesagt werden soll",
         "mustNot": "Was nicht gesagt werden soll",
         "exampleUrls": "Beispiele"
-      }
+      },
+      "set_application_status": "{name} auf „{status}“ setzen. Die Person wird benachrichtigt."
     },
     "fillChoice": {
       "title": "Wie füllen wir {what} aus?",
@@ -5517,7 +5518,9 @@
       "profile": "Mein Profil",
       "settings": "Benachrichtigungen",
       "postJob": "Job veröffentlichen",
-      "myJobs": "Meine Jobs und Kandidaten"
+      "myJobs": "Meine Jobs und Kandidaten",
+      "inbox": "Was gibt es Neues",
+      "plans": "Tarife und Preise"
     },
     "prompts": {
       "jobs": "Finde Jobs, die zu meinem Profil passen",
@@ -5529,7 +5532,9 @@
       "profile": "Zeige mein Profil",
       "settings": "Zeige meine Benachrichtigungseinstellungen",
       "postJob": "Ich möchte einen Job veröffentlichen",
-      "myJobs": "Zeige meine Jobs und ihre Kandidaten"
+      "myJobs": "Zeige meine Jobs und ihre Kandidaten",
+      "inbox": "Was gibt es Neues in meinen Benachrichtigungen?",
+      "plans": "Welche Tarife gibt es und was enthalten sie?"
     },
     "contacts": {
       "assistant": "Spoki",

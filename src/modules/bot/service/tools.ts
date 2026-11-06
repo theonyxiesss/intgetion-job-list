@@ -54,6 +54,7 @@ import type { ShownJob } from "./shown-jobs";
 import type { StepSummary } from "../ui/step-summary";
 import { accountTools } from "./account-tools";
 import { employerJobTools } from "./employer-job-tools";
+import { platformTools } from "./platform-tools";
 import { accountProfileTools } from "./account-profile-tool";
 import { myCardsTools } from "./my-cards-tool";
 import { companyTools } from "./company-tools";
@@ -897,6 +898,7 @@ export const TOOLS: readonly BotTool[] = [
   }),
   ...accountTools,
   ...employerJobTools,
+  ...platformTools,
   ...accountProfileTools,
   ...myCardsTools,
   ...companyTools,

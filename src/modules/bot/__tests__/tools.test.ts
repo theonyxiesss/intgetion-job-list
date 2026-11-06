@@ -31,6 +31,8 @@ describe("bot tool layer (7A)", () => {
       "get_event",
       "offer_step",
       "propose_profile_update",
+      "get_salaries",
+      "get_plans",
       "ugc_price_range",
       "find_freelance_tasks",
       "find_services",

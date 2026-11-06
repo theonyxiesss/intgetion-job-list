@@ -19,6 +19,8 @@ import {
   CalendarDays,
   Check,
   ClipboardList,
+  CreditCard,
+  Inbox,
   Clock3,
   FilePlus2,
   LogIn,
@@ -56,7 +58,9 @@ const MORE: Item[] = [
   { key: "events", icon: CalendarDays },
   { key: "salaries", icon: Banknote },
   { key: "applications", icon: ClipboardList },
+  { key: "inbox", icon: Inbox },
   { key: "settings", icon: Bell },
+  { key: "plans", icon: CreditCard },
 ];
 const EMPLOYER: Item[] = [
   { key: "postJob", icon: FilePlus2 },

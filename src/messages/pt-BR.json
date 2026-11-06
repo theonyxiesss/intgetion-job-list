@@ -2107,7 +2107,8 @@
         "mustSay": "O que dizer",
         "mustNot": "O que não dizer",
         "exampleUrls": "Exemplos"
-      }
+      },
+      "set_application_status": "Mover {name} para “{status}”. O candidato será avisado."
     },
     "fillChoice": {
       "title": "Como vamos preencher {what}?",
@@ -5517,7 +5518,9 @@
       "profile": "Meu perfil",
       "settings": "Notificações",
       "postJob": "Publicar vaga",
-      "myJobs": "Minhas vagas e candidatos"
+      "myJobs": "Minhas vagas e candidatos",
+      "inbox": "Novidades",
+      "plans": "Planos e preços"
     },
     "prompts": {
       "jobs": "Encontre vagas que combinem com meu perfil",
@@ -5529,7 +5532,9 @@
       "profile": "Mostre meu perfil",
       "settings": "Mostre minhas configurações de notificação",
       "postJob": "Quero publicar uma vaga",
-      "myJobs": "Mostre minhas vagas e seus candidatos"
+      "myJobs": "Mostre minhas vagas e seus candidatos",
+      "inbox": "O que há de novo nas minhas notificações?",
+      "plans": "Quais planos existem e o que incluem?"
     },
     "contacts": {
       "assistant": "Spoki",

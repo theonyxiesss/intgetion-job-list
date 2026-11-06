@@ -2107,7 +2107,8 @@
         "mustSay": "Ce qu’il faut dire",
         "mustNot": "Ce qu’il ne faut pas dire",
         "exampleUrls": "Exemples"
-      }
+      },
+      "set_application_status": "Passer {name} à « {status} ». Le candidat sera prévenu."
     },
     "fillChoice": {
       "title": "Comment remplit-on {what} ?",
@@ -5517,7 +5518,9 @@
       "profile": "Mon profil",
       "settings": "Notifications",
       "postJob": "Publier une offre",
-      "myJobs": "Mes offres et candidats"
+      "myJobs": "Mes offres et candidats",
+      "inbox": "Quoi de neuf",
+      "plans": "Offres et tarifs"
     },
     "prompts": {
       "jobs": "Trouve des offres adaptées à mon profil",
@@ -5529,7 +5532,9 @@
       "profile": "Montre mon profil",
       "settings": "Montre mes paramètres de notification",
       "postJob": "Je veux publier une offre",
-      "myJobs": "Montre mes offres et leurs candidats"
+      "myJobs": "Montre mes offres et leurs candidats",
+      "inbox": "Quoi de neuf dans mes notifications ?",
+      "plans": "Quelles offres existent et que comprennent-elles ?"
     },
     "contacts": {
       "assistant": "Spoki",

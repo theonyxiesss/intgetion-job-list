@@ -2107,7 +2107,8 @@
         "mustSay": "Cosa dire",
         "mustNot": "Cosa non dire",
         "exampleUrls": "Esempi"
-      }
+      },
+      "set_application_status": "Spostare {name} a «{status}». Il candidato verrà avvisato."
     },
     "fillChoice": {
       "title": "Come compiliamo {what}?",
@@ -5517,7 +5518,9 @@
       "profile": "Il mio profilo",
       "settings": "Notifiche",
       "postJob": "Pubblica un'offerta",
-      "myJobs": "Le mie offerte e i candidati"
+      "myJobs": "Le mie offerte e i candidati",
+      "inbox": "Novità",
+      "plans": "Piani e prezzi"
     },
     "prompts": {
       "jobs": "Trova offerte adatte al mio profilo",
@@ -5529,7 +5532,9 @@
       "profile": "Mostra il mio profilo",
       "settings": "Mostra le mie impostazioni di notifica",
       "postJob": "Voglio pubblicare un'offerta",
-      "myJobs": "Mostra le mie offerte e i loro candidati"
+      "myJobs": "Mostra le mie offerte e i loro candidati",
+      "inbox": "Cosa c’è di nuovo nelle mie notifiche?",
+      "plans": "Quali piani ci sono e cosa includono?"
     },
     "contacts": {
       "assistant": "Spoki",

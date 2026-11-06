@@ -2107,7 +2107,8 @@
         "mustSay": "Qué decir",
         "mustNot": "Qué no decir",
         "exampleUrls": "Ejemplos"
-      }
+      },
+      "set_application_status": "Mover {name} a «{status}». Se avisará al candidato."
     },
     "fillChoice": {
       "title": "¿Cómo rellenamos {what}?",
@@ -5517,7 +5518,9 @@
       "profile": "Mi perfil",
       "settings": "Notificaciones",
       "postJob": "Publicar empleo",
-      "myJobs": "Mis empleos y candidatos"
+      "myJobs": "Mis empleos y candidatos",
+      "inbox": "Novedades",
+      "plans": "Planes y precios"
     },
     "prompts": {
       "jobs": "Busca empleos que encajen con mi perfil",
@@ -5529,7 +5532,9 @@
       "profile": "Muestra mi perfil",
       "settings": "Muestra mis ajustes de notificaciones",
       "postJob": "Quiero publicar un empleo",
-      "myJobs": "Muestra mis empleos y sus candidatos"
+      "myJobs": "Muestra mis empleos y sus candidatos",
+      "inbox": "¿Qué hay de nuevo en mis notificaciones?",
+      "plans": "¿Qué planes hay y qué incluyen?"
     },
     "contacts": {
       "assistant": "Spoki",

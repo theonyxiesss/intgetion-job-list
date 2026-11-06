@@ -2107,7 +2107,8 @@
         "mustSay": "What to say",
         "mustNot": "What not to say",
         "exampleUrls": "Examples"
-      }
+      },
+      "set_application_status": "Move {name} to “{status}”. The candidate will be told."
     },
     "fillChoice": {
       "title": "How shall we fill in {what}?",
@@ -6023,7 +6024,9 @@
       "profile": "My profile",
       "settings": "Notifications",
       "postJob": "Post a job",
-      "myJobs": "My jobs and candidates"
+      "myJobs": "My jobs and candidates",
+      "inbox": "What is new",
+      "plans": "Plans and prices"
     },
     "prompts": {
       "jobs": "Find jobs that match my profile",
@@ -6035,7 +6038,9 @@
       "profile": "Show my profile",
       "settings": "Show my notification settings",
       "postJob": "I want to post a job",
-      "myJobs": "Show my jobs and their candidates"
+      "myJobs": "Show my jobs and their candidates",
+      "inbox": "What is new in my notifications?",
+      "plans": "What plans are there and what do they include?"
     },
     "contacts": {
       "assistant": "Spoki",

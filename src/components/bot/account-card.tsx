@@ -18,6 +18,7 @@ export const ACCOUNT_CARD_TOOLS = [
   "cancel_reminder",
   "propose_job_update",
   "set_job_status",
+  "set_application_status",
   "set_service_status",
   "propose_account_update",
   "set_email_language",
@@ -32,6 +33,16 @@ export function isAccountCardTool(tool: string): boolean {
 }
 
 const CHANNELS = new Set(["inapp", "email", "telegram"]);
+const applicationStatus = new Set([
+  "applied",
+  "viewed",
+  "shortlisted",
+  "interview",
+  "offer",
+  "hired",
+  "rejected",
+  "withdrawn",
+]);
 
 /** Vacancy fields Spoki may change, in card order (D498). */
 const JOB_FIELDS = [
@@ -69,6 +80,8 @@ export function AccountCardText({
   const types = useTranslations("notifications.types");
   const jobs = useTranslations("jobs");
   const channels = useTranslations("notificationSettings");
+  const statuses = useTranslations("chat.applicationStatus");
+  const applicationStatusText = (status: string) => statuses(status);
   const a = (args ?? {}) as Record<string, unknown>;
   const name = preview ?? "";
   if (tool === "set_notification") {
@@ -87,6 +100,15 @@ export function AccountCardText({
   }
   if (tool === "set_profile_hidden") {
     return t("set_profile_hidden", { on: flag(a, "hidden") });
+  }
+  if (tool === "set_application_status") {
+    const status = typeof a.status === "string" ? a.status : "";
+    return t("set_application_status", {
+      name,
+      status: applicationStatus.has(status)
+        ? applicationStatusText(status)
+        : status,
+    });
   }
   if (tool === "set_job_status") {
     const action = typeof a.action === "string" ? a.action : "";

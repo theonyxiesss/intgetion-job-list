@@ -43,6 +43,7 @@ describe("account tools (D472)", () => {
       findTool("set_ugc_status")!,
       findTool("propose_ugc_update")!,
       findTool("withdraw_ugc_campaign")!,
+      findTool("set_application_status")!,
     ].filter((tool) => tool.confirm(ctx));
     expect(cardTools.map((tool) => tool.name).sort()).toEqual(
       [...ACCOUNT_CARD_TOOLS].sort(),
@@ -112,6 +113,7 @@ describe("account card copy (D472)", () => {
             channel: "Email",
             action: "close",
             changes: "Title: Lead",
+            status: "Shortlisted",
           } as never,
         );
         expect(text).not.toContain("{");
