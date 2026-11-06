@@ -147,13 +147,6 @@ export async function Header() {
       ],
     },
     { href: "/chat", label: t("headerNav.spokiAgent") },
-    {
-      label: t("headerNav.about"),
-      links: [
-        { href: "/company", label: t("headerNav.aboutCompany") },
-        { href: "/for-employers", label: t("nav.employers") },
-      ],
-    },
     { href: "/pricing", label: t("nav.pricing") },
   ];
 
