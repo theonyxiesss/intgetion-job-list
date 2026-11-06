@@ -2356,6 +2356,19 @@
         "posted": "Posted",
         "unknown": "Not stated"
       }
+    },
+    "jobCard": {
+      "more": "Details",
+      "less": "Hide details",
+      "save": "Save",
+      "letter": "Cover letter",
+      "apply": "Apply",
+      "loading": "Loading the description…",
+      "error": "Could not load the description. Try again.",
+      "empty": "The employer has not added a description.",
+      "askSave": "Save the job “{title}” at {company} (id {id})",
+      "askLetter": "Write a cover letter draft for “{title}” at {company} (id {id}) based on my profile",
+      "askApply": "I want to apply to “{title}” at {company} (id {id})"
     }
   },
   "cookies": {

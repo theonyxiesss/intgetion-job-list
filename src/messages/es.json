@@ -2356,6 +2356,19 @@
         "posted": "Publicado",
         "unknown": "No indicado"
       }
+    },
+    "jobCard": {
+      "more": "Detalles",
+      "less": "Ocultar detalles",
+      "save": "Guardar",
+      "letter": "Carta",
+      "apply": "Postularme",
+      "loading": "Cargando la descripción…",
+      "error": "No se pudo cargar la descripción. Inténtalo de nuevo.",
+      "empty": "La empresa no añadió una descripción.",
+      "askSave": "Guarda el empleo «{title}» en {company} (id {id})",
+      "askLetter": "Escribe un borrador de carta de presentación para «{title}» en {company} (id {id}) según mi perfil",
+      "askApply": "Quiero postularme a «{title}» en {company} (id {id})"
     }
   },
   "cookies": {

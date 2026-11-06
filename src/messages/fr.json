@@ -2356,6 +2356,19 @@
         "posted": "Publiée",
         "unknown": "Non précisé"
       }
+    },
+    "jobCard": {
+      "more": "Détails",
+      "less": "Masquer les détails",
+      "save": "Enregistrer",
+      "letter": "Lettre",
+      "apply": "Postuler",
+      "loading": "Chargement de la description…",
+      "error": "Impossible de charger la description. Réessayez.",
+      "empty": "L’employeur n’a pas ajouté de description.",
+      "askSave": "Enregistre l’offre « {title} » chez {company} (id {id})",
+      "askLetter": "Rédige un brouillon de lettre de motivation pour « {title} » chez {company} (id {id}) à partir de mon profil",
+      "askApply": "Je veux postuler à « {title} » chez {company} (id {id})"
     }
   },
   "cookies": {

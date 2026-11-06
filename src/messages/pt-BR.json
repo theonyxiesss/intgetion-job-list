@@ -2356,6 +2356,19 @@
         "posted": "Publicada",
         "unknown": "Não informado"
       }
+    },
+    "jobCard": {
+      "more": "Detalhes",
+      "less": "Ocultar detalhes",
+      "save": "Salvar",
+      "letter": "Carta",
+      "apply": "Candidatar-me",
+      "loading": "Carregando a descrição…",
+      "error": "Não foi possível carregar a descrição. Tente de novo.",
+      "empty": "A empresa não adicionou uma descrição.",
+      "askSave": "Salve a vaga “{title}” na {company} (id {id})",
+      "askLetter": "Escreva um rascunho de carta de apresentação para “{title}” na {company} (id {id}) com base no meu perfil",
+      "askApply": "Quero me candidatar a “{title}” na {company} (id {id})"
     }
   },
   "cookies": {

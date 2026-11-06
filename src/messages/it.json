@@ -2356,6 +2356,19 @@
         "posted": "Pubblicata",
         "unknown": "Non indicato"
       }
+    },
+    "jobCard": {
+      "more": "Dettagli",
+      "less": "Nascondi dettagli",
+      "save": "Salva",
+      "letter": "Lettera",
+      "apply": "Candidati",
+      "loading": "Caricamento della descrizione…",
+      "error": "Impossibile caricare la descrizione. Riprova.",
+      "empty": "L’azienda non ha aggiunto una descrizione.",
+      "askSave": "Salva l’offerta «{title}» presso {company} (id {id})",
+      "askLetter": "Scrivi una bozza di lettera di presentazione per «{title}» presso {company} (id {id}) in base al mio profilo",
+      "askApply": "Voglio candidarmi a «{title}» presso {company} (id {id})"
     }
   },
   "cookies": {

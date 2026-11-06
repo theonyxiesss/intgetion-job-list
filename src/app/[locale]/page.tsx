@@ -96,6 +96,7 @@ export default async function HomePage({
             signedIn={signedIn}
             jobCardText={cardText}
             voiceSoon={morrow("voice")}
+            jobActions
           />
         </main>
       </MorrowHome>

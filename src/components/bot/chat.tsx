@@ -360,8 +360,11 @@ export function Chat({
   variant = "page",
   section,
   voiceSoon,
+  jobActions = false,
 }: {
   signedIn: boolean;
+  /** Buttons under each job card: details, save, letter, apply (TZ 53). */
+  jobActions?: boolean;
   /** Shows a microphone stub with this hint (TZ 53); voice is not built yet. */
   voiceSoon?: string;
   /** Card labels from the `jobs` namespace, read where the chat is rendered (D377). */
@@ -1584,7 +1587,11 @@ export function Chat({
                   <ul key={entry.key} className="grid gap-2">
                     {entry.jobs.map((job) => (
                       <li key={job.id}>
-                        <ChatJobCard job={job} text={jobCardText} />
+                        <ChatJobCard
+                          job={job}
+                          text={jobCardText}
+                          withActions={jobActions}
+                        />
                       </li>
                     ))}
                   </ul>

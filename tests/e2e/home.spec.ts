@@ -58,6 +58,48 @@ test("a side menu item asks the chat (TZ 53)", async ({ page }) => {
   await expect(page).not.toHaveURL(/profile/);
 });
 
+test("a job card opens in place and hands its actions to the chat (TZ 53)", async ({
+  page,
+}) => {
+  const id = "11111111-2222-4333-8444-555555555555";
+  const sent: string[] = [];
+  await page.route("**/api/bot/message", async (route) => {
+    sent.push((route.request().postDataJSON() as { text: string }).text);
+    const job = {
+      id,
+      title: "Senior Frontend Engineer",
+      companyName: "Linear",
+      workFormat: "remote",
+      location: "Europe",
+    };
+    await route.fulfill({
+      status: 200,
+      headers: { "content-type": "text/event-stream" },
+      body:
+        `event: tool_result\ndata: ${JSON.stringify({ type: "tool_result", kind: "jobs", data: [job] })}\n\n` +
+        'event: done\ndata: {"type":"done","conversationId":"00000000-0000-4000-8000-000000000000"}\n\n',
+    });
+  });
+  await page.route(`**/api/jobs/${id}`, (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ job: { description: "Build interfaces." } }),
+    }),
+  );
+  await page.goto("/en");
+  await page
+    .getByRole("complementary")
+    .getByRole("button", { name: /Find a job/ })
+    .click();
+  const log = page.getByRole("log");
+  await log.getByRole("button", { name: "Details" }).click();
+  await expect(log.getByText("Build interfaces.")).toBeVisible();
+  await log.getByRole("button", { name: "Save", exact: true }).click();
+  await expect.poll(() => sent.length).toBe(2);
+  expect(sent[1]).toContain(id);
+});
+
 test("unknown routes use the localized not-found page", async ({ page }) => {
   const response = await page.goto("/en/missing-page");
   expect(response?.status()).toBe(404);

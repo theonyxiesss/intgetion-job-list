@@ -42,6 +42,10 @@ const EMPLOYER: Item[] = [
   { key: "myJobs", icon: Users },
 ];
 
+function noSubscribe() {
+  return () => {};
+}
+
 function readLight() {
   return document.documentElement.dataset.theme === "light";
 }
@@ -71,6 +75,12 @@ export function MorrowHome({
   const t = useTranslations("morrow");
   const [menuOpen, setMenuOpen] = useState(false);
   const light = useSyncExternalStore(watchTheme, readLight, () => false);
+  // A click before hydration has no handler and would be lost.
+  const hydrated = useSyncExternalStore(
+    noSubscribe,
+    () => true,
+    () => false,
+  );
 
   function toggleTheme() {
     const next = !light;
@@ -97,6 +107,7 @@ export function MorrowHome({
             key={key}
             type="button"
             className="morrow-item"
+            disabled={!hydrated}
             onClick={() => ask(key)}
           >
             <ItemIcon size={16} aria-hidden="true" />

@@ -2356,6 +2356,19 @@
         "posted": "Veröffentlicht",
         "unknown": "Nicht angegeben"
       }
+    },
+    "jobCard": {
+      "more": "Details",
+      "less": "Details ausblenden",
+      "save": "Speichern",
+      "letter": "Anschreiben",
+      "apply": "Bewerben",
+      "loading": "Beschreibung wird geladen…",
+      "error": "Die Beschreibung konnte nicht geladen werden. Bitte erneut versuchen.",
+      "empty": "Der Arbeitgeber hat keine Beschreibung hinzugefügt.",
+      "askSave": "Speichere den Job „{title}“ bei {company} (id {id})",
+      "askLetter": "Schreibe einen Entwurf für ein Anschreiben für „{title}“ bei {company} (id {id}) anhand meines Profils",
+      "askApply": "Ich möchte mich auf „{title}“ bei {company} (id {id}) bewerben"
     }
   },
   "cookies": {
