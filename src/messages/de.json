@@ -2369,6 +2369,21 @@
       "askSave": "Speichere den Job „{title}“ bei {company} (id {id})",
       "askLetter": "Schreibe einen Entwurf für ein Anschreiben für „{title}“ bei {company} (id {id}) anhand meines Profils",
       "askApply": "Ich möchte mich auf „{title}“ bei {company} (id {id}) bewerben"
+    },
+    "attach": {
+      "button": "Datei anhängen",
+      "reading": "Datei wird gelesen…",
+      "remove": "Datei entfernen",
+      "ask": "Lies die Datei „{name}“. Wenn es ein Lebenslauf ist, fasse kurz zusammen, was drinsteht, und biete an, mein Profil damit auszufüllen.",
+      "errors": {
+        "ATTACHMENT_TOO_LARGE": "Die Datei ist größer als 4 MB.",
+        "ATTACHMENT_TYPE": "Hänge eine PDF-, TXT- oder MD-Datei an.",
+        "ATTACHMENT_UNREADABLE": "Diese PDF konnte nicht gelesen werden. Versuche eine andere Datei.",
+        "ATTACHMENT_NO_TEXT": "Diese Datei enthält keinen Text. Gescannte PDFs können noch nicht gelesen werden.",
+        "ATTACHMENT_EMPTY": "Die Datei ist leer.",
+        "RATE_LIMITED": "Zu viele Dateien in kurzer Zeit. Versuche es später erneut.",
+        "ATTACHMENT_FAILED": "Die Datei konnte nicht gelesen werden. Versuche es erneut."
+      }
     }
   },
   "cookies": {

@@ -100,6 +100,40 @@ test("a job card opens in place and hands its actions to the chat (TZ 53)", asyn
   expect(sent[1]).toContain(id);
 });
 
+test("a file attached in the chat is read and sent with the message (TZ 53)", async ({
+  page,
+}) => {
+  const sent: { text: string; attachment?: { name: string; text: string } }[] =
+    [];
+  await page.route("**/api/bot/message", async (route) => {
+    sent.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 200,
+      headers: { "content-type": "text/event-stream" },
+      body:
+        'event: token\ndata: {"type":"token","text":"Read it."}\n\n' +
+        'event: done\ndata: {"type":"done","conversationId":"00000000-0000-4000-8000-000000000000"}\n\n',
+    });
+  });
+  await page.goto("/en");
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "cv.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from("Jane Doe\nReact developer, five years."),
+  });
+  await expect(
+    page.getByRole("button", { name: "Remove the file" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Send" }).click();
+  await expect(page.getByText("Read it.")).toBeVisible();
+  expect(sent).toHaveLength(1);
+  expect(sent[0].attachment).toEqual({
+    name: "cv.txt",
+    text: "Jane Doe\nReact developer, five years.",
+  });
+  expect(sent[0].text).toContain("cv.txt");
+});
+
 test("unknown routes use the localized not-found page", async ({ page }) => {
   const response = await page.goto("/en/missing-page");
   expect(response?.status()).toBe(404);

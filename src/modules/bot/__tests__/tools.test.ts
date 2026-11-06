@@ -199,6 +199,19 @@ describe("bot history (7A)", () => {
       createdAt: new Date(),
     }) as Parameters<typeof toLLMMessages>[0][number];
 
+  it("gives an attached file to the model as data with its name (TZ 53)", () => {
+    const text = "Jane Doe. React developer. ".repeat(100);
+    const [message] = toLLMMessages([
+      row("user", text, { attachment: { name: "cv<1>.pdf" } }),
+    ]);
+    expect(message.role).toBe("user");
+    expect(message.content).toMatch(/^\[Attached file: cv&lt;1&gt;\.pdf\]\n/);
+    expect(message.content).toContain('<untrusted_data source="user_file">');
+    // Longer than a chat message, still whole: the file has its own cap.
+    expect(message.content).toContain(text.trim());
+    expect(message.content).not.toContain('truncated="true"');
+  });
+
   it("wraps user text as untrusted data and drops orphan tool results", () => {
     const messages = toLLMMessages([
       row("tool", "orphan", { toolCallId: "gone" }),

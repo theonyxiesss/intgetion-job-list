@@ -3,6 +3,11 @@
  * Other modules may import only this file, never this module's repo.
  */
 export {
+  ATTACHMENT_MAX_BYTES,
+  ATTACHMENT_MAX_CHARS,
+  extractAttachmentText,
+} from "./attachment";
+export {
   BOT_SESSION_COOKIE,
   CONFIRMATION_TTL_MS,
   MAX_TOOL_ROUNDS,

@@ -2369,6 +2369,21 @@
       "askSave": "Save the job “{title}” at {company} (id {id})",
       "askLetter": "Write a cover letter draft for “{title}” at {company} (id {id}) based on my profile",
       "askApply": "I want to apply to “{title}” at {company} (id {id})"
+    },
+    "attach": {
+      "button": "Attach a file",
+      "reading": "Reading the file…",
+      "remove": "Remove the file",
+      "ask": "Read the file “{name}”. If it is a CV, tell me briefly what is in it and offer to fill in my profile from it.",
+      "errors": {
+        "ATTACHMENT_TOO_LARGE": "The file is larger than 4 MB.",
+        "ATTACHMENT_TYPE": "Attach a PDF, TXT or MD file.",
+        "ATTACHMENT_UNREADABLE": "This PDF could not be read. Try another file.",
+        "ATTACHMENT_NO_TEXT": "There is no text in this file. A scanned PDF cannot be read yet.",
+        "ATTACHMENT_EMPTY": "The file is empty.",
+        "RATE_LIMITED": "Too many files in a short time. Try again later.",
+        "ATTACHMENT_FAILED": "The file could not be read. Try again."
+      }
     }
   },
   "cookies": {

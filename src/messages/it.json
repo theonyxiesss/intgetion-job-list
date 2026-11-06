@@ -2369,6 +2369,21 @@
       "askSave": "Salva l’offerta «{title}» presso {company} (id {id})",
       "askLetter": "Scrivi una bozza di lettera di presentazione per «{title}» presso {company} (id {id}) in base al mio profilo",
       "askApply": "Voglio candidarmi a «{title}» presso {company} (id {id})"
+    },
+    "attach": {
+      "button": "Allega un file",
+      "reading": "Lettura del file…",
+      "remove": "Rimuovi il file",
+      "ask": "Leggi il file «{name}». Se è un CV, dimmi in breve cosa contiene e proponi di compilare il mio profilo con esso.",
+      "errors": {
+        "ATTACHMENT_TOO_LARGE": "Il file supera i 4 MB.",
+        "ATTACHMENT_TYPE": "Allega un file PDF, TXT o MD.",
+        "ATTACHMENT_UNREADABLE": "Impossibile leggere questo PDF. Prova un altro file.",
+        "ATTACHMENT_NO_TEXT": "Questo file non contiene testo. Un PDF scansionato non si può ancora leggere.",
+        "ATTACHMENT_EMPTY": "Il file è vuoto.",
+        "RATE_LIMITED": "Troppi file in poco tempo. Riprova più tardi.",
+        "ATTACHMENT_FAILED": "Impossibile leggere il file. Riprova."
+      }
     }
   },
   "cookies": {

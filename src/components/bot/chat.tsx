@@ -1,6 +1,14 @@
 "use client";
 
-import { ArrowDown, ArrowUp, Mic, RotateCcw, Square } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Mic,
+  Paperclip,
+  RotateCcw,
+  Square,
+  X,
+} from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useStickToBottom } from "use-stick-to-bottom";
 import {
@@ -308,6 +316,18 @@ type ChatActions = {
   profileReview: boolean;
 };
 
+/** A file read by `/api/bot/attachment`, waiting to go with the next message. */
+type Attached = { name: string; text: string };
+
+const ATTACH_ERRORS = new Set([
+  "ATTACHMENT_TOO_LARGE",
+  "ATTACHMENT_TYPE",
+  "ATTACHMENT_UNREADABLE",
+  "ATTACHMENT_NO_TEXT",
+  "ATTACHMENT_EMPTY",
+  "RATE_LIMITED",
+]);
+
 let counter = 0;
 const nextKey = () => `e${(counter += 1)}`;
 
@@ -361,10 +381,13 @@ export function Chat({
   section,
   voiceSoon,
   jobActions = false,
+  canAttach = false,
 }: {
   signedIn: boolean;
   /** Buttons under each job card: details, save, letter, apply (TZ 53). */
   jobActions?: boolean;
+  /** A paperclip that reads a CV or another file into the chat (TZ 53). */
+  canAttach?: boolean;
   /** Shows a microphone stub with this hint (TZ 53); voice is not built yet. */
   voiceSoon?: string;
   /** Card labels from the `jobs` namespace, read where the chat is rendered (D377). */
@@ -408,6 +431,11 @@ export function Chat({
   const [starterSeed, setStarterSeed] = useState(1);
   const [noJobsFound, setNoJobsFound] = useState(false);
   const [text, setText] = useState("");
+  const attachText = useTranslations("chat.attach");
+  const [attached, setAttached] = useState<Attached | null>(null);
+  const [attaching, setAttaching] = useState(false);
+  const [attachError, setAttachError] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const [sending, setSending] = useState(false);
   /** The thread's subject from the server, when the address named none (D525). */
   const [serverFocus, setServerFocus] = useState<ServerFocus | null>(null);
@@ -737,14 +765,17 @@ export function Chat({
     });
   }
 
-  async function ask(message: string) {
+  async function ask(message: string, file?: Attached) {
     if (!message || sending) return false;
     setNoJobsFound(false);
     setText("");
+    setAttached(null);
     fieldRef.current?.focus();
+    if (file) add({ key: nextKey(), kind: "user", text: `📎 ${file.name}` });
     add({ key: nextKey(), kind: "user", text: message });
     return streamTurn("/api/bot/message", {
       text: message,
+      ...(file ? { attachment: file } : {}),
       locale,
       ...(section ? { section } : {}),
       ...(fromServices ? { from: "services" as const } : {}),
@@ -1105,7 +1136,39 @@ export function Chat({
 
   function send(event: FormEvent) {
     event.preventDefault();
-    void ask(text.trim());
+    const typed = text.trim();
+    if (attached) {
+      void ask(typed || attachText("ask", { name: attached.name }), attached);
+    } else void ask(typed);
+  }
+
+  async function readFile(file: File) {
+    setAttachError(null);
+    setAttaching(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const response = await fetch("/api/bot/attachment", {
+        method: "POST",
+        body: form,
+      });
+      const body = (await response.json().catch(() => null)) as {
+        name?: string;
+        text?: string;
+        error?: { code?: string };
+      } | null;
+      if (!response.ok || !body?.name || !body.text) {
+        const code = body?.error?.code ?? "";
+        setAttachError(ATTACH_ERRORS.has(code) ? code : "ATTACHMENT_FAILED");
+        return;
+      }
+      setAttached({ name: body.name, text: body.text });
+      fieldRef.current?.focus();
+    } catch {
+      setAttachError("ATTACHMENT_FAILED");
+    } finally {
+      setAttaching(false);
+    }
   }
 
   function setCardValue(key: string, name: string, value: string) {
@@ -2088,7 +2151,63 @@ export function Chat({
             onSubmit={send}
             className={`flex shrink-0 flex-col gap-2 ${welcome ? "max-md:pb-3" : "pb-[max(0.75rem,env(safe-area-inset-bottom))]"}`}
           >
+            {attached || attaching || attachError ? (
+              <div className="flex flex-wrap items-center gap-2 px-2">
+                {attached ? (
+                  <span className="t-body-s inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-4">
+                    <Icon icon={Paperclip} size={16} />
+                    <span className="max-w-[16rem] truncate">
+                      {attached.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setAttached(null)}
+                      className="-mr-2 flex size-8 items-center justify-center rounded-full hover:bg-surface-2"
+                    >
+                      <Icon icon={X} size={16} />
+                      <span className="sr-only">{attachText("remove")}</span>
+                    </button>
+                  </span>
+                ) : null}
+                {attaching ? (
+                  <span className="t-body-s text-fg-muted" role="status">
+                    {attachText("reading")}
+                  </span>
+                ) : null}
+                {attachError ? (
+                  <span className="t-body-s text-danger" role="alert">
+                    {attachText(`errors.${attachError}`)}
+                  </span>
+                ) : null}
+              </div>
+            ) : null}
             <div className="flex items-end gap-2 rounded-[1.75rem] bg-surface-2 py-1.5 pr-1.5 pl-5 ring-1 ring-line-strong focus-within:ring-2 focus-within:ring-fg-subtle">
+              {canAttach ? (
+                <>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
+                    className="sr-only"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    onChange={(event) => {
+                      const file = event.currentTarget.files?.[0];
+                      event.currentTarget.value = "";
+                      if (file) void readFile(file);
+                    }}
+                  />
+                  <button
+                    type="button"
+                    disabled={attaching || sending}
+                    onClick={() => fileRef.current?.click()}
+                    className="-ml-3 flex size-11 shrink-0 items-center justify-center rounded-full text-fg-muted transition-colors hover:text-fg disabled:opacity-40"
+                  >
+                    <Icon icon={Paperclip} size={20} />
+                    <span className="sr-only">{attachText("button")}</span>
+                  </button>
+                </>
+              ) : null}
               <label className="sr-only" htmlFor="chat-input">
                 {t("placeholder")}
               </label>
@@ -2134,7 +2253,7 @@ export function Chat({
               ) : (
                 <button
                   type="submit"
-                  disabled={!text.trim()}
+                  disabled={!text.trim() && !attached}
                   className="flex size-11 shrink-0 items-center justify-center rounded-full bg-signal text-signal-fg transition-opacity disabled:opacity-40"
                 >
                   <Icon icon={ArrowUp} size={20} />

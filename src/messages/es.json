@@ -2369,6 +2369,21 @@
       "askSave": "Guarda el empleo «{title}» en {company} (id {id})",
       "askLetter": "Escribe un borrador de carta de presentación para «{title}» en {company} (id {id}) según mi perfil",
       "askApply": "Quiero postularme a «{title}» en {company} (id {id})"
+    },
+    "attach": {
+      "button": "Adjuntar archivo",
+      "reading": "Leyendo el archivo…",
+      "remove": "Quitar el archivo",
+      "ask": "Lee el archivo «{name}». Si es un CV, dime brevemente qué contiene y ofrece rellenar mi perfil con él.",
+      "errors": {
+        "ATTACHMENT_TOO_LARGE": "El archivo supera los 4 MB.",
+        "ATTACHMENT_TYPE": "Adjunta un archivo PDF, TXT o MD.",
+        "ATTACHMENT_UNREADABLE": "No se pudo leer este PDF. Prueba con otro archivo.",
+        "ATTACHMENT_NO_TEXT": "Este archivo no tiene texto. Un PDF escaneado aún no se puede leer.",
+        "ATTACHMENT_EMPTY": "El archivo está vacío.",
+        "RATE_LIMITED": "Demasiados archivos en poco tiempo. Inténtalo más tarde.",
+        "ATTACHMENT_FAILED": "No se pudo leer el archivo. Inténtalo de nuevo."
+      }
     }
   },
   "cookies": {

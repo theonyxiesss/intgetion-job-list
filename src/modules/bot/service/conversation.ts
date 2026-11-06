@@ -11,6 +11,7 @@ import {
   MAX_OUTPUT_TOKENS,
   modelsFromEnv,
   redactPii,
+  escapeUntrusted,
   trimContext,
   wrapUntrusted,
   type LLMMessage,
@@ -18,6 +19,7 @@ import {
   type LLMToolCall,
   type PriceTable,
 } from "@/lib/llm";
+import { ATTACHMENT_MAX_CHARS } from "./attachment";
 import { logger } from "@/lib/logger";
 import type { PageSection } from "@/config/page-sections";
 import { isValidTimeZone } from "@/lib/tz";
@@ -1078,7 +1080,12 @@ async function breakerOpen(now: Date) {
 
 // ---- history → model messages ---------------------------------------------
 
-type StoredToolCall = { calls?: LLMToolCall[]; toolCallId?: string };
+type StoredToolCall = {
+  calls?: LLMToolCall[];
+  toolCallId?: string;
+  /** A user row that holds an attached file's text (TZ 53). */
+  attachment?: { name: string };
+};
 
 /**
  * Stored rows to provider messages. User text is untrusted data (12.4);
@@ -1089,7 +1096,13 @@ export function toLLMMessages(rows: readonly repo.MessageRow[]): LLMMessage[] {
   const out: LLMMessage[] = [];
   for (const row of rows) {
     const meta = (row.toolCall ?? {}) as StoredToolCall;
-    if (row.role === "user") {
+    if (row.role === "user" && meta.attachment) {
+      out.push({
+        role: "user",
+        content: `[Attached file: ${escapeUntrusted(meta.attachment.name)}]
+${wrapUntrusted("user_file", row.content, ATTACHMENT_MAX_CHARS)}`,
+      });
+    } else if (row.role === "user") {
       out.push({
         role: "user",
         content: wrapUntrusted("user_message", row.content),
@@ -1219,6 +1232,8 @@ export type MessageInput = {
   userId: string | null;
   conversation: repo.ConversationRow;
   text: string;
+  /** A file read into the chat; the model sees its text as data (TZ 53). */
+  attachment?: { name: string; text: string };
   ip: string;
   locale: string;
   /** Spoki's own turn right after a card was answered (D515): no user text. */
@@ -1267,6 +1282,14 @@ export async function handleMessage(
     ? undefined
     : await acknowledgeResume(conversation, input.locale, emit);
   const current = acked ?? conversation;
+  if (!afterCard && input.attachment) {
+    await repo.insertMessage({
+      conversationId: current.id,
+      role: "user",
+      content: redactPii(input.attachment.text),
+      toolCall: { attachment: { name: input.attachment.name } },
+    });
+  }
   if (!afterCard)
     await repo.insertMessage({
       conversationId: current.id,
@@ -2507,8 +2530,13 @@ export async function conversationHistory(conversationId: string) {
     ) {
       return [];
     }
+    const file = (row.toolCall as StoredToolCall | null)?.attachment;
     const content =
-      row.role === "user" ? row.content : stripLeakedToolMarkup(row.content);
+      row.role === "user"
+        ? file
+          ? `📎 ${file.name}`
+          : row.content
+        : stripLeakedToolMarkup(row.content);
     if (!content) return [];
     return [
       {

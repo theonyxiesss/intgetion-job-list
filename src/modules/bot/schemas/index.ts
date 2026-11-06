@@ -22,6 +22,14 @@ export const botMessageInput = z
     inviteId: z.uuid().optional(),
     /** The part of the site open beside the Spoki panel (D525); a name only. */
     section: z.enum(PAGE_SECTIONS).optional(),
+    /** The text of a file read by `/api/bot/attachment` (TZ 53). */
+    attachment: z
+      .object({
+        name: z.string().trim().min(1).max(200),
+        text: z.string().trim().min(1).max(12_000),
+      })
+      .strict()
+      .optional(),
   })
   .strict();
 

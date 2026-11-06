@@ -53,6 +53,8 @@ export const rateRules = {
   dataExport: { limit: 5, windowSeconds: 24 * 60 * 60 },
   /** bot messages from a guest, keyed by IP + bot session (7A) */
   botGuest: { limit: 5, windowSeconds: 24 * 60 * 60 },
+  /** files read into the chat, keyed by IP (TZ 53) */
+  botAttachment: { limit: 20, windowSeconds: 60 * 60 },
   /** all guest bot messages from one IP, whatever the cookie (D607) */
   botGuestIp: { limit: 20, windowSeconds: 24 * 60 * 60 },
   /** bot messages from a user, keyed by user id (7A); free tier, D323 */

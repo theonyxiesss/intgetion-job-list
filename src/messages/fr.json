@@ -2369,6 +2369,21 @@
       "askSave": "Enregistre l’offre « {title} » chez {company} (id {id})",
       "askLetter": "Rédige un brouillon de lettre de motivation pour « {title} » chez {company} (id {id}) à partir de mon profil",
       "askApply": "Je veux postuler à « {title} » chez {company} (id {id})"
+    },
+    "attach": {
+      "button": "Joindre un fichier",
+      "reading": "Lecture du fichier…",
+      "remove": "Retirer le fichier",
+      "ask": "Lis le fichier « {name} ». Si c’est un CV, résume brièvement son contenu et propose de remplir mon profil avec.",
+      "errors": {
+        "ATTACHMENT_TOO_LARGE": "Le fichier dépasse 4 Mo.",
+        "ATTACHMENT_TYPE": "Joignez un fichier PDF, TXT ou MD.",
+        "ATTACHMENT_UNREADABLE": "Impossible de lire ce PDF. Essayez un autre fichier.",
+        "ATTACHMENT_NO_TEXT": "Ce fichier ne contient pas de texte. Un PDF scanné ne peut pas encore être lu.",
+        "ATTACHMENT_EMPTY": "Le fichier est vide.",
+        "RATE_LIMITED": "Trop de fichiers en peu de temps. Réessayez plus tard.",
+        "ATTACHMENT_FAILED": "Impossible de lire le fichier. Réessayez."
+      }
     }
   },
   "cookies": {

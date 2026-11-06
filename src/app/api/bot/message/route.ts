@@ -58,6 +58,7 @@ data: ${JSON.stringify(event)}
               userId,
               conversation,
               text: input.text,
+              attachment: input.attachment,
               ip,
               locale,
               page: input.section,

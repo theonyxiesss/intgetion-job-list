@@ -97,6 +97,7 @@ export default async function HomePage({
             jobCardText={cardText}
             voiceSoon={morrow("voice")}
             jobActions
+            canAttach
           />
         </main>
       </MorrowHome>
