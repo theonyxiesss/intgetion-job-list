@@ -2368,7 +2368,10 @@
       "empty": "A empresa não adicionou uma descrição.",
       "askSave": "Salve a vaga “{title}” na {company} (id {id})",
       "askLetter": "Escreva um rascunho de carta de apresentação para “{title}” na {company} (id {id}) com base no meu perfil",
-      "askApply": "Quero me candidatar a “{title}” na {company} (id {id})"
+      "askApply": "Quero me candidatar a “{title}” na {company} (id {id})",
+      "match": "compatível",
+      "forYou": "Para você",
+      "opportunity": "Vaga"
     },
     "attach": {
       "button": "Anexar arquivo",
@@ -5549,6 +5552,16 @@
       "placeholder": "Escreva sobre este pedido",
       "send": "Enviar",
       "closed": "Este pedido está fechado; não é possível adicionar mensagens."
-    }
+    },
+    "tagline": "Seu próximo capítulo começa com uma conversa.",
+    "menu": "Menu",
+    "about": "Sobre a plataforma",
+    "aboutTitle": "Um pouco sobre {name}",
+    "aboutLead": "Uma conversa sobre o que vem a seguir.",
+    "aboutText": "Encontre uma vaga que combine, descubra trabalhos freelance e receba ajuda com candidaturas. Conte ao Spoki o que procura ou anexe seu currículo.",
+    "attachCv": "Anexar currículo ou portfólio",
+    "dialogues": "SEUS DIÁLOGOS",
+    "searchDialogues": "Encontrar uma conversa…",
+    "noDialogues": "Nenhuma conversa encontrada."
   }
 }

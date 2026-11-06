@@ -1,23 +1,27 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "./fixtures";
 
-// TZ 53: the home page is the platform chat in the Morrow style.
-test("home is the chat with the side menu (English)", async ({ page }) => {
+/** Before the chat starts, the Morrow menu button opens "about" (TZ 53). */
+async function openAbout(page: import("@playwright/test").Page, name: string) {
+  await page.getByRole("button", { name }).click();
+  return page.getByRole("dialog", { name });
+}
+
+// TZ 53: the home page is the platform chat on the Morrow mockup.
+test("home is the chat with the Morrow menu (English)", async ({ page }) => {
   await page.goto("/en");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Spoki Assistant",
   );
   await expect(page.getByLabel("Write a message")).toBeVisible();
-  const menu = page.getByRole("complementary");
+  const about = await openAbout(page, "About the platform");
   for (const name of [
-    "Find a job",
-    "Find freelance work",
-    "Events",
-    "Saved jobs",
-    "My applications",
-    "Post a job",
+    /Find a job/,
+    /Find freelance work/,
+    /Saved jobs/,
+    /Attach CV or portfolio/,
   ]) {
-    await expect(menu.getByRole("button", { name })).toBeVisible();
+    await expect(about.getByRole("button", { name })).toBeVisible();
   }
   // The site header and footer are not shown under the chat.
   await expect(page.getByRole("banner")).toBeHidden();
@@ -27,14 +31,13 @@ test("home is the chat with the side menu (English)", async ({ page }) => {
 test("home is the chat with the side menu (Russian)", async ({ page }) => {
   await page.goto("/ru");
   await expect(page.getByLabel("Напишите сообщение")).toBeVisible();
+  const about = await openAbout(page, "О платформе");
   await expect(
-    page
-      .getByRole("complementary")
-      .getByRole("button", { name: /Найти работу/ }),
+    about.getByRole("button", { name: /Найти работу/ }),
   ).toBeVisible();
 });
 
-test("a side menu item asks the chat (TZ 53)", async ({ page }) => {
+test("a Morrow menu item asks the chat (TZ 53)", async ({ page }) => {
   const sent: { text?: string }[] = [];
   await page.route("**/api/bot/message", async (route) => {
     sent.push(route.request().postDataJSON());
@@ -47,8 +50,9 @@ test("a side menu item asks the chat (TZ 53)", async ({ page }) => {
     });
   });
   await page.goto("/en");
-  await page
-    .getByRole("complementary")
+  await (
+    await openAbout(page, "About the platform")
+  )
     .getByRole("button", { name: /Find a job/ })
     .click();
   await expect(page.getByText("Stubbed answer.")).toBeVisible();
@@ -88,12 +92,13 @@ test("a job card opens in place and hands its actions to the chat (TZ 53)", asyn
     }),
   );
   await page.goto("/en");
-  await page
-    .getByRole("complementary")
+  await (
+    await openAbout(page, "About the platform")
+  )
     .getByRole("button", { name: /Find a job/ })
     .click();
   const log = page.getByRole("log");
-  await log.getByRole("button", { name: "Details" }).click();
+  await log.getByRole("button", { name: /Details/ }).click();
   await expect(log.getByText("Build interfaces.")).toBeVisible();
   await log.getByRole("button", { name: "Save", exact: true }).click();
   await expect.poll(() => sent.length).toBe(2);

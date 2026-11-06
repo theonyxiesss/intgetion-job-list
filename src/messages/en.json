@@ -2368,7 +2368,10 @@
       "empty": "The employer has not added a description.",
       "askSave": "Save the job “{title}” at {company} (id {id})",
       "askLetter": "Write a cover letter draft for “{title}” at {company} (id {id}) based on my profile",
-      "askApply": "I want to apply to “{title}” at {company} (id {id})"
+      "askApply": "I want to apply to “{title}” at {company} (id {id})",
+      "match": "match",
+      "forYou": "For you",
+      "opportunity": "Job"
     },
     "attach": {
       "button": "Attach a file",
@@ -6055,6 +6058,16 @@
       "placeholder": "Write about this order",
       "send": "Send",
       "closed": "This order is closed, so new messages cannot be added."
-    }
+    },
+    "tagline": "Your next chapter starts with a conversation.",
+    "menu": "Menu",
+    "about": "About the platform",
+    "aboutTitle": "A little about {name}",
+    "aboutLead": "A conversation about what comes next.",
+    "aboutText": "Find a role that fits, discover freelance work and get help with applications. Tell Spoki what you have in mind, or attach your CV to begin.",
+    "attachCv": "Attach CV or portfolio",
+    "dialogues": "YOUR DIALOGUES",
+    "searchDialogues": "Find a conversation…",
+    "noDialogues": "No conversations found."
   }
 }

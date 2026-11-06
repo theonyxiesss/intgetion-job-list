@@ -2368,7 +2368,10 @@
       "empty": "L’employeur n’a pas ajouté de description.",
       "askSave": "Enregistre l’offre « {title} » chez {company} (id {id})",
       "askLetter": "Rédige un brouillon de lettre de motivation pour « {title} » chez {company} (id {id}) à partir de mon profil",
-      "askApply": "Je veux postuler à « {title} » chez {company} (id {id})"
+      "askApply": "Je veux postuler à « {title} » chez {company} (id {id})",
+      "match": "correspondance",
+      "forYou": "Pour vous",
+      "opportunity": "Offre"
     },
     "attach": {
       "button": "Joindre un fichier",
@@ -5549,6 +5552,16 @@
       "placeholder": "Écrivez à propos de cette commande",
       "send": "Envoyer",
       "closed": "Cette commande est close ; aucun message ne peut être ajouté."
-    }
+    },
+    "tagline": "Votre prochain chapitre commence par une conversation.",
+    "menu": "Menu",
+    "about": "À propos de la plateforme",
+    "aboutTitle": "Un mot sur {name}",
+    "aboutLead": "Une conversation sur la suite.",
+    "aboutText": "Trouvez un poste qui vous correspond, découvrez des missions freelance et obtenez de l’aide pour vos candidatures. Dites à Spoki ce que vous cherchez ou joignez votre CV.",
+    "attachCv": "Joindre un CV ou un portfolio",
+    "dialogues": "VOS DIALOGUES",
+    "searchDialogues": "Trouver une conversation…",
+    "noDialogues": "Aucune conversation trouvée."
   }
 }

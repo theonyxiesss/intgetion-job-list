@@ -2368,7 +2368,10 @@
       "empty": "L’azienda non ha aggiunto una descrizione.",
       "askSave": "Salva l’offerta «{title}» presso {company} (id {id})",
       "askLetter": "Scrivi una bozza di lettera di presentazione per «{title}» presso {company} (id {id}) in base al mio profilo",
-      "askApply": "Voglio candidarmi a «{title}» presso {company} (id {id})"
+      "askApply": "Voglio candidarmi a «{title}» presso {company} (id {id})",
+      "match": "affinità",
+      "forYou": "Per te",
+      "opportunity": "Offerta"
     },
     "attach": {
       "button": "Allega un file",
@@ -5549,6 +5552,16 @@
       "placeholder": "Scrivi su questo ordine",
       "send": "Invia",
       "closed": "Questo ordine è chiuso; non si possono aggiungere messaggi."
-    }
+    },
+    "tagline": "Il tuo prossimo capitolo inizia con una conversazione.",
+    "menu": "Menu",
+    "about": "Sulla piattaforma",
+    "aboutTitle": "Un po’ su {name}",
+    "aboutLead": "Una conversazione su ciò che viene dopo.",
+    "aboutText": "Trova un ruolo adatto, scopri lavori freelance e ricevi aiuto con le candidature. Di’ a Spoki cosa cerchi o allega il tuo CV.",
+    "attachCv": "Allega CV o portfolio",
+    "dialogues": "I TUOI DIALOGHI",
+    "searchDialogues": "Trova una conversazione…",
+    "noDialogues": "Nessuna conversazione trovata."
   }
 }

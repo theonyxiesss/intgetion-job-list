@@ -39,3 +39,8 @@ export function onSpokiAsk(listener: () => void) {
 
 /** Fired when one chat turn ends, answered or stopped. */
 export const SPOKI_TURN_DONE = "spoki-turn-done";
+
+/** The chat home's menu: whether the chat has left its empty screen. */
+export const SPOKI_CONVERSATION = "spoki-conversation";
+/** The chat home's menu asks the chat to open its file picker. */
+export const SPOKI_ATTACH = "spoki-attach";

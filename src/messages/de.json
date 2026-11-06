@@ -2368,7 +2368,10 @@
       "empty": "Der Arbeitgeber hat keine Beschreibung hinzugefügt.",
       "askSave": "Speichere den Job „{title}“ bei {company} (id {id})",
       "askLetter": "Schreibe einen Entwurf für ein Anschreiben für „{title}“ bei {company} (id {id}) anhand meines Profils",
-      "askApply": "Ich möchte mich auf „{title}“ bei {company} (id {id}) bewerben"
+      "askApply": "Ich möchte mich auf „{title}“ bei {company} (id {id}) bewerben",
+      "match": "Treffer",
+      "forYou": "Für dich",
+      "opportunity": "Job"
     },
     "attach": {
       "button": "Datei anhängen",
@@ -5549,6 +5552,16 @@
       "placeholder": "Schreibe zu diesem Auftrag",
       "send": "Senden",
       "closed": "Dieser Auftrag ist abgeschlossen; neue Nachrichten sind nicht möglich."
-    }
+    },
+    "tagline": "Dein nächstes Kapitel beginnt mit einem Gespräch.",
+    "menu": "Menü",
+    "about": "Über die Plattform",
+    "aboutTitle": "Ein wenig über {name}",
+    "aboutLead": "Ein Gespräch darüber, was als Nächstes kommt.",
+    "aboutText": "Finde einen passenden Job, entdecke Freelance-Arbeit und erhalte Hilfe bei Bewerbungen. Sag Spoki, was du suchst, oder hänge deinen Lebenslauf an.",
+    "attachCv": "Lebenslauf oder Portfolio anhängen",
+    "dialogues": "DEINE DIALOGE",
+    "searchDialogues": "Gespräch finden…",
+    "noDialogues": "Keine Gespräche gefunden."
   }
 }

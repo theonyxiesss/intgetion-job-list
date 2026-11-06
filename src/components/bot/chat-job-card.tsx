@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { handSpokiAsk } from "@/components/bot/spoki-ask";
 import { Badge } from "@/components/ui/badge";
 import { CompanyMark } from "@/components/ui/company-mark";
 import { JobCard, type JobCardStat } from "@/components/ui/job-card";
@@ -48,12 +46,9 @@ export type ChatJobCardText = {
 export function ChatJobCard({
   job,
   text,
-  withActions = false,
 }: {
   job: ChatJob;
   text: ChatJobCardText;
-  /** The chat home's buttons under the card (TZ 53). */
-  withActions?: boolean;
 }) {
   const chat = useTranslations("chat");
   const explain = useTranslations("explain");
@@ -115,90 +110,6 @@ export function ChatJobCard({
           )}
         </p>
       ))}
-      {withActions ? <JobCardActions job={job} /> : null}
-    </div>
-  );
-}
-
-type Details =
-  { state: "loading" | "error" } | { state: "ready"; text: string };
-
-/**
- * Opens the job's description in place and hands the next step to the chat:
- * saving, applying and the cover letter go through the bot's own tools and
- * its confirmation card (TZ 53).
- */
-function JobCardActions({ job }: { job: ChatJob }) {
-  const t = useTranslations("chat.jobCard");
-  const [open, setOpen] = useState(false);
-  const [details, setDetails] = useState<Details | null>(null);
-  const subject = { title: job.title, company: job.companyName, id: job.id };
-
-  async function toggle() {
-    const next = !open;
-    setOpen(next);
-    if (!next || details?.state === "ready") return;
-    setDetails({ state: "loading" });
-    try {
-      const response = await fetch(`/api/jobs/${job.id}`);
-      if (!response.ok) throw new Error(String(response.status));
-      const body = (await response.json()) as {
-        job: { description?: string | null };
-      };
-      setDetails({ state: "ready", text: body.job.description?.trim() ?? "" });
-    } catch {
-      setDetails({ state: "error" });
-    }
-  }
-
-  const button =
-    "inline-flex min-h-11 items-center rounded-full border border-line px-4 t-body-s transition-colors hover:bg-surface-2";
-  return (
-    <div className="flex flex-col gap-2 px-1">
-      {open ? (
-        <div className="rounded-2xl border border-line bg-surface px-4 py-3">
-          {details?.state === "ready" ? (
-            <p className="t-body-s max-h-80 overflow-y-auto whitespace-pre-line text-fg">
-              {details.text || t("empty")}
-            </p>
-          ) : (
-            <p className="t-body-s text-fg-muted" role="status">
-              {details?.state === "error" ? t("error") : t("loading")}
-            </p>
-          )}
-        </div>
-      ) : null}
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          className={button}
-          aria-expanded={open}
-          onClick={() => void toggle()}
-        >
-          {open ? t("less") : t("more")}
-        </button>
-        <button
-          type="button"
-          className={button}
-          onClick={() => handSpokiAsk(t("askSave", subject))}
-        >
-          {t("save")}
-        </button>
-        <button
-          type="button"
-          className={button}
-          onClick={() => handSpokiAsk(t("askLetter", subject))}
-        >
-          {t("letter")}
-        </button>
-        <button
-          type="button"
-          className="inline-flex min-h-11 items-center rounded-full bg-fg px-4 t-body-s text-bg"
-          onClick={() => handSpokiAsk(t("askApply", subject))}
-        >
-          {t("apply")}
-        </button>
-      </div>
     </div>
   );
 }

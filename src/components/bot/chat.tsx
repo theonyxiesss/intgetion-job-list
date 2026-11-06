@@ -21,6 +21,8 @@ import {
 } from "react";
 import {
   onSpokiAsk,
+  SPOKI_ATTACH,
+  SPOKI_CONVERSATION,
   SPOKI_TURN_DONE,
   takeSpokiAsk,
 } from "@/components/bot/spoki-ask";
@@ -49,6 +51,8 @@ import {
   isAccountCardTool,
 } from "@/components/bot/account-card";
 import { AssistantAnswer } from "@/components/bot/chat-markdown";
+import { MorrowJobCard } from "@/components/morrow/morrow-job-card";
+import { MorrowMark } from "@/components/morrow/morrow-mark";
 import { ChatSuggestions } from "@/components/bot/chat-suggestions";
 import { afterJobResults, NO_JOBS_YET } from "@/components/bot/no-jobs";
 import {
@@ -384,14 +388,14 @@ export function Chat({
   variant = "page",
   section,
   voiceSoon,
-  jobActions = false,
   canAttach = false,
+  morrow,
 }: {
   signedIn: boolean;
-  /** Buttons under each job card: details, save, letter, apply (TZ 53). */
-  jobActions?: boolean;
   /** A paperclip that reads a CV or another file into the chat (TZ 53). */
   canAttach?: boolean;
+  /** The chat home's Morrow layout (TZ 53): its brand on the empty screen. */
+  morrow?: { wordmark: string; tagline: string };
   /** Shows a microphone stub with this hint (TZ 53); voice is not built yet. */
   voiceSoon?: string;
   /** Card labels from the `jobs` namespace, read where the chat is rendered (D377). */
@@ -1120,6 +1124,21 @@ export function Chat({
     if (fieldRef.current) fitComposer(fieldRef.current);
   }, [text]);
 
+  // The chat home's menu opens into a sidebar once the chat has begun, and
+  // its "attach a CV" item opens this chat's file picker (TZ 53).
+  useEffect(() => {
+    if (!morrow) return;
+    window.dispatchEvent(
+      new CustomEvent(SPOKI_CONVERSATION, { detail: !welcome }),
+    );
+  }, [morrow, welcome]);
+  useEffect(() => {
+    if (!morrow) return;
+    const pick = () => fileRef.current?.click();
+    window.addEventListener(SPOKI_ATTACH, pick);
+    return () => window.removeEventListener(SPOKI_ATTACH, pick);
+  }, [morrow]);
+
   // A question handed over from another page, the home page field (D601).
   // Asked once the history is in, so the history never covers it; during an
   // answer it waits in the field instead.
@@ -1400,17 +1419,21 @@ export function Chat({
     <FreelanceCopyContext.Provider value={freelanceCopy}>
       <div
         className={
-          variant === "page"
-            ? "chat-shell flex min-h-0 w-full flex-1 flex-col max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:bg-bg"
-            : "flex min-h-0 w-full flex-1 flex-col"
+          morrow
+            ? `workspace ${welcome ? "welcome-workspace" : "active-workspace"}`
+            : variant === "page"
+              ? "chat-shell flex min-h-0 w-full flex-1 flex-col max-md:fixed max-md:inset-x-0 max-md:top-16 max-md:bottom-0 max-md:z-30 max-md:bg-bg"
+              : "flex min-h-0 w-full flex-1 flex-col"
         }
       >
         <div
           data-chat-meta
           className={
-            variant === "page" || hasFocusLine || showJobGoal
-              ? "mx-auto w-full max-w-3xl shrink-0 px-4 py-3 md:px-6"
-              : "hidden"
+            morrow
+              ? "sr-only"
+              : variant === "page" || hasFocusLine || showJobGoal
+                ? "mx-auto w-full max-w-3xl shrink-0 px-4 py-3 md:px-6"
+                : "hidden"
           }
         >
           {variant === "page" ? (
@@ -1468,7 +1491,7 @@ export function Chat({
               </Link>
             </p>
           ) : null}
-          {historyReady && showJobGoal ? (
+          {historyReady && showJobGoal && !morrow ? (
             <>
               <JobGoalPanel
                 goal={jobGoal}
@@ -1490,15 +1513,23 @@ export function Chat({
           aria-live="polite"
           aria-busy={answerTyping || undefined}
           aria-label={t("log")}
-          className="min-h-0 flex-1 overflow-auto"
+          className={
+            morrow
+              ? `chat-scroll${welcome ? " morrow-log-empty" : ""}`
+              : "min-h-0 flex-1 overflow-auto"
+          }
         >
           {/* The log itself is plain `overflow: auto` so the scroll-lock
               library sees wheel scrolling; sideways overflow is clipped here. */}
           <div
             ref={contentRef}
-            className="mx-auto flex min-h-full w-full max-w-3xl flex-col gap-6 overflow-x-hidden px-4 md:px-6"
+            className={
+              morrow
+                ? "conversation flex flex-col overflow-x-hidden"
+                : "mx-auto flex min-h-full w-full max-w-3xl flex-col gap-6 overflow-x-hidden px-4 md:px-6"
+            }
           >
-            {welcome && (
+            {welcome && !morrow && (
               <div className="mt-auto flex w-full flex-col items-center gap-4 pb-2 text-center">
                 <h2 className="text-2xl font-medium md:text-3xl">
                   {fromServices
@@ -1570,6 +1601,15 @@ export function Chat({
               </div>
             )}
             {entries.map((entry) => {
+              if (entry.kind === "user" && morrow) {
+                return (
+                  <div key={entry.key} className="message-row user">
+                    <div className="message-body">
+                      <div className="user-bubble">{entry.text}</div>
+                    </div>
+                  </div>
+                );
+              }
               if (entry.kind === "user") {
                 return (
                   <p
@@ -1582,7 +1622,14 @@ export function Chat({
               }
               if (entry.kind === "assistant") {
                 return (
-                  <div key={entry.key} className="min-w-0">
+                  <div
+                    key={entry.key}
+                    className={
+                      morrow
+                        ? "message-row assistant message-body assistant-text"
+                        : "min-w-0"
+                    }
+                  >
                     <span className="sr-only">{t("agent")}</span>
                     <AssistantAnswer
                       text={entry.text}
@@ -1652,15 +1699,26 @@ export function Chat({
               }
               if (entry.kind === "jobs" || entry.kind === "matches") {
                 if (entry.jobs.length === 0) return null;
+                if (morrow) {
+                  return (
+                    <div key={entry.key} className="message-row assistant">
+                      <div className="message-body results-list">
+                        {entry.jobs.map((job) => (
+                          <MorrowJobCard
+                            key={job.id}
+                            job={job}
+                            text={jobCardText}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
                 return (
                   <ul key={entry.key} className="grid gap-2">
                     {entry.jobs.map((job) => (
                       <li key={job.id}>
-                        <ChatJobCard
-                          job={job}
-                          text={jobCardText}
-                          withActions={jobActions}
-                        />
+                        <ChatJobCard job={job} text={jobCardText} />
                       </li>
                     ))}
                   </ul>
@@ -2116,7 +2174,22 @@ export function Chat({
             </div>
           )}
         </div>
-        <div className="mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-3 px-4 md:px-6">
+        <div
+          className={
+            morrow
+              ? "composer-wrap flex flex-col gap-3"
+              : "mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-3 px-4 md:px-6"
+          }
+        >
+          {morrow && welcome ? (
+            <div className="welcome-brand">
+              <p className="welcome-title">
+                <MorrowMark />
+                <span>{morrow.wordmark}</span>
+              </p>
+              <p>{morrow.tagline}</p>
+            </div>
+          ) : null}
           {actions.signup && !signedIn && (
             <p className="flex flex-col items-start gap-2">
               <Link
@@ -2153,123 +2226,231 @@ export function Chat({
               {t("reviewProfile")}
             </Link>
           )}
-          <form
-            onSubmit={send}
-            className={`flex shrink-0 flex-col gap-2 ${welcome ? "max-md:pb-3" : "pb-[max(0.75rem,env(safe-area-inset-bottom))]"}`}
-          >
-            {attached || attaching || attachError ? (
-              <div className="flex flex-wrap items-center gap-2 px-2">
-                {attached ? (
-                  <span className="t-body-s inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-4">
-                    <Icon icon={Paperclip} size={16} />
-                    <span className="max-w-[16rem] truncate">
-                      {attached.name}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setAttached(null)}
-                      className="-mr-2 flex size-8 items-center justify-center rounded-full hover:bg-surface-2"
-                    >
-                      <Icon icon={X} size={16} />
-                      <span className="sr-only">{attachText("remove")}</span>
-                    </button>
-                  </span>
-                ) : null}
-                {attaching ? (
-                  <span className="t-body-s text-fg-muted" role="status">
-                    {attachText("reading")}
-                  </span>
-                ) : null}
-                {attachError ? (
-                  <span className="t-body-s text-danger" role="alert">
-                    {attachText(`errors.${attachError}`)}
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
-            <div className="flex items-end gap-2 rounded-[1.75rem] bg-surface-2 py-1.5 pr-1.5 pl-5 ring-1 ring-line-strong focus-within:ring-2 focus-within:ring-fg-subtle">
+          {morrow ? (
+            <form onSubmit={send} className="composer">
               {canAttach ? (
-                <>
-                  <input
-                    ref={fileRef}
-                    type="file"
-                    accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
-                    className="sr-only"
-                    tabIndex={-1}
-                    aria-hidden="true"
-                    onChange={(event) => {
-                      const file = event.currentTarget.files?.[0];
-                      event.currentTarget.value = "";
-                      if (file) void readFile(file);
-                    }}
-                  />
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
+                  className="sr-only"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  onChange={(event) => {
+                    const file = event.currentTarget.files?.[0];
+                    event.currentTarget.value = "";
+                    if (file) void readFile(file);
+                  }}
+                />
+              ) : null}
+              {attached || attaching || attachError ? (
+                <div className="attachment-list">
+                  {attached ? (
+                    <span>
+                      <Icon icon={Paperclip} size={16} />
+                      {attached.name}
+                      <button type="button" onClick={() => setAttached(null)}>
+                        <Icon icon={X} size={16} />
+                        <span className="sr-only">{attachText("remove")}</span>
+                      </button>
+                    </span>
+                  ) : null}
+                  {attaching ? (
+                    <span role="status">{attachText("reading")}</span>
+                  ) : null}
+                  {attachError ? (
+                    <span role="alert" className="attachment-error">
+                      {attachText(`errors.${attachError}`)}
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
+              <div className="composer-line">
+                <label className="sr-only" htmlFor="chat-input">
+                  {t("placeholder")}
+                </label>
+                <textarea
+                  ref={fieldRef}
+                  id="chat-input"
+                  rows={1}
+                  value={text}
+                  maxLength={2000}
+                  placeholder={t("placeholder")}
+                  onChange={(event) => {
+                    setText(event.target.value);
+                    fitComposer(event.currentTarget);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      event.currentTarget.form?.requestSubmit();
+                    }
+                  }}
+                />
+              </div>
+              <div className="composer-toolbar">
+                {canAttach ? (
                   <button
                     type="button"
+                    className="composer-tool"
                     disabled={attaching || sending}
                     onClick={() => fileRef.current?.click()}
-                    className="-ml-3 flex size-11 shrink-0 items-center justify-center rounded-full text-fg-muted transition-colors hover:text-fg disabled:opacity-40"
                   >
-                    <Icon icon={Paperclip} size={20} />
+                    <Icon icon={Paperclip} size={16} />
                     <span className="sr-only">{attachText("button")}</span>
                   </button>
-                </>
+                ) : null}
+                {voiceSoon ? (
+                  <button
+                    type="button"
+                    className="composer-tool"
+                    aria-disabled="true"
+                    title={voiceSoon}
+                  >
+                    <Icon icon={Mic} size={16} />
+                    <span className="sr-only">{voiceSoon}</span>
+                  </button>
+                ) : null}
+                {sending ? (
+                  <button
+                    type="button"
+                    className="send-btn"
+                    onClick={() => abortRef.current?.abort()}
+                  >
+                    <Icon icon={Square} size={16} fill="currentColor" />
+                    <span className="sr-only">{t("answer.stop")}</span>
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="send-btn"
+                    disabled={!text.trim() && !attached}
+                  >
+                    <Icon icon={ArrowUp} size={16} />
+                    <span className="sr-only">{t("send")}</span>
+                  </button>
+                )}
+              </div>
+            </form>
+          ) : (
+            <form
+              onSubmit={send}
+              className={`flex shrink-0 flex-col gap-2 ${welcome ? "max-md:pb-3" : "pb-[max(0.75rem,env(safe-area-inset-bottom))]"}`}
+            >
+              {attached || attaching || attachError ? (
+                <div className="flex flex-wrap items-center gap-2 px-2">
+                  {attached ? (
+                    <span className="t-body-s inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-4">
+                      <Icon icon={Paperclip} size={16} />
+                      <span className="max-w-[16rem] truncate">
+                        {attached.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setAttached(null)}
+                        className="-mr-2 flex size-8 items-center justify-center rounded-full hover:bg-surface-2"
+                      >
+                        <Icon icon={X} size={16} />
+                        <span className="sr-only">{attachText("remove")}</span>
+                      </button>
+                    </span>
+                  ) : null}
+                  {attaching ? (
+                    <span className="t-body-s text-fg-muted" role="status">
+                      {attachText("reading")}
+                    </span>
+                  ) : null}
+                  {attachError ? (
+                    <span className="t-body-s text-danger" role="alert">
+                      {attachText(`errors.${attachError}`)}
+                    </span>
+                  ) : null}
+                </div>
               ) : null}
-              <label className="sr-only" htmlFor="chat-input">
-                {t("placeholder")}
-              </label>
-              <textarea
-                ref={fieldRef}
-                id="chat-input"
-                rows={1}
-                value={text}
-                maxLength={2000}
-                placeholder={t("placeholder")}
-                onChange={(event) => {
-                  setText(event.target.value);
-                  fitComposer(event.currentTarget);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    event.currentTarget.form?.requestSubmit();
-                  }
-                }}
-                className="max-h-[min(10rem,30dvh)] min-h-11 flex-1 resize-none overflow-x-hidden bg-transparent py-3 leading-5 text-fg placeholder:text-fg-subtle focus-visible:outline-none"
-              />
-              {voiceSoon ? (
-                <button
-                  type="button"
-                  aria-disabled="true"
-                  title={voiceSoon}
-                  className="flex size-11 shrink-0 cursor-default items-center justify-center rounded-full text-fg-subtle"
-                >
-                  <Icon icon={Mic} size={20} />
-                  <span className="sr-only">{voiceSoon}</span>
-                </button>
-              ) : null}
-              {sending ? (
-                <button
-                  type="button"
-                  onClick={() => abortRef.current?.abort()}
-                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-fg text-bg"
-                >
-                  <Icon icon={Square} size={16} fill="currentColor" />
-                  <span className="sr-only">{t("answer.stop")}</span>
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={!text.trim() && !attached}
-                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-signal text-signal-fg transition-opacity disabled:opacity-40"
-                >
-                  <Icon icon={ArrowUp} size={20} />
-                  <span className="sr-only">{t("send")}</span>
-                </button>
-              )}
-            </div>
-          </form>
+              <div className="flex items-end gap-2 rounded-[1.75rem] bg-surface-2 py-1.5 pr-1.5 pl-5 ring-1 ring-line-strong focus-within:ring-2 focus-within:ring-fg-subtle">
+                {canAttach ? (
+                  <>
+                    <input
+                      ref={fileRef}
+                      type="file"
+                      accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
+                      className="sr-only"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      onChange={(event) => {
+                        const file = event.currentTarget.files?.[0];
+                        event.currentTarget.value = "";
+                        if (file) void readFile(file);
+                      }}
+                    />
+                    <button
+                      type="button"
+                      disabled={attaching || sending}
+                      onClick={() => fileRef.current?.click()}
+                      className="-ml-3 flex size-11 shrink-0 items-center justify-center rounded-full text-fg-muted transition-colors hover:text-fg disabled:opacity-40"
+                    >
+                      <Icon icon={Paperclip} size={20} />
+                      <span className="sr-only">{attachText("button")}</span>
+                    </button>
+                  </>
+                ) : null}
+                <label className="sr-only" htmlFor="chat-input">
+                  {t("placeholder")}
+                </label>
+                <textarea
+                  ref={fieldRef}
+                  id="chat-input"
+                  rows={1}
+                  value={text}
+                  maxLength={2000}
+                  placeholder={t("placeholder")}
+                  onChange={(event) => {
+                    setText(event.target.value);
+                    fitComposer(event.currentTarget);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      event.currentTarget.form?.requestSubmit();
+                    }
+                  }}
+                  className="max-h-[min(10rem,30dvh)] min-h-11 flex-1 resize-none overflow-x-hidden bg-transparent py-3 leading-5 text-fg placeholder:text-fg-subtle focus-visible:outline-none"
+                />
+                {voiceSoon ? (
+                  <button
+                    type="button"
+                    aria-disabled="true"
+                    title={voiceSoon}
+                    className="flex size-11 shrink-0 cursor-default items-center justify-center rounded-full text-fg-subtle"
+                  >
+                    <Icon icon={Mic} size={20} />
+                    <span className="sr-only">{voiceSoon}</span>
+                  </button>
+                ) : null}
+                {sending ? (
+                  <button
+                    type="button"
+                    onClick={() => abortRef.current?.abort()}
+                    className="flex size-11 shrink-0 items-center justify-center rounded-full bg-fg text-bg"
+                  >
+                    <Icon icon={Square} size={16} fill="currentColor" />
+                    <span className="sr-only">{t("answer.stop")}</span>
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={!text.trim() && !attached}
+                    className="flex size-11 shrink-0 items-center justify-center rounded-full bg-signal text-signal-fg transition-opacity disabled:opacity-40"
+                  >
+                    <Icon icon={ArrowUp} size={20} />
+                    <span className="sr-only">{t("send")}</span>
+                  </button>
+                )}
+              </div>
+            </form>
+          )}
         </div>
-        {welcome && (
+        {welcome && !morrow && (
           <div
             aria-hidden="true"
             className="min-h-0 flex-1 max-md:hidden [@media(max-height:520px)]:hidden"

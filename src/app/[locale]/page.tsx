@@ -106,7 +106,10 @@ export default async function HomePage({
             signedIn={signedIn}
             jobCardText={cardText}
             voiceSoon={morrow("voice")}
-            jobActions
+            morrow={{
+              wordmark: product("wordmark"),
+              tagline: morrow("tagline"),
+            }}
             canAttach
           />
         </main>
