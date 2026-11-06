@@ -6033,6 +6033,28 @@
       "settings": "Show my notification settings",
       "postJob": "I want to post a job",
       "myJobs": "Show my jobs and their candidates"
+    },
+    "contacts": {
+      "assistant": "Spoki",
+      "heading": "Clients & recruiters",
+      "empty": "Your job applications and freelance orders will appear here.",
+      "guest": "Sign in to see your applications and orders here.",
+      "recruiterNote": "Application sent. The employer answers by changing its status; there is no recruiter chat on the platform yet.",
+      "asBuyer": "Freelance order · you are the client",
+      "asSeller": "Freelance order · you are the freelancer",
+      "yourLetter": "Your cover note",
+      "noLetter": "You applied without a cover note.",
+      "status": "Status: {status}",
+      "feed": "Order messages",
+      "loading": "Loading the conversation…",
+      "error": "Could not load or send. Try again.",
+      "notReady": "Messages for orders are not switched on yet.",
+      "hidden": "A moderator hid this message.",
+      "payment": "Payment received",
+      "delivery": "Work delivered",
+      "placeholder": "Write about this order",
+      "send": "Send",
+      "closed": "This order is closed, so new messages cannot be added."
     }
   }
 }

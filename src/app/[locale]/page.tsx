@@ -54,6 +54,12 @@ export default async function HomePage({
   const product = await getTranslations("product");
   const morrow = await getTranslations("morrow");
   const jobs = await getTranslations("jobs");
+  const applications = await getTranslations("applications");
+  const freelance = await getTranslations("freelance");
+  const statusLabels = {
+    application: applications.raw("status") as Record<string, string>,
+    order: freelance.raw("orders.status") as Record<string, string>,
+  };
   const supabase = await createSupabaseServerClient();
   const user = await getCurrentUser(supabase.auth);
   const signedIn = user !== null;
@@ -90,7 +96,11 @@ export default async function HomePage({
           locale,
         })}
       />
-      <MorrowHome signedIn={signedIn} wordmark={product("wordmark")}>
+      <MorrowHome
+        signedIn={signedIn}
+        wordmark={product("wordmark")}
+        statusLabels={statusLabels}
+      >
         <main className="flex min-h-0 flex-1 flex-col">
           <Chat
             signedIn={signedIn}

@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useSyncExternalStore, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import { useTranslations } from "next-intl";
 import {
   Banknote,
@@ -18,10 +24,13 @@ import {
   Users,
   FilePlus2,
   LogIn,
+  MessageCircle,
   type LucideIcon,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { handSpokiAsk } from "@/components/bot/spoki-ask";
+import { handSpokiAsk, SPOKI_TURN_DONE } from "@/components/bot/spoki-ask";
+import type { ChatThread } from "@/app/api/me/threads/route";
+import { ContactRoom, type StatusLabels } from "./contact-room";
 
 type Item = { key: string; icon: LucideIcon; hint?: boolean };
 
@@ -66,10 +75,12 @@ function watchTheme(onChange: () => void) {
 export function MorrowHome({
   signedIn,
   wordmark,
+  statusLabels,
   children,
 }: {
   signedIn: boolean;
   wordmark: string;
+  statusLabels: StatusLabels;
   children: ReactNode;
 }) {
   const t = useTranslations("morrow");
@@ -81,6 +92,34 @@ export function MorrowHome({
     () => true,
     () => false,
   );
+
+  const [threads, setThreads] = useState<ChatThread[]>([]);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const open = threads.find((thread) => thread.id === openId) ?? null;
+
+  const loadThreads = useCallback(async () => {
+    if (!signedIn) return;
+    try {
+      const response = await fetch("/api/me/threads", { cache: "no-store" });
+      if (!response.ok) return;
+      const body = (await response.json()) as { threads?: ChatThread[] };
+      setThreads(body.threads ?? []);
+    } catch {
+      // The list stays as it was.
+    }
+  }, [signedIn]);
+
+  useEffect(() => {
+    const refresh = () => void loadThreads();
+    const first = window.setTimeout(refresh, 0);
+    window.addEventListener(SPOKI_TURN_DONE, refresh);
+    window.addEventListener("focus", refresh);
+    return () => {
+      window.clearTimeout(first);
+      window.removeEventListener(SPOKI_TURN_DONE, refresh);
+      window.removeEventListener("focus", refresh);
+    };
+  }, [loadThreads]);
 
   function toggleTheme() {
     const next = !light;
@@ -95,6 +134,7 @@ export function MorrowHome({
 
   function ask(key: string) {
     setMenuOpen(false);
+    setOpenId(null);
     handSpokiAsk(t(`prompts.${key}`));
   }
 
@@ -138,9 +178,57 @@ export function MorrowHome({
           </button>
         </div>
         <nav className="morrow-nav">
+          <button
+            type="button"
+            className="morrow-item"
+            aria-current={open ? undefined : "page"}
+            onClick={() => {
+              setOpenId(null);
+              setMenuOpen(false);
+            }}
+          >
+            <MessageCircle size={16} aria-hidden="true" />
+            <span>{t("contacts.assistant")}</span>
+          </button>
           {group(t("discover"), DISCOVER)}
           {group(t("mine"), MINE)}
           {group(t("employer"), EMPLOYER)}
+          <div className="morrow-group">
+            <p className="morrow-contact-heading">{t("contacts.heading")}</p>
+            {threads.map((thread) => (
+              <button
+                key={thread.id}
+                type="button"
+                className="morrow-item"
+                aria-current={thread.id === openId ? "page" : undefined}
+                onClick={() => {
+                  setOpenId(thread.id);
+                  setMenuOpen(false);
+                }}
+              >
+                <span className="morrow-item-text">
+                  <span className="morrow-thread-title">
+                    {thread.kind === "recruiter"
+                      ? `${thread.company} · ${thread.title}`
+                      : thread.title}
+                  </span>
+                  <small>
+                    {thread.kind === "recruiter"
+                      ? (statusLabels.application[thread.status] ??
+                        thread.status)
+                      : (statusLabels.order[thread.status] ?? thread.status)}
+                  </small>
+                </span>
+              </button>
+            ))}
+            {threads.length === 0 ? (
+              <p className="morrow-item-text morrow-contact-empty">
+                <small>
+                  {signedIn ? t("contacts.empty") : t("contacts.guest")}
+                </small>
+              </p>
+            ) : null}
+          </div>
         </nav>
         <div className="morrow-sidebar-foot">
           {signedIn ? null : (
@@ -182,7 +270,13 @@ export function MorrowHome({
           </button>
           <span className="morrow-logo">{wordmark}</span>
         </div>
-        {children}
+        {open ? (
+          <ContactRoom key={open.id} thread={open} labels={statusLabels} />
+        ) : null}
+        {/* The chat stays mounted under a thread, so its turn is not lost. */}
+        <div className="morrow-chat" hidden={open !== null}>
+          {children}
+        </div>
       </section>
     </div>
   );

@@ -5527,6 +5527,28 @@
       "settings": "Mostra le mie impostazioni di notifica",
       "postJob": "Voglio pubblicare un'offerta",
       "myJobs": "Mostra le mie offerte e i loro candidati"
+    },
+    "contacts": {
+      "assistant": "Spoki",
+      "heading": "Clienti e recruiter",
+      "empty": "Qui compariranno le tue candidature e gli ordini freelance.",
+      "guest": "Accedi per vedere qui candidature e ordini.",
+      "recruiterNote": "Candidatura inviata. L’azienda risponde cambiando lo stato; sulla piattaforma non c’è ancora una chat con i recruiter.",
+      "asBuyer": "Ordine freelance · sei il cliente",
+      "asSeller": "Ordine freelance · sei il freelance",
+      "yourLetter": "La tua lettera di presentazione",
+      "noLetter": "Ti sei candidato senza lettera.",
+      "status": "Stato: {status}",
+      "feed": "Messaggi dell’ordine",
+      "loading": "Caricamento della conversazione…",
+      "error": "Impossibile caricare o inviare. Riprova.",
+      "notReady": "I messaggi degli ordini non sono ancora attivi.",
+      "hidden": "Un moderatore ha nascosto questo messaggio.",
+      "payment": "Pagamento ricevuto",
+      "delivery": "Lavoro consegnato",
+      "placeholder": "Scrivi su questo ordine",
+      "send": "Invia",
+      "closed": "Questo ordine è chiuso; non si possono aggiungere messaggi."
     }
   }
 }

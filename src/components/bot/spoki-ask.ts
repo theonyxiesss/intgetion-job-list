@@ -36,3 +36,6 @@ export function onSpokiAsk(listener: () => void) {
   window.addEventListener(EVENT, listener);
   return () => window.removeEventListener(EVENT, listener);
 }
+
+/** Fired when one chat turn ends, answered or stopped. */
+export const SPOKI_TURN_DONE = "spoki-turn-done";

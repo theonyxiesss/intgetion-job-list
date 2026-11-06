@@ -5527,6 +5527,28 @@
       "settings": "Mostre minhas configurações de notificação",
       "postJob": "Quero publicar uma vaga",
       "myJobs": "Mostre minhas vagas e seus candidatos"
+    },
+    "contacts": {
+      "assistant": "Spoki",
+      "heading": "Clientes e recrutadores",
+      "empty": "Suas candidaturas e pedidos freelance aparecerão aqui.",
+      "guest": "Entre para ver aqui suas candidaturas e pedidos.",
+      "recruiterNote": "Candidatura enviada. A empresa responde mudando o status; ainda não há chat com recrutadores na plataforma.",
+      "asBuyer": "Pedido freelance · você é o cliente",
+      "asSeller": "Pedido freelance · você é o freelancer",
+      "yourLetter": "Sua carta de apresentação",
+      "noLetter": "Você se candidatou sem carta.",
+      "status": "Status: {status}",
+      "feed": "Mensagens do pedido",
+      "loading": "Carregando a conversa…",
+      "error": "Não foi possível carregar ou enviar. Tente de novo.",
+      "notReady": "As mensagens de pedidos ainda não estão ativadas.",
+      "hidden": "Um moderador ocultou esta mensagem.",
+      "payment": "Pagamento recebido",
+      "delivery": "Trabalho entregue",
+      "placeholder": "Escreva sobre este pedido",
+      "send": "Enviar",
+      "closed": "Este pedido está fechado; não é possível adicionar mensagens."
     }
   }
 }

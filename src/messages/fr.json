@@ -5527,6 +5527,28 @@
       "settings": "Montre mes paramètres de notification",
       "postJob": "Je veux publier une offre",
       "myJobs": "Montre mes offres et leurs candidats"
+    },
+    "contacts": {
+      "assistant": "Spoki",
+      "heading": "Clients et recruteurs",
+      "empty": "Vos candidatures et commandes freelance apparaîtront ici.",
+      "guest": "Connectez-vous pour voir ici vos candidatures et commandes.",
+      "recruiterNote": "Candidature envoyée. L’employeur répond en changeant son statut ; il n’y a pas encore de chat avec les recruteurs sur la plateforme.",
+      "asBuyer": "Commande freelance · vous êtes le client",
+      "asSeller": "Commande freelance · vous êtes le freelance",
+      "yourLetter": "Votre lettre de motivation",
+      "noLetter": "Vous avez postulé sans lettre.",
+      "status": "Statut : {status}",
+      "feed": "Messages de la commande",
+      "loading": "Chargement de la conversation…",
+      "error": "Impossible de charger ou d’envoyer. Réessayez.",
+      "notReady": "Les messages des commandes ne sont pas encore activés.",
+      "hidden": "Un modérateur a masqué ce message.",
+      "payment": "Paiement reçu",
+      "delivery": "Travail livré",
+      "placeholder": "Écrivez à propos de cette commande",
+      "send": "Envoyer",
+      "closed": "Cette commande est close ; aucun message ne peut être ajouté."
     }
   }
 }

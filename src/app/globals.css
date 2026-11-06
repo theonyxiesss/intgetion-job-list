@@ -1152,3 +1152,147 @@ body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
     transition: none;
   }
 }
+
+.morrow-chat {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.morrow-chat[hidden] {
+  display: none;
+}
+
+.morrow-item[aria-current="page"] {
+  background: var(--surface-2);
+}
+
+.morrow-contact-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--fg-subtle);
+}
+
+.morrow-contact-heading::before,
+.morrow-contact-heading::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: var(--line);
+}
+
+.morrow-contact-empty {
+  padding: 4px 10px;
+}
+
+.morrow-thread-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.morrow-room {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  max-width: 736px;
+  margin: 0 auto;
+  padding: 32px 28px max(24px, env(safe-area-inset-bottom));
+}
+
+.morrow-room-head {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.morrow-room-head strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.morrow-room-head span,
+.morrow-room-status,
+.morrow-room-caption {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+
+.morrow-room-feed {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.morrow-room-mine,
+.morrow-room-theirs {
+  max-width: 82%;
+  border-radius: 18px;
+  padding: 12px 18px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.morrow-room-mine {
+  align-self: flex-end;
+  background: var(--surface-2);
+}
+
+.morrow-room-theirs {
+  align-self: flex-start;
+  border: 1px solid var(--line);
+}
+
+.morrow-room-status {
+  align-self: center;
+  text-align: center;
+}
+
+.morrow-room-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--surface);
+  padding: 6px 6px 6px 18px;
+}
+
+.morrow-room-form input {
+  flex: 1;
+  min-height: 44px;
+  background: transparent;
+  color: var(--fg);
+  outline: none;
+}
+
+.morrow-room-form button {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--signal);
+  color: var(--signal-fg);
+}
+
+.morrow-room-form button:disabled {
+  opacity: 0.4;
+}

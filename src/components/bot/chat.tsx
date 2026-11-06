@@ -19,7 +19,11 @@ import {
   useState,
   type FormEvent,
 } from "react";
-import { onSpokiAsk, takeSpokiAsk } from "@/components/bot/spoki-ask";
+import {
+  onSpokiAsk,
+  SPOKI_TURN_DONE,
+  takeSpokiAsk,
+} from "@/components/bot/spoki-ask";
 import {
   keyboardOverlaps,
   nextKeyboardPhase,
@@ -1106,6 +1110,8 @@ export function Chat({
       );
       abortRef.current = null;
       setSending(false);
+      // Lists beside the chat (the home's threads) refresh after each turn.
+      window.dispatchEvent(new Event(SPOKI_TURN_DONE));
     }
     return turnState === "done";
   }

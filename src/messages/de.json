@@ -5527,6 +5527,28 @@
       "settings": "Zeige meine Benachrichtigungseinstellungen",
       "postJob": "Ich möchte einen Job veröffentlichen",
       "myJobs": "Zeige meine Jobs und ihre Kandidaten"
+    },
+    "contacts": {
+      "assistant": "Spoki",
+      "heading": "Kunden & Recruiter",
+      "empty": "Hier erscheinen deine Bewerbungen und Freelance-Aufträge.",
+      "guest": "Melde dich an, um hier Bewerbungen und Aufträge zu sehen.",
+      "recruiterNote": "Bewerbung gesendet. Der Arbeitgeber antwortet über den Status; einen Recruiter-Chat gibt es auf der Plattform noch nicht.",
+      "asBuyer": "Freelance-Auftrag · du bist der Kunde",
+      "asSeller": "Freelance-Auftrag · du bist der Freelancer",
+      "yourLetter": "Dein Anschreiben",
+      "noLetter": "Du hast dich ohne Anschreiben beworben.",
+      "status": "Status: {status}",
+      "feed": "Nachrichten zum Auftrag",
+      "loading": "Unterhaltung wird geladen…",
+      "error": "Laden oder Senden fehlgeschlagen. Bitte erneut versuchen.",
+      "notReady": "Nachrichten zu Aufträgen sind noch nicht aktiviert.",
+      "hidden": "Ein Moderator hat diese Nachricht ausgeblendet.",
+      "payment": "Zahlung erhalten",
+      "delivery": "Arbeit geliefert",
+      "placeholder": "Schreibe zu diesem Auftrag",
+      "send": "Senden",
+      "closed": "Dieser Auftrag ist abgeschlossen; neue Nachrichten sind nicht möglich."
     }
   }
 }
