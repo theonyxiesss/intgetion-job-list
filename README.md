@@ -1,15 +1,118 @@
 # INTGETION JOB LIST
 
-Remote-first job platform. The spec is [`docs/TZ_INTGETION_v6.md`](docs/TZ_INTGETION_v6.md).
+Job-платформа нового поколения с удалённой работой в фокусе. Сайт — [intgetion.com](https://intgetion.com).
 
-## Scripts
+Платформа соединяет **кандидатов** и **работодателей**: вакансии, отклики, подбор по навыкам, фриланс-услуги и мероприятия (Web3 и IT). Пользоваться можно через сайт, Telegram-бота и MCP-сервер для ИИ-ассистентов.
 
-- `pnpm dev` — local app
-- `pnpm lint`
-- `pnpm format:check`
-- `pnpm typecheck`
-- `pnpm test`
-- `pnpm test:e2e` — Playwright (`pnpm exec playwright install` once)
-- `pnpm build`
+> Название продукта фиксировано: `INTGETION JOB LIST` (константа `PRODUCT_NAME` в `src/config/product.ts`).
 
-Subphase 0A is the repository scaffold. Product features start in later subphases.
+## Для кого
+
+- **Кандидаты** — ищут удалённые вакансии, откликаются, получают подборку по совпадению с профилем и утренние сводки.
+- **Работодатели и компании** — публикуют вакансии, видят отклики, ведут профиль компании.
+- **Фрилансеры** — публикуют услуги и принимают заказы; есть отдельная доска задач.
+- **Участники Web3 и IT-сообщества** — календарь мероприятий.
+- **ИИ-ассистенты** — подключаются через MCP и получают доступ к поиску вакансий и данных платформы.
+
+## Основные возможности
+
+| Направление        | Что есть                                                                                        |
+| ------------------ | ----------------------------------------------------------------------------------------------- |
+| Вакансии и отклики | Публикация, поиск, фильтры, статусы откликов с полным набором переходов                         |
+| Подбор             | Скоринг совпадения кандидата и вакансии, страница `/matches`                                    |
+| Компании           | Профиль компании и её вакансии                                                                  |
+| Фриланс            | Услуги, заказы, задачи и отклики на задачи                                                      |
+| Мероприятия        | Лента Web3 и IT-событий                                                                         |
+| Уведомления        | Утренние сводки в трёх временных слотах, уведомления в Telegram                                 |
+| Telegram-бот       | Чат с платформой в Telegram и на сайте                                                          |
+| MCP                | Сервер для ИИ-ассистентов: OAuth с PKCE, динамическая регистрация клиентов, персональные токены |
+| SEO                | Служебные страницы, метаданные, sitemap                                                         |
+| Администрирование  | Панель админа, модерация, метрики и аналитика                                                   |
+| Языки              | Интерфейс на английском и русском (`src/messages/en.json`, `src/messages/ru.json`)              |
+
+Подробности по каждому модулю — в [docs/how-it-works/INDEX.md](docs/how-it-works/INDEX.md).
+
+## Технологический стек
+
+- **Фронтенд и сервер:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4
+- **Интернационализация:** next-intl
+- **Формы и валидация:** react-hook-form, zod
+- **База данных и авторизация:** Supabase (Postgres и Auth), Drizzle ORM
+- **Письма:** Resend
+- **Web3-вход:** Reown AppKit, WalletConnect, viem
+- **ИИ и MCP:** `@modelcontextprotocol/server`
+- **Хостинг:** Vercel. Каждый push в `master` выкатывает продакшн
+- **Тесты:** Vitest (юнит и интеграция), Playwright (e2e), axe (проверка доступности)
+- **Качество кода:** ESLint, Prettier, `tsc --noEmit`, gitleaks
+
+## Структура репозитория
+
+```
+src/
+  app/            маршруты Next.js и API (включая /api/health, /api/mcp, /api/bot, /api/auth)
+  modules/        доменные модули: jobs, applications, candidates, companies, matching,
+                  freelance, events, bot, mcp, auth, billing, admin, notifications,
+                  analytics, seo, taxonomy, ugc, salaries и другие
+  components/     общие UI-компоненты
+  config/         константы продукта и конфигурация
+  messages/       строки интерфейса на en и ru
+  db/             схема и работа с базой
+supabase/         миграции базы данных
+scripts/          служебные скрипты: миграции, проверки окружения, сиды, оценка бота
+tests/, fixtures/ тестовые данные и сценарии
+docs/             документация: ТЗ, решения, runbook, описания модулей
+```
+
+Модули общаются между собой только через `src/modules/<модуль>/service/index.ts`.
+
+## Окружения
+
+| Что                  | Где                                                                                       |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| Продакшн             | https://intgetion.com, деплой из `master`                                                 |
+| Здоровье сервиса     | `GET /api/health` → `{"ok": true}`. Поле `auth: "down"` означает, что сбоит Supabase Auth |
+| База данных          | Supabase, облачный проект; локально — `supabase start`                                    |
+| Локальная разработка | `pnpm dev`, порт 3000                                                                     |
+
+Preview-деплои намеренно отключены (`vercel.json`): окружение Preview содержит продакшн-секреты.
+
+## Быстрый старт
+
+Нужны Node.js, pnpm и файл `.env.local` (шаблон — `.env.example`). Переменные окружения проверяются командой `pnpm env:check`.
+
+```bash
+pnpm install
+pnpm env:check
+pnpm dev
+```
+
+## Команды
+
+| Команда                 | Что делает                                                      |
+| ----------------------- | --------------------------------------------------------------- |
+| `pnpm dev`              | Локальный сервер разработки                                     |
+| `pnpm build`            | Продакшн-сборка                                                 |
+| `pnpm lint`             | ESLint, предупреждения считаются ошибками                       |
+| `pnpm typecheck`        | Проверка типов TypeScript                                       |
+| `pnpm format:check`     | Проверка форматирования Prettier                                |
+| `pnpm test`             | Юнит-тесты (Vitest)                                             |
+| `pnpm test:integration` | Интеграционные тесты, нужен поднятый Supabase                   |
+| `pnpm test:e2e`         | e2e-тесты Playwright (один раз: `pnpm exec playwright install`) |
+| `pnpm db:migrate`       | Применить миграции (только по согласованию)                     |
+| `pnpm eval`             | Оценка ответов бота                                             |
+
+## Процесс работы
+
+- `master` защищён: прямые push запрещены, изменения попадают в продакшн только через Pull Request, после прохождения проверок `check` и `database`.
+- Каждая задача делается в своей ветке. Правила работы агентов и параллельных веток — в [docs/PARALLEL_WORK.md](docs/PARALLEL_WORK.md).
+- Изменение модуля сопровождается обновлением его описания в `docs/how-it-works/`.
+
+## Документация
+
+- [AGENTS.md](AGENTS.md) — инструкции для ИИ-агентов и правила проекта
+- [docs/CURRENT.md](docs/CURRENT.md) — текущее состояние: что работает, что сломано, что в работе
+- [docs/OPEN_TASKS.md](docs/OPEN_TASKS.md) — открытые задачи
+- [docs/TZ_INTGETION_v6.md](docs/TZ_INTGETION_v6.md) — техническое задание
+- [docs/DECISIONS.md](docs/DECISIONS.md) — журнал архитектурных решений
+- [docs/RUNBOOK.md](docs/RUNBOOK.md) — эксплуатация и деплой
+- [MISSION_LOG.md](MISSION_LOG.md) — история работ
