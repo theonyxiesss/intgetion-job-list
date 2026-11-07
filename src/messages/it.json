@@ -2245,6 +2245,16 @@
         "title": "Pagina dell’azienda",
         "text": "Sito, dominio, dati legali e logo dell’azienda si cambiano qui.",
         "action": "Apri"
+      },
+      "account_data": {
+        "title": "Account e dati",
+        "text": "Scarica i dati o elimina l’account.",
+        "action": "Apri"
+      },
+      "assistants": {
+        "title": "Assistenti IA",
+        "text": "Token e assistenti collegati.",
+        "action": "Apri"
       }
     },
     "answer": {
@@ -5622,6 +5632,21 @@
         "portfolio": "portfolio {value}"
       },
       "request": "Aggiorna il mio profilo: {facts}. Se è allegato un CV, usalo anche."
+    },
+    "panels": {
+      "account": {
+        "title": "Account e dati",
+        "lead": "Scarica tutto ciò che conserviamo su di te o elimina l’account.",
+        "exportTitle": "Scarica i tuoi dati",
+        "exportText": "Un file JSON con profilo, candidature, elementi salvati e messaggi.",
+        "exportButton": "Scarica i dati"
+      },
+      "assistants": {
+        "title": "Assistenti IA",
+        "lead": "Collega Claude, ChatGPT o un altro assistente via MCP. Il token si vede una sola volta: copialo nell’assistente, mai in una chat.",
+        "loading": "Caricamento degli assistenti…",
+        "failed": "Impossibile caricare gli assistenti. Riprova."
+      }
     }
   }
 }

@@ -2245,6 +2245,16 @@
         "title": "Company page",
         "text": "The company website, domain, legal details and logo are changed here.",
         "action": "Open"
+      },
+      "account_data": {
+        "title": "Account and data",
+        "text": "Download your data or delete the account.",
+        "action": "Open"
+      },
+      "assistants": {
+        "title": "AI assistants",
+        "text": "Tokens and connected assistants.",
+        "action": "Open"
       }
     },
     "answer": {
@@ -6128,6 +6138,21 @@
         "portfolio": "portfolio {value}"
       },
       "request": "Update my profile: {facts}. If a CV is attached, use it too."
+    },
+    "panels": {
+      "account": {
+        "title": "Account and data",
+        "lead": "Download everything we keep about you, or delete the account.",
+        "exportTitle": "Download your data",
+        "exportText": "A JSON file with your profile, applications, saved items and messages.",
+        "exportButton": "Download data"
+      },
+      "assistants": {
+        "title": "AI assistants",
+        "lead": "Connect Claude, ChatGPT or another assistant over MCP. A token is shown once: copy it into the assistant, never into a chat.",
+        "loading": "Loading your assistants…",
+        "failed": "Could not load your assistants. Try again."
+      }
     }
   }
 }

@@ -2245,6 +2245,16 @@
         "title": "Page de l’entreprise",
         "text": "Le site, le domaine, les informations légales et le logo de l’entreprise se changent ici.",
         "action": "Ouvrir"
+      },
+      "account_data": {
+        "title": "Compte et données",
+        "text": "Télécharger vos données ou supprimer le compte.",
+        "action": "Ouvrir"
+      },
+      "assistants": {
+        "title": "Assistants IA",
+        "text": "Jetons et assistants connectés.",
+        "action": "Ouvrir"
       }
     },
     "answer": {
@@ -5622,6 +5632,21 @@
         "portfolio": "portfolio {value}"
       },
       "request": "Mets à jour mon profil : {facts}. Si un CV est joint, utilise-le aussi."
+    },
+    "panels": {
+      "account": {
+        "title": "Compte et données",
+        "lead": "Téléchargez tout ce que nous gardons sur vous ou supprimez le compte.",
+        "exportTitle": "Télécharger vos données",
+        "exportText": "Un fichier JSON avec votre profil, vos candidatures, vos favoris et vos messages.",
+        "exportButton": "Télécharger les données"
+      },
+      "assistants": {
+        "title": "Assistants IA",
+        "lead": "Connectez Claude, ChatGPT ou un autre assistant via MCP. Un jeton s’affiche une seule fois : copiez-le dans l’assistant, jamais dans un chat.",
+        "loading": "Chargement de vos assistants…",
+        "failed": "Impossible de charger vos assistants. Réessayez."
+      }
     }
   }
 }

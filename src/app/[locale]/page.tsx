@@ -6,6 +6,7 @@ import { RouteMessages } from "@/components/shell/route-messages";
 import { routing } from "@/i18n/routing";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
+import { MCP_SCOPES } from "@/modules/mcp/service";
 import { JsonLd } from "@/modules/seo/json-ld";
 import { homeGraphJsonLd } from "@/modules/seo/markup";
 import { languageAlternates, siteUrl } from "@/modules/seo/site";
@@ -86,6 +87,8 @@ export default async function HomePage({
         "notificationSettings",
         "jobs",
         "categories",
+        "settings",
+        "mcp",
       ]}
     >
       <JsonLd
@@ -100,6 +103,7 @@ export default async function HomePage({
         signedIn={signedIn}
         wordmark={product("wordmark")}
         statusLabels={statusLabels}
+        mcpScopes={MCP_SCOPES}
       >
         <main className="flex min-h-0 flex-1 flex-col">
           <Chat

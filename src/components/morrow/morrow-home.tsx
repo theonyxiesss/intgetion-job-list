@@ -15,6 +15,8 @@ import {
   Banknote,
   Bell,
   Bookmark,
+  Bot,
+  ShieldCheck,
   BriefcaseBusiness,
   CalendarDays,
   Check,
@@ -49,6 +51,7 @@ import { profileRequest, type ProfileDraft } from "./profile-request";
 import type { ChatThread } from "@/app/api/me/threads/route";
 import type { MyConversation } from "@/modules/bot/service";
 import { ContactRoom, type StatusLabels } from "./contact-room";
+import { SettingsPanelView, type SettingsPanel } from "./settings-panels";
 
 type Item = { key: string; icon: LucideIcon };
 
@@ -111,11 +114,13 @@ export function MorrowHome({
   signedIn,
   wordmark,
   statusLabels,
+  mcpScopes,
   children,
 }: {
   signedIn: boolean;
   wordmark: string;
   statusLabels: StatusLabels;
+  mcpScopes: readonly string[];
   children: ReactNode;
 }) {
   const t = useTranslations("morrow");
@@ -151,6 +156,7 @@ export function MorrowHome({
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [dialogues, setDialogues] = useState<MyConversation[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [panel, setPanel] = useState<SettingsPanel | null>(null);
   /** Changing it remounts the chat on the thread the cookie now names. */
   const [chatKey, setChatKey] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -158,7 +164,10 @@ export function MorrowHome({
   const trigger = useRef<HTMLButtonElement>(null);
   const open = threads.find((thread) => thread.id === openId) ?? null;
   const hasConversation =
-    started || open !== null || dialogues.some((row) => !row.current);
+    started ||
+    open !== null ||
+    panel !== null ||
+    dialogues.some((row) => !row.current);
   const expanded = hasConversation && sidebar && (!phone || infoOpen);
   const showInfo = !hasConversation && infoOpen;
   const query = search.trim().toLowerCase();
@@ -268,6 +277,27 @@ export function MorrowHome({
     );
   }
 
+  // Spoki opens a panel by its link: `/?panel=account` or `assistants`.
+  useEffect(() => {
+    if (!signedIn) return;
+    const first = window.setTimeout(() => {
+      const url = new URL(window.location.href);
+      const asked = url.searchParams.get("panel");
+      if (asked !== "account" && asked !== "assistants") return;
+      url.searchParams.delete("panel");
+      window.history.replaceState(null, "", url);
+      setPanel(asked);
+    }, 0);
+    return () => window.clearTimeout(first);
+  }, [signedIn]);
+
+  function openPanel(next: SettingsPanel) {
+    act(() => {
+      setOpenId(null);
+      setPanel(next);
+    });
+  }
+
   function toggleTheme() {
     const next = !light;
     if (next) document.documentElement.dataset.theme = "light";
@@ -289,6 +319,7 @@ export function MorrowHome({
   function ask(key: string) {
     act(() => {
       setOpenId(null);
+      setPanel(null);
       handSpokiAsk(t(`prompts.${key}`));
     });
   }
@@ -424,6 +455,30 @@ export function MorrowHome({
         <Paperclip size={16} aria-hidden="true" />
         <span>{t("attachCv")}</span>
       </button>
+      {signedIn ? (
+        <>
+          <button
+            type="button"
+            className="menu-action"
+            aria-current={panel === "account" ? "page" : undefined}
+            disabled={!hydrated}
+            onClick={() => openPanel("account")}
+          >
+            <ShieldCheck size={16} aria-hidden="true" />
+            <span>{t("panels.account.title")}</span>
+          </button>
+          <button
+            type="button"
+            className="menu-action"
+            aria-current={panel === "assistants" ? "page" : undefined}
+            disabled={!hydrated}
+            onClick={() => openPanel("assistants")}
+          >
+            <Bot size={16} aria-hidden="true" />
+            <span>{t("panels.assistants.title")}</span>
+          </button>
+        </>
+      ) : null}
       {signedIn ? null : (
         <button
           type="button"
@@ -466,227 +521,243 @@ export function MorrowHome({
           />
         ) : null}
       </AnimatePresence>
-      <motion.div
-        ref={root}
-        className={`chat-menu ${expanded ? "is-sidebar" : ""}`}
-        role={expanded && phone ? "dialog" : undefined}
-        aria-modal={expanded && phone ? true : undefined}
-        aria-label={expanded && phone ? t("menu") : undefined}
-        initial={false}
-        animate={{
-          width: expanded ? Math.min(300, width - 40) : 44,
-          height: expanded ? height : 44,
-          top: expanded ? 0 : 20,
-          left: expanded ? 0 : 20,
-          borderRadius: expanded ? 0 : 22,
-        }}
-        transition={{ duration, ease: EASE }}
-      >
-        <motion.button
-          ref={trigger}
-          type="button"
-          className="menu-trigger"
-          aria-expanded={expanded || showInfo}
-          aria-controls={
-            expanded
-              ? "workspace-sidebar"
-              : showInfo
-                ? "morrow-info"
-                : undefined
-          }
+      {/* framer-motion writes style attributes into server HTML, which the
+          site's CSP refuses; the animated menu starts after hydration. */}
+      {hydrated ? (
+        <motion.div
+          ref={root}
+          className={`chat-menu ${expanded ? "is-sidebar" : ""}`}
+          role={expanded && phone ? "dialog" : undefined}
+          aria-modal={expanded && phone ? true : undefined}
+          aria-label={expanded && phone ? t("menu") : undefined}
           initial={false}
-          animate={{ left: expanded ? 16 : 0, top: expanded ? 16 : 0 }}
+          animate={{
+            width: expanded ? Math.min(300, width - 40) : 44,
+            height: expanded ? height : 44,
+            top: expanded ? 0 : 20,
+            left: expanded ? 0 : 20,
+            borderRadius: expanded ? 0 : 22,
+          }}
           transition={{ duration, ease: EASE }}
-          whileTap={reduceMotion ? undefined : { scale: 0.92 }}
-          onClick={onTrigger}
         >
-          <AnimatePresence initial={false} mode="wait">
-            <motion.span
-              key={expanded ? "collapse" : "dots"}
-              initial={{ opacity: 0, rotate: -45 }}
-              animate={{ opacity: 1, rotate: 0 }}
-              exit={{ opacity: 0, rotate: 45 }}
-              transition={{ duration: reduceMotion ? 0 : 0.1 }}
-            >
-              {expanded ? (
-                <PanelLeftClose size={18} aria-hidden="true" />
-              ) : (
-                <MoreHorizontal size={21} aria-hidden="true" />
-              )}
-            </motion.span>
-          </AnimatePresence>
-          <span className="sr-only">
-            {expanded
-              ? t("closeMenu")
-              : hasConversation
-                ? t("openMenu")
-                : t("about")}
-          </span>
-        </motion.button>
-        <AnimatePresence>
-          {expanded ? (
-            <motion.nav
-              key="sidebar"
-              id="workspace-sidebar"
-              aria-label={t("menu")}
-              className="sidebar-content"
-              initial={{ opacity: 0, x: reduceMotion ? 0 : -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{
-                opacity: 0,
-                transition: { duration: reduceMotion ? 0 : 0.08 },
-              }}
-              transition={{
-                delay: reduceMotion ? 0 : 0.1,
-                duration: reduceMotion ? 0 : 0.22,
-              }}
-            >
-              <div className="sidebar-brand">{wordmark}</div>
-              <motion.div className="sidebar-scroll" layoutScroll>
-                <button
-                  type="button"
-                  className="menu-action new-dialogue"
-                  disabled={!hydrated || busy}
-                  onClick={newConversation}
-                >
-                  <Plus size={16} aria-hidden="true" />
-                  <span>{t("newConversation")}</span>
-                </button>
-                <div className="menu-label">{t("discover")}</div>
-                {shortcuts}
-                {actions(MORE)}
-                <div className="menu-label">{t("employer")}</div>
-                {actions(EMPLOYER)}
-                <div className="menu-divider" />
-                <div className="menu-label">
-                  <Clock3 size={12} aria-hidden="true" />
-                  {t("dialogues")}
-                </div>
-                <label className="menu-search">
-                  <Search size={14} aria-hidden="true" />
-                  <input
-                    aria-label={t("searchDialogues")}
-                    placeholder={t("searchDialogues")}
-                    value={search}
-                    onChange={(event) => setSearch(event.target.value)}
-                  />
-                </label>
-                <div className="menu-history">
-                  {shownDialogues.map((row) => {
-                    const title = row.title ?? t("untitled");
-                    const current = row.current && open === null;
-                    return (
-                      <div className="dialogue-row" key={row.id}>
-                        <button
-                          type="button"
-                          className="menu-action"
-                          aria-current={current ? "page" : undefined}
-                          disabled={busy}
-                          onClick={() => openDialogue(row)}
-                        >
-                          <span>{title}</span>
-                          {current ? (
-                            <Check size={13} aria-hidden="true" />
-                          ) : null}
-                        </button>
-                        {signedIn ? (
+          <motion.button
+            ref={trigger}
+            type="button"
+            className="menu-trigger"
+            aria-expanded={expanded || showInfo}
+            aria-controls={
+              expanded
+                ? "workspace-sidebar"
+                : showInfo
+                  ? "morrow-info"
+                  : undefined
+            }
+            initial={false}
+            animate={{ left: expanded ? 16 : 0, top: expanded ? 16 : 0 }}
+            transition={{ duration, ease: EASE }}
+            whileTap={reduceMotion ? undefined : { scale: 0.92 }}
+            onClick={onTrigger}
+          >
+            <AnimatePresence initial={false} mode="wait">
+              <motion.span
+                key={expanded ? "collapse" : "dots"}
+                initial={{ opacity: 0, rotate: -45 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                exit={{ opacity: 0, rotate: 45 }}
+                transition={{ duration: reduceMotion ? 0 : 0.1 }}
+              >
+                {expanded ? (
+                  <PanelLeftClose size={18} aria-hidden="true" />
+                ) : (
+                  <MoreHorizontal size={21} aria-hidden="true" />
+                )}
+              </motion.span>
+            </AnimatePresence>
+            <span className="sr-only">
+              {expanded
+                ? t("closeMenu")
+                : hasConversation
+                  ? t("openMenu")
+                  : t("about")}
+            </span>
+          </motion.button>
+          <AnimatePresence>
+            {expanded ? (
+              <motion.nav
+                key="sidebar"
+                id="workspace-sidebar"
+                aria-label={t("menu")}
+                className="sidebar-content"
+                initial={{ opacity: 0, x: reduceMotion ? 0 : -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{
+                  opacity: 0,
+                  transition: { duration: reduceMotion ? 0 : 0.08 },
+                }}
+                transition={{
+                  delay: reduceMotion ? 0 : 0.1,
+                  duration: reduceMotion ? 0 : 0.22,
+                }}
+              >
+                <div className="sidebar-brand">{wordmark}</div>
+                <motion.div className="sidebar-scroll" layoutScroll>
+                  <button
+                    type="button"
+                    className="menu-action new-dialogue"
+                    disabled={!hydrated || busy}
+                    onClick={newConversation}
+                  >
+                    <Plus size={16} aria-hidden="true" />
+                    <span>{t("newConversation")}</span>
+                  </button>
+                  <div className="menu-label">{t("discover")}</div>
+                  {shortcuts}
+                  {actions(MORE)}
+                  <div className="menu-label">{t("employer")}</div>
+                  {actions(EMPLOYER)}
+                  <div className="menu-divider" />
+                  <div className="menu-label">
+                    <Clock3 size={12} aria-hidden="true" />
+                    {t("dialogues")}
+                  </div>
+                  <label className="menu-search">
+                    <Search size={14} aria-hidden="true" />
+                    <input
+                      aria-label={t("searchDialogues")}
+                      placeholder={t("searchDialogues")}
+                      value={search}
+                      onChange={(event) => setSearch(event.target.value)}
+                    />
+                  </label>
+                  <div className="menu-history">
+                    {shownDialogues.map((row) => {
+                      const title = row.title ?? t("untitled");
+                      const current = row.current && open === null;
+                      return (
+                        <div className="dialogue-row" key={row.id}>
                           <button
                             type="button"
-                            className="delete-dialogue"
-                            title={t("deleteDialogue", { title })}
-                            onClick={() => void deleteDialogue(row)}
+                            className="menu-action"
+                            aria-current={current ? "page" : undefined}
+                            disabled={busy}
+                            onClick={() => openDialogue(row)}
                           >
-                            <Trash2 size={14} aria-hidden="true" />
-                            <span className="sr-only">
-                              {t("deleteDialogue", { title })}
-                            </span>
+                            <span>{title}</span>
+                            {current ? (
+                              <Check size={13} aria-hidden="true" />
+                            ) : null}
                           </button>
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                  {query &&
-                  shownDialogues.length + shownThreads.length === 0 ? (
-                    <p className="menu-note">{t("noDialogues")}</p>
-                  ) : null}
-                  <motion.div
-                    layout="position"
-                    transition={{
-                      layout: {
-                        duration: reduceMotion ? 0 : 0.28,
-                        ease: "easeOut",
-                      },
-                    }}
-                    className={`contact-conversations ${threads.length ? "has-contacts" : ""}`}
-                  >
-                    <div className="contact-heading">
-                      {t("contacts.heading")}
-                    </div>
-                    {shownThreads.map((thread) => (
-                      <div className="dialogue-row" key={thread.id}>
-                        <button
-                          type="button"
-                          className="menu-action"
-                          aria-current={
-                            thread.id === openId ? "page" : undefined
-                          }
-                          onClick={() => act(() => setOpenId(thread.id))}
-                        >
-                          <span>
-                            {thread.kind === "recruiter"
-                              ? `${thread.company} · ${thread.title}`
-                              : thread.title}
-                          </span>
-                          <small>
-                            {thread.kind === "recruiter"
-                              ? (statusLabels.application[thread.status] ??
-                                thread.status)
-                              : (statusLabels.order[thread.status] ??
-                                thread.status)}
-                          </small>
-                        </button>
-                      </div>
-                    ))}
-                    {threads.length === 0 ? (
-                      <p className="menu-note">
-                        {signedIn ? t("contacts.empty") : t("contacts.guest")}
-                      </p>
+                          {signedIn ? (
+                            <button
+                              type="button"
+                              className="delete-dialogue"
+                              title={t("deleteDialogue", { title })}
+                              onClick={() => void deleteDialogue(row)}
+                            >
+                              <Trash2 size={14} aria-hidden="true" />
+                              <span className="sr-only">
+                                {t("deleteDialogue", { title })}
+                              </span>
+                            </button>
+                          ) : null}
+                        </div>
+                      );
+                    })}
+                    {query &&
+                    shownDialogues.length + shownThreads.length === 0 ? (
+                      <p className="menu-note">{t("noDialogues")}</p>
                     ) : null}
-                  </motion.div>
+                    <motion.div
+                      layout="position"
+                      transition={{
+                        layout: {
+                          duration: reduceMotion ? 0 : 0.28,
+                          ease: "easeOut",
+                        },
+                      }}
+                      className={`contact-conversations ${threads.length ? "has-contacts" : ""}`}
+                    >
+                      <div className="contact-heading">
+                        {t("contacts.heading")}
+                      </div>
+                      {shownThreads.map((thread) => (
+                        <div className="dialogue-row" key={thread.id}>
+                          <button
+                            type="button"
+                            className="menu-action"
+                            aria-current={
+                              thread.id === openId ? "page" : undefined
+                            }
+                            onClick={() =>
+                              act(() => {
+                                setPanel(null);
+                                setOpenId(thread.id);
+                              })
+                            }
+                          >
+                            <span>
+                              {thread.kind === "recruiter"
+                                ? `${thread.company} · ${thread.title}`
+                                : thread.title}
+                            </span>
+                            <small>
+                              {thread.kind === "recruiter"
+                                ? (statusLabels.application[thread.status] ??
+                                  thread.status)
+                                : (statusLabels.order[thread.status] ??
+                                  thread.status)}
+                            </small>
+                          </button>
+                        </div>
+                      ))}
+                      {threads.length === 0 ? (
+                        <p className="menu-note">
+                          {signedIn ? t("contacts.empty") : t("contacts.guest")}
+                        </p>
+                      ) : null}
+                    </motion.div>
+                  </div>
+                </motion.div>
+                <div className="sidebar-footer">{footer}</div>
+              </motion.nav>
+            ) : null}
+            {showInfo ? (
+              <motion.div
+                key="info"
+                id="morrow-info"
+                role="dialog"
+                aria-label={t("about")}
+                className="menu-panel"
+                initial={{
+                  opacity: 0,
+                  scale: reduceMotion ? 1 : 0.9,
+                  y: reduceMotion ? 0 : -8,
+                }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: reduceMotion ? 1 : 0.95 }}
+                transition={{ duration: reduceMotion ? 0 : 0.2 }}
+                style={{ transformOrigin: "top left" }}
+              >
+                <div className="menu-name">
+                  {t("aboutTitle", { name: wordmark })}
+                  <span>{t("aboutLead")}</span>
                 </div>
+                {shortcuts}
+                <p className="menu-note">{t("aboutText")}</p>
+                <div className="menu-divider" />
+                {footer}
               </motion.div>
-              <div className="sidebar-footer">{footer}</div>
-            </motion.nav>
-          ) : null}
-          {showInfo ? (
-            <motion.div
-              key="info"
-              id="morrow-info"
-              role="dialog"
-              aria-label={t("about")}
-              className="menu-panel"
-              initial={{
-                opacity: 0,
-                scale: reduceMotion ? 1 : 0.9,
-                y: reduceMotion ? 0 : -8,
-              }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: reduceMotion ? 1 : 0.95 }}
-              transition={{ duration: reduceMotion ? 0 : 0.2 }}
-              style={{ transformOrigin: "top left" }}
-            >
-              <div className="menu-name">
-                {t("aboutTitle", { name: wordmark })}
-                <span>{t("aboutLead")}</span>
-              </div>
-              {shortcuts}
-              <p className="menu-note">{t("aboutText")}</p>
-              <div className="menu-divider" />
-              {footer}
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </motion.div>
+      ) : (
+        <div className="chat-menu">
+          <button type="button" className="menu-trigger" disabled>
+            <MoreHorizontal size={21} aria-hidden="true" />
+            <span className="sr-only">{t("about")}</span>
+          </button>
+        </div>
+      )}
       {profileOpen ? (
         <ProfileDialog
           signedIn={signedIn}
@@ -696,12 +767,18 @@ export function MorrowHome({
         />
       ) : null}
       <section className="workspace-host">
-        {open ? (
+        {panel ? (
+          <SettingsPanelView panel={panel} scopes={mcpScopes} />
+        ) : open ? (
           <ContactRoom key={open.id} thread={open} labels={statusLabels} />
         ) : null}
         {/* The chat stays mounted under a thread, so its turn is not lost;
             a new key draws it again on another dialogue. */}
-        <div key={chatKey} className="morrow-chat" hidden={open !== null}>
+        <div
+          key={chatKey}
+          className="morrow-chat"
+          hidden={open !== null || panel !== null}
+        >
           {children}
         </div>
       </section>

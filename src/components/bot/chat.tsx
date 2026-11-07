@@ -17,6 +17,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  useSyncExternalStore,
   type FormEvent,
 } from "react";
 import {
@@ -339,6 +340,10 @@ const ATTACH_ERRORS = new Set([
   "RATE_LIMITED",
 ]);
 
+function subscribeNever() {
+  return () => {};
+}
+
 let counter = 0;
 const nextKey = () => `e${(counter += 1)}`;
 
@@ -464,6 +469,13 @@ export function Chat({
   /** Empty chat sits mid-screen; a started conversation pins the field to the bottom. */
   const welcome = entries.length === 0;
   const reduceMotion = useReducedMotion();
+  // framer-motion's style attributes in server HTML break the site's CSP,
+  // so the animated brand waits for hydration (TZ 53).
+  const hydrated = useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
   /** The mockup's entrance for one message row (TZ 53). */
   const rowMotion = {
     initial: { opacity: 0, y: 8 },
@@ -2227,8 +2239,17 @@ export function Chat({
               : "mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-3 px-4 md:px-6"
           }
         >
+          {morrow && welcome && !hydrated ? (
+            <div className="welcome-brand">
+              <p className="welcome-title">
+                <MorrowMark />
+                <span>{morrow.wordmark}</span>
+              </p>
+              <p>{morrow.tagline}</p>
+            </div>
+          ) : null}
           <AnimatePresence initial={false}>
-            {morrow && welcome ? (
+            {morrow && welcome && hydrated ? (
               <motion.div
                 key="brand"
                 className="welcome-brand"

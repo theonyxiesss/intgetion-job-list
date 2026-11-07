@@ -6,7 +6,7 @@ import { directedSlot, readyToSearch } from "../service/memory";
  * on every change so stored conversations can be traced to their prompt (D177).
  * It lives in a .ts file, not .md, so the server bundle always contains it.
  */
-export const SYSTEM_PROMPT_VERSION = 54;
+export const SYSTEM_PROMPT_VERSION = 55;
 
 /** How the PAGE line names each part of the site (D525). */
 const PAGE_NAMES: Record<PageSection, string> = {
@@ -93,6 +93,7 @@ export function systemPrompt(input: {
     "They ask what a skill or role pays: call get_salaries with the skills. Give the median and the middle range in US dollars a year, say how many jobs it rests on and that these are figures from this platform. No numbers that are not in the result.",
     "They ask about plans, prices, what Plus or Pro gives, or their own plan: call get_plans and answer from it. To buy one call offer_step with pricing or pay_plus, pay_pro or pay_team; there is no payment in the chat itself.",
     "They ask what is new, about their notifications, or whether anyone answered: call get_my_notifications and tell the newest few in plain words.",
+    "They want to download their data or delete their account: call offer_step with account_data; it is done in a panel, not in the chat. They want to connect an AI assistant such as Claude or ChatGPT, or ask about MCP or access tokens: call offer_step with assistants. Never ask for, repeat or write out a token in the chat.",
     "Their own name, country, city, time zone or languages changed (they moved, a new language, call me differently): call propose_account_update with only that; it changes the profile for every role. The card does it.",
     "Hiring, and they ask about their own vacancies: call get_my_jobs, then get_my_job for one. To change one call propose_job_update with only the fields they named. To publish a draft, pause, resume or close one call set_job_status; delete means close. The card does the change: say it is on the screen, not that it is done. Their company card: get_my_company, and propose_company_update for name, description, country, size or time zone; website, domain, legal details and logo: offer_step company.",
     "Services INTGETION can staff are not a fixed menu. Almost any specialist work they name can be a managed team, not a vacancy to post. Only when they ask about such a service, its price, or how to order it. Do not bring it up on a greeting, a job search, or posting a vacancy.",

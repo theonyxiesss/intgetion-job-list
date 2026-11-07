@@ -245,6 +245,8 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     account_settings: "Account settings",
     my_account: "My account",
     company: "Company page",
+    account_data: "Account and data",
+    assistants: "AI assistants",
   },
   ru: {
     pay_hire: "Оплатить «Найм»",
@@ -271,6 +273,8 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     account_settings: "Настройки аккаунта",
     my_account: "Мой аккаунт",
     company: "Страница компании",
+    account_data: "Аккаунт и данные",
+    assistants: "ИИ-ассистенты",
   },
   "pt-BR": {
     pay_hire: "Pagar Hire",
@@ -297,6 +301,8 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     account_settings: "Configurações da conta",
     my_account: "Minha conta",
     company: "Página da empresa",
+    account_data: "Conta e dados",
+    assistants: "Assistentes de IA",
   },
   de: {
     pay_hire: "Hire bezahlen",
@@ -323,6 +329,8 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     account_settings: "Kontoeinstellungen",
     my_account: "Mein Konto",
     company: "Unternehmensseite",
+    account_data: "Konto und Daten",
+    assistants: "KI-Assistenten",
   },
   fr: {
     pay_hire: "Payer Hire",
@@ -349,6 +357,8 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     account_settings: "Paramètres du compte",
     my_account: "Mon compte",
     company: "Page de l’entreprise",
+    account_data: "Compte et données",
+    assistants: "Assistants IA",
   },
   it: {
     pay_hire: "Paga Hire",
@@ -375,6 +385,8 @@ const OFFER_BUTTON: Record<string, Record<OfferAction, string>> = {
     account_settings: "Impostazioni account",
     my_account: "Il mio account",
     company: "Pagina dell’azienda",
+    account_data: "Account e dati",
+    assistants: "Assistenti IA",
   },
 };
 

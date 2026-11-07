@@ -30,6 +30,8 @@ export const OFFER_ACTIONS = [
   "account_settings",
   "my_account",
   "company",
+  "account_data",
+  "assistants",
 ] as const;
 
 export type OfferAction = (typeof OFFER_ACTIONS)[number];
@@ -134,6 +136,10 @@ export function offerPath(
     return signedIn ? "/settings/account" : null;
   }
   if (action === "my_account") return signedIn ? "/account" : null;
+  // Exports, deletion and AI-assistant tokens stay out of the chat (TZ 53):
+  // the chat home opens them as panels.
+  if (action === "account_data") return signedIn ? "/?panel=account" : null;
+  if (action === "assistants") return signedIn ? "/?panel=assistants" : null;
   if (action === "company") return signedIn ? "/employer/company" : null;
   if (action === "memory") {
     return signedIn ? "/settings/privacy#memory" : null;

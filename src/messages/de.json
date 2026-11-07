@@ -2245,6 +2245,16 @@
         "title": "Unternehmensseite",
         "text": "Website, Domain, rechtliche Angaben und Logo des Unternehmens werden hier geändert.",
         "action": "Öffnen"
+      },
+      "account_data": {
+        "title": "Konto und Daten",
+        "text": "Daten herunterladen oder Konto löschen.",
+        "action": "Öffnen"
+      },
+      "assistants": {
+        "title": "KI-Assistenten",
+        "text": "Tokens und verbundene Assistenten.",
+        "action": "Öffnen"
       }
     },
     "answer": {
@@ -5622,6 +5632,21 @@
         "portfolio": "Portfolio {value}"
       },
       "request": "Aktualisiere mein Profil: {facts}. Wenn ein Lebenslauf angehängt ist, nutze ihn auch."
+    },
+    "panels": {
+      "account": {
+        "title": "Konto und Daten",
+        "lead": "Lade alles herunter, was wir über dich speichern, oder lösche das Konto.",
+        "exportTitle": "Deine Daten herunterladen",
+        "exportText": "Eine JSON-Datei mit Profil, Bewerbungen, Gespeichertem und Nachrichten.",
+        "exportButton": "Daten herunterladen"
+      },
+      "assistants": {
+        "title": "KI-Assistenten",
+        "lead": "Verbinde Claude, ChatGPT oder einen anderen Assistenten per MCP. Ein Token wird einmal angezeigt: Kopiere es in den Assistenten, nie in einen Chat.",
+        "loading": "Assistenten werden geladen…",
+        "failed": "Assistenten konnten nicht geladen werden. Bitte erneut versuchen."
+      }
     }
   }
 }
