@@ -1,4 +1,6 @@
 import createMiddleware from "next-intl/middleware";
+import { isLoginNext } from "@/components/auth/login-next";
+import { chatOnlyTarget } from "@/config/chat-only";
 import { NextResponse, type NextRequest } from "next/server";
 import {
   adminHostEntry,
@@ -25,6 +27,13 @@ import { refreshSession } from "./lib/supabase/proxy";
 import { markSession } from "./lib/supabase/session-mark";
 
 const handleI18nRouting = createMiddleware(routing);
+
+/** `/ru`, `/de`…: every locale but English, which has no prefix (D335). */
+const LOCALE_PREFIX = new RegExp(
+  `^/(?:${routing.locales
+    .filter((locale) => locale !== routing.defaultLocale)
+    .join("|")})(?=/|$)`,
+);
 
 function stamp(response: NextResponse, requestId: string, adminHost: boolean) {
   response.headers.set(REQUEST_ID_HEADER, requestId);
@@ -125,6 +134,22 @@ export async function proxy(request: NextRequest) {
       maxAge: LOCALE_COOKIE_MAX_AGE,
     });
     return stamp(response, requestId, adminHost);
+  }
+
+  // TZ 53: with CHAT_ONLY on, a cabinet page opens the chat home and does
+  // the same there. Only a known action and an allowlisted return go along.
+  if (!adminHost && flags.chatOnlyEnabled) {
+    const prefix = pathname.match(LOCALE_PREFIX)?.[0] ?? "";
+    const target = chatOnlyTarget(pathname.slice(prefix.length) || "/");
+    if (target) {
+      const url = request.nextUrl.clone();
+      const next = request.nextUrl.searchParams.get("next") ?? undefined;
+      url.pathname = prefix || "/";
+      url.search = "";
+      url.searchParams.set("open", target);
+      if (isLoginNext(next)) url.searchParams.set("next", next);
+      return stamp(NextResponse.redirect(url, 307), requestId, adminHost);
+    }
   }
 
   const originSite = csrfSite(host, siteUrl());

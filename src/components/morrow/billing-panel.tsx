@@ -2,29 +2,26 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { handSpokiAsk } from "@/components/bot/spoki-ask";
-import { CryptoPay } from "@/modules/billing/ui/crypto-pay";
+import { Link } from "@/i18n/navigation";
 import { InterestForm } from "@/modules/billing/ui/interest-form";
-import type { NonEvmOption } from "@/modules/billing/ui/non-evm-pay";
 
 export const PAY_PLANS = ["plus", "pro", "team", "hire"] as const;
 export type PayPlan = (typeof PAY_PLANS)[number];
 
 type Checkout = {
   ready: boolean;
-  evm: boolean;
-  networks: NonEvmOption[];
-  projectId: string;
   amounts: Record<PayPlan, string>;
   jobs: { id: string; title: string }[];
   companies: { id: string; name: string }[];
 };
 
 /**
- * Plans and payment on the chat home (TZ 53): the plans as cards, then the
- * same crypto checkout as `/billing/crypto`, whose wallet window opens over
- * the chat and whose result shows in place.
+ * Plans on the chat home (TZ 53): the plan, then the company or job it is
+ * for, are chosen here. The wallet itself is opened only on
+ * `/billing/crypto`: WalletConnect needs a looser CSP (its relay, styles
+ * and fonts), and that is kept to the pay page (D403, D406), never the chat.
  */
 export function BillingPanel({ initialPlan }: { initialPlan: PayPlan | null }) {
   const t = useTranslations("morrow.panels.billing");
@@ -59,8 +56,6 @@ export function BillingPanel({ initialPlan }: { initialPlan: PayPlan | null }) {
     );
   }
   if (!checkout.ready) return <InterestForm />;
-
-  const rails = { evm: checkout.evm, networks: checkout.networks };
   const price = (code: PayPlan) =>
     code === "hire"
       ? t("perJob", { amount: checkout.amounts[code] })
@@ -113,14 +108,24 @@ export function BillingPanel({ initialPlan }: { initialPlan: PayPlan | null }) {
         {tiers(`${plan}.name`)} · {price(plan)}
       </h2>
       {chosen ? (
-        <CryptoPay
-          plan={plan}
-          amount={checkout.amounts[plan]}
-          projectId={checkout.projectId}
-          jobId={plan === "hire" ? chosen : undefined}
-          companyId={plan === "team" ? chosen : undefined}
-          {...rails}
-        />
+        <>
+          <p>{t("payNote")}</p>
+          <Link
+            className="morrow-panel-button"
+            href={{
+              pathname: "/billing/crypto",
+              query:
+                plan === "hire"
+                  ? { plan, job: chosen }
+                  : plan === "team"
+                    ? { plan, company: chosen }
+                    : { plan },
+            }}
+          >
+            {t("pay")}
+            <ArrowUpRight size={16} aria-hidden="true" />
+          </Link>
+        </>
       ) : choices.length > 0 ? (
         <>
           <p>{plan === "team" ? billing("pickCompany") : billing("pickJob")}</p>

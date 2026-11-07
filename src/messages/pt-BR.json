@@ -5545,7 +5545,9 @@
       "postJob": "Quero publicar uma vaga",
       "myJobs": "Mostre minhas vagas e seus candidatos",
       "inbox": "O que há de novo nas minhas notificações?",
-      "plans": "Quais planos existem e o que incluem?"
+      "plans": "Quais planos existem e o que incluem?",
+      "savedSearches": "Mostre minhas buscas salvas",
+      "ugc": "Mostre campanhas de vídeo UGC para mim"
     },
     "contacts": {
       "assistant": "Spoki",
@@ -5659,7 +5661,9 @@
         "postJob": "Publicar vaga",
         "askJob": "Quero publicar uma vaga",
         "createCompany": "Criar página da empresa",
-        "askCompany": "Me ajude a criar a página da minha empresa"
+        "askCompany": "Me ajude a criar a página da minha empresa",
+        "pay": "Pagar",
+        "payNote": "A carteira abre em uma página de pagamento protegida. Depois você volta aqui."
       }
     }
   }

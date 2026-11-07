@@ -3,6 +3,7 @@
 import {
   useCallback,
   useEffect,
+  useEffectEvent,
   useRef,
   useState,
   useSyncExternalStore,
@@ -55,6 +56,8 @@ import type { MyConversation } from "@/modules/bot/service";
 import { ContactRoom, type StatusLabels } from "./contact-room";
 import { SettingsPanelView, type SettingsPanel } from "./settings-panels";
 import { PAY_PLANS, type PayPlan } from "./billing-panel";
+import { isChatOpen, type ChatOpen } from "@/config/chat-only";
+import { isLoginNext, type LoginNext } from "@/components/auth/login-next";
 
 type Item = { key: string; icon: LucideIcon };
 
@@ -161,6 +164,7 @@ export function MorrowHome({
   const [openId, setOpenId] = useState<string | null>(null);
   const [panel, setPanel] = useState<SettingsPanel | null>(null);
   const [payPlan, setPayPlan] = useState<PayPlan | null>(null);
+  const [loginNext, setLoginNext] = useState<LoginNext | undefined>();
   /** Changing it remounts the chat on the thread the cookie now names. */
   const [chatKey, setChatKey] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -281,11 +285,25 @@ export function MorrowHome({
     );
   }
 
+  const openFromAddress = useEffectEvent((action: ChatOpen, next?: LoginNext) =>
+    runOpen(action, next),
+  );
+
   // Spoki opens a panel by its link: `/?panel=account`, `assistants` or
   // `billing`. Without a session (a link from Telegram) it asks to sign in.
   useEffect(() => {
     const first = window.setTimeout(() => {
       const url = new URL(window.location.href);
+      // A closed cabinet page sent the person here (CHAT_ONLY, TZ 53).
+      const opened = url.searchParams.get("open");
+      if (isChatOpen(opened)) {
+        const next = url.searchParams.get("next") ?? undefined;
+        url.searchParams.delete("open");
+        url.searchParams.delete("next");
+        window.history.replaceState(null, "", url);
+        openFromAddress(opened, isLoginNext(next) ? next : undefined);
+        return;
+      }
       const asked = url.searchParams.get("panel");
       if (asked !== "account" && asked !== "assistants" && asked !== "billing")
         return;
@@ -304,6 +322,35 @@ export function MorrowHome({
     }, 0);
     return () => window.clearTimeout(first);
   }, [signedIn]);
+
+  /** What a closed page did, done on the chat home. */
+  function runOpen(action: ChatOpen, next?: LoginNext) {
+    if (action === "signin" || action === "signup") {
+      setLoginNext(next);
+      setProfileOpen(
+        signedIn ? "profile" : action === "signin" ? "signin" : "profile",
+      );
+      return;
+    }
+    if (action === "profile") {
+      setProfileOpen("profile");
+      return;
+    }
+    if (
+      action === "account" ||
+      action === "assistants" ||
+      action === "billing"
+    ) {
+      if (!signedIn) {
+        setProfileOpen("signin");
+        return;
+      }
+      setPayPlan(null);
+      setPanel(action);
+      return;
+    }
+    handSpokiAsk(t(`prompts.${action}`));
+  }
 
   function openPanel(next: SettingsPanel) {
     act(() => {
@@ -797,6 +844,7 @@ export function MorrowHome({
         <ProfileDialog
           signedIn={signedIn}
           startWith={profileOpen}
+          next={loginNext}
           onClose={() => setProfileOpen(null)}
           onSave={saveProfile}
         />

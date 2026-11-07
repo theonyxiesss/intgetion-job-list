@@ -6051,7 +6051,9 @@
       "postJob": "I want to post a job",
       "myJobs": "Show my jobs and their candidates",
       "inbox": "What is new in my notifications?",
-      "plans": "What plans are there and what do they include?"
+      "plans": "What plans are there and what do they include?",
+      "savedSearches": "Show my saved searches",
+      "ugc": "Show UGC video campaigns for me"
     },
     "contacts": {
       "assistant": "Spoki",
@@ -6165,7 +6167,9 @@
         "postJob": "Post a job",
         "askJob": "I want to post a job",
         "createCompany": "Create a company page",
-        "askCompany": "Help me create my company page"
+        "askCompany": "Help me create my company page",
+        "pay": "Pay",
+        "payNote": "The wallet opens on a protected payment page. You come back here after paying."
       }
     }
   }

@@ -5545,7 +5545,9 @@
       "postJob": "Voglio pubblicare un'offerta",
       "myJobs": "Mostra le mie offerte e i loro candidati",
       "inbox": "Cosa c’è di nuovo nelle mie notifiche?",
-      "plans": "Quali piani ci sono e cosa includono?"
+      "plans": "Quali piani ci sono e cosa includono?",
+      "savedSearches": "Mostra le mie ricerche salvate",
+      "ugc": "Mostrami campagne video UGC"
     },
     "contacts": {
       "assistant": "Spoki",
@@ -5659,7 +5661,9 @@
         "postJob": "Pubblica un’offerta",
         "askJob": "Voglio pubblicare un’offerta",
         "createCompany": "Crea la pagina aziendale",
-        "askCompany": "Aiutami a creare la pagina della mia azienda"
+        "askCompany": "Aiutami a creare la pagina della mia azienda",
+        "pay": "Paga",
+        "payNote": "Il wallet si apre su una pagina di pagamento protetta. Poi torni qui."
       }
     }
   }

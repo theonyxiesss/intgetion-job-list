@@ -5545,7 +5545,9 @@
       "postJob": "Je veux publier une offre",
       "myJobs": "Montre mes offres et leurs candidats",
       "inbox": "Quoi de neuf dans mes notifications ?",
-      "plans": "Quelles offres existent et que comprennent-elles ?"
+      "plans": "Quelles offres existent et que comprennent-elles ?",
+      "savedSearches": "Montre mes recherches enregistrées",
+      "ugc": "Montre-moi des campagnes vidéo UGC"
     },
     "contacts": {
       "assistant": "Spoki",
@@ -5659,7 +5661,9 @@
         "postJob": "Publier une offre",
         "askJob": "Je veux publier une offre",
         "createCompany": "Créer la page entreprise",
-        "askCompany": "Aide-moi à créer la page de mon entreprise"
+        "askCompany": "Aide-moi à créer la page de mon entreprise",
+        "pay": "Payer",
+        "payNote": "Le portefeuille s’ouvre sur une page de paiement protégée. Vous revenez ici ensuite."
       }
     }
   }

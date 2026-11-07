@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { FileText, Mail, X } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { ProfileDraft } from "./profile-request";
+import type { LoginNext } from "@/components/auth/login-next";
 
 export const PROFILE_DRAFT_KEY = "morrow_profile_draft";
 
@@ -28,11 +29,14 @@ type Step = "profile" | "signin" | "wait";
 export function ProfileDialog({
   signedIn,
   startWith,
+  next = "home",
   onClose,
   onSave,
 }: {
   signedIn: boolean;
   startWith: "profile" | "signin";
+  /** Where the email link returns; the chat home unless a page asked. */
+  next?: LoginNext;
   onClose: () => void;
   onSave: (draft: ProfileDraft) => void;
 }) {
@@ -109,7 +113,7 @@ export function ProfileDialog({
         body: JSON.stringify({
           email: email.trim(),
           locale,
-          next: "home",
+          next,
           ...(kind === "register" ? { acceptTerms: true } : {}),
         }),
       });
