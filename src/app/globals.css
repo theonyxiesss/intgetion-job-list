@@ -2615,3 +2615,13 @@ body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
   max-height: 44px;
   overflow-y: auto;
 }
+
+/* Long text just slides out of view, as in other chats: no scrollbar in
+   the field, while the caret, keys and the wheel still move through it. */
+.morrow .composer textarea {
+  scrollbar-width: none;
+}
+
+.morrow .composer textarea::-webkit-scrollbar {
+  display: none;
+}
