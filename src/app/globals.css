@@ -2212,10 +2212,6 @@ body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
   display: none;
 }
 
-.morrow .morrow-log-empty {
-  display: none;
-}
-
 .morrow .welcome-title {
   display: flex;
   align-items: center;
@@ -2599,18 +2595,21 @@ body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
   }
 }
 
-/* A modern chat: the empty screen keeps its top edge still, so a long
-   message grows the field downward instead of lifting the brand. */
-.morrow .welcome-workspace {
-  justify-content: flex-start;
-}
-
+/* As on master's /chat: the greeting is held at the top of the log, the
+   field between the log and a spacer, so a long message grows the field
+   around its place and the greeting stays still. The field stops at 10rem
+   (or 30% of a short screen), then scrolls inside. */
 .morrow .welcome-workspace .composer-wrap {
-  padding-top: max(32px, calc(50dvh - 170px));
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
-/* The field grows to a third of the screen, then scrolls inside. */
+.morrow .conversation-empty {
+  padding-top: max(40px, calc(50dvh - 250px));
+  padding-bottom: 0;
+}
+
 .morrow .composer textarea {
-  max-height: min(240px, 33dvh);
+  max-height: min(10rem, 30dvh);
   overflow-y: auto;
 }

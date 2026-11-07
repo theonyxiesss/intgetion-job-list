@@ -1538,11 +1538,7 @@ export function Chat({
           aria-live="polite"
           aria-busy={answerTyping || undefined}
           aria-label={t("log")}
-          className={
-            morrow
-              ? `chat-scroll${welcome ? " morrow-log-empty" : ""}`
-              : "min-h-0 flex-1 overflow-auto"
-          }
+          className={morrow ? "chat-scroll" : "min-h-0 flex-1 overflow-auto"}
         >
           {/* The log itself is plain `overflow: auto` so the scroll-lock
               library sees wheel scrolling; sideways overflow is clipped here. */}
@@ -1550,7 +1546,7 @@ export function Chat({
             ref={contentRef}
             className={
               morrow
-                ? "conversation flex flex-col overflow-x-hidden"
+                ? `conversation flex min-h-full flex-col overflow-x-hidden${welcome ? " conversation-empty" : ""}`
                 : "mx-auto flex min-h-full w-full max-w-3xl flex-col gap-6 overflow-x-hidden px-4 md:px-6"
             }
           >
@@ -1570,6 +1566,33 @@ export function Chat({
                 })}
               </div>
             ) : null}
+            {morrow && welcome && !hydrated ? (
+              <div className="welcome-brand">
+                <p className="welcome-title">
+                  <MorrowMark />
+                  <span>{morrow.wordmark}</span>
+                </p>
+                <p>{morrow.tagline}</p>
+              </div>
+            ) : null}
+            <AnimatePresence initial={false}>
+              {morrow && welcome && hydrated ? (
+                <motion.div
+                  key="brand"
+                  className="welcome-brand"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.2 }}
+                >
+                  <p className="welcome-title">
+                    <MorrowMark />
+                    <span>{morrow.wordmark}</span>
+                  </p>
+                  <p>{morrow.tagline}</p>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
             {welcome && !morrow && (
               <div className="mt-auto flex w-full flex-col items-center gap-4 pb-2 text-center">
                 <h2 className="text-2xl font-medium md:text-3xl">
@@ -2242,33 +2265,6 @@ export function Chat({
               : "mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-3 px-4 md:px-6"
           }
         >
-          {morrow && welcome && !hydrated ? (
-            <div className="welcome-brand">
-              <p className="welcome-title">
-                <MorrowMark />
-                <span>{morrow.wordmark}</span>
-              </p>
-              <p>{morrow.tagline}</p>
-            </div>
-          ) : null}
-          <AnimatePresence initial={false}>
-            {morrow && welcome && hydrated ? (
-              <motion.div
-                key="brand"
-                className="welcome-brand"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, height: 0, marginBottom: 0, y: -8 }}
-                transition={{ duration: reduceMotion ? 0 : 0.2 }}
-              >
-                <p className="welcome-title">
-                  <MorrowMark />
-                  <span>{morrow.wordmark}</span>
-                </p>
-                <p>{morrow.tagline}</p>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
           {actions.signup && !signedIn && (
             <p className="flex flex-col items-start gap-2">
               <Link
@@ -2529,7 +2525,7 @@ export function Chat({
             </form>
           )}
         </motion.div>
-        {welcome && !morrow && (
+        {welcome && (
           <div
             aria-hidden="true"
             className="min-h-0 flex-1 max-md:hidden [@media(max-height:520px)]:hidden"
