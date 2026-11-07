@@ -1,24 +1,19 @@
-/** The Morrow mark of the chat home's empty screen (TZ 53). */
+/**
+ * The platform's orbit-and-star mark in the place of the Morrow mockup's
+ * own (TZ 53). `.logo-img` turns it dark on the light theme.
+ */
 export function MorrowMark() {
   return (
-    <svg
-      className="morrow-mark"
-      viewBox="0 0 40 40"
-      fill="none"
+    // eslint-disable-next-line @next/next/no-img-element -- tiny static PNG, no optimizer round trip
+    <img
+      src="/brand/logo-64.png"
+      srcSet="/brand/logo-64.png 1x, /brand/logo-128.png 2x"
+      width={72}
+      height={44}
+      alt=""
       aria-hidden="true"
-    >
-      <path
-        d="M7 30V17a6.5 6.5 0 0 1 13 0v13M20 30V17a6.5 6.5 0 0 1 13 0v13"
-        stroke="currentColor"
-        strokeWidth="3.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="m6 7 4-3M30 4l4 3"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-    </svg>
+      decoding="async"
+      className="logo-img morrow-mark"
+    />
   );
 }

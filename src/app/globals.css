@@ -2586,3 +2586,15 @@ body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
   flex-direction: column;
   padding-left: 16px;
 }
+
+/* Our mark is wider than the mockup's square one. */
+.morrow .welcome-title .morrow-mark {
+  width: auto;
+  height: 44px;
+}
+
+@media (max-width: 760px) {
+  .morrow .welcome-title .morrow-mark {
+    height: 38px;
+  }
+}
