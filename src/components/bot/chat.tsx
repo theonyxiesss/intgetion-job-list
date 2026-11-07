@@ -1142,9 +1142,11 @@ export function Chat({
     return turnState === "done";
   }
 
+  // The chat home keeps one field size; long text scrolls inside (TZ 53).
+  const fixedField = morrow !== undefined;
   useLayoutEffect(() => {
-    if (fieldRef.current) fitComposer(fieldRef.current);
-  }, [text]);
+    if (fieldRef.current && !fixedField) fitComposer(fieldRef.current);
+  }, [text, fixedField]);
 
   // The chat home's menu opens into a sidebar once the chat has begun, and
   // its "attach a CV" item opens this chat's file picker (TZ 53).
@@ -2353,7 +2355,6 @@ export function Chat({
                   placeholder={t("placeholder")}
                   onChange={(event) => {
                     setText(event.target.value);
-                    fitComposer(event.currentTarget);
                   }}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" && !event.shiftKey) {

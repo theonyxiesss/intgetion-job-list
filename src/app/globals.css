@@ -2597,8 +2597,8 @@ body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
 
 /* As on master's /chat: the greeting is held at the top of the log, the
    field between the log and a spacer, so a long message grows the field
-   around its place and the greeting stays still. The field stops at 10rem
-   (or 30% of a short screen), then scrolls inside. */
+   around its place and the greeting stays still. The field itself never
+   changes size: long text scrolls inside it. */
 .morrow .welcome-workspace .composer-wrap {
   padding-top: 12px;
   padding-bottom: 12px;
@@ -2610,6 +2610,8 @@ body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
 }
 
 .morrow .composer textarea {
-  max-height: min(10rem, 30dvh);
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
   overflow-y: auto;
 }
