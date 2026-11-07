@@ -2388,7 +2388,8 @@
         "RATE_LIMITED": "Troppi file in poco tempo. Riprova più tardi.",
         "ATTACHMENT_FAILED": "Impossibile leggere il file. Riprova."
       }
-    }
+    },
+    "personalize": "Per un’esperienza personalizzata, <link>registrati</link> e aggiungi CV e portfolio."
   },
   "cookies": {
     "label": "Scelta dei cookie",
@@ -5571,6 +5572,56 @@
     "newConversation": "Nuova conversazione",
     "untitled": "Nuova conversazione",
     "deleteDialogue": "Elimina «{title}»",
-    "deleteConfirm": "Eliminare «{title}»? La conversazione e i suoi messaggi verranno rimossi."
+    "deleteConfirm": "Eliminare «{title}»? La conversazione e i suoi messaggi verranno rimossi.",
+    "profile": {
+      "title": "Rendilo personale",
+      "titleSignedIn": "Il tuo profilo professionale",
+      "lead": "Dicci chi sei e adatteremo le offerte a te. Nessuna password: ti inviamo un link via e-mail.",
+      "leadSignedIn": "Spoki salverà questi dati nel tuo profilo dopo la tua conferma sulla sua scheda.",
+      "signinTitle": "Accedi",
+      "signinText": "Ti invieremo un link. Aprilo su qualsiasi dispositivo e questa scheda accederà da sola.",
+      "waitTitle": "Controlla la posta",
+      "waitText": "Abbiamo inviato un link a {email}.",
+      "waitHint": "Apri il link dell’e-mail. Questa finestra accederà non appena lo farai.",
+      "otherEmail": "Usa un’altra e-mail",
+      "close": "Chiudi",
+      "fields": {
+        "name": "Il tuo nome",
+        "role": "Ruolo",
+        "skills": "Competenze",
+        "location": "Luogo o modalità di lavoro",
+        "portfolio": "URL del portfolio",
+        "email": "E-mail"
+      },
+      "placeholders": {
+        "name": "Alex Morgan",
+        "role": "Sviluppatore frontend",
+        "skills": "React, TypeScript, accessibilità",
+        "location": "Europa, da remoto o una città",
+        "portfolio": "https://il-tuo-portfolio.com",
+        "email": "tu@esempio.it"
+      },
+      "cv": "Allega il tuo CV",
+      "cvReading": "Lettura del CV…",
+      "cvFailed": "Impossibile leggere il file. Allega un PDF, TXT o MD fino a 4 MB.",
+      "terms": "Accetto i <terms>termini</terms> e l’<privacy>informativa sulla privacy</privacy>",
+      "privacy": "Del CV si legge solo il testo, il file non viene conservato. Il profilo si salva solo dopo la tua conferma.",
+      "privacySignedIn": "Del CV si legge solo il testo, il file non viene conservato.",
+      "save": "Salva profilo",
+      "create": "Crea profilo",
+      "haveAccount": "Hai già un account? Accedi",
+      "noAccount": "Nuovo qui? Crea un profilo",
+      "sendLink": "Invia il link",
+      "failed": "Impossibile inviare il link. Riprova.",
+      "tooMany": "Troppi tentativi. Riprova più tardi.",
+      "line": {
+        "name": "nome {value}",
+        "role": "ruolo {value}",
+        "skills": "competenze {value}",
+        "location": "luogo {value}",
+        "portfolio": "portfolio {value}"
+      },
+      "request": "Aggiorna il mio profilo: {facts}. Se è allegato un CV, usalo anche."
+    }
   }
 }

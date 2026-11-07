@@ -2388,7 +2388,8 @@
         "RATE_LIMITED": "Too many files in a short time. Try again later.",
         "ATTACHMENT_FAILED": "The file could not be read. Try again."
       }
-    }
+    },
+    "personalize": "For a personalized experience, <link>sign up</link> and add your CV and portfolio."
   },
   "cookies": {
     "label": "Cookie choice",
@@ -6077,6 +6078,56 @@
     "newConversation": "New conversation",
     "untitled": "New conversation",
     "deleteDialogue": "Delete “{title}”",
-    "deleteConfirm": "Delete “{title}”? The conversation and its messages will be removed."
+    "deleteConfirm": "Delete “{title}”? The conversation and its messages will be removed.",
+    "profile": {
+      "title": "Make it personal",
+      "titleSignedIn": "Your career profile",
+      "lead": "Tell us who you are and we will tailor jobs to you. No password: we send a link to your email.",
+      "leadSignedIn": "Spoki will save these details to your profile after you confirm them on its card.",
+      "signinTitle": "Sign in",
+      "signinText": "We will email you a link. Open it on any device and this tab signs in by itself.",
+      "waitTitle": "Check your email",
+      "waitText": "We sent a link to {email}.",
+      "waitHint": "Open the link from the letter. This window will sign you in as soon as you do.",
+      "otherEmail": "Use another email",
+      "close": "Close",
+      "fields": {
+        "name": "Your name",
+        "role": "Professional role",
+        "skills": "Skills",
+        "location": "Location or work preference",
+        "portfolio": "Portfolio URL",
+        "email": "Email"
+      },
+      "placeholders": {
+        "name": "Alex Morgan",
+        "role": "Frontend developer",
+        "skills": "React, TypeScript, accessibility",
+        "location": "Europe, remote, or a city",
+        "portfolio": "https://your-portfolio.com",
+        "email": "you@example.com"
+      },
+      "cv": "Attach your CV",
+      "cvReading": "Reading your CV…",
+      "cvFailed": "Could not read this file. Attach a PDF, TXT or MD up to 4 MB.",
+      "terms": "I accept the <terms>terms</terms> and the <privacy>privacy policy</privacy>",
+      "privacy": "Your CV is read for its text and is not stored as a file. The profile is saved only after you confirm it.",
+      "privacySignedIn": "Your CV is read for its text and is not stored as a file.",
+      "save": "Save profile",
+      "create": "Create profile",
+      "haveAccount": "Already have an account? Sign in",
+      "noAccount": "New here? Create a profile",
+      "sendLink": "Send the link",
+      "failed": "Could not send the link. Try again.",
+      "tooMany": "Too many attempts. Try again later.",
+      "line": {
+        "name": "name {value}",
+        "role": "role {value}",
+        "skills": "skills {value}",
+        "location": "location {value}",
+        "portfolio": "portfolio {value}"
+      },
+      "request": "Update my profile: {facts}. If a CV is attached, use it too."
+    }
   }
 }

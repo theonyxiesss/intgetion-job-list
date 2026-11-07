@@ -2388,7 +2388,8 @@
         "RATE_LIMITED": "Zu viele Dateien in kurzer Zeit. Versuche es später erneut.",
         "ATTACHMENT_FAILED": "Die Datei konnte nicht gelesen werden. Versuche es erneut."
       }
-    }
+    },
+    "personalize": "Für persönliche Empfehlungen <link>registriere dich</link> und füge Lebenslauf und Portfolio hinzu."
   },
   "cookies": {
     "label": "Cookie-Auswahl",
@@ -5571,6 +5572,56 @@
     "newConversation": "Neues Gespräch",
     "untitled": "Neues Gespräch",
     "deleteDialogue": "„{title}“ löschen",
-    "deleteConfirm": "„{title}“ löschen? Das Gespräch und seine Nachrichten werden entfernt."
+    "deleteConfirm": "„{title}“ löschen? Das Gespräch und seine Nachrichten werden entfernt.",
+    "profile": {
+      "title": "Mach es persönlich",
+      "titleSignedIn": "Dein Karriereprofil",
+      "lead": "Erzähl uns, wer du bist, und wir passen die Jobs an. Kein Passwort: Wir schicken dir einen Link per E-Mail.",
+      "leadSignedIn": "Spoki speichert diese Angaben in deinem Profil, sobald du sie auf seiner Karte bestätigst.",
+      "signinTitle": "Anmelden",
+      "signinText": "Wir schicken dir einen Link. Öffne ihn auf einem beliebigen Gerät, dieser Tab meldet sich dann selbst an.",
+      "waitTitle": "Prüfe dein Postfach",
+      "waitText": "Wir haben einen Link an {email} gesendet.",
+      "waitHint": "Öffne den Link aus der E-Mail. Dieses Fenster meldet dich an, sobald du das tust.",
+      "otherEmail": "Andere E-Mail verwenden",
+      "close": "Schließen",
+      "fields": {
+        "name": "Dein Name",
+        "role": "Beruf",
+        "skills": "Fähigkeiten",
+        "location": "Ort oder Arbeitsform",
+        "portfolio": "Portfolio-URL",
+        "email": "E-Mail"
+      },
+      "placeholders": {
+        "name": "Alex Morgan",
+        "role": "Frontend-Entwickler",
+        "skills": "React, TypeScript, Barrierefreiheit",
+        "location": "Europa, remote oder eine Stadt",
+        "portfolio": "https://dein-portfolio.com",
+        "email": "du@beispiel.de"
+      },
+      "cv": "Lebenslauf anhängen",
+      "cvReading": "Lebenslauf wird gelesen…",
+      "cvFailed": "Die Datei konnte nicht gelesen werden. Hänge ein PDF, TXT oder MD bis 4 MB an.",
+      "terms": "Ich akzeptiere die <terms>Bedingungen</terms> und die <privacy>Datenschutzerklärung</privacy>",
+      "privacy": "Vom Lebenslauf wird nur der Text gelesen, die Datei wird nicht gespeichert. Das Profil wird erst nach deiner Bestätigung gespeichert.",
+      "privacySignedIn": "Vom Lebenslauf wird nur der Text gelesen, die Datei wird nicht gespeichert.",
+      "save": "Profil speichern",
+      "create": "Profil erstellen",
+      "haveAccount": "Schon ein Konto? Anmelden",
+      "noAccount": "Neu hier? Profil erstellen",
+      "sendLink": "Link senden",
+      "failed": "Der Link konnte nicht gesendet werden. Bitte erneut versuchen.",
+      "tooMany": "Zu viele Versuche. Bitte später erneut versuchen.",
+      "line": {
+        "name": "Name {value}",
+        "role": "Beruf {value}",
+        "skills": "Fähigkeiten {value}",
+        "location": "Ort {value}",
+        "portfolio": "Portfolio {value}"
+      },
+      "request": "Aktualisiere mein Profil: {facts}. Wenn ein Lebenslauf angehängt ist, nutze ihn auch."
+    }
   }
 }

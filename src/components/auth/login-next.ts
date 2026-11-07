@@ -2,6 +2,8 @@ import { localePath } from "@/i18n/paths";
 
 /** Pages a sign-in may return to (allowlist: no open redirect). */
 export const RETURN_PATHS = {
+  /** The chat home (TZ 53): its profile window signs people in. */
+  home: "/",
   chat: "/chat",
   "mcp-consent": "/oauth/consent",
   "post-job": "/post-job",

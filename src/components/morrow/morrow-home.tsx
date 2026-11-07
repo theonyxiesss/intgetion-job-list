@@ -37,13 +37,15 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
-import { Link } from "@/i18n/navigation";
 import {
   handSpokiAsk,
   SPOKI_ATTACH,
   SPOKI_CONVERSATION,
+  SPOKI_PROFILE,
   SPOKI_TURN_DONE,
 } from "@/components/bot/spoki-ask";
+import { PROFILE_DRAFT_KEY, ProfileDialog } from "./profile-dialog";
+import { profileRequest, type ProfileDraft } from "./profile-request";
 import type { ChatThread } from "@/app/api/me/threads/route";
 import type { MyConversation } from "@/modules/bot/service";
 import { ContactRoom, type StatusLabels } from "./contact-room";
@@ -117,7 +119,11 @@ export function MorrowHome({
   children: ReactNode;
 }) {
   const t = useTranslations("morrow");
+  const profileText = useTranslations("morrow.profile");
   const locale = useLocale();
+  const [profileOpen, setProfileOpen] = useState<"profile" | "signin" | null>(
+    null,
+  );
   const reduceMotion = useReducedMotion();
   const light = useSyncExternalStore(watchTheme, readLight, () => false);
   const [width, height] = useSyncExternalStore(
@@ -199,7 +205,10 @@ export function MorrowHome({
     window.addEventListener(SPOKI_TURN_DONE, refresh);
     window.addEventListener("focus", refresh);
     window.addEventListener(SPOKI_CONVERSATION, conversation);
+    const profile = () => setProfileOpen("profile");
+    window.addEventListener(SPOKI_PROFILE, profile);
     return () => {
+      window.removeEventListener(SPOKI_PROFILE, profile);
       window.clearTimeout(first);
       window.removeEventListener(SPOKI_TURN_DONE, refresh);
       window.removeEventListener("focus", refresh);
@@ -227,6 +236,37 @@ export function MorrowHome({
       document.removeEventListener("keydown", keyboard);
     };
   }, [expanded, showInfo, phone]);
+
+  // A profile typed before signing in goes to Spoki once the link signed
+  // this tab in; Spoki's card saves it.
+  useEffect(() => {
+    if (!signedIn) return;
+    const first = window.setTimeout(() => {
+      let draft: ProfileDraft | null = null;
+      try {
+        const stored = window.sessionStorage.getItem(PROFILE_DRAFT_KEY);
+        window.sessionStorage.removeItem(PROFILE_DRAFT_KEY);
+        draft = stored ? (JSON.parse(stored) as ProfileDraft) : null;
+      } catch {
+        draft = null;
+      }
+      if (draft) saveProfile(draft);
+    }, 0);
+    return () => window.clearTimeout(first);
+    // Runs once on the first signed-in render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signedIn]);
+
+  function saveProfile(draft: ProfileDraft) {
+    setProfileOpen(null);
+    setOpenId(null);
+    handSpokiAsk(
+      profileRequest(draft, (key, values) =>
+        profileText(key as never, values as never),
+      ),
+      draft.cv ?? undefined,
+    );
+  }
 
   function toggleTheme() {
     const next = !light;
@@ -356,7 +396,7 @@ export function MorrowHome({
         type="button"
         className="menu-action"
         disabled={!hydrated}
-        onClick={() => ask("profile")}
+        onClick={() => act(() => setProfileOpen("profile"))}
       >
         <UserRound size={16} aria-hidden="true" />
         <span>{t("items.profile")}</span>
@@ -385,13 +425,15 @@ export function MorrowHome({
         <span>{t("attachCv")}</span>
       </button>
       {signedIn ? null : (
-        <Link
-          href={{ pathname: "/login", query: { next: "/" } }}
+        <button
+          type="button"
           className="menu-action"
+          disabled={!hydrated}
+          onClick={() => act(() => setProfileOpen("signin"))}
         >
           <LogIn size={16} aria-hidden="true" />
           <span>{t("signIn")}</span>
-        </Link>
+        </button>
       )}
       <button type="button" className="menu-action" onClick={toggleTheme}>
         {light ? (
@@ -645,6 +687,14 @@ export function MorrowHome({
           ) : null}
         </AnimatePresence>
       </motion.div>
+      {profileOpen ? (
+        <ProfileDialog
+          signedIn={signedIn}
+          startWith={profileOpen}
+          onClose={() => setProfileOpen(null)}
+          onSave={saveProfile}
+        />
+      ) : null}
       <section className="workspace-host">
         {open ? (
           <ContactRoom key={open.id} thread={open} labels={statusLabels} />

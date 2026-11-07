@@ -23,8 +23,10 @@ import {
   onSpokiAsk,
   SPOKI_ATTACH,
   SPOKI_CONVERSATION,
+  SPOKI_PROFILE,
   SPOKI_TURN_DONE,
   takeSpokiAsk,
+  takeSpokiFile,
 } from "@/components/bot/spoki-ask";
 import {
   keyboardOverlaps,
@@ -1152,9 +1154,12 @@ export function Chat({
   // answer it waits in the field instead.
   const askHanded = useEffectEvent(() => {
     const message = takeSpokiAsk();
+    const file = takeSpokiFile();
     if (!message) return;
-    if (sending) setText(message);
-    else void ask(message);
+    if (sending) {
+      setText(message);
+      if (file) setAttached(file);
+    } else void ask(message, file ?? undefined);
   });
   useEffect(() => {
     if (!historyReady) return;
@@ -1537,6 +1542,22 @@ export function Chat({
                 : "mx-auto flex min-h-full w-full max-w-3xl flex-col gap-6 overflow-x-hidden px-4 md:px-6"
             }
           >
+            {morrow && !signedIn && !welcome ? (
+              <div className="personalization-notice">
+                {t.rich("personalize", {
+                  link: (chunks) => (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        window.dispatchEvent(new Event(SPOKI_PROFILE))
+                      }
+                    >
+                      {chunks}
+                    </button>
+                  ),
+                })}
+              </div>
+            ) : null}
             {welcome && !morrow && (
               <div className="mt-auto flex w-full flex-col items-center gap-4 pb-2 text-center">
                 <h2 className="text-2xl font-medium md:text-3xl">

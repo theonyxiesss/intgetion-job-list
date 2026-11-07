@@ -2415,3 +2415,65 @@ body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
 .morrow .composer textarea {
   min-height: 44px;
 }
+
+.morrow .profile-dialog label.profile-terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.6;
+}
+
+.morrow .profile-dialog .profile-terms input {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.morrow .profile-terms a,
+.morrow .personalization-notice button {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.morrow .profile-error {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: var(--danger);
+}
+
+.morrow .profile-switch {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.morrow .profile-switch:hover {
+  color: var(--text);
+}
+
+.morrow .profile-wait {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--soft);
+}
+
+.morrow .profile-submit {
+  min-height: 44px;
+}
+
+.morrow .profile-submit:disabled {
+  opacity: 0.5;
+}

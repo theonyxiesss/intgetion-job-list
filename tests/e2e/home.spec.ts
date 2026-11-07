@@ -178,6 +178,51 @@ test("New conversation starts an empty thread from the sidebar (TZ 53)", async (
   await expect(page.getByLabel("Write a message")).toBeVisible();
 });
 
+test("the profile window signs a guest up by email link, as in the mockup (TZ 53)", async ({
+  page,
+}) => {
+  const sent: Record<string, unknown>[] = [];
+  await page.route("**/api/auth/register", async (route) => {
+    sent.push(route.request().postDataJSON());
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: '{"ok":true}',
+    });
+  });
+  await page.route("**/api/auth/email-wait", (route) =>
+    route.fulfill({
+      status: 202,
+      contentType: "application/json",
+      body: '{"pending":true}',
+    }),
+  );
+  await page.goto("/en");
+  await (
+    await openAbout(page, "About the platform")
+  )
+    .getByRole("button", { name: "My profile" })
+    .click();
+  const dialog = page.getByRole("dialog", { name: "Make it personal" });
+  await dialog.getByLabel("Your name").fill("Alex");
+  await dialog.getByLabel("Professional role").fill("Frontend developer");
+  await dialog.getByLabel("Skills").fill("React");
+  await dialog.getByLabel("Email").fill("alex@example.com");
+  await dialog.getByRole("checkbox").check();
+  await dialog.getByRole("button", { name: "Create profile" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Check your email" }),
+  ).toBeVisible();
+  expect(sent).toEqual([
+    {
+      email: "alex@example.com",
+      locale: "en",
+      next: "home",
+      acceptTerms: true,
+    },
+  ]);
+});
+
 test("unknown routes use the localized not-found page", async ({ page }) => {
   const response = await page.goto("/en/missing-page");
   expect(response?.status()).toBe(404);

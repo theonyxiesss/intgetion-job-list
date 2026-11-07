@@ -2388,7 +2388,8 @@
         "RATE_LIMITED": "Muitos arquivos em pouco tempo. Tente mais tarde.",
         "ATTACHMENT_FAILED": "Não foi possível ler o arquivo. Tente de novo."
       }
-    }
+    },
+    "personalize": "Para uma experiência personalizada, <link>cadastre-se</link> e adicione seu currículo e portfólio."
   },
   "cookies": {
     "label": "Escolha de cookies",
@@ -5571,6 +5572,56 @@
     "newConversation": "Nova conversa",
     "untitled": "Nova conversa",
     "deleteDialogue": "Excluir “{title}”",
-    "deleteConfirm": "Excluir “{title}”? A conversa e suas mensagens serão removidas."
+    "deleteConfirm": "Excluir “{title}”? A conversa e suas mensagens serão removidas.",
+    "profile": {
+      "title": "Deixe pessoal",
+      "titleSignedIn": "Seu perfil profissional",
+      "lead": "Conte quem você é e ajustaremos as vagas para você. Sem senha: enviamos um link por e-mail.",
+      "leadSignedIn": "O Spoki salvará estes dados no seu perfil quando você confirmar no cartão dele.",
+      "signinTitle": "Entrar",
+      "signinText": "Enviaremos um link. Abra em qualquer aparelho e esta aba entra sozinha.",
+      "waitTitle": "Confira seu e-mail",
+      "waitText": "Enviamos um link para {email}.",
+      "waitHint": "Abra o link do e-mail. Esta janela entra assim que você abrir.",
+      "otherEmail": "Usar outro e-mail",
+      "close": "Fechar",
+      "fields": {
+        "name": "Seu nome",
+        "role": "Função",
+        "skills": "Habilidades",
+        "location": "Local ou formato de trabalho",
+        "portfolio": "URL do portfólio",
+        "email": "E-mail"
+      },
+      "placeholders": {
+        "name": "Alex Morgan",
+        "role": "Desenvolvedor frontend",
+        "skills": "React, TypeScript, acessibilidade",
+        "location": "Europa, remoto ou uma cidade",
+        "portfolio": "https://seu-portfolio.com",
+        "email": "voce@exemplo.com"
+      },
+      "cv": "Anexar seu currículo",
+      "cvReading": "Lendo seu currículo…",
+      "cvFailed": "Não foi possível ler o arquivo. Anexe um PDF, TXT ou MD de até 4 MB.",
+      "terms": "Aceito os <terms>termos</terms> e a <privacy>política de privacidade</privacy>",
+      "privacy": "Do currículo usamos só o texto; o arquivo não é guardado. O perfil só é salvo depois que você confirmar.",
+      "privacySignedIn": "Do currículo usamos só o texto; o arquivo não é guardado.",
+      "save": "Salvar perfil",
+      "create": "Criar perfil",
+      "haveAccount": "Já tem conta? Entrar",
+      "noAccount": "Novo aqui? Criar perfil",
+      "sendLink": "Enviar link",
+      "failed": "Não foi possível enviar o link. Tente de novo.",
+      "tooMany": "Muitas tentativas. Tente mais tarde.",
+      "line": {
+        "name": "nome {value}",
+        "role": "função {value}",
+        "skills": "habilidades {value}",
+        "location": "local {value}",
+        "portfolio": "portfólio {value}"
+      },
+      "request": "Atualize meu perfil: {facts}. Se houver currículo anexado, use-o também."
+    }
   }
 }

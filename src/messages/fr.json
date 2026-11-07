@@ -2388,7 +2388,8 @@
         "RATE_LIMITED": "Trop de fichiers en peu de temps. Réessayez plus tard.",
         "ATTACHMENT_FAILED": "Impossible de lire le fichier. Réessayez."
       }
-    }
+    },
+    "personalize": "Pour une expérience personnalisée, <link>inscrivez-vous</link> et ajoutez votre CV et votre portfolio."
   },
   "cookies": {
     "label": "Choix des cookies",
@@ -5571,6 +5572,56 @@
     "newConversation": "Nouvelle conversation",
     "untitled": "Nouvelle conversation",
     "deleteDialogue": "Supprimer « {title} »",
-    "deleteConfirm": "Supprimer « {title} » ? La conversation et ses messages seront supprimés."
+    "deleteConfirm": "Supprimer « {title} » ? La conversation et ses messages seront supprimés.",
+    "profile": {
+      "title": "Personnalisez",
+      "titleSignedIn": "Votre profil professionnel",
+      "lead": "Dites-nous qui vous êtes et nous adapterons les offres. Sans mot de passe : nous vous envoyons un lien par e-mail.",
+      "leadSignedIn": "Spoki enregistrera ces informations dans votre profil après votre confirmation sur sa carte.",
+      "signinTitle": "Se connecter",
+      "signinText": "Nous vous envoyons un lien. Ouvrez-le sur n’importe quel appareil, cet onglet se connectera tout seul.",
+      "waitTitle": "Vérifiez vos e-mails",
+      "waitText": "Nous avons envoyé un lien à {email}.",
+      "waitHint": "Ouvrez le lien de l’e-mail. Cette fenêtre vous connectera dès que ce sera fait.",
+      "otherEmail": "Utiliser un autre e-mail",
+      "close": "Fermer",
+      "fields": {
+        "name": "Votre nom",
+        "role": "Métier",
+        "skills": "Compétences",
+        "location": "Lieu ou mode de travail",
+        "portfolio": "URL du portfolio",
+        "email": "E-mail"
+      },
+      "placeholders": {
+        "name": "Alex Morgan",
+        "role": "Développeur frontend",
+        "skills": "React, TypeScript, accessibilité",
+        "location": "Europe, à distance ou une ville",
+        "portfolio": "https://votre-portfolio.com",
+        "email": "vous@exemple.fr"
+      },
+      "cv": "Joindre votre CV",
+      "cvReading": "Lecture du CV…",
+      "cvFailed": "Impossible de lire ce fichier. Joignez un PDF, TXT ou MD de 4 Mo maximum.",
+      "terms": "J’accepte les <terms>conditions</terms> et la <privacy>politique de confidentialité</privacy>",
+      "privacy": "Seul le texte du CV est lu, le fichier n’est pas conservé. Le profil n’est enregistré qu’après votre confirmation.",
+      "privacySignedIn": "Seul le texte du CV est lu, le fichier n’est pas conservé.",
+      "save": "Enregistrer le profil",
+      "create": "Créer le profil",
+      "haveAccount": "Déjà un compte ? Se connecter",
+      "noAccount": "Nouveau ? Créer un profil",
+      "sendLink": "Envoyer le lien",
+      "failed": "Impossible d’envoyer le lien. Réessayez.",
+      "tooMany": "Trop de tentatives. Réessayez plus tard.",
+      "line": {
+        "name": "nom {value}",
+        "role": "métier {value}",
+        "skills": "compétences {value}",
+        "location": "lieu {value}",
+        "portfolio": "portfolio {value}"
+      },
+      "request": "Mets à jour mon profil : {facts}. Si un CV est joint, utilise-le aussi."
+    }
   }
 }
