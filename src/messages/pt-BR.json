@@ -5665,6 +5665,7 @@
         "pay": "Pagar",
         "payNote": "A carteira abre em uma página de pagamento protegida. Depois você volta aqui."
       }
-    }
+    },
+    "language": "Idioma"
   }
 }

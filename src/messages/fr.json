@@ -5665,6 +5665,7 @@
         "pay": "Payer",
         "payNote": "Le portefeuille s’ouvre sur une page de paiement protégée. Vous revenez ici ensuite."
       }
-    }
+    },
+    "language": "Langue"
   }
 }

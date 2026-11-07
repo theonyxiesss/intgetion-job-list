@@ -2580,3 +2580,9 @@ body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
 .morrow .morrow-panel-back:hover {
   color: var(--text);
 }
+
+.morrow .menu-languages {
+  display: flex;
+  flex-direction: column;
+  padding-left: 16px;
+}

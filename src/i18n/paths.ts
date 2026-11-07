@@ -1,3 +1,4 @@
+import { CHAT_ONLY } from "@/config/chat-only-flag";
 import { routing, type AppLocale } from "./routing";
 
 /**
@@ -6,6 +7,8 @@ import { routing, type AppLocale } from "./routing";
  * links, canonicals and emails never take the `/en/...` → `/...` redirect.
  */
 export function localePrefix(locale: string): string {
+  // TZ 53: one address for every language; the cookie carries the choice.
+  if (CHAT_ONLY) return "";
   return locale === routing.defaultLocale ? "" : `/${locale}`;
 }
 

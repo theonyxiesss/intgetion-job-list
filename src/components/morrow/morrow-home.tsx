@@ -54,6 +54,7 @@ import { profileRequest, type ProfileDraft } from "./profile-request";
 import type { ChatThread } from "@/app/api/me/threads/route";
 import type { MyConversation } from "@/modules/bot/service";
 import { ContactRoom, type StatusLabels } from "./contact-room";
+import { LanguageMenu } from "./language-menu";
 import { SettingsPanelView, type SettingsPanel } from "./settings-panels";
 import { PAY_PLANS, type PayPlan } from "./billing-panel";
 import { isChatOpen, type ChatOpen } from "@/config/chat-only";
@@ -572,6 +573,7 @@ export function MorrowHome({
           <span>{t("signIn")}</span>
         </button>
       )}
+      <LanguageMenu />
       <button type="button" className="menu-action" onClick={toggleTheme}>
         {light ? (
           <Moon size={16} aria-hidden="true" />

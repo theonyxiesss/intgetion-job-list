@@ -1,3 +1,5 @@
+import { CHAT_ONLY } from "./chat-only-flag";
+
 function envFlag(name: string): boolean {
   return process.env[name] === "true";
 }
@@ -29,9 +31,6 @@ export const flags = {
    * Off until tested; the bot reads it per turn (`interactiveUiOn`).
    */
   spokiInteractiveUiEnabled: envFlag("SPOKI_INTERACTIVE_UI"),
-  /**
-   * TZ 53: the chat is the platform. With CHAT_ONLY=true the cabinet pages
-   * open the chat home instead (`src/config/chat-only.ts`).
-   */
-  chatOnlyEnabled: envFlag("CHAT_ONLY"),
+  /** TZ 53: the chat is the platform (`src/config/chat-only-flag.ts`). */
+  chatOnlyEnabled: CHAT_ONLY,
 } as const;

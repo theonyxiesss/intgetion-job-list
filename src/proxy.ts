@@ -136,19 +136,34 @@ export async function proxy(request: NextRequest) {
     return stamp(response, requestId, adminHost);
   }
 
-  // TZ 53: with CHAT_ONLY on, a cabinet page opens the chat home and does
-  // the same there. Only a known action and an allowlisted return go along.
+  // TZ 53: with the chat-only platform on, addresses carry no language and
+  // a cabinet page opens the chat home, doing the same there. An old
+  // `/ru/...` link keeps working: it drops the prefix and keeps the choice.
+  // Only a known action and an allowlisted return go along.
   if (!adminHost && flags.chatOnlyEnabled) {
     const prefix = pathname.match(LOCALE_PREFIX)?.[0] ?? "";
-    const target = chatOnlyTarget(pathname.slice(prefix.length) || "/");
-    if (target) {
+    const rest = pathname.slice(prefix.length) || "/";
+    const target = chatOnlyTarget(rest);
+    if (target || prefix) {
       const url = request.nextUrl.clone();
-      const next = request.nextUrl.searchParams.get("next") ?? undefined;
-      url.pathname = prefix || "/";
-      url.search = "";
-      url.searchParams.set("open", target);
-      if (isLoginNext(next)) url.searchParams.set("next", next);
-      return stamp(NextResponse.redirect(url, 307), requestId, adminHost);
+      if (target) {
+        const next = request.nextUrl.searchParams.get("next") ?? undefined;
+        url.pathname = "/";
+        url.search = "";
+        url.searchParams.set("open", target);
+        if (isLoginNext(next)) url.searchParams.set("next", next);
+      } else {
+        url.pathname = rest;
+      }
+      const response = NextResponse.redirect(url, target ? 307 : 308);
+      if (prefix) {
+        response.cookies.set(LOCALE_COOKIE, prefix.slice(1), {
+          path: "/",
+          sameSite: "lax",
+          maxAge: LOCALE_COOKIE_MAX_AGE,
+        });
+      }
+      return stamp(response, requestId, adminHost);
     }
   }
 

@@ -1,4 +1,5 @@
 import { defineRouting } from "next-intl/routing";
+import { CHAT_ONLY } from "@/config/chat-only-flag";
 
 /** next-intl's cookie for the chosen language (D335). */
 export const LOCALE_COOKIE = "NEXT_LOCALE";
@@ -7,8 +8,9 @@ export const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 export const routing = defineRouting({
   locales: ["en", "ru", "es", "pt-BR", "de", "fr", "it"],
   defaultLocale: "en",
-  // D335: English at the root, Russian under /ru.
-  localePrefix: "as-needed",
+  // D335: English at the root, Russian under /ru. In the chat-only
+  // platform (TZ 53) no address carries a language: settings choose it.
+  localePrefix: CHAT_ONLY ? "never" : "as-needed",
   // Remember an explicit choice for a year; the browser language is the
   // first guess only.
   localeCookie: { name: LOCALE_COOKIE, maxAge: LOCALE_COOKIE_MAX_AGE },

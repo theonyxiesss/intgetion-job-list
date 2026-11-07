@@ -6171,6 +6171,7 @@
         "pay": "Pay",
         "payNote": "The wallet opens on a protected payment page. You come back here after paying."
       }
-    }
+    },
+    "language": "Language"
   }
 }

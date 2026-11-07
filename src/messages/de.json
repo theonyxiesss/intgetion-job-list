@@ -5665,6 +5665,7 @@
         "pay": "Bezahlen",
         "payNote": "Die Wallet öffnet sich auf einer geschützten Zahlungsseite. Danach kommst du hierher zurück."
       }
-    }
+    },
+    "language": "Sprache"
   }
 }

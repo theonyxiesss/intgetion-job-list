@@ -5665,6 +5665,7 @@
         "pay": "Pagar",
         "payNote": "La billetera se abre en una página de pago protegida. Después vuelves aquí."
       }
-    }
+    },
+    "language": "Idioma"
   }
 }
