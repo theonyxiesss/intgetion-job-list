@@ -2598,3 +2598,19 @@ body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
     height: 38px;
   }
 }
+
+/* A modern chat: the empty screen keeps its top edge still, so a long
+   message grows the field downward instead of lifting the brand. */
+.morrow .welcome-workspace {
+  justify-content: flex-start;
+}
+
+.morrow .welcome-workspace .composer-wrap {
+  padding-top: max(32px, calc(50dvh - 170px));
+}
+
+/* The field grows to a third of the screen, then scrolls inside. */
+.morrow .composer textarea {
+  max-height: min(240px, 33dvh);
+  overflow-y: auto;
+}

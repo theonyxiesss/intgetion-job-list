@@ -2227,6 +2227,9 @@ export function Chat({
         </div>
         <motion.div
           layout={morrow ? "position" : false}
+          // Only the move from the empty screen to the conversation animates;
+          // a field growing with text must not slide the composer around.
+          layoutDependency={welcome}
           transition={{
             layout: {
               duration: reduceMotion ? 0 : 0.4,
