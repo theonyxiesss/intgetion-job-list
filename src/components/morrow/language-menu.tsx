@@ -4,7 +4,18 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Check, Globe } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
-import { routing, type AppLocale } from "@/i18n/routing";
+import {
+  LOCALE_COOKIE,
+  LOCALE_COOKIE_MAX_AGE,
+  routing,
+  type AppLocale,
+} from "@/i18n/routing";
+import { CHAT_ONLY } from "@/config/chat-only-flag";
+
+/** Keeps the language for a year, as next-intl would. */
+function rememberLocale(locale: AppLocale) {
+  document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; samesite=lax`;
+}
 
 /**
  * The chat home's language setting (TZ 53): addresses carry no language,
@@ -20,6 +31,13 @@ export function LanguageMenu() {
   function choose(next: AppLocale) {
     setOpen(false);
     if (next === locale) return;
+    if (CHAT_ONLY) {
+      // Addresses carry no language: the cookie is the whole choice. A
+      // locale navigation would put `/ru` in the address bar.
+      rememberLocale(next);
+      window.location.reload();
+      return;
+    }
     router.replace("/", { locale: next });
     router.refresh();
   }
