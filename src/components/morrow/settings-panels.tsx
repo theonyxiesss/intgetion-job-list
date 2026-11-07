@@ -5,8 +5,9 @@ import { useTranslations } from "next-intl";
 import { Download } from "lucide-react";
 import { McpAccess } from "@/components/settings/mcp-access";
 import { DeleteAccount } from "@/components/settings/settings-controls";
+import { BillingPanel, type PayPlan } from "./billing-panel";
 
-export type SettingsPanel = "account" | "assistants";
+export type SettingsPanel = "account" | "assistants" | "billing";
 
 type McpProps = Parameters<typeof McpAccess>[0];
 
@@ -19,9 +20,12 @@ type McpProps = Parameters<typeof McpAccess>[0];
 export function SettingsPanelView({
   panel,
   scopes,
+  plan = null,
 }: {
   panel: SettingsPanel;
   scopes: McpProps["scopes"];
+  /** The plan a payment link asked for. */
+  plan?: PayPlan | null;
 }) {
   const t = useTranslations("morrow.panels");
   return (
@@ -33,6 +37,8 @@ export function SettingsPanelView({
       <div className="morrow-room-feed">
         {panel === "account" ? (
           <AccountPanel />
+        ) : panel === "billing" ? (
+          <BillingPanel initialPlan={plan} />
         ) : (
           <AssistantsPanel scopes={scopes} />
         )}

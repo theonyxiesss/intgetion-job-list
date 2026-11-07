@@ -17,6 +17,7 @@ import {
   Bookmark,
   Bot,
   ShieldCheck,
+  Wallet,
   BriefcaseBusiness,
   CalendarDays,
   Check,
@@ -41,6 +42,7 @@ import {
 } from "lucide-react";
 import {
   handSpokiAsk,
+  onSpokiAsk,
   SPOKI_ATTACH,
   SPOKI_CONVERSATION,
   SPOKI_PROFILE,
@@ -52,6 +54,7 @@ import type { ChatThread } from "@/app/api/me/threads/route";
 import type { MyConversation } from "@/modules/bot/service";
 import { ContactRoom, type StatusLabels } from "./contact-room";
 import { SettingsPanelView, type SettingsPanel } from "./settings-panels";
+import { PAY_PLANS, type PayPlan } from "./billing-panel";
 
 type Item = { key: string; icon: LucideIcon };
 
@@ -157,6 +160,7 @@ export function MorrowHome({
   const [dialogues, setDialogues] = useState<MyConversation[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
   const [panel, setPanel] = useState<SettingsPanel | null>(null);
+  const [payPlan, setPayPlan] = useState<PayPlan | null>(null);
   /** Changing it remounts the chat on the thread the cookie now names. */
   const [chatKey, setChatKey] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -277,15 +281,25 @@ export function MorrowHome({
     );
   }
 
-  // Spoki opens a panel by its link: `/?panel=account` or `assistants`.
+  // Spoki opens a panel by its link: `/?panel=account`, `assistants` or
+  // `billing`. Without a session (a link from Telegram) it asks to sign in.
   useEffect(() => {
-    if (!signedIn) return;
     const first = window.setTimeout(() => {
       const url = new URL(window.location.href);
       const asked = url.searchParams.get("panel");
-      if (asked !== "account" && asked !== "assistants") return;
+      if (asked !== "account" && asked !== "assistants" && asked !== "billing")
+        return;
+      if (!signedIn) {
+        setProfileOpen("signin");
+        return;
+      }
+      const plan = url.searchParams.get("plan");
       url.searchParams.delete("panel");
+      url.searchParams.delete("plan");
       window.history.replaceState(null, "", url);
+      setPayPlan(
+        PAY_PLANS.includes(plan as PayPlan) ? (plan as PayPlan) : null,
+      );
       setPanel(asked);
     }, 0);
     return () => window.clearTimeout(first);
@@ -294,9 +308,20 @@ export function MorrowHome({
   function openPanel(next: SettingsPanel) {
     act(() => {
       setOpenId(null);
+      setPayPlan(null);
       setPanel(next);
     });
   }
+
+  // A question handed to Spoki from a panel shows the chat again.
+  useEffect(
+    () =>
+      onSpokiAsk(() => {
+        setPanel(null);
+        setOpenId(null);
+      }),
+    [],
+  );
 
   function toggleTheme() {
     const next = !light;
@@ -476,6 +501,16 @@ export function MorrowHome({
           >
             <Bot size={16} aria-hidden="true" />
             <span>{t("panels.assistants.title")}</span>
+          </button>
+          <button
+            type="button"
+            className="menu-action"
+            aria-current={panel === "billing" ? "page" : undefined}
+            disabled={!hydrated}
+            onClick={() => openPanel("billing")}
+          >
+            <Wallet size={16} aria-hidden="true" />
+            <span>{t("panels.billing.title")}</span>
           </button>
         </>
       ) : null}
@@ -768,7 +803,12 @@ export function MorrowHome({
       ) : null}
       <section className="workspace-host">
         {panel ? (
-          <SettingsPanelView panel={panel} scopes={mcpScopes} />
+          <SettingsPanelView
+            key={`${panel}-${payPlan ?? ""}`}
+            panel={panel}
+            scopes={mcpScopes}
+            plan={payPlan}
+          />
         ) : open ? (
           <ContactRoom key={open.id} thread={open} labels={statusLabels} />
         ) : null}

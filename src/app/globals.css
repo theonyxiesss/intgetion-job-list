@@ -2527,3 +2527,56 @@ body:has(.morrow) :is(.vt-site-header, footer, [data-rail], [data-bottom-nav]) {
   height: 44px;
   border-radius: 22px;
 }
+
+.morrow .morrow-plans {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.morrow .morrow-plan {
+  display: flex;
+  min-height: 44px;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--panel);
+  padding: 14px;
+  text-align: left;
+  transition: border-color 0.15s;
+}
+
+.morrow .morrow-plan:hover {
+  border-color: var(--line2);
+}
+
+.morrow .morrow-plan b {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.morrow .morrow-plan span {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.morrow .morrow-plan strong {
+  margin-top: auto;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.morrow .morrow-panel-back {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.morrow .morrow-panel-back:hover {
+  color: var(--text);
+}

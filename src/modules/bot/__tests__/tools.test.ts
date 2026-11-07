@@ -241,7 +241,9 @@ describe("bot history (7A)", () => {
     });
     expect(guestCard.llm).not.toContain("http");
     expect(offerPath("pay_plus", false)).toBe("/login?next=billing-plus");
-    expect(offerPath("pay_team", true)).toBe("/billing/crypto?plan=team");
+    expect(offerPath("pay_team", true)).toBe("/?panel=billing&plan=team");
+    expect(offerPath("pricing", true)).toBe("/?panel=billing");
+    expect(offerPath("pricing", false)).toBe("/pricing");
     expect(offerPath("register", true)).toBeNull();
     expect(offerPath("order_service", false)).toBe("/services");
     expect(offerPath("order_service", true)).toBe("/services");

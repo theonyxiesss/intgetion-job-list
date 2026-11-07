@@ -110,8 +110,12 @@ export function offerPath(
   signedIn: boolean,
 ): string | null {
   const plan = PLAN[action];
-  if (plan) return planPayHref(true, plan, signedIn);
-  if (action === "pricing") return "/pricing";
+  // Signed in, payment opens on the chat home (TZ 53); a guest signs in first.
+  if (plan)
+    return signedIn
+      ? `/?panel=billing&plan=${plan}`
+      : planPayHref(true, plan, signedIn);
+  if (action === "pricing") return signedIn ? "/?panel=billing" : "/pricing";
   if (action === "register") {
     return signedIn ? null : "/register?next=chat";
   }

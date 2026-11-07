@@ -6152,6 +6152,20 @@
         "lead": "Connect Claude, ChatGPT or another assistant over MCP. A token is shown once: copy it into the assistant, never into a chat.",
         "loading": "Loading your assistants…",
         "failed": "Could not load your assistants. Try again."
+      },
+      "billing": {
+        "title": "Plans and payment",
+        "lead": "Pick a plan and pay with a crypto wallet. The wallet opens over the chat.",
+        "loading": "Loading plans…",
+        "failed": "Could not load payment. Try again.",
+        "perMonth": "${amount} a month",
+        "perJob": "${amount} per job",
+        "back": "All plans",
+        "noJob": "You have no job to pay for yet.",
+        "postJob": "Post a job",
+        "askJob": "I want to post a job",
+        "createCompany": "Create a company page",
+        "askCompany": "Help me create my company page"
       }
     }
   }

@@ -5646,6 +5646,20 @@
         "lead": "Collega Claude, ChatGPT o un altro assistente via MCP. Il token si vede una sola volta: copialo nell’assistente, mai in una chat.",
         "loading": "Caricamento degli assistenti…",
         "failed": "Impossibile caricare gli assistenti. Riprova."
+      },
+      "billing": {
+        "title": "Piani e pagamento",
+        "lead": "Scegli un piano e paga con un wallet crypto. Il wallet si apre sopra la chat.",
+        "loading": "Caricamento dei piani…",
+        "failed": "Impossibile caricare il pagamento. Riprova.",
+        "perMonth": "${amount} al mese",
+        "perJob": "${amount} per offerta",
+        "back": "Tutti i piani",
+        "noJob": "Non hai ancora un’offerta da pagare.",
+        "postJob": "Pubblica un’offerta",
+        "askJob": "Voglio pubblicare un’offerta",
+        "createCompany": "Crea la pagina aziendale",
+        "askCompany": "Aiutami a creare la pagina della mia azienda"
       }
     }
   }

@@ -5646,6 +5646,20 @@
         "lead": "Connectez Claude, ChatGPT ou un autre assistant via MCP. Un jeton s’affiche une seule fois : copiez-le dans l’assistant, jamais dans un chat.",
         "loading": "Chargement de vos assistants…",
         "failed": "Impossible de charger vos assistants. Réessayez."
+      },
+      "billing": {
+        "title": "Offres et paiement",
+        "lead": "Choisissez une offre et payez avec un portefeuille crypto. Le portefeuille s’ouvre par-dessus le chat.",
+        "loading": "Chargement des offres…",
+        "failed": "Impossible de charger le paiement. Réessayez.",
+        "perMonth": "${amount} par mois",
+        "perJob": "${amount} par offre",
+        "back": "Toutes les offres",
+        "noJob": "Vous n’avez pas encore d’offre à payer.",
+        "postJob": "Publier une offre",
+        "askJob": "Je veux publier une offre",
+        "createCompany": "Créer la page entreprise",
+        "askCompany": "Aide-moi à créer la page de mon entreprise"
       }
     }
   }

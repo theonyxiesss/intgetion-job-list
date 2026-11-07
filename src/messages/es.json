@@ -5646,6 +5646,20 @@
         "lead": "Conecta Claude, ChatGPT u otro asistente por MCP. El token se muestra una vez: cópialo en el asistente, nunca en un chat.",
         "loading": "Cargando tus asistentes…",
         "failed": "No se pudieron cargar tus asistentes. Inténtalo de nuevo."
+      },
+      "billing": {
+        "title": "Planes y pago",
+        "lead": "Elige un plan y paga con una billetera cripto. La billetera se abre sobre el chat.",
+        "loading": "Cargando planes…",
+        "failed": "No se pudo cargar el pago. Inténtalo de nuevo.",
+        "perMonth": "${amount} al mes",
+        "perJob": "${amount} por empleo",
+        "back": "Todos los planes",
+        "noJob": "Aún no tienes un empleo por el que pagar.",
+        "postJob": "Publicar empleo",
+        "askJob": "Quiero publicar un empleo",
+        "createCompany": "Crear página de empresa",
+        "askCompany": "Ayúdame a crear la página de mi empresa"
       }
     }
   }

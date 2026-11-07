@@ -5646,6 +5646,20 @@
         "lead": "Verbinde Claude, ChatGPT oder einen anderen Assistenten per MCP. Ein Token wird einmal angezeigt: Kopiere es in den Assistenten, nie in einen Chat.",
         "loading": "Assistenten werden geladen…",
         "failed": "Assistenten konnten nicht geladen werden. Bitte erneut versuchen."
+      },
+      "billing": {
+        "title": "Tarife und Zahlung",
+        "lead": "Wähle einen Tarif und zahle mit einer Krypto-Wallet. Die Wallet öffnet sich über dem Chat.",
+        "loading": "Tarife werden geladen…",
+        "failed": "Zahlung konnte nicht geladen werden. Bitte erneut versuchen.",
+        "perMonth": "${amount} pro Monat",
+        "perJob": "${amount} pro Job",
+        "back": "Alle Tarife",
+        "noJob": "Du hast noch keinen Job, für den du zahlen kannst.",
+        "postJob": "Job veröffentlichen",
+        "askJob": "Ich möchte einen Job veröffentlichen",
+        "createCompany": "Unternehmensseite erstellen",
+        "askCompany": "Hilf mir, meine Unternehmensseite zu erstellen"
       }
     }
   }

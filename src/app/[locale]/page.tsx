@@ -89,6 +89,8 @@ export default async function HomePage({
         "categories",
         "settings",
         "mcp",
+        "billing",
+        "pricing",
       ]}
     >
       <JsonLd
