@@ -29,6 +29,7 @@
   "dependencies": {
     "@assistant-ui/react": "^0.15.31",
     "@hookform/resolvers": "^5.9.1",
+    "@intgetion/contacts": "github:theonyxiesss/intgetion-contacts#v0.1.0",
     "@modelcontextprotocol/server": "2.3.1",
     "@reown/appkit": "1.8.19",
     "@supabase/ssr": "^0.12.7",
@@ -48,7 +49,7 @@
     "sharp": "^0.35.5",
     "use-stick-to-bottom": "1.1.6",
     "viem": "^2.57.4",
-    "zod": "^4.6.5"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

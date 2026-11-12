@@ -1,7 +1,7 @@
 import { getDb } from "@/db/client";
 import { notFound } from "@/lib/http";
 import { normalizeSkill } from "@/modules/taxonomy/service";
-import { findContactEmail } from "@/modules/contacts/service";
+import { findContactEmail } from "@intgetion/contacts";
 import { writeSharedFacts } from "@/modules/users/service";
 import type { CandidateDto } from "../api/dto";
 import * as profiles from "../repo/profiles";
