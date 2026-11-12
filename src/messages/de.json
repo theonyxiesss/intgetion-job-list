@@ -166,7 +166,15 @@
     "spokiLoading": "Spoki wird geladen…",
     "spokiResize": "Größe der Seite und des Spoki-Bereichs ändern",
     "spokiHide": "Spoki ausblenden",
-    "spokiShow": "Spoki einblenden"
+    "spokiShow": "Spoki einblenden",
+    "newChat": "Neuer Chat",
+    "findJobs": "Jobs finden",
+    "notifications": "Benachrichtigungen",
+    "profile": "Mein Profil",
+    "settings": "Einstellungen",
+    "finance": "Finanzen",
+    "payments": "Zahlungen",
+    "cryptoWallet": "Krypto-Wallet"
   },
   "locale": {
     "en": "Englisch",

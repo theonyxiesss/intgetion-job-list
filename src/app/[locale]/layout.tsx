@@ -21,6 +21,8 @@ import {
 } from "@/components/bot/spoki-dock-model";
 import { SpokiRow, SpokiShell } from "@/components/bot/spoki-shell";
 import { SiteRail, type SiteRailData } from "@/components/shell/site-rail";
+import { AppSidebar } from "@/components/shell/app-sidebar";
+import { sidebarLabelKeys } from "@/components/shell/app-sidebar-items";
 import { railServices } from "@/components/shell/rail-items";
 import { JOB_CATEGORIES } from "@/config/markers";
 import { MiniAppBar } from "@/components/auth/mini-app-bar";
@@ -132,17 +134,39 @@ export default async function LocaleLayout({
   // Left rail from 1280 px, kept across navigations (D477, D489). min-h-0 on
   // both wrappers: the chat keeps the window height and scrolls its thread
   // instead of pushing the field down (D491).
-  const pageColumn = (
+  const v2 = flags.uiV2Enabled;
+  const sidebarLabels = v2
+    ? Object.fromEntries(sidebarLabelKeys().map((key) => [key, t(key)]))
+    : {};
+  const classicColumn = (
     <div className="flex min-h-0 w-full flex-1 flex-col xl:has-[>[data-rail]]:mx-auto xl:has-[>[data-rail]]:grid xl:has-[>[data-rail]]:max-w-[1376px] xl:has-[>[data-rail]:not([data-collapsed])]:grid-cols-[300px_minmax(0,1fr)] xl:has-[>[data-rail][data-collapsed]]:grid-cols-[96px_minmax(0,1fr)]">
       <SiteRail data={rail} />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
     </div>
+  );
+  // v2 (UI_V2): the side menu replaces the rail on desktop; phones keep the
+  // header and its menu.
+  const pageColumn = v2 ? (
+    <div className="flex min-h-0 w-full flex-1">
+      <AppSidebar labels={sidebarLabels} signedIn={signedIn} />
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
+    </div>
+  ) : (
+    classicColumn
+  );
+  const header = v2 ? (
+    <div className="lg:hidden">
+      <Header />
+    </div>
+  ) : (
+    <Header />
   );
 
   return (
     <html
       lang={locale}
       className={`h-full ${fontVariables}`}
+      data-ui={v2 ? "v2" : undefined}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col has-[[data-bottom-nav]]:pb-[calc(4rem+env(safe-area-inset-bottom))] md:has-[[data-bottom-nav]]:pb-0">
@@ -175,7 +199,7 @@ export default async function LocaleLayout({
                 all, so pages load none of its code (D525). */}
             {dock ? (
               <SpokiShell signedIn={signedIn} preference={dockPreference}>
-                <Header />
+                {header}
                 <div
                   id="content"
                   tabIndex={-1}
@@ -200,7 +224,7 @@ export default async function LocaleLayout({
               </SpokiShell>
             ) : (
               <>
-                <Header />
+                {header}
                 <div
                   id="content"
                   tabIndex={-1}
@@ -210,7 +234,13 @@ export default async function LocaleLayout({
                 </div>
               </>
             )}
-            <Footer />
+            {v2 ? (
+              <div className="lg:hidden">
+                <Footer />
+              </div>
+            ) : (
+              <Footer />
+            )}
             <AnalyticsTracker />
             <TelegramLoginResume />
             {flags.telegramMiniAppEnabled && !signedIn && (

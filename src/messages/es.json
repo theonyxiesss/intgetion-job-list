@@ -166,7 +166,15 @@
     "spokiLoading": "Cargando Spoki…",
     "spokiResize": "Cambiar el tamaño de la página y el panel de Spoki",
     "spokiHide": "Ocultar Spoki",
-    "spokiShow": "Mostrar Spoki"
+    "spokiShow": "Mostrar Spoki",
+    "newChat": "Nuevo chat",
+    "findJobs": "Buscar empleo",
+    "notifications": "Notificaciones",
+    "profile": "Mi perfil",
+    "settings": "Ajustes",
+    "finance": "Finanzas",
+    "payments": "Pagos",
+    "cryptoWallet": "Monedero cripto"
   },
   "locale": {
     "en": "Inglés",

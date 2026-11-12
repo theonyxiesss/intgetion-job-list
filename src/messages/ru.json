@@ -166,7 +166,15 @@
     "spokiLoading": "Загружаем Spoki…",
     "spokiResize": "Изменить размер страницы и панели Spoki",
     "spokiHide": "Скрыть Spoki",
-    "spokiShow": "Показать Spoki"
+    "spokiShow": "Показать Spoki",
+    "newChat": "Новый чат",
+    "findJobs": "Найти работу",
+    "notifications": "Уведомления",
+    "profile": "Мой профиль",
+    "settings": "Настройки",
+    "finance": "Финансы",
+    "payments": "Платежи",
+    "cryptoWallet": "Криптокошелёк"
   },
   "locale": {
     "en": "Английский",

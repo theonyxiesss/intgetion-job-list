@@ -53,6 +53,52 @@
   color-scheme: light;
 }
 
+/*
+ * v2 interface (UI_V2): the redesign mockup. Same token names, so every
+ * component follows without changes: near-black page, soft grey surfaces,
+ * mint accent with dark text on it.
+ */
+:root[data-ui="v2"],
+:root[data-ui="v2"][data-theme="dark"] {
+  --bg: #0b0b0c;
+  --surface: #141416;
+  --surface-2: #1c1c1f;
+  --line: #222226;
+  --line-strong: #2a2a2f;
+  --fg: #ececef;
+  --fg-muted: #a6a6ad;
+  --fg-subtle: #8b8b92;
+  --accent: #7ee0b5;
+  --accent-fg: #0b0b0c;
+  --signal: #8ab4ff;
+  --signal-fg: #0b0b0c;
+  --success: #7ee0b5;
+  --warning: #f2c46b;
+  --danger: #ff9f8a;
+  --overlay: rgb(0 0 0 / 0.7);
+  --wordmark: #ececef;
+}
+
+:root[data-ui="v2"][data-theme="light"] {
+  --bg: #ffffff;
+  --surface: #f6f6f7;
+  --surface-2: #ececef;
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+  --fg: #141416;
+  --fg-muted: #52525b;
+  --fg-subtle: #63636b;
+  --accent: #0f7a54;
+  --accent-fg: #ffffff;
+  --signal: #2f5fd0;
+  --signal-fg: #ffffff;
+  --success: #0f7a54;
+  --warning: #9a5b00;
+  --danger: #c2410c;
+  --overlay: rgb(0 0 0 / 0.45);
+  --wordmark: #141416;
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
