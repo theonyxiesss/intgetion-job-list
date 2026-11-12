@@ -9,7 +9,7 @@ import {
 } from "@/modules/candidates/service";
 import { findMemberRole, listMemberUserIds } from "@/modules/companies/service";
 import { safeNotify } from "@/modules/notifications/service";
-import { findContactEmail } from "@/modules/contacts/service";
+import { findContactEmail } from "@intgetion/contacts";
 import { toApplicationDto, type ApplicationDto } from "../api/dto";
 import {
   findApplication,

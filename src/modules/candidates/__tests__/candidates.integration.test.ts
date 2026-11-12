@@ -5,7 +5,7 @@ import { getDb } from "@/db/client";
 import { users, skillSuggestions } from "@/db/schema";
 import { HttpError } from "@/lib/http";
 import { seedSkills } from "@/modules/taxonomy/service";
-import { getOwnContacts, saveContacts } from "@/modules/contacts/service";
+import { getOwnContacts, saveContacts } from "@intgetion/contacts";
 import {
   getCandidateForViewer,
   getOwnCandidate,

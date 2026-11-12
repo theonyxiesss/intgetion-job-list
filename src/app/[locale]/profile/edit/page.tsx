@@ -7,7 +7,7 @@ import {
 import { HttpError } from "@/lib/http";
 import { requireUser } from "@/lib/auth-guards";
 import { getOwnCandidate } from "@/modules/candidates/service";
-import { getOwnContacts } from "@/modules/contacts/service";
+import { getOwnContacts } from "@intgetion/contacts";
 import { readSharedProfile } from "@/modules/users/service";
 import { redirect } from "@/i18n/navigation";
 import { Container, PageHeader } from "@/components/ui/container";
