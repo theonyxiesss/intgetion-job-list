@@ -115,7 +115,7 @@ async function CreatorsBody({
                       className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"
                     >
                       <CreatorProfileCard card={card} />
-                      <div className="flex flex-col gap-3 rounded-lg border border-line p-4 md:p-5">
+                      <div className="flex flex-col gap-3 rounded-lg border border-line p-4 md:p-5 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface">
                         <p className="t-label text-fg-muted">
                           {d("participations")}
                         </p>
@@ -207,7 +207,7 @@ async function CreatorsBody({
                           }
                         />
                       ) : (
-                        <ul className="flex flex-col divide-y divide-line rounded-lg border border-line">
+                        <ul className="flex flex-col divide-y divide-line rounded-lg border border-line in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface">
                           {cards.map((card) => (
                             <li
                               key={card.userId}
