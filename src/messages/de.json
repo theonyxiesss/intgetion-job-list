@@ -1569,6 +1569,11 @@
     "emptyArchive": "Nichts im Archiv."
   },
   "employerApplications": {
+    "v2": {
+      "title": "Recruiting",
+      "job": "Stelle:",
+      "count": "{count, plural, one {# Bewerbung} other {# Bewerbungen}}"
+    },
     "open": "Bewerbungen",
     "title": "Bewerbungen",
     "empty": "Noch keine Bewerbungen.",

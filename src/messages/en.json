@@ -1569,6 +1569,11 @@
     "emptyArchive": "Nothing in the archive."
   },
   "employerApplications": {
+    "v2": {
+      "title": "Hiring",
+      "job": "Job:",
+      "count": "{count, plural, one {# application} other {# applications}}"
+    },
     "open": "Applications",
     "title": "Applications",
     "empty": "No applications yet.",
