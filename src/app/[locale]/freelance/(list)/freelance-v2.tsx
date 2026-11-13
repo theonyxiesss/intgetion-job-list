@@ -53,6 +53,7 @@ export async function FreelancePageV2({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("freelance");
+  const nav = await getTranslations("nav");
   const query = parseFreelanceSearch(await searchParams);
   const { cards, total, hasMore } = await listCatalog(query, locale);
   const active = FILTER_KEYS.filter((key) => query[key] !== undefined);
@@ -120,6 +121,12 @@ export async function FreelancePageV2({
               {t("v2.asSeller")}
             </Link>
           </nav>
+          <Link
+            href="/freelance/tasks"
+            className="flex min-h-10 items-center rounded-xl border border-line-strong px-3.5 text-sm hover:bg-surface"
+          >
+            {nav("taskBoard")}
+          </Link>
           <Link
             href="/freelance/orders"
             className="flex min-h-10 items-center gap-2 rounded-xl border border-line-strong px-3.5 text-sm hover:bg-surface"
