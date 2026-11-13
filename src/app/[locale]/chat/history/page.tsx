@@ -38,14 +38,24 @@ function threadHref(topic: ConversationHistoryItem["topic"]): string {
 /** `/chat/history`: the signed-in person's conversations with Spoki. */
 export default async function ChatHistoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ q?: string }>;
 }) {
   const { locale } = await params;
+  const query = ((await searchParams).q ?? "").trim().slice(0, 100);
   setRequestLocale(locale);
   const user = await userOrLogin(locale);
   const t = await getTranslations("chat.history");
-  const items = await listOwnConversations(user.id, 50);
+  const all = await listOwnConversations(user.id, 100);
+  // Search by the first question, as in the mockup; text past retention is gone.
+  const needle = query.toLocaleLowerCase(locale);
+  const items = needle
+    ? all.filter((item) =>
+        item.preview?.toLocaleLowerCase(locale).includes(needle),
+      )
+    : all;
   const when = new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
     timeStyle: "short",
@@ -55,7 +65,25 @@ export default async function ChatHistoryPage({
     <main className="py-10 md:py-16 in-data-[ui=v2]:py-6 md:in-data-[ui=v2]:py-8">
       <Container narrow className="flex flex-col gap-6">
         <PageHeader title={t("title")} intro={t("intro")} />
-        {items.length === 0 ? (
+        {all.length > 0 ? (
+          <form role="search" action="" className="flex gap-2">
+            <label htmlFor="chat-search" className="sr-only">
+              {t("search")}
+            </label>
+            <input
+              id="chat-search"
+              name="q"
+              type="search"
+              defaultValue={query}
+              placeholder={t("search")}
+              maxLength={100}
+              className="min-h-11 min-w-0 flex-1 rounded-xl border border-line bg-surface-2 px-4 text-sm placeholder:text-fg-subtle"
+            />
+          </form>
+        ) : null}
+        {query && items.length === 0 ? (
+          <EmptyState title={t("notFound")} />
+        ) : items.length === 0 ? (
           <EmptyState
             title={t("empty")}
             action={

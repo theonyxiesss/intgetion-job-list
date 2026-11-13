@@ -27,6 +27,11 @@ import { SharedProfileForm } from "@/modules/users/ui/shared-profile-form";
 import { requireSettingsUser } from "../settings/require-settings-user";
 import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
+import {
+  getSellerRecord,
+  listPublicReviews,
+} from "@/modules/freelance/service";
+import { formatUsd } from "@/modules/freelance/ui/format";
 
 export const dynamic = "force-dynamic";
 
@@ -213,6 +218,29 @@ export default async function AccountPage({
   // v2 (UI_V2): the profile mockup on the same data and forms.
   if (flags.uiV2Enabled) {
     const card = "rounded-[18px] border border-line bg-surface p-5";
+    // Freelance side of the same account (mockup: rating, services, reviews).
+    const ownServices = await safe(listOwnServices(user.id), []);
+    const published = ownServices.filter((item) => item.status === "published");
+    const record = await safe(getSellerRecord(user.id), null);
+    const reviews = (
+      await Promise.all(
+        published
+          .slice(0, 5)
+          .map((item) =>
+            safe(listPublicReviews(item.id, 3), []).then((rows) =>
+              rows.map((row) => ({ ...row, service: item.title })),
+            ),
+          ),
+      )
+    )
+      .flat()
+      .filter((row) => row.body)
+      .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
+      .slice(0, 3);
+    const rating = new Intl.NumberFormat(locale, {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    });
     const name = shared?.displayName?.trim() || t("title");
     const initials = name
       .split(/\s+/)
@@ -247,6 +275,17 @@ export default async function AccountPage({
                   </h1>
                   {place ? (
                     <p className="text-sm text-fg-muted">{place}</p>
+                  ) : null}
+                  {record?.rating != null && record.ratingCount > 0 ? (
+                    <p className="text-sm">
+                      <span aria-hidden="true" className="text-warning">
+                        ★{" "}
+                      </span>
+                      {t("v2.rating", {
+                        rating: rating.format(record.rating),
+                        count: record.ratingCount,
+                      })}
+                    </p>
                   ) : null}
                   <p className="text-sm text-fg-muted">{t("intro")}</p>
                 </div>
@@ -297,6 +336,100 @@ export default async function AccountPage({
                   ))}
                 </ul>
               </section>
+
+              <section
+                aria-labelledby="account-own-services"
+                className={`${card} flex flex-col gap-3`}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h2
+                    id="account-own-services"
+                    className="text-lg font-semibold"
+                  >
+                    {t("v2.myServices")}
+                  </h2>
+                  <Link
+                    href="/profile/freelance/new"
+                    className="flex min-h-10 items-center rounded-xl border border-line-strong px-3.5 text-sm"
+                  >
+                    {t("v2.addService")}
+                  </Link>
+                </div>
+                {ownServices.length === 0 ? (
+                  <p className="text-sm text-fg-muted">{t("v2.noServices")}</p>
+                ) : (
+                  <ul className="grid gap-2 sm:grid-cols-2">
+                    {ownServices.slice(0, 4).map((item) => {
+                      const prices = item.packages.map(
+                        (pack) => pack.priceMinor,
+                      );
+                      const from = prices.length
+                        ? prices.reduce((a, b) => (b < a ? b : a))
+                        : null;
+                      return (
+                        <li key={item.id}>
+                          <Link
+                            href={
+                              item.status === "published"
+                                ? `/freelance/${item.slug}`
+                                : "/profile/freelance"
+                            }
+                            className="flex h-full flex-col gap-1.5 rounded-[14px] border border-line bg-surface-2 p-4 hover:border-line-strong"
+                          >
+                            <span className="text-[15px] font-medium">
+                              {item.title}
+                            </span>
+                            <span className="text-sm text-fg-muted">
+                              {from !== null
+                                ? t("v2.priceFrom", {
+                                    price: formatUsd(from, locale),
+                                  })
+                                : null}
+                            </span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+                <Link
+                  href="/profile/freelance"
+                  className="self-start text-sm text-accent"
+                >
+                  {t("services.open")} →
+                </Link>
+              </section>
+
+              {reviews.length > 0 ? (
+                <section
+                  aria-labelledby="account-reviews"
+                  className={`${card} flex flex-col gap-3`}
+                >
+                  <h2 id="account-reviews" className="text-lg font-semibold">
+                    {t("v2.reviews")}
+                  </h2>
+                  <ul className="flex flex-col">
+                    {reviews.map((review, index) => (
+                      <li
+                        key={index}
+                        className="flex flex-col gap-1 border-t border-line py-3 first:border-t-0 first:pt-0"
+                      >
+                        <span className="text-sm">
+                          <span aria-hidden="true" className="text-warning">
+                            {"★".repeat(review.rating)}
+                          </span>
+                          <span className="sr-only">{review.rating}/5</span>
+                          <span className="text-fg-subtle">
+                            {" "}
+                            · {review.service}
+                          </span>
+                        </span>
+                        <p className="text-sm text-fg-muted">{review.body}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
 
               <section
                 id="account-profile-section"

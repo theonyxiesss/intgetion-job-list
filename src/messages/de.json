@@ -1826,6 +1826,8 @@
   },
   "chat": {
     "history": {
+      "search": "Chats durchsuchen",
+      "notFound": "Nichts gefunden",
       "title": "Chatverlauf",
       "intro": "Deine Gespräche mit Spoki. Alter Nachrichtentext wird nach der Aufbewahrungsfrist gelöscht.",
       "empty": "Noch keine Gespräche",
@@ -5175,6 +5177,14 @@
     "telegram": "Erinnerung von Spoki: {text}\n{when}"
   },
   "account": {
+    "v2": {
+      "rating": "{rating} · {count, plural, one {# Bewertung} other {# Bewertungen}}",
+      "myServices": "Meine Leistungen",
+      "addService": "Leistung hinzufügen",
+      "noServices": "Noch keine Leistungen. Füge eine hinzu und nimm Aufträge an.",
+      "priceFrom": "ab {price}",
+      "reviews": "Kundenbewertungen"
+    },
     "nav": "Mein Konto",
     "title": "Mein Konto",
     "intro": "Ein Konto für alle Dienste der Website: Profil, Tarif, Anmeldung und Wallet findest du hier.",

@@ -1826,6 +1826,8 @@
   },
   "chat": {
     "history": {
+      "search": "Search chats",
+      "notFound": "Nothing found",
       "title": "Chat history",
       "intro": "Your conversations with Spoki. Old message text is removed after the retention period.",
       "empty": "No conversations yet",
@@ -5681,6 +5683,14 @@
     "telegram": "Reminder from Spoki: {text}\n{when}"
   },
   "account": {
+    "v2": {
+      "rating": "{rating} · {count, plural, one {# review} other {# reviews}}",
+      "myServices": "My services",
+      "addService": "Add a service",
+      "noServices": "No services yet. Add one and take orders.",
+      "priceFrom": "from {price}",
+      "reviews": "Client reviews"
+    },
     "nav": "My account",
     "title": "My account",
     "intro": "One account for every service on the site: profile, plan, sign-in and wallet are here.",

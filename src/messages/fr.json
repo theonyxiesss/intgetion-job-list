@@ -1826,6 +1826,8 @@
   },
   "chat": {
     "history": {
+      "search": "Rechercher dans les chats",
+      "notFound": "Aucun résultat",
       "title": "Historique des chats",
       "intro": "Vos conversations avec Spoki. Le texte ancien est supprimé après la durée de conservation.",
       "empty": "Aucune conversation pour l’instant",
@@ -5179,6 +5181,14 @@
     "telegram": "Rappel de Spoki : {text}\n{when}"
   },
   "account": {
+    "v2": {
+      "rating": "{rating} · {count, plural, one {# avis} other {# avis}}",
+      "myServices": "Mes services",
+      "addService": "Ajouter un service",
+      "noServices": "Aucun service pour l’instant. Ajoutez-en un et recevez des commandes.",
+      "priceFrom": "à partir de {price}",
+      "reviews": "Avis des clients"
+    },
     "nav": "Mon compte",
     "title": "Mon compte",
     "intro": "Un seul compte pour tous les services du site : profil, offre, connexion et portefeuille sont ici.",

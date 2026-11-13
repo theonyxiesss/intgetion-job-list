@@ -1826,6 +1826,8 @@
   },
   "chat": {
     "history": {
+      "search": "Cerca nelle chat",
+      "notFound": "Nessun risultato",
       "title": "Cronologia chat",
       "intro": "Le tue conversazioni con Spoki. Il testo vecchio viene eliminato dopo il periodo di conservazione.",
       "empty": "Ancora nessuna conversazione",
@@ -5175,6 +5177,14 @@
     "telegram": "Promemoria da Spoki: {text}\n{when}"
   },
   "account": {
+    "v2": {
+      "rating": "{rating} · {count, plural, one {# recensione} other {# recensioni}}",
+      "myServices": "I miei servizi",
+      "addService": "Aggiungi servizio",
+      "noServices": "Ancora nessun servizio. Aggiungine uno e ricevi ordini.",
+      "priceFrom": "da {price}",
+      "reviews": "Recensioni dei clienti"
+    },
     "nav": "Il mio account",
     "title": "Il mio account",
     "intro": "Un solo account per tutti i servizi del sito: profilo, piano, accesso e wallet sono qui.",
