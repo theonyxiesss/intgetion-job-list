@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ThemeChoice } from "@/components/settings/theme-choice";
-import { LanguagePicker } from "@/components/shell/language-picker";
 import { RouteMessages } from "@/components/shell/route-messages";
 import { flags } from "@/config/flags";
 import { requireSettingsUser } from "../require-settings-user";
@@ -33,13 +32,6 @@ export default async function AppearanceSettingsPage({
     <RouteMessages namespaces={["settings"]}>
       <SettingsShell active="appearance" title={t("v2.tabAppearance")}>
         <ThemeChoice />
-        <section className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <h2 className="t-h3">{t("siteLanguage")}</h2>
-            <p className="t-body-s text-fg-muted">{t("siteLanguageHint")}</p>
-          </div>
-          <LanguagePicker variant="grid" />
-        </section>
       </SettingsShell>
     </RouteMessages>
   );

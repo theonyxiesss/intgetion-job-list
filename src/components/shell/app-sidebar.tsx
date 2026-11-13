@@ -300,7 +300,8 @@ export function AppSidebar({
             {signedIn ? (userName ?? t("nav.account")) : t("nav.login")}
           </span>
         </Link>
-        <LanguagePicker variant="menu" />
+        {/* Signed in: the language lives in settings (mockup); guests keep it here. */}
+        {signedIn ? null : <LanguagePicker variant="menu" />}
         {signedIn && (
           <Link
             href="/settings/account"
