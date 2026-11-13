@@ -93,8 +93,14 @@ export default async function FreelanceOrderPage({
     : null;
 
   return (
-    <main className={v2 ? "px-0 py-6 md:py-8" : "py-10 md:py-16"}>
-      <Container className={v2 ? "flex flex-col gap-5" : "flex flex-col gap-8"}>
+    <main className={v2 ? "px-4 py-6 md:px-6 md:py-8" : "py-10 md:py-16"}>
+      <Container
+        className={
+          v2
+            ? "!mx-auto !max-w-[1180px] !px-0 flex flex-col gap-4"
+            : "flex flex-col gap-8"
+        }
+      >
         <Link
           href={
             order.side === "buyer"
@@ -102,12 +108,22 @@ export default async function FreelanceOrderPage({
               : "/freelance/orders?side=seller"
           }
           {...navBack}
-          className="t-label inline-flex min-h-11 items-center self-start text-fg-muted"
+          className={
+            v2
+              ? "inline-flex min-h-9 items-center gap-1.5 self-start text-sm text-fg-muted hover:text-fg"
+              : "t-label inline-flex min-h-11 items-center self-start text-fg-muted"
+          }
         >
           {t("orders.back")}
         </Link>
         <header className={card ?? "flex flex-col gap-3"}>
-          <div className="flex flex-wrap items-center gap-2">
+          {v2 ? (
+            <p className="text-xs text-fg-subtle">
+              {t("v2.room")} · #{order.id.slice(0, 4).toUpperCase()} ·{" "}
+              {t(`orders.status.${order.status}`)}
+            </p>
+          ) : null}
+          <div className={v2 ? "hidden" : "flex flex-wrap items-center gap-2"}>
             <Badge tone={order.next.length > 0 ? "new" : "neutral"}>
               {t(`orders.status.${order.status}`)}
             </Badge>
@@ -131,7 +147,24 @@ export default async function FreelanceOrderPage({
               order.serviceTitle
             )}
           </h1>
-          <p className={v2 ? "text-sm text-fg-muted" : "text-fg-muted"}>
+          {v2 ? (
+            <p className="text-sm text-fg-muted">
+              {[
+                contact?.name
+                  ? `${order.side === "buyer" ? t("v2.seller") : t("v2.buyer")} ${contact.name}`
+                  : null,
+                order.side === "buyer" ? t("v2.youBuy") : t("v2.youSell"),
+                deadline
+                  ? t("v2.due", {
+                      date: deadline.dueAt.toISOString().slice(0, 10),
+                    })
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+          ) : null}
+          <p className={v2 ? "text-sm text-fg-subtle" : "text-fg-muted"}>
             {t(`orders.hint.${order.side}.${order.status}`)}
           </p>
           {v2 && stepIndex >= 0 ? (
@@ -158,25 +191,27 @@ export default async function FreelanceOrderPage({
             </nav>
           ) : null}
         </header>
-        <StatRow>
-          <Stat
-            label={t("orders.package")}
-            value={t(`tiers.${order.packageTier}`)}
-          />
-          <Stat
-            label={t("priceLabel")}
-            value={formatUsd(order.priceMinor, locale)}
-          />
-          <Stat
-            label={t("termLabel")}
-            value={t("days", { count: order.deliveryDays })}
-          />
-          <Stat
-            label={t("orders.revisionsLeft")}
-            value={String(order.revisionsLeft)}
-          />
-        </StatRow>
-        {deadline ? (
+        {v2 ? null : (
+          <StatRow>
+            <Stat
+              label={t("orders.package")}
+              value={t(`tiers.${order.packageTier}`)}
+            />
+            <Stat
+              label={t("priceLabel")}
+              value={formatUsd(order.priceMinor, locale)}
+            />
+            <Stat
+              label={t("termLabel")}
+              value={t("days", { count: order.deliveryDays })}
+            />
+            <Stat
+              label={t("orders.revisionsLeft")}
+              value={String(order.revisionsLeft)}
+            />
+          </StatRow>
+        )}
+        {deadline && (!v2 || deadline.state === "overdue") ? (
           <p
             role={deadline.state === "overdue" ? "alert" : "status"}
             className={
@@ -228,10 +263,27 @@ export default async function FreelanceOrderPage({
             aria-label={roomCopy.room_details}
             className={
               v2
-                ? "flex flex-col gap-3 lg:col-start-2 lg:row-start-1"
+                ? "flex flex-col gap-3 lg:col-start-2 lg:row-start-1 [&_.t-label]:font-sans [&_.t-label]:text-xs [&_.t-label]:tracking-normal [&_.t-label]:normal-case"
                 : "flex flex-col gap-8 lg:col-start-2 lg:row-start-1"
             }
           >
+            {v2 ? (
+              <section className="flex flex-col gap-2 rounded-[18px] border border-line bg-surface p-5">
+                <span className="text-xs text-fg-subtle">
+                  {t("priceLabel")}
+                </span>
+                <span className="text-[30px] leading-none font-semibold tracking-tight">
+                  {formatUsd(order.priceMinor, locale)}
+                </span>
+                <span className="text-sm text-fg-muted">
+                  {[
+                    t(`tiers.${order.packageTier}`),
+                    t("days", { count: order.deliveryDays }),
+                    `${t("orders.revisionsLeft")}: ${order.revisionsLeft}`,
+                  ].join(" · ")}
+                </span>
+              </section>
+            ) : null}
             <section className={card ?? "flex flex-col gap-2"}>
               <h2 className={v2 ? "text-[15px] font-semibold" : "t-h3"}>
                 {t("orders.task")}
@@ -403,7 +455,7 @@ export default async function FreelanceOrderPage({
           <div
             className={
               v2
-                ? "min-w-0 rounded-[18px] border border-line bg-surface p-4 lg:col-start-1 lg:row-start-1"
+                ? "min-w-0 rounded-[18px] border border-line bg-surface p-4 lg:col-start-1 lg:row-start-1 [&_.t-label]:font-sans [&_.t-label]:text-xs [&_.t-label]:tracking-normal [&_.t-label]:normal-case"
                 : "lg:col-start-1 lg:row-start-1"
             }
           >

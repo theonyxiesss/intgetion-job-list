@@ -4308,6 +4308,12 @@
   },
   "freelance": {
     "v2": {
+      "room": "Salle de commande",
+      "seller": "Freelance",
+      "buyer": "Client",
+      "youBuy": "vous êtes le client",
+      "youSell": "vous êtes le freelance",
+      "due": "pour le {date}",
       "title": "Freelance",
       "asClient": "Je suis client",
       "asSeller": "Je suis freelance",

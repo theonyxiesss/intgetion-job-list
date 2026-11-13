@@ -4810,6 +4810,12 @@
   },
   "freelance": {
     "v2": {
+      "room": "Order room",
+      "seller": "Freelancer",
+      "buyer": "Client",
+      "youBuy": "you are the client",
+      "youSell": "you are the freelancer",
+      "due": "due {date}",
       "title": "Freelance",
       "asClient": "I am a client",
       "asSeller": "I am a freelancer",

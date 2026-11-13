@@ -4304,6 +4304,12 @@
   },
   "freelance": {
     "v2": {
+      "room": "Sala del pedido",
+      "seller": "Freelancer",
+      "buyer": "Cliente",
+      "youBuy": "el cliente eres tú",
+      "youSell": "el freelancer eres tú",
+      "due": "entrega {date}",
       "title": "Freelance",
       "asClient": "Soy cliente",
       "asSeller": "Soy freelancer",
