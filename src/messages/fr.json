@@ -415,6 +415,12 @@
     "code": "500"
   },
   "auth": {
+    "v2": {
+      "loginTitle": "Bon retour",
+      "loginIntro": "Connectez-vous pour continuer avec Spoki.",
+      "registerTitle": "Créer un compte",
+      "registerIntro": "Un compte pour l’emploi, le freelance et le recrutement."
+    },
     "loginTitle": "Se connecter",
     "registerTitle": "Créer un compte",
     "resetTitle": "Réinitialiser le mot de passe",
@@ -473,6 +479,7 @@
       "network": "Pas de connexion au site. Vérifiez votre connexion internet et réessayez — votre saisie est conservée."
     },
     "social": {
+      "orEmail": "ou par e-mail",
       "title": "Ou continuer avec",
       "google": "Continuer avec Google",
       "x": "Continuer avec X",

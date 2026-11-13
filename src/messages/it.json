@@ -415,6 +415,12 @@
     "code": "500"
   },
   "auth": {
+    "v2": {
+      "loginTitle": "Bentornato",
+      "loginIntro": "Accedi per continuare con Spoki.",
+      "registerTitle": "Crea un account",
+      "registerIntro": "Un account per lavoro, freelance e assunzioni."
+    },
     "loginTitle": "Accedi",
     "registerTitle": "Crea un account",
     "resetTitle": "Reimposta la password",
@@ -473,6 +479,7 @@
       "network": "Nessuna connessione al sito. Controlla internet e riprova: i dati inseriti restano nei campi."
     },
     "social": {
+      "orEmail": "o via email",
       "title": "Oppure continua con",
       "google": "Continua con Google",
       "x": "Continua con X",

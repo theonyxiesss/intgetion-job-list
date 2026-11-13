@@ -7,7 +7,11 @@ import {
   loginReturnHref,
   type LoginNext,
 } from "@/components/auth/login-next";
-import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
+import {
+  SignInTerms,
+  SocialSignInStubs,
+} from "@/components/auth/social-sign-in-stubs";
+import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
 import { isRequestId } from "@/lib/request-id";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -46,7 +50,8 @@ export default async function LoginPage({
 
   return (
     <AuthPage
-      title={t("loginTitle")}
+      title={flags.uiV2Enabled ? t("v2.loginTitle") : t("loginTitle")}
+      intro={flags.uiV2Enabled ? t("v2.loginIntro") : undefined}
       mode="login"
       footer={
         <>
@@ -67,12 +72,13 @@ export default async function LoginPage({
         </>
       }
     >
+      {flags.uiV2Enabled ? <SocialSignInStubs next={next} /> : null}
       <LoginForm
         initialError={failed}
         initialRequestId={requestId}
         next={next}
       />
-      <SocialSignInStubs next={next} />
+      {flags.uiV2Enabled ? <SignInTerms /> : <SocialSignInStubs next={next} />}
     </AuthPage>
   );
 }

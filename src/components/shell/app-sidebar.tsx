@@ -24,6 +24,9 @@ const CHILD_ICONS: Record<string, string> = {
     "M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1zM4 7l11-3v3M16 13h.01",
 };
 
+/** Sign-in pages are full screen in the mockup: no side menu there. */
+const AUTH_PAGES = ["/login", "/register", "/reset-password", "/auth"];
+
 /** Labels resolved on the server: message key -> text (UI_V2). */
 export type AppSidebarLabels = Record<string, string>;
 /** A recent Spoki thread for the menu: its address and first question. */
@@ -82,6 +85,7 @@ export function AppSidebar({
 }) {
   const pathname = usePathname();
   const t = (key: string) => labels[key] ?? key;
+  const authPage = AUTH_PAGES.some((page) => sidebarActive(pathname, page));
   // The mockup's flyout: a group opens a panel to the right of the menu.
   const [open, setOpen] = useState<{
     label: string;
@@ -115,6 +119,8 @@ export function AppSidebar({
   const openGroup = sidebarItems.find(
     (item) => isGroup(item) && item.label === open?.label,
   );
+
+  if (authPage) return null;
 
   return (
     <nav
