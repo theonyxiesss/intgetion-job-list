@@ -3589,6 +3589,15 @@
     }
   },
   "postJob": {
+    "v2": {
+      "title": "Nueva vacante",
+      "myJobs": "Mis vacantes",
+      "spokiText": "Describe el puesto con tus palabras: Spoki rellena los campos y redacta la vacante.",
+      "spokiFill": "Rellenar con Spoki",
+      "publishTitle": "Publicación por 30 días",
+      "publishText": "La vacante entra al catálogo tras una revisión. El plan «Start» es gratis.",
+      "comparePlans": "Comparar planes"
+    },
     "assistantDraft": "Preparar la oferta con el asistente",
     "title": "Publicar empleo",
     "guest": "Para publicar un empleo, inicia sesión o crea una cuenta.",

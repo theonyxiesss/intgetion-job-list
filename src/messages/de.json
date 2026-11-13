@@ -3589,6 +3589,15 @@
     }
   },
   "postJob": {
+    "v2": {
+      "title": "Neue Stelle",
+      "myJobs": "Meine Stellen",
+      "spokiText": "Beschreibe die Stelle in eigenen Worten — Spoki füllt die Felder aus und schreibt den Text.",
+      "spokiFill": "Mit Spoki ausfüllen",
+      "publishTitle": "Veröffentlichung für 30 Tage",
+      "publishText": "Die Stelle kommt nach einer Prüfung in den Katalog. Der Tarif «Start» ist kostenlos.",
+      "comparePlans": "Tarife vergleichen"
+    },
     "assistantDraft": "Stellenanzeige mit dem Assistenten erstellen",
     "title": "Job ausschreiben",
     "guest": "Um einen Job auszuschreiben, melden Sie sich an oder erstellen Sie ein Konto.",

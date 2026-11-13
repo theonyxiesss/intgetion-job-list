@@ -3589,6 +3589,15 @@
     }
   },
   "postJob": {
+    "v2": {
+      "title": "Nuova offerta",
+      "myJobs": "Le mie offerte",
+      "spokiText": "Descrivi il ruolo con parole tue: Spoki compila i campi e scrive l’offerta.",
+      "spokiFill": "Compila con Spoki",
+      "publishTitle": "Pubblicazione per 30 giorni",
+      "publishText": "L’offerta entra nel catalogo dopo un controllo. Il piano «Start» è gratuito.",
+      "comparePlans": "Confronta i piani"
+    },
     "assistantDraft": "Prepara l’offerta con l’assistente",
     "title": "Pubblica un’offerta",
     "guest": "Per pubblicare un’offerta, accedi o crea un account.",

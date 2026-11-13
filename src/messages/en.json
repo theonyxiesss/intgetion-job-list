@@ -3589,6 +3589,15 @@
     }
   },
   "postJob": {
+    "v2": {
+      "title": "New job",
+      "myJobs": "My jobs",
+      "spokiText": "Describe the role in your own words — Spoki fills in the fields and writes the job text.",
+      "spokiFill": "Fill in with Spoki",
+      "publishTitle": "Publishing for 30 days",
+      "publishText": "The job goes into the catalog after a check. The «Start» plan is free.",
+      "comparePlans": "Compare plans"
+    },
     "assistantDraft": "Draft this vacancy with the assistant",
     "title": "Post a job",
     "guest": "To post a job, sign in or create an account.",

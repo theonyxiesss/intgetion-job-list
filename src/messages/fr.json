@@ -3593,6 +3593,15 @@
     }
   },
   "postJob": {
+    "v2": {
+      "title": "Nouvelle offre",
+      "myJobs": "Mes offres",
+      "spokiText": "Décrivez le poste avec vos mots : Spoki remplit les champs et rédige l’offre.",
+      "spokiFill": "Remplir avec Spoki",
+      "publishTitle": "Publication pour 30 jours",
+      "publishText": "L’offre arrive au catalogue après vérification. L’offre «Start» est gratuite.",
+      "comparePlans": "Comparer les offres"
+    },
     "assistantDraft": "Préparer l’offre avec l’assistant",
     "title": "Publier une offre",
     "guest": "Pour publier une offre, connectez-vous ou créez un compte.",

@@ -3589,6 +3589,15 @@
     }
   },
   "postJob": {
+    "v2": {
+      "title": "Nova vaga",
+      "myJobs": "Minhas vagas",
+      "spokiText": "Descreva a vaga com suas palavras — o Spoki preenche os campos e escreve o texto.",
+      "spokiFill": "Preencher com o Spoki",
+      "publishTitle": "Publicação por 30 dias",
+      "publishText": "A vaga entra no catálogo após uma revisão. O plano «Start» é grátis.",
+      "comparePlans": "Comparar planos"
+    },
     "assistantDraft": "Preparar a vaga com o assistente",
     "title": "Publicar vaga",
     "guest": "Para publicar uma vaga, entre ou crie uma conta.",
