@@ -1721,6 +1721,28 @@
     }
   },
   "settings": {
+    "v2": {
+      "tabSecurity": "Безопасность и вход",
+      "tabAppearance": "Оформление",
+      "sessions": "Активные сеансы",
+      "sessionsText": "Входили с чужого или старого устройства? Завершите те сеансы, это устройство останется в аккаунте.",
+      "signOutOthers": "Выйти на всех других устройствах",
+      "signOutOthersDone": "Вы вышли на других устройствах",
+      "signOutOthersFailed": "Не удалось выйти на других устройствах. Попробуйте ещё раз.",
+      "theme": "Тема",
+      "themeText": "Действует на этом устройстве.",
+      "themeDark": "Тёмная",
+      "themeLight": "Светлая",
+      "timezone": "Часовой пояс",
+      "roles": "Роли на платформе",
+      "notSet": "Не указано",
+      "change": "Изменить",
+      "configure": "Настроить",
+      "roleSeeker": "Соискатель",
+      "roleFreelancer": "Фрилансер",
+      "roleEmployer": "Работодатель",
+      "roleCreator": "Креатор"
+    },
     "siteLanguage": "Язык сайта",
     "siteLanguageHint": "Меняет язык сайта, писем и сообщений в Telegram и Discord.",
     "title": "Настройки",

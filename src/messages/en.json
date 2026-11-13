@@ -1721,6 +1721,28 @@
     }
   },
   "settings": {
+    "v2": {
+      "tabSecurity": "Security and sign-in",
+      "tabAppearance": "Appearance",
+      "sessions": "Active sessions",
+      "sessionsText": "Signed in on another device you no longer use? End those sessions; this device stays signed in.",
+      "signOutOthers": "Sign out on all other devices",
+      "signOutOthersDone": "Signed out on other devices",
+      "signOutOthersFailed": "Could not sign out other devices. Try again.",
+      "theme": "Theme",
+      "themeText": "Applies on this device.",
+      "themeDark": "Dark",
+      "themeLight": "Light",
+      "timezone": "Time zone",
+      "roles": "Roles on the platform",
+      "notSet": "Not set",
+      "change": "Change",
+      "configure": "Configure",
+      "roleSeeker": "Job seeker",
+      "roleFreelancer": "Freelancer",
+      "roleEmployer": "Employer",
+      "roleCreator": "Creator"
+    },
     "siteLanguage": "Site language",
     "siteLanguageHint": "Changes the language of the site, emails and Telegram and Discord messages.",
     "title": "Settings",

@@ -1721,6 +1721,28 @@
     }
   },
   "settings": {
+    "v2": {
+      "tabSecurity": "Sicherheit und Anmeldung",
+      "tabAppearance": "Darstellung",
+      "sessions": "Aktive Sitzungen",
+      "sessionsText": "Auf einem anderen Gerät angemeldet, das du nicht mehr nutzt? Beende diese Sitzungen; dieses Gerät bleibt angemeldet.",
+      "signOutOthers": "Auf allen anderen Geräten abmelden",
+      "signOutOthersDone": "Auf anderen Geräten abgemeldet",
+      "signOutOthersFailed": "Abmelden auf anderen Geräten fehlgeschlagen. Versuche es erneut.",
+      "theme": "Design",
+      "themeText": "Gilt auf diesem Gerät.",
+      "themeDark": "Dunkel",
+      "themeLight": "Hell",
+      "timezone": "Zeitzone",
+      "roles": "Rollen auf der Plattform",
+      "notSet": "Nicht angegeben",
+      "change": "Ändern",
+      "configure": "Einrichten",
+      "roleSeeker": "Jobsuchend",
+      "roleFreelancer": "Freelancer",
+      "roleEmployer": "Arbeitgeber",
+      "roleCreator": "Creator"
+    },
     "siteLanguage": "Sprache der Website",
     "siteLanguageHint": "Ändert die Sprache der Website, der E-Mails und der Nachrichten in Telegram und Discord.",
     "title": "Einstellungen",

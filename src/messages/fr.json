@@ -1721,6 +1721,28 @@
     }
   },
   "settings": {
+    "v2": {
+      "tabSecurity": "Sécurité et connexion",
+      "tabAppearance": "Apparence",
+      "sessions": "Sessions actives",
+      "sessionsText": "Connecté sur un autre appareil que vous n’utilisez plus ? Fermez ces sessions ; cet appareil reste connecté.",
+      "signOutOthers": "Se déconnecter des autres appareils",
+      "signOutOthersDone": "Déconnecté des autres appareils",
+      "signOutOthersFailed": "Impossible de déconnecter les autres appareils. Réessayez.",
+      "theme": "Thème",
+      "themeText": "S’applique sur cet appareil.",
+      "themeDark": "Sombre",
+      "themeLight": "Clair",
+      "timezone": "Fuseau horaire",
+      "roles": "Rôles sur la plateforme",
+      "notSet": "Non renseigné",
+      "change": "Modifier",
+      "configure": "Configurer",
+      "roleSeeker": "Candidat",
+      "roleFreelancer": "Freelance",
+      "roleEmployer": "Employeur",
+      "roleCreator": "Créateur"
+    },
     "siteLanguage": "Langue du site",
     "siteLanguageHint": "Change la langue du site, des e-mails et des messages Telegram et Discord.",
     "title": "Paramètres",

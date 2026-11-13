@@ -1721,6 +1721,28 @@
     }
   },
   "settings": {
+    "v2": {
+      "tabSecurity": "Seguridad y acceso",
+      "tabAppearance": "Apariencia",
+      "sessions": "Sesiones activas",
+      "sessionsText": "¿Entraste desde otro dispositivo que ya no usas? Cierra esas sesiones; este dispositivo sigue conectado.",
+      "signOutOthers": "Cerrar sesión en los demás dispositivos",
+      "signOutOthersDone": "Sesiones cerradas en otros dispositivos",
+      "signOutOthersFailed": "No se pudieron cerrar las otras sesiones. Inténtalo de nuevo.",
+      "theme": "Tema",
+      "themeText": "Se aplica en este dispositivo.",
+      "themeDark": "Oscuro",
+      "themeLight": "Claro",
+      "timezone": "Zona horaria",
+      "roles": "Roles en la plataforma",
+      "notSet": "Sin indicar",
+      "change": "Cambiar",
+      "configure": "Configurar",
+      "roleSeeker": "Candidato",
+      "roleFreelancer": "Freelancer",
+      "roleEmployer": "Empleador",
+      "roleCreator": "Creador"
+    },
     "siteLanguage": "Idioma del sitio",
     "siteLanguageHint": "Cambia el idioma del sitio, los correos y los mensajes de Telegram y Discord.",
     "title": "Ajustes",

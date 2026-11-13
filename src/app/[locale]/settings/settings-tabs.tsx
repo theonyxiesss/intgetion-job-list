@@ -5,10 +5,20 @@ import { LinkTabs } from "@/components/ui";
 import { Link } from "@/i18n/navigation";
 import { flags } from "@/config/flags";
 
-type Tab = "notifications" | "privacy" | "account" | "assistants";
+type Tab =
+  | "notifications"
+  | "privacy"
+  | "account"
+  | "assistants"
+  | "security"
+  | "appearance";
 
 /** DESIGN.md 9.0: «Уведомления · Приватность · Аккаунт». */
-export async function SettingsTabs({ active }: { active: Tab }) {
+export async function SettingsTabs({
+  active,
+}: {
+  active: Exclude<Tab, "security" | "appearance">;
+}) {
   const t = await getTranslations("settings");
   const items: { key: Tab; label: string; href: string }[] = [
     { key: "account", label: t("tabAccount"), href: "/settings/account" },
@@ -68,6 +78,9 @@ const ICONS: Record<Tab, string> = {
   privacy: "M6 10V8a6 6 0 0 1 12 0v2M5 10h14v11H5zM12 14v3",
   assistants:
     "M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4zM18 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z",
+  security: "M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6zM9 12l2 2 4-4",
+  appearance:
+    "M12 3a9 9 0 1 0 0 18c1 0 1.5-.7 1.5-1.5 0-.9-.7-1.2-.7-2 0-.8.7-1.5 1.5-1.5H17a4 4 0 0 0 4-4c0-5-4-9-9-9zM7.5 12h.01M10 7.5h.01M15 7.5h.01",
 };
 
 /**
@@ -89,7 +102,9 @@ export async function SettingsShell({
       <main className="py-10 md:py-16">
         <Container narrow className="flex flex-col gap-8">
           <PageHeader title={title} />
-          <SettingsTabs active={active} />
+          {active !== "security" && active !== "appearance" ? (
+            <SettingsTabs active={active} />
+          ) : null}
           {children}
         </Container>
       </main>
@@ -98,6 +113,11 @@ export async function SettingsShell({
   const t = await getTranslations("settings");
   const items: { key: Tab; label: string; href: string }[] = [
     { key: "account", label: t("tabAccount"), href: "/settings/account" },
+    {
+      key: "security",
+      label: t("v2.tabSecurity"),
+      href: "/settings/security",
+    },
     {
       key: "notifications",
       label: t("tabNotifications"),
@@ -108,6 +128,11 @@ export async function SettingsShell({
       key: "assistants",
       label: t("tabAssistants"),
       href: "/settings/assistants",
+    },
+    {
+      key: "appearance",
+      label: t("v2.tabAppearance"),
+      href: "/settings/appearance",
     },
   ];
   const current = items.find((item) => item.key === active)!;
