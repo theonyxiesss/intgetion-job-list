@@ -39,23 +39,7 @@ export const sidebarItems: readonly SidebarItem[] = [
       { href: "/jobs", label: "nav.findJobs", hint: "nav.hint.findJobs" },
     ],
   },
-  {
-    href: "/freelance",
-    label: "nav.freelance",
-    icon: "freelance",
-    children: [
-      {
-        href: "/freelance",
-        label: "nav.freelance",
-        hint: "nav.hint.freelance",
-      },
-      {
-        href: "/freelance/tasks",
-        label: "nav.taskBoard",
-        hint: "nav.hint.taskBoard",
-      },
-    ],
-  },
+  { href: "/freelance", label: "nav.freelance", icon: "freelance" },
   { href: "/campaigns", label: "nav.campaigns", icon: "ugc" },
   { href: "/services", label: "nav.turnkey", icon: "turnkey" },
   { href: "/messages", label: "nav.inbox", icon: "messages" },

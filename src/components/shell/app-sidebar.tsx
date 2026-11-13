@@ -85,10 +85,13 @@ export function AppSidebar({
   labels,
   signedIn,
   recent = [],
+  userName = null,
 }: {
   labels: AppSidebarLabels;
   signedIn: boolean;
   recent?: readonly SidebarRecentChat[];
+  /** Shown in the footer instead of «Account» when known. */
+  userName?: string | null;
 }) {
   const pathname = usePathname();
   const t = (key: string) => labels[key] ?? key;
@@ -261,8 +264,11 @@ export function AppSidebar({
               <li key={chat.href + chat.title}>
                 <Link
                   href={chat.href}
-                  className="flex min-h-9 items-center truncate rounded-lg px-3 text-sm text-fg-muted hover:bg-surface-2 hover:text-fg"
+                  className="flex min-h-9 items-center gap-2.5 truncate rounded-lg px-3 text-sm text-fg-muted hover:bg-surface-2 hover:text-fg"
                 >
+                  <span className="shrink-0 text-fg-subtle">
+                    <Stroke d={PATHS.messages} size={15} />
+                  </span>
                   <span className="truncate">{chat.title}</span>
                 </Link>
               </li>
@@ -278,12 +284,20 @@ export function AppSidebar({
         >
           <span
             aria-hidden="true"
-            className="flex size-8 items-center justify-center rounded-full bg-surface-2 text-fg-muted"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-xs font-semibold text-fg"
           >
-            <Stroke d={PATHS.profile} size={16} />
+            {signedIn && userName ? (
+              userName
+                .split(/\s+/)
+                .slice(0, 2)
+                .map((part) => part[0]?.toUpperCase() ?? "")
+                .join("")
+            ) : (
+              <Stroke d={PATHS.profile} size={16} />
+            )}
           </span>
           <span className="truncate">
-            {signedIn ? t("nav.account") : t("nav.login")}
+            {signedIn ? (userName ?? t("nav.account")) : t("nav.login")}
           </span>
         </Link>
         <LanguagePicker variant="menu" />
@@ -291,7 +305,7 @@ export function AppSidebar({
           <Link
             href="/settings/account"
             aria-label={t("nav.settings")}
-            className="flex size-10 items-center justify-center rounded-lg text-fg-muted hover:bg-surface-2 hover:text-fg"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full border border-line-strong text-fg-muted hover:bg-surface-2 hover:text-fg"
           >
             <Stroke
               d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 12h2M18 12h2M12 4v2M12 18v2M6.3 6.3l1.4 1.4M16.3 16.3l1.4 1.4M6.3 17.7l1.4-1.4M16.3 7.7l1.4-1.4"
