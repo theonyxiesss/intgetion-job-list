@@ -204,6 +204,16 @@
     "it": "Italienisch"
   },
   "home": {
+    "v2": {
+      "title": "Womit beginnen wir?",
+      "lead": "Spoki findet passende Jobs, Dienstleistungen und Veranstaltungen für dich.",
+      "placeholder": "Zum Beispiel: Remote-Frontend, React, ab 4000 $",
+      "quickLinks": "Schnellzugriff",
+      "jobs": "Remote-Arbeit finden",
+      "profile": "Meinen Lebenslauf prüfen",
+      "freelance": "Freelance-Leistung buchen",
+      "events": "IT-Events in der Nähe"
+    },
     "tagline": "Eine Plattform für Remote-Arbeit: Jobs, Freelance, UGC und Events.",
     "feedTitle": "Remote-Jobs",
     "topJobs": "Top-Jobs",
@@ -1801,6 +1811,7 @@
     }
   },
   "chat": {
+    "disclaimer": "Spoki kann Fehler machen. Prüfe die Angaben in der Stellenanzeige.",
     "jobGoal": {
       "title": "Job finden",
       "intro": "Lege deine Kriterien fest. Spoki sucht auf der Plattform und schlägt den nächsten Schritt vor.",
@@ -2934,6 +2945,8 @@
     "payHire": "Mit USDT oder USDC bezahlen",
     "soon": "Demnächst",
     "soonNote": "Bezahlte Tarife sind noch nicht im Verkauf. Zahlungen per Karte und USDT / USDC kommen; bis dahin funktioniert alles in den kostenlosen Tarifen.",
+    "helpChoosing": "Nicht sicher, welcher Tarif passt?",
+    "askSpoki": "Frag Spoki",
     "hireNote": "Start bleibt kostenlos. Hire, Team, Plus und Pro werden in USDT oder USDC bezahlt. Die Schaltfläche berechnet den Monatspreis und schaltet den Tarif für 30 Tage ein. Er verlängert sich nicht von selbst. Hire enthält einen hervorgehobenen Block für 7 Tage. Plus schaltet 100 Spoki-Nachrichten pro Tag frei und Pro 300. Der kostenlose Tarif bleibt bei 15. Start und Hire umfassen 2 Teammitglieder. Team erhöht das für dieses Unternehmen auf 10. Ein stärkeres Modell und eine automatische Rückerstattung werden mit dieser Zahlung noch nicht eingeschaltet.",
     "market": "Eine Anzeige auf den großen Remote-Jobbörsen kostet $250–300 pro Job ohne Rückerstattung. Hier ist sie kostenlos oder kostet $79 mit Garantie.",
     "alwaysFreeTitle": "Was kein Tarif je verkauft",
@@ -4065,6 +4078,7 @@
   },
   "events": {
     "viewEvent": "Event öffnen",
+    "askSpoki": "Events mit Spoki finden",
     "title": "Web3- & Tech-Events",
     "subtitle": "Summits, Konferenzen, Meetups, Hackathons, Business- und Karrieretreffen. Gehen Sie dorthin, wo eingestellt wird: Networking führt oft zur nächsten Stelle.",
     "filters": "Filter",
@@ -4220,6 +4234,9 @@
     "title": "Freelance. Fertige Leistungen mit Preis.",
     "subtitle": "Einzelne Fachleute: was sie machen, zu welchem Preis und bis wann. Kontakte öffnen sich, sobald die Person deine Anfrage annimmt. Für ein ganzes Team siehe Services.",
     "teamLink": "Ein Team nötig? Services",
+    "teamPromo": "INTGETION übernimmt das ganze Projekt.",
+    "ugcPromoTitle": "Mehrere UGC-Videos nötig?",
+    "ugcPromoText": "Erstelle eine Kampagne für Creator.",
     "filters": "Filter",
     "closeFilters": "Filter schließen",
     "applyFilters": "Leistungen zeigen",
@@ -4567,6 +4584,12 @@
     "fromLabel": "Preis ab"
   },
   "ugc": {
+    "v2": {
+      "roleLabel": "UGC-Rolle",
+      "brand": "Ich bin eine Marke",
+      "creator": "Ich bin Creator",
+      "createCampaign": "Kampagne erstellen"
+    },
     "title": "UGC-Videos",
     "intro": "Kurze Videos von echten Menschen für Anzeigen und soziale Netzwerke. Ein Briefing, Creator bewerben sich, Sie stellen die Gewählten ein.",
     "moneyNote": "Der Betrag wird in Cent gespeichert. In diesem Schritt wird nichts berechnet oder ausgezahlt.",

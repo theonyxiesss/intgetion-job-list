@@ -204,6 +204,16 @@
     "it": "Italien"
   },
   "home": {
+    "v2": {
+      "title": "Par quoi commencer ?",
+      "lead": "Spoki trouvera des offres, des services et des événements pour vous.",
+      "placeholder": "Par exemple : frontend à distance, React, dès 4 000 $",
+      "quickLinks": "Accès rapides",
+      "jobs": "Trouver un emploi à distance",
+      "profile": "Analyser mon CV",
+      "freelance": "Commander un service freelance",
+      "events": "Événements IT à proximité"
+    },
     "tagline": "Une plateforme pour le travail à distance : emplois, freelance, UGC et événements.",
     "feedTitle": "Emplois à distance",
     "topJobs": "Meilleures offres",
@@ -1801,6 +1811,7 @@
     }
   },
   "chat": {
+    "disclaimer": "Spoki peut se tromper. Vérifiez les détails dans l’offre d’emploi.",
     "jobGoal": {
       "title": "Trouver un emploi",
       "intro": "Définissez vos critères. Spoki cherchera sur la plateforme et proposera la prochaine étape.",
@@ -2934,6 +2945,8 @@
     "payHire": "Payer en USDT ou en USDC",
     "soon": "Bientôt",
     "soonNote": "Les formules payantes ne sont pas encore en vente. Les paiements par carte et en USDT / USDC arrivent ; d’ici là, tout fonctionne avec les formules gratuites.",
+    "helpChoosing": "Vous hésitez entre les formules ?",
+    "askSpoki": "Demandez à Spoki",
     "hireNote": "Start reste gratuit. Hire, Team, Plus et Pro se paient en USDT ou en USDC. Le bouton facture le prix mensuel et active la formule pour 30 jours. Elle ne se renouvelle pas d’elle-même. Hire inclut un bloc mis en avant pendant 7 jours. Plus active 100 messages Spoki par jour et Pro 300. La formule gratuite reste à 15. Start et Hire incluent 2 membres d’équipe. Team porte ce nombre à 10 pour cette entreprise. Un modèle plus puissant et un remboursement automatique ne sont pas encore activés par ce paiement.",
     "market": "Publier sur les grands sites d’emploi à distance coûte 250–300 $ par offre sans remboursement. Ici, c’est gratuit, ou 79 $ avec garantie.",
     "alwaysFreeTitle": "Ce qu’aucune formule ne vend jamais",
@@ -4069,6 +4082,7 @@
   },
   "events": {
     "viewEvent": "Ouvrir l’événement",
+    "askSpoki": "Trouver des événements avec Spoki",
     "title": "Événements Web3 et tech",
     "subtitle": "Sommets, conférences, meetups, hackathons, rencontres business et carrière. Allez là où l’on recrute : le networking mène souvent au prochain poste.",
     "filters": "Filtres",
@@ -4224,6 +4238,9 @@
     "title": "Freelance. Des services prêts, avec un prix.",
     "subtitle": "Des spécialistes indépendants : ce qu’ils feront, pour combien et pour quand. Les contacts s’ouvrent quand le freelance accepte votre demande. Pour une équipe entière, voir Services.",
     "teamLink": "Besoin d’une équipe ? Services",
+    "teamPromo": "INTGETION prend en charge tout votre projet.",
+    "ugcPromoTitle": "Besoin de plusieurs vidéos UGC ?",
+    "ugcPromoText": "Créez une campagne pour les créateurs.",
     "filters": "Filtres",
     "closeFilters": "Fermer les filtres",
     "applyFilters": "Afficher les services",
@@ -4571,6 +4588,12 @@
     "fromLabel": "Prix à partir de"
   },
   "ugc": {
+    "v2": {
+      "roleLabel": "Rôle UGC",
+      "brand": "Je suis une marque",
+      "creator": "Je suis créateur",
+      "createCampaign": "Créer une campagne"
+    },
     "title": "Vidéos UGC",
     "intro": "Des vidéos courtes de vraies personnes pour la pub et les réseaux. Un brief, les créateurs postulent, vous embauchez ceux que vous choisissez.",
     "moneyNote": "Le montant est enregistré en centimes. Rien n’est débité ni payé à cette étape.",

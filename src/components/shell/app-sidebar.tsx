@@ -75,7 +75,7 @@ export function AppSidebar({
     <nav
       aria-label={t("nav.rail")}
       data-sidebar
-      className="sticky top-0 hidden h-dvh w-[264px] shrink-0 flex-col gap-4 overflow-y-auto border-r border-line bg-surface px-3 py-3.5 lg:flex"
+      className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-4 overflow-y-auto border-r border-line bg-surface px-3 py-3.5 md:flex"
     >
       <div className="flex items-center justify-between px-1.5 py-1">
         <Link href="/" className="flex items-center">

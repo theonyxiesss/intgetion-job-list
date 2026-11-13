@@ -144,8 +144,8 @@ export default async function LocaleLayout({
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
     </div>
   );
-  // v2 (UI_V2): the side menu replaces the rail on desktop; phones keep the
-  // header and its menu.
+  // v2 (UI_V2): the side menu replaces the rail from tablet width;
+  // phones use the bottom menu without the classic top bar.
   const pageColumn = v2 ? (
     <div className="flex min-h-0 w-full flex-1">
       <AppSidebar labels={sidebarLabels} signedIn={signedIn} />
@@ -154,13 +154,7 @@ export default async function LocaleLayout({
   ) : (
     classicColumn
   );
-  const header = v2 ? (
-    <div className="lg:hidden">
-      <Header />
-    </div>
-  ) : (
-    <Header />
-  );
+  const header = v2 ? <Header navigationOnly /> : <Header />;
 
   return (
     <html

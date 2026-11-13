@@ -55,6 +55,8 @@
 
 ## Маршруты и страницы
 
+- При `UI_V2=true` `/campaigns` использует обзор по `UGC.dc.html`: роль бренда или креатора ведёт в существующие кабинеты, четыре показателя и кампании читаются из `companyWorkspace`, вкладки открывают рабочие разделы. Гость видит две роли и реальные пути входа/создания, без демонстрационных кампаний. При выключенном флаге действует прежний кабинет. Supabase Auth (402) пока не даёт визуально проверить состояние компании локально.
+
 - Компания: `/campaigns`, `/campaigns/new`, `/campaigns/list`, `/campaigns/orders`, `/campaigns/materials`, `/campaigns/creators`, `/campaigns/payments`, `/campaigns/[id]`, `/campaigns/[id]/room/[inviteId]`, `/campaigns/[id]/winners`.
 - Креатор: `/creator`, `/creator/join`, `/creator/invites`, `/creator/campaigns`, `/creator/workspace`.
 - Админка: `/admin/campaigns`, `/admin/campaigns/ledger`, `/admin/campaigns/disputes/[id]`.

@@ -8,6 +8,7 @@
 - Applications: `src/modules/applications/**` — только `transitionApplication()`
 - Contacts / reveal: `src/modules/contacts/**` + express-interest (D3)
 - Listing/filters: `/api/jobs`, pages `/jobs`, `/jobs/[id]`
+- Каталог V2 использует ту же выборку `searchJobs`; число показанных вакансий берётся из `chat.work.summary.jobs` и не зависит от макетных карточек.
 
 Импорт: `src/modules/ingestion/**` + [../tz/13-import.md](../tz/13-import.md), см. [import.md](import.md). Сохранить, скрыть, пожаловаться, сохранённые поиски и подписки — [job-search-tools.md](job-search-tools.md).
 
@@ -42,6 +43,7 @@
 ## Маршруты и страницы
 
 - Кандидат: `/jobs`, `/jobs/[id]`, `/jobs/t/[slug]` (тег), `/jobs/rss.xml`, `/jobs/t/[slug]/rss.xml`, `/applications`, `/contacts`, `/post-job`.
+- Макет V2 Jobs: `/jobs` сохраняет серверные фильтры и `searchJobs`, а интерфейс каталога показывает список и детали выбранной вакансии в двух панелях (на телефоне — последовательно). Клик по карточке передаёт `selected` query-параметр; «Для меня» и «Сохранённые» ведут на реальные `/matches` и `/saved-jobs`. Save/hide/report в панели используют `JobFeedbackActions` и существующие API; отклик ведёт на детальную страницу.
 - Работодатель: `/employer/jobs`, `/employer/jobs/new`, `/employer/jobs/[id]`, `/employer/jobs/[id]/edit`, `/employer/jobs/[id]/applications`, `/employer/jobs/[id]/stats`, `/employer/applications/[id]`.
 - API вакансий: `/api/jobs`, `/api/jobs/[id]`, `/api/jobs/[id]/[action]`, `/api/jobs/draft`, `/api/hire`.
 - API откликов: `/api/applications`, `/api/applications/[id]`, `/api/applications/[id]/status`, `/api/applications/[id]/withdraw`, `/api/applications/[id]/express-interest`, `/api/applications/[id]/contacts`, `/api/candidates/me/contacts`.

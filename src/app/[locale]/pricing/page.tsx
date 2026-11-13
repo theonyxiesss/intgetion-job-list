@@ -72,31 +72,33 @@ export default async function PricingPage({
   return (
     <main>
       <JsonLd data={faqPageJsonLd(faq)} />
-      <Section>
-        <Container className="flex flex-col gap-6">
+      <Section className="py-8 md:py-12">
+        <Container className="flex flex-col items-center gap-5 text-center">
           <p className="t-label text-fg-muted">{t("label")}</p>
-          <h1 className="t-display-l max-w-[22ch]">{t("account.title")}</h1>
-          <p className="t-body-l max-w-[60ch] text-fg-muted">
+          <h1 className="max-w-[28ch] text-3xl font-semibold tracking-tight md:text-4xl">
+            {t("account.title")}
+          </h1>
+          <p className="t-body max-w-[68ch] text-fg-muted">
             {t("account.intro")}
           </p>
         </Container>
       </Section>
 
-      <Section bordered labelledBy="tiers-title">
+      <Section bordered labelledBy="tiers-title" className="py-8 md:py-12">
         <Container className="flex flex-col gap-8">
           <h2 id="tiers-title" className="sr-only">
             {t("account.plansTitle")}
           </h2>
-          <ul className="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
+          <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {ACCOUNT_PLANS.map((tier) => {
               const payHref = planPayHref(paymentsOn, tier.code, signedIn);
               return (
                 <li
                   key={tier.code}
                   className={cn(
-                    "flex flex-col gap-5 border bg-surface p-6",
+                    "flex flex-col gap-5 rounded-lg border bg-surface p-6",
                     tier.recommended
-                      ? "border-line-strong max-md:order-first"
+                      ? "border-fg max-md:order-first"
                       : "border-line",
                   )}
                 >
@@ -110,11 +112,11 @@ export default async function PricingPage({
                       </span>
                     )}
                   </div>
-                  <p className="t-body-s text-fg-muted">
+                  <p className="t-body-s min-h-10 text-fg-muted">
                     {t(`account.tiers.${tier.code}.for`)}
                   </p>
-                  <p className="flex flex-wrap items-baseline gap-2">
-                    <span className="t-data-l break-words">
+                  <p className="flex flex-wrap items-baseline gap-2 border-b border-line pb-5">
+                    <span className="font-mono text-3xl tracking-tight tabular-nums break-words">
                       {tier.price === null ? t("free") : `$${tier.price}`}
                     </span>
                     {tier.per && (
@@ -128,7 +130,7 @@ export default async function PricingPage({
                       {t("yearly", { price: tier.yearly })}
                     </p>
                   )}
-                  <ul className="flex flex-col gap-3">
+                  <ul className="flex flex-col gap-3 pb-4">
                     {tier.points.map((point) => (
                       <li key={point} className="flex gap-3">
                         <Icon
@@ -161,7 +163,11 @@ export default async function PricingPage({
                       <Link
                         href={payHref}
                         {...navForward}
-                        className={buttonClass("primary", "md", "w-full")}
+                        className={buttonClass(
+                          tier.recommended ? "primary" : "secondary",
+                          "md",
+                          "w-full",
+                        )}
                       >
                         {t("payHire")}
                       </Link>
@@ -169,7 +175,7 @@ export default async function PricingPage({
                       <span
                         aria-disabled="true"
                         className={buttonClass(
-                          "primary",
+                          tier.recommended ? "primary" : "secondary",
                           "md",
                           "w-full opacity-60",
                         )}
@@ -185,10 +191,20 @@ export default async function PricingPage({
           <p className="t-body-s text-fg-muted">
             {paymentsOn ? t("account.payNote") : t("soonNote")}
           </p>
+          <p className="t-body-s text-fg-muted">
+            {t("helpChoosing")}{" "}
+            <Link
+              href="/chat"
+              className="text-accent underline underline-offset-4"
+              {...navForward}
+            >
+              {t("askSpoki")}
+            </Link>
+          </p>
         </Container>
       </Section>
 
-      <Section labelledBy="commission-title">
+      <Section labelledBy="commission-title" className="py-12 md:py-16">
         <Container className="flex flex-col gap-6">
           <h2 id="commission-title" className="t-h2">
             {t("account.commissionTitle")}
@@ -236,7 +252,7 @@ export default async function PricingPage({
         </Container>
       </Section>
 
-      <Section bordered labelledBy="oneoff-title">
+      <Section bordered labelledBy="oneoff-title" className="py-12 md:py-16">
         <Container className="flex flex-col gap-6">
           <h2 id="oneoff-title" className="t-h2">
             {t("account.oneOffTitle")}
@@ -248,7 +264,7 @@ export default async function PricingPage({
             {ONE_OFFS.map((item) => (
               <li
                 key={item.code}
-                className="flex flex-col gap-2 border border-line p-5"
+                className="flex flex-col gap-2 rounded-lg border border-line bg-surface p-5"
               >
                 <div className="flex items-baseline justify-between gap-3">
                   <h3 className="font-medium">
@@ -268,14 +284,17 @@ export default async function PricingPage({
         </Container>
       </Section>
 
-      <Section labelledBy="free-title">
+      <Section labelledBy="free-title" className="py-12 md:py-16">
         <Container className="flex flex-col gap-8">
           <h2 id="free-title" className="t-h2">
             {t("alwaysFreeTitle")}
           </h2>
           <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {ALWAYS_FREE.map((key) => (
-              <li key={key} className="border border-line p-5">
+              <li
+                key={key}
+                className="rounded-lg border border-line bg-surface p-5"
+              >
                 {t(`alwaysFree.${key}`)}
               </li>
             ))}
@@ -283,7 +302,7 @@ export default async function PricingPage({
         </Container>
       </Section>
 
-      <Section bordered labelledBy="faq-title">
+      <Section bordered labelledBy="faq-title" className="py-12 md:py-16">
         <Container className="flex flex-col gap-8">
           <h2 id="faq-title" className="t-h2">
             {t("faqTitle")}

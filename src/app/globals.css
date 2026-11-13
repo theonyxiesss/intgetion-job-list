@@ -99,6 +99,26 @@
   --wordmark: #141416;
 }
 
+/* UI_V2 has no classic 64px top bar. Keep overlays and sticky filters at
+   the viewport edge while preserving space for the phone tab bar. */
+:root[data-ui="v2"] .v2-jobs-header,
+:root[data-ui="v2"] #spoki-panel {
+  top: 0;
+}
+
+@media (min-width: 1024px) {
+  :root[data-ui="v2"] #spoki-panel {
+    height: 100dvh;
+  }
+}
+
+@media (max-width: 767px) {
+  :root[data-ui="v2"] .chat-shell {
+    top: 0;
+    bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);

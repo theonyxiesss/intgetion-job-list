@@ -204,6 +204,16 @@
     "it": "Italian"
   },
   "home": {
+    "v2": {
+      "title": "Where shall we start?",
+      "lead": "Spoki will find jobs, services and events for you.",
+      "placeholder": "For example: remote frontend, React, from $4000",
+      "quickLinks": "Quick actions",
+      "jobs": "Find remote work",
+      "profile": "Review my résumé",
+      "freelance": "Order a freelance service",
+      "events": "IT events nearby"
+    },
     "tagline": "One platform for remote work: jobs, freelance, UGC and events.",
     "feedTitle": "Remote jobs",
     "topJobs": "Top jobs",
@@ -1801,6 +1811,7 @@
     }
   },
   "chat": {
+    "disclaimer": "Spoki can make mistakes. Check the details in the job listing.",
     "jobGoal": {
       "title": "Find a job",
       "intro": "Set your criteria. Spoki will search jobs on the platform and suggest a next step.",
@@ -2934,6 +2945,8 @@
     "payHire": "Pay with USDT or USDC",
     "soon": "Coming soon",
     "soonNote": "Paid plans are not on sale yet. Card and USDT / USDC payments are coming; until then everything on the free plans works.",
+    "helpChoosing": "Not sure which plan to choose?",
+    "askSpoki": "Ask Spoki",
     "hireNote": "Start stays free. Hire, Team, Plus and Pro are paid in USDT or USDC. The button charges the monthly price and turns the plan on for 30 days. It does not renew by itself. Hire includes a promoted block for 7 days. Plus turns on 100 Spoki messages a day and Pro turns on 300. The free plan stays at 15. Start and Hire include 2 teammates. Team raises that company to 10. A stronger model and an automatic refund are not switched on by this payment yet.",
     "market": "Posting on the big remote boards costs $250–300 per job with no refund. Here it is free, or $79 with a guarantee.",
     "alwaysFreeTitle": "What no plan ever sells",
@@ -4571,6 +4584,7 @@
   },
   "events": {
     "viewEvent": "Open event",
+    "askSpoki": "Find events with Spoki",
     "title": "Web3 & tech events",
     "subtitle": "Summits, conferences, meetups, hackathons, business and career meetups. Go where people hire: networking often leads to the next role.",
     "filters": "Filters",
@@ -4726,6 +4740,9 @@
     "title": "Freelance. Ready services with a price.",
     "subtitle": "Individual specialists: what they will do, for how much and by when. Contacts open once the freelancer accepts your request. For a whole team, see Services.",
     "teamLink": "Need a team? Services",
+    "teamPromo": "INTGETION can deliver your whole project.",
+    "ugcPromoTitle": "Need several UGC videos?",
+    "ugcPromoText": "Create a campaign for creators.",
     "filters": "Filters",
     "closeFilters": "Close filters",
     "applyFilters": "Show services",
@@ -5073,6 +5090,12 @@
     "fromLabel": "Price from"
   },
   "ugc": {
+    "v2": {
+      "roleLabel": "UGC role",
+      "brand": "I'm a brand",
+      "creator": "I'm a creator",
+      "createCampaign": "Create campaign"
+    },
     "title": "UGC videos",
     "intro": "Short videos from real people for ads and social posts. One brief, creators apply, you hire the ones you pick.",
     "moneyNote": "The amount is recorded in cents. Nothing is charged or paid in this step.",

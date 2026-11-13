@@ -35,6 +35,17 @@ export async function EventCard({
 }) {
   const t = await getTranslations("events");
   const place = eventPlace(event, locale, t("online"));
+  const dateRange = eventDateRange(event, intlLocale(locale));
+  const dateParts = new Intl.DateTimeFormat(intlLocale(locale), {
+    day: "numeric",
+    month: "short",
+    timeZone: event.allDay ? "UTC" : (event.timeZone ?? "UTC"),
+  }).formatToParts(event.startsAt);
+  const day = dateParts.find((part) => part.type === "day")?.value;
+  const month = dateParts.find((part) => part.type === "month")?.value;
+  const date = event.allDay
+    ? isoDay(event.startsAt)
+    : event.startsAt.toISOString();
   return (
     <ListingCard
       href={`/events/${event.slug}`}
@@ -42,19 +53,29 @@ export async function EventCard({
       headingLevel={2}
       label={t(`kinds.${event.kind}`)}
       badges={<Badge>{t(`formats.${event.format}`)}</Badge>}
-      facts={place ? [place] : []}
+      mark={
+        day && month ? (
+          <div
+            aria-hidden="true"
+            className="flex size-14 shrink-0 flex-col items-center justify-center rounded-md border border-line bg-surface-2"
+          >
+            <span className="font-mono text-lg font-semibold leading-none">
+              {day}
+            </span>
+            <span className="mt-1 text-xs text-fg-muted">{month}</span>
+          </div>
+        ) : null
+      }
+      facts={[
+        <time key="date" dateTime={date}>
+          {dateRange}
+        </time>,
+        ...(place ? [place] : []),
+      ]}
       tags={event.topics.map((topic) => t(`topics.${topic}`))}
       lead={
-        <p className="t-data text-fg">
-          <time
-            dateTime={
-              event.allDay
-                ? isoDay(event.startsAt)
-                : event.startsAt.toISOString()
-            }
-          >
-            {eventDateRange(event, intlLocale(locale))}
-          </time>
+        <p className="t-body-s text-fg-muted">
+          {t("sourceLabel")}: {event.source.name}
         </p>
       }
       viewLabel={t("viewEvent")}

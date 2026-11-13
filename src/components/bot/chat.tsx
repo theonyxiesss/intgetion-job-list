@@ -65,6 +65,7 @@ import { ConfirmCard } from "@/components/ui/dialog";
 import { ugcBudgetMinor, usdLabel } from "@/modules/ugc/service/pricing";
 import { Alert } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
+import { ServiceIcon } from "@/components/ui/service-icon";
 import { TELEGRAM_BOT_URL } from "@/config/telegram";
 import { localePath } from "@/i18n/paths";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -1334,7 +1335,7 @@ export function Chat({
           data-chat-meta
           className={
             variant === "page" || hasFocusLine || showJobGoal
-              ? "mx-auto w-full max-w-3xl shrink-0 px-4 py-3 md:px-6"
+              ? "mx-auto w-full max-w-[760px] shrink-0 px-4 py-3 md:px-6"
               : "hidden"
           }
         >
@@ -1421,7 +1422,7 @@ export function Chat({
               library sees wheel scrolling; sideways overflow is clipped here. */}
           <div
             ref={contentRef}
-            className="mx-auto flex min-h-full w-full max-w-3xl flex-col gap-6 overflow-x-hidden px-4 md:px-6"
+            className="mx-auto flex min-h-full w-full max-w-[760px] flex-col gap-6 overflow-x-hidden px-4 md:px-6"
           >
             {welcome && (
               <div className="mt-auto flex w-full flex-col items-center gap-4 pb-2 text-center">
@@ -1499,7 +1500,7 @@ export function Chat({
                 return (
                   <p
                     key={entry.key}
-                    className="max-w-[85%] self-end whitespace-pre-wrap break-words rounded-3xl bg-surface-2 px-4 py-2.5"
+                    className="max-w-[85%] self-end whitespace-pre-wrap break-words rounded-[20px] bg-surface-2 px-4 py-3 text-[15px] leading-6"
                   >
                     {entry.text}
                   </p>
@@ -1507,19 +1508,30 @@ export function Chat({
               }
               if (entry.kind === "assistant") {
                 return (
-                  <div key={entry.key} className="min-w-0">
-                    <span className="sr-only">{t("agent")}</span>
-                    <AssistantAnswer
-                      text={entry.text}
-                      live={entry.live === true}
-                      messageId={entry.messageId}
-                      onRetry={
-                        retryText && entry.key === lastKey
-                          ? () => void ask(retryText)
-                          : undefined
-                      }
-                      onTyping={setAnswerTyping}
-                    />
+                  <div
+                    key={entry.key}
+                    className="flex min-w-0 items-start gap-3"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-fg"
+                    >
+                      <ServiceIcon name="spoki" size={18} />
+                    </span>
+                    <div className="min-w-0 flex-1 text-[15px]">
+                      <span className="sr-only">{t("agent")}</span>
+                      <AssistantAnswer
+                        text={entry.text}
+                        live={entry.live === true}
+                        messageId={entry.messageId}
+                        onRetry={
+                          retryText && entry.key === lastKey
+                            ? () => void ask(retryText)
+                            : undefined
+                        }
+                        onTyping={setAnswerTyping}
+                      />
+                    </div>
                   </div>
                 );
               }
@@ -2037,7 +2049,7 @@ export function Chat({
             </div>
           )}
         </div>
-        <div className="mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-3 px-4 md:px-6">
+        <div className="mx-auto flex w-full max-w-[760px] shrink-0 flex-col gap-3 px-4 md:px-6">
           {actions.signup && !signedIn && (
             <p className="flex flex-col items-start gap-2">
               <Link
@@ -2078,7 +2090,7 @@ export function Chat({
             onSubmit={send}
             className={`flex shrink-0 flex-col gap-2 ${welcome ? "max-md:pb-3" : "pb-[max(0.75rem,env(safe-area-inset-bottom))]"}`}
           >
-            <div className="flex items-end gap-2 rounded-[1.75rem] bg-surface-2 py-1.5 pr-1.5 pl-5 ring-1 ring-line-strong focus-within:ring-2 focus-within:ring-fg-subtle">
+            <div className="flex items-end gap-2 rounded-[1.75rem] border border-line bg-surface-2 py-1.5 pr-1.5 pl-5 focus-within:border-line-strong">
               <label className="sr-only" htmlFor="chat-input">
                 {t("placeholder")}
               </label>
@@ -2122,6 +2134,11 @@ export function Chat({
               )}
             </div>
           </form>
+          {variant === "page" && (
+            <p className="pb-3 text-center text-xs text-fg-muted">
+              {t("disclaimer")}
+            </p>
+          )}
         </div>
         {welcome && (
           <div

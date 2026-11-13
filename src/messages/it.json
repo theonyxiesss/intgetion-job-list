@@ -204,6 +204,16 @@
     "it": "Italiano"
   },
   "home": {
+    "v2": {
+      "title": "Da dove iniziamo?",
+      "lead": "Spoki troverà offerte, servizi ed eventi per te.",
+      "placeholder": "Ad esempio: frontend da remoto, React, da $4000",
+      "quickLinks": "Azioni rapide",
+      "jobs": "Trova lavoro da remoto",
+      "profile": "Analizza il mio CV",
+      "freelance": "Ordina un servizio freelance",
+      "events": "Eventi IT nelle vicinanze"
+    },
     "tagline": "Una piattaforma per il lavoro da remoto: offerte, freelance, UGC ed eventi.",
     "feedTitle": "Lavori da remoto",
     "topJobs": "Offerte principali",
@@ -1801,6 +1811,7 @@
     }
   },
   "chat": {
+    "disclaimer": "Spoki può commettere errori. Verifica i dettagli nell’annuncio di lavoro.",
     "jobGoal": {
       "title": "Trova lavoro",
       "intro": "Imposta i criteri. Spoki cercherà sulla piattaforma e suggerirà il prossimo passo.",
@@ -2934,6 +2945,8 @@
     "payHire": "Paga in USDT o USDC",
     "soon": "Presto",
     "soonNote": "I piani a pagamento non sono ancora in vendita. I pagamenti con carta e in USDT / USDC arriveranno; fino ad allora tutto funziona con i piani gratuiti.",
+    "helpChoosing": "Non sai quale piano scegliere?",
+    "askSpoki": "Chiedi a Spoki",
     "hireNote": "Start resta gratuito. Hire, Team, Plus e Pro si pagano in USDT o USDC. Il pulsante addebita il prezzo mensile e attiva il piano per 30 giorni. Non si rinnova da solo. Hire include un blocco in evidenza per 7 giorni. Plus attiva 100 messaggi Spoki al giorno e Pro 300. Il piano gratuito resta a 15. Start e Hire includono 2 membri del team. Team porta quell’azienda a 10. Un modello più potente e un rimborso automatico non vengono ancora attivati da questo pagamento.",
     "market": "Pubblicare sui grandi portali di lavoro da remoto costa $250–300 per offerta senza rimborso. Qui è gratis, oppure $79 con garanzia.",
     "alwaysFreeTitle": "Cosa nessun piano vende mai",
@@ -4065,6 +4078,7 @@
   },
   "events": {
     "viewEvent": "Apri l’evento",
+    "askSpoki": "Trova eventi con Spoki",
     "title": "Eventi Web3 e tech",
     "subtitle": "Summit, conferenze, meetup, hackathon, incontri di business e di carriera. Vai dove si assume: il networking porta spesso al prossimo lavoro.",
     "filters": "Filtri",
@@ -4220,6 +4234,9 @@
     "title": "Freelance. Servizi pronti, con un prezzo.",
     "subtitle": "Singoli specialisti: cosa faranno, a quanto ed entro quando. I contatti si aprono quando il freelance accetta la tua richiesta. Per un intero team, vedi Servizi.",
     "teamLink": "Serve un team? Servizi",
+    "teamPromo": "INTGETION può gestire l’intero progetto.",
+    "ugcPromoTitle": "Ti servono più video UGC?",
+    "ugcPromoText": "Crea una campagna per i creator.",
     "filters": "Filtri",
     "closeFilters": "Chiudi filtri",
     "applyFilters": "Mostra servizi",
@@ -4567,6 +4584,12 @@
     "fromLabel": "Prezzo da"
   },
   "ugc": {
+    "v2": {
+      "roleLabel": "Ruolo UGC",
+      "brand": "Sono un brand",
+      "creator": "Sono un creator",
+      "createCampaign": "Crea campagna"
+    },
     "title": "Video UGC",
     "intro": "Video brevi di persone reali per pubblicità e social. Un brief, i creator si candidano, assumi chi scegli.",
     "moneyNote": "L’importo è registrato in centesimi. In questo passo non si addebita e non si paga nulla.",
