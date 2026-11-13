@@ -548,7 +548,7 @@ export async function JobsPageV2({
               <>
                 <div className="flex flex-wrap items-start gap-4">
                   <JobAvatar company={selectedJob.company} large />
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-[1_1_280px]">
                     <h2 className="text-[22px] leading-tight font-semibold tracking-tight">
                       {selectedJob.title}
                     </h2>
