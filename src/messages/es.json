@@ -123,6 +123,7 @@
     "ogAlt": "INTGETION Job List — trabajo remoto en Web3"
   },
   "nav": {
+    "chatHistory": "Historial de chats",
     "home": "Inicio",
     "main": "Principal",
     "language": "Idioma",
@@ -1819,6 +1820,19 @@
     }
   },
   "chat": {
+    "history": {
+      "title": "Historial de chats",
+      "intro": "Tus conversaciones con Spoki. El texto antiguo se borra tras el plazo de conservación.",
+      "empty": "Aún no hay conversaciones",
+      "newChat": "Iniciar un chat",
+      "noPreview": "Conversación sin texto guardado",
+      "topic": {
+        "job": "Sobre una vacante",
+        "campaign": "Sobre una campaña",
+        "invite": "Sobre una prueba de creador",
+        "general": "Chat general"
+      }
+    },
     "disclaimer": "Spoki puede cometer errores. Comprueba los detalles en la oferta de empleo.",
     "jobGoal": {
       "title": "Buscar empleo",

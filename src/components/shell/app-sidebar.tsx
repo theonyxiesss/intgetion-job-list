@@ -91,6 +91,15 @@ export function AppSidebar({
         <Stroke d="M12 5v14M5 12h14" size={18} />
         {t("nav.newChat")}
       </Link>
+      <Link
+        href="/chat/history"
+        aria-current={
+          sidebarActive(pathname, "/chat/history") ? "page" : undefined
+        }
+        className="flex min-h-9 items-center px-3 text-sm text-fg-muted hover:text-fg"
+      >
+        {t("nav.chatHistory")}
+      </Link>
 
       <ul className="flex flex-col gap-0.5">
         {sidebarItems.map((item) => {

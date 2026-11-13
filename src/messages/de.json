@@ -123,6 +123,7 @@
     "ogAlt": "INTGETION Job List — Remote-Arbeit in Web3"
   },
   "nav": {
+    "chatHistory": "Chatverlauf",
     "home": "Startseite",
     "main": "Hauptmenü",
     "language": "Sprache",
@@ -1819,6 +1820,19 @@
     }
   },
   "chat": {
+    "history": {
+      "title": "Chatverlauf",
+      "intro": "Deine Gespräche mit Spoki. Alter Nachrichtentext wird nach der Aufbewahrungsfrist gelöscht.",
+      "empty": "Noch keine Gespräche",
+      "newChat": "Chat starten",
+      "noPreview": "Gespräch ohne gespeicherten Text",
+      "topic": {
+        "job": "Zu einer Stelle",
+        "campaign": "Zu einer Kampagne",
+        "invite": "Zu einem Creator-Test",
+        "general": "Allgemeiner Chat"
+      }
+    },
     "disclaimer": "Spoki kann Fehler machen. Prüfe die Angaben in der Stellenanzeige.",
     "jobGoal": {
       "title": "Job finden",

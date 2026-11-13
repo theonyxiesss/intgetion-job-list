@@ -74,6 +74,7 @@ export function groupActive(pathname: string, group: SidebarGroup): boolean {
 export function sidebarLabelKeys(): string[] {
   const keys = new Set<string>([
     "nav.newChat",
+    "nav.chatHistory",
     "nav.settings",
     "nav.account",
     "nav.login",

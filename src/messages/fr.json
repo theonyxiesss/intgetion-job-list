@@ -123,6 +123,7 @@
     "ogAlt": "INTGETION Job List — travail à distance dans le Web3"
   },
   "nav": {
+    "chatHistory": "Historique des chats",
     "home": "Accueil",
     "main": "Principal",
     "language": "Langue",
@@ -1819,6 +1820,19 @@
     }
   },
   "chat": {
+    "history": {
+      "title": "Historique des chats",
+      "intro": "Vos conversations avec Spoki. Le texte ancien est supprimé après la durée de conservation.",
+      "empty": "Aucune conversation pour l’instant",
+      "newChat": "Démarrer un chat",
+      "noPreview": "Conversation sans texte conservé",
+      "topic": {
+        "job": "À propos d’une offre",
+        "campaign": "À propos d’une campagne",
+        "invite": "À propos d’un test créateur",
+        "general": "Chat général"
+      }
+    },
     "disclaimer": "Spoki peut se tromper. Vérifiez les détails dans l’offre d’emploi.",
     "jobGoal": {
       "title": "Trouver un emploi",
