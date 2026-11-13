@@ -142,7 +142,22 @@
     "homeDescription": "Remote jobs and freelance tasks, freelancers and UGC creators to hire, plus Web3 and tech events. Spoki, the AI agent, guides every step; pay in USDC or USDT.",
     "ogAlt": "INTGETION Job List — remote work in Web3"
   },
+  "inbox": {
+    "title": "Messages",
+    "search": "Search conversations",
+    "notFound": "Nothing found",
+    "empty": "No conversations yet",
+    "emptyText": "Conversations appear here when you order a service, take an order or work on a UGC campaign.",
+    "pick": "Pick a conversation on the left.",
+    "order": "Order",
+    "openRoom": "Open the order room",
+    "youBuy": "you are the client",
+    "youSell": "you are the freelancer",
+    "asCreator": "you are the creator",
+    "asBrand": "you are the brand"
+  },
   "nav": {
+    "inbox": "Messages",
     "hint": {
       "hiring": "Applications, candidates, stages",
       "findJobs": "Jobs picked with Spoki",

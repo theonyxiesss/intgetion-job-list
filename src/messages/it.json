@@ -142,7 +142,22 @@
     "homeDescription": "Offerte da remoto e incarichi freelance, freelance e creator UGC da ingaggiare, oltre a eventi Web3 e tech. Spoki, l’agente IA, ti guida a ogni passo; paghi in USDC o USDT.",
     "ogAlt": "INTGETION Job List — lavoro da remoto nel Web3"
   },
+  "inbox": {
+    "title": "Messaggi",
+    "search": "Cerca nelle conversazioni",
+    "notFound": "Nessun risultato",
+    "empty": "Ancora nessuna conversazione",
+    "emptyText": "Le conversazioni compaiono quando ordini un servizio, prendi un ordine o lavori a una campagna UGC.",
+    "pick": "Scegli una conversazione a sinistra.",
+    "order": "Ordine",
+    "openRoom": "Stanza dell’ordine",
+    "youBuy": "sei il cliente",
+    "youSell": "sei il freelance",
+    "asCreator": "sei il creator",
+    "asBrand": "sei il brand"
+  },
   "nav": {
+    "inbox": "Messaggi",
     "hint": {
       "hiring": "Candidature, candidati, fasi",
       "findJobs": "Offerte scelte con Spoki",

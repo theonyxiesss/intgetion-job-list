@@ -142,7 +142,22 @@
     "homeDescription": "Remote-Jobs und Freelance-Aufgaben, Freelancer und UGC-Creator zum Beauftragen sowie Web3- und Tech-Events. Der KI-Agent Spoki begleitet jeden Schritt; Zahlung in USDC oder USDT.",
     "ogAlt": "INTGETION Job List — Remote-Arbeit in Web3"
   },
+  "inbox": {
+    "title": "Nachrichten",
+    "search": "Gespräche durchsuchen",
+    "notFound": "Nichts gefunden",
+    "empty": "Noch keine Gespräche",
+    "emptyText": "Gespräche erscheinen, wenn du eine Leistung bestellst, einen Auftrag annimmst oder an einer UGC-Kampagne arbeitest.",
+    "pick": "Wähle links ein Gespräch.",
+    "order": "Auftrag",
+    "openRoom": "Auftragsraum",
+    "youBuy": "du bist Auftraggeber",
+    "youSell": "du bist Freelancer",
+    "asCreator": "du bist Creator",
+    "asBrand": "du bist die Marke"
+  },
   "nav": {
+    "inbox": "Nachrichten",
     "hint": {
       "hiring": "Bewerbungen, Kandidaten, Phasen",
       "findJobs": "Jobs mit Spoki finden",

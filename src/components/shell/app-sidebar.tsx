@@ -51,6 +51,7 @@ const PATHS: Record<SidebarIcon, string> = {
     "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z",
   finance: "M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1zM4 7l11-3v3",
   history: "M3 12a9 9 0 1 0 3-6.7M3 4v4h4M12 7v5l3 2",
+  messages: "M4 5h16v11H8l-4 4z",
 };
 
 function Stroke({ d, size = 17 }: { d: string; size?: number }): ReactNode {
