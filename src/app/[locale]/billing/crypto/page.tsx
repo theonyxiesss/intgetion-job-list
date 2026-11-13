@@ -20,6 +20,7 @@ import { campaignDepositState, readCampaign } from "@/modules/ugc/service";
 import { RouteMessages } from "@/components/shell/route-messages";
 import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
+import { Logo } from "@/components/ui/logo";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -68,26 +69,43 @@ export default async function CryptoBillingPage({
   }
   const t = await getTranslations("billing");
   const v2 = flags.uiV2Enabled;
+  const product = await getTranslations("product");
   // v2 (UI_V2): the checkout mockup frame — back link, secure mark, cards.
   const heading = v2 ? (
-    <header className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <header className="flex flex-col gap-6">
+      <div className="relative left-1/2 grid w-[calc(100vw-2rem)] -translate-x-1/2 grid-cols-[1fr_auto_1fr] items-center gap-3 md:w-[calc(100vw-3rem)]">
         <Link
           href="/employer/billing"
-          className="flex min-h-10 items-center gap-2 rounded-xl border border-line-strong px-3 text-sm text-fg-muted hover:text-fg"
+          className="flex min-h-10 items-center gap-2 justify-self-start rounded-xl border border-line-strong px-3 text-sm hover:bg-surface"
         >
-          ← {t("v2.back")}
+          <span aria-hidden="true">‹</span>
+          {t("v2.back")}
         </Link>
-        <span className="text-sm text-fg-muted">{t("v2.secure")}</span>
+        <Link href="/" className="flex items-center">
+          <Logo name={product("wordmark")} />
+        </Link>
+        <span className="flex items-center gap-1.5 justify-self-end text-sm text-fg-muted">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.8}
+            strokeLinecap="round"
+            aria-hidden="true"
+          >
+            <path d="M6 10V8a6 6 0 0 1 12 0v2M5 10h14v11H5z" />
+          </svg>
+          {t("v2.secure")}
+        </span>
       </div>
-      <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+      <h1 className="text-[22px] font-semibold tracking-tight">{t("title")}</h1>
     </header>
   ) : (
     <h1 className="t-h2">{t("title")}</h1>
   );
-  const frame = v2
-    ? "mx-auto flex w-full max-w-[720px] flex-col gap-6 px-4"
-    : undefined;
+  const frame = v2 ? "flex flex-col gap-6 py-0" : undefined;
   const projectIdEarly =
     process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID?.trim() ?? "";
   const freelanceOrder =
@@ -179,8 +197,8 @@ export default async function CryptoBillingPage({
         );
     }
     return (
-      <main className="flex-1 py-10">
-        <Container className={frame ?? "flex flex-col gap-6"}>
+      <main className={v2 ? "flex-1 overflow-x-hidden py-4" : "flex-1 py-10"}>
+        <Container narrow={v2} className={frame ?? "flex flex-col gap-6"}>
           {heading}
           {body}
         </Container>
@@ -214,8 +232,8 @@ export default async function CryptoBillingPage({
 
   return (
     <RouteMessages namespaces={["billing"]}>
-      <main className="flex-1 py-10">
-        <Container className={frame ?? "flex flex-col gap-6"}>
+      <main className={v2 ? "flex-1 overflow-x-hidden py-4" : "flex-1 py-10"}>
+        <Container narrow={v2} className={frame ?? "flex flex-col gap-6"}>
           {heading}
           {!ready ? (
             <InterestForm />

@@ -24,8 +24,14 @@ const CHILD_ICONS: Record<string, string> = {
     "M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1zM4 7l11-3v3M16 13h.01",
 };
 
-/** Sign-in pages are full screen in the mockup: no side menu there. */
-const AUTH_PAGES = ["/login", "/register", "/reset-password", "/auth"];
+/** Sign-in and checkout are full screen in the mockup: no side menu there. */
+const AUTH_PAGES = [
+  "/login",
+  "/register",
+  "/reset-password",
+  "/auth",
+  "/billing/crypto",
+];
 
 /** Labels resolved on the server: message key -> text (UI_V2). */
 export type AppSidebarLabels = Record<string, string>;
