@@ -29,7 +29,7 @@ export const sidebarItems: readonly SidebarItem[] = [
     children: [
       { href: "/jobs", label: "nav.findJobs" },
       { href: "/post-job", label: "nav.postJob" },
-      { href: "/employer/jobs", label: "nav.myJobs" },
+      { href: "/employer/jobs", label: "nav.hiring" },
     ],
   },
   {
@@ -77,6 +77,7 @@ export function sidebarLabelKeys(): string[] {
   const keys = new Set<string>([
     "nav.newChat",
     "nav.sections",
+    "nav.hiring",
     "nav.recentChats",
     "nav.allChats",
     "nav.settings",

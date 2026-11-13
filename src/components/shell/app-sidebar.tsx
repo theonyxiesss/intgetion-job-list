@@ -91,7 +91,7 @@ export function AppSidebar({
 
       <Link
         href="/chat"
-        className="flex min-h-11 items-center gap-2.5 rounded-xl border border-line-strong px-3 text-sm font-medium hover:bg-surface-2"
+        className="flex min-h-11 items-center gap-2.5 rounded-xl bg-surface-2 px-3 text-sm font-semibold hover:bg-line-strong"
       >
         <Stroke d="M12 5v14M5 12h14" size={18} />
         {t("nav.newChat")}
