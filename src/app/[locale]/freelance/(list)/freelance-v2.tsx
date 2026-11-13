@@ -1,0 +1,293 @@
+// v2 (UI_V2) layout of this route; page.tsx renders it when the flag is on.
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { FREELANCE_CATEGORIES } from "@/config/freelance";
+import { Tag } from "@/components/ui/badge";
+import { Button, ButtonLink, buttonClass } from "@/components/ui/button";
+import { Container, PageHeader } from "@/components/ui/container";
+import { EmptyState } from "@/components/ui/feedback";
+import { Field } from "@/components/ui/field";
+import { Input, Select } from "@/components/ui/input";
+import { navForward } from "@/components/ui/page-transition";
+import { Link } from "@/i18n/navigation";
+import {
+  FREELANCE_BUDGETS,
+  FREELANCE_FILTER_LANGUAGES,
+  FREELANCE_SORTS,
+  FREELANCE_TERMS,
+  listCatalog,
+  parseFreelanceSearch,
+  type FreelanceSearchQuery,
+} from "@/modules/freelance/service";
+import { formatUsd, languageNames } from "@/modules/freelance/ui/format";
+import { ServiceCard } from "@/modules/freelance/ui/service-card";
+import { FilterShell } from "@/modules/jobs/ui/filter-shell";
+
+const FILTER_KEYS = ["q", "category", "budget", "days", "lang"] as const;
+
+function queryString(
+  query: FreelanceSearchQuery,
+  changes: Partial<
+    Record<keyof FreelanceSearchQuery, string | number | undefined>
+  >,
+): string {
+  const params = new URLSearchParams();
+  const merged = { ...query, ...changes };
+  for (const key of [...FILTER_KEYS, "sort", "page"] as const) {
+    const value = merged[key];
+    if (value === undefined || value === "") continue;
+    if (key === "page" && Number(value) <= 1) continue;
+    if (key === "sort" && value === "fit") continue;
+    params.set(key, String(value));
+  }
+  const text = params.toString();
+  return text ? `/freelance?${text}` : "/freelance";
+}
+
+/** Catalog title and description for search (D446). */
+
+export async function FreelancePageV2({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations("freelance");
+  const query = parseFreelanceSearch(await searchParams);
+  const { cards, total, hasMore } = await listCatalog(query, locale);
+  const active = FILTER_KEYS.filter((key) => query[key] !== undefined);
+  const dollars = (amount: number) =>
+    formatUsd(BigInt(amount) * BigInt(100), locale);
+  const chipLabel = (key: (typeof FILTER_KEYS)[number]): string => {
+    if (key === "category") return t(`categories.${query.category}`);
+    if (key === "budget")
+      return t("upTo", { price: dollars(query.budget ?? 0) });
+    if (key === "days") return t("upToDays", { count: query.days ?? 0 });
+    if (key === "lang") return languageNames([query.lang ?? ""], locale);
+    return String(query[key]);
+  };
+
+  return (
+    <main className="py-8 md:py-12">
+      <Container className="flex flex-col gap-8">
+        <PageHeader
+          title={t("title")}
+          intro={t("subtitle")}
+          actions={
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href="/freelance/orders"
+                className={buttonClass("secondary")}
+              >
+                {t("myOrders")}
+              </Link>
+              <Link
+                href="/profile/freelance"
+                className={buttonClass("secondary")}
+              >
+                {t("sellerCabinet")}
+              </Link>
+            </div>
+          }
+        />
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="sr-only" htmlFor="freelance-q">
+            {t("search")}
+          </label>
+          <Input
+            key={query.q ?? ""}
+            id="freelance-q"
+            name="q"
+            type="search"
+            form="freelance-filters"
+            defaultValue={query.q ?? ""}
+            placeholder={t("search")}
+            className="min-w-0 flex-1 basis-64"
+          />
+          <ButtonLink href="/chat" variant="secondary" {...navForward}>
+            {t("askSpoki")}
+          </ButtonLink>
+        </div>
+        <nav aria-label={t("category")} className="flex flex-wrap gap-2">
+          <Link
+            href={queryString(query, { category: undefined, page: 1 })}
+            aria-current={query.category ? undefined : "page"}
+            className={buttonClass(query.category ? "ghost" : "secondary")}
+          >
+            {t("anyCategory")}
+          </Link>
+          {FREELANCE_CATEGORIES.map((category) => (
+            <Link
+              key={category}
+              href={queryString(query, { category, page: 1 })}
+              aria-current={query.category === category ? "page" : undefined}
+              className={buttonClass(
+                query.category === category ? "secondary" : "ghost",
+              )}
+            >
+              {t(`categories.${category}`)}
+            </Link>
+          ))}
+        </nav>
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
+          <form
+            key={query.category ?? ""}
+            id="freelance-filters"
+            action=""
+            className="flex flex-col gap-4 lg:col-start-2 lg:row-start-1"
+          >
+            <FilterShell
+              count={active.length}
+              filtersLabel={t("filters")}
+              closeLabel={t("closeFilters")}
+            >
+              <Field label={t("category")}>
+                <Select name="category" defaultValue={query.category ?? ""}>
+                  <option value="">{t("anyCategory")}</option>
+                  {FREELANCE_CATEGORIES.map((category) => (
+                    <option key={category} value={category}>
+                      {t(`categories.${category}`)}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label={t("budget")}>
+                <Select name="budget" defaultValue={query.budget ?? ""}>
+                  <option value="">{t("anyBudget")}</option>
+                  {FREELANCE_BUDGETS.map((amount) => (
+                    <option key={amount} value={amount}>
+                      {t("upTo", { price: dollars(amount) })}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label={t("term")}>
+                <Select name="days" defaultValue={query.days ?? ""}>
+                  <option value="">{t("anyTerm")}</option>
+                  {FREELANCE_TERMS.map((days) => (
+                    <option key={days} value={days}>
+                      {t("upToDays", { count: days })}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label={t("language")}>
+                <Select name="lang" defaultValue={query.lang ?? ""}>
+                  <option value="">{t("anyLanguage")}</option>
+                  {FREELANCE_FILTER_LANGUAGES.map((code) => (
+                    <option key={code} value={code}>
+                      {languageNames([code], locale)}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label={t("sort")}>
+                <Select name="sort" defaultValue={query.sort}>
+                  {FREELANCE_SORTS.map((sort) => (
+                    <option key={sort} value={sort}>
+                      {t(`sorts.${sort}`)}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Button type="submit">{t("applyFilters")}</Button>
+            </FilterShell>
+          </form>
+          <div className="relative z-10 flex min-w-0 flex-col gap-4 lg:col-start-1 lg:row-start-1">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Link
+                href="/services"
+                className="rounded-lg border border-line bg-surface p-4 transition-colors hover:border-line-strong hover:bg-surface-2"
+              >
+                <span className="t-body font-semibold">{t("teamLink")}</span>
+                <span className="t-body-s mt-1 block text-fg-muted">
+                  {t("teamPromo")}
+                </span>
+              </Link>
+              <Link
+                href="/campaigns"
+                className="rounded-lg border border-line bg-surface p-4 transition-colors hover:border-line-strong hover:bg-surface-2"
+              >
+                <span className="t-body font-semibold">
+                  {t("ugcPromoTitle")}
+                </span>
+                <span className="t-body-s mt-1 block text-fg-muted">
+                  {t("ugcPromoText")}
+                </span>
+              </Link>
+            </div>
+            {active.length > 0 ? (
+              <ul className="flex flex-wrap gap-2">
+                {active.map((key) => (
+                  <li key={key}>
+                    <Link
+                      href={queryString(query, { [key]: undefined, page: 1 })}
+                      className="inline-flex"
+                      aria-label={`${t("clearFilter")}: ${chipLabel(key)}`}
+                    >
+                      <Tag>
+                        <span aria-hidden="true">{chipLabel(key)} ×</span>
+                      </Tag>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            {cards.length > 0 ? (
+              <>
+                <p className="t-label text-fg-muted" aria-live="polite">
+                  {t("results", { count: total })}
+                </p>
+                <ul className="grid gap-4 md:grid-cols-2">
+                  {cards.map((card) => (
+                    <li key={card.id}>
+                      <ServiceCard card={card} locale={locale} />
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <EmptyState
+                title={active.length > 0 ? t("emptyFiltered") : t("empty")}
+                text={
+                  active.length > 0 ? t("emptyFilteredText") : t("emptyText")
+                }
+                action={
+                  <Link href="/services" className={buttonClass("secondary")}>
+                    {t("teamLink")}
+                  </Link>
+                }
+              />
+            )}
+            {query.page > 1 || hasMore ? (
+              <nav
+                aria-label={t("pagination")}
+                className="flex flex-wrap gap-3"
+              >
+                {query.page > 1 ? (
+                  <Link
+                    className={buttonClass("secondary")}
+                    href={queryString(query, { page: query.page - 1 })}
+                  >
+                    {t("previous")}
+                  </Link>
+                ) : null}
+                {hasMore ? (
+                  <Link
+                    className={buttonClass("secondary")}
+                    href={queryString(query, { page: query.page + 1 })}
+                    {...navForward}
+                  >
+                    {t("next")}
+                  </Link>
+                ) : null}
+              </nav>
+            ) : null}
+          </div>
+        </div>
+      </Container>
+    </main>
+  );
+}

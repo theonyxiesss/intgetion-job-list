@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { flags } from "@/config/flags";
+import { FreelancePageV2 } from "./freelance-v2";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FREELANCE_CATEGORIES } from "@/config/freelance";
 import { Tag } from "@/components/ui/badge";
-import { Button, ButtonLink, buttonClass } from "@/components/ui/button";
+import { Button, buttonClass } from "@/components/ui/button";
 import { Container, PageHeader } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/feedback";
 import { Field } from "@/components/ui/field";
@@ -72,6 +74,7 @@ export default async function FreelancePage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  if (flags.uiV2Enabled) return FreelancePageV2({ params, searchParams });
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("freelance");
@@ -90,7 +93,7 @@ export default async function FreelancePage({
   };
 
   return (
-    <main className="py-8 md:py-12">
+    <main className="py-10 md:py-16">
       <Container className="flex flex-col gap-8">
         <PageHeader
           title={t("title")}
@@ -112,51 +115,11 @@ export default async function FreelancePage({
             </div>
           }
         />
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="sr-only" htmlFor="freelance-q">
-            {t("search")}
-          </label>
-          <Input
-            key={query.q ?? ""}
-            id="freelance-q"
-            name="q"
-            type="search"
-            form="freelance-filters"
-            defaultValue={query.q ?? ""}
-            placeholder={t("search")}
-            className="min-w-0 flex-1 basis-64"
-          />
-          <ButtonLink href="/chat" variant="secondary" {...navForward}>
-            {t("askSpoki")}
-          </ButtonLink>
-        </div>
-        <nav aria-label={t("category")} className="flex flex-wrap gap-2">
-          <Link
-            href={queryString(query, { category: undefined, page: 1 })}
-            aria-current={query.category ? undefined : "page"}
-            className={buttonClass(query.category ? "ghost" : "secondary")}
-          >
-            {t("anyCategory")}
-          </Link>
-          {FREELANCE_CATEGORIES.map((category) => (
-            <Link
-              key={category}
-              href={queryString(query, { category, page: 1 })}
-              aria-current={query.category === category ? "page" : undefined}
-              className={buttonClass(
-                query.category === category ? "secondary" : "ghost",
-              )}
-            >
-              {t(`categories.${category}`)}
-            </Link>
-          ))}
-        </nav>
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
           <form
-            key={query.category ?? ""}
             id="freelance-filters"
             action=""
-            className="flex flex-col gap-4 lg:col-start-2 lg:row-start-1"
+            className="flex flex-col gap-4"
           >
             <FilterShell
               count={active.length}
@@ -215,29 +178,18 @@ export default async function FreelancePage({
               <Button type="submit">{t("applyFilters")}</Button>
             </FilterShell>
           </form>
-          <div className="relative z-10 flex min-w-0 flex-col gap-4 lg:col-start-1 lg:row-start-1">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Link
-                href="/services"
-                className="rounded-lg border border-line bg-surface p-4 transition-colors hover:border-line-strong hover:bg-surface-2"
-              >
-                <span className="t-body font-semibold">{t("teamLink")}</span>
-                <span className="t-body-s mt-1 block text-fg-muted">
-                  {t("teamPromo")}
-                </span>
-              </Link>
-              <Link
-                href="/campaigns"
-                className="rounded-lg border border-line bg-surface p-4 transition-colors hover:border-line-strong hover:bg-surface-2"
-              >
-                <span className="t-body font-semibold">
-                  {t("ugcPromoTitle")}
-                </span>
-                <span className="t-body-s mt-1 block text-fg-muted">
-                  {t("ugcPromoText")}
-                </span>
-              </Link>
-            </div>
+          <div className="relative z-10 flex min-w-0 flex-col gap-4">
+            <label className="sr-only" htmlFor="freelance-q">
+              {t("search")}
+            </label>
+            <Input
+              id="freelance-q"
+              name="q"
+              type="search"
+              form="freelance-filters"
+              defaultValue={query.q ?? ""}
+              placeholder={t("search")}
+            />
             {active.length > 0 ? (
               <ul className="flex flex-wrap gap-2">
                 {active.map((key) => (

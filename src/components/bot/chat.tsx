@@ -359,6 +359,7 @@ export function Chat({
   freelanceTitle,
   freelanceCopy = {},
   variant = "page",
+  v2 = false,
   section,
 }: {
   signedIn: boolean;
@@ -369,6 +370,8 @@ export function Chat({
    * layout (D525), which owns the title, the position and the phone screen.
    */
   variant?: "page" | "panel";
+  /** UI_V2 look: Spoki avatar by answers, note under the field. */
+  v2?: boolean;
   /** The part of the site the person has open, sent with each message (D525). */
   section?: PageSection;
   jobId?: string;
@@ -1510,15 +1513,21 @@ export function Chat({
                 return (
                   <div
                     key={entry.key}
-                    className="flex min-w-0 items-start gap-3"
+                    className={
+                      v2 ? "flex min-w-0 items-start gap-3" : "min-w-0"
+                    }
                   >
-                    <span
-                      aria-hidden="true"
-                      className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-fg"
+                    {v2 && (
+                      <span
+                        aria-hidden="true"
+                        className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-fg"
+                      >
+                        <ServiceIcon name="spoki" size={18} />
+                      </span>
+                    )}
+                    <div
+                      className={v2 ? "min-w-0 flex-1 text-[15px]" : "min-w-0"}
                     >
-                      <ServiceIcon name="spoki" size={18} />
-                    </span>
-                    <div className="min-w-0 flex-1 text-[15px]">
                       <span className="sr-only">{t("agent")}</span>
                       <AssistantAnswer
                         text={entry.text}
@@ -2134,7 +2143,7 @@ export function Chat({
               )}
             </div>
           </form>
-          {variant === "page" && (
+          {v2 && variant === "page" && (
             <p className="pb-3 text-center text-xs text-fg-muted">
               {t("disclaimer")}
             </p>

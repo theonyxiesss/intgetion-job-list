@@ -4,18 +4,18 @@
 
 ## Код
 
-| Что                               | Где                                                                             |
-| --------------------------------- | ------------------------------------------------------------------------------- |
-| Константы (темы, виды, источники) | `src/config/events.ts`                                                          |
-| Схема и миграция                  | `src/db/schema/events.ts`, `src/db/migrations/0049_events.sql`                  |
-| Вход модуля                       | `src/modules/events/service/index.ts`                                           |
-| Адаптер confs.tech                | `src/modules/events/adapters/confs-tech.ts`, страна — `adapters/country.ts`     |
-| Адаптер ccfddl (D440)             | `src/modules/events/adapters/ccfddl.ts`                                         |
-| Фикстура                          | `fixtures/events/fictional-events.json`, `adapters/fixture.ts`                  |
-| Прогон импорта                    | `src/modules/events/service/import.ts`, cron `src/app/api/cron/events/route.ts` |
-| Запросы                           | `service/filter.ts` (правила), `repo/events-repo.ts` (SQL)                      |
+| Что                               | Где                                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------------ |
+| Константы (темы, виды, источники) | `src/config/events.ts`                                                               |
+| Схема и миграция                  | `src/db/schema/events.ts`, `src/db/migrations/0049_events.sql`                       |
+| Вход модуля                       | `src/modules/events/service/index.ts`                                                |
+| Адаптер confs.tech                | `src/modules/events/adapters/confs-tech.ts`, страна — `adapters/country.ts`          |
+| Адаптер ccfddl (D440)             | `src/modules/events/adapters/ccfddl.ts`                                              |
+| Фикстура                          | `fixtures/events/fictional-events.json`, `adapters/fixture.ts`                       |
+| Прогон импорта                    | `src/modules/events/service/import.ts`, cron `src/app/api/cron/events/route.ts`      |
+| Запросы                           | `service/filter.ts` (правила), `repo/events-repo.ts` (SQL)                           |
 | Страницы                          | `src/app/[locale]/events/(list)/page.tsx`, `src/app/[locale]/events/[slug]/page.tsx` |
-| Spoki                             | `find_events` в `src/modules/bot/service/tools.ts`, `offer_step` `events`       |
+| Spoki                             | `find_events` в `src/modules/bot/service/tools.ts`, `offer_step` `events`            |
 
 ## Импорт
 
