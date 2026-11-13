@@ -27,6 +27,8 @@ import { SharedProfileForm } from "@/modules/users/ui/shared-profile-form";
 import { requireSettingsUser } from "../settings/require-settings-user";
 import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
+import { formatMoneyDto } from "@/lib/money";
+import { intlLocale } from "@/i18n/locale";
 import {
   getSellerRecord,
   listPublicReviews,
@@ -241,13 +243,22 @@ export default async function AccountPage({
       minimumFractionDigits: 1,
       maximumFractionDigits: 1,
     });
-    const name = shared?.displayName?.trim() || t("title");
+    const prof = await getTranslations("profile");
+    const jobsT = await getTranslations("jobs");
+    const name =
+      shared?.displayName?.trim() || candidate?.fullName?.trim() || t("title");
+    const headline =
+      candidate?.headline?.trim() || candidate?.desiredTitles.join(", ") || "";
     const initials = name
       .split(/\s+/)
       .slice(0, 2)
       .map((part) => part[0]?.toUpperCase() ?? "")
       .join("");
-    const place = [shared?.city, shared?.country, shared?.timezone]
+    const place = [
+      candidate?.city ?? shared?.city,
+      candidate?.country ?? shared?.country,
+      candidate?.timezone ?? shared?.timezone,
+    ]
       .filter(Boolean)
       .join(" · ");
     const completeness = candidate?.completeness ?? null;
@@ -256,6 +267,29 @@ export default async function AccountPage({
         <main className="px-4 py-6 md:px-6 md:py-8">
           <div className="mx-auto flex max-w-[1180px] flex-wrap items-start gap-5">
             <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-5">
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="mr-auto text-sm text-fg-muted">
+                  {t("v2.twoProfiles")}
+                </p>
+                <nav
+                  aria-label={t("title")}
+                  className="flex gap-1 rounded-xl border border-line bg-surface-2 p-1"
+                >
+                  <Link
+                    href="/account"
+                    aria-current="page"
+                    className="rounded-lg bg-surface px-3 py-1.5 text-sm font-medium"
+                  >
+                    {t("v2.seeker")}
+                  </Link>
+                  <Link
+                    href="/profile/freelance"
+                    className="rounded-lg px-3 py-1.5 text-sm text-fg-muted hover:text-fg"
+                  >
+                    {t("v2.freelancer")}
+                  </Link>
+                </nav>
+              </div>
               <section
                 aria-labelledby="account-title"
                 className={`${card} flex flex-wrap items-center gap-5`}
@@ -273,9 +307,21 @@ export default async function AccountPage({
                   >
                     {name}
                   </h1>
-                  {place ? (
-                    <p className="text-sm text-fg-muted">{place}</p>
+                  {headline ? (
+                    <p className="text-sm text-fg-muted">{headline}</p>
                   ) : null}
+                  <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-fg-subtle">
+                    {place ? <span>{place}</span> : null}
+                    {candidate?.jobSearchStatus === "active" ? (
+                      <span className="flex items-center gap-1.5 text-fg-muted">
+                        <span
+                          aria-hidden="true"
+                          className="size-1.5 rounded-full bg-accent"
+                        />
+                        {t("v2.openToOffers")}
+                      </span>
+                    ) : null}
+                  </p>
                   {record?.rating != null && record.ratingCount > 0 ? (
                     <p className="text-sm">
                       <span aria-hidden="true" className="text-warning">
@@ -287,23 +333,101 @@ export default async function AccountPage({
                       })}
                     </p>
                   ) : null}
-                  <p className="text-sm text-fg-muted">{t("intro")}</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <a
                     href="#account-profile-section"
                     className="flex min-h-11 items-center rounded-xl border border-line-strong px-4 text-sm"
                   >
-                    {t("profile.title")}
+                    {t("v2.edit")}
                   </a>
                   <Link
                     href="/profile/edit"
-                    className="flex min-h-11 items-center rounded-xl bg-fg px-4 text-sm font-medium text-bg"
+                    className="flex min-h-11 items-center rounded-xl bg-fg px-4 text-sm font-semibold text-bg"
                   >
-                    {t("services.jobs.name")}
+                    {t("v2.jobProfile")}
                   </Link>
                 </div>
               </section>
+
+              {candidate ? (
+                <>
+                  {candidate.summary || shared?.about ? (
+                    <section className="flex flex-col gap-2">
+                      <h2 className="text-[15px] font-semibold">
+                        {t("v2.about")}
+                      </h2>
+                      <p className="text-sm whitespace-pre-wrap text-fg-muted">
+                        {candidate.summary || shared?.about}
+                      </p>
+                    </section>
+                  ) : null}
+                  {candidate.skills.length > 0 ? (
+                    <section className="flex flex-col gap-2">
+                      <h2 className="text-[15px] font-semibold">
+                        {t("v2.skills")}
+                      </h2>
+                      <ul className="grid gap-2 sm:grid-cols-2">
+                        {candidate.skills.map((skill) => (
+                          <li
+                            key={skill.skillId}
+                            className="flex items-center justify-between gap-3 rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm"
+                          >
+                            <span className="font-medium">
+                              {locale === "ru" ? skill.nameRu : skill.nameEn}
+                            </span>
+                            <span className="text-xs text-fg-subtle">
+                              {prof(`levels.${skill.level}`)}
+                              {skill.years !== null
+                                ? ` · ${t("v2.years", { count: skill.years })}`
+                                : ""}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                  <section className="flex flex-col gap-2">
+                    <h2 className="text-[15px] font-semibold">
+                      {t("v2.lookingFor")}
+                    </h2>
+                    <dl className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                      {[
+                        [
+                          t("v2.titles"),
+                          candidate.desiredTitles.join(", ") || "—",
+                        ],
+                        [
+                          t("v2.salary"),
+                          candidate.salaryMin
+                            ? formatMoneyDto(
+                                candidate.salaryMin,
+                                intlLocale(locale),
+                              )
+                            : "—",
+                        ],
+                        [
+                          t("v2.format"),
+                          candidate.workFormats
+                            .map((format) => jobsT(format))
+                            .join(", ") || "—",
+                        ],
+                        [t("v2.timezone"), candidate.timezone ?? "—"],
+                      ].map(([label, value]) => (
+                        <div
+                          key={label}
+                          className="rounded-xl border border-line bg-surface p-3"
+                        >
+                          <dt className="text-xs text-fg-subtle">{label}</dt>
+                          <dd className="mt-1 text-sm font-semibold">
+                            {value}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </section>
+                </>
+              ) : null}
 
               <section
                 aria-labelledby="account-services"
@@ -456,13 +580,13 @@ export default async function AccountPage({
             </div>
 
             <aside className="flex min-w-0 flex-[1_1_300px] flex-col gap-4 lg:max-w-[380px]">
-              {completeness !== null ? (
+              {completeness !== null && candidate ? (
                 <section className={`${card} flex flex-col gap-3`}>
                   <div className="flex items-baseline justify-between gap-3">
                     <h2 className="text-[15px] font-semibold">
-                      {t("services.jobs.name")}
+                      {t("v2.completeness")}
                     </h2>
-                    <span className="text-2xl font-semibold text-accent">
+                    <span className="text-2xl font-semibold">
                       {completeness}%
                     </span>
                   </div>
@@ -475,8 +599,27 @@ export default async function AccountPage({
                       style={{ width: `${completeness}%` }}
                     />
                   </span>
-                  <Link href="/profile/edit" className="text-sm text-accent">
-                    {t("services.open")} →
+                  {candidate.missing.length > 0 ? (
+                    <ul className="flex flex-col gap-2 pt-1">
+                      {candidate.missing.slice(0, 5).map((part) => (
+                        <li
+                          key={part}
+                          className="flex items-center gap-2.5 text-sm text-fg-muted"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="size-4 shrink-0 rounded-full border-[1.5px] border-line-strong"
+                          />
+                          {prof(`missing.${part}`)}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  <Link
+                    href="/profile/edit"
+                    className="flex min-h-10 items-center justify-center rounded-xl border border-line-strong text-sm font-medium hover:bg-surface-2"
+                  >
+                    {t("v2.fillProfile")}
                   </Link>
                 </section>
               ) : null}
