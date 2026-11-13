@@ -1708,6 +1708,8 @@
     }
   },
   "settings": {
+    "siteLanguage": "Sprache der Website",
+    "siteLanguageHint": "Ändert die Sprache der Website, der E-Mails und der Nachrichten in Telegram und Discord.",
     "title": "Einstellungen",
     "tabNotifications": "Benachrichtigungen",
     "tabPrivacy": "Datenschutz",

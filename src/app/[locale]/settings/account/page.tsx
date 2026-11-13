@@ -9,6 +9,8 @@ import { Alert, Container, PageHeader } from "@/components/ui";
 import { requireSettingsUser } from "../require-settings-user";
 import { SettingsTabs } from "../settings-tabs";
 import { RouteMessages } from "@/components/shell/route-messages";
+import { LanguagePicker } from "@/components/shell/language-picker";
+import { flags } from "@/config/flags";
 
 export default async function AccountSettingsPage({
   params,
@@ -35,6 +37,13 @@ export default async function AccountSettingsPage({
             error={error}
             provider={provider}
           />
+          {flags.uiV2Enabled && (
+            <section className="flex flex-col gap-3">
+              <h2 className="text-lg font-semibold">{t("siteLanguage")}</h2>
+              <p className="text-sm text-fg-muted">{t("siteLanguageHint")}</p>
+              <LanguagePicker variant="grid" />
+            </section>
+          )}
           <EmailLanguage locale={user.locale} />
           <SecurityStubs />
           {user.platformRole === "admin" ? (

@@ -1708,6 +1708,8 @@
     }
   },
   "settings": {
+    "siteLanguage": "Язык сайта",
+    "siteLanguageHint": "Меняет язык сайта, писем и сообщений в Telegram и Discord.",
     "title": "Настройки",
     "tabNotifications": "Уведомления",
     "tabPrivacy": "Приватность",

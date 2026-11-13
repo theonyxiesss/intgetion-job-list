@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Logo } from "@/components/ui/logo";
+import { LanguagePicker } from "./language-picker";
 import {
   groupActive,
   isGroup,
@@ -169,6 +170,7 @@ export function AppSidebar({
             {signedIn ? t("nav.account") : t("nav.login")}
           </span>
         </Link>
+        <LanguagePicker variant="menu" />
         {signedIn && (
           <Link
             href="/settings/account"

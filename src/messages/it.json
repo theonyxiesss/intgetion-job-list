@@ -1708,6 +1708,8 @@
     }
   },
   "settings": {
+    "siteLanguage": "Lingua del sito",
+    "siteLanguageHint": "Cambia la lingua del sito, delle email e dei messaggi su Telegram e Discord.",
     "title": "Impostazioni",
     "tabNotifications": "Notifiche",
     "tabPrivacy": "Privacy",
