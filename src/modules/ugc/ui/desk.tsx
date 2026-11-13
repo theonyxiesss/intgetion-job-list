@@ -512,7 +512,7 @@ export function Fact({
   mono?: boolean;
 }) {
   return (
-    <div className="flex min-w-0 flex-col gap-1">
+    <div className="flex min-w-0 flex-col gap-1 in-data-[ui=v2]:rounded-xl in-data-[ui=v2]:border in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface in-data-[ui=v2]:p-3">
       <dt className="t-label text-fg-muted">{label}</dt>
       <dd className={cn("break-words text-fg", mono && "t-data")}>{value}</dd>
     </div>
@@ -530,7 +530,7 @@ export function DeskEmpty({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-line-strong p-5 md:p-6">
+    <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-line-strong p-5 md:p-6 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-solid in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface">
       <p className="font-medium">{title}</p>
       {text ? (
         <p className="t-body-s max-w-[60ch] text-fg-muted">{text}</p>

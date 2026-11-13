@@ -323,7 +323,7 @@ export default async function CampaignPage({
           </>
         }
       >
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface in-data-[ui=v2]:p-5">
           <div className="flex flex-wrap items-center gap-3">
             <CampaignStatus status={brief.status} />
             <span className="t-body-s font-mono text-fg-muted">
@@ -376,7 +376,7 @@ export default async function CampaignPage({
           </p>
         ) : null}
 
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-5 border-y border-line py-6 md:grid-cols-4">
+        <dl className="grid grid-cols-2 gap-x-6 gap-y-5 border-y border-line py-6 md:grid-cols-4 in-data-[ui=v2]:gap-2 in-data-[ui=v2]:border-0 in-data-[ui=v2]:py-0">
           <Fact label={d("fact.reward")} value={money} />
           <Fact
             label={d("fact.videos")}
