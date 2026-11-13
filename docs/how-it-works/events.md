@@ -4,18 +4,18 @@
 
 ## Код
 
-| Что                               | Где                                                                             |
-| --------------------------------- | ------------------------------------------------------------------------------- |
-| Константы (темы, виды, источники) | `src/config/events.ts`                                                          |
-| Схема и миграция                  | `src/db/schema/events.ts`, `src/db/migrations/0049_events.sql`                  |
-| Вход модуля                       | `src/modules/events/service/index.ts`                                           |
-| Адаптер confs.tech                | `src/modules/events/adapters/confs-tech.ts`, страна — `adapters/country.ts`     |
-| Адаптер ccfddl (D440)             | `src/modules/events/adapters/ccfddl.ts`                                         |
-| Фикстура                          | `fixtures/events/fictional-events.json`, `adapters/fixture.ts`                  |
-| Прогон импорта                    | `src/modules/events/service/import.ts`, cron `src/app/api/cron/events/route.ts` |
-| Запросы                           | `service/filter.ts` (правила), `repo/events-repo.ts` (SQL)                      |
+| Что                               | Где                                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------------ |
+| Константы (темы, виды, источники) | `src/config/events.ts`                                                               |
+| Схема и миграция                  | `src/db/schema/events.ts`, `src/db/migrations/0049_events.sql`                       |
+| Вход модуля                       | `src/modules/events/service/index.ts`                                                |
+| Адаптер confs.tech                | `src/modules/events/adapters/confs-tech.ts`, страна — `adapters/country.ts`          |
+| Адаптер ccfddl (D440)             | `src/modules/events/adapters/ccfddl.ts`                                              |
+| Фикстура                          | `fixtures/events/fictional-events.json`, `adapters/fixture.ts`                       |
+| Прогон импорта                    | `src/modules/events/service/import.ts`, cron `src/app/api/cron/events/route.ts`      |
+| Запросы                           | `service/filter.ts` (правила), `repo/events-repo.ts` (SQL)                           |
 | Страницы                          | `src/app/[locale]/events/(list)/page.tsx`, `src/app/[locale]/events/[slug]/page.tsx` |
-| Spoki                             | `find_events` в `src/modules/bot/service/tools.ts`, `offer_step` `events`       |
+| Spoki                             | `find_events` в `src/modules/bot/service/tools.ts`, `offer_step` `events`            |
 
 ## Импорт
 
@@ -66,3 +66,4 @@
 - Поиск, фильтры и страницы остаются GET-параметрами того же `searchEvents`; «Подобрать со Spoki» ведёт в существующий `/chat`.
 - Над выдачей есть быстрые переключатели формата и трёх тем (`dev`, `ai`, `web3`) по `Events.dc.html`. Они используют тот же `queryString` и `searchEvents`: сохраняют остальные фильтры, сбрасывают пагинацию на первую страницу и не требуют клиентского состояния. Остальные темы доступны в полной панели фильтров.
 - Макетные переключатели «сохранить событие» и счётчик «Мои мероприятия» не перенесены: у каталога нет хранилища сохранённых событий и RSVP (D435). Регистрация остаётся на сайте организатора.
+- При `UI_V2=true` `/events` рендерит `EventsPageV2` и `EventCardV2`; страница продолжает использовать `searchEvents` и те же GET-фильтры, без RSVP и записей сохранения.

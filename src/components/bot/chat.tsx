@@ -65,7 +65,6 @@ import { ConfirmCard } from "@/components/ui/dialog";
 import { ugcBudgetMinor, usdLabel } from "@/modules/ugc/service/pricing";
 import { Alert } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
-import { ServiceIcon } from "@/components/ui/service-icon";
 import { TELEGRAM_BOT_URL } from "@/config/telegram";
 import { localePath } from "@/i18n/paths";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -359,6 +358,7 @@ export function Chat({
   freelanceTitle,
   freelanceCopy = {},
   variant = "page",
+  v2 = false,
   section,
 }: {
   signedIn: boolean;
@@ -369,6 +369,8 @@ export function Chat({
    * layout (D525), which owns the title, the position and the phone screen.
    */
   variant?: "page" | "panel";
+  /** UI_V2 look: Spoki avatar by answers, note under the field. */
+  v2?: boolean;
   /** The part of the site the person has open, sent with each message (D525). */
   section?: PageSection;
   jobId?: string;
@@ -1340,7 +1342,9 @@ export function Chat({
           }
         >
           {variant === "page" ? (
-            <h1 className="text-sm font-medium">{t("title")}</h1>
+            <h1 className={v2 ? "sr-only" : "text-sm font-medium"}>
+              {t("title")}
+            </h1>
           ) : null}
           {jobFocus ? (
             <p className="t-body-s mt-2 text-fg first:mt-0">
@@ -1508,17 +1512,10 @@ export function Chat({
               }
               if (entry.kind === "assistant") {
                 return (
-                  <div
-                    key={entry.key}
-                    className="flex min-w-0 items-start gap-3"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-fg"
+                  <div key={entry.key} className="min-w-0">
+                    <div
+                      className={v2 ? "min-w-0 flex-1 text-[15px]" : "min-w-0"}
                     >
-                      <ServiceIcon name="spoki" size={18} />
-                    </span>
-                    <div className="min-w-0 flex-1 text-[15px]">
                       <span className="sr-only">{t("agent")}</span>
                       <AssistantAnswer
                         text={entry.text}
@@ -2126,7 +2123,7 @@ export function Chat({
                 <button
                   type="submit"
                   disabled={!text.trim()}
-                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-signal text-signal-fg transition-opacity disabled:opacity-40"
+                  className={`flex size-11 shrink-0 items-center justify-center rounded-full transition-opacity disabled:opacity-40 ${v2 ? "bg-fg text-bg" : "bg-signal text-signal-fg"}`}
                 >
                   <Icon icon={ArrowUp} size={20} />
                   <span className="sr-only">{t("send")}</span>
@@ -2134,7 +2131,7 @@ export function Chat({
               )}
             </div>
           </form>
-          {variant === "page" && (
+          {v2 && variant === "page" && (
             <p className="pb-3 text-center text-xs text-fg-muted">
               {t("disclaimer")}
             </p>

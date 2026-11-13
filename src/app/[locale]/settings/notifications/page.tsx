@@ -1,7 +1,6 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PreferenceToggles } from "@/components/notifications/preference-toggles";
-import { SettingsTabs } from "../settings-tabs";
-import { Container, PageHeader } from "@/components/ui/container";
+import { SettingsShell } from "../settings-tabs";
 import { redirect } from "@/i18n/navigation";
 import { requireUser } from "@/lib/auth-guards";
 import { HttpError } from "@/lib/http";
@@ -50,22 +49,14 @@ export default async function NotificationSettingsPage({
     });
 
   return (
-    <main className="py-10 md:py-16">
-      <Container narrow className="flex flex-col gap-8">
-        <PageHeader title={settings("title")} />
-        <SettingsTabs active="notifications" />
-        <PreferenceToggles
-          items={items}
-          saved={t("saved")}
-          error={t("error")}
-        />
-        <section className="flex flex-col gap-2 border border-line p-4">
-          <h2 className="t-label text-fg-muted">{t("alwaysOnTitle")}</h2>
-          <p className="t-body-s max-w-[60ch] text-fg-muted">
-            {t("alwaysOnBody")}
-          </p>
-        </section>
-      </Container>
-    </main>
+    <SettingsShell active="notifications" title={settings("title")}>
+      <PreferenceToggles items={items} saved={t("saved")} error={t("error")} />
+      <section className="flex flex-col gap-2 border border-line p-4">
+        <h2 className="t-label text-fg-muted">{t("alwaysOnTitle")}</h2>
+        <p className="t-body-s max-w-[60ch] text-fg-muted">
+          {t("alwaysOnBody")}
+        </p>
+      </section>
+    </SettingsShell>
   );
 }

@@ -4,7 +4,13 @@
  */
 export type SidebarLink = { href: string; label: string; icon: SidebarIcon };
 export type SidebarGroup = SidebarLink & {
-  children: readonly { href: string; label: string }[];
+  /** `hint` is the grey line under a flyout item; `action` sits on top. */
+  children: readonly {
+    href: string;
+    label: string;
+    hint?: string;
+    action?: boolean;
+  }[];
 };
 export type SidebarItem = SidebarLink | SidebarGroup;
 
@@ -17,32 +23,28 @@ export type SidebarIcon =
   | "bell"
   | "profile"
   | "pricing"
-  | "finance";
+  | "finance"
+  | "history"
+  | "messages";
 
 export const sidebarItems: readonly SidebarItem[] = [
+  { href: "/chat/history", label: "nav.chatHistory", icon: "history" },
   {
     href: "/jobs",
     label: "nav.jobs",
     icon: "jobs",
     children: [
-      { href: "/jobs", label: "nav.findJobs" },
-      { href: "/post-job", label: "nav.postJob" },
-      { href: "/employer/jobs", label: "nav.myJobs" },
+      { href: "/post-job", label: "nav.postJob", action: true },
+      { href: "/employer/jobs", label: "nav.hiring", hint: "nav.hint.hiring" },
+      { href: "/jobs", label: "nav.findJobs", hint: "nav.hint.findJobs" },
     ],
   },
-  {
-    href: "/freelance",
-    label: "nav.freelance",
-    icon: "freelance",
-    children: [
-      { href: "/freelance", label: "nav.freelance" },
-      { href: "/freelance/tasks", label: "nav.taskBoard" },
-    ],
-  },
+  { href: "/freelance", label: "nav.freelance", icon: "freelance" },
   { href: "/campaigns", label: "nav.campaigns", icon: "ugc" },
-  { href: "/services", label: "nav.services", icon: "turnkey" },
-  { href: "/events", label: "nav.events", icon: "events" },
+  { href: "/services", label: "nav.turnkey", icon: "turnkey" },
+  { href: "/messages", label: "nav.inbox", icon: "messages" },
   { href: "/notifications", label: "nav.notifications", icon: "bell" },
+  { href: "/events", label: "nav.eventsList", icon: "events" },
   { href: "/profile", label: "nav.profile", icon: "profile" },
   { href: "/pricing", label: "nav.pricing", icon: "pricing" },
   {
@@ -50,8 +52,16 @@ export const sidebarItems: readonly SidebarItem[] = [
     label: "nav.finance",
     icon: "finance",
     children: [
-      { href: "/employer/billing", label: "nav.payments" },
-      { href: "/billing/crypto", label: "nav.cryptoWallet" },
+      {
+        href: "/employer/billing",
+        label: "nav.payments",
+        hint: "nav.hint.payments",
+      },
+      {
+        href: "/billing/crypto",
+        label: "nav.cryptoWallet",
+        hint: "nav.hint.cryptoWallet",
+      },
     ],
   },
 ];
@@ -74,6 +84,10 @@ export function groupActive(pathname: string, group: SidebarGroup): boolean {
 export function sidebarLabelKeys(): string[] {
   const keys = new Set<string>([
     "nav.newChat",
+    "nav.sections",
+    "nav.hiring",
+    "nav.recentChats",
+    "nav.allChats",
     "nav.settings",
     "nav.account",
     "nav.login",
@@ -83,7 +97,11 @@ export function sidebarLabelKeys(): string[] {
   ]);
   for (const item of sidebarItems) {
     keys.add(item.label);
-    if (isGroup(item)) for (const child of item.children) keys.add(child.label);
+    if (isGroup(item))
+      for (const child of item.children) {
+        keys.add(child.label);
+        if (child.hint) keys.add(child.hint);
+      }
   }
   return [...keys];
 }

@@ -67,7 +67,7 @@ export function HomeAsk({
         onFocus={spoki?.preload}
         className={
           v2
-            ? "flex w-full items-center gap-3 rounded-[28px] border border-line bg-surface-2 py-2 pr-2 pl-5 has-[#home-ask:focus-visible]:outline-2 has-[#home-ask:focus-visible]:outline-offset-2 has-[#home-ask:focus-visible]:outline-accent"
+            ? "flex w-full items-center gap-3 rounded-[28px] border border-line-strong bg-surface-2 py-2 pr-2 pl-5 has-[#home-ask:focus-visible]:outline-2 has-[#home-ask:focus-visible]:outline-offset-2 has-[#home-ask:focus-visible]:outline-accent"
             : "flex w-full items-center gap-3 rounded-xl border border-line-strong bg-surface py-2 pr-2 pl-4 has-[#home-ask:focus-visible]:outline-2 has-[#home-ask:focus-visible]:outline-offset-2 has-[#home-ask:focus-visible]:outline-accent"
         }
       >
@@ -90,7 +90,7 @@ export function HomeAsk({
             type="submit"
             aria-label={submit}
             disabled={!text.trim()}
-            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent text-accent-fg disabled:opacity-50"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-fg text-bg disabled:opacity-40"
           >
             <Icon icon={ArrowUp} size={20} />
           </button>

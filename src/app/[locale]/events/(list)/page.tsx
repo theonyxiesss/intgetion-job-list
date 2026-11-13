@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { flags } from "@/config/flags";
+import { EventsPageV2 } from "./events-v2";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { EVENT_FORMATS, EVENT_KINDS, EVENT_TOPICS } from "@/config/events";
 import { Button, ButtonLink, buttonClass } from "@/components/ui/button";
@@ -83,6 +85,7 @@ export default async function EventsPage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  if (flags.uiV2Enabled) return EventsPageV2({ params, searchParams });
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("events");

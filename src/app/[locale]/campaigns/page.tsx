@@ -404,16 +404,16 @@ async function V2Overview({
     { label: d("stat.accepted"), value: String(totals.accepted) },
   ];
   return (
-    <main className="py-6 md:py-8">
-      <Container className="flex flex-col gap-4">
+    <main className="px-4 py-6 md:px-6 md:py-8">
+      <div className="mx-auto flex max-w-[1180px] flex-col gap-4">
         <header className="flex flex-wrap items-center gap-3">
           <h1 className="mr-auto text-[22px] font-semibold">{title}</h1>
           <UgcV2RoleNav active="brand" />
           <ButtonLink
             href="/campaigns/new"
-            variant="primary"
-            icon={<Icon icon={Plus} size={16} />}
+            className="flex min-h-10 items-center gap-1.5 rounded-xl bg-fg px-4 text-sm font-semibold text-bg hover:opacity-90"
           >
+            <Icon icon={Plus} size={16} />
             {t("v2.createCampaign")}
           </ButtonLink>
         </header>
@@ -575,7 +575,7 @@ async function V2Overview({
             </Link>
           </span>
         </aside>
-      </Container>
+      </div>
     </main>
   );
 }
@@ -591,16 +591,16 @@ async function V2Doors({
   const h = await getTranslations("ugcHub");
   const d = await getTranslations("ugcDesk");
   return (
-    <main className="py-6 md:py-8">
-      <Container className="flex flex-col gap-4">
+    <main className="px-4 py-6 md:px-6 md:py-8">
+      <div className="mx-auto flex max-w-[1180px] flex-col gap-4">
         <header className="flex flex-wrap items-center gap-3">
           <h1 className="mr-auto text-[22px] font-semibold">{t("title")}</h1>
           <UgcV2RoleNav active="brand" />
           <ButtonLink
             href="/campaigns/new"
-            variant="primary"
-            icon={<Icon icon={Plus} size={16} />}
+            className="flex min-h-10 items-center gap-1.5 rounded-xl bg-fg px-4 text-sm font-semibold text-bg hover:opacity-90"
           >
+            <Icon icon={Plus} size={16} />
             {t("v2.createCampaign")}
           </ButtonLink>
         </header>
@@ -654,7 +654,7 @@ async function V2Doors({
             {h("priceTitle")}: {priceLine(h, guide)}
           </span>
         </aside>
-      </Container>
+      </div>
     </main>
   );
 }

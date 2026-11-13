@@ -46,6 +46,7 @@
 
 - Страницы: `/freelance` (каталог), `/freelance/[slug]` (услуга), `/freelance/orders`, `/freelance/orders/[id]` (заказ и комната), `/profile/freelance`, `/profile/freelance/new`, `/profile/freelance/[id]/edit` (кабинет исполнителя), касса `/billing/crypto?freelance=`.
 - Каталог `/freelance` использует оболочку V2: поиск и ссылки по категориям над списком, фильтры бюджета, срока, языка и сортировки, ссылки на Spoki, командные услуги и UGC. Список и количество услуг приходят из `listCatalog`; при пустой базе показывается существующее пустое состояние, без макетных карточек. Карточка остаётся общей `ListingCard` (D479, D605).
+- При `UI_V2=true` каталог показывает отдельные V2-карточки и фильтры на базе того же `listCatalog`. `/freelance/orders/[id]` сохраняет существующие API сообщений и переходов состояния в обновлённой карточной оболочке.
 - Админка: `/admin/freelance/[id]`, очередь — `/admin/moderation`.
 - API: `/api/freelance/services` (+ `[id]`, `[id]/submit`, `[id]/pause`, `[id]/report`), `/api/freelance/seller`, `/api/freelance/service-draft`, `/api/freelance/requests`, `/api/freelance/orders/[id]/transition`, `/api/freelance/orders/[id]/messages`, `/api/freelance/orders/[id]/payment`, `/api/freelance/orders/[id]/report`, `/api/freelance/payments/[id]` (+ `confirm`), `/api/freelance/reviews`, `/api/freelance/client-reviews`.
 - Cron: `/api/cron/freelance` каждые 15 минут — `runOrderTimers`, `recheckOrderPayments`, `expireOldTasks`.

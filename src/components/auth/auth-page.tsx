@@ -6,11 +6,14 @@ import { OrbitBackdrop } from "@/components/ui/orbit-backdrop";
 import { ServiceIcon } from "@/components/ui/service-icon";
 import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
+import { Logo } from "@/components/ui/logo";
 
 /**
  * Shell of every auth screen: login, register, reset, check email (D330).
  * A heading of the h2 size, not a display one: these are forms, not
  * landing pages. `break-words` keeps long addresses and errors inside.
+ * With UI_V2 it is the mockup card: Spoki mark, title and, on login and
+ * register, a switch between the two.
  */
 export async function AuthPage({
   title,
@@ -29,11 +32,25 @@ export async function AuthPage({
 }) {
   if (flags.uiV2Enabled) {
     const nav = await getTranslations("nav");
+    const product = await getTranslations("product");
     const tabClass = (active: boolean) =>
       `flex min-h-10 flex-1 items-center justify-center rounded-[10px] text-sm font-medium ${active ? "bg-line-strong text-fg" : "text-fg-muted hover:text-fg"}`;
 
     return (
-      <main className="flex flex-1 items-start justify-center px-4 py-10 md:items-center md:py-16">
+      <main className="flex min-h-dvh flex-1 flex-col px-4 py-4 md:px-6">
+        <div className="flex items-center justify-between">
+          <Link href="/" className="flex items-center">
+            <Logo name={product("wordmark")} />
+          </Link>
+          <Link
+            href="/"
+            className="flex min-h-9 items-center gap-1.5 rounded-xl border border-line-strong px-3 text-sm hover:bg-surface"
+          >
+            <span aria-hidden="true">‹</span>
+            {nav("home")}
+          </Link>
+        </div>
+        <div className="flex flex-1 items-start justify-center py-10 md:items-center">
         <div className="flex w-full max-w-[420px] min-w-0 flex-col gap-5 break-words">
           <header className="flex flex-col items-center gap-2.5 text-center">
             <span
@@ -74,6 +91,7 @@ export async function AuthPage({
               {footer}
             </div>
           ) : null}
+        </div>
         </div>
       </main>
     );
