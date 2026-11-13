@@ -90,7 +90,7 @@ export function HomeAsk({
             type="submit"
             aria-label={submit}
             disabled={!text.trim()}
-            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent text-accent-fg disabled:opacity-50"
+            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-fg text-bg disabled:opacity-40"
           >
             <Icon icon={ArrowUp} size={20} />
           </button>

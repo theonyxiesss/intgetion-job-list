@@ -2135,7 +2135,7 @@ export function Chat({
                 <button
                   type="submit"
                   disabled={!text.trim()}
-                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-signal text-signal-fg transition-opacity disabled:opacity-40"
+                  className={`flex size-11 shrink-0 items-center justify-center rounded-full transition-opacity disabled:opacity-40 ${v2 ? "bg-fg text-bg" : "bg-signal text-signal-fg"}`}
                 >
                   <Icon icon={ArrowUp} size={20} />
                   <span className="sr-only">{t("send")}</span>
