@@ -1,8 +1,7 @@
 // v2 (UI_V2) layout of this route; page.tsx renders it when the flag is on.
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { EVENT_FORMATS, EVENT_KINDS, EVENT_TOPICS } from "@/config/events";
-import { Button, ButtonLink, buttonClass } from "@/components/ui/button";
-import { Container, PageHeader } from "@/components/ui/container";
+import { EVENT_KINDS, EVENT_TOPICS } from "@/config/events";
+import { Button, buttonClass } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/feedback";
 import { Field } from "@/components/ui/field";
 import { Input, Select } from "@/components/ui/input";
@@ -17,7 +16,6 @@ import {
   type EventSearchQuery,
 } from "@/modules/events/service";
 import { EventCardV2 } from "./event-card-v2";
-import { FilterShell } from "@/modules/jobs/ui/filter-shell";
 
 const FILTER_KEYS = [
   "q",
@@ -76,57 +74,95 @@ export async function EventsPageV2({
     return value;
   };
 
+  const seg = (on: boolean) =>
+    `rounded-lg px-3 py-1.5 text-sm whitespace-nowrap ${on ? "bg-surface font-medium text-fg" : "text-fg-muted hover:text-fg"}`;
+  const topics = EVENT_TOPICS.slice(0, 4);
+
   return (
-    <main className="py-8 md:py-12">
-      <Container className="flex flex-col gap-8">
-        <PageHeader
-          title={t("title")}
-          intro={t("subtitle")}
-          actions={
-            <ButtonLink href="/chat" variant="secondary" {...navForward}>
-              {t("askSpoki")}
-            </ButtonLink>
-          }
-        />
-        <div className="relative z-10 flex min-w-0 flex-col gap-4">
-          <label className="sr-only" htmlFor="event-q">
-            {t("search")}
-          </label>
-          <Input
-            id="event-q"
-            name="q"
-            type="search"
-            form="event-filters"
-            defaultValue={query.q ?? ""}
-            placeholder={t("search")}
-          />
-          {active.length > 0 ? (
-            <ul className="flex flex-wrap gap-2">
-              {active.map((key) => (
-                <li key={key}>
-                  <Link
-                    href={queryString(query, { [key]: undefined, page: 1 })}
-                    className="inline-flex"
-                    aria-label={`${t("clearFilter")}: ${chipLabel(key)}`}
-                  >
-                    <Tag>
-                      <span aria-hidden="true">{chipLabel(key)} ×</span>
-                    </Tag>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <aside className="flex min-w-0 flex-col gap-5 lg:col-start-2 lg:row-start-1">
-            <h2 className="t-h3 hidden lg:block">{t("filters")}</h2>
-            <form id="event-filters" action="" className="flex flex-col gap-4">
-              <FilterShell
-                count={active.length}
-                filtersLabel={t("filters")}
-                closeLabel={t("closeFilters")}
+    <main className="px-4 py-6 md:px-6 md:py-8">
+      <div className="mx-auto grid max-w-[1180px] items-start gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="flex min-w-0 flex-col gap-4">
+          <header className="flex flex-wrap items-center gap-3">
+            <h1 className="mr-auto text-[22px] font-semibold tracking-tight">
+              {t("v2.title")}
+            </h1>
+            <Link
+              href="/chat"
+              {...navForward}
+              className="flex min-h-10 items-center rounded-xl border border-line-strong px-4 text-sm font-medium hover:bg-surface"
+            >
+              {t("v2.pickWithSpoki")}
+            </Link>
+          </header>
+          <div className="flex flex-wrap items-center gap-2">
+            <nav
+              aria-label={t("format")}
+              className="flex gap-1 rounded-xl border border-line bg-surface-2 p-1"
+            >
+              <Link
+                href={queryString(query, { format: undefined, page: 1 })}
+                aria-current={!query.format ? "page" : undefined}
+                className={seg(!query.format)}
               >
+                {t("v2.all")}
+              </Link>
+              {(["online", "offline"] as const).map((format) => (
+                <Link
+                  key={format}
+                  href={queryString(query, { format, page: 1 })}
+                  aria-current={query.format === format ? "page" : undefined}
+                  className={seg(query.format === format)}
+                >
+                  {t(`formats.${format}`)}
+                </Link>
+              ))}
+            </nav>
+            <nav
+              aria-label={t("topic")}
+              className="flex max-w-full gap-1 overflow-x-auto rounded-xl border border-line bg-surface-2 p-1"
+            >
+              <Link
+                href={queryString(query, { topic: undefined, page: 1 })}
+                aria-current={!query.topic ? "page" : undefined}
+                className={seg(!query.topic)}
+              >
+                {t("anyTopic")}
+              </Link>
+              {topics.map((topic) => (
+                <Link
+                  key={topic}
+                  href={queryString(query, { topic, page: 1 })}
+                  aria-current={query.topic === topic ? "page" : undefined}
+                  className={seg(query.topic === topic)}
+                >
+                  {t(`topics.${topic}`)}
+                </Link>
+              ))}
+            </nav>
+            <details className="relative">
+              <summary
+                className={`flex h-9 cursor-pointer list-none items-center rounded-full border px-3.5 text-sm hover:border-fg-subtle ${active.length > 0 ? "border-accent bg-surface-2" : "border-line-strong bg-surface"}`}
+              >
+                {active.length > 0
+                  ? `${t("v2.more")} · ${active.length}`
+                  : t("v2.more")}
+              </summary>
+              <form
+                id="event-filters"
+                action=""
+                className="absolute top-11 left-0 z-30 grid w-[min(92vw,560px)] gap-3 rounded-2xl border border-line-strong bg-surface p-4 shadow-xl sm:grid-cols-2"
+              >
+                <Field label={t("search")} className="sm:col-span-2">
+                  <Input
+                    name="q"
+                    type="search"
+                    defaultValue={query.q ?? ""}
+                    placeholder={t("search")}
+                  />
+                </Field>
+                {query.format ? (
+                  <input type="hidden" name="format" value={query.format} />
+                ) : null}
                 <Field label={t("topic")}>
                   <Select name="topic" defaultValue={query.topic ?? ""}>
                     <option value="">{t("anyTopic")}</option>
@@ -143,16 +179,6 @@ export async function EventsPageV2({
                     {EVENT_KINDS.map((kind) => (
                       <option key={kind} value={kind}>
                         {t(`kinds.${kind}`)}
-                      </option>
-                    ))}
-                  </Select>
-                </Field>
-                <Field label={t("format")}>
-                  <Select name="format" defaultValue={query.format ?? ""}>
-                    <option value="">{t("anyFormat")}</option>
-                    {EVENT_FORMATS.map((format) => (
-                      <option key={format} value={format}>
-                        {t(`formats.${format}`)}
                       </option>
                     ))}
                   </Select>
@@ -180,16 +206,35 @@ export async function EventsPageV2({
                 <Field label={t("to")}>
                   <Input type="date" name="to" defaultValue={query.to ?? ""} />
                 </Field>
-                <Button type="submit">{t("applyFilters")}</Button>
-              </FilterShell>
-            </form>
-          </aside>
-          <section
-            aria-label={t("title")}
-            className="flex min-w-0 flex-col gap-4 lg:col-start-1 lg:row-span-2 lg:row-start-1"
-          >
+                <Button type="submit" className="sm:col-span-2">
+                  {t("applyFilters")}
+                </Button>
+              </form>
+            </details>
+          </div>
+          {active.filter((key) => key !== "format" && key !== "topic").length >
+          0 ? (
+            <ul className="flex flex-wrap gap-2">
+              {active
+                .filter((key) => key !== "format" && key !== "topic")
+                .map((key) => (
+                  <li key={key}>
+                    <Link
+                      href={queryString(query, { [key]: undefined, page: 1 })}
+                      className="inline-flex"
+                      aria-label={`${t("clearFilter")}: ${chipLabel(key)}`}
+                    >
+                      <Tag>
+                        <span aria-hidden="true">{chipLabel(key)} ×</span>
+                      </Tag>
+                    </Link>
+                  </li>
+                ))}
+            </ul>
+          ) : null}
+          <section aria-label={t("v2.title")} className="flex flex-col gap-2.5">
             {items.length > 0 ? (
-              <ul className="grid gap-4">
+              <ul className="flex flex-col gap-2.5">
                 {items.map((event) => (
                   <li key={event.id}>
                     <EventCardV2 event={event} locale={locale} />
@@ -224,22 +269,26 @@ export async function EventsPageV2({
               </nav>
             ) : null}
           </section>
-          <section
-            aria-label={t("networking")}
-            className="flex flex-col gap-4 rounded-lg border border-line bg-surface p-4 md:p-5 lg:col-start-2 lg:row-start-2"
-          >
-            <p className="t-body-s text-fg-muted">{t("networking")}</p>
-            <ButtonLink
-              href="/chat"
-              variant="secondary"
-              className="w-full"
-              {...navForward}
-            >
-              {t("askSpoki")}
-            </ButtonLink>
-          </section>
         </div>
-      </Container>
+        <aside className="flex min-w-0 flex-col gap-3">
+          <section className="flex gap-3 rounded-[18px] border border-line bg-surface p-4">
+            <span
+              aria-hidden="true"
+              className="mt-1 size-2 shrink-0 rounded-full bg-accent"
+            />
+            <div className="flex min-w-0 flex-col gap-3">
+              <p className="text-sm text-fg-muted">{t("networking")}</p>
+              <Link
+                href="/chat"
+                {...navForward}
+                className="self-start text-sm font-medium text-accent"
+              >
+                {t("v2.pickWithSpoki")} →
+              </Link>
+            </div>
+          </section>
+        </aside>
+      </div>
     </main>
   );
 }

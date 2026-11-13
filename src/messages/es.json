@@ -4156,6 +4156,13 @@
     }
   },
   "events": {
+    "v2": {
+      "title": "Eventos",
+      "pickWithSpoki": "Elegir con Spoki",
+      "all": "Todos",
+      "more": "Más filtros",
+      "details": "Detalles"
+    },
     "viewEvent": "Abrir evento",
     "askSpoki": "Buscar eventos con Spoki",
     "title": "Eventos Web3 y tech",

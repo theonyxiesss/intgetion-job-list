@@ -4156,6 +4156,13 @@
     }
   },
   "events": {
+    "v2": {
+      "title": "Мероприятия",
+      "pickWithSpoki": "Подобрать со Spoki",
+      "all": "Все",
+      "more": "Ещё фильтры",
+      "details": "Подробнее"
+    },
     "viewEvent": "Открыть событие",
     "askSpoki": "Подобрать события со Spoki",
     "title": "События Web3 и IT",
