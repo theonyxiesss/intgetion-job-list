@@ -143,6 +143,14 @@
     "ogAlt": "INTGETION Job List — lavoro da remoto nel Web3"
   },
   "nav": {
+    "hint": {
+      "hiring": "Candidature, candidati, fasi",
+      "findJobs": "Offerte scelte con Spoki",
+      "freelance": "Servizi a prezzo fisso",
+      "taskBoard": "Incarichi dai clienti",
+      "payments": "Piani e assunzioni pagate",
+      "cryptoWallet": "Paga in cripto"
+    },
     "hiring": "Assunzioni",
     "sections": "Sezioni",
     "recentChats": "Chat recenti",

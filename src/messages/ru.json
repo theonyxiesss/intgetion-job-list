@@ -143,6 +143,14 @@
     "ogAlt": "INTGETION Job List — удалённая работа в Web3"
   },
   "nav": {
+    "hint": {
+      "hiring": "Отклики, кандидаты, этапы",
+      "findJobs": "Подбор вакансий со Spoki",
+      "freelance": "Готовые услуги с ценой",
+      "taskBoard": "Задачи от заказчиков",
+      "payments": "Тарифы и оплаченные наймы",
+      "cryptoWallet": "Оплата криптовалютой"
+    },
     "hiring": "Найм",
     "sections": "Разделы",
     "recentChats": "Недавние чаты",

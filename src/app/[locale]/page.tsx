@@ -185,7 +185,7 @@ export default async function HomePage({
             <Link
               key={key}
               href={href}
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line px-4 text-sm text-fg-muted transition-colors hover:border-line-strong hover:text-fg"
+              className="inline-flex min-h-[42px] items-center gap-2 rounded-[20px] border border-line-strong px-4 text-sm text-fg-muted transition-colors hover:border-fg-subtle hover:text-fg"
             >
               <Glyph size={16} aria-hidden="true" />
               {t(`v2.${key}`)}

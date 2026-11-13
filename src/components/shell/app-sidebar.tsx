@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, usePathname } from "@/i18n/navigation";
 import { Logo } from "@/components/ui/logo";
 import { LanguagePicker } from "./language-picker";
@@ -11,6 +11,18 @@ import {
   sidebarItems,
   type SidebarIcon,
 } from "./app-sidebar-items";
+
+/** Icons of flyout items, by address (mockup flyouts). */
+const CHILD_ICONS: Record<string, string> = {
+  "/employer/jobs":
+    "M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21c1-4 4-6 7-6s6 2 7 6M17 11a3 3 0 1 0 0-6M22 21c-.6-2.6-2-4.3-4-5",
+  "/jobs": "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4",
+  "/freelance": "M4 7h16M4 12h10M4 17h7",
+  "/freelance/tasks": "M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01",
+  "/employer/billing": "M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6",
+  "/billing/crypto":
+    "M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1zM4 7l11-3v3M16 13h.01",
+};
 
 /** Labels resolved on the server: message key -> text (UI_V2). */
 export type AppSidebarLabels = Record<string, string>;
@@ -70,18 +82,45 @@ export function AppSidebar({
 }) {
   const pathname = usePathname();
   const t = (key: string) => labels[key] ?? key;
-  const [open, setOpen] = useState<string | null>(() => {
-    const active = sidebarItems.find(
-      (item) => isGroup(item) && groupActive(pathname, item),
-    );
-    return active ? active.label : null;
-  });
+  // The mockup's flyout: a group opens a panel to the right of the menu.
+  const [open, setOpen] = useState<{
+    label: string;
+    top: number;
+    left: number;
+  } | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
+    setOpen(null);
+  }
+  useEffect(() => {
+    if (!open) return;
+    const close = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (panelRef.current?.contains(target)) return;
+      if ((target as Element).closest?.("[data-flyout-trigger]")) return;
+      setOpen(null);
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(null);
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [open]);
+  const openGroup = sidebarItems.find(
+    (item) => isGroup(item) && item.label === open?.label,
+  );
 
   return (
     <nav
       aria-label={t("nav.rail")}
       data-sidebar
-      className="sticky top-0 hidden h-dvh w-[248px] shrink-0 flex-col gap-4 overflow-y-auto border-r border-line bg-surface px-3 py-3.5 md:flex"
+      className="sticky top-0 hidden h-dvh w-[280px] shrink-0 flex-col gap-4 overflow-y-auto border-r border-line bg-surface px-3 py-3.5 md:flex"
     >
       <div className="flex items-center justify-between px-1.5 py-1">
         <Link href="/" className="flex items-center">
@@ -115,51 +154,81 @@ export function AppSidebar({
               </li>
             );
           }
-          const expanded = open === item.label;
+          const expanded = open?.label === item.label;
           const inside = groupActive(pathname, item);
           const panelId = `sidebar-${item.icon}`;
           return (
             <li key={item.label}>
               <button
                 type="button"
+                data-flyout-trigger
                 aria-expanded={expanded}
                 aria-controls={panelId}
-                onClick={() => setOpen(expanded ? null : item.label)}
-                className={`${ROW} w-full text-left ${inside ? ROW_ACTIVE : ""}`}
+                onClick={(event) => {
+                  if (expanded) return setOpen(null);
+                  const box = event.currentTarget.getBoundingClientRect();
+                  setOpen({
+                    label: item.label,
+                    top: Math.min(box.top - 8, window.innerHeight - 340),
+                    left: box.right + 12,
+                  });
+                }}
+                className={`${ROW} w-full text-left ${inside || expanded ? ROW_ACTIVE : ""}`}
               >
                 <Stroke d={PATHS[item.icon]} />
                 <span className="flex-1">{t(item.label)}</span>
-                <span
-                  className={`transition-transform ${expanded ? "rotate-90" : ""}`}
-                >
-                  <Stroke d="M9 6l6 6-6 6" size={14} />
-                </span>
+                <Stroke d="M9 6l6 6-6 6" size={14} />
               </button>
-              {expanded && (
-                <ul
-                  id={panelId}
-                  className="mt-0.5 ml-[34px] flex flex-col gap-0.5 border-l border-line pl-2"
-                >
-                  {item.children.map((child) => {
-                    const on = pathname === child.href;
-                    return (
-                      <li key={child.href}>
-                        <Link
-                          href={child.href}
-                          aria-current={on ? "page" : undefined}
-                          className={`flex min-h-9 items-center rounded-lg px-2.5 text-sm hover:bg-surface-2 ${on ? "bg-surface-2 text-fg" : "text-fg-muted"}`}
-                        >
-                          {t(child.label)}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
             </li>
           );
         })}
       </ul>
+
+      {open && openGroup && isGroup(openGroup) ? (
+        <div
+          ref={panelRef}
+          id={`sidebar-${openGroup.icon}`}
+          style={{ top: Math.max(open.top, 8), left: open.left }}
+          className="fixed z-50 flex w-[290px] flex-col gap-0.5 rounded-2xl border border-line-strong bg-surface p-2 shadow-2xl"
+        >
+          {openGroup.children.map((child, index) => {
+            const on = pathname === child.href;
+            const next = openGroup.children[index + 1];
+            return (
+              <div key={child.href} className="flex flex-col">
+                <Link
+                  href={child.href}
+                  aria-current={on ? "page" : undefined}
+                  className={`flex min-h-10 items-start gap-3 rounded-xl px-3 py-2 hover:bg-surface-2 ${on ? "bg-surface-2" : ""} ${child.action ? "text-fg-muted" : ""}`}
+                >
+                  {child.action ? (
+                    <span aria-hidden="true" className="leading-6">
+                      +
+                    </span>
+                  ) : CHILD_ICONS[child.href] ? (
+                    <span className="mt-1 text-fg-subtle">
+                      <Stroke d={CHILD_ICONS[child.href]} size={16} />
+                    </span>
+                  ) : null}
+                  <span className="flex flex-col">
+                    <span className="text-sm leading-6 font-medium">
+                      {t(child.label)}
+                    </span>
+                    {child.hint ? (
+                      <span className="text-xs text-fg-subtle">
+                        {t(child.hint)}
+                      </span>
+                    ) : null}
+                  </span>
+                </Link>
+                {child.action || (next && !next.hint) ? (
+                  <span aria-hidden="true" className="mx-2 my-1 h-px bg-line" />
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
 
       {recent.length > 0 && (
         <div className="flex min-h-0 flex-col gap-0.5">

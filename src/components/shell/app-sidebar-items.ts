@@ -4,7 +4,13 @@
  */
 export type SidebarLink = { href: string; label: string; icon: SidebarIcon };
 export type SidebarGroup = SidebarLink & {
-  children: readonly { href: string; label: string }[];
+  /** `hint` is the grey line under a flyout item; `action` sits on top. */
+  children: readonly {
+    href: string;
+    label: string;
+    hint?: string;
+    action?: boolean;
+  }[];
 };
 export type SidebarItem = SidebarLink | SidebarGroup;
 
@@ -27,9 +33,9 @@ export const sidebarItems: readonly SidebarItem[] = [
     label: "nav.jobs",
     icon: "jobs",
     children: [
-      { href: "/jobs", label: "nav.findJobs" },
-      { href: "/post-job", label: "nav.postJob" },
-      { href: "/employer/jobs", label: "nav.hiring" },
+      { href: "/post-job", label: "nav.postJob", action: true },
+      { href: "/employer/jobs", label: "nav.hiring", hint: "nav.hint.hiring" },
+      { href: "/jobs", label: "nav.findJobs", hint: "nav.hint.findJobs" },
     ],
   },
   {
@@ -37,8 +43,16 @@ export const sidebarItems: readonly SidebarItem[] = [
     label: "nav.freelance",
     icon: "freelance",
     children: [
-      { href: "/freelance", label: "nav.freelance" },
-      { href: "/freelance/tasks", label: "nav.taskBoard" },
+      {
+        href: "/freelance",
+        label: "nav.freelance",
+        hint: "nav.hint.freelance",
+      },
+      {
+        href: "/freelance/tasks",
+        label: "nav.taskBoard",
+        hint: "nav.hint.taskBoard",
+      },
     ],
   },
   { href: "/campaigns", label: "nav.campaigns", icon: "ugc" },
@@ -52,8 +66,16 @@ export const sidebarItems: readonly SidebarItem[] = [
     label: "nav.finance",
     icon: "finance",
     children: [
-      { href: "/employer/billing", label: "nav.payments" },
-      { href: "/billing/crypto", label: "nav.cryptoWallet" },
+      {
+        href: "/employer/billing",
+        label: "nav.payments",
+        hint: "nav.hint.payments",
+      },
+      {
+        href: "/billing/crypto",
+        label: "nav.cryptoWallet",
+        hint: "nav.hint.cryptoWallet",
+      },
     ],
   },
 ];
@@ -89,7 +111,11 @@ export function sidebarLabelKeys(): string[] {
   ]);
   for (const item of sidebarItems) {
     keys.add(item.label);
-    if (isGroup(item)) for (const child of item.children) keys.add(child.label);
+    if (isGroup(item))
+      for (const child of item.children) {
+        keys.add(child.label);
+        if (child.hint) keys.add(child.hint);
+      }
   }
   return [...keys];
 }
