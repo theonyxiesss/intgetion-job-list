@@ -3492,6 +3492,18 @@
   },
   "billing": {
     "v2": {
+      "title": "Mes finances",
+      "free": "Gratuit",
+      "noEnd": "Sans fin",
+      "hires": "Recrutements payés",
+      "hiresText": "Chacun met une offre en avant 30 jours.",
+      "operations": "Opérations",
+      "noOperations": "Aucun paiement pour l’instant.",
+      "subscription": "Abonnement",
+      "changePlan": "Changer d’offre",
+      "methods": "Moyens de paiement",
+      "methodsText": "Le paiement passe par un portefeuille crypto lié au compte.",
+      "wallet": "Portefeuille crypto",
       "back": "Retour aux finances",
       "secure": "Paiement sécurisé",
       "companyPlan": "Offre de l’entreprise",

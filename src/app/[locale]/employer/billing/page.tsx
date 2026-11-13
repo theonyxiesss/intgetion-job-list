@@ -46,23 +46,23 @@ export default async function EmployerBillingPage({
     const card = "rounded-[18px] border border-line bg-surface p-5";
     const companyPlan =
       plan === "team" ? t("team") : plan === "hire" ? t("hire") : t("start");
+    const personalPlan =
+      personal.candidatePlan === "free"
+        ? t("v2.free")
+        : t(personal.candidatePlan);
     const showCompany =
       !companyContext.companies.length || Boolean(companyContext.selected);
+    const hires = companyBilling?.hires ?? [];
     return (
       <main className="flex-1 px-4 py-6 md:px-6 md:py-8">
-        <div className="mx-auto flex max-w-[1180px] flex-col gap-5">
+        <div className="mx-auto flex max-w-[1180px] flex-col gap-4">
           <header className="flex flex-wrap items-center gap-3">
-            <div className="flex min-w-0 flex-1 flex-col gap-1">
-              {companyContext.selected ? (
-                <span className="text-sm text-fg-muted">
-                  {companyContext.selected.name}
-                </span>
-              ) : null}
-              <h1 className="text-[22px] font-semibold">{t("title")}</h1>
-            </div>
+            <h1 className="mr-auto text-[22px] font-semibold tracking-tight">
+              {t("v2.title")}
+            </h1>
             <Link
               href="/pricing"
-              className="flex min-h-10 items-center rounded-xl border border-line-strong px-3.5 text-sm"
+              className="flex min-h-10 items-center rounded-xl border border-line-strong px-3.5 text-sm hover:bg-surface"
             >
               {nav("pricing")}
             </Link>
@@ -79,64 +79,111 @@ export default async function EmployerBillingPage({
               text={employer("selectCompanyText")}
             />
           ) : null}
-          <div className="grid gap-3 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)]">
+            <section className={`${card} flex flex-col gap-3`}>
+              <span className="text-sm text-fg-muted">
+                {t("v2.personalPlan")}
+              </span>
+              <span className="text-[32px] leading-none font-semibold tracking-tight">
+                {personalPlan}
+              </span>
+              <span className="text-sm text-fg-subtle">
+                {personal.candidateUntil
+                  ? t("planUntil", {
+                      date: personal.candidateUntil.slice(0, 10),
+                    })
+                  : t("v2.noEnd")}
+              </span>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Link
+                  href="/billing/crypto?plan=plus"
+                  className="flex min-h-10 items-center rounded-xl bg-fg px-4 text-sm font-semibold text-bg hover:opacity-90"
+                >
+                  {t("v2.pay")}
+                </Link>
+              </div>
+            </section>
             {showCompany ? (
               <section className={`${card} flex flex-col gap-2`}>
                 <span className="text-sm text-fg-muted">
                   {t("v2.companyPlan")}
                 </span>
                 <span className="text-2xl font-semibold">{companyPlan}</span>
-                {companyBilling?.teamUntil ? (
-                  <span className="text-sm text-fg-subtle">
-                    {t("teamUntil", {
-                      date: companyBilling.teamUntil.slice(0, 10),
-                    })}
-                  </span>
-                ) : null}
+                <span className="text-sm text-fg-subtle">
+                  {companyBilling?.teamUntil
+                    ? t("teamUntil", {
+                        date: companyBilling.teamUntil.slice(0, 10),
+                      })
+                    : (companyContext.selected?.name ?? "")}
+                </span>
               </section>
             ) : null}
             <section className={`${card} flex flex-col gap-2`}>
-              <span className="text-sm text-fg-muted">
-                {t("v2.personalPlan")}
+              <span className="text-sm text-fg-muted">{t("v2.hires")}</span>
+              <span className="text-2xl font-semibold">{hires.length}</span>
+              <span className="text-sm text-fg-subtle">
+                {t("v2.hiresText")}
               </span>
-              <span className="text-2xl font-semibold">
-                {t(personal.candidatePlan)}
-              </span>
-              {personal.candidateUntil ? (
-                <span className="text-sm text-fg-subtle">
-                  {t("planUntil", {
-                    date: personal.candidateUntil.slice(0, 10),
-                  })}
-                </span>
-              ) : null}
             </section>
           </div>
-          {companyBilling && companyBilling.hires.length > 0 ? (
-            <section className={`${card} flex flex-col gap-1`}>
-              <h2 className="pb-2 text-base font-semibold">{t("hire")}</h2>
-              <ul className="flex flex-col">
-                {companyBilling.hires.map((hire) => (
-                  <li
-                    key={hire.jobId}
-                    className="border-t border-line py-3 text-sm"
-                  >
-                    {t("hireUntil", { date: hire.validUntil.slice(0, 10) })}
-                  </li>
-                ))}
-              </ul>
+          <div className="grid items-start gap-3 lg:grid-cols-[minmax(0,1fr)_340px]">
+            <section className={`${card} flex flex-col gap-2`}>
+              <h2 className="text-[15px] font-semibold">
+                {t("v2.operations")}
+              </h2>
+              {hires.length > 0 ? (
+                <ul className="flex flex-col">
+                  {hires.map((hire) => (
+                    <li
+                      key={hire.jobId}
+                      className="flex items-center gap-3 border-t border-line py-3 first:border-t-0"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-fg-muted"
+                      >
+                        ↓
+                      </span>
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <span className="text-sm font-medium">{t("hire")}</span>
+                        <span className="text-xs text-fg-subtle">
+                          {t("hireUntil", {
+                            date: hire.validUntil.slice(0, 10),
+                          })}
+                        </span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-fg-muted">{t("v2.noOperations")}</p>
+              )}
             </section>
-          ) : null}
-          <section className={`${card} flex flex-wrap items-center gap-3`}>
-            <p className="min-w-0 flex-[1_1_320px] text-sm text-fg-muted">
-              {t("startHint")}
-            </p>
-            <Link
-              href="/billing/crypto?plan=plus"
-              className="flex min-h-11 items-center rounded-xl bg-accent px-4 text-sm font-semibold text-accent-fg"
-            >
-              {t("v2.pay")}
-            </Link>
-          </section>
+            <aside className="flex flex-col gap-3">
+              <section className={`${card} flex flex-col gap-3`}>
+                <h2 className="text-[15px] font-semibold">
+                  {t("v2.subscription")}
+                </h2>
+                <p className="text-sm text-fg-muted">{t("startHint")}</p>
+                <Link
+                  href="/pricing"
+                  className="flex min-h-10 items-center justify-center rounded-xl border border-line-strong text-sm font-medium hover:bg-surface-2"
+                >
+                  {t("v2.changePlan")}
+                </Link>
+              </section>
+              <section className={`${card} flex flex-col gap-3`}>
+                <h2 className="text-[15px] font-semibold">{t("v2.methods")}</h2>
+                <p className="text-sm text-fg-muted">{t("v2.methodsText")}</p>
+                <Link
+                  href="/account#security"
+                  className="flex min-h-10 items-center justify-center rounded-xl border border-line-strong text-sm font-medium hover:bg-surface-2"
+                >
+                  {t("v2.wallet")}
+                </Link>
+              </section>
+            </aside>
+          </div>
         </div>
       </main>
     );
