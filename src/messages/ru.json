@@ -1,5 +1,25 @@
 {
   "jobs": {
+    "v2": {
+      "title": "Вакансии",
+      "all": "Все",
+      "forMe": "Для меня",
+      "saved": "Сохранённые",
+      "searchPlaceholder": "Должность, навык или компания",
+      "pickWithSpoki": "Подобрать со Spoki",
+      "anyFormat": "Любой формат",
+      "level": "Уровень",
+      "employment": "Занятость",
+      "posted": "Дата",
+      "more": "Ещё фильтры",
+      "reset": "Сбросить",
+      "count": "{count, plural, one {# вакансия} few {# вакансии} many {# вакансий} other {# вакансии}}",
+      "apply": "Откликнуться",
+      "salary": "Зарплата",
+      "zone": "Пояс",
+      "skills": "Навыки",
+      "about": "О вакансии"
+    },
     "moreFilters": "Ещё фильтры",
     "aside": {
       "spokiTitle": "Spoki подберёт вакансии",

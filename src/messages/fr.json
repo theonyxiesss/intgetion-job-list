@@ -1,5 +1,25 @@
 {
   "jobs": {
+    "v2": {
+      "title": "Offres",
+      "all": "Toutes",
+      "forMe": "Pour moi",
+      "saved": "Enregistrées",
+      "searchPlaceholder": "Poste, compétence ou entreprise",
+      "pickWithSpoki": "Trouver avec Spoki",
+      "anyFormat": "Tout format",
+      "level": "Niveau",
+      "employment": "Contrat",
+      "posted": "Date",
+      "more": "Plus de filtres",
+      "reset": "Réinitialiser",
+      "count": "{count, plural, one {# offre} other {# offres}}",
+      "apply": "Postuler",
+      "salary": "Salaire",
+      "zone": "Fuseau",
+      "skills": "Compétences",
+      "about": "À propos du poste"
+    },
     "moreFilters": "Plus de filtres",
     "aside": {
       "spokiTitle": "Spoki trouve des offres pour vous",

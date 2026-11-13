@@ -1,5 +1,25 @@
 {
   "jobs": {
+    "v2": {
+      "title": "Jobs",
+      "all": "Alle",
+      "forMe": "Für mich",
+      "saved": "Gespeichert",
+      "searchPlaceholder": "Position, Skill oder Firma",
+      "pickWithSpoki": "Mit Spoki finden",
+      "anyFormat": "Jedes Format",
+      "level": "Level",
+      "employment": "Anstellung",
+      "posted": "Datum",
+      "more": "Weitere Filter",
+      "reset": "Zurücksetzen",
+      "count": "{count, plural, one {# Job} other {# Jobs}}",
+      "apply": "Bewerben",
+      "salary": "Gehalt",
+      "zone": "Zeitzone",
+      "skills": "Skills",
+      "about": "Über die Stelle"
+    },
     "moreFilters": "Weitere Filter",
     "aside": {
       "spokiTitle": "Spoki findet Jobs für Sie",

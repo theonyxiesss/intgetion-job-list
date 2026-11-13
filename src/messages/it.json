@@ -1,5 +1,25 @@
 {
   "jobs": {
+    "v2": {
+      "title": "Offerte",
+      "all": "Tutte",
+      "forMe": "Per me",
+      "saved": "Salvate",
+      "searchPlaceholder": "Ruolo, competenza o azienda",
+      "pickWithSpoki": "Scegli con Spoki",
+      "anyFormat": "Qualsiasi formato",
+      "level": "Livello",
+      "employment": "Contratto",
+      "posted": "Data",
+      "more": "Altri filtri",
+      "reset": "Azzera",
+      "count": "{count, plural, one {# offerta} other {# offerte}}",
+      "apply": "Candidati",
+      "salary": "Stipendio",
+      "zone": "Fuso",
+      "skills": "Competenze",
+      "about": "Sull’offerta"
+    },
     "moreFilters": "Altri filtri",
     "aside": {
       "spokiTitle": "Spoki trova offerte per te",

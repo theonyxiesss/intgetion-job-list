@@ -1,5 +1,25 @@
 {
   "jobs": {
+    "v2": {
+      "title": "Jobs",
+      "all": "All",
+      "forMe": "For me",
+      "saved": "Saved",
+      "searchPlaceholder": "Job title, skill or company",
+      "pickWithSpoki": "Pick with Spoki",
+      "anyFormat": "Any format",
+      "level": "Level",
+      "employment": "Employment",
+      "posted": "Posted",
+      "more": "More filters",
+      "reset": "Reset",
+      "count": "{count, plural, one {# job} other {# jobs}}",
+      "apply": "Apply",
+      "salary": "Salary",
+      "zone": "Time zone",
+      "skills": "Skills",
+      "about": "About the job"
+    },
     "moreFilters": "More filters",
     "aside": {
       "spokiTitle": "Let Spoki find jobs",

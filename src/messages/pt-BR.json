@@ -1,5 +1,25 @@
 {
   "jobs": {
+    "v2": {
+      "title": "Vagas",
+      "all": "Todas",
+      "forMe": "Para mim",
+      "saved": "Salvas",
+      "searchPlaceholder": "Cargo, habilidade ou empresa",
+      "pickWithSpoki": "Escolher com o Spoki",
+      "anyFormat": "Qualquer formato",
+      "level": "Nível",
+      "employment": "Contratação",
+      "posted": "Data",
+      "more": "Mais filtros",
+      "reset": "Limpar",
+      "count": "{count, plural, one {# vaga} other {# vagas}}",
+      "apply": "Candidatar-se",
+      "salary": "Salário",
+      "zone": "Fuso",
+      "skills": "Habilidades",
+      "about": "Sobre a vaga"
+    },
     "moreFilters": "Mais filtros",
     "aside": {
       "spokiTitle": "O Spoki encontra vagas para você",

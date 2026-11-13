@@ -9,6 +9,7 @@ import {
 import { Link } from "@/i18n/navigation";
 import { Button, buttonClass } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/feedback";
+import { PillSelect } from "@/components/ui/pill-select";
 import { Input, Select } from "@/components/ui/input";
 import { Tag } from "@/components/ui/badge";
 import { navForward } from "@/components/ui/page-transition";
@@ -29,17 +30,8 @@ import {
   listSearchSkillOptions,
   searchJobs,
 } from "@/modules/jobs/service";
-import { FilterShell } from "@/modules/jobs/ui/filter-shell";
-import { QuickFilters } from "@/modules/jobs/ui/quick-filters";
 import { RememberFilters } from "@/modules/jobs/ui/remember-filters";
-import {
-  RECENT_JOBS_COOKIE,
-  parseRecentJobs,
-} from "@/modules/jobs/ui/recent-jobs";
-import { RecentlyViewed } from "@/modules/jobs/ui/recently-viewed";
 import { SaveSearchButton } from "@/modules/saved-searches/ui/save-search-button";
-import { cookies } from "next/headers";
-import { CONSENT_COOKIE, consentAllows, consentInForce } from "@/lib/consent";
 import { RouteMessages } from "@/components/shell/route-messages";
 
 const categories = JOB_CATEGORIES;
@@ -123,23 +115,11 @@ export async function JobsPageV2({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("jobs");
-  const nav = await getTranslations("nav");
-  const savedJobsText = await getTranslations("savedJobs");
-  const jobForm = await getTranslations("postJob");
-  const chatText = await getTranslations("chat");
   const actions = await getTranslations("jobActions");
   const categoryNames = await getTranslations("categories");
   const markers = await getTranslations("markers");
   let signedIn = false;
   const raw = await searchParams;
-  // "You viewed" exists only with preferences consent (D228).
-  const jar = await cookies();
-  const recentIds = consentAllows(
-    consentInForce(jar.get(CONSENT_COOKIE)?.value),
-    "preferences",
-  )
-    ? parseRecentJobs(jar.get(RECENT_JOBS_COOKIE)?.value)
-    : [];
   const parsed = jobSearchQuery.safeParse(raw);
   let viewer: Parameters<typeof searchJobs>[2] = { hidden: null };
   let viewerId: string | null = null;
@@ -204,9 +184,11 @@ export async function JobsPageV2({
   return (
     <RouteMessages namespaces={["savedSearches"]}>
       <main className="min-h-[calc(100dvh-4rem)] bg-bg">
-        <header className="v2-jobs-header sticky top-16 z-20 flex flex-col gap-3 border-b border-line bg-bg px-4 py-4 md:px-6 lg:top-0">
+        <header className="v2-jobs-header sticky top-16 z-20 flex flex-col gap-4 border-b border-line bg-bg px-4 pt-5 pb-4 md:px-6 lg:top-0">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="t-h3 mr-auto">{t("title")}</h1>
+            <h1 className="mr-auto text-[22px] font-semibold tracking-tight">
+              {t("v2.title")}
+            </h1>
             <nav
               aria-label={t("filters")}
               className="flex gap-1 rounded-xl border border-line bg-surface-2 p-1"
@@ -214,121 +196,132 @@ export async function JobsPageV2({
               <Link
                 href={without(raw, "selected")}
                 aria-current="page"
-                className="rounded-lg bg-surface px-3 py-1.5 text-sm"
+                className="rounded-lg bg-surface px-3 py-1.5 text-sm font-medium"
               >
-                {nav("jobs")}
+                {t("v2.all")}
               </Link>
               <Link
                 href="/matches"
                 className="rounded-lg px-3 py-1.5 text-sm text-fg-muted hover:text-fg"
               >
-                {nav("matches")}
+                {t("v2.forMe")}
               </Link>
               <Link
                 href="/saved-jobs"
                 className="rounded-lg px-3 py-1.5 text-sm text-fg-muted hover:text-fg"
               >
-                {savedJobsText("title")}
+                {t("v2.saved")}
               </Link>
             </nav>
-            <Link href="/employer/jobs/new" className={buttonClass("primary")}>
-              {nav("postJob")}
-            </Link>
           </div>
           <form id="catalog-filters" action="" className="flex flex-col gap-3">
             <label className="sr-only" htmlFor="job-q">
               {t("search")}
             </label>
-            <div className="flex flex-wrap gap-2">
-              <Input
+            <div className="flex min-h-12 items-center gap-2 rounded-2xl border border-line bg-surface pr-1.5 pl-4 focus-within:border-line-strong">
+              <svg
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                strokeLinecap="round"
+                aria-hidden="true"
+                className="shrink-0 text-fg-subtle"
+              >
+                <path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4" />
+              </svg>
+              <input
                 id="job-q"
                 name="q"
+                type="search"
                 defaultValue={text(raw, "q")}
-                placeholder={t("search")}
-                className="min-w-0 flex-1"
+                placeholder={t("v2.searchPlaceholder")}
+                className="min-h-11 min-w-0 flex-1 bg-transparent text-[15px] placeholder:text-fg-subtle focus-visible:outline-none"
               />
-              <Link href="/chat" className={buttonClass("secondary")}>
-                {t("talkToAssistant")}
+              <Link
+                href="/chat"
+                className="flex min-h-9 shrink-0 items-center gap-1.5 rounded-xl px-3 text-sm font-medium hover:bg-surface-2"
+              >
+                <span aria-hidden="true">+</span>
+                {t("v2.pickWithSpoki")}
               </Link>
             </div>
-            <FilterShell
-              layout="grid"
-              count={activeCount(raw)}
-              filtersLabel={t("filters")}
-              closeLabel={t("closeFilters")}
-            >
-              <Select
+            <div className="flex flex-wrap items-center gap-2">
+              <PillSelect
+                aria-label={t("format")}
+                name="workFormat"
+                defaultValue={text(raw, "workFormat")}
+                active={Boolean(text(raw, "workFormat"))}
+              >
+                <option value="">{t("v2.anyFormat")}</option>
+                <option value="remote">{t("remote")}</option>
+                <option value="hybrid">{t("hybrid")}</option>
+                <option value="onsite">{t("onsite")}</option>
+              </PillSelect>
+              <PillSelect
                 aria-label={t("category")}
                 name="category"
                 defaultValue={text(raw, "category")}
+                active={Boolean(text(raw, "category"))}
               >
-                <option value="">{t("anyCategory")}</option>
+                <option value="">{t("category")}</option>
                 {categories.map((id) => (
                   <option key={id} value={id}>
                     {categoryNames(id)}
                   </option>
                 ))}
-              </Select>
-              <Select
-                aria-label={t("format")}
-                name="workFormat"
-                defaultValue={text(raw, "workFormat")}
-              >
-                <option value="">{t("any")}</option>
-                <option value="remote">{t("remote")}</option>
-                <option value="hybrid">{t("hybrid")}</option>
-                <option value="onsite">{t("onsite")}</option>
-              </Select>
-              <Select
-                aria-label={t("employment")}
-                name="employmentType"
-                defaultValue={text(raw, "employmentType")}
-              >
-                <option value="">{t("anyEmployment")}</option>
-                <option value="full_time">{t("full_time")}</option>
-                <option value="part_time">{t("part_time")}</option>
-                <option value="contract">{t("contract")}</option>
-                <option value="freelance">{t("freelance")}</option>
-                <option value="internship">{t("internship")}</option>
-              </Select>
-              <Select
+              </PillSelect>
+              <PillSelect
                 aria-label={markers("seniorityLabel")}
                 name="seniority"
                 defaultValue={text(raw, "seniority")}
+                active={Boolean(text(raw, "seniority"))}
               >
-                <option value="">{markers("anySeniority")}</option>
+                <option value="">{t("v2.level")}</option>
                 {SENIORITY_LEVELS.map((id) => (
                   <option key={id} value={id}>
                     {markers(`seniority.${id}`)}
                   </option>
                 ))}
-              </Select>
-              <Select
+              </PillSelect>
+              <PillSelect
+                aria-label={t("employment")}
+                name="employmentType"
+                defaultValue={text(raw, "employmentType")}
+                active={Boolean(text(raw, "employmentType"))}
+              >
+                <option value="">{t("v2.employment")}</option>
+                <option value="full_time">{t("full_time")}</option>
+                <option value="part_time">{t("part_time")}</option>
+                <option value="contract">{t("contract")}</option>
+                <option value="freelance">{t("freelance")}</option>
+                <option value="internship">{t("internship")}</option>
+              </PillSelect>
+              <PillSelect
                 aria-label={t("postedWithinLabel")}
                 name="postedWithin"
                 defaultValue={text(raw, "postedWithin")}
+                active={Boolean(text(raw, "postedWithin"))}
               >
-                <option value="">{t("anyDate")}</option>
+                <option value="">{t("v2.posted")}</option>
                 <option value="1">{t("day")}</option>
                 <option value="7">{t("week")}</option>
                 <option value="30">{t("monthPosted")}</option>
-              </Select>
-              <Select
-                aria-label={t("sort")}
-                name="sort"
-                defaultValue={text(raw, "sort") || "newest"}
+              </PillSelect>
+              <details
+                className="relative"
+                open={advancedCount(raw) > 0 ? undefined : undefined}
               >
-                <option value="newest">{t("newest")}</option>
-                <option value="relevance">{t("relevance")}</option>
-                <option value="salary">{t("highestSalary")}</option>
-              </Select>
-              <details className="lg:col-span-3" open={advancedCount(raw) > 0}>
-                <summary className="t-body-s flex min-h-11 cursor-pointer items-center text-fg-muted hover:text-fg">
+                <summary
+                  className={`flex h-9 cursor-pointer list-none items-center rounded-full border px-3.5 text-sm hover:border-fg-subtle ${advancedCount(raw) > 0 ? "border-accent bg-surface-2" : "border-line-strong bg-surface"}`}
+                >
                   {advancedCount(raw) > 0
-                    ? `${t("moreFilters")} (${advancedCount(raw)})`
-                    : t("moreFilters")}
+                    ? `${t("v2.more")} · ${advancedCount(raw)}`
+                    : t("v2.more")}
                 </summary>
-                <div className="grid gap-3 pt-3 lg:grid-cols-3">
+                <div className="absolute top-11 left-0 z-30 grid w-[min(92vw,640px)] gap-3 rounded-2xl border border-line-strong bg-surface p-4 shadow-xl sm:grid-cols-2">
                   <Select
                     aria-label={t("skillsFilter")}
                     name="skills"
@@ -422,22 +415,24 @@ export async function JobsPageV2({
                     <option value="gross">{t("gross")}</option>
                     <option value="net">{t("net")}</option>
                   </Select>
+                  <Button type="submit" className="sm:col-span-2">
+                    {t("applyFilters")}
+                  </Button>
                 </div>
               </details>
-              <Button type="submit" className="lg:justify-self-start">
+              {activeCount(raw) > 0 ? (
+                <Link
+                  href="/jobs"
+                  className="px-2 text-sm text-fg-muted hover:text-fg"
+                >
+                  {t("v2.reset")}
+                </Link>
+              ) : null}
+              <button type="submit" className="sr-only">
                 {t("applyFilters")}
-              </Button>
-            </FilterShell>
+              </button>
+            </div>
           </form>
-          <div className="flex flex-wrap items-center gap-2">
-            <QuickFilters signedIn={signedIn} />
-            <Link
-              className="text-sm text-fg-muted underline-offset-4 hover:underline"
-              href="/jobs"
-            >
-              {t("clearFilter")}
-            </Link>
-          </div>
           <RememberFilters
             query={
               activeCount(raw) > 0
@@ -446,9 +441,6 @@ export async function JobsPageV2({
             }
             label={t("restoreFilters")}
           />
-          {activeCount(raw) === 0 ? (
-            <RecentlyViewed ids={recentIds} locale={locale} />
-          ) : null}
           {activeCount(raw) > 0 && signedIn ? (
             <SaveSearchButton
               query={without(raw, "cursor").replace(/^\?/, "")}
@@ -466,11 +458,22 @@ export async function JobsPageV2({
             aria-label={t("title")}
             className="flex flex-col gap-2 border-r border-line p-3 md:p-4"
           >
-            <div className="flex items-center justify-between px-1 pb-1 text-sm text-fg-muted">
-              <span>
-                {chatText("work.summary.jobs", { count: result.items.length })}
-              </span>
-              <span>{t("newest")}</span>
+            <div className="flex items-center justify-between gap-2 px-1 pb-1 text-sm text-fg-muted">
+              <span>{t("v2.count", { count: result.items.length })}</span>
+              <label className="sr-only" htmlFor="job-sort">
+                {t("sort")}
+              </label>
+              <PillSelect
+                id="job-sort"
+                form="catalog-filters"
+                name="sort"
+                defaultValue={text(raw, "sort") || "newest"}
+                className="h-8 border-transparent bg-transparent text-fg-muted"
+              >
+                <option value="newest">{t("newest")}</option>
+                <option value="relevance">{t("relevance")}</option>
+                <option value="salary">{t("highestSalary")}</option>
+              </PillSelect>
             </div>
             {chips.length > 0 ? (
               <ul className="flex flex-wrap gap-2">
@@ -498,13 +501,11 @@ export async function JobsPageV2({
                       aria-current={
                         selectedJob?.id === job.id ? "true" : undefined
                       }
-                      className={`flex gap-3 rounded-xl border p-3 transition-colors hover:bg-surface-2 ${selectedJob?.id === job.id ? "border-accent bg-surface" : "border-line bg-bg"}`}
+                      className={`flex gap-3 rounded-2xl border p-3.5 transition-colors hover:bg-surface ${selectedJob?.id === job.id ? "border-line-strong bg-surface" : "border-line bg-bg"}`}
                     >
-                      <span className="mt-0.5">
-                        <CompanyMarkFor company={job.company} />
-                      </span>
+                      <JobAvatar company={job.company} />
                       <span className="flex min-w-0 flex-1 flex-col gap-1">
-                        <span className="flex justify-between gap-2 text-sm font-semibold">
+                        <span className="flex justify-between gap-2 text-[15px] font-semibold">
                           <span className="truncate">{job.title}</span>
                           {job.promoted ? (
                             <Badge tone="new">{t("promoted")}</Badge>
@@ -516,7 +517,7 @@ export async function JobsPageV2({
                             job.locationCountry ||
                             t("worldwide")}
                         </span>
-                        <span className="text-sm">
+                        <span className="text-sm font-medium">
                           {job.salaryMin
                             ? `${formatMoneyDto(job.salaryMin, intlLocale(locale))}${job.salaryMax ? ` – ${formatMoneyDto(job.salaryMax, intlLocale(locale))}` : ""} / ${t(job.salaryMin.period)}`
                             : t("salaryMissing")}
@@ -546,9 +547,11 @@ export async function JobsPageV2({
             {selectedJob ? (
               <>
                 <div className="flex flex-wrap items-start gap-4">
-                  <CompanyMarkFor company={selectedJob.company} size="page" />
+                  <JobAvatar company={selectedJob.company} large />
                   <div className="min-w-0 flex-1">
-                    <h2 className="t-h3">{selectedJob.title}</h2>
+                    <h2 className="text-[22px] leading-tight font-semibold tracking-tight">
+                      {selectedJob.title}
+                    </h2>
                     <Link
                       href={`/companies/${selectedJob.company.slug}`}
                       className="text-sm text-fg-muted underline-offset-4 hover:underline"
@@ -608,53 +611,46 @@ export async function JobsPageV2({
                     ) : null}
                     <Link
                       href={`/jobs/${selectedJob.id}`}
-                      className={buttonClass("primary")}
+                      className="flex min-h-11 items-center rounded-xl bg-fg px-5 text-sm font-semibold text-bg hover:opacity-90"
                     >
-                      {t("apply")}
+                      {t("v2.apply")}
                     </Link>
                   </div>
                 </div>
                 <dl className="grid grid-cols-2 gap-2 md:grid-cols-4">
                   {[
                     [
-                      t("salaryMin"),
+                      t("v2.salary"),
                       selectedJob.salaryMin
                         ? `${formatMoneyDto(selectedJob.salaryMin, intlLocale(locale))}${selectedJob.salaryMax ? ` – ${formatMoneyDto(selectedJob.salaryMax, intlLocale(locale))}` : ""}`
                         : t("salaryMissing"),
                     ],
-                    [t("format"), t(selectedJob.workFormat)],
-                    [t("employment"), t(selectedJob.employmentType)],
                     [
-                      markers("seniorityLabel"),
+                      t("v2.level"),
                       selectedJob.seniority
                         ? markers(`seniority.${selectedJob.seniority}`)
                         : "—",
                     ],
+                    [t("v2.employment"), t(selectedJob.employmentType)],
                     [
-                      t("country"),
-                      selectedJob.location?.trim() ||
-                        selectedJob.locationCountry ||
-                        t("worldwide"),
-                    ],
-                    [
-                      t("timezone"),
+                      t("v2.zone"),
                       selectedJob.timezoneRequired
                         ? `${selectedJob.timezoneRequired} · ${selectedJob.minOverlapHours}h`
-                        : "—",
+                        : t(selectedJob.workFormat),
                     ],
                   ].map(([label, value]) => (
                     <div
                       key={label}
-                      className="rounded-lg border border-line bg-surface p-3"
+                      className="rounded-xl border border-line bg-surface p-3"
                     >
-                      <dt className="text-xs text-fg-muted">{label}</dt>
-                      <dd className="mt-1 text-sm">{value}</dd>
+                      <dt className="text-xs text-fg-subtle">{label}</dt>
+                      <dd className="mt-1 text-sm font-semibold">{value}</dd>
                     </div>
                   ))}
                 </dl>
                 <section>
-                  <h3 className="t-label mb-2 text-fg-muted">
-                    {t("skillsFilter")}
+                  <h3 className="mb-2 text-[15px] font-semibold">
+                    {t("v2.skills")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {selectedJob.skills.slice(0, 6).map((skill) => (
@@ -664,8 +660,8 @@ export async function JobsPageV2({
                 </section>
                 {selectedJob.description ? (
                   <section>
-                    <h3 className="t-label mb-2 text-fg-muted">
-                      {jobForm("form.description")}
+                    <h3 className="mb-2 text-[15px] font-semibold">
+                      {t("v2.about")}
                     </h3>
                     <p className="whitespace-pre-wrap text-sm leading-7 text-fg-muted">
                       {markdownToPlain(publicJobText(selectedJob.description))}
@@ -680,5 +676,39 @@ export async function JobsPageV2({
         </div>
       </main>
     </RouteMessages>
+  );
+}
+
+const AVATAR_TONES = [
+  "bg-[#8ab4ff] text-[#0b0b0c]",
+  "bg-[#f2c46b] text-[#0b0b0c]",
+  "bg-[#c4a6ff] text-[#0b0b0c]",
+  "bg-[#7ee0b5] text-[#0b0b0c]",
+  "bg-[#ff9f8a] text-[#0b0b0c]",
+];
+
+/** The mockup's lettered square; a real logo wins when the company has one. */
+function JobAvatar({
+  company,
+  large = false,
+}: {
+  company: Parameters<typeof CompanyMarkFor>[0]["company"] & { name: string };
+  large?: boolean;
+}) {
+  if (company.logoPath) {
+    return (
+      <CompanyMarkFor company={company} size={large ? "page" : undefined} />
+    );
+  }
+  let hash = 0;
+  for (const char of company.name)
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  return (
+    <span
+      aria-hidden="true"
+      className={`flex shrink-0 items-center justify-center rounded-xl font-semibold ${AVATAR_TONES[hash % AVATAR_TONES.length]} ${large ? "size-12 text-lg" : "size-10"}`}
+    >
+      {company.name.trim().charAt(0).toUpperCase()}
+    </span>
   );
 }
