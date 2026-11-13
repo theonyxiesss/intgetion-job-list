@@ -45,10 +45,10 @@ export default async function ServicesPage({
         <div className="mx-auto flex max-w-[1180px] flex-col gap-6">
           <header className="flex flex-wrap items-end gap-6">
             <div className="flex min-w-0 flex-[1_1_520px] flex-col gap-3">
-              <p className="text-[13px] font-semibold tracking-[0.04em] text-accent uppercase">
+              <p className="text-xs font-semibold tracking-[0.06em] text-fg-muted uppercase">
                 {t("workspace")}
               </p>
-              <h1 className="max-w-[22ch] text-[34px] leading-tight font-semibold tracking-tight">
+              <h1 className="text-[30px] leading-tight font-semibold tracking-tight">
                 {t("title")}
               </h1>
               <p className="max-w-[64ch] text-[15px] leading-relaxed text-fg-muted">
@@ -58,13 +58,13 @@ export default async function ServicesPage({
             <div className="flex flex-wrap gap-2">
               <a
                 href="#brief"
-                className="flex min-h-11 items-center rounded-xl bg-accent px-4 text-sm font-semibold text-accent-fg"
+                className="flex min-h-11 items-center rounded-xl bg-fg px-4 text-sm font-semibold text-bg hover:opacity-90"
               >
                 {form.title}
               </a>
               <Link
                 href={{ pathname: "/chat", query: { from: "services" } }}
-                className="flex min-h-11 items-center rounded-xl border border-line-strong px-4 text-sm text-accent"
+                className="flex min-h-11 items-center rounded-xl border border-line-strong px-4 text-sm font-medium hover:bg-surface"
               >
                 {t("chat")}
               </Link>
@@ -85,6 +85,23 @@ export default async function ServicesPage({
                     key={group.name}
                     className="flex flex-col gap-3 rounded-[18px] border border-line bg-surface p-4"
                   >
+                    <span
+                      aria-hidden="true"
+                      className="flex size-9 items-center justify-center rounded-xl bg-surface-2 text-fg-muted"
+                    >
+                      <svg
+                        width="17"
+                        height="17"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={1.7}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M4 7h16v12H4zM9 7V5h6v2M4 12h16" />
+                      </svg>
+                    </span>
                     <span className="text-base font-semibold">
                       {group.name}
                     </span>
@@ -125,7 +142,7 @@ export default async function ServicesPage({
             <aside
               id="brief"
               aria-label={t("listTitle")}
-              className="min-w-0 flex-[1_1_340px] rounded-[18px] border border-line bg-surface p-5 lg:sticky lg:top-6 lg:max-w-[420px]"
+              className="min-w-0 flex-[1_1_340px] rounded-[18px] border border-line bg-surface p-5 lg:sticky lg:top-6 lg:max-w-[420px] [&_.sm\:grid-cols-2]:grid-cols-1"
             >
               <BriefForm
                 copy={form}
