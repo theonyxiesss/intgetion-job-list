@@ -1143,6 +1143,10 @@
     "nav": "Notifications",
     "title": "Notifications",
     "tabsLabel": "Notifications",
+    "viewsLabel": "Notification views",
+    "viewFeed": "Feed",
+    "viewChannels": "Channels",
+    "unreadLabel": "Unread",
     "tabAll": "All",
     "tabUnread": "Unread",
     "empty": "No notifications yet.",
@@ -5094,7 +5098,11 @@
       "roleLabel": "UGC role",
       "brand": "I'm a brand",
       "creator": "I'm a creator",
-      "createCampaign": "Create campaign"
+      "createCampaign": "Create campaign",
+      "creatorLead": "Get invitations from brands, make videos from a brief, and track payment after acceptance.",
+      "creatorInvites": "Invitations",
+      "creatorCampaigns": "My campaigns",
+      "creatorVideos": "My videos"
     },
     "title": "UGC videos",
     "intro": "Short videos from real people for ads and social posts. One brief, creators apply, you hire the ones you pick.",
@@ -5794,7 +5802,8 @@
       "applied": "Responses",
       "hired": "Hired",
       "waiting": "Videos to review",
-      "accepted": "Accepted videos"
+      "accepted": "Accepted videos",
+      "deposited": "Deposited campaign budget"
     },
     "freshTitle": "Latest videos",
     "seeAll": "See all",

@@ -11,6 +11,7 @@ import { hirePublishesNow } from "@/modules/jobs/schemas/hire";
 import { HireForm } from "@/modules/jobs/ui/hire-form";
 import { jobFormOptions } from "../employer/jobs/form-options";
 import { readJobDraft } from "@/modules/jobs/service";
+import { flags } from "@/config/flags";
 
 const UUID = /^[0-9a-f-]{36}$/i;
 
@@ -39,7 +40,10 @@ export default async function PostJobPage({
         footer={
           <p>
             {auth("noAccount")}{" "}
-            <Link href="/register" className="underline underline-offset-4">
+            <Link
+              href={{ pathname: "/register", query: { next: "post-job" } }}
+              className="underline underline-offset-4"
+            >
               {t("register")}
             </Link>
           </p>
@@ -64,10 +68,14 @@ export default async function PostJobPage({
       : undefined;
   const options = await jobFormOptions();
   return (
-    <main className="flex-1 py-10">
-      <Container className="flex flex-col gap-8">
+    <main className="flex-1 py-10 in-data-[ui=v2]:py-6 md:in-data-[ui=v2]:py-8">
+      <Container className="flex flex-col gap-8 in-data-[ui=v2]:gap-5">
         <PageHeader title={t("title")} />
-        <ButtonLink href="/chat?from=post_job" variant="secondary">
+        <ButtonLink
+          href="/chat?from=post_job"
+          variant="secondary"
+          className="in-data-[ui=v2]:self-start in-data-[ui=v2]:rounded-xl"
+        >
           {t("assistantDraft")}
         </ButtonLink>
         <HireForm
@@ -81,6 +89,7 @@ export default async function PostJobPage({
           categories={options.categories}
           employment={options.employment}
           sharedDraft={sharedDraft}
+          v2={flags.uiV2Enabled}
         />
       </Container>
     </main>

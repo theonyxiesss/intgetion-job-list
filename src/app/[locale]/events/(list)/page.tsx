@@ -32,6 +32,15 @@ const FILTER_KEYS = [
   "from",
   "to",
 ] as const;
+const QUICK_TOPICS = ["dev", "ai", "web3"] as const;
+
+function quickFilterClass(active: boolean): string {
+  return `inline-flex min-h-10 items-center rounded-lg px-3 text-sm transition-colors ${
+    active
+      ? "bg-line-strong text-fg"
+      : "text-fg-muted hover:bg-surface-2 hover:text-fg"
+  }`;
+}
 
 function queryString(
   query: EventSearchQuery,
@@ -120,6 +129,52 @@ export default async function EventsPage({
             defaultValue={query.q ?? ""}
             placeholder={t("search")}
           />
+          <div className="flex flex-wrap gap-2">
+            <nav
+              aria-label={t("format")}
+              className="flex flex-wrap gap-1 rounded-xl border border-line bg-surface-2 p-1"
+            >
+              <Link
+                href={queryString(query, { format: undefined, page: 1 })}
+                aria-current={!query.format ? "true" : undefined}
+                className={quickFilterClass(!query.format)}
+              >
+                {t("anyFormat")}
+              </Link>
+              {EVENT_FORMATS.map((format) => (
+                <Link
+                  key={format}
+                  href={queryString(query, { format, page: 1 })}
+                  aria-current={query.format === format ? "true" : undefined}
+                  className={quickFilterClass(query.format === format)}
+                >
+                  {t(`formats.${format}`)}
+                </Link>
+              ))}
+            </nav>
+            <nav
+              aria-label={t("topic")}
+              className="flex flex-wrap gap-1 rounded-xl border border-line bg-surface-2 p-1"
+            >
+              <Link
+                href={queryString(query, { topic: undefined, page: 1 })}
+                aria-current={!query.topic ? "true" : undefined}
+                className={quickFilterClass(!query.topic)}
+              >
+                {t("anyTopic")}
+              </Link>
+              {QUICK_TOPICS.map((topic) => (
+                <Link
+                  key={topic}
+                  href={queryString(query, { topic, page: 1 })}
+                  aria-current={query.topic === topic ? "true" : undefined}
+                  className={quickFilterClass(query.topic === topic)}
+                >
+                  {t(`topics.${topic}`)}
+                </Link>
+              ))}
+            </nav>
+          </div>
           {active.length > 0 ? (
             <ul className="flex flex-wrap gap-2">
               {active.map((key) => (

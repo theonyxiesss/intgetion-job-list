@@ -1143,6 +1143,10 @@
     "nav": "Benachrichtigungen",
     "title": "Benachrichtigungen",
     "tabsLabel": "Benachrichtigungen",
+    "viewsLabel": "Benachrichtigungsansichten",
+    "viewFeed": "Verlauf",
+    "viewChannels": "Kanäle",
+    "unreadLabel": "Ungelesen",
     "tabAll": "Alle",
     "tabUnread": "Ungelesen",
     "empty": "Noch keine Benachrichtigungen.",
@@ -4588,7 +4592,11 @@
       "roleLabel": "UGC-Rolle",
       "brand": "Ich bin eine Marke",
       "creator": "Ich bin Creator",
-      "createCampaign": "Kampagne erstellen"
+      "createCampaign": "Kampagne erstellen",
+      "creatorLead": "Erhalte Einladungen von Marken, erstelle Videos nach Briefing und verfolge die Zahlung nach Abnahme.",
+      "creatorInvites": "Einladungen",
+      "creatorCampaigns": "Meine Kampagnen",
+      "creatorVideos": "Meine Videos"
     },
     "title": "UGC-Videos",
     "intro": "Kurze Videos von echten Menschen für Anzeigen und soziale Netzwerke. Ein Briefing, Creator bewerben sich, Sie stellen die Gewählten ein.",
@@ -5288,7 +5296,8 @@
       "applied": "Bewerbungen",
       "hired": "Eingestellt",
       "waiting": "Videos zu prüfen",
-      "accepted": "Angenommene Videos"
+      "accepted": "Angenommene Videos",
+      "deposited": "Eingezahltes Kampagnenbudget"
     },
     "freshTitle": "Neueste Videos",
     "seeAll": "Alle ansehen",

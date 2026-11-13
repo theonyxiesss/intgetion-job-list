@@ -84,9 +84,9 @@ export function AgentBriefsControls({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="grid gap-3 md:grid-cols-2">
       {hasProfile ? (
-        <section className="flex items-start justify-between gap-4 rounded-lg border border-line p-4">
+        <section className="flex items-start justify-between gap-4 rounded-[18px] border border-line bg-surface p-4">
           <div className="flex flex-col gap-1">
             <p className="t-h3">{labels.agentTitle}</p>
             <p className="text-fg-muted">{labels.agentText}</p>
@@ -104,7 +104,7 @@ export function AgentBriefsControls({
         </section>
       ) : null}
       {company.canManage ? (
-        <section className="flex items-start justify-between gap-4 rounded-lg border border-line p-4">
+        <section className="flex items-start justify-between gap-4 rounded-[18px] border border-line bg-surface p-4">
           <div className="flex flex-col gap-1">
             <p className="t-h3">{labels.company.title}</p>
             <p className="text-fg-muted">{labels.company.text}</p>
@@ -121,7 +121,7 @@ export function AgentBriefsControls({
           />
         </section>
       ) : null}
-      {locked ? <p className="text-fg-muted">{labels.agentOff}</p> : null}
+      {locked ? <p className="text-fg-muted md:col-span-2">{labels.agentOff}</p> : null}
       <BotAlertsSwitch
         channel="telegram"
         linked={telegram.linked}

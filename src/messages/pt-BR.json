@@ -1143,6 +1143,10 @@
     "nav": "Notificações",
     "title": "Notificações",
     "tabsLabel": "Notificações",
+    "viewsLabel": "Visualizações de notificações",
+    "viewFeed": "Atividade",
+    "viewChannels": "Canais",
+    "unreadLabel": "Não lida",
     "tabAll": "Todas",
     "tabUnread": "Não lidas",
     "empty": "Ainda não há notificações.",
@@ -4588,7 +4592,11 @@
       "roleLabel": "Papel em UGC",
       "brand": "Sou uma marca",
       "creator": "Sou criador",
-      "createCampaign": "Criar campanha"
+      "createCampaign": "Criar campanha",
+      "creatorLead": "Receba convites de marcas, crie vídeos a partir do briefing e acompanhe o pagamento após a aprovação.",
+      "creatorInvites": "Convites",
+      "creatorCampaigns": "Minhas campanhas",
+      "creatorVideos": "Meus vídeos"
     },
     "title": "Vídeos UGC",
     "intro": "Vídeos curtos de pessoas reais para anúncios e redes. Um brief, criadores se candidatam, você contrata quem escolher.",
@@ -5288,7 +5296,8 @@
       "applied": "Respostas",
       "hired": "Contratados",
       "waiting": "Vídeos para revisar",
-      "accepted": "Vídeos aceitos"
+      "accepted": "Vídeos aceitos",
+      "deposited": "Orçamento depositado"
     },
     "freshTitle": "Vídeos recentes",
     "seeAll": "Ver tudo",

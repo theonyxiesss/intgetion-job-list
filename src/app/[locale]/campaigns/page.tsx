@@ -15,12 +15,14 @@ import {
   attentionItems,
   companyWorkspace,
   deskTotals,
+  moneyTotals,
   UGC_STEPS,
   ugcPriceGuide,
   usdLabel,
   type UgcPriceGuide,
 } from "@/modules/ugc/service";
 import { StepTrack } from "@/modules/ugc/ui/step-track";
+import { UgcV2RoleNav } from "@/modules/ugc/ui/v2-role-nav";
 import {
   CampaignStatus,
   DeskEmpty,
@@ -366,31 +368,6 @@ function priceLine(
 
 const v2Card = "rounded-[18px] border border-line bg-surface p-4";
 
-async function V2RoleNav({ brand }: { brand: boolean }) {
-  const t = await getTranslations("ugc");
-  return (
-    <nav
-      aria-label={t("v2.roleLabel")}
-      className="flex rounded-xl border border-line bg-surface-2 p-1 text-sm"
-    >
-      <Link
-        href="/campaigns"
-        aria-current={brand ? "page" : undefined}
-        className={`rounded-lg px-3 py-2 ${brand ? "bg-surface text-fg" : "text-fg-muted"}`}
-      >
-        {t("v2.brand")}
-      </Link>
-      <Link
-        href="/creator/workspace"
-        aria-current={!brand ? "page" : undefined}
-        className={`rounded-lg px-3 py-2 ${brand ? "text-fg-muted" : "bg-surface text-fg"}`}
-      >
-        {t("v2.creator")}
-      </Link>
-    </nav>
-  );
-}
-
 async function V2Overview({
   campaigns,
   counts,
@@ -406,18 +383,32 @@ async function V2Overview({
   const h = await getTranslations("ugcHub");
   const t = await getTranslations("ugc");
   const totals = deskTotals(campaigns);
+  const money = moneyTotals(campaigns);
+  const attention = attentionItems(campaigns);
+  const fresh = campaigns
+    .flatMap((campaign) =>
+      campaign.participants.flatMap((row) =>
+        row.submission ? [{ campaign, row, submission: row.submission }] : [],
+      ),
+    )
+    .sort(
+      (a, b) =>
+        Number(b.submission.status === "submitted") -
+        Number(a.submission.status === "submitted"),
+    )
+    .slice(0, 3);
   const metrics = [
-    { key: "active", value: totals.active },
-    { key: "applied", value: totals.applied },
-    { key: "hired", value: totals.hired },
-    { key: "waiting", value: totals.waiting },
-  ] as const;
+    { label: d("stat.active"), value: String(totals.active) },
+    { label: d("stat.waiting"), value: String(totals.waiting) },
+    { label: d("stat.deposited"), value: usdLabel(money.depositedMinor) },
+    { label: d("stat.accepted"), value: String(totals.accepted) },
+  ];
   return (
     <main className="py-6 md:py-8">
       <Container className="flex flex-col gap-4">
         <header className="flex flex-wrap items-center gap-3">
           <h1 className="mr-auto text-[22px] font-semibold">{title}</h1>
-          <V2RoleNav brand />
+          <UgcV2RoleNav active="brand" />
           <ButtonLink
             href="/campaigns/new"
             variant="primary"
@@ -429,9 +420,9 @@ async function V2Overview({
         <p className="text-sm text-fg-muted">{h("doorCompanyText")}</p>
         {chooser}
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          {metrics.map(({ key, value }) => (
-            <div key={key} className={`${v2Card} flex flex-col gap-1`}>
-              <span className="text-xs text-fg-muted">{d(`stat.${key}`)}</span>
+          {metrics.map(({ label, value }) => (
+            <div key={label} className={`${v2Card} flex flex-col gap-1`}>
+              <span className="text-xs text-fg-muted">{label}</span>
               <span className="font-mono text-[22px] font-semibold">
                 {value}
               </span>
@@ -506,6 +497,54 @@ async function V2Overview({
             ))}
           </ul>
         )}
+        {attention.length > 0 ? (
+          <section aria-labelledby="ugc-v2-attention" className="flex flex-col gap-3">
+            <h2 id="ugc-v2-attention" className="text-lg font-semibold">
+              {d("attentionTitle")}
+            </h2>
+            <ul className="grid gap-2.5 lg:grid-cols-2">
+              {attention.map((item) => {
+                const campaign = campaigns.find((row) => row.id === item.campaignId);
+                if (!campaign) return null;
+                return (
+                  <li key={`${item.kind}-${item.campaignId}`} className={`${v2Card} flex flex-wrap items-center gap-3`}>
+                    <span className="flex min-w-0 flex-1 flex-col gap-1">
+                      <span className="font-medium">{d(`attention.${item.kind}`, { count: item.count })}</span>
+                      <span className="text-sm text-fg-muted">{item.productName}</span>
+                    </span>
+                    <Link href={nextHref(campaign)} className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent hover:underline">
+                      {d(`attentionAction.${item.kind}`)}
+                      <Icon icon={ArrowRight} size={16} />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ) : null}
+        {fresh.length > 0 ? (
+          <section aria-labelledby="ugc-v2-fresh" className="flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-3">
+              <h2 id="ugc-v2-fresh" className="text-lg font-semibold">{d("freshTitle")}</h2>
+              <Link href="/campaigns/materials" className="text-sm text-fg-muted hover:text-fg">{d("seeAll")}</Link>
+            </div>
+            <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {fresh.map(({ campaign, row, submission }) => {
+                const name = row.creator?.displayName || t("creator");
+                return (
+                  <li key={row.inviteId} className={`${v2Card} flex min-w-0 gap-3`}>
+                    <VideoPreview url={submission.url} hook={submission.hook} creatorName={name} />
+                    <span className="flex min-w-0 flex-col gap-2 py-1">
+                      <SubmissionStatus status={submission.status} />
+                      <span className="font-medium break-words">{name}</span>
+                      <Link href={`/campaigns/${campaign.id}#ugc-videos`} className="text-sm text-fg-muted underline-offset-4 hover:underline">{campaign.productName}</Link>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ) : null}
         <div className="flex flex-wrap gap-4 text-sm text-fg-muted">
           <Link href="/campaigns/orders" className="hover:text-fg">
             {d("nav.orders")}
@@ -556,7 +595,7 @@ async function V2Doors({
       <Container className="flex flex-col gap-4">
         <header className="flex flex-wrap items-center gap-3">
           <h1 className="mr-auto text-[22px] font-semibold">{t("title")}</h1>
-          <V2RoleNav brand />
+          <UgcV2RoleNav active="brand" />
           <ButtonLink
             href="/campaigns/new"
             variant="primary"

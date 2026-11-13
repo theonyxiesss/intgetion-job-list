@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { MessageSquare, Trophy } from "lucide-react";
+import { ArrowLeft, MessageSquare, Trophy } from "lucide-react";
 import { Container, PageHeader } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -34,6 +34,7 @@ import {
 } from "@/modules/ugc/ui/desk";
 import { VideoReviewItem } from "@/modules/ugc/ui/video-review";
 import { RouteMessages } from "@/components/shell/route-messages";
+import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -321,17 +322,44 @@ export default async function CampaignPage({
         }
       >
         <div className="flex flex-col gap-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <CampaignStatus status={brief.status} />
-            <span className="t-body-s font-mono text-fg-muted">
-              {d("deadline", { date: brief.deadline })}
-            </span>
+          <Link
+            href="/campaigns"
+            className="inline-flex min-h-9 items-center gap-1.5 self-start text-sm text-fg-muted hover:text-fg"
+          >
+            <Icon icon={ArrowLeft} size={16} />
+            {d("nav.campaigns")}
+          </Link>
+          <div className="flex flex-col gap-4 rounded-[18px] border border-line bg-surface p-4 md:p-5">
+            <div className="flex flex-wrap items-center gap-3">
+              <CampaignStatus status={brief.status} />
+              <span className="t-body-s font-mono text-fg-muted">
+                {d("deadline", { date: brief.deadline })}
+              </span>
+            </div>
+            <StepTrack
+              progress={progress}
+              labels={steps}
+              label={brief.productName}
+            />
           </div>
-          <StepTrack
-            progress={progress}
-            labels={steps}
-            label={brief.productName}
-          />
+          <nav aria-label={brief.productName} className="flex flex-wrap gap-2">
+            <a href="#ugc-brief" className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong">
+              {d("briefTitle")}
+            </a>
+            <a href="#ugc-people" className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong">
+              {d("peopleTitle")}
+            </a>
+            <a href="#ugc-videos" className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong">
+              {d("videosTitle")}
+            </a>
+            {brief.status === "open" ||
+            brief.status === "paused" ||
+            brief.status === "pending_review" ? (
+              <a href="#ugc-manage" className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong">
+                {d("manageTitle")}
+              </a>
+            ) : null}
+          </nav>
         </div>
 
         {next ? (
