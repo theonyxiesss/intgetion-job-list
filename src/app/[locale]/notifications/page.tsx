@@ -149,7 +149,7 @@ export default async function NotificationsPage({
       `min-h-9 rounded-lg px-3 py-2 text-sm font-medium ${on ? "bg-surface text-fg" : "text-fg-muted hover:text-fg"}`;
     return (
       <main className="px-4 py-6 md:px-6 md:py-8">
-        <div className="mx-auto flex max-w-[860px] flex-col gap-5">
+        <div className="mx-auto flex max-w-[1180px] flex-col gap-5">
           <header className="flex flex-wrap items-center gap-3">
             <h1 className="flex-1 text-[22px] font-semibold">{t("title")}</h1>
             <nav
@@ -175,6 +175,88 @@ export default async function NotificationsPage({
           {channels ? (
             <div className="flex flex-col gap-4">
               <p className="text-sm text-fg-muted">{t("v2.channelsText")}</p>
+              <ul className="grid gap-3 md:grid-cols-2">
+                {[
+                  {
+                    key: "site",
+                    icon: "M3 5h18v12H3zM8 21h8M12 17v4",
+                    tone: "bg-surface-2 text-fg",
+                    title: t("v2.site"),
+                    status: t("v2.siteStatus"),
+                    action: null,
+                    on: true,
+                  },
+                  {
+                    key: "telegram",
+                    icon: "M21 4L3 11l6 2 2 6 3-4 5 4z",
+                    tone: "bg-[#2aabee] text-white",
+                    title: "Telegram",
+                    status: telegram
+                      ? t("v2.connectedAs", {
+                          name: telegram.username
+                            ? `@${telegram.username}`
+                            : "Telegram",
+                        })
+                      : t("v2.notConnected"),
+                    action: telegram ? null : "/settings/account",
+                    on: Boolean(telegram),
+                  },
+                  {
+                    key: "email",
+                    icon: "M3 6h18v12H3zM3 7l9 6 9-6",
+                    tone: "bg-fg text-bg",
+                    title: t("v2.email"),
+                    status: mailReady
+                      ? t("v2.connected")
+                      : t("v2.notConnected"),
+                    action: mailReady ? null : "/settings/account",
+                    on: mailReady,
+                  },
+                ].map((channel) => (
+                  <li
+                    key={channel.key}
+                    className="flex items-center gap-3 rounded-[18px] border border-line bg-surface p-4"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${channel.tone}`}
+                    >
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={1.8}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d={channel.icon} />
+                      </svg>
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="text-[15px] font-semibold">
+                        {channel.title}
+                      </span>
+                      <span className="truncate text-sm text-fg-muted">
+                        {channel.status}
+                      </span>
+                    </span>
+                    {channel.action ? (
+                      <Link
+                        href={channel.action}
+                        className="flex min-h-9 items-center rounded-xl bg-fg px-3.5 text-sm font-semibold text-bg hover:opacity-90"
+                      >
+                        {t("v2.connect")}
+                      </Link>
+                    ) : (
+                      <span className="flex min-h-9 items-center rounded-xl border border-line-strong px-3.5 text-sm text-fg-muted">
+                        {t("v2.on")}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
               {controls}
               <Link
                 href="/settings/notifications"

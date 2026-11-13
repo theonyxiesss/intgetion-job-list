@@ -1183,6 +1183,14 @@
   },
   "notifications": {
     "v2": {
+      "site": "On the site",
+      "siteStatus": "Always on · bell in the menu",
+      "email": "Email",
+      "connected": "Connected",
+      "notConnected": "Not connected",
+      "connectedAs": "Connected · {name}",
+      "connect": "Connect",
+      "on": "On",
       "feed": "Feed",
       "channels": "Channels",
       "channelsText": "Where notifications go. Urgent ones — sign-ins, payments, disputes — always arrive.",

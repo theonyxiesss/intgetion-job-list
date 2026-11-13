@@ -1183,6 +1183,14 @@
   },
   "notifications": {
     "v2": {
+      "site": "Sul sito",
+      "siteStatus": "Sempre attivo · campanella nel menu",
+      "email": "Email",
+      "connected": "Collegata",
+      "notConnected": "Non collegato",
+      "connectedAs": "Collegato · {name}",
+      "connect": "Collega",
+      "on": "Attivo",
       "feed": "Feed",
       "channels": "Canali",
       "channelsText": "Dove inviare le notifiche. Le urgenti — accessi, pagamenti, contestazioni — arrivano sempre.",

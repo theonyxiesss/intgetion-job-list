@@ -1183,6 +1183,14 @@
   },
   "notifications": {
     "v2": {
+      "site": "No site",
+      "siteStatus": "Sempre ligado · sino no menu",
+      "email": "E-mail",
+      "connected": "Conectado",
+      "notConnected": "Não conectado",
+      "connectedAs": "Conectado · {name}",
+      "connect": "Conectar",
+      "on": "Ligado",
       "feed": "Feed",
       "channels": "Canais",
       "channelsText": "Para onde enviar as notificações. O urgente — acessos, pagamentos, disputas — sempre chega.",

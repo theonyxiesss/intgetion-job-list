@@ -1183,6 +1183,14 @@
   },
   "notifications": {
     "v2": {
+      "site": "Auf der Website",
+      "siteStatus": "Immer an · Glocke im Menü",
+      "email": "E-Mail",
+      "connected": "Verbunden",
+      "notConnected": "Nicht verbunden",
+      "connectedAs": "Verbunden · {name}",
+      "connect": "Verbinden",
+      "on": "An",
       "feed": "Verlauf",
       "channels": "Kanäle",
       "channelsText": "Wohin Benachrichtigungen gehen. Dringendes — Anmeldungen, Zahlungen, Streitfälle — kommt immer an.",

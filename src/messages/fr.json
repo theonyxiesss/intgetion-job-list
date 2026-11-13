@@ -1183,6 +1183,14 @@
   },
   "notifications": {
     "v2": {
+      "site": "Sur le site",
+      "siteStatus": "Toujours actif · cloche dans le menu",
+      "email": "E-mail",
+      "connected": "Connecté",
+      "notConnected": "Non connecté",
+      "connectedAs": "Connecté · {name}",
+      "connect": "Connecter",
+      "on": "Activé",
       "feed": "Fil",
       "channels": "Canaux",
       "channelsText": "Où envoyer les notifications. L’urgent — connexions, paiements, litiges — arrive toujours.",
