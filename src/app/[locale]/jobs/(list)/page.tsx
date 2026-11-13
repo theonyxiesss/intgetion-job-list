@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { flags } from "@/config/flags";
+import { JobsPageV2 } from "./jobs-v2";
 import { languageAlternates, siteUrl } from "@/modules/seo/site";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import {
@@ -138,6 +140,7 @@ export default async function JobsPage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  if (flags.uiV2Enabled) return JobsPageV2({ params, searchParams });
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("jobs");

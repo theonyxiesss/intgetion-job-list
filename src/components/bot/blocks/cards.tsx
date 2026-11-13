@@ -27,7 +27,7 @@ export function JobCards({
       {props.items.map((job) => (
         <li
           key={job.id}
-          className="flex min-w-0 flex-col gap-1 rounded-lg border border-line bg-surface-2 px-4 py-3"
+          className="flex min-w-0 flex-col gap-1 rounded-lg border border-line bg-surface-2 px-4 py-3 in-data-[ui=v2]:rounded-[14px]"
         >
           <div className="flex items-baseline justify-between gap-3">
             <Link
@@ -84,7 +84,7 @@ export function ServiceCards({
         return (
           <li
             key={service.id}
-            className="flex min-w-0 flex-col gap-1 rounded-lg border border-line bg-surface-2 px-4 py-3"
+            className="flex min-w-0 flex-col gap-1 rounded-lg border border-line bg-surface-2 px-4 py-3 in-data-[ui=v2]:rounded-[14px]"
           >
             <p className="font-medium break-words">
               {open?.type === "link" ? (

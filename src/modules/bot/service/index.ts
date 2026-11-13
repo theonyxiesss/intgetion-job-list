@@ -59,6 +59,7 @@ export {
 export { UNTRUSTED_NOTE, type McpOutcome } from "./mcp-faces";
 export { postSystemEvent } from "./system-event";
 export { listOwnBotActions, sweepBotActions } from "./journal";
+export { listOwnConversations, type ConversationHistoryItem } from "./history";
 export { listMcpReminders, runReminderDispatch } from "./reminders";
 export {
   MEMORY_MAX_CHARS,

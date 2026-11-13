@@ -52,6 +52,50 @@ export async function SocialSignInStubs({ next }: { next?: LoginNext }) {
       {chunks}
     </Link>
   );
+  if (flags.uiV2Enabled) {
+    // v2: the mockup puts the providers first, then «or by email».
+    const row =
+      "flex min-h-11 w-full items-center justify-center gap-2.5 rounded-xl border border-line-strong bg-surface text-sm font-medium hover:bg-surface-2";
+    return (
+      <section
+        aria-labelledby="social-sign-in"
+        className="flex flex-col gap-2.5"
+      >
+        <h2 id="social-sign-in" className="sr-only">
+          {t("title")}
+        </h2>
+        {telegram ? (
+          <a href={telegram} className={row}>
+            <SocialMark name="telegram" />
+            {t("telegram")}
+          </a>
+        ) : (
+          <TelegramLoginButton
+            locale={locale as AppLocale}
+            label={t("telegram")}
+            waiting={t("telegramWaiting")}
+            failed={t("telegramFailed")}
+            unavailable={tErrors("auth_unavailable")}
+            openLabel={t("telegramOpen")}
+            icon={<SocialMark name="telegram" />}
+          />
+        )}
+        <a href={`/api/auth/google?${oauthQuery}`} className={row}>
+          <SocialMark name="google" />
+          {t("google")}
+        </a>
+        <a href={`/api/auth/x?${oauthQuery}`} className={row}>
+          <SocialMark name="x" />
+          {t("x")}
+        </a>
+        <div className="flex items-center gap-3 pt-1 text-xs text-fg-subtle">
+          <span aria-hidden="true" className="h-px flex-1 bg-line" />
+          {t("orEmail")}
+          <span aria-hidden="true" className="h-px flex-1 bg-line" />
+        </div>
+      </section>
+    );
+  }
   return (
     <section aria-labelledby="social-sign-in" className="flex flex-col gap-3">
       <div className="flex items-center gap-3 text-fg-muted">
@@ -95,5 +139,25 @@ export async function SocialSignInStubs({ next }: { next?: LoginNext }) {
         {t.rich("continueTerms", { terms, privacy })}
       </p>
     </section>
+  );
+}
+
+/** v2: the terms line, shown under the form instead of under the providers. */
+export async function SignInTerms() {
+  const t = await getTranslations("auth.social");
+  const terms = (chunks: ReactNode) => (
+    <Link href="/terms" className="underline">
+      {chunks}
+    </Link>
+  );
+  const privacy = (chunks: ReactNode) => (
+    <Link href="/privacy" className="underline">
+      {chunks}
+    </Link>
+  );
+  return (
+    <p className="text-center text-xs text-fg-subtle">
+      {t.rich("continueTerms", { terms, privacy })}
+    </p>
   );
 }

@@ -79,7 +79,7 @@ export default async function CampaignPage({
     return (
       <RouteMessages namespaces={["ugc"]}>
         <main className="py-10 md:py-16">
-          <Container className="flex max-w-3xl flex-col gap-6">
+          <Container className="flex max-w-3xl in-data-[ui=v2]:max-w-[1100px] in-data-[ui=v2]:gap-5 flex-col gap-6">
             <PageHeader
               title={view.brief.productName}
               intro={view.brief.productSummary}
@@ -92,9 +92,12 @@ export default async function CampaignPage({
             {view.invite.terms ? (
               <section
                 aria-labelledby="offer-terms"
-                className="flex flex-col gap-2 rounded-lg border border-border p-4"
+                className="flex flex-col gap-2 rounded-lg border border-border p-4 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface"
               >
-                <h2 id="offer-terms" className="t-h4">
+                <h2
+                  id="offer-terms"
+                  className="t-h4 in-data-[ui=v2]:text-[15px] in-data-[ui=v2]:font-semibold"
+                >
                   {t("termsTitle")}
                 </h2>
                 <ul className="t-body-s flex flex-col gap-1">
@@ -320,7 +323,7 @@ export default async function CampaignPage({
           </>
         }
       >
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface in-data-[ui=v2]:p-5">
           <div className="flex flex-wrap items-center gap-3">
             <CampaignStatus status={brief.status} />
             <span className="t-body-s font-mono text-fg-muted">
@@ -337,7 +340,7 @@ export default async function CampaignPage({
         {next ? (
           <section
             aria-labelledby="ugc-next"
-            className="flex flex-col gap-3 rounded-lg border border-line border-l-2 border-l-fg p-4 sm:flex-row sm:items-center sm:justify-between md:p-5"
+            className="flex flex-col gap-3 rounded-lg border border-line border-l-2 border-l-fg p-4 sm:flex-row sm:items-center sm:justify-between md:p-5 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface"
           >
             <div className="flex flex-col gap-1">
               <p id="ugc-next" className="t-label text-fg-muted">
@@ -373,7 +376,7 @@ export default async function CampaignPage({
           </p>
         ) : null}
 
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-5 border-y border-line py-6 md:grid-cols-4">
+        <dl className="grid grid-cols-2 gap-x-6 gap-y-5 border-y border-line py-6 md:grid-cols-4 in-data-[ui=v2]:gap-2 in-data-[ui=v2]:border-0 in-data-[ui=v2]:py-0">
           <Fact label={d("fact.reward")} value={money} />
           <Fact
             label={d("fact.videos")}
@@ -409,10 +412,13 @@ export default async function CampaignPage({
 
         {deposit.required && (deposit.paid || brief.status === "open") ? (
           <section
-            className="flex flex-col gap-3 rounded-lg border border-line p-4 md:p-5"
+            className="flex flex-col gap-3 rounded-lg border border-line p-4 md:p-5 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface"
             aria-labelledby="ugc-deposit"
           >
-            <h2 id="ugc-deposit" className="t-h3">
+            <h2
+              id="ugc-deposit"
+              className="t-h3 in-data-[ui=v2]:text-[15px] in-data-[ui=v2]:font-semibold"
+            >
               {h("deposit.title")}
             </h2>
             <p className="t-body-s text-fg-muted">
@@ -466,7 +472,7 @@ export default async function CampaignPage({
               }
             />
           ) : (
-            <ul className="flex flex-col divide-y divide-line rounded-lg border border-line">
+            <ul className="flex flex-col divide-y divide-line rounded-lg border border-line in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface">
               {people.map((row) => {
                 const name = row.creator?.displayName || t("creator");
                 return (
@@ -672,7 +678,7 @@ export default async function CampaignPage({
           {view.versions.length > 0 ? (
             <section
               aria-labelledby="brief-versions"
-              className="flex flex-col gap-2 rounded-lg border border-line p-4 md:p-5"
+              className="flex flex-col gap-2 rounded-lg border border-line p-4 md:p-5 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface"
             >
               <h3 id="brief-versions" className="font-medium">
                 {t("versionsTitle")}
@@ -733,7 +739,7 @@ export default async function CampaignPage({
             </section>
           ) : null}
           {brief.status === "open" || brief.status === "paused" ? (
-            <details className="group rounded-lg border border-line">
+            <details className="group rounded-lg border border-line in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface">
               <summary className="flex min-h-11 cursor-pointer items-center px-4 font-medium md:px-5">
                 {t("editTextTitle")}
               </summary>

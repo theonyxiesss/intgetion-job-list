@@ -28,7 +28,7 @@
 
 ## Env
 
-analytics: `PRIVACY_HASH_SECRET`, `NEXT_PUBLIC_SITE_URL`, `OWNER_ALERT_TELEGRAM_ID` (сводка, D607). metrics (`envStatus`) показывает, заданы ли `DATABASE_URL` (и режим пулера), `NEXT_PUBLIC_SITE_URL`, ключ Supabase admin, `RESEND_API_KEY` с `EMAIL_FROM`, `TELEGRAM_BOT_TOKEN` (и заморожен ли вход через виджет), ключ LLM, секреты и `SENTRY_DSN` — значения секретов не показывает.
+analytics: `PRIVACY_HASH_SECRET`, `NEXT_PUBLIC_SITE_URL`, `OWNER_ALERT_TELEGRAM_ID` (сводка, D607). Локальный preview может установить `NEXT_PUBLIC_DISABLE_ANALYTICS=true`, чтобы не отправлять page-view события в общую БД; по умолчанию tracking включён. metrics (`envStatus`) показывает, заданы ли `DATABASE_URL` (и режим пулера), `NEXT_PUBLIC_SITE_URL`, ключ Supabase admin, `RESEND_API_KEY` с `EMAIL_FROM`, `TELEGRAM_BOT_TOKEN` (и заморожен ли вход через виджет), ключ LLM, секреты и `SENTRY_DSN` — значения секретов не показывает.
 
 ## ТЗ и решения
 

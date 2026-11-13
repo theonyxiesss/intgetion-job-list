@@ -70,12 +70,14 @@ export default async function EmployerJobPage({
         >
           {t("back")}
         </ButtonLink>
-        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface in-data-[ui=v2]:p-5">
           <div className="flex flex-col gap-3">
             <StatusBadge status={job.status}>
               {t(`statusLabel.${job.status}`)}
             </StatusBadge>
-            <h1 className="t-display-l">{dto.title}</h1>
+            <h1 className="t-display-l in-data-[ui=v2]:text-[24px] in-data-[ui=v2]:leading-tight in-data-[ui=v2]:font-semibold in-data-[ui=v2]:tracking-tight">
+              {dto.title}
+            </h1>
             <p className="text-fg-muted">
               {hire ? billing("hire") : billing("start")}
             </p>
@@ -117,8 +119,10 @@ export default async function EmployerJobPage({
           <Stat label={t("colExpires")} value={date(job.expiresAt)} />
         </StatRow>
         <RichText text={dto.description} />
-        <section className="flex flex-col gap-3">
-          <h2 className="t-h2">{matched("title")}</h2>
+        <section className="flex flex-col gap-3 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface in-data-[ui=v2]:p-5">
+          <h2 className="t-h2 in-data-[ui=v2]:text-[15px] in-data-[ui=v2]:font-semibold">
+            {matched("title")}
+          </h2>
           <p className="text-fg-muted">{matched("text")}</p>
           {candidates.length === 0 ? (
             <p className="text-fg-muted">{matched("empty")}</p>
@@ -127,7 +131,7 @@ export default async function EmployerJobPage({
               {candidates.map((card, index) => (
                 <li
                   key={index}
-                  className="flex flex-col gap-1 border-b border-line py-3"
+                  className="flex flex-col gap-1 border-b border-line py-3 in-data-[ui=v2]:border-t in-data-[ui=v2]:border-b-0"
                 >
                   <p className="t-h3">
                     {[

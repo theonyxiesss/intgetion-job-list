@@ -4,18 +4,18 @@
 
 ## Код
 
-| Что                               | Где                                                                             |
-| --------------------------------- | ------------------------------------------------------------------------------- |
-| Константы (темы, виды, источники) | `src/config/events.ts`                                                          |
-| Схема и миграция                  | `src/db/schema/events.ts`, `src/db/migrations/0049_events.sql`                  |
-| Вход модуля                       | `src/modules/events/service/index.ts`                                           |
-| Адаптер confs.tech                | `src/modules/events/adapters/confs-tech.ts`, страна — `adapters/country.ts`     |
-| Адаптер ccfddl (D440)             | `src/modules/events/adapters/ccfddl.ts`                                         |
-| Фикстура                          | `fixtures/events/fictional-events.json`, `adapters/fixture.ts`                  |
-| Прогон импорта                    | `src/modules/events/service/import.ts`, cron `src/app/api/cron/events/route.ts` |
-| Запросы                           | `service/filter.ts` (правила), `repo/events-repo.ts` (SQL)                      |
-| Страницы                          | `src/app/[locale]/events/page.tsx`, `src/app/[locale]/events/[slug]/page.tsx`   |
-| Spoki                             | `find_events` в `src/modules/bot/service/tools.ts`, `offer_step` `events`       |
+| Что                               | Где                                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------------ |
+| Константы (темы, виды, источники) | `src/config/events.ts`                                                               |
+| Схема и миграция                  | `src/db/schema/events.ts`, `src/db/migrations/0049_events.sql`                       |
+| Вход модуля                       | `src/modules/events/service/index.ts`                                                |
+| Адаптер confs.tech                | `src/modules/events/adapters/confs-tech.ts`, страна — `adapters/country.ts`          |
+| Адаптер ccfddl (D440)             | `src/modules/events/adapters/ccfddl.ts`                                              |
+| Фикстура                          | `fixtures/events/fictional-events.json`, `adapters/fixture.ts`                       |
+| Прогон импорта                    | `src/modules/events/service/import.ts`, cron `src/app/api/cron/events/route.ts`      |
+| Запросы                           | `service/filter.ts` (правила), `repo/events-repo.ts` (SQL)                           |
+| Страницы                          | `src/app/[locale]/events/(list)/page.tsx`, `src/app/[locale]/events/[slug]/page.tsx` |
+| Spoki                             | `find_events` в `src/modules/bot/service/tools.ts`, `offer_step` `events`            |
 
 ## Импорт
 
@@ -58,3 +58,10 @@
 
 - Web3-событий почти нет (по одному в каждом источнике); второй источник для Web3 — открытый вопрос D435.
 - Регистрации на событие нет (ТЗ 26).
+
+## Каталог V2 (2026-11-12)
+
+- `/events` повторяет композицию макета: выдача занимает основную колонку, фильтры и блок о нетворкинге — боковую. На телефоне кнопка фильтров открывает существующую полноэкранную панель.
+- Карточки используют общий `ListingCard` (D479), с локализованным календарным маркером, временем и местом из записи, атрибуцией источника и переходом на детальную страницу.
+- Поиск, фильтры и страницы остаются GET-параметрами того же `searchEvents`; «Подобрать со Spoki» ведёт в существующий `/chat`.
+- Макетные переключатели «сохранить событие» и счётчик «Мои мероприятия» не перенесены: у каталога нет хранилища сохранённых событий и RSVP (D435). Регистрация остаётся на сайте организатора.

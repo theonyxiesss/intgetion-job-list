@@ -60,8 +60,8 @@ export function SpokiBlock({
       aria-label={t(`label.${block.component}` as never)}
       className={
         live
-          ? "ui-fade-up @container min-w-0 rounded-lg border border-line bg-surface p-4"
-          : "@container min-w-0 rounded-lg border border-line bg-surface p-4"
+          ? "ui-fade-up @container min-w-0 rounded-lg border border-line bg-surface p-4 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:p-5"
+          : "@container min-w-0 rounded-lg border border-line bg-surface p-4 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:p-5"
       }
     >
       <Body block={block} handlers={all} values={values} onValues={onValues} />

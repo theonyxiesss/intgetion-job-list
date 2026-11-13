@@ -7,7 +7,11 @@ import {
   loginReturnHref,
   type LoginNext,
 } from "@/components/auth/login-next";
-import { SocialSignInStubs } from "@/components/auth/social-sign-in-stubs";
+import {
+  SignInTerms,
+  SocialSignInStubs,
+} from "@/components/auth/social-sign-in-stubs";
+import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
@@ -32,7 +36,9 @@ export default async function RegisterPage({
 
   return (
     <AuthPage
-      title={t("registerTitle")}
+      title={flags.uiV2Enabled ? t("v2.registerTitle") : t("registerTitle")}
+      intro={flags.uiV2Enabled ? t("v2.registerIntro") : undefined}
+      mode="register"
       footer={
         <p>
           {t("haveAccount")}{" "}
@@ -45,8 +51,9 @@ export default async function RegisterPage({
         </p>
       }
     >
+      {flags.uiV2Enabled ? <SocialSignInStubs next={next} /> : null}
       <RegisterForm next={next} />
-      <SocialSignInStubs next={next} />
+      {flags.uiV2Enabled ? <SignInTerms /> : <SocialSignInStubs next={next} />}
     </AuthPage>
   );
 }

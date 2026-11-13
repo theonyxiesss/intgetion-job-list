@@ -21,6 +21,7 @@ import { Container } from "@/components/ui/container";
 import { Skeleton } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/i18n/navigation";
+import { flags } from "@/config/flags";
 import type {
   UgcCampaignStatus,
   UgcParticipationStatus,
@@ -59,6 +60,36 @@ export async function DeskNav({
   counts?: Partial<Record<DeskSection, number>>;
 }) {
   const t = await getTranslations("ugcDesk");
+  if (flags.uiV2Enabled) {
+    // v2 (UI_V2): the mockup's segmented bar.
+    return (
+      <nav
+        aria-label={t("navLabel")}
+        className="flex max-w-full gap-1 self-start overflow-x-auto rounded-xl border border-line bg-surface-2 p-1"
+      >
+        {DESK_SECTIONS.map((section) => {
+          const current = section === active;
+          const count = counts[section];
+          return (
+            <Link
+              key={section}
+              href={DESK_HREFS[section]}
+              aria-current={current ? "page" : undefined}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm whitespace-nowrap ${current ? "bg-surface font-medium text-fg" : "text-fg-muted hover:text-fg"}`}
+            >
+              {t(`nav.${section}`)}
+              {count ? (
+                <span className="text-xs text-fg-subtle">
+                  <span className="sr-only">{t("navCount")}</span>
+                  {count}
+                </span>
+              ) : null}
+            </Link>
+          );
+        })}
+      </nav>
+    );
+  }
   return (
     <nav aria-label={t("navLabel")} className="md:border-b md:border-line">
       <ul className="grid grid-cols-3 gap-2 md:-mb-px md:flex md:gap-7">
@@ -118,6 +149,46 @@ export async function DeskShell({
   children: ReactNode;
 }) {
   const t = await getTranslations("ugcDesk");
+  if (flags.uiV2Enabled) {
+    return (
+      <main className="px-4 py-6 md:px-6 md:py-8">
+        <div className="mx-auto flex max-w-[1180px] flex-col gap-4 [&_.font-mono]:font-sans [&_.t-data]:font-sans [&_.t-label]:font-sans [&_.t-label]:text-xs [&_.t-label]:tracking-normal [&_.t-label]:normal-case">
+          <header className="flex flex-wrap items-center gap-3">
+            <div className="mr-auto flex min-w-0 flex-col gap-1">
+              <p className="text-xs text-fg-subtle">{t("label")}</p>
+              <h1 className="text-[22px] font-semibold tracking-tight break-words">
+                {title}
+              </h1>
+              {intro ? (
+                <p className="max-w-[68ch] text-sm text-fg-muted">{intro}</p>
+              ) : null}
+            </div>
+            {actions === undefined ? (
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href="/campaigns/new"
+                  className="flex min-h-10 items-center gap-1.5 rounded-xl bg-fg px-4 text-sm font-semibold text-bg hover:opacity-90"
+                >
+                  <Icon icon={Plus} size={16} />
+                  {t("newBrief")}
+                </Link>
+                <Link
+                  href="/chat?from=campaigns"
+                  className="flex min-h-10 items-center rounded-xl border border-line-strong px-3.5 text-sm hover:bg-surface"
+                >
+                  {t("withSpoki")}
+                </Link>
+              </div>
+            ) : actions ? (
+              <div className="flex flex-wrap gap-2">{actions}</div>
+            ) : null}
+          </header>
+          <DeskNav active={active} counts={counts} />
+          {children}
+        </div>
+      </main>
+    );
+  }
   return (
     <main className="py-8 md:py-12">
       <Container className="flex flex-col gap-8">
@@ -441,7 +512,7 @@ export function Fact({
   mono?: boolean;
 }) {
   return (
-    <div className="flex min-w-0 flex-col gap-1">
+    <div className="flex min-w-0 flex-col gap-1 in-data-[ui=v2]:rounded-xl in-data-[ui=v2]:border in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface in-data-[ui=v2]:p-3">
       <dt className="t-label text-fg-muted">{label}</dt>
       <dd className={cn("break-words text-fg", mono && "t-data")}>{value}</dd>
     </div>
@@ -459,7 +530,7 @@ export function DeskEmpty({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-line-strong p-5 md:p-6">
+    <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-line-strong p-5 md:p-6 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-solid in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface">
       <p className="font-medium">{title}</p>
       {text ? (
         <p className="t-body-s max-w-[60ch] text-fg-muted">{text}</p>

@@ -32,6 +32,7 @@
 
 ## Маршруты и страницы
 
+- Публичная `/pricing` показывает четыре тарифа аккаунта из `ACCOUNT_PLANS`, только действующие ссылки оплаты из `planPayHref`, разовые покупки, комиссию и FAQ. Оболочка V2 использует компактные карточки; годовые цены остаются справочной строкой, потому что касса оплачивает месяц на 30 дней. Ссылка «Спросите Spoki» ведёт в существующий `/chat`.
 - Страницы: `/billing/crypto` (касса; `?freelance=` — заказ фриланса), `/employer/billing`, блок тарифа на `/account`, кнопки на `/employer/jobs/[id]` и `/jobs/[id]`.
 - API: `/api/billing/me`, `/api/billing/interest`, `/api/billing/crypto/order`, `/api/billing/crypto/orders/[id]`, `/api/billing/crypto/confirm`, `/api/billing/crypto/siwe/nonce`, `/api/billing/crypto/siwe/verify`.
 - Cron: `/api/cron/billing` каждую минуту — `recheckSubmittedOrders`; `/api/cron/sanctions` в 02:40 UTC — `refreshSanctionsList`.

@@ -29,4 +29,10 @@ export const flags = {
    * Off until tested; the bot reads it per turn (`interactiveUiOn`).
    */
   spokiInteractiveUiEnabled: envFlag("SPOKI_INTERACTIVE_UI"),
+  /**
+   * The v2 interface (redesign mockup): mint accent, softer greys and a left
+   * side menu in place of the header, rail and footer on desktop. Off until
+   * tested on previews; with UI_V2=true it applies to every page.
+   */
+  uiV2Enabled: envFlag("UI_V2"),
 } as const;

@@ -8,6 +8,7 @@ import {
   readConsent,
   readCookie,
 } from "@/lib/consent";
+import { analyticsBeaconEnabled } from "./analytics-tracker-policy";
 
 const VISITOR_COOKIE = "_ia";
 const VISITOR_MAX_AGE_SECONDS = 395 * 24 * 60 * 60;
@@ -22,6 +23,9 @@ export function AnalyticsTracker() {
   const first = useRef(true);
 
   useEffect(() => {
+    if (!analyticsBeaconEnabled(process.env.NEXT_PUBLIC_DISABLE_ANALYTICS)) {
+      return;
+    }
     const allowed = consentAllows(readConsent(document.cookie), "analytics", {
       gpc: browserGpc(),
     });

@@ -1,5 +1,25 @@
 {
   "jobs": {
+    "v2": {
+      "title": "Vagas",
+      "all": "Todas",
+      "forMe": "Para mim",
+      "saved": "Salvas",
+      "searchPlaceholder": "Cargo, habilidade ou empresa",
+      "pickWithSpoki": "Escolher com o Spoki",
+      "anyFormat": "Qualquer formato",
+      "level": "Nível",
+      "employment": "Contratação",
+      "posted": "Data",
+      "more": "Mais filtros",
+      "reset": "Limpar",
+      "count": "{count, plural, one {# vaga} other {# vagas}}",
+      "apply": "Candidatar-se",
+      "salary": "Salário",
+      "zone": "Fuso",
+      "skills": "Habilidades",
+      "about": "Sobre a vaga"
+    },
     "moreFilters": "Mais filtros",
     "aside": {
       "spokiTitle": "O Spoki encontra vagas para você",
@@ -122,7 +142,37 @@
     "homeDescription": "Vagas remotas e tarefas freelance, freelancers e criadores UGC para contratar, além de eventos Web3 e tech. Spoki, o agente de IA, guia cada passo; pague em USDC ou USDT.",
     "ogAlt": "INTGETION Job List — trabalho remoto em Web3"
   },
+  "inbox": {
+    "title": "Mensagens",
+    "search": "Buscar conversas",
+    "notFound": "Nada encontrado",
+    "empty": "Ainda não há conversas",
+    "emptyText": "As conversas aparecem quando você pede um serviço, aceita um pedido ou trabalha numa campanha UGC.",
+    "pick": "Escolha uma conversa à esquerda.",
+    "order": "Pedido",
+    "openRoom": "Sala do pedido",
+    "youBuy": "você é o cliente",
+    "youSell": "você é o freelancer",
+    "asCreator": "você é o criador",
+    "asBrand": "você é a marca"
+  },
   "nav": {
+    "inbox": "Mensagens",
+    "hint": {
+      "hiring": "Candidaturas, candidatos, etapas",
+      "findJobs": "Vagas escolhidas com o Spoki",
+      "freelance": "Serviços com preço fixo",
+      "taskBoard": "Tarefas de clientes",
+      "payments": "Planos e contratações pagas",
+      "cryptoWallet": "Pagar com cripto"
+    },
+    "hiring": "Contratação",
+    "sections": "Seções",
+    "recentChats": "Chats recentes",
+    "allChats": "Todos",
+    "turnkey": "Chave na mão",
+    "eventsList": "Eventos",
+    "chatHistory": "Histórico de chats",
     "home": "Início",
     "main": "Principal",
     "language": "Idioma",
@@ -166,7 +216,15 @@
     "spokiLoading": "Carregando o Spoki…",
     "spokiResize": "Redimensionar a página e o painel do Spoki",
     "spokiHide": "Ocultar o Spoki",
-    "spokiShow": "Mostrar o Spoki"
+    "spokiShow": "Mostrar o Spoki",
+    "newChat": "Novo chat",
+    "findJobs": "Encontrar vagas",
+    "notifications": "Notificações",
+    "profile": "Meu perfil",
+    "settings": "Configurações",
+    "finance": "Finanças",
+    "payments": "Pagamentos",
+    "cryptoWallet": "Carteira cripto"
   },
   "locale": {
     "en": "Inglês",
@@ -196,6 +254,16 @@
     "it": "Italiano"
   },
   "home": {
+    "v2": {
+      "title": "Por onde começamos?",
+      "lead": "Spoki vai encontrar vagas, serviços e eventos para você.",
+      "placeholder": "Por exemplo: frontend remoto, React, a partir de US$ 4.000",
+      "quickLinks": "Ações rápidas",
+      "jobs": "Encontrar trabalho remoto",
+      "profile": "Analisar meu currículo",
+      "freelance": "Contratar um serviço freelancer",
+      "events": "Eventos de TI por perto"
+    },
     "tagline": "Uma plataforma para trabalho remoto: vagas, freelance, UGC e eventos.",
     "feedTitle": "Vagas remotas",
     "topJobs": "Vagas em destaque",
@@ -362,6 +430,12 @@
     "code": "500"
   },
   "auth": {
+    "v2": {
+      "loginTitle": "Que bom te ver de novo",
+      "loginIntro": "Entre para continuar com o Spoki.",
+      "registerTitle": "Crie uma conta",
+      "registerIntro": "Uma conta para vagas, freelance e contratação."
+    },
     "loginTitle": "Entrar",
     "registerTitle": "Criar uma conta",
     "resetTitle": "Redefinir senha",
@@ -420,6 +494,7 @@
       "network": "Sem conexão com o site. Verifique sua internet e tente novamente — o que você digitou foi mantido."
     },
     "social": {
+      "orEmail": "ou por e-mail",
       "title": "Ou continue com",
       "google": "Continuar com Google",
       "x": "Continuar com X",
@@ -1122,6 +1197,21 @@
     }
   },
   "notifications": {
+    "v2": {
+      "emailOff": "Não conectado",
+      "site": "No site",
+      "siteStatus": "Sempre ligado · sino no menu",
+      "email": "E-mail",
+      "connected": "Conectado",
+      "notConnected": "Não conectado",
+      "connectedAs": "Conectado · {name}",
+      "connect": "Conectar",
+      "on": "Ligado",
+      "feed": "Feed",
+      "channels": "Canais",
+      "channelsText": "Para onde enviar as notificações. O urgente — acessos, pagamentos, disputas — sempre chega.",
+      "fineTune": "Ajuste fino por evento nas configurações"
+    },
     "nav": "Notificações",
     "title": "Notificações",
     "tabsLabel": "Notificações",
@@ -1494,6 +1584,11 @@
     "emptyArchive": "Nada no arquivo."
   },
   "employerApplications": {
+    "v2": {
+      "title": "Contratação",
+      "job": "Vaga:",
+      "count": "{count, plural, one {# candidatura} other {# candidaturas}}"
+    },
     "open": "Candidaturas",
     "title": "Candidaturas",
     "empty": "Ainda não há candidaturas.",
@@ -1690,6 +1785,30 @@
     }
   },
   "settings": {
+    "v2": {
+      "tabSecurity": "Segurança e acesso",
+      "tabAppearance": "Aparência",
+      "sessions": "Sessões ativas",
+      "sessionsText": "Entrou em outro dispositivo que não usa mais? Encerre essas sessões; este dispositivo continua conectado.",
+      "signOutOthers": "Sair de todos os outros dispositivos",
+      "signOutOthersDone": "Você saiu dos outros dispositivos",
+      "signOutOthersFailed": "Não foi possível sair dos outros dispositivos. Tente de novo.",
+      "theme": "Tema",
+      "themeText": "Vale neste dispositivo.",
+      "themeDark": "Escuro",
+      "themeLight": "Claro",
+      "timezone": "Fuso horário",
+      "roles": "Papéis na plataforma",
+      "notSet": "Não informado",
+      "change": "Alterar",
+      "configure": "Configurar",
+      "roleSeeker": "Candidato",
+      "roleFreelancer": "Freelancer",
+      "roleEmployer": "Empregador",
+      "roleCreator": "Criador"
+    },
+    "siteLanguage": "Idioma do site",
+    "siteLanguageHint": "Muda o idioma do site, dos e-mails e das mensagens no Telegram e no Discord.",
     "title": "Configurações",
     "tabNotifications": "Notificações",
     "tabPrivacy": "Privacidade",
@@ -1793,6 +1912,38 @@
     }
   },
   "chat": {
+    "history": {
+      "searchLong": "Buscar pela primeira pergunta",
+      "filter": {
+        "all": "Todos",
+        "job": "Vagas",
+        "campaign": "UGC",
+        "general": "Gerais"
+      },
+      "group": {
+        "today": "Hoje",
+        "yesterday": "Ontem",
+        "week": "Esta semana",
+        "earlier": "Antes"
+      },
+      "keepTitle": "Histórico",
+      "keepText": "A lista de chats fica. O texto é apagado 24 horas após o envio; o Spoki só lembra o que você permitir guardar.",
+      "memorySettings": "Memória do Spoki",
+      "search": "Buscar nos chats",
+      "notFound": "Nada encontrado",
+      "title": "Histórico de chats",
+      "intro": "Suas conversas com o Spoki. O texto antigo é apagado após o prazo de retenção.",
+      "empty": "Ainda não há conversas",
+      "newChat": "Iniciar um chat",
+      "noPreview": "Conversa sem texto salvo",
+      "topic": {
+        "job": "Sobre uma vaga",
+        "campaign": "Sobre uma campanha",
+        "invite": "Sobre um teste de criador",
+        "general": "Chat geral"
+      }
+    },
+    "disclaimer": "Spoki pode cometer erros. Confira os detalhes na vaga de emprego.",
     "jobGoal": {
       "title": "Encontrar emprego",
       "intro": "Defina seus critérios. Spoki buscará na plataforma e sugerirá o próximo passo.",
@@ -2804,6 +2955,18 @@
     "failed": "Não foi possível abrir o link. Tente novamente em um minuto."
   },
   "pricing": {
+    "v2": {
+      "title": "Planos",
+      "intro": "Uma conta para buscar vagas, freelance e contratar. Comece grátis e mude de plano quando precisar de mais.",
+      "period": "Período de cobrança",
+      "month": "Mês",
+      "year": "Ano",
+      "saving": "até −{percent}%",
+      "popular": "Popular",
+      "forever": "para sempre",
+      "perMonth": "/ mês",
+      "perYear": "/ ano"
+    },
     "account": {
       "title": "Uma conta. Tudo grátis. Menos comissão em cada negócio.",
       "intro": "Buscar vagas, contratar, vender serviços e lançar UGC com uma só conta, sem custo. A plataforma ganha uma comissão nos negócios; um plano reduz essa comissão e dá mais velocidade.",
@@ -2926,6 +3089,8 @@
     "payHire": "Pagar com USDT ou USDC",
     "soon": "Em breve",
     "soonNote": "Os planos pagos ainda não estão à venda. Pagamentos com cartão e USDT / USDC estão chegando; até lá, tudo nos planos gratuitos funciona.",
+    "helpChoosing": "Não sabe qual plano escolher?",
+    "askSpoki": "Pergunte ao Spoki",
     "hireNote": "Start continua grátis. Hire, Team, Plus e Pro são pagos em USDT ou USDC. O botão cobra o preço mensal e liga o plano por 30 dias. Não renova sozinho. Hire inclui um bloco promovido por 7 dias. Plus liga 100 mensagens do Spoki por dia e Pro liga 300. O plano grátis continua em 15. Start e Hire incluem 2 colegas. Team sobe essa empresa para 10. Um modelo mais forte e um reembolso automático ainda não são ligados por este pagamento.",
     "market": "Publicar nos grandes sites de vagas remotas custa US$ 250–300 por vaga, sem reembolso. Aqui é grátis, ou US$ 79 com garantia.",
     "alwaysFreeTitle": "O que nenhum plano jamais vende",
@@ -3342,6 +3507,25 @@
     }
   },
   "billing": {
+    "v2": {
+      "title": "Minhas finanças",
+      "free": "Grátis",
+      "noEnd": "Sem data de término",
+      "hires": "Contratações pagas",
+      "hiresText": "Cada uma destaca uma vaga por 30 dias.",
+      "operations": "Operações",
+      "noOperations": "Ainda não há pagamentos.",
+      "subscription": "Assinatura",
+      "changePlan": "Trocar plano",
+      "methods": "Formas de pagamento",
+      "methodsText": "O pagamento sai de uma carteira cripto ligada à conta.",
+      "wallet": "Carteira cripto",
+      "back": "Voltar às finanças",
+      "secure": "Pagamento seguro",
+      "companyPlan": "Plano da empresa",
+      "personalPlan": "Plano pessoal",
+      "pay": "Pagar ou recarregar"
+    },
     "nav": "Pagamento",
     "title": "Pagamento e plano",
     "start": "Seu plano: Start",
@@ -3420,6 +3604,15 @@
     }
   },
   "postJob": {
+    "v2": {
+      "title": "Nova vaga",
+      "myJobs": "Minhas vagas",
+      "spokiText": "Descreva a vaga com suas palavras — o Spoki preenche os campos e escreve o texto.",
+      "spokiFill": "Preencher com o Spoki",
+      "publishTitle": "Publicação por 30 dias",
+      "publishText": "A vaga entra no catálogo após uma revisão. O plano «Start» é grátis.",
+      "comparePlans": "Comparar planos"
+    },
     "assistantDraft": "Preparar a vaga com o assistente",
     "title": "Publicar vaga",
     "guest": "Para publicar uma vaga, entre ou crie uma conta.",
@@ -4056,7 +4249,15 @@
     }
   },
   "events": {
+    "v2": {
+      "title": "Eventos",
+      "pickWithSpoki": "Escolher com o Spoki",
+      "all": "Todos",
+      "more": "Mais filtros",
+      "details": "Detalhes"
+    },
     "viewEvent": "Abrir evento",
+    "askSpoki": "Encontrar eventos com o Spoki",
     "title": "Eventos Web3 e tech",
     "subtitle": "Cúpulas, conferências, meetups, hackathons, encontros de negócios e de carreira. Vá aonde se contrata: o networking costuma levar à próxima vaga.",
     "filters": "Filtros",
@@ -4117,6 +4318,27 @@
     }
   },
   "freelance": {
+    "v2": {
+      "fromPrice": "a partir de {price}",
+      "askAbout": "Perguntar ao Spoki sobre o serviço",
+      "order": "Pedir",
+      "room": "Sala do pedido",
+      "seller": "Freelancer",
+      "buyer": "Cliente",
+      "youBuy": "o cliente é você",
+      "youSell": "o freelancer é você",
+      "due": "prazo {date}",
+      "title": "Freelance",
+      "asClient": "Sou cliente",
+      "asSeller": "Sou freelancer",
+      "searchPlaceholder": "O que precisa ser feito? Ex.: landing, logo, tradução",
+      "pickWithSpoki": "Escolher com o Spoki",
+      "all": "Todos",
+      "more": "Mais filtros",
+      "turnkeyTitle": "Não quer procurar freelancers sozinho?",
+      "turnkeyText": "A INTGETION faz chave na mão: equipe, gerente e pagamento por etapas.",
+      "results": "{count, plural, one {# serviço} other {# serviços}} · {sort}"
+    },
     "viewService": "Abrir serviço",
     "telegram": {
       "confirmAccept": "Aceitar a solicitação para “{serviceTitle}”? Os contatos se abrem para os dois.",
@@ -4212,6 +4434,9 @@
     "title": "Freelance. Serviços prontos com preço.",
     "subtitle": "Especialistas individuais: o que vão fazer, por quanto e até quando. Os contatos abrem quando o freelancer aceita seu pedido. Para uma equipe inteira, veja Serviços.",
     "teamLink": "Precisa de uma equipe? Serviços",
+    "teamPromo": "A INTGETION pode cuidar do projeto inteiro.",
+    "ugcPromoTitle": "Precisa de vários vídeos UGC?",
+    "ugcPromoText": "Crie uma campanha para creators.",
     "filters": "Filtros",
     "closeFilters": "Fechar filtros",
     "applyFilters": "Mostrar serviços",
@@ -4559,6 +4784,12 @@
     "fromLabel": "Preço a partir de"
   },
   "ugc": {
+    "v2": {
+      "roleLabel": "Papel em UGC",
+      "brand": "Sou uma marca",
+      "creator": "Sou criador",
+      "createCampaign": "Criar campanha"
+    },
     "title": "Vídeos UGC",
     "intro": "Vídeos curtos de pessoas reais para anúncios e redes. Um brief, criadores se candidatam, você contrata quem escolher.",
     "moneyNote": "O valor fica registrado em centavos. Neste passo nada é cobrado nem pago.",
@@ -5110,6 +5341,30 @@
     "telegram": "Lembrete do Spoki: {text}\n{when}"
   },
   "account": {
+    "v2": {
+      "twoProfiles": "Uma conta, dois perfis: para vagas e para freelance.",
+      "seeker": "Candidato",
+      "freelancer": "Freelancer",
+      "openToOffers": "Aberto a propostas",
+      "edit": "Editar",
+      "jobProfile": "Perfil de emprego",
+      "about": "Sobre mim",
+      "skills": "Habilidades",
+      "years": "{count, plural, one {# ano} other {# anos}}",
+      "lookingFor": "O que procuro",
+      "titles": "Cargos",
+      "salary": "Salário",
+      "format": "Formato",
+      "timezone": "Fuso horário",
+      "completeness": "Perfil preenchido",
+      "fillProfile": "Preencher perfil",
+      "rating": "{rating} · {count, plural, one {# avaliação} other {# avaliações}}",
+      "myServices": "Meus serviços",
+      "addService": "Adicionar serviço",
+      "noServices": "Ainda não há serviços. Adicione um e receba pedidos.",
+      "priceFrom": "a partir de {price}",
+      "reviews": "Avaliações de clientes"
+    },
     "nav": "Minha conta",
     "title": "Minha conta",
     "intro": "Uma conta para todos os serviços do site: perfil, plano, acesso e carteira estão aqui.",

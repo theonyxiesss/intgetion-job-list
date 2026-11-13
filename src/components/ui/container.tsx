@@ -63,11 +63,21 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <header className="flex flex-col gap-4 border-b border-line pb-8 md:flex-row md:items-end md:justify-between">
+    <header className="flex flex-col gap-4 border-b border-line pb-8 md:flex-row md:items-end md:justify-between in-data-[ui=v2]:border-0 in-data-[ui=v2]:pb-0">
       <div className="flex flex-col gap-3">
-        {label && <p className="t-label text-fg-muted">{label}</p>}
-        <h1 className="t-display-l">{title}</h1>
-        {intro && <p className="max-w-[68ch] text-fg-muted">{intro}</p>}
+        {label && (
+          <p className="t-label text-fg-muted in-data-[ui=v2]:text-sm in-data-[ui=v2]:normal-case in-data-[ui=v2]:tracking-normal">
+            {label}
+          </p>
+        )}
+        <h1 className="t-display-l in-data-[ui=v2]:text-[22px] in-data-[ui=v2]:leading-tight in-data-[ui=v2]:font-semibold in-data-[ui=v2]:tracking-tight">
+          {title}
+        </h1>
+        {intro && (
+          <p className="max-w-[68ch] text-fg-muted in-data-[ui=v2]:text-sm">
+            {intro}
+          </p>
+        )}
       </div>
       {actions && <div className="flex flex-wrap gap-3">{actions}</div>}
     </header>

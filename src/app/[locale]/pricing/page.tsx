@@ -1,4 +1,6 @@
 import { Check } from "lucide-react";
+import { flags } from "@/config/flags";
+import { PricingPageV2 } from "./pricing-v2";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { buttonClass } from "@/components/ui/button";
@@ -51,6 +53,7 @@ export default async function PricingPage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ for?: string; next?: string }>;
 }) {
+  if (flags.uiV2Enabled) return PricingPageV2({ params, searchParams });
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("pricing");

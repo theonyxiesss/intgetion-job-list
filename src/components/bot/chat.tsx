@@ -358,6 +358,7 @@ export function Chat({
   freelanceTitle,
   freelanceCopy = {},
   variant = "page",
+  v2 = false,
   section,
 }: {
   signedIn: boolean;
@@ -368,6 +369,8 @@ export function Chat({
    * layout (D525), which owns the title, the position and the phone screen.
    */
   variant?: "page" | "panel";
+  /** UI_V2 look: Spoki avatar by answers, note under the field. */
+  v2?: boolean;
   /** The part of the site the person has open, sent with each message (D525). */
   section?: PageSection;
   jobId?: string;
@@ -1334,12 +1337,14 @@ export function Chat({
           data-chat-meta
           className={
             variant === "page" || hasFocusLine || showJobGoal
-              ? "mx-auto w-full max-w-3xl shrink-0 px-4 py-3 md:px-6"
+              ? "mx-auto w-full max-w-[760px] shrink-0 px-4 py-3 md:px-6"
               : "hidden"
           }
         >
           {variant === "page" ? (
-            <h1 className="text-sm font-medium">{t("title")}</h1>
+            <h1 className={v2 ? "sr-only" : "text-sm font-medium"}>
+              {t("title")}
+            </h1>
           ) : null}
           {jobFocus ? (
             <p className="t-body-s mt-2 text-fg first:mt-0">
@@ -1421,7 +1426,7 @@ export function Chat({
               library sees wheel scrolling; sideways overflow is clipped here. */}
           <div
             ref={contentRef}
-            className="mx-auto flex min-h-full w-full max-w-3xl flex-col gap-6 overflow-x-hidden px-4 md:px-6"
+            className="mx-auto flex min-h-full w-full max-w-[760px] flex-col gap-6 overflow-x-hidden px-4 md:px-6"
           >
             {welcome && (
               <div className="mt-auto flex w-full flex-col items-center gap-4 pb-2 text-center">
@@ -1499,7 +1504,7 @@ export function Chat({
                 return (
                   <p
                     key={entry.key}
-                    className="max-w-[85%] self-end whitespace-pre-wrap break-words rounded-3xl bg-surface-2 px-4 py-2.5"
+                    className="max-w-[85%] self-end whitespace-pre-wrap break-words rounded-[20px] bg-surface-2 px-4 py-3 text-[15px] leading-6"
                   >
                     {entry.text}
                   </p>
@@ -1508,18 +1513,22 @@ export function Chat({
               if (entry.kind === "assistant") {
                 return (
                   <div key={entry.key} className="min-w-0">
-                    <span className="sr-only">{t("agent")}</span>
-                    <AssistantAnswer
-                      text={entry.text}
-                      live={entry.live === true}
-                      messageId={entry.messageId}
-                      onRetry={
-                        retryText && entry.key === lastKey
-                          ? () => void ask(retryText)
-                          : undefined
-                      }
-                      onTyping={setAnswerTyping}
-                    />
+                    <div
+                      className={v2 ? "min-w-0 flex-1 text-[15px]" : "min-w-0"}
+                    >
+                      <span className="sr-only">{t("agent")}</span>
+                      <AssistantAnswer
+                        text={entry.text}
+                        live={entry.live === true}
+                        messageId={entry.messageId}
+                        onRetry={
+                          retryText && entry.key === lastKey
+                            ? () => void ask(retryText)
+                            : undefined
+                        }
+                        onTyping={setAnswerTyping}
+                      />
+                    </div>
                   </div>
                 );
               }
@@ -2037,7 +2046,7 @@ export function Chat({
             </div>
           )}
         </div>
-        <div className="mx-auto flex w-full max-w-3xl shrink-0 flex-col gap-3 px-4 md:px-6">
+        <div className="mx-auto flex w-full max-w-[760px] shrink-0 flex-col gap-3 px-4 md:px-6">
           {actions.signup && !signedIn && (
             <p className="flex flex-col items-start gap-2">
               <Link
@@ -2078,7 +2087,7 @@ export function Chat({
             onSubmit={send}
             className={`flex shrink-0 flex-col gap-2 ${welcome ? "max-md:pb-3" : "pb-[max(0.75rem,env(safe-area-inset-bottom))]"}`}
           >
-            <div className="flex items-end gap-2 rounded-[1.75rem] bg-surface-2 py-1.5 pr-1.5 pl-5 ring-1 ring-line-strong focus-within:ring-2 focus-within:ring-fg-subtle">
+            <div className="flex items-end gap-2 rounded-[1.75rem] border border-line bg-surface-2 py-1.5 pr-1.5 pl-5 focus-within:border-line-strong">
               <label className="sr-only" htmlFor="chat-input">
                 {t("placeholder")}
               </label>
@@ -2114,7 +2123,7 @@ export function Chat({
                 <button
                   type="submit"
                   disabled={!text.trim()}
-                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-signal text-signal-fg transition-opacity disabled:opacity-40"
+                  className={`flex size-11 shrink-0 items-center justify-center rounded-full transition-opacity disabled:opacity-40 ${v2 ? "bg-fg text-bg" : "bg-signal text-signal-fg"}`}
                 >
                   <Icon icon={ArrowUp} size={20} />
                   <span className="sr-only">{t("send")}</span>
@@ -2122,6 +2131,11 @@ export function Chat({
               )}
             </div>
           </form>
+          {v2 && variant === "page" && (
+            <p className="pb-3 text-center text-xs text-fg-muted">
+              {t("disclaimer")}
+            </p>
+          )}
         </div>
         {welcome && (
           <div
