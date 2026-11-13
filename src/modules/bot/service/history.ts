@@ -1,4 +1,4 @@
-// Copy of intgetion-bot v0.2.0 service/history.ts (chat history); the module owns it.
+// Copy of intgetion-bot v0.2.1 service/history.ts (chat history); the module owns it.
 import * as repo from "../repo/bot-repo";
 
 /** Longest preview of the first question shown in the history list. */
