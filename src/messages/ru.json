@@ -4225,6 +4225,18 @@
     }
   },
   "freelance": {
+    "v2": {
+      "title": "Фриланс",
+      "asClient": "Я заказчик",
+      "asSeller": "Я исполнитель",
+      "searchPlaceholder": "Что нужно сделать? Например: лендинг, логотип, перевод",
+      "pickWithSpoki": "Подобрать со Spoki",
+      "all": "Все",
+      "more": "Ещё фильтры",
+      "turnkeyTitle": "Не хотите искать исполнителей сами?",
+      "turnkeyText": "INTGETION сделает под ключ: команда, менеджер, оплата по этапам.",
+      "results": "{count, plural, one {# услуга} few {# услуги} many {# услуг} other {# услуги}} · {sort}"
+    },
     "viewService": "Открыть услугу",
     "telegram": {
       "confirmAccept": "Принять запрос на «{serviceTitle}»? Контакты откроются обеим сторонам.",

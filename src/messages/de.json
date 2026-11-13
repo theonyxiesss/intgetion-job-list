@@ -4225,6 +4225,18 @@
     }
   },
   "freelance": {
+    "v2": {
+      "title": "Freelance",
+      "asClient": "Ich bin Auftraggeber",
+      "asSeller": "Ich bin Freelancer",
+      "searchPlaceholder": "Was ist zu tun? Z. B. Landingpage, Logo, Übersetzung",
+      "pickWithSpoki": "Mit Spoki finden",
+      "all": "Alle",
+      "more": "Weitere Filter",
+      "turnkeyTitle": "Keine Lust, selbst Freelancer zu suchen?",
+      "turnkeyText": "INTGETION macht es schlüsselfertig: Team, Manager, Zahlung nach Etappen.",
+      "results": "{count, plural, one {# Leistung} other {# Leistungen}} · {sort}"
+    },
     "viewService": "Service öffnen",
     "telegram": {
       "confirmAccept": "Anfrage für „{serviceTitle}“ annehmen? Beide Seiten sehen dann die Kontakte.",

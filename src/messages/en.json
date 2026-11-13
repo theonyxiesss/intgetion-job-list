@@ -4731,6 +4731,18 @@
     }
   },
   "freelance": {
+    "v2": {
+      "title": "Freelance",
+      "asClient": "I am a client",
+      "asSeller": "I am a freelancer",
+      "searchPlaceholder": "What needs doing? E.g. a landing page, a logo, a translation",
+      "pickWithSpoki": "Pick with Spoki",
+      "all": "All",
+      "more": "More filters",
+      "turnkeyTitle": "Don't want to look for freelancers yourself?",
+      "turnkeyText": "INTGETION does it turnkey: a team, a manager, payment by stages.",
+      "results": "{count, plural, one {# service} other {# services}} · {sort}"
+    },
     "viewService": "Open service",
     "telegram": {
       "confirmAccept": "Accept the request for “{serviceTitle}”? Contacts open to both of you.",

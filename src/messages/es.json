@@ -4225,6 +4225,18 @@
     }
   },
   "freelance": {
+    "v2": {
+      "title": "Freelance",
+      "asClient": "Soy cliente",
+      "asSeller": "Soy freelancer",
+      "searchPlaceholder": "¿Qué hay que hacer? Ej.: landing, logo, traducción",
+      "pickWithSpoki": "Elegir con Spoki",
+      "all": "Todos",
+      "more": "Más filtros",
+      "turnkeyTitle": "¿No quieres buscar freelancers tú mismo?",
+      "turnkeyText": "INTGETION lo hace llave en mano: equipo, gestor y pago por etapas.",
+      "results": "{count, plural, one {# servicio} other {# servicios}} · {sort}"
+    },
     "viewService": "Abrir servicio",
     "telegram": {
       "confirmAccept": "¿Aceptar la solicitud para «{serviceTitle}»? Los contactos se abren para ambos.",
