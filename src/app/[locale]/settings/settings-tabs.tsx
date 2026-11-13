@@ -152,7 +152,7 @@ export async function SettingsShell({
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-4 md:max-w-[760px]">
           <h1 className="text-lg font-semibold">{current.label}</h1>
-          <div className="flex flex-col gap-4 *:rounded-[18px] *:border *:border-line *:bg-surface *:p-5">
+          <div className="flex flex-col gap-4 *:rounded-[18px] *:border *:border-line *:bg-surface *:p-5 [&_.t-h3]:text-[15px] [&_.t-h3]:leading-snug [&_.t-h3]:font-semibold [&_.t-label]:text-xs [&_.t-label]:tracking-normal [&_.t-label]:normal-case [&_h2]:text-[15px] [&_h2]:font-semibold">
             {children}
           </div>
         </div>
