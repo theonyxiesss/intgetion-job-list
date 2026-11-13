@@ -123,6 +123,11 @@
     "ogAlt": "INTGETION Job List — Remote-Arbeit in Web3"
   },
   "nav": {
+    "sections": "Bereiche",
+    "recentChats": "Letzte Chats",
+    "allChats": "Alle",
+    "turnkey": "Schlüsselfertig",
+    "eventsList": "Veranstaltungen",
     "chatHistory": "Chatverlauf",
     "home": "Startseite",
     "main": "Hauptmenü",

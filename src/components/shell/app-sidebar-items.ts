@@ -17,9 +17,11 @@ export type SidebarIcon =
   | "bell"
   | "profile"
   | "pricing"
-  | "finance";
+  | "finance"
+  | "history";
 
 export const sidebarItems: readonly SidebarItem[] = [
+  { href: "/chat/history", label: "nav.chatHistory", icon: "history" },
   {
     href: "/jobs",
     label: "nav.jobs",
@@ -40,9 +42,9 @@ export const sidebarItems: readonly SidebarItem[] = [
     ],
   },
   { href: "/campaigns", label: "nav.campaigns", icon: "ugc" },
-  { href: "/services", label: "nav.services", icon: "turnkey" },
-  { href: "/events", label: "nav.events", icon: "events" },
+  { href: "/services", label: "nav.turnkey", icon: "turnkey" },
   { href: "/notifications", label: "nav.notifications", icon: "bell" },
+  { href: "/events", label: "nav.eventsList", icon: "events" },
   { href: "/profile", label: "nav.profile", icon: "profile" },
   { href: "/pricing", label: "nav.pricing", icon: "pricing" },
   {
@@ -74,7 +76,9 @@ export function groupActive(pathname: string, group: SidebarGroup): boolean {
 export function sidebarLabelKeys(): string[] {
   const keys = new Set<string>([
     "nav.newChat",
-    "nav.chatHistory",
+    "nav.sections",
+    "nav.recentChats",
+    "nav.allChats",
     "nav.settings",
     "nav.account",
     "nav.login",

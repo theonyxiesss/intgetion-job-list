@@ -123,6 +123,11 @@
     "ogAlt": "INTGETION Job List — удалённая работа в Web3"
   },
   "nav": {
+    "sections": "Разделы",
+    "recentChats": "Недавние чаты",
+    "allChats": "Все",
+    "turnkey": "Под ключ",
+    "eventsList": "Мероприятия",
     "chatHistory": "История чатов",
     "home": "Главная",
     "main": "Основное",

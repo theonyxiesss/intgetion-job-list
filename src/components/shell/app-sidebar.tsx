@@ -14,6 +14,8 @@ import {
 
 /** Labels resolved on the server: message key -> text (UI_V2). */
 export type AppSidebarLabels = Record<string, string>;
+/** A recent Spoki thread for the menu: its address and first question. */
+export type SidebarRecentChat = { href: string; title: string };
 
 const PATHS: Record<SidebarIcon, string> = {
   jobs: "M3 7h18v13H3zM8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2",
@@ -27,6 +29,7 @@ const PATHS: Record<SidebarIcon, string> = {
   pricing:
     "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z",
   finance: "M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a1 1 0 0 1-1-1zM4 7l11-3v3",
+  history: "M3 12a9 9 0 1 0 3-6.7M3 4v4h4M12 7v5l3 2",
 };
 
 function Stroke({ d, size = 17 }: { d: string; size?: number }): ReactNode {
@@ -59,9 +62,11 @@ const ROW_ACTIVE = "bg-surface-2 text-fg";
 export function AppSidebar({
   labels,
   signedIn,
+  recent = [],
 }: {
   labels: AppSidebarLabels;
   signedIn: boolean;
+  recent?: readonly SidebarRecentChat[];
 }) {
   const pathname = usePathname();
   const t = (key: string) => labels[key] ?? key;
@@ -91,16 +96,8 @@ export function AppSidebar({
         <Stroke d="M12 5v14M5 12h14" size={18} />
         {t("nav.newChat")}
       </Link>
-      <Link
-        href="/chat/history"
-        aria-current={
-          sidebarActive(pathname, "/chat/history") ? "page" : undefined
-        }
-        className="flex min-h-9 items-center px-3 text-sm text-fg-muted hover:text-fg"
-      >
-        {t("nav.chatHistory")}
-      </Link>
 
+      <p className="px-3 pt-2 text-xs text-fg-subtle">{t("nav.sections")}</p>
       <ul className="flex flex-col gap-0.5">
         {sidebarItems.map((item) => {
           if (!isGroup(item)) {
@@ -163,6 +160,34 @@ export function AppSidebar({
           );
         })}
       </ul>
+
+      {recent.length > 0 && (
+        <div className="flex min-h-0 flex-col gap-0.5">
+          <div className="flex items-center justify-between px-3 pt-2">
+            <span className="text-xs text-fg-subtle">
+              {t("nav.recentChats")}
+            </span>
+            <Link
+              href="/chat/history"
+              className="text-xs text-fg-subtle hover:text-fg"
+            >
+              {t("nav.allChats")}
+            </Link>
+          </div>
+          <ul className="flex flex-col gap-0.5">
+            {recent.map((chat) => (
+              <li key={chat.href + chat.title}>
+                <Link
+                  href={chat.href}
+                  className="flex min-h-9 items-center truncate rounded-lg px-3 text-sm text-fg-muted hover:bg-surface-2 hover:text-fg"
+                >
+                  <span className="truncate">{chat.title}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="mt-auto flex items-center gap-2 border-t border-line pt-2.5 pl-1.5">
         <Link

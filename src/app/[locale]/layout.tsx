@@ -23,6 +23,7 @@ import { SpokiRow, SpokiShell } from "@/components/bot/spoki-shell";
 import { SiteRail, type SiteRailData } from "@/components/shell/site-rail";
 import { AppSidebar } from "@/components/shell/app-sidebar";
 import { sidebarLabelKeys } from "@/components/shell/app-sidebar-items";
+import { sidebarRecentChats } from "@/components/shell/sidebar-recent";
 import { railServices } from "@/components/shell/rail-items";
 import { JOB_CATEGORIES } from "@/config/markers";
 import { MiniAppBar } from "@/components/auth/mini-app-bar";
@@ -146,9 +147,14 @@ export default async function LocaleLayout({
   );
   // v2 (UI_V2): the side menu replaces the rail from tablet width;
   // phones use the bottom menu without the classic top bar.
+  const recentChats = v2 && signedIn ? await sidebarRecentChats(t) : [];
   const pageColumn = v2 ? (
     <div className="flex min-h-0 w-full flex-1">
-      <AppSidebar labels={sidebarLabels} signedIn={signedIn} />
+      <AppSidebar
+        labels={sidebarLabels}
+        signedIn={signedIn}
+        recent={recentChats}
+      />
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
     </div>
   ) : (
