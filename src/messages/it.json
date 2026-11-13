@@ -1140,6 +1140,12 @@
     }
   },
   "notifications": {
+    "v2": {
+      "feed": "Feed",
+      "channels": "Canali",
+      "channelsText": "Dove inviare le notifiche. Le urgenti — accessi, pagamenti, contestazioni — arrivano sempre.",
+      "fineTune": "Regolazione per evento nelle impostazioni"
+    },
     "nav": "Notifiche",
     "title": "Notifiche",
     "tabsLabel": "Notifiche",

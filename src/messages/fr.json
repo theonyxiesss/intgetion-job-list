@@ -1140,6 +1140,12 @@
     }
   },
   "notifications": {
+    "v2": {
+      "feed": "Fil",
+      "channels": "Canaux",
+      "channelsText": "Où envoyer les notifications. L’urgent — connexions, paiements, litiges — arrive toujours.",
+      "fineTune": "Réglage fin par événement dans les paramètres"
+    },
     "nav": "Notifications",
     "title": "Notifications",
     "tabsLabel": "Notifications",

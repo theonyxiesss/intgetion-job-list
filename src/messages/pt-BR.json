@@ -1140,6 +1140,12 @@
     }
   },
   "notifications": {
+    "v2": {
+      "feed": "Feed",
+      "channels": "Canais",
+      "channelsText": "Para onde enviar as notificações. O urgente — acessos, pagamentos, disputas — sempre chega.",
+      "fineTune": "Ajuste fino por evento nas configurações"
+    },
     "nav": "Notificações",
     "title": "Notificações",
     "tabsLabel": "Notificações",

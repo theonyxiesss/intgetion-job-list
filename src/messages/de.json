@@ -1140,6 +1140,12 @@
     }
   },
   "notifications": {
+    "v2": {
+      "feed": "Verlauf",
+      "channels": "Kanäle",
+      "channelsText": "Wohin Benachrichtigungen gehen. Dringendes — Anmeldungen, Zahlungen, Streitfälle — kommt immer an.",
+      "fineTune": "Feineinstellung pro Ereignis in den Einstellungen"
+    },
     "nav": "Benachrichtigungen",
     "title": "Benachrichtigungen",
     "tabsLabel": "Benachrichtigungen",

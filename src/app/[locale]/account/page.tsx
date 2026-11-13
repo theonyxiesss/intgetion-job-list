@@ -25,6 +25,8 @@ import {
 } from "@/modules/users/service";
 import { SharedProfileForm } from "@/modules/users/ui/shared-profile-form";
 import { requireSettingsUser } from "../settings/require-settings-user";
+import { flags } from "@/config/flags";
+import { Link } from "@/i18n/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -207,6 +209,212 @@ export default async function AccountPage({
 
   const section =
     "flex flex-col gap-4 rounded-lg border border-line p-4 md:p-6";
+
+  // v2 (UI_V2): the profile mockup on the same data and forms.
+  if (flags.uiV2Enabled) {
+    const card = "rounded-[18px] border border-line bg-surface p-5";
+    const name = shared?.displayName?.trim() || t("title");
+    const initials = name
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? "")
+      .join("");
+    const place = [shared?.city, shared?.country, shared?.timezone]
+      .filter(Boolean)
+      .join(" · ");
+    const completeness = candidate?.completeness ?? null;
+    return (
+      <RouteMessages namespaces={["account", "settings"]}>
+        <main className="px-4 py-6 md:px-6 md:py-8">
+          <div className="mx-auto flex max-w-[1180px] flex-wrap items-start gap-5">
+            <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-5">
+              <section
+                aria-labelledby="account-title"
+                className={`${card} flex flex-wrap items-center gap-5`}
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex size-[76px] shrink-0 items-center justify-center rounded-full bg-signal text-2xl font-bold text-signal-fg"
+                >
+                  {initials}
+                </span>
+                <div className="flex min-w-0 flex-[1_1_260px] flex-col gap-1.5">
+                  <h1
+                    id="account-title"
+                    className="text-2xl font-semibold tracking-tight"
+                  >
+                    {name}
+                  </h1>
+                  {place ? (
+                    <p className="text-sm text-fg-muted">{place}</p>
+                  ) : null}
+                  <p className="text-sm text-fg-muted">{t("intro")}</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href="#account-profile-section"
+                    className="flex min-h-11 items-center rounded-xl border border-line-strong px-4 text-sm"
+                  >
+                    {t("profile.title")}
+                  </a>
+                  <Link
+                    href="/profile/edit"
+                    className="flex min-h-11 items-center rounded-xl bg-fg px-4 text-sm font-medium text-bg"
+                  >
+                    {t("services.jobs.name")}
+                  </Link>
+                </div>
+              </section>
+
+              <section
+                aria-labelledby="account-services"
+                className="flex flex-col gap-3"
+              >
+                <div className="flex flex-col gap-1">
+                  <h2 id="account-services" className="text-lg font-semibold">
+                    {t("services.title")}
+                  </h2>
+                  <p className="text-sm text-fg-muted">{t("services.text")}</p>
+                </div>
+                <ul className="grid gap-3 sm:grid-cols-2">
+                  {list.map((service) => (
+                    <li key={service.key}>
+                      <Link
+                        href={service.href}
+                        className={`${card} flex h-full flex-col gap-2 hover:border-line-strong`}
+                      >
+                        <span className="font-semibold">
+                          {t(`services.${service.key}.name`)}
+                        </span>
+                        <span className="text-sm text-fg-muted">
+                          {service.status}
+                        </span>
+                        <span className="mt-auto pt-1 text-sm text-accent">
+                          {t("services.open")} →
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              <section
+                id="account-profile-section"
+                aria-labelledby="account-profile"
+                className={`${card} flex scroll-mt-6 flex-col gap-4`}
+              >
+                <div className="flex flex-col gap-1">
+                  <h2 id="account-profile" className="text-lg font-semibold">
+                    {t("profile.title")}
+                  </h2>
+                  <p className="text-sm text-fg-muted">{t("profile.text")}</p>
+                </div>
+                <SharedProfileForm
+                  initial={{
+                    displayName: shared?.displayName ?? null,
+                    country: shared?.country ?? null,
+                    city: shared?.city ?? null,
+                    timezone: shared?.timezone ?? null,
+                    languages: shared?.languages ?? [],
+                    about: shared?.about ?? null,
+                  }}
+                />
+              </section>
+            </div>
+
+            <aside className="flex min-w-0 flex-[1_1_300px] flex-col gap-4 lg:max-w-[380px]">
+              {completeness !== null ? (
+                <section className={`${card} flex flex-col gap-3`}>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <h2 className="text-[15px] font-semibold">
+                      {t("services.jobs.name")}
+                    </h2>
+                    <span className="text-2xl font-semibold text-accent">
+                      {completeness}%
+                    </span>
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    className="flex h-1.5 rounded-full bg-surface-2"
+                  >
+                    <span
+                      className="rounded-full bg-accent"
+                      style={{ width: `${completeness}%` }}
+                    />
+                  </span>
+                  <Link href="/profile/edit" className="text-sm text-accent">
+                    {t("services.open")} →
+                  </Link>
+                </section>
+              ) : null}
+
+              <section
+                aria-labelledby="account-plan"
+                className={`${card} flex flex-col gap-3`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <h2 id="account-plan" className="text-[15px] font-semibold">
+                    {t("plan.title")}
+                  </h2>
+                  <Link href="/pricing" className="text-sm text-accent">
+                    {t("plan.change")}
+                  </Link>
+                </div>
+                <ul className="flex flex-col gap-3">
+                  {plans.map((plan) => (
+                    <li key={plan.key} className="flex flex-col gap-1.5">
+                      <span className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-lg bg-accent px-2 py-0.5 text-xs font-semibold text-accent-fg">
+                          {plan.name}
+                        </span>
+                        <span className="text-sm">{plan.label}</span>
+                      </span>
+                      {plan.until ? (
+                        <span className="text-xs text-fg-subtle">
+                          {t("plan.until", { date: plan.until })}
+                        </span>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              <section
+                id="security"
+                aria-labelledby="account-security"
+                className={`${card} flex scroll-mt-6 flex-col gap-4`}
+              >
+                <div className="flex flex-col gap-1">
+                  <h2
+                    id="account-security"
+                    className="text-[15px] font-semibold"
+                  >
+                    {t("security.title")}
+                  </h2>
+                  <p className="text-sm text-fg-muted">{t("security.text")}</p>
+                </div>
+                <AccountSignIn locale={locale} user={user} />
+                <AccountWallet
+                  address={wallet?.address ?? null}
+                  projectId={
+                    process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID?.trim() ??
+                    ""
+                  }
+                  blocked={impact?.blocked ?? false}
+                  openPayments={impact?.openPayments ?? 0}
+                  unpaidOrders={impact?.unpaidOrders ?? 0}
+                  owedRewards={impact?.owedRewards ?? 0}
+                />
+                <Link href="/settings/account" className="text-sm text-accent">
+                  {t("security.more")} →
+                </Link>
+              </section>
+            </aside>
+          </div>
+        </main>
+      </RouteMessages>
+    );
+  }
 
   return (
     <RouteMessages namespaces={["account", "settings"]}>

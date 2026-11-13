@@ -1140,6 +1140,12 @@
     }
   },
   "notifications": {
+    "v2": {
+      "feed": "Feed",
+      "channels": "Channels",
+      "channelsText": "Where notifications go. Urgent ones — sign-ins, payments, disputes — always arrive.",
+      "fineTune": "Fine-tune by event in settings"
+    },
     "nav": "Notifications",
     "title": "Notifications",
     "tabsLabel": "Notifications",
