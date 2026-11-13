@@ -3371,6 +3371,13 @@
     }
   },
   "billing": {
+    "v2": {
+      "back": "Back to finances",
+      "secure": "Secure payment",
+      "companyPlan": "Company plan",
+      "personalPlan": "Personal plan",
+      "pay": "Pay or top up"
+    },
     "nav": "Billing",
     "title": "Payment and plan",
     "start": "Your plan: Start",

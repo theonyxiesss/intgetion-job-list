@@ -33,6 +33,7 @@ export default async function RegisterPage({
   return (
     <AuthPage
       title={t("registerTitle")}
+      mode="register"
       footer={
         <p>
           {t("haveAccount")}{" "}

@@ -3371,6 +3371,13 @@
     }
   },
   "billing": {
+    "v2": {
+      "back": "Zurück zu den Finanzen",
+      "secure": "Sichere Zahlung",
+      "companyPlan": "Firmentarif",
+      "personalPlan": "Persönlicher Tarif",
+      "pay": "Bezahlen oder aufladen"
+    },
     "nav": "Abrechnung",
     "title": "Zahlung und Tarif",
     "start": "Ihr Tarif: Start",

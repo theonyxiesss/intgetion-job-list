@@ -3371,6 +3371,13 @@
     }
   },
   "billing": {
+    "v2": {
+      "back": "Volver a finanzas",
+      "secure": "Pago seguro",
+      "companyPlan": "Plan de la empresa",
+      "personalPlan": "Plan personal",
+      "pay": "Pagar o recargar"
+    },
     "nav": "Pago",
     "title": "Pago y plan",
     "start": "Tu plan: Start",

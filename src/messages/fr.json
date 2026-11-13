@@ -3375,6 +3375,13 @@
     }
   },
   "billing": {
+    "v2": {
+      "back": "Retour aux finances",
+      "secure": "Paiement sécurisé",
+      "companyPlan": "Offre de l’entreprise",
+      "personalPlan": "Offre personnelle",
+      "pay": "Payer ou recharger"
+    },
     "nav": "Facturation",
     "title": "Paiement et formule",
     "start": "Votre formule : Start",

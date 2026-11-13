@@ -47,6 +47,7 @@ export default async function LoginPage({
   return (
     <AuthPage
       title={t("loginTitle")}
+      mode="login"
       footer={
         <>
           <Link href="/reset-password" className="underline underline-offset-4">

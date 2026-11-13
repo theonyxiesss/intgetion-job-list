@@ -18,6 +18,8 @@ import { getOrderForParty, orderPayState } from "@/modules/freelance/service";
 import { formatUsd } from "@/modules/freelance/ui/format";
 import { campaignDepositState, readCampaign } from "@/modules/ugc/service";
 import { RouteMessages } from "@/components/shell/route-messages";
+import { flags } from "@/config/flags";
+import { Link } from "@/i18n/navigation";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -65,6 +67,27 @@ export default async function CryptoBillingPage({
     redirect(`${localePrefix(locale)}/login?next=${loginNext(plan)}`);
   }
   const t = await getTranslations("billing");
+  const v2 = flags.uiV2Enabled;
+  // v2 (UI_V2): the checkout mockup frame — back link, secure mark, cards.
+  const heading = v2 ? (
+    <header className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Link
+          href="/employer/billing"
+          className="flex min-h-10 items-center gap-2 rounded-xl border border-line-strong px-3 text-sm text-fg-muted hover:text-fg"
+        >
+          ← {t("v2.back")}
+        </Link>
+        <span className="text-sm text-fg-muted">{t("v2.secure")}</span>
+      </div>
+      <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
+    </header>
+  ) : (
+    <h1 className="t-h2">{t("title")}</h1>
+  );
+  const frame = v2
+    ? "mx-auto flex w-full max-w-[720px] flex-col gap-6 px-4"
+    : undefined;
   const projectIdEarly =
     process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID?.trim() ?? "";
   const freelanceOrder =
@@ -86,8 +109,9 @@ export default async function CryptoBillingPage({
           >),
         }
       : base;
-    const panel =
-      "mx-auto flex w-full max-w-md flex-col gap-4 border border-line bg-surface p-6";
+    const panel = v2
+      ? "flex w-full flex-col gap-4 rounded-[18px] border border-line bg-surface p-6"
+      : "mx-auto flex w-full max-w-md flex-col gap-4 border border-line bg-surface p-6";
     let body: React.ReactNode;
     if (ugcCampaign) {
       let title = "";
@@ -156,8 +180,8 @@ export default async function CryptoBillingPage({
     }
     return (
       <main className="flex-1 py-10">
-        <Container className="flex flex-col gap-6">
-          <h1 className="t-h2">{t("title")}</h1>
+        <Container className={frame ?? "flex flex-col gap-6"}>
+          {heading}
           {body}
         </Container>
       </main>
@@ -184,14 +208,15 @@ export default async function CryptoBillingPage({
     companies.find((item) => item.id === company) ??
     (companies.length === 1 ? companies[0] : undefined);
   const amount = (SALE_PLANS[plan].priceMinor / BigInt(100)).toString();
-  const panel =
-    "mx-auto flex w-full max-w-md flex-col gap-4 border border-line bg-surface p-6";
+  const panel = v2
+    ? "flex w-full flex-col gap-4 rounded-[18px] border border-line bg-surface p-6"
+    : "mx-auto flex w-full max-w-md flex-col gap-4 border border-line bg-surface p-6";
 
   return (
     <RouteMessages namespaces={["billing"]}>
       <main className="flex-1 py-10">
-        <Container className="flex flex-col gap-6">
-          <h1 className="t-h2">{t("title")}</h1>
+        <Container className={frame ?? "flex flex-col gap-6"}>
+          {heading}
           {!ready ? (
             <InterestForm />
           ) : plan === "plus" || plan === "pro" ? (
