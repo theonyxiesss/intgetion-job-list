@@ -2903,6 +2903,18 @@
     "failed": "Could not open the link. Try again in a minute."
   },
   "pricing": {
+    "v2": {
+      "title": "Plans",
+      "intro": "One account for job search, freelance and hiring. Start free, upgrade when you need more.",
+      "period": "Billing period",
+      "month": "Month",
+      "year": "Year",
+      "saving": "up to −{percent}%",
+      "popular": "Popular",
+      "forever": "forever",
+      "perMonth": "/ mo",
+      "perYear": "/ yr"
+    },
     "account": {
       "title": "One account. Everything free. Pay less on every deal.",
       "intro": "Search, hire, sell services and run UGC from one account at no cost. The platform earns a commission on deals; a plan lowers it and adds speed.",

@@ -2903,6 +2903,18 @@
     "failed": "Impossible d’ouvrir le lien. Réessayez dans une minute."
   },
   "pricing": {
+    "v2": {
+      "title": "Offres",
+      "intro": "Un compte pour chercher un emploi, travailler en freelance et recruter. Commencez gratuitement, passez à plus quand il le faut.",
+      "period": "Période de facturation",
+      "month": "Mois",
+      "year": "Année",
+      "saving": "jusqu’à −{percent} %",
+      "popular": "Populaire",
+      "forever": "pour toujours",
+      "perMonth": "/ mois",
+      "perYear": "/ an"
+    },
     "account": {
       "title": "Un compte. Tout gratuit. Moins de commission sur chaque mission.",
       "intro": "Chercher un emploi, recruter, vendre des services et lancer de l'UGC avec un seul compte, sans frais. La plateforme se rémunère par une commission sur les transactions ; un forfait la réduit et vous fait gagner du temps.",

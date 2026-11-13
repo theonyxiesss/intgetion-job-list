@@ -2903,6 +2903,18 @@
     "failed": "No se ha podido abrir el enlace. Inténtalo de nuevo en un minuto."
   },
   "pricing": {
+    "v2": {
+      "title": "Planes",
+      "intro": "Una cuenta para buscar empleo, freelance y contratar. Empieza gratis y mejora cuando necesites más.",
+      "period": "Periodo de pago",
+      "month": "Mes",
+      "year": "Año",
+      "saving": "hasta −{percent}%",
+      "popular": "Popular",
+      "forever": "para siempre",
+      "perMonth": "/ mes",
+      "perYear": "/ año"
+    },
     "account": {
       "title": "Una cuenta. Todo gratis. Menos comisión en cada trato.",
       "intro": "Buscar trabajo, contratar, vender servicios y lanzar UGC con una sola cuenta y sin coste. La plataforma gana una comisión por trato; un plan la reduce y te da velocidad.",

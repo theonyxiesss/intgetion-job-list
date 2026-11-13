@@ -2903,6 +2903,18 @@
     "failed": "Der Link konnte nicht geöffnet werden. Versuchen Sie es in einer Minute erneut."
   },
   "pricing": {
+    "v2": {
+      "title": "Tarife",
+      "intro": "Ein Konto für Jobsuche, Freelance und Recruiting. Kostenlos starten, upgraden, wenn du mehr brauchst.",
+      "period": "Abrechnungszeitraum",
+      "month": "Monat",
+      "year": "Jahr",
+      "saving": "bis −{percent}%",
+      "popular": "Beliebt",
+      "forever": "für immer",
+      "perMonth": "/ Monat",
+      "perYear": "/ Jahr"
+    },
     "account": {
       "title": "Ein Konto. Alles kostenlos. Weniger Provision bei jedem Auftrag.",
       "intro": "Jobs suchen, einstellen, Leistungen verkaufen und UGC starten – kostenlos mit einem Konto. Die Plattform verdient an einer Provision auf Aufträge; ein Tarif senkt sie und macht dich schneller.",

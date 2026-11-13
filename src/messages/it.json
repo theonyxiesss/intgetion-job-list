@@ -2903,6 +2903,18 @@
     "failed": "Impossibile aprire il link. Riprova tra un minuto."
   },
   "pricing": {
+    "v2": {
+      "title": "Piani",
+      "intro": "Un account per cercare lavoro, il freelance e le assunzioni. Inizia gratis, passa a un piano quando serve di più.",
+      "period": "Periodo di pagamento",
+      "month": "Mese",
+      "year": "Anno",
+      "saving": "fino a −{percent}%",
+      "popular": "Popolare",
+      "forever": "per sempre",
+      "perMonth": "/ mese",
+      "perYear": "/ anno"
+    },
     "account": {
       "title": "Un account. Tutto gratis. Meno commissioni su ogni affare.",
       "intro": "Cercare lavoro, assumere, vendere servizi e lanciare UGC con un solo account, senza costi. La piattaforma guadagna con una commissione sugli affari; un piano la riduce e ti fa andare più veloce.",

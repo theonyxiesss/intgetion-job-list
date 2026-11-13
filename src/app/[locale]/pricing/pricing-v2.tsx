@@ -1,7 +1,6 @@
 // v2 (UI_V2) layout of this route; page.tsx renders it when the flag is on.
 import { Check } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { buttonClass } from "@/components/ui/button";
 import { Container, Section } from "@/components/ui/container";
 import { Icon } from "@/components/ui/icon";
 import { navForward } from "@/components/ui/page-transition";
@@ -30,7 +29,7 @@ export async function PricingPageV2({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ for?: string; next?: string }>;
+  searchParams: Promise<{ for?: string; next?: string; period?: string }>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -49,75 +48,150 @@ export async function PricingPageV2({
     answer: t(`faq.${key}.a`),
   }));
   const plans = ["free", "plus", "pro", "team"] as const;
+  // v2: the mockup's «Month / Year» switch shows the yearly prices.
+  const yearly = query.period === "year";
+  const bestSaving = Math.max(
+    ...ACCOUNT_PLANS.filter((tier) => tier.price && tier.yearly).map((tier) =>
+      Math.round((1 - tier.yearly! / (tier.price! * 12)) * 100),
+    ),
+  );
+  const periodHref = (period: "month" | "year") => {
+    const params = new URLSearchParams();
+    if (query.for) params.set("for", query.for);
+    if (query.next) params.set("next", query.next);
+    if (period === "year") params.set("period", "year");
+    const text = params.toString();
+    return text ? `/pricing?${text}` : "/pricing";
+  };
 
   return (
     <main>
       <JsonLd data={faqPageJsonLd(faq)} />
-      <Section className="py-8 md:py-12">
-        <Container className="flex flex-col items-center gap-5 text-center">
-          <p className="t-label text-fg-muted">{t("label")}</p>
-          <h1 className="max-w-[28ch] text-3xl font-semibold tracking-tight md:text-4xl">
-            {t("account.title")}
-          </h1>
-          <p className="t-body max-w-[68ch] text-fg-muted">
-            {t("account.intro")}
-          </p>
-        </Container>
-      </Section>
-
-      <Section bordered labelledBy="tiers-title" className="py-8 md:py-12">
-        <Container className="flex flex-col gap-8">
+      <section className="px-4 py-8 md:px-6 md:py-10">
+        <div className="mx-auto flex max-w-[1180px] flex-col items-center gap-6">
+          <div className="flex flex-col items-center gap-2 text-center">
+            <h1 className="text-[30px] font-semibold tracking-tight">
+              {t("v2.title")}
+            </h1>
+            <p className="max-w-[60ch] text-[15px] text-fg-muted">
+              {t("v2.intro")}
+            </p>
+          </div>
+          <nav
+            aria-label={t("v2.period")}
+            className="flex gap-1 rounded-xl border border-line bg-surface-2 p-1"
+          >
+            <Link
+              href={periodHref("month")}
+              aria-current={!yearly ? "page" : undefined}
+              className={`rounded-lg px-4 py-1.5 text-sm ${!yearly ? "bg-surface font-medium text-fg" : "text-fg-muted hover:text-fg"}`}
+            >
+              {t("v2.month")}
+            </Link>
+            <Link
+              href={periodHref("year")}
+              aria-current={yearly ? "page" : undefined}
+              className={`flex items-center gap-2 rounded-lg px-4 py-1.5 text-sm ${yearly ? "bg-surface font-medium text-fg" : "text-fg-muted hover:text-fg"}`}
+            >
+              {t("v2.year")}
+              {bestSaving > 0 ? (
+                <span className="rounded-md bg-accent/15 px-1.5 text-xs text-accent">
+                  {t("v2.saving", { percent: bestSaving })}
+                </span>
+              ) : null}
+            </Link>
+          </nav>
           <h2 id="tiers-title" className="sr-only">
             {t("account.plansTitle")}
           </h2>
-          <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <ul className="grid w-full gap-3 md:grid-cols-2 xl:grid-cols-4">
             {ACCOUNT_PLANS.map((tier) => {
               const payHref = planPayHref(paymentsOn, tier.code, signedIn);
+              const showYear = yearly && tier.yearly !== undefined;
               return (
                 <li
                   key={tier.code}
                   className={cn(
-                    "flex flex-col gap-5 rounded-lg border bg-surface p-6",
+                    "relative flex flex-col gap-4 rounded-[18px] border p-6",
                     tier.recommended
-                      ? "border-fg max-md:order-first"
-                      : "border-line",
+                      ? "border-line-strong bg-surface-2 max-md:order-first"
+                      : "border-line bg-surface",
                   )}
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <h3 className="t-h3">
+                  {tier.recommended && (
+                    <span className="absolute -top-3 left-6 rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-fg">
+                      {t("v2.popular")}
+                    </span>
+                  )}
+                  <div className="flex flex-col gap-1">
+                    <h3 className="text-[17px] font-semibold">
                       {t(`account.tiers.${tier.code}.name`)}
                     </h3>
-                    {tier.recommended && (
-                      <span className="t-label text-signal">
-                        {t("recommended")}
-                      </span>
-                    )}
-                  </div>
-                  <p className="t-body-s min-h-10 text-fg-muted">
-                    {t(`account.tiers.${tier.code}.for`)}
-                  </p>
-                  <p className="flex flex-wrap items-baseline gap-2 border-b border-line pb-5">
-                    <span className="font-mono text-3xl tracking-tight tabular-nums break-words">
-                      {tier.price === null ? t("free") : `$${tier.price}`}
-                    </span>
-                    {tier.per && (
-                      <span className="t-body-s text-fg-muted">
-                        {t(`per.${tier.per}`)}
-                      </span>
-                    )}
-                  </p>
-                  {tier.yearly !== undefined && (
-                    <p className="t-body-s text-fg-muted">
-                      {t("yearly", { price: tier.yearly })}
+                    <p className="min-h-10 text-sm text-fg-muted">
+                      {t(`account.tiers.${tier.code}.for`)}
                     </p>
+                  </div>
+                  <p className="flex flex-wrap items-baseline gap-1.5">
+                    <span className="text-[32px] leading-none font-semibold tracking-tight tabular-nums">
+                      {tier.price === null
+                        ? "$0"
+                        : `$${showYear ? tier.yearly : tier.price}`}
+                    </span>
+                    <span className="text-sm text-fg-muted">
+                      {tier.price === null
+                        ? t("v2.forever")
+                        : showYear
+                          ? t("v2.perYear")
+                          : t("v2.perMonth")}
+                    </span>
+                  </p>
+                  {tier.price === null ? (
+                    <Link
+                      href={
+                        posting
+                          ? freePlanHref("companies", query.next)
+                          : signedIn
+                            ? "/jobs"
+                            : "/register"
+                      }
+                      {...navForward}
+                      className="flex min-h-11 w-full items-center justify-center rounded-xl border border-line-strong text-sm font-medium hover:bg-surface-2"
+                    >
+                      {posting ? t("continueFree") : t("startFree")}
+                    </Link>
+                  ) : payHref ? (
+                    <Link
+                      href={payHref}
+                      {...navForward}
+                      className={cn(
+                        "flex min-h-11 w-full items-center justify-center rounded-xl text-sm font-semibold",
+                        tier.recommended
+                          ? "bg-fg text-bg hover:opacity-90"
+                          : "border border-line-strong hover:bg-surface-2",
+                      )}
+                    >
+                      {t("payHire")}
+                    </Link>
+                  ) : (
+                    <span
+                      aria-disabled="true"
+                      className={cn(
+                        "flex min-h-11 w-full items-center justify-center rounded-xl text-sm font-semibold opacity-60",
+                        tier.recommended
+                          ? "bg-fg text-bg"
+                          : "border border-line-strong",
+                      )}
+                    >
+                      {t("soon")}
+                    </span>
                   )}
-                  <ul className="flex flex-col gap-3 pb-4">
+                  <ul className="flex flex-col gap-2.5 pt-1">
                     {tier.points.map((point) => (
-                      <li key={point} className="flex gap-3">
+                      <li key={point} className="flex gap-2.5 text-sm">
                         <Icon
                           icon={Check}
                           size={16}
-                          className="mt-1 shrink-0 text-success"
+                          className="mt-0.5 shrink-0 text-fg-subtle"
                         />
                         <span>
                           {t(`account.tiers.${tier.code}.points.${point}`)}
@@ -125,65 +199,46 @@ export async function PricingPageV2({
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-auto">
-                    {tier.price === null ? (
-                      <Link
-                        href={
-                          posting
-                            ? freePlanHref("companies", query.next)
-                            : signedIn
-                              ? "/jobs"
-                              : "/register"
-                        }
-                        {...navForward}
-                        className={buttonClass("secondary", "md", "w-full")}
-                      >
-                        {posting ? t("continueFree") : t("startFree")}
-                      </Link>
-                    ) : payHref ? (
-                      <Link
-                        href={payHref}
-                        {...navForward}
-                        className={buttonClass(
-                          tier.recommended ? "primary" : "secondary",
-                          "md",
-                          "w-full",
-                        )}
-                      >
-                        {t("payHire")}
-                      </Link>
-                    ) : (
-                      <span
-                        aria-disabled="true"
-                        className={buttonClass(
-                          tier.recommended ? "primary" : "secondary",
-                          "md",
-                          "w-full opacity-60",
-                        )}
-                      >
-                        {t("soon")}
-                      </span>
-                    )}
-                  </div>
                 </li>
               );
             })}
           </ul>
-          <p className="t-body-s text-fg-muted">
-            {paymentsOn ? t("account.payNote") : t("soonNote")}
-          </p>
-          <p className="t-body-s text-fg-muted">
-            {t("helpChoosing")}{" "}
-            <Link
-              href="/chat"
-              className="text-accent underline underline-offset-4"
-              {...navForward}
-            >
-              {t("askSpoki")}
-            </Link>
-          </p>
-        </Container>
-      </Section>
+          <div className="grid w-full gap-3 md:grid-cols-2">
+            <p className="flex items-start gap-3 rounded-[18px] border border-line bg-surface p-4 text-sm text-fg-muted">
+              <svg
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.7}
+                strokeLinecap="round"
+                aria-hidden="true"
+                className="mt-0.5 shrink-0"
+              >
+                <path d="M6 10V8a6 6 0 0 1 12 0v2M5 10h14v11H5z" />
+              </svg>
+              {paymentsOn ? t("account.payNote") : t("soonNote")}
+            </p>
+            <p className="flex items-start gap-3 rounded-[18px] border border-line bg-surface p-4 text-sm text-fg-muted">
+              <span
+                aria-hidden="true"
+                className="mt-1.5 size-2 shrink-0 rounded-full bg-accent"
+              />
+              <span>
+                {t("helpChoosing")}{" "}
+                <Link
+                  href="/chat"
+                  className="font-medium text-fg hover:underline"
+                  {...navForward}
+                >
+                  {t("askSpoki")}
+                </Link>
+              </span>
+            </p>
+          </div>
+        </div>
+      </section>
 
       <Section labelledBy="commission-title" className="py-12 md:py-16">
         <Container className="flex flex-col gap-6">
