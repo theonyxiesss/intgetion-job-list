@@ -67,7 +67,11 @@ export default async function PostJobPage({
     <main className="flex-1 py-10">
       <Container className="flex flex-col gap-8">
         <PageHeader title={t("title")} />
-        <ButtonLink href="/chat?from=post_job" variant="secondary">
+        <ButtonLink
+          href="/chat?from=post_job"
+          variant="secondary"
+          className="in-data-[ui=v2]:self-start in-data-[ui=v2]:rounded-xl"
+        >
           {t("assistantDraft")}
         </ButtonLink>
         <HireForm

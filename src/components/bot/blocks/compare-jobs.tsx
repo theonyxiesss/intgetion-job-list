@@ -26,7 +26,7 @@ export function CompareJobs({
         return (
           <li
             key={item.id}
-            className="flex min-w-0 flex-col gap-3 rounded-lg border border-line bg-surface-2 p-4"
+            className="flex min-w-0 flex-col gap-3 rounded-lg border border-line bg-surface-2 p-4 in-data-[ui=v2]:rounded-[14px]"
           >
             <div className="min-w-0">
               <p className="font-medium break-words">{item.title}</p>
