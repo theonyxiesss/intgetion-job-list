@@ -4304,6 +4304,9 @@
   },
   "freelance": {
     "v2": {
+      "fromPrice": "ab {price}",
+      "askAbout": "Spoki zur Leistung fragen",
+      "order": "Bestellen",
       "room": "Auftragsraum",
       "seller": "Freelancer",
       "buyer": "Auftraggeber",

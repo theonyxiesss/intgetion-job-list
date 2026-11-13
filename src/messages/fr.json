@@ -4308,6 +4308,9 @@
   },
   "freelance": {
     "v2": {
+      "fromPrice": "à partir de {price}",
+      "askAbout": "Demander à Spoki",
+      "order": "Commander",
       "room": "Salle de commande",
       "seller": "Freelance",
       "buyer": "Client",

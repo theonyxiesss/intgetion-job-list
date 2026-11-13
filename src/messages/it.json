@@ -4304,6 +4304,9 @@
   },
   "freelance": {
     "v2": {
+      "fromPrice": "da {price}",
+      "askAbout": "Chiedi a Spoki del servizio",
+      "order": "Ordina",
       "room": "Stanza dell’ordine",
       "seller": "Freelance",
       "buyer": "Cliente",

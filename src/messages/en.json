@@ -4810,6 +4810,9 @@
   },
   "freelance": {
     "v2": {
+      "fromPrice": "from {price}",
+      "askAbout": "Ask Spoki about this service",
+      "order": "Order",
       "room": "Order room",
       "seller": "Freelancer",
       "buyer": "Client",

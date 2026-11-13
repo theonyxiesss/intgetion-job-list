@@ -18,7 +18,7 @@ import {
   type FreelanceSearchQuery,
 } from "@/modules/freelance/service";
 import { formatUsd, languageNames } from "@/modules/freelance/ui/format";
-import { ServiceCard } from "@/modules/freelance/ui/service-card";
+import { ServiceCardV2 } from "./service-card-v2";
 
 const FILTER_KEYS = ["q", "category", "budget", "days", "lang"] as const;
 
@@ -289,7 +289,7 @@ export async function FreelancePageV2({
             <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {cards.map((card) => (
                 <li key={card.id}>
-                  <ServiceCard card={card} locale={locale} />
+                  <ServiceCardV2 card={card} locale={locale} />
                 </li>
               ))}
             </ul>
