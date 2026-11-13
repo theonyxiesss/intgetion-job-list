@@ -1183,6 +1183,7 @@
   },
   "notifications": {
     "v2": {
+      "emailOff": "Não conectado",
       "site": "No site",
       "siteStatus": "Sempre ligado · sino no menu",
       "email": "E-mail",
@@ -1892,6 +1893,22 @@
   },
   "chat": {
     "history": {
+      "searchLong": "Buscar pela primeira pergunta",
+      "filter": {
+        "all": "Todos",
+        "job": "Vagas",
+        "campaign": "UGC",
+        "general": "Gerais"
+      },
+      "group": {
+        "today": "Hoje",
+        "yesterday": "Ontem",
+        "week": "Esta semana",
+        "earlier": "Antes"
+      },
+      "keepTitle": "Histórico",
+      "keepText": "A lista de chats fica. O texto é apagado 24 horas após o envio; o Spoki só lembra o que você permitir guardar.",
+      "memorySettings": "Memória do Spoki",
       "search": "Buscar nos chats",
       "notFound": "Nada encontrado",
       "title": "Histórico de chats",

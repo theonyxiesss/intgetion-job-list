@@ -1183,6 +1183,7 @@
   },
   "notifications": {
     "v2": {
+      "emailOff": "Nicht verbunden",
       "site": "Auf der Website",
       "siteStatus": "Immer an · Glocke im Menü",
       "email": "E-Mail",
@@ -1892,6 +1893,22 @@
   },
   "chat": {
     "history": {
+      "searchLong": "Nach der ersten Frage suchen",
+      "filter": {
+        "all": "Alle",
+        "job": "Jobs",
+        "campaign": "UGC",
+        "general": "Allgemein"
+      },
+      "group": {
+        "today": "Heute",
+        "yesterday": "Gestern",
+        "week": "Diese Woche",
+        "earlier": "Früher"
+      },
+      "keepTitle": "Verlauf speichern",
+      "keepText": "Die Chatliste bleibt. Nachrichtentext wird 24 Stunden nach dem Senden gelöscht; Spoki merkt sich nur, was du erlaubst.",
+      "memorySettings": "Spoki-Gedächtnis",
       "search": "Chats durchsuchen",
       "notFound": "Nichts gefunden",
       "title": "Chatverlauf",

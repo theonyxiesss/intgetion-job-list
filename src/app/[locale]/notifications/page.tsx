@@ -206,9 +206,7 @@ export default async function NotificationsPage({
                     icon: "M3 6h18v12H3zM3 7l9 6 9-6",
                     tone: "bg-fg text-bg",
                     title: t("v2.email"),
-                    status: mailReady
-                      ? t("v2.connected")
-                      : t("v2.notConnected"),
+                    status: mailReady ? t("v2.connected") : t("v2.emailOff"),
                     action: mailReady ? null : "/settings/account",
                     on: mailReady,
                   },

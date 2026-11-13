@@ -1183,6 +1183,7 @@
   },
   "notifications": {
     "v2": {
+      "emailOff": "Non connecté",
       "site": "Sur le site",
       "siteStatus": "Toujours actif · cloche dans le menu",
       "email": "E-mail",
@@ -1892,6 +1893,22 @@
   },
   "chat": {
     "history": {
+      "searchLong": "Rechercher par la première question",
+      "filter": {
+        "all": "Tous",
+        "job": "Offres",
+        "campaign": "UGC",
+        "general": "Généraux"
+      },
+      "group": {
+        "today": "Aujourd’hui",
+        "yesterday": "Hier",
+        "week": "Cette semaine",
+        "earlier": "Plus tôt"
+      },
+      "keepTitle": "Conservation",
+      "keepText": "La liste des chats reste. Le texte est supprimé 24 heures après l’envoi ; Spoki ne retient que ce que vous l’autorisez à garder.",
+      "memorySettings": "Mémoire de Spoki",
       "search": "Rechercher dans les chats",
       "notFound": "Aucun résultat",
       "title": "Historique des chats",

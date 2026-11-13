@@ -1183,6 +1183,7 @@
   },
   "notifications": {
     "v2": {
+      "emailOff": "Not connected",
       "site": "On the site",
       "siteStatus": "Always on · bell in the menu",
       "email": "Email",
@@ -1892,6 +1893,22 @@
   },
   "chat": {
     "history": {
+      "searchLong": "Search by the first question",
+      "filter": {
+        "all": "All",
+        "job": "Jobs",
+        "campaign": "Creator tests",
+        "general": "General"
+      },
+      "group": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "week": "This week",
+        "earlier": "Earlier"
+      },
+      "keepTitle": "Keeping history",
+      "keepText": "The chat list stays. Message text is removed 24 hours after it was sent; Spoki remembers only what you let it keep in memory.",
+      "memorySettings": "Spoki memory settings",
       "search": "Search chats",
       "notFound": "Nothing found",
       "title": "Chat history",

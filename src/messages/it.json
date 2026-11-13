@@ -1183,6 +1183,7 @@
   },
   "notifications": {
     "v2": {
+      "emailOff": "Non collegata",
       "site": "Sul sito",
       "siteStatus": "Sempre attivo · campanella nel menu",
       "email": "Email",
@@ -1892,6 +1893,22 @@
   },
   "chat": {
     "history": {
+      "searchLong": "Cerca per la prima domanda",
+      "filter": {
+        "all": "Tutte",
+        "job": "Offerte",
+        "campaign": "UGC",
+        "general": "Generali"
+      },
+      "group": {
+        "today": "Oggi",
+        "yesterday": "Ieri",
+        "week": "Questa settimana",
+        "earlier": "Prima"
+      },
+      "keepTitle": "Conservazione",
+      "keepText": "L’elenco delle chat resta. Il testo viene cancellato 24 ore dopo l’invio; Spoki ricorda solo ciò che gli permetti di tenere.",
+      "memorySettings": "Memoria di Spoki",
       "search": "Cerca nelle chat",
       "notFound": "Nessun risultato",
       "title": "Cronologia chat",
