@@ -65,7 +65,6 @@ import { ConfirmCard } from "@/components/ui/dialog";
 import { ugcBudgetMinor, usdLabel } from "@/modules/ugc/service/pricing";
 import { Alert } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
-import { ServiceIcon } from "@/components/ui/service-icon";
 import { TELEGRAM_BOT_URL } from "@/config/telegram";
 import { localePath } from "@/i18n/paths";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -1343,7 +1342,9 @@ export function Chat({
           }
         >
           {variant === "page" ? (
-            <h1 className="text-sm font-medium">{t("title")}</h1>
+            <h1 className={v2 ? "sr-only" : "text-sm font-medium"}>
+              {t("title")}
+            </h1>
           ) : null}
           {jobFocus ? (
             <p className="t-body-s mt-2 text-fg first:mt-0">
@@ -1511,20 +1512,7 @@ export function Chat({
               }
               if (entry.kind === "assistant") {
                 return (
-                  <div
-                    key={entry.key}
-                    className={
-                      v2 ? "flex min-w-0 items-start gap-3" : "min-w-0"
-                    }
-                  >
-                    {v2 && (
-                      <span
-                        aria-hidden="true"
-                        className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-fg"
-                      >
-                        <ServiceIcon name="spoki" size={18} />
-                      </span>
-                    )}
+                  <div key={entry.key} className="min-w-0">
                     <div
                       className={v2 ? "min-w-0 flex-1 text-[15px]" : "min-w-0"}
                     >
