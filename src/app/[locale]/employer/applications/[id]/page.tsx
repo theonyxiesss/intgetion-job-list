@@ -88,10 +88,10 @@ export default async function EmployerApplicationPage({
           {t("backToList")}
         </ButtonLink>
 
-        <header className="flex flex-col gap-4 border-b border-line pb-8 md:flex-row md:items-end md:justify-between">
+        <header className="flex flex-col gap-4 border-b border-line pb-8 md:flex-row md:items-end md:justify-between in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface in-data-[ui=v2]:p-5">
           <div className="flex flex-col gap-3">
             <p className="t-label text-fg-muted">{application.jobTitle}</p>
-            <h1 className="t-display-l">
+            <h1 className="t-display-l in-data-[ui=v2]:text-[24px] in-data-[ui=v2]:leading-tight in-data-[ui=v2]:font-semibold in-data-[ui=v2]:tracking-tight">
               {application.candidateName ?? t("unnamed")}
             </h1>
             {profile?.headline && (
@@ -120,7 +120,7 @@ export default async function EmployerApplicationPage({
         {contacts ? (
           <section
             aria-labelledby="contacts-title"
-            className="flex flex-col gap-4 border border-success p-6"
+            className="flex flex-col gap-4 border border-success p-6 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:bg-surface"
           >
             <h2 id="contacts-title" className="t-h3 text-success">
               {contactsText("title")}
@@ -138,9 +138,12 @@ export default async function EmployerApplicationPage({
         {application.coverNote ? (
           <section
             aria-labelledby="cover-title"
-            className="flex flex-col gap-3"
+            className="flex flex-col gap-3 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface in-data-[ui=v2]:p-5"
           >
-            <h2 id="cover-title" className="t-h3">
+            <h2
+              id="cover-title"
+              className="t-h3 in-data-[ui=v2]:text-[15px] in-data-[ui=v2]:font-semibold"
+            >
               {t("coverNote")}
             </h2>
             <p className="max-w-[68ch] whitespace-pre-wrap">
@@ -151,9 +154,12 @@ export default async function EmployerApplicationPage({
 
         <section
           aria-labelledby="profile-title"
-          className="flex flex-col gap-6"
+          className="flex flex-col gap-6 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface in-data-[ui=v2]:p-5"
         >
-          <h2 id="profile-title" className="t-h3">
+          <h2
+            id="profile-title"
+            className="t-h3 in-data-[ui=v2]:text-[15px] in-data-[ui=v2]:font-semibold"
+          >
             {t("profileTitle")}
           </h2>
           {profile ? (
