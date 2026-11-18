@@ -69,6 +69,7 @@ export function HireForm({
   categories,
   employment,
   sharedDraft,
+  v2 = false,
 }: {
   companyId: string | null;
   companyName: string;
@@ -83,6 +84,7 @@ export function HireForm({
     status: "draft" | "submitting" | "submitted";
     submittedJobId: string | null;
   };
+  v2?: boolean;
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -106,6 +108,9 @@ export function HireForm({
         ]
       : ["", "", ""],
   );
+  const groupClass = v2
+    ? "rounded-[18px] border border-line bg-surface p-5"
+    : undefined;
 
   function toggleRegion(key: (typeof HIRE_REGION_KEYS)[number]) {
     const current = new Set(
@@ -230,11 +235,14 @@ export function HireForm({
     return <p className="max-w-[60ch] text-fg-muted">{text.submittingLive}</p>;
 
   return (
-    <form className="flex max-w-[720px] flex-col gap-10" onSubmit={submit}>
+    <form
+      className={`flex max-w-[720px] flex-col ${v2 ? "gap-4" : "gap-10"}`}
+      onSubmit={submit}
+    >
       <p className="max-w-[60ch] text-fg-muted">
         {publishes ? text.introLive : text.intro}
       </p>
-      <FieldGroup legend={text.title}>
+      <FieldGroup legend={text.title} className={groupClass}>
         <Field label={text.title} required>
           <Input
             name="title"
@@ -265,7 +273,7 @@ export function HireForm({
         </Field>
       </FieldGroup>
 
-      <FieldGroup legend={text.location}>
+      <FieldGroup legend={text.location} className={groupClass}>
         <Field label={text.location} help={text.locationHelp}>
           <Input
             name="location"
@@ -313,7 +321,7 @@ export function HireForm({
         </div>
       </FieldGroup>
 
-      <FieldGroup legend={text.salaryMin}>
+      <FieldGroup legend={text.salaryMin} className={groupClass}>
         <div className="grid gap-4 md:grid-cols-4">
           <Field label={text.salaryMin} required>
             <Input
@@ -360,7 +368,7 @@ export function HireForm({
         </div>
       </FieldGroup>
 
-      <FieldGroup legend={text.countries}>
+      <FieldGroup legend={text.countries} className={groupClass}>
         <Field label={text.countries} help={text.countriesHelp}>
           <Input
             value={countries}
@@ -381,7 +389,7 @@ export function HireForm({
         </div>
       </FieldGroup>
 
-      <FieldGroup legend={text.application}>
+      <FieldGroup legend={text.application} className={groupClass}>
         <fieldset className="flex flex-col gap-2">
           <legend className="mb-2 text-sm">{text.application}</legend>
           {(["email", "external_url", "internal"] as const).map((value) => (
@@ -424,7 +432,7 @@ export function HireForm({
         ) : null}
       </FieldGroup>
 
-      <FieldGroup legend={text.website}>
+      <FieldGroup legend={text.website} className={groupClass}>
         <Field label={text.website}>
           <Input
             name="website"
@@ -477,7 +485,7 @@ export function HireForm({
         </div>
       </FieldGroup>
 
-      <FieldGroup legend={text.manager}>
+      <FieldGroup legend={text.manager} className={groupClass}>
         <div className="grid gap-4 md:grid-cols-2">
           <Field label={text.firstName} required>
             <Input
@@ -498,7 +506,7 @@ export function HireForm({
         </div>
       </FieldGroup>
 
-      <FieldGroup legend={text.questions}>
+      <FieldGroup legend={text.questions} className={groupClass}>
         <p className="text-sm text-fg-muted">{text.questionsHelp}</p>
         {questions.map((value, index) => (
           <Field

@@ -32,8 +32,8 @@
 
 ## Маршруты и страницы
 
-- Страницы: `/account`, `/profile`, `/profile/edit`, `/onboarding`, `/settings/account`, `/settings/email`, `/settings/privacy` (там же память Spoki), `/settings/notifications`.
-- API аккаунта: `/api/me`, `/api/me/profile`, `/api/me/export`, `/api/me/email`, `/api/me/email/confirm`, `GET|DELETE /api/me/wallet`, `POST /api/me/wallet/nonce`, `POST /api/me/wallet/verify`, `/api/consent`.
+- Страницы: `/account`, `/profile`, `/profile/edit`, `/onboarding`, `/settings/account`, `/settings/email`, `/settings/privacy` (там же память Spoki), `/settings/notifications`, `/settings/appearance`, `/settings/security`.
+- API аккаунта: `/api/me`, `/api/me/profile`, `/api/me/export`, `/api/me/email`, `/api/me/email/confirm`, `DELETE /api/me/sessions` (завершить остальные сессии после `requireCurrentUser`), `GET|DELETE /api/me/wallet`, `POST /api/me/wallet/nonce`, `POST /api/me/wallet/verify`, `/api/consent`.
 - API кандидата: `/api/candidates/me`, `/api/candidates/me/visibility`, `/api/candidates/me/contacts`, `/api/candidates/[id]`, `/api/notifications/agent-briefs`.
 - Cron: `/api/cron/retention` в 20 минут каждого часа.
 

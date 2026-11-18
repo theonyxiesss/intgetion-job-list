@@ -54,7 +54,7 @@ export default async function WinnersPage({
       {view.winners.length === 0 ? (
         <DeskEmpty title={t("winnersEmpty")} />
       ) : (
-        <ul className="flex flex-col divide-y divide-line rounded-lg border border-line">
+        <ul className="flex flex-col divide-y divide-line rounded-lg border border-line in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface">
           {view.winners.map((row) => {
             const name = row.displayName || t("creator");
             return (

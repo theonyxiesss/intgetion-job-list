@@ -16,6 +16,9 @@ import { JsonLd } from "@/modules/seo/json-ld";
 import { faqPageJsonLd, homeGraphJsonLd } from "@/modules/seo/markup";
 import { languageAlternates, siteUrl } from "@/modules/seo/site";
 import { localePrefix } from "@/i18n/paths";
+import { flags } from "@/config/flags";
+import { ServiceIcon } from "@/components/ui/service-icon";
+import { FileText, Layers3, MapPin, Search } from "lucide-react";
 
 /**
  * The home page presents the platform for remote work (D601, replacing the
@@ -135,6 +138,63 @@ export default async function HomePage({
   setRequestLocale(locale);
   const t = await getTranslations("home");
   const product = await getTranslations("product");
+
+  if (flags.uiV2Enabled) {
+    const quickLinks = [
+      { key: "jobs", href: "/jobs", icon: Search },
+      { key: "profile", href: "/profile", icon: FileText },
+      { key: "freelance", href: "/freelance", icon: Layers3 },
+      { key: "events", href: "/events", icon: MapPin },
+    ] as const;
+    return (
+      <main className="flex min-h-[calc(100dvh-4rem)] flex-1 flex-col items-center justify-center gap-7 px-6 py-12 text-center lg:min-h-dvh">
+        <JsonLd
+          data={homeGraphJsonLd({
+            name: product("name"),
+            url: siteUrl(),
+            logoUrl: `${siteUrl()}/icons/icon-512.png`,
+            locale,
+          })}
+        />
+        <div className="flex flex-col items-center gap-2.5">
+          <span
+            aria-hidden="true"
+            className="flex size-11 items-center justify-center rounded-[14px] bg-accent text-accent-fg"
+          >
+            <ServiceIcon name="spoki" size={24} />
+          </span>
+          <h1 className="text-[30px] font-semibold tracking-tight">
+            {t("v2.title")}
+          </h1>
+          <p className="text-[15px] text-fg-muted">{t("v2.lead")}</p>
+        </div>
+        <HomeAsk
+          v2
+          action={`${localePrefix(locale)}/chat`}
+          label={t("landing.ask.label")}
+          placeholder={t("v2.placeholder")}
+          submit={t("landing.ask.submit")}
+          examplesLabel={t("landing.ask.examplesLabel")}
+          examples={[]}
+        />
+        <nav
+          aria-label={t("v2.quickLinks")}
+          className="flex max-w-[720px] flex-wrap justify-center gap-2.5"
+        >
+          {quickLinks.map(({ key, href, icon: Glyph }) => (
+            <Link
+              key={key}
+              href={href}
+              className="inline-flex min-h-[42px] items-center gap-2 rounded-[20px] border border-line-strong px-4 text-sm text-fg-muted transition-colors hover:border-fg-subtle hover:text-fg"
+            >
+              <Glyph size={16} aria-hidden="true" />
+              {t(`v2.${key}`)}
+            </Link>
+          ))}
+        </nav>
+      </main>
+    );
+  }
 
   return (
     <main>

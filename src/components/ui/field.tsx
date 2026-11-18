@@ -74,12 +74,16 @@ export function Field({
 export function FieldGroup({
   legend,
   children,
+  className,
 }: {
   legend: string;
   children: ReactNode;
+  className?: string;
 }) {
   return (
-    <fieldset className="flex flex-col gap-4 border-t border-line pt-6">
+    <fieldset
+      className={cn("flex flex-col gap-4 border-t border-line pt-6", className)}
+    >
       <legend className="t-h3 mb-2">{legend}</legend>
       {children}
     </fieldset>

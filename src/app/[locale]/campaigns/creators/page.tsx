@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ButtonLink } from "@/components/ui/button";
+import { flags } from "@/config/flags";
 import { Link } from "@/i18n/navigation";
 import { RouteMessages } from "@/components/shell/route-messages";
 import { creatorsFrom, workspaceMatches } from "@/modules/ugc/service";
 import { UgcAction } from "@/modules/ugc/ui/action";
+import { UgcV2RoleNav } from "@/modules/ugc/ui/v2-role-nav";
 import {
   CreatorProfileCard,
   DeskEmpty,
@@ -85,12 +87,24 @@ async function CreatorsBody({
       <DeskShell
         active="creators"
         title={
-          desk.company && desk.companies.length > 1
-            ? `${d("nav.creators")} · ${desk.company.name}`
-            : d("nav.creators")
+          flags.uiV2Enabled
+            ? t("title")
+            : desk.company && desk.companies.length > 1
+              ? `${d("nav.creators")} · ${desk.company.name}`
+              : d("nav.creators")
         }
         intro={d("creatorsIntro")}
         counts={desk.counts}
+        actions={
+          flags.uiV2Enabled ? (
+            <>
+              <UgcV2RoleNav active="brand" />
+              <ButtonLink href="/campaigns/new" variant="primary">
+                {t("v2.createCampaign")}
+              </ButtonLink>
+            </>
+          ) : undefined
+        }
       >
         {desk.companies.length === 0 ? (
           <NeedCompany />
@@ -108,14 +122,24 @@ async function CreatorsBody({
                   text={d("creatorsEmptyText")}
                 />
               ) : (
-                <ul className="flex flex-col gap-4">
+                <ul
+                  className={
+                    flags.uiV2Enabled
+                      ? "grid gap-3 md:grid-cols-2 xl:grid-cols-4"
+                      : "flex flex-col gap-4"
+                  }
+                >
                   {people.map(({ card, rows }) => (
                     <li
                       key={card.userId}
-                      className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"
+                      className={
+                        flags.uiV2Enabled
+                          ? "flex min-w-0 flex-col gap-3"
+                          : "grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"
+                      }
                     >
                       <CreatorProfileCard card={card} />
-                      <div className="flex flex-col gap-3 rounded-lg border border-line p-4 md:p-5">
+                      <div className="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4 md:p-5">
                         <p className="t-label text-fg-muted">
                           {d("participations")}
                         </p>
@@ -207,11 +231,21 @@ async function CreatorsBody({
                           }
                         />
                       ) : (
-                        <ul className="flex flex-col divide-y divide-line rounded-lg border border-line">
+                        <ul
+                          className={
+                            flags.uiV2Enabled
+                              ? "grid gap-3 md:grid-cols-2 xl:grid-cols-4"
+                              : "flex flex-col divide-y divide-line rounded-lg border border-line"
+                          }
+                        >
                           {cards.map((card) => (
                             <li
                               key={card.userId}
-                              className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                              className={
+                                flags.uiV2Enabled
+                                  ? "flex min-w-0 flex-col justify-between gap-3 rounded-[18px] border border-line bg-surface p-4"
+                                  : "flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                              }
                             >
                               <div className="flex min-w-0 items-center gap-3">
                                 <Monogram

@@ -30,7 +30,9 @@ const iconLink =
 const headerCta = "min-h-9! px-4! text-[14px]!";
 
 /** Site header (DESIGN.md 8.11). */
-export async function Header() {
+export async function Header({
+  navigationOnly = false,
+}: { navigationOnly?: boolean } = {}) {
   const t = await getTranslations();
   // Set by the proxy, which already checked the session (D41).
   const signedIn = hasSessionMark(await headers());
@@ -120,6 +122,34 @@ export async function Header() {
           : []),
       ]
     : [];
+  if (navigationOnly) {
+    return (
+      <div className="md:hidden">
+        <MobileNav
+          items={orderPhoneNav(
+            [...sections, ...main, ...more, ...account],
+            signedIn ? "member" : "guest",
+          )}
+          label={t("nav.menu")}
+          openLabel={t("nav.menu")}
+          closeLabel={t("ui.close")}
+          signedIn={signedIn}
+          triggerClassName="hidden!"
+          railessTriggerClassName="hidden!"
+        />
+        <BottomNav
+          label={t("nav.bottom")}
+          moreLabel={t("nav.more")}
+          items={[
+            { href: "/jobs", label: t("nav.jobs") },
+            { href: "/freelance", label: t("nav.freelance") },
+            { href: "/chat", label: t("nav.chat") },
+            { href: "/campaigns", label: t("nav.campaigns") },
+          ]}
+        />
+      </div>
+    );
+  }
   // Upwork-style groups (D592); each item says what it does (D596).
   const menuGroups: HeaderMenuGroup[] = [
     {

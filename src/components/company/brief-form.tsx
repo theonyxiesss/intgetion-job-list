@@ -91,15 +91,19 @@ function composeTask(
 export function BriefForm({
   copy,
   directionGroups,
+  selectedDirection,
 }: {
   copy: BriefFormCopy;
   directionGroups: string[];
+  selectedDirection?: string;
 }) {
   const spoki = useSpoki();
   const router = useRouter();
   const [step, setStep] = useState<BriefStep>("goal");
   const [goal, setGoal] = useState("");
-  const [directions, setDirections] = useState<string[]>([]);
+  const [directions, setDirections] = useState<string[]>(
+    selectedDirection ? [selectedDirection] : [],
+  );
   const [task, setTask] = useState("");
   const [reviewTask, setReviewTask] = useState("");
   const [reply, setReply] = useState("");

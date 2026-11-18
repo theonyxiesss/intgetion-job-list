@@ -19,7 +19,7 @@ export function Table({
   return (
     <div
       className={cn(
-        "w-full overflow-x-auto rounded-lg border border-line",
+        "w-full overflow-x-auto rounded-lg border border-line in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:bg-surface",
         className,
       )}
     >

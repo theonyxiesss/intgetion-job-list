@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Play, Plus, Sparkles } from "lucide-react";
 import { Container, PageHeader } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Stat, StatRow } from "@/components/ui/stat";
 import { Link } from "@/i18n/navigation";
+import { flags } from "@/config/flags";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
@@ -14,12 +15,14 @@ import {
   attentionItems,
   companyWorkspace,
   deskTotals,
+  moneyTotals,
   UGC_STEPS,
   ugcPriceGuide,
   usdLabel,
   type UgcPriceGuide,
 } from "@/modules/ugc/service";
 import { StepTrack } from "@/modules/ugc/ui/step-track";
+import { UgcV2RoleNav } from "@/modules/ugc/ui/v2-role-nav";
 import {
   CampaignStatus,
   DeskEmpty,
@@ -63,7 +66,11 @@ export default async function CampaignsPage({
   const companies = user ? await getCompaniesForUser(user.id) : [];
   const guide = await ugcPriceGuide();
   if (!user || companies.length === 0) {
-    return <Doors signedIn={Boolean(user)} guide={guide} />;
+    return flags.uiV2Enabled ? (
+      <V2Doors signedIn={Boolean(user)} guide={guide} />
+    ) : (
+      <Doors signedIn={Boolean(user)} guide={guide} />
+    );
   }
   return (
     <Suspense fallback={<DeskSkeleton />}>
@@ -107,6 +114,17 @@ async function Overview({
       hrefFor={(id) => (id ? `/campaigns?company=${id}` : "/campaigns")}
     />
   );
+
+  if (flags.uiV2Enabled) {
+    return (
+      <V2Overview
+        campaigns={campaigns}
+        counts={counts}
+        title={t("title")}
+        chooser={chooser}
+      />
+    );
+  }
 
   if (campaigns.length === 0) {
     return (
@@ -346,6 +364,336 @@ function priceLine(
         list: guide.presets.map(usdLabel).join(", "),
         usual: usdLabel(guide.medianMinor),
       });
+}
+
+const v2Card = "rounded-[18px] border border-line bg-surface p-4";
+
+async function V2Overview({
+  campaigns,
+  counts,
+  title,
+  chooser,
+}: {
+  campaigns: Awaited<ReturnType<typeof companyWorkspace>>;
+  counts: ReturnType<typeof deskCounts>;
+  title: string;
+  chooser: React.ReactNode;
+}) {
+  const d = await getTranslations("ugcDesk");
+  const h = await getTranslations("ugcHub");
+  const t = await getTranslations("ugc");
+  const totals = deskTotals(campaigns);
+  const money = moneyTotals(campaigns);
+  const attention = attentionItems(campaigns);
+  const fresh = campaigns
+    .flatMap((campaign) =>
+      campaign.participants.flatMap((row) =>
+        row.submission ? [{ campaign, row, submission: row.submission }] : [],
+      ),
+    )
+    .sort(
+      (a, b) =>
+        Number(b.submission.status === "submitted") -
+        Number(a.submission.status === "submitted"),
+    )
+    .slice(0, 3);
+  const metrics = [
+    { label: d("stat.active"), value: String(totals.active) },
+    { label: d("stat.waiting"), value: String(totals.waiting) },
+    { label: d("stat.deposited"), value: usdLabel(money.depositedMinor) },
+    { label: d("stat.accepted"), value: String(totals.accepted) },
+  ];
+  return (
+    <main className="px-4 py-6 md:px-6 md:py-8">
+      <div className="mx-auto flex max-w-[1180px] flex-col gap-4">
+        <header className="flex flex-wrap items-center gap-3">
+          <h1 className="mr-auto text-[22px] font-semibold">{title}</h1>
+          <UgcV2RoleNav active="brand" />
+          <ButtonLink
+            href="/campaigns/new"
+            className="flex min-h-10 items-center gap-1.5 rounded-xl bg-fg px-4 text-sm font-semibold text-bg hover:opacity-90"
+          >
+            <Icon icon={Plus} size={16} />
+            {t("v2.createCampaign")}
+          </ButtonLink>
+        </header>
+        <p className="text-sm text-fg-muted">{h("doorCompanyText")}</p>
+        {chooser}
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {metrics.map(({ label, value }) => (
+            <div key={label} className={`${v2Card} flex flex-col gap-1`}>
+              <span className="text-xs text-fg-muted">{label}</span>
+              <span className="font-mono text-[22px] font-semibold">
+                {value}
+              </span>
+            </div>
+          ))}
+        </div>
+        <nav
+          aria-label={d("navLabel")}
+          className="flex flex-wrap gap-1 rounded-xl border border-line bg-surface-2 p-1 text-sm"
+        >
+          {(["campaigns", "creators", "materials"] as const).map((section) => (
+            <Link
+              key={section}
+              href={
+                section === "campaigns"
+                  ? "/campaigns/list"
+                  : section === "creators"
+                    ? "/campaigns/creators"
+                    : "/campaigns/materials"
+              }
+              className={`flex min-h-10 items-center rounded-lg px-3 ${section === "campaigns" ? "bg-surface text-fg" : "text-fg-muted hover:text-fg"}`}
+            >
+              {d(`nav.${section}`)}
+              {counts[section] ? ` · ${counts[section]}` : ""}
+            </Link>
+          ))}
+        </nav>
+        {campaigns.length === 0 ? (
+          <section className={`${v2Card} flex flex-col gap-3`}>
+            <h2 className="text-lg font-semibold">{h("emptyTitle")}</h2>
+            <p className="text-sm text-fg-muted">{h("emptyText")}</p>
+            <Link
+              href="/chat?from=campaigns"
+              className="text-sm font-medium text-accent hover:underline"
+            >
+              {h("doorCompanyAction")} →
+            </Link>
+          </section>
+        ) : (
+          <ul className="flex flex-col gap-2.5">
+            {campaigns.slice(0, 5).map((row) => (
+              <li key={row.id}>
+                <Link
+                  href={`/campaigns/${row.id}`}
+                  className={`${v2Card} flex flex-wrap items-center gap-4 transition-colors hover:bg-surface-2`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="flex h-[72px] w-14 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-fg-muted"
+                  >
+                    <Icon icon={Play} size={20} />
+                  </span>
+                  <span className="flex min-w-[180px] flex-1 flex-col gap-2">
+                    <span className="font-semibold">{row.productName}</span>
+                    <span className="text-sm text-fg-muted">
+                      {d("deadline", { date: row.deadline })}
+                    </span>
+                    <progress
+                      className="h-1 w-full max-w-80 accent-accent"
+                      value={
+                        row.participants.filter((p) => p.submission).length
+                      }
+                      max={Math.max(1, row.videosWanted)}
+                    />
+                  </span>
+                  <span className="flex flex-col items-end gap-1 font-mono text-sm">
+                    <span>{usdLabel(row.budgetMinor)}</span>
+                    <CampaignStatus status={row.status} />
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+        {attention.length > 0 ? (
+          <section
+            aria-labelledby="ugc-v2-attention"
+            className="flex flex-col gap-3"
+          >
+            <h2 id="ugc-v2-attention" className="text-lg font-semibold">
+              {d("attentionTitle")}
+            </h2>
+            <ul className="grid gap-2.5 lg:grid-cols-2">
+              {attention.map((item) => {
+                const campaign = campaigns.find(
+                  (row) => row.id === item.campaignId,
+                );
+                if (!campaign) return null;
+                return (
+                  <li
+                    key={`${item.kind}-${item.campaignId}`}
+                    className={`${v2Card} flex flex-wrap items-center gap-3`}
+                  >
+                    <span className="flex min-w-0 flex-1 flex-col gap-1">
+                      <span className="font-medium">
+                        {d(`attention.${item.kind}`, { count: item.count })}
+                      </span>
+                      <span className="text-sm text-fg-muted">
+                        {item.productName}
+                      </span>
+                    </span>
+                    <Link
+                      href={nextHref(campaign)}
+                      className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent hover:underline"
+                    >
+                      {d(`attentionAction.${item.kind}`)}
+                      <Icon icon={ArrowRight} size={16} />
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ) : null}
+        {fresh.length > 0 ? (
+          <section
+            aria-labelledby="ugc-v2-fresh"
+            className="flex flex-col gap-3"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <h2 id="ugc-v2-fresh" className="text-lg font-semibold">
+                {d("freshTitle")}
+              </h2>
+              <Link
+                href="/campaigns/materials"
+                className="text-sm text-fg-muted hover:text-fg"
+              >
+                {d("seeAll")}
+              </Link>
+            </div>
+            <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {fresh.map(({ campaign, row, submission }) => {
+                const name = row.creator?.displayName || t("creator");
+                return (
+                  <li
+                    key={row.inviteId}
+                    className={`${v2Card} flex min-w-0 gap-3`}
+                  >
+                    <VideoPreview
+                      url={submission.url}
+                      hook={submission.hook}
+                      creatorName={name}
+                    />
+                    <span className="flex min-w-0 flex-col gap-2 py-1">
+                      <SubmissionStatus status={submission.status} />
+                      <span className="font-medium break-words">{name}</span>
+                      <Link
+                        href={`/campaigns/${campaign.id}#ugc-videos`}
+                        className="text-sm text-fg-muted underline-offset-4 hover:underline"
+                      >
+                        {campaign.productName}
+                      </Link>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        ) : null}
+        <div className="flex flex-wrap gap-4 text-sm text-fg-muted">
+          <Link href="/campaigns/orders" className="hover:text-fg">
+            {d("nav.orders")}
+          </Link>
+          <Link href="/campaigns/payments" className="hover:text-fg">
+            {d("nav.payments")}
+          </Link>
+          <Link href="/creator/invites" className="hover:text-fg">
+            {h("creatorInvites")}
+          </Link>
+        </div>
+        <aside
+          className={`${v2Card} flex items-start gap-3 text-sm text-fg-muted`}
+        >
+          <span
+            aria-hidden="true"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-bg"
+          >
+            <Icon icon={Sparkles} size={16} />
+          </span>
+          <span>
+            {h("emptyText")}{" "}
+            <Link
+              href="/chat?from=campaigns"
+              className="text-fg underline underline-offset-4"
+            >
+              {h("doorCompanyAction")}
+            </Link>
+          </span>
+        </aside>
+      </div>
+    </main>
+  );
+}
+
+async function V2Doors({
+  signedIn,
+  guide,
+}: {
+  signedIn: boolean;
+  guide: UgcPriceGuide;
+}) {
+  const t = await getTranslations("ugc");
+  const h = await getTranslations("ugcHub");
+  const d = await getTranslations("ugcDesk");
+  return (
+    <main className="px-4 py-6 md:px-6 md:py-8">
+      <div className="mx-auto flex max-w-[1180px] flex-col gap-4">
+        <header className="flex flex-wrap items-center gap-3">
+          <h1 className="mr-auto text-[22px] font-semibold">{t("title")}</h1>
+          <UgcV2RoleNav active="brand" />
+          <ButtonLink
+            href="/campaigns/new"
+            className="flex min-h-10 items-center gap-1.5 rounded-xl bg-fg px-4 text-sm font-semibold text-bg hover:opacity-90"
+          >
+            <Icon icon={Plus} size={16} />
+            {t("v2.createCampaign")}
+          </ButtonLink>
+        </header>
+        <p className="text-sm text-fg-muted">{t("intro")}</p>
+        <div className="grid gap-3 md:grid-cols-2">
+          <section className={`${v2Card} flex flex-col gap-4`}>
+            <h2 className="text-lg font-semibold">{h("doorCompanyTitle")}</h2>
+            <p className="flex-1 text-sm text-fg-muted">
+              {h("doorCompanyText")}
+            </p>
+            {signedIn ? (
+              <p className="text-sm text-fg-muted">{d("needCompanyText")}</p>
+            ) : null}
+            <div className="flex flex-wrap gap-3">
+              <ButtonLink href="/chat?from=campaigns" variant="primary">
+                {h("doorCompanyAction")}
+              </ButtonLink>
+              <ButtonLink
+                href={signedIn ? "/employer/company" : "/login"}
+                variant="secondary"
+              >
+                {signedIn ? d("createCompany") : t("signIn")}
+              </ButtonLink>
+            </div>
+          </section>
+          <section className={`${v2Card} flex flex-col gap-4`}>
+            <h2 className="text-lg font-semibold">{h("doorCreatorTitle")}</h2>
+            <p className="flex-1 text-sm text-fg-muted">
+              {h("doorCreatorText")}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <ButtonLink href="/creator/campaigns" variant="secondary">
+                {h("doorCreatorAction")}
+              </ButtonLink>
+              <ButtonLink href="/creator" variant="secondary">
+                {h("creatorProfile")}
+              </ButtonLink>
+            </div>
+          </section>
+        </div>
+        <aside
+          className={`${v2Card} flex items-start gap-3 text-sm text-fg-muted`}
+        >
+          <span
+            aria-hidden="true"
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-bg"
+          >
+            <Icon icon={Sparkles} size={16} />
+          </span>
+          <span>
+            {h("priceTitle")}: {priceLine(h, guide)}
+          </span>
+        </aside>
+      </div>
+    </main>
+  );
 }
 
 /** The two doors of D464, for a guest or a person without a company. */

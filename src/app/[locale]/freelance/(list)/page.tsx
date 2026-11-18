@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { flags } from "@/config/flags";
+import { FreelancePageV2 } from "./freelance-v2";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FREELANCE_CATEGORIES } from "@/config/freelance";
 import { Tag } from "@/components/ui/badge";
@@ -72,6 +74,7 @@ export default async function FreelancePage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  if (flags.uiV2Enabled) return FreelancePageV2({ params, searchParams });
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("freelance");

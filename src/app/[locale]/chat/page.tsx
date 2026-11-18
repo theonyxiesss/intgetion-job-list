@@ -6,6 +6,7 @@ import {
   setRequestLocale,
 } from "next-intl/server";
 import { Chat } from "@/components/bot/chat";
+import { flags } from "@/config/flags";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { readFreelanceFocus } from "@/modules/bot/service";
@@ -115,6 +116,7 @@ export default async function ChatPage({
     >
       <main className="flex min-h-0 flex-1 flex-col">
         <Chat
+          v2={flags.uiV2Enabled}
           signedIn={user !== null}
           jobCardText={cardText}
           jobId={row?.id}

@@ -1,4 +1,6 @@
 import { Check } from "lucide-react";
+import { flags } from "@/config/flags";
+import { PricingPageV2 } from "./pricing-v2";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { buttonClass } from "@/components/ui/button";
@@ -51,6 +53,7 @@ export default async function PricingPage({
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ for?: string; next?: string }>;
 }) {
+  if (flags.uiV2Enabled) return PricingPageV2({ params, searchParams });
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("pricing");
@@ -72,17 +75,23 @@ export default async function PricingPage({
   return (
     <main>
       <JsonLd data={faqPageJsonLd(faq)} />
-      <Section>
-        <Container className="flex flex-col gap-6">
+      <Section className="py-8 md:py-12 in-data-[ui=v2]:py-6 md:in-data-[ui=v2]:py-8">
+        <Container className="flex flex-col items-center gap-5 text-center in-data-[ui=v2]:gap-3">
           <p className="t-label text-fg-muted">{t("label")}</p>
-          <h1 className="t-display-l max-w-[22ch]">{t("account.title")}</h1>
-          <p className="t-body-l max-w-[60ch] text-fg-muted">
+          <h1 className="max-w-[28ch] text-3xl font-semibold tracking-tight md:text-4xl in-data-[ui=v2]:text-[30px]">
+            {t("account.title")}
+          </h1>
+          <p className="t-body max-w-[68ch] text-fg-muted">
             {t("account.intro")}
           </p>
         </Container>
       </Section>
 
-      <Section bordered labelledBy="tiers-title">
+      <Section
+        bordered
+        labelledBy="tiers-title"
+        className="py-8 md:py-12 in-data-[ui=v2]:py-6 md:in-data-[ui=v2]:py-8"
+      >
         <Container className="flex flex-col gap-8">
           <h2 id="tiers-title" className="sr-only">
             {t("account.plansTitle")}
@@ -94,9 +103,9 @@ export default async function PricingPage({
                 <li
                   key={tier.code}
                   className={cn(
-                    "flex flex-col gap-5 border bg-surface p-6",
+                    "flex flex-col gap-5 rounded-lg border bg-surface p-6 in-data-[ui=v2]:rounded-[20px]",
                     tier.recommended
-                      ? "border-line-strong max-md:order-first"
+                      ? "border-fg max-md:order-first in-data-[ui=v2]:border-accent"
                       : "border-line",
                   )}
                 >
@@ -105,7 +114,7 @@ export default async function PricingPage({
                       {t(`account.tiers.${tier.code}.name`)}
                     </h3>
                     {tier.recommended && (
-                      <span className="t-label text-signal">
+                      <span className="t-label text-signal in-data-[ui=v2]:rounded-lg in-data-[ui=v2]:bg-accent in-data-[ui=v2]:px-2 in-data-[ui=v2]:py-1 in-data-[ui=v2]:text-accent-fg">
                         {t("recommended")}
                       </span>
                     )}

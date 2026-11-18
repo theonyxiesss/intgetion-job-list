@@ -28,6 +28,7 @@ seo своих таблиц нет. salaries читает `jobs`, `job_skills` (
 ## Маршруты и страницы
 
 - seo используют: главная, `/jobs`, `/jobs/[id]`, `/jobs/t/[slug]`, `/companies/[slug]`, `/freelance`, `/freelance/[slug]`, `/events`, `/events/[slug]`, `/salaries`, `/salaries/[skill]`, `/pricing`, `/services`, `/company`, `/portfolio`, `/privacy`, `/terms`, все `opengraph-image.tsx`, `layout.tsx`, `/sitemap.xml`, `/robots.txt`, `/indexnow-key.txt`.
+- При `UI_V2=true` главная показывает экран Spoki из `Main.dc.html` и `homeGraphJsonLd`. FAQ-разметка выводится только с прежним лендингом, где вопросы видны. Текст поля передаётся через существующий `HomeAsk` в чат; быстрые действия ведут на реальные маршруты.
 - salaries: страницы `/salaries` и `/salaries/[skill]`, адреса в sitemap (`listSalarySkillSlugs`).
 
 ## Env (без значений)

@@ -112,7 +112,7 @@ export function Details({ props }: { props: DetailsProps }) {
       {props.sections.map((section, index) => (
         <details
           key={`${index}-${section.title}`}
-          className="group rounded-lg border border-line"
+          className="group rounded-lg border border-line in-data-[ui=v2]:rounded-[14px]"
         >
           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2 font-medium [&::-webkit-details-marker]:hidden">
             {section.title}
