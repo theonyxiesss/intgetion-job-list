@@ -20,10 +20,10 @@
 ## В работе
 
 - UI 2.0 — кандидат в `codex/ui-v2-integration`, основан на `a3441925`, на 47 коммитов впереди `origin/master`. Production-флаг `UI_V2` не включён.
-- Проверки: typecheck, lint, 2053 unit-теста, production build и CRLF-aware Prettier прошли. `env:check` не прошёл из-за отсутствующего `.env.local` в worktree. Миграций и новых зависимостей нет.
+- Локальные typecheck, lint, 2053 unit-теста, production build и CRLF-aware Prettier прошли. PR #54 открыт; основной CI `check` прошёл, `database` упал на старом E2E-переходе к настройкам уведомлений; тест обновлён, повторный CI ожидается.
 - Визуальная проверка и выпуск заблокированы: auto-review отклонил копирование локального `.env.local` как перенос множества секретов в worktree. Auth на облаке отвечает 402; preview отключён по D524. `/messages` и пункт inbox удалены как неутверждённая функция; чат заказа сохранён.
 - Ветка `wip/auth-2026-11-05` (на GitHub): незакоммиченная работа, найденная в главной папке 2026-11-05 (ошибки входа, `auth-health`, тесты Telegram, переводы). Не проверена; разобрать, что из неё ещё не в `master`.
-- Объединение `claude/redesign-shell` с `codex/mockup-backend` сохранено в кандидате; PR, push и production deploy пока не выполнены.
+- Кандидат опубликован в `codex/ui-v2-integration`; PR #54 открыт. Production-флаг выключен, деплой не выполнялся.
 
 ## Где что лежит
 
