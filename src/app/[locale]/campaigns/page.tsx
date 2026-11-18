@@ -498,21 +498,36 @@ async function V2Overview({
           </ul>
         )}
         {attention.length > 0 ? (
-          <section aria-labelledby="ugc-v2-attention" className="flex flex-col gap-3">
+          <section
+            aria-labelledby="ugc-v2-attention"
+            className="flex flex-col gap-3"
+          >
             <h2 id="ugc-v2-attention" className="text-lg font-semibold">
               {d("attentionTitle")}
             </h2>
             <ul className="grid gap-2.5 lg:grid-cols-2">
               {attention.map((item) => {
-                const campaign = campaigns.find((row) => row.id === item.campaignId);
+                const campaign = campaigns.find(
+                  (row) => row.id === item.campaignId,
+                );
                 if (!campaign) return null;
                 return (
-                  <li key={`${item.kind}-${item.campaignId}`} className={`${v2Card} flex flex-wrap items-center gap-3`}>
+                  <li
+                    key={`${item.kind}-${item.campaignId}`}
+                    className={`${v2Card} flex flex-wrap items-center gap-3`}
+                  >
                     <span className="flex min-w-0 flex-1 flex-col gap-1">
-                      <span className="font-medium">{d(`attention.${item.kind}`, { count: item.count })}</span>
-                      <span className="text-sm text-fg-muted">{item.productName}</span>
+                      <span className="font-medium">
+                        {d(`attention.${item.kind}`, { count: item.count })}
+                      </span>
+                      <span className="text-sm text-fg-muted">
+                        {item.productName}
+                      </span>
                     </span>
-                    <Link href={nextHref(campaign)} className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent hover:underline">
+                    <Link
+                      href={nextHref(campaign)}
+                      className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent hover:underline"
+                    >
                       {d(`attentionAction.${item.kind}`)}
                       <Icon icon={ArrowRight} size={16} />
                     </Link>
@@ -523,21 +538,43 @@ async function V2Overview({
           </section>
         ) : null}
         {fresh.length > 0 ? (
-          <section aria-labelledby="ugc-v2-fresh" className="flex flex-col gap-3">
+          <section
+            aria-labelledby="ugc-v2-fresh"
+            className="flex flex-col gap-3"
+          >
             <div className="flex items-center justify-between gap-3">
-              <h2 id="ugc-v2-fresh" className="text-lg font-semibold">{d("freshTitle")}</h2>
-              <Link href="/campaigns/materials" className="text-sm text-fg-muted hover:text-fg">{d("seeAll")}</Link>
+              <h2 id="ugc-v2-fresh" className="text-lg font-semibold">
+                {d("freshTitle")}
+              </h2>
+              <Link
+                href="/campaigns/materials"
+                className="text-sm text-fg-muted hover:text-fg"
+              >
+                {d("seeAll")}
+              </Link>
             </div>
             <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {fresh.map(({ campaign, row, submission }) => {
                 const name = row.creator?.displayName || t("creator");
                 return (
-                  <li key={row.inviteId} className={`${v2Card} flex min-w-0 gap-3`}>
-                    <VideoPreview url={submission.url} hook={submission.hook} creatorName={name} />
+                  <li
+                    key={row.inviteId}
+                    className={`${v2Card} flex min-w-0 gap-3`}
+                  >
+                    <VideoPreview
+                      url={submission.url}
+                      hook={submission.hook}
+                      creatorName={name}
+                    />
                     <span className="flex min-w-0 flex-col gap-2 py-1">
                       <SubmissionStatus status={submission.status} />
                       <span className="font-medium break-words">{name}</span>
-                      <Link href={`/campaigns/${campaign.id}#ugc-videos`} className="text-sm text-fg-muted underline-offset-4 hover:underline">{campaign.productName}</Link>
+                      <Link
+                        href={`/campaigns/${campaign.id}#ugc-videos`}
+                        className="text-sm text-fg-muted underline-offset-4 hover:underline"
+                      >
+                        {campaign.productName}
+                      </Link>
                     </span>
                   </li>
                 );

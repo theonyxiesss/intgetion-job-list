@@ -2,7 +2,11 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
 /** The brand / creator switch in the UGC V2 mockup; each role has its own real workspace. */
-export async function UgcV2RoleNav({ active }: { active: "brand" | "creator" }) {
+export async function UgcV2RoleNav({
+  active,
+}: {
+  active: "brand" | "creator";
+}) {
   const t = await getTranslations("ugc");
   return (
     <nav

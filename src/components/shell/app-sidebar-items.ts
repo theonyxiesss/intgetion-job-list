@@ -42,7 +42,6 @@ export const sidebarItems: readonly SidebarItem[] = [
   { href: "/freelance", label: "nav.freelance", icon: "freelance" },
   { href: "/campaigns", label: "nav.campaigns", icon: "ugc" },
   { href: "/services", label: "nav.turnkey", icon: "turnkey" },
-  { href: "/messages", label: "nav.inbox", icon: "messages" },
   { href: "/notifications", label: "nav.notifications", icon: "bell" },
   { href: "/events", label: "nav.eventsList", icon: "events" },
   { href: "/profile", label: "nav.profile", icon: "profile" },

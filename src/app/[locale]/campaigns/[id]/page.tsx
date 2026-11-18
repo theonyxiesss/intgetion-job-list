@@ -346,19 +346,31 @@ export default async function CampaignPage({
             />
           </div>
           <nav aria-label={brief.productName} className="flex flex-wrap gap-2">
-            <a href="#ugc-brief" className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong">
+            <a
+              href="#ugc-brief"
+              className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong"
+            >
               {d("briefTitle")}
             </a>
-            <a href="#ugc-people" className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong">
+            <a
+              href="#ugc-people"
+              className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong"
+            >
               {d("peopleTitle")}
             </a>
-            <a href="#ugc-videos" className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong">
+            <a
+              href="#ugc-videos"
+              className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong"
+            >
               {d("videosTitle")}
             </a>
             {brief.status === "open" ||
             brief.status === "paused" ||
             brief.status === "pending_review" ? (
-              <a href="#ugc-manage" className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong">
+              <a
+                href="#ugc-manage"
+                className="inline-flex min-h-10 items-center rounded-lg border border-line bg-surface px-3 text-sm hover:border-line-strong"
+              >
                 {d("manageTitle")}
               </a>
             ) : null}

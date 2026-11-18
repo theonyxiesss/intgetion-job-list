@@ -51,47 +51,57 @@ export async function AuthPage({
           </Link>
         </div>
         <div className="flex flex-1 items-start justify-center py-10 md:items-center">
-        <div className="flex w-full max-w-[420px] min-w-0 flex-col gap-5 break-words">
-          <header className="flex flex-col items-center gap-2.5 text-center">
-            <span
-              aria-hidden="true"
-              className="flex size-11 items-center justify-center rounded-[14px] bg-accent text-accent-fg"
-            >
-              <ServiceIcon name="spoki" size={24} />
-            </span>
-            <h1 className="text-[26px] font-semibold tracking-tight">{title}</h1>
-            {intro ? (
-              <div className="max-w-[60ch] text-sm text-fg-muted">{intro}</div>
+          <div className="flex w-full max-w-[420px] min-w-0 flex-col gap-5 break-words">
+            <header className="flex flex-col items-center gap-2.5 text-center">
+              <span
+                aria-hidden="true"
+                className="flex size-11 items-center justify-center rounded-[14px] bg-accent text-accent-fg"
+              >
+                <ServiceIcon name="spoki" size={24} />
+              </span>
+              <h1 className="text-[26px] font-semibold tracking-tight">
+                {title}
+              </h1>
+              {intro ? (
+                <div className="max-w-[60ch] text-sm text-fg-muted">
+                  {intro}
+                </div>
+              ) : null}
+            </header>
+            {mode ? (
+              <nav
+                aria-label={`${nav("login")} / ${nav("register")}`}
+                className="flex gap-1 rounded-[14px] border border-line-strong bg-surface-2 p-1"
+              >
+                <Link
+                  href={
+                    next ? { pathname: "/login", query: { next } } : "/login"
+                  }
+                  aria-current={mode === "login" ? "page" : undefined}
+                  className={tabClass(mode === "login")}
+                >
+                  {nav("login")}
+                </Link>
+                <Link
+                  href={
+                    next
+                      ? { pathname: "/register", query: { next } }
+                      : "/register"
+                  }
+                  aria-current={mode === "register" ? "page" : undefined}
+                  className={tabClass(mode === "register")}
+                >
+                  {nav("register")}
+                </Link>
+              </nav>
             ) : null}
-          </header>
-          {mode ? (
-            <nav
-              aria-label={`${nav("login")} / ${nav("register")}`}
-              className="flex gap-1 rounded-[14px] border border-line-strong bg-surface-2 p-1"
-            >
-              <Link
-                href={next ? { pathname: "/login", query: { next } } : "/login"}
-                aria-current={mode === "login" ? "page" : undefined}
-                className={tabClass(mode === "login")}
-              >
-                {nav("login")}
-              </Link>
-              <Link
-                href={next ? { pathname: "/register", query: { next } } : "/register"}
-                aria-current={mode === "register" ? "page" : undefined}
-                className={tabClass(mode === "register")}
-              >
-                {nav("register")}
-              </Link>
-            </nav>
-          ) : null}
-          {children}
-          {footer ? (
-            <div className="flex flex-col items-center gap-2 text-center text-sm text-fg-muted">
-              {footer}
-            </div>
-          ) : null}
-        </div>
+            {children}
+            {footer ? (
+              <div className="flex flex-col items-center gap-2 text-center text-sm text-fg-muted">
+                {footer}
+              </div>
+            ) : null}
+          </div>
         </div>
       </main>
     );

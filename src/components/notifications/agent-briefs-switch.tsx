@@ -121,7 +121,9 @@ export function AgentBriefsControls({
           />
         </section>
       ) : null}
-      {locked ? <p className="text-fg-muted md:col-span-2">{labels.agentOff}</p> : null}
+      {locked ? (
+        <p className="text-fg-muted md:col-span-2">{labels.agentOff}</p>
+      ) : null}
       <BotAlertsSwitch
         channel="telegram"
         linked={telegram.linked}

@@ -87,7 +87,11 @@ export default async function PricingPage({
         </Container>
       </Section>
 
-      <Section bordered labelledBy="tiers-title" className="py-8 md:py-12 in-data-[ui=v2]:py-6 md:in-data-[ui=v2]:py-8">
+      <Section
+        bordered
+        labelledBy="tiers-title"
+        className="py-8 md:py-12 in-data-[ui=v2]:py-6 md:in-data-[ui=v2]:py-8"
+      >
         <Container className="flex flex-col gap-8">
           <h2 id="tiers-title" className="sr-only">
             {t("account.plansTitle")}

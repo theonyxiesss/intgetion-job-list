@@ -61,30 +61,53 @@ export default async function ServicesPage({
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <a href="#brief" className="flex min-h-11 items-center rounded-xl bg-accent px-4 text-sm font-semibold text-accent-fg">
+              <a
+                href="#brief"
+                className="flex min-h-11 items-center rounded-xl bg-accent px-4 text-sm font-semibold text-accent-fg"
+              >
                 {form.title}
               </a>
-              <Link href={{ pathname: "/chat", query: { from: "services" } }} className="flex min-h-11 items-center rounded-xl border border-line-strong px-4 text-sm text-accent">
+              <Link
+                href={{ pathname: "/chat", query: { from: "services" } }}
+                className="flex min-h-11 items-center rounded-xl border border-line-strong px-4 text-sm text-accent"
+              >
                 {t("chat")}
               </Link>
             </div>
           </header>
 
           <div className="flex flex-wrap items-start gap-5">
-            <section aria-labelledby="services-list" className="flex min-w-0 flex-[999_1_560px] flex-col gap-3">
-              <h2 id="services-list" className="text-lg font-semibold">{t("listTitle")}</h2>
+            <section
+              aria-labelledby="services-list"
+              className="flex min-w-0 flex-[999_1_560px] flex-col gap-3"
+            >
+              <h2 id="services-list" className="text-lg font-semibold">
+                {t("listTitle")}
+              </h2>
               <ul className="grid gap-3 sm:grid-cols-2">
                 {groups.map((group, index) => (
                   <li key={group.name}>
                     <Link
-                      href={{ pathname: "/services", query: { direction: String(index) } }}
-                      aria-current={selectedDirection === group.name ? "true" : undefined}
+                      href={{
+                        pathname: "/services",
+                        query: { direction: String(index) },
+                      }}
+                      aria-current={
+                        selectedDirection === group.name ? "true" : undefined
+                      }
                       className="flex h-full flex-col gap-3 rounded-[18px] border border-line bg-surface p-4 transition-colors hover:border-line-strong aria-current:border-accent aria-current:bg-surface-2"
                     >
-                      <span className="text-base font-semibold">{group.name}</span>
+                      <span className="text-base font-semibold">
+                        {group.name}
+                      </span>
                       <span className="flex flex-wrap gap-1.5">
                         {group.items.map((item) => (
-                          <span key={item} className="rounded-lg bg-surface-2 px-2.5 py-1 text-[13px] text-fg-muted">{item}</span>
+                          <span
+                            key={item}
+                            className="rounded-lg bg-surface-2 px-2.5 py-1 text-[13px] text-fg-muted"
+                          >
+                            {item}
+                          </span>
                         ))}
                       </span>
                     </Link>
@@ -93,13 +116,30 @@ export default async function ServicesPage({
               </ul>
               <p className="text-sm text-fg-muted">{t("else")}</p>
               <div className="flex flex-wrap gap-2">
-                <Link href="/company" className="flex min-h-10 items-center rounded-xl border border-line-strong px-3.5 text-sm">{t("about")}</Link>
+                <Link
+                  href="/company"
+                  className="flex min-h-10 items-center rounded-xl border border-line-strong px-3.5 text-sm"
+                >
+                  {t("about")}
+                </Link>
                 {links.map((link) => (
-                  <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="flex min-h-10 items-center rounded-xl border border-line-strong px-3.5 text-sm">{link.label}</a>
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex min-h-10 items-center rounded-xl border border-line-strong px-3.5 text-sm"
+                  >
+                    {link.label}
+                  </a>
                 ))}
               </div>
             </section>
-            <aside id="brief" aria-label={t("listTitle")} className="scroll-mt-8 min-w-0 flex-[1_1_340px] rounded-[18px] border border-line bg-surface p-5 lg:sticky lg:top-6 lg:max-w-[420px]">
+            <aside
+              id="brief"
+              aria-label={t("listTitle")}
+              className="scroll-mt-8 min-w-0 flex-[1_1_340px] rounded-[18px] border border-line bg-surface p-5 lg:sticky lg:top-6 lg:max-w-[420px]"
+            >
               <BriefForm
                 key={selectedDirection}
                 copy={form}

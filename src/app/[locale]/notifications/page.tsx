@@ -446,7 +446,10 @@ export default async function NotificationsPage({
               <ul className="flex flex-col gap-2.5">
                 {items.map((item) => {
                   const key = catalogTitleKey(item.type);
-                  const payload = (item.payload ?? {}) as Record<string, string>;
+                  const payload = (item.payload ?? {}) as Record<
+                    string,
+                    string
+                  >;
                   return (
                     <li
                       key={item.id}
@@ -474,14 +477,19 @@ export default async function NotificationsPage({
                               serviceTitle: payload.serviceTitle ?? "",
                               date: payload.expiresAt?.slice(0, 10) ?? "",
                               count: Number(
-                                payload.applicationCount ?? payload.matchCount ?? 0,
+                                payload.applicationCount ??
+                                  payload.matchCount ??
+                                  0,
                               ),
                             })
                           : null}
                       </p>
                       {!item.readAt ? (
                         <span className="mt-1 flex items-center gap-2 text-xs text-accent">
-                          <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
+                          <span
+                            aria-hidden="true"
+                            className="size-1.5 rounded-full bg-accent"
+                          />
                           {t("unreadLabel")}
                         </span>
                       ) : null}

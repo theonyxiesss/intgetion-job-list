@@ -18,6 +18,10 @@ function lookup(key: string): unknown {
 }
 
 describe("v2 side menu", () => {
+  it("does not expose the unapproved messages inbox", () => {
+    expect(sidebarItems.some((item) => item.href === "/messages")).toBe(false);
+  });
+
   it("has an English label for every key it uses", () => {
     for (const key of sidebarLabelKeys()) {
       expect(typeof lookup(key), key).toBe("string");
