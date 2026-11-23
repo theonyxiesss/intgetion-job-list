@@ -3221,7 +3221,8 @@
           "Planung",
           "Wissensbasis",
           "Backoffice"
-        ]
+        ],
+        "hint": "Support, Moderation, Onboarding, Prozesse"
       },
       {
         "name": "Community",
@@ -3239,7 +3240,8 @@
           "Lokalisierung",
           "Mehrsprachige Inhalte",
           "Lokale Community"
-        ]
+        ],
+        "hint": "Community, Social Media, Texte, Video, Lokalisierung"
       },
       {
         "name": "Wachstum",
@@ -3262,7 +3264,8 @@
           "Medienarbeit",
           "Marke",
           "Analytik"
-        ]
+        ],
+        "hint": "SEO, Werbung, PR, Partnerschaften, Analytics"
       },
       {
         "name": "Produkt",
@@ -3276,7 +3279,8 @@
           "Produktrecherche",
           "MVP",
           "QA"
-        ]
+        ],
+        "hint": "Strategie, UX/UI, Prototypen, Research, QA"
       },
       {
         "name": "Entwicklung",
@@ -3291,7 +3295,8 @@
           "DevOps",
           "Interne Tools",
           "Web3-Entwicklung"
-        ]
+        ],
+        "hint": "Web, Mobile, APIs, Integrationen, DevOps"
       },
       {
         "name": "Web3",
@@ -3312,7 +3317,8 @@
           "Holder",
           "Discord und Telegram",
           "Krypto-Inhalte"
-        ]
+        ],
+        "hint": "Smart Contracts, DAOs, Ökosystem-Wachstum, Communities"
       },
       {
         "name": "Menschen",
@@ -3326,7 +3332,8 @@
           "Arbeitgebermarke",
           "Teamabläufe",
           "Teamform"
-        ]
+        ],
+        "hint": "Fachkräfte finden, Recruiting, Remote-Teams aufbauen"
       },
       {
         "name": "Recherche",
@@ -3340,7 +3347,8 @@
           "Preisrecherche",
           "Berichte",
           "Business Intelligence"
-        ]
+        ],
+        "hint": "Markt, Wettbewerber, Kunden, Business-Analytik"
       },
       {
         "name": "Design",
@@ -3350,7 +3358,8 @@
           "Motion",
           "Illustration",
           "Designsystem"
-        ]
+        ],
+        "hint": "Interfaces, Branding, Motion, Design-Systeme"
       },
       {
         "name": "Kommunikation",
@@ -3360,7 +3369,8 @@
           "Interne Nachrichten",
           "Auftritte",
           "Krisennotizen"
-        ]
+        ],
+        "hint": "Presse, Ankündigungen, Vorträge, Krisenkommunikation"
       }
     ],
     "else": "Steht Ihre Aufgabe nicht in der Liste, beschreiben Sie sie trotzdem.",
@@ -3391,7 +3401,11 @@
       "replyBad": "Geben Sie eine E-Mail oder einen Telegram-Namen an.",
       "orgLong": "Der Unternehmensname darf höchstens 120 Zeichen haben.",
       "doneTitle": "Ihre Anfrage wurde gespeichert",
-      "steps": { "goal": "Ziel", "brief": "Briefing", "review": "Prüfen" },
+      "steps": {
+        "goal": "Ziel",
+        "brief": "Briefing",
+        "review": "Prüfen"
+      },
       "goalTitle": "Was möchten Sie erreichen?",
       "goalLead": "Beginnen Sie mit dem Ergebnis. INTGETION schlägt nach Prüfung eine passende Teamzusammenstellung vor.",
       "goals": [
@@ -3447,7 +3461,16 @@
       "discuss": "Anfrage senden und Spoki öffnen",
       "chatHandoff": "Ich habe eine Anfrage für ein betreutes INTGETION-Team gesendet. Hilf mir, die Aufgabe und das gewünschte Ergebnis zu klären. Frage nicht nach meiner E-Mail oder Telegram-Kontaktangabe; ich habe sie im Formular angegeben.",
       "done": "Die Anfrage wurde gespeichert. Spoki ist geöffnet und hilft Ihnen, die Aufgabe zu klären. Kontaktdaten werden nicht an den Chat übergeben.",
-      "trap": "Website"
+      "trap": "Website",
+      "spokiLead": "Spoki hilft, ein klares Briefing für das INTGETION-Team zu schreiben. Sie können mit eigenen Worten antworten.",
+      "spokiRole": "Ihr KI-Assistent auf der Plattform",
+      "spokiChips": [
+        "Projekt starten",
+        "Wachstum steigern",
+        "Produkt verbessern",
+        "Team zusammenstellen"
+      ],
+      "reviewFooter": "Nach dem Senden prüft das Team das Briefing. Spoki hilft, das Gespräch fortzusetzen; INTGETION schlägt vor Plan, Team, Termine und Preis, bevor die Arbeit beginnt."
     },
     "links": [
       {

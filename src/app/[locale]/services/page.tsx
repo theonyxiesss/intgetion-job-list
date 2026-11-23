@@ -36,7 +36,11 @@ export default async function ServicesPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("services");
-  const groups = t.raw("groups") as { name: string; items: string[] }[];
+  const groups = t.raw("groups") as {
+    name: string;
+    hint: string;
+    items: string[];
+  }[];
   const form = t.raw("form") as BriefFormCopy;
   const links = t.raw("links") as { label: string; href: string }[];
   const query = await searchParams;
@@ -143,7 +147,10 @@ export default async function ServicesPage({
               <BriefForm
                 key={selectedDirection}
                 copy={form}
-                directionGroups={groups.map((group) => group.name)}
+                directionGroups={groups.map(({ name, hint }) => ({
+                  name,
+                  hint,
+                }))}
                 selectedDirection={selectedDirection}
               />
             </aside>
@@ -261,7 +268,10 @@ export default async function ServicesPage({
             >
               <BriefForm
                 copy={form}
-                directionGroups={groups.map((group) => group.name)}
+                directionGroups={groups.map(({ name, hint }) => ({
+                  name,
+                  hint,
+                }))}
               />
             </aside>
           </div>
@@ -321,7 +331,10 @@ export default async function ServicesPage({
             <div className="border-t border-line px-4 py-6 md:px-6">
               <BriefForm
                 copy={form}
-                directionGroups={groups.map((group) => group.name)}
+                directionGroups={groups.map(({ name, hint }) => ({
+                  name,
+                  hint,
+                }))}
               />
             </div>
           </div>

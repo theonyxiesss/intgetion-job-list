@@ -3221,7 +3221,8 @@
           "Agenda",
           "Base de conhecimento",
           "Back office"
-        ]
+        ],
+        "hint": "Suporte, moderação, onboarding, processos"
       },
       {
         "name": "Comunidade",
@@ -3239,7 +3240,8 @@
           "Localização",
           "Conteúdo multilíngue",
           "Comunidade local"
-        ]
+        ],
+        "hint": "Comunidade, redes sociais, textos, vídeo, localização"
       },
       {
         "name": "Crescimento",
@@ -3262,7 +3264,8 @@
           "Mídia",
           "Marca",
           "Análise"
-        ]
+        ],
+        "hint": "SEO, anúncios, PR, parcerias, analytics"
       },
       {
         "name": "Produto",
@@ -3276,7 +3279,8 @@
           "Pesquisa de produto",
           "MVP",
           "QA"
-        ]
+        ],
+        "hint": "Estratégia, UX/UI, protótipos, pesquisa, QA"
       },
       {
         "name": "Desenvolvimento",
@@ -3291,7 +3295,8 @@
           "DevOps",
           "Ferramentas internas",
           "Engenharia Web3"
-        ]
+        ],
+        "hint": "Web, mobile, APIs, integrações, DevOps"
       },
       {
         "name": "Web3",
@@ -3312,7 +3317,8 @@
           "Holders",
           "Discord e Telegram",
           "Conteúdo cripto"
-        ]
+        ],
+        "hint": "Contratos inteligentes, DAOs, crescimento do ecossistema, comunidades"
       },
       {
         "name": "Pessoas",
@@ -3326,7 +3332,8 @@
           "Marca empregadora",
           "Operações da equipe",
           "Forma da equipe"
-        ]
+        ],
+        "hint": "Busca de especialistas, recrutamento, equipes remotas"
       },
       {
         "name": "Pesquisa",
@@ -3340,7 +3347,8 @@
           "Pesquisa de preço",
           "Relatórios",
           "Inteligência de negócio"
-        ]
+        ],
+        "hint": "Mercado, concorrentes, clientes, análise de negócio"
       },
       {
         "name": "Design",
@@ -3350,7 +3358,8 @@
           "Motion",
           "Ilustração",
           "Sistema de design"
-        ]
+        ],
+        "hint": "Interfaces, identidade, motion, sistemas de design"
       },
       {
         "name": "Comunicação",
@@ -3360,7 +3369,8 @@
           "Notícias internas",
           "Palestras",
           "Notas de crise"
-        ]
+        ],
+        "hint": "Imprensa, anúncios, palestras, notas de crise"
       }
     ],
     "else": "Se a sua tarefa não está na lista, descreva mesmo assim.",
@@ -3391,7 +3401,11 @@
       "replyBad": "Informe um e-mail ou um nome no Telegram.",
       "orgLong": "O nome da empresa precisa ter menos de 120 caracteres.",
       "doneTitle": "Solicitação salva",
-      "steps": { "goal": "Objetivo", "brief": "Briefing", "review": "Revisão" },
+      "steps": {
+        "goal": "Objetivo",
+        "brief": "Briefing",
+        "review": "Revisão"
+      },
       "goalTitle": "Que resultado você quer alcançar?",
       "goalLead": "Comece pelo resultado. A INTGETION vai sugerir uma equipe após avaliar a solicitação.",
       "goals": [
@@ -3447,7 +3461,16 @@
       "discuss": "Enviar solicitação e abrir o Spoki",
       "chatHandoff": "Enviei uma solicitação para uma equipe gerenciada pela INTGETION. Ajude-me a conversar sobre a tarefa e esclarecer o resultado esperado. Não peça meu e-mail nem contato do Telegram; informei isso na solicitação.",
       "done": "A solicitação foi salva. O Spoki está aberto para ajudar a esclarecer a tarefa. Os contatos não são enviados ao chat.",
-      "trap": "Site"
+      "trap": "Site",
+      "spokiLead": "O Spoki ajuda a montar um briefing claro para a equipe INTGETION. Você pode responder com suas palavras.",
+      "spokiRole": "Seu assistente de IA na plataforma",
+      "spokiChips": [
+        "Lançar um projeto",
+        "Crescer",
+        "Melhorar o produto",
+        "Montar uma equipe"
+      ],
+      "reviewFooter": "Depois do envio, a equipe analisa o briefing. O Spoki ajuda a continuar a conversa; a INTGETION propõe plano, equipe, prazos e preço antes de qualquer trabalho."
     },
     "links": [
       {

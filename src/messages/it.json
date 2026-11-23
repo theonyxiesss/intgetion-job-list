@@ -3221,7 +3221,8 @@
           "Agenda",
           "Base di conoscenza",
           "Back office"
-        ]
+        ],
+        "hint": "Supporto, moderazione, onboarding, processi"
       },
       {
         "name": "Community",
@@ -3239,7 +3240,8 @@
           "Localizzazione",
           "Contenuti multilingue",
           "Community locale"
-        ]
+        ],
+        "hint": "Community, social, testi, video, localizzazione"
       },
       {
         "name": "Crescita",
@@ -3262,7 +3264,8 @@
           "Media",
           "Brand",
           "Analisi"
-        ]
+        ],
+        "hint": "SEO, pubblicità, PR, partnership, analytics"
       },
       {
         "name": "Prodotto",
@@ -3276,7 +3279,8 @@
           "Ricerca prodotto",
           "MVP",
           "QA"
-        ]
+        ],
+        "hint": "Strategia, UX/UI, prototipi, ricerca, QA"
       },
       {
         "name": "Sviluppo",
@@ -3291,7 +3295,8 @@
           "DevOps",
           "Strumenti interni",
           "Ingegneria Web3"
-        ]
+        ],
+        "hint": "Web, mobile, API, integrazioni, DevOps"
       },
       {
         "name": "Web3",
@@ -3312,7 +3317,8 @@
           "Holder",
           "Discord e Telegram",
           "Contenuti crypto"
-        ]
+        ],
+        "hint": "Smart contract, DAO, crescita dell'ecosistema, community"
       },
       {
         "name": "Persone",
@@ -3326,7 +3332,8 @@
           "Marca datore",
           "Operazioni del team",
           "Forma del team"
-        ]
+        ],
+        "hint": "Ricerca di specialisti, recruiting, team remoti"
       },
       {
         "name": "Ricerca",
@@ -3340,7 +3347,8 @@
           "Ricerca sul prezzo",
           "Report",
           "Business intelligence"
-        ]
+        ],
+        "hint": "Mercato, concorrenti, clienti, business analytics"
       },
       {
         "name": "Design",
@@ -3350,7 +3358,8 @@
           "Motion",
           "Illustrazione",
           "Design system"
-        ]
+        ],
+        "hint": "Interfacce, identità, motion, design system"
       },
       {
         "name": "Comunicazione",
@@ -3360,7 +3369,8 @@
           "Notizie interne",
           "Interventi",
           "Note di crisi"
-        ]
+        ],
+        "hint": "Stampa, annunci, interventi, note di crisi"
       }
     ],
     "else": "Se il tuo compito non è in elenco, descrivilo comunque.",
@@ -3391,7 +3401,11 @@
       "replyBad": "Indica un’email o un nome Telegram.",
       "orgLong": "Il nome dell’azienda deve contenere meno di 120 caratteri.",
       "doneTitle": "La richiesta è stata salvata",
-      "steps": { "goal": "Obiettivo", "brief": "Brief", "review": "Verifica" },
+      "steps": {
+        "goal": "Obiettivo",
+        "brief": "Brief",
+        "review": "Verifica"
+      },
       "goalTitle": "Quale risultato vuoi raggiungere?",
       "goalLead": "Parti dal risultato. Dopo aver valutato la richiesta, INTGETION proporrà il team più adatto.",
       "goals": [
@@ -3447,7 +3461,16 @@
       "discuss": "Invia la richiesta e apri Spoki",
       "chatHandoff": "Ho inviato una richiesta per un team gestito da INTGETION. Aiutami a discutere il compito e a chiarire il risultato atteso. Non chiedermi email o contatto Telegram: li ho indicati nella richiesta.",
       "done": "La richiesta è salvata. Spoki è aperto per aiutarti a chiarire il compito. I contatti non vengono inviati nella chat.",
-      "trap": "Sito web"
+      "trap": "Sito web",
+      "spokiLead": "Spoki ti aiuta a scrivere un brief chiaro per il team INTGETION. Puoi rispondere con parole tue.",
+      "spokiRole": "Il tuo assistente AI sulla piattaforma",
+      "spokiChips": [
+        "Avviare un progetto",
+        "Crescere",
+        "Migliorare il prodotto",
+        "Costruire un team"
+      ],
+      "reviewFooter": "Dopo l'invio il team esamina il brief. Spoki può aiutare a continuare la discussione; INTGETION proporrà piano, team, tempi e prezzo prima dell'inizio del lavoro."
     },
     "links": [
       {

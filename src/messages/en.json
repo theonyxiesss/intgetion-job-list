@@ -3208,6 +3208,7 @@
     "groups": [
       {
         "name": "Operations",
+        "hint": "Support, moderation, onboarding, processes",
         "items": [
           "Support",
           "Customer success",
@@ -3224,7 +3225,8 @@
         ]
       },
       {
-        "name": "Community",
+        "name": "Community and content",
+        "hint": "Community, social, copy, video, localization",
         "items": [
           "Community",
           "Social",
@@ -3242,7 +3244,8 @@
         ]
       },
       {
-        "name": "Growth",
+        "name": "Growth and marketing",
+        "hint": "SEO, ads, PR, partnerships, analytics",
         "items": [
           "SEO",
           "Paid media",
@@ -3266,6 +3269,7 @@
       },
       {
         "name": "Product",
+        "hint": "Strategy, UX/UI, prototypes, research, QA",
         "items": [
           "Product management",
           "Strategy",
@@ -3280,6 +3284,7 @@
       },
       {
         "name": "Development",
+        "hint": "Web, mobile, APIs, integrations, DevOps",
         "items": [
           "Web",
           "Frontend",
@@ -3295,6 +3300,7 @@
       },
       {
         "name": "Web3",
+        "hint": "Smart contracts, DAOs, ecosystem growth, communities",
         "items": [
           "Smart contracts",
           "Protocol",
@@ -3315,7 +3321,8 @@
         ]
       },
       {
-        "name": "People",
+        "name": "Team and hiring",
+        "hint": "Finding specialists, recruiting, building remote teams",
         "items": [
           "Talent sourcing",
           "Recruitment",
@@ -3330,6 +3337,7 @@
       },
       {
         "name": "Research",
+        "hint": "Market, competitors, customers, business analytics",
         "items": [
           "Market research",
           "Competitors",
@@ -3344,6 +3352,7 @@
       },
       {
         "name": "Design",
+        "hint": "Interfaces, identity, motion, design systems",
         "items": [
           "Interface",
           "Brand design",
@@ -3354,6 +3363,7 @@
       },
       {
         "name": "Communications",
+        "hint": "Press, announcements, talks, crisis notes",
         "items": [
           "Press",
           "Announcements",
@@ -3368,19 +3378,19 @@
     "about": "How the team works",
     "form": {
       "title": "Describe the task",
-      "lead": "You do not need to hire someone onto your staff. Tell us the problem — for example, SEO for a product — and a specialist team works on the result.",
+      "lead": "You do not need to find and coordinate each specialist yourself. Tell us what the business needs: we will estimate the scope, propose the team, timeline, and price.",
       "task": "The problem",
       "taskHint": "What you need done, and what “done” looks like.",
-      "reply": "How we should reach you",
-      "replyHint": "Email or Telegram",
-      "org": "Company (optional)",
+      "reply": "How should we reach you?",
+      "replyHint": "We need a contact only to answer the request.",
+      "org": "Company or project (optional)",
       "budget": "Approximate budget (optional)",
-      "budgetHint": "A range is enough. We quote after we understand the scope.",
+      "budgetHint": "This helps us suggest the right scope.",
       "budgetLong": "Keep the budget to a short range.",
-      "duration": "How long do you plan to work together",
+      "duration": "Duration or format (optional)",
       "durationHint": "A few weeks, a few months, or ongoing.",
       "durationLong": "Keep the length to a short note.",
-      "start": "When should we start",
+      "start": "When do you need to start? (optional)",
       "startHint": "As soon as possible, a date, or not sure yet.",
       "startLong": "Keep the start to a short note.",
       "send": "Send the task",
@@ -3391,9 +3401,13 @@
       "replyBad": "Enter an email or a Telegram name.",
       "orgLong": "Keep the company name under 120 characters.",
       "doneTitle": "Your request is saved",
-      "steps": { "goal": "Goal", "brief": "Brief", "review": "Review" },
+      "steps": {
+        "goal": "Goal",
+        "brief": "Chat with Spoki",
+        "review": "Agreement"
+      },
       "goalTitle": "What are you trying to achieve?",
-      "goalLead": "Start with the outcome. INTGETION will suggest a team after reviewing the request.",
+      "goalLead": "Start with the goal. If you already know which specialists you need, tick the areas below.",
       "goals": [
         {
           "id": "launch",
@@ -3412,39 +3426,48 @@
         },
         {
           "id": "team",
-          "title": "Build a team for a project",
-          "hint": "Find and coordinate specialists"
+          "title": "Build a team for a task",
+          "hint": "Hiring and managing specialists"
         },
         {
           "id": "clarify",
-          "title": "Help me define the task",
-          "hint": "We can shape the brief together"
+          "title": "Not sure yet — I need help",
+          "hint": "Spoki will help define the request"
         }
       ],
       "goalRequired": "Choose a goal or at least one team area to continue.",
-      "directionsTitle": "Team areas (optional)",
-      "directionsHint": "Choose any areas you already have in mind. You can leave this blank.",
-      "spokiTitle": "Tell Spoki about the task",
+      "directionsTitle": "Team areas",
+      "directionsHint": "You do not have to choose now — INTGETION will assemble the team from the brief.",
+      "spokiTitle": "Let's work out the task together",
+      "spokiLead": "Spoki will help you write a clear brief for the INTGETION team. You can answer in your own words.",
       "spokiName": "Spoki",
-      "spokiQuestion": "What should we create or improve, and what would a successful result look like?",
+      "spokiRole": "Your AI assistant on the platform",
+      "spokiQuestion": "What do you want to change or create? How will you know the task is done?",
+      "spokiChips": [
+        "Launch a project",
+        "Grow",
+        "Improve the product",
+        "Build a team"
+      ],
       "spokiHint": "After saving, Spoki opens with the task context. Your contact details stay in the request and are not sent to chat.",
-      "reviewTitle": "Review your brief",
-      "reviewLead": "Check the task and contact details. INTGETION will suggest the scope, team, timeline, and price after reviewing it.",
-      "goalLabel": "Goal",
-      "directionsLabel": "Team areas",
+      "reviewTitle": "Here is how we understood the task",
+      "reviewLead": "Check the summary and edit it if needed. This is not an order yet and binds you to nothing.",
+      "reviewFooter": "After you send it, the team reviews the brief. Spoki can help continue the discussion; INTGETION will propose a plan, team, timeline, and price before any work starts.",
+      "goalLabel": "Your goal",
+      "directionsLabel": "Areas",
       "taskLabel": "Task and outcome",
       "organizationLabel": "Company",
-      "budgetLabel": "Approximate budget",
-      "durationLabel": "Collaboration length",
+      "budgetLabel": "Budget",
+      "durationLabel": "Duration and start",
       "startLabel": "Start",
-      "replyLabel": "Reply to",
+      "replyLabel": "Contact",
       "unspecified": "Not provided",
       "anyDirection": "Suggest based on the task",
       "continue": "Continue",
       "back": "Back",
       "review": "Review request",
-      "editBrief": "Edit the brief",
-      "discuss": "Send request and open Spoki",
+      "editBrief": "Back to the chat",
+      "discuss": "Discuss with the team",
       "chatHandoff": "I submitted a request for an INTGETION managed team. Help me discuss the task and clarify the outcome. Do not ask for my email or Telegram contact; I provided it in the request.",
       "done": "The request is saved. Spoki is open to help you clarify the task; your contact details were kept out of the chat.",
       "trap": "Website"

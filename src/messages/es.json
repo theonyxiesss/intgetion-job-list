@@ -3221,7 +3221,8 @@
           "Agenda",
           "Base de conocimiento",
           "Back office"
-        ]
+        ],
+        "hint": "Soporte, moderación, onboarding, procesos"
       },
       {
         "name": "Comunidad",
@@ -3239,7 +3240,8 @@
           "Localización",
           "Contenido multilingüe",
           "Comunidad local"
-        ]
+        ],
+        "hint": "Comunidad, redes, textos, vídeo, localización"
       },
       {
         "name": "Crecimiento",
@@ -3262,7 +3264,8 @@
           "Medios",
           "Marca",
           "Analítica"
-        ]
+        ],
+        "hint": "SEO, publicidad, PR, alianzas, analítica"
       },
       {
         "name": "Producto",
@@ -3276,7 +3279,8 @@
           "Investigación de producto",
           "MVP",
           "QA"
-        ]
+        ],
+        "hint": "Estrategia, UX/UI, prototipos, investigación, QA"
       },
       {
         "name": "Desarrollo",
@@ -3291,7 +3295,8 @@
           "DevOps",
           "Herramientas internas",
           "Ingeniería Web3"
-        ]
+        ],
+        "hint": "Web, móvil, APIs, integraciones, DevOps"
       },
       {
         "name": "Web3",
@@ -3312,7 +3317,8 @@
           "Holders",
           "Discord y Telegram",
           "Contenido cripto"
-        ]
+        ],
+        "hint": "Contratos inteligentes, DAO, crecimiento del ecosistema, comunidades"
       },
       {
         "name": "Personas",
@@ -3326,7 +3332,8 @@
           "Marca empleadora",
           "Operaciones del equipo",
           "Forma del equipo"
-        ]
+        ],
+        "hint": "Búsqueda de especialistas, reclutamiento, equipos remotos"
       },
       {
         "name": "Investigación",
@@ -3340,7 +3347,8 @@
           "Investigación de precio",
           "Informes",
           "Inteligencia de negocio"
-        ]
+        ],
+        "hint": "Mercado, competidores, clientes, analítica de negocio"
       },
       {
         "name": "Diseño",
@@ -3350,7 +3358,8 @@
           "Motion",
           "Ilustración",
           "Sistema de diseño"
-        ]
+        ],
+        "hint": "Interfaces, identidad, motion, sistemas de diseño"
       },
       {
         "name": "Comunicación",
@@ -3360,7 +3369,8 @@
           "Noticias internas",
           "Charlas",
           "Notas de crisis"
-        ]
+        ],
+        "hint": "Prensa, anuncios, charlas, notas de crisis"
       }
     ],
     "else": "Si tu tarea no está en la lista, descríbela igual.",
@@ -3391,7 +3401,11 @@
       "replyBad": "Escribe un correo o un nombre de Telegram.",
       "orgLong": "El nombre de la empresa debe tener menos de 120 caracteres.",
       "doneTitle": "Solicitud guardada",
-      "steps": { "goal": "Objetivo", "brief": "Brief", "review": "Revisión" },
+      "steps": {
+        "goal": "Objetivo",
+        "brief": "Brief",
+        "review": "Revisión"
+      },
       "goalTitle": "¿Qué resultado quieres conseguir?",
       "goalLead": "Empieza por el resultado. INTGETION propondrá un equipo adecuado tras revisar la solicitud.",
       "goals": [
@@ -3447,7 +3461,16 @@
       "discuss": "Enviar solicitud y abrir Spoki",
       "chatHandoff": "He enviado una solicitud para un equipo gestionado por INTGETION. Ayúdame a conversar sobre la tarea y aclarar el resultado esperado. No me pidas el correo ni el contacto de Telegram; lo indiqué en la solicitud.",
       "done": "La solicitud está guardada. Spoki se ha abierto para ayudarte a concretar la tarea. Los datos de contacto no se envían al chat.",
-      "trap": "Sitio web"
+      "trap": "Sitio web",
+      "spokiLead": "Spoki te ayuda a escribir un brief claro para el equipo de INTGETION. Puedes responder con tus palabras.",
+      "spokiRole": "Tu asistente de IA en la plataforma",
+      "spokiChips": [
+        "Lanzar un proyecto",
+        "Crecer",
+        "Mejorar el producto",
+        "Formar un equipo"
+      ],
+      "reviewFooter": "Tras enviarlo, el equipo revisa el brief. Spoki puede ayudar a seguir la conversación; INTGETION propondrá plan, equipo, plazos y precio antes de empezar."
     },
     "links": [
       {

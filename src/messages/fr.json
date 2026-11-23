@@ -3221,7 +3221,8 @@
           "Planning",
           "Base de connaissances",
           "Back office"
-        ]
+        ],
+        "hint": "Support, modération, onboarding, processus"
       },
       {
         "name": "Communauté",
@@ -3239,7 +3240,8 @@
           "Localisation",
           "Contenu multilingue",
           "Communauté locale"
-        ]
+        ],
+        "hint": "Communauté, réseaux, textes, vidéo, localisation"
       },
       {
         "name": "Croissance",
@@ -3262,7 +3264,8 @@
           "Médias",
           "Marque",
           "Analytique"
-        ]
+        ],
+        "hint": "SEO, publicité, RP, partenariats, analytique"
       },
       {
         "name": "Produit",
@@ -3276,7 +3279,8 @@
           "Recherche produit",
           "MVP",
           "QA"
-        ]
+        ],
+        "hint": "Stratégie, UX/UI, prototypes, recherche, QA"
       },
       {
         "name": "Développement",
@@ -3291,7 +3295,8 @@
           "DevOps",
           "Outils internes",
           "Ingénierie Web3"
-        ]
+        ],
+        "hint": "Web, mobile, API, intégrations, DevOps"
       },
       {
         "name": "Web3",
@@ -3312,7 +3317,8 @@
           "Holders",
           "Discord et Telegram",
           "Contenu crypto"
-        ]
+        ],
+        "hint": "Smart contracts, DAO, croissance de l'écosystème, communautés"
       },
       {
         "name": "Personnes",
@@ -3326,7 +3332,8 @@
           "Marque employeur",
           "Opérations d’équipe",
           "Forme de l’équipe"
-        ]
+        ],
+        "hint": "Recherche de spécialistes, recrutement, équipes à distance"
       },
       {
         "name": "Recherche",
@@ -3340,7 +3347,8 @@
           "Recherche de prix",
           "Rapports",
           "Intelligence d’affaires"
-        ]
+        ],
+        "hint": "Marché, concurrents, clients, analyse business"
       },
       {
         "name": "Design",
@@ -3350,7 +3358,8 @@
           "Motion",
           "Illustration",
           "Système de design"
-        ]
+        ],
+        "hint": "Interfaces, identité, motion, systèmes de design"
       },
       {
         "name": "Communication",
@@ -3360,7 +3369,8 @@
           "Nouvelles internes",
           "Prises de parole",
           "Notes de crise"
-        ]
+        ],
+        "hint": "Presse, annonces, interventions, notes de crise"
       }
     ],
     "else": "Si votre tâche n’est pas dans la liste, décrivez-la quand même.",
@@ -3451,7 +3461,16 @@
       "discuss": "Envoyer la demande et ouvrir Spoki",
       "chatHandoff": "J’ai envoyé une demande pour une équipe INTGETION accompagnée. Aide-moi à discuter de la tâche et à préciser le résultat attendu. Ne demande pas mon e-mail ni mon contact Telegram ; je les ai indiqués dans le formulaire.",
       "done": "La demande est enregistrée. Spoki est ouvert pour vous aider à préciser la tâche. Les coordonnées ne sont pas envoyées dans le chat.",
-      "trap": "Site web"
+      "trap": "Site web",
+      "spokiLead": "Spoki vous aide à rédiger un brief clair pour l'équipe INTGETION. Vous pouvez répondre avec vos mots.",
+      "spokiRole": "Votre assistant IA sur la plateforme",
+      "spokiChips": [
+        "Lancer un projet",
+        "Accélérer la croissance",
+        "Améliorer le produit",
+        "Constituer une équipe"
+      ],
+      "reviewFooter": "Après l'envoi, l'équipe étudie le brief. Spoki peut poursuivre la discussion ; INTGETION proposera un plan, une équipe, des délais et un prix avant tout travail."
     },
     "links": [
       {
