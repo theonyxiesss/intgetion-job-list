@@ -232,7 +232,7 @@ async function CampaignListBody({
                   ))}
                 </tbody>
               </Table>
-              <ul className="flex flex-col divide-y divide-line rounded-lg border border-line md:hidden">
+              <ul className="flex flex-col divide-y divide-line rounded-lg border border-line md:hidden in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface">
                 {rows.map((row) => (
                   <li key={row.id} className="flex flex-col gap-3 p-4">
                     <div className="flex flex-wrap items-center justify-between gap-2">

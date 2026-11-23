@@ -1,9 +1,11 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Container, PageHeader } from "@/components/ui";
 import { RouteMessages } from "@/components/shell/route-messages";
 import { McpAccess } from "@/components/settings/mcp-access";
+import { McpServerAddress } from "@/components/settings/mcp-server-address";
+import { flags } from "@/config/flags";
+import { siteUrl } from "@/lib/supabase/env";
 import { requireSettingsUser } from "../require-settings-user";
-import { SettingsTabs } from "../settings-tabs";
+import { SettingsShell } from "../settings-tabs";
 import {
   listMcpConnections,
   listMcpPersonalTokens,
@@ -25,17 +27,14 @@ export default async function AssistantsSettingsPage({
   ]);
   return (
     <RouteMessages namespaces={["mcp"]}>
-      <main className="py-10 md:py-16">
-        <Container narrow className="flex flex-col gap-8">
-          <PageHeader title={t("settingsTitle")} />
-          <SettingsTabs active="assistants" />
-          <McpAccess
-            tokens={tokens}
-            connections={connections}
-            scopes={MCP_SCOPES}
-          />
-        </Container>
-      </main>
+      <SettingsShell active="assistants" title={t("settingsTitle")}>
+        <McpAccess
+          tokens={tokens}
+          connections={connections}
+          scopes={MCP_SCOPES}
+        />
+        {flags.uiV2Enabled && <McpServerAddress url={`${siteUrl()}/api/mcp`} />}
+      </SettingsShell>
     </RouteMessages>
   );
 }

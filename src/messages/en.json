@@ -1,5 +1,25 @@
 {
   "jobs": {
+    "v2": {
+      "title": "Jobs",
+      "all": "All",
+      "forMe": "For me",
+      "saved": "Saved",
+      "searchPlaceholder": "Job title, skill or company",
+      "pickWithSpoki": "Pick with Spoki",
+      "anyFormat": "Any format",
+      "level": "Level",
+      "employment": "Employment",
+      "posted": "Posted",
+      "more": "More filters",
+      "reset": "Reset",
+      "count": "{count, plural, one {# job} other {# jobs}}",
+      "apply": "Apply",
+      "salary": "Salary",
+      "zone": "Time zone",
+      "skills": "Skills",
+      "about": "About the job"
+    },
     "moreFilters": "More filters",
     "aside": {
       "spokiTitle": "Let Spoki find jobs",
@@ -122,7 +142,37 @@
     "homeDescription": "Remote jobs and freelance tasks, freelancers and UGC creators to hire, plus Web3 and tech events. Spoki, the AI agent, guides every step; pay in USDC or USDT.",
     "ogAlt": "INTGETION Job List — remote work in Web3"
   },
+  "inbox": {
+    "title": "Messages",
+    "search": "Search conversations",
+    "notFound": "Nothing found",
+    "empty": "No conversations yet",
+    "emptyText": "Conversations appear here when you order a service, take an order or work on a UGC campaign.",
+    "pick": "Pick a conversation on the left.",
+    "order": "Order",
+    "openRoom": "Open the order room",
+    "youBuy": "you are the client",
+    "youSell": "you are the freelancer",
+    "asCreator": "you are the creator",
+    "asBrand": "you are the brand"
+  },
   "nav": {
+    "inbox": "Messages",
+    "hint": {
+      "hiring": "Applications, candidates, stages",
+      "findJobs": "Jobs picked with Spoki",
+      "freelance": "Fixed-price services",
+      "taskBoard": "Tasks from clients",
+      "payments": "Plans and paid hires",
+      "cryptoWallet": "Pay with crypto"
+    },
+    "hiring": "Hiring",
+    "sections": "Sections",
+    "recentChats": "Recent chats",
+    "allChats": "All",
+    "turnkey": "Turnkey",
+    "eventsList": "Events",
+    "chatHistory": "Chat history",
     "home": "Home",
     "main": "Main",
     "language": "Language",
@@ -166,7 +216,15 @@
     "spokiLoading": "Loading Spoki…",
     "spokiResize": "Resize the page and Spoki panels",
     "spokiHide": "Hide Spoki",
-    "spokiShow": "Show Spoki"
+    "spokiShow": "Show Spoki",
+    "newChat": "New chat",
+    "findJobs": "Find jobs",
+    "notifications": "Notifications",
+    "profile": "My profile",
+    "settings": "Settings",
+    "finance": "Finance",
+    "payments": "Payments",
+    "cryptoWallet": "Crypto wallet"
   },
   "locale": {
     "en": "English",
@@ -196,6 +254,16 @@
     "it": "Italian"
   },
   "home": {
+    "v2": {
+      "title": "Where shall we start?",
+      "lead": "Spoki will find jobs, services and events for you.",
+      "placeholder": "For example: remote frontend, React, from $4000",
+      "quickLinks": "Quick actions",
+      "jobs": "Find remote work",
+      "profile": "Review my résumé",
+      "freelance": "Order a freelance service",
+      "events": "IT events nearby"
+    },
     "tagline": "One platform for remote work: jobs, freelance, UGC and events.",
     "feedTitle": "Remote jobs",
     "topJobs": "Top jobs",
@@ -362,6 +430,12 @@
     "code": "500"
   },
   "auth": {
+    "v2": {
+      "loginTitle": "Welcome back",
+      "loginIntro": "Sign in to continue with Spoki.",
+      "registerTitle": "Create an account",
+      "registerIntro": "One account for jobs, freelance and hiring."
+    },
     "loginTitle": "Sign in",
     "registerTitle": "Create an account",
     "resetTitle": "Reset password",
@@ -420,6 +494,7 @@
       "network": "No connection to the site. Check your internet and try again — what you typed is kept."
     },
     "social": {
+      "orEmail": "or by email",
       "title": "Or continue with",
       "google": "Continue with Google",
       "x": "Continue with X",
@@ -582,7 +657,10 @@
       "ugc:read": "Read your company's UGC campaigns",
       "reminders:read": "Read pending reminders",
       "reminders:write": "Manage your reminders"
-    }
+    },
+    "serverAddress": "MCP server address",
+    "serverCopy": "Copy",
+    "serverCopied": "Copied"
   },
   "profile": {
     "nav": "Profile",
@@ -1122,9 +1200,28 @@
     }
   },
   "notifications": {
+    "v2": {
+      "emailOff": "Not connected",
+      "site": "On the site",
+      "siteStatus": "Always on · bell in the menu",
+      "email": "Email",
+      "connected": "Connected",
+      "notConnected": "Not connected",
+      "connectedAs": "Connected · {name}",
+      "connect": "Connect",
+      "on": "On",
+      "feed": "Feed",
+      "channels": "Channels",
+      "channelsText": "Where notifications go. Urgent ones — sign-ins, payments, disputes — always arrive.",
+      "fineTune": "Fine-tune by event in settings"
+    },
     "nav": "Notifications",
     "title": "Notifications",
     "tabsLabel": "Notifications",
+    "viewsLabel": "Notification views",
+    "viewFeed": "Feed",
+    "viewChannels": "Channels",
+    "unreadLabel": "Unread",
     "tabAll": "All",
     "tabUnread": "Unread",
     "empty": "No notifications yet.",
@@ -1464,7 +1561,25 @@
     "error": "Could not save this setting.",
     "telegram": "Telegram",
     "alwaysOnTitle": "Account and security emails",
-    "alwaysOnBody": "Email confirmation, sign-in links and password resets are always sent. They are needed to keep access to your account."
+    "alwaysOnBody": "Email confirmation, sign-in links and password resets are always sent. They are needed to keep access to your account.",
+    "v2": {
+      "inapp": "On site",
+      "intro": "What to send and where. Sign-in and account security emails always arrive.",
+      "event": "Event",
+      "channels": "Channels",
+      "telegramLinked": "Connected",
+      "telegramNotLinked": "Not connected",
+      "connect": "Connect",
+      "groups": {
+        "matches": "New matching jobs",
+        "replies": "Employer reply to your application",
+        "messages": "New message",
+        "orders": "Order: new, delivered, accepted",
+        "ugc": "UGC: invites and videos",
+        "hiring": "Hiring: applications and company jobs",
+        "checks": "Reviews, moderation and reports"
+      }
+    }
   },
   "applications": {
     "nav": "Applications",
@@ -1494,6 +1609,11 @@
     "emptyArchive": "Nothing in the archive."
   },
   "employerApplications": {
+    "v2": {
+      "title": "Hiring",
+      "job": "Job:",
+      "count": "{count, plural, one {# application} other {# applications}}"
+    },
     "open": "Applications",
     "title": "Applications",
     "empty": "No applications yet.",
@@ -1690,6 +1810,40 @@
     }
   },
   "settings": {
+    "v2": {
+      "tabSecurity": "Security and sign-in",
+      "tabAppearance": "Appearance",
+      "sessions": "Active sessions",
+      "sessionsText": "Signed in on another device you no longer use? End those sessions; this device stays signed in.",
+      "signOutOthers": "Sign out on all other devices",
+      "signOutOthersDone": "Signed out on other devices",
+      "signOutOthersFailed": "Could not sign out other devices. Try again.",
+      "theme": "Theme",
+      "themeText": "Applies on this device.",
+      "themeDark": "Dark",
+      "themeLight": "Light",
+      "timezone": "Time zone",
+      "roles": "Roles on the platform",
+      "notSet": "Not set",
+      "change": "Change",
+      "configure": "Configure",
+      "roleSeeker": "Job seeker",
+      "roleFreelancer": "Freelancer",
+      "roleEmployer": "Employer",
+      "roleCreator": "Creator",
+      "tabPrivacy": "Privacy and data",
+      "tabAssistants": "AI assistants (MCP)",
+      "name": "Name",
+      "email": "Email",
+      "emailConfirmed": "confirmed",
+      "password": "Password",
+      "passwordHint": "We email you a link to change it",
+      "passwordChange": "Change",
+      "language": "Interface language",
+      "languageChange": "Change language"
+    },
+    "siteLanguage": "Site language",
+    "siteLanguageHint": "Changes the language of the site, emails and Telegram and Discord messages.",
     "title": "Settings",
     "tabNotifications": "Notifications",
     "tabPrivacy": "Privacy",
@@ -1793,6 +1947,38 @@
     }
   },
   "chat": {
+    "history": {
+      "searchLong": "Search by the first question",
+      "filter": {
+        "all": "All",
+        "job": "Jobs",
+        "campaign": "Creator tests",
+        "general": "General"
+      },
+      "group": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "week": "This week",
+        "earlier": "Earlier"
+      },
+      "keepTitle": "Keeping history",
+      "keepText": "The chat list stays. Message text is removed 24 hours after it was sent; Spoki remembers only what you let it keep in memory.",
+      "memorySettings": "Spoki memory settings",
+      "search": "Search chats",
+      "notFound": "Nothing found",
+      "title": "Chat history",
+      "intro": "Your conversations with Spoki. Old message text is removed after the retention period.",
+      "empty": "No conversations yet",
+      "newChat": "Start a chat",
+      "noPreview": "Conversation without saved text",
+      "topic": {
+        "job": "About a job",
+        "campaign": "About a campaign",
+        "invite": "About a creator test",
+        "general": "General chat"
+      }
+    },
+    "disclaimer": "Spoki can make mistakes. Check the details in the job listing.",
     "jobGoal": {
       "title": "Find a job",
       "intro": "Set your criteria. Spoki will search jobs on the platform and suggest a next step.",
@@ -2804,6 +2990,18 @@
     "failed": "Could not open the link. Try again in a minute."
   },
   "pricing": {
+    "v2": {
+      "title": "Plans",
+      "intro": "One account for job search, freelance and hiring. Start free, upgrade when you need more.",
+      "period": "Billing period",
+      "month": "Month",
+      "year": "Year",
+      "saving": "up to −{percent}%",
+      "popular": "Popular",
+      "forever": "forever",
+      "perMonth": "/ mo",
+      "perYear": "/ yr"
+    },
     "account": {
       "title": "One account. Everything free. Pay less on every deal.",
       "intro": "Search, hire, sell services and run UGC from one account at no cost. The platform earns a commission on deals; a plan lowers it and adds speed.",
@@ -2926,6 +3124,8 @@
     "payHire": "Pay with USDT or USDC",
     "soon": "Coming soon",
     "soonNote": "Paid plans are not on sale yet. Card and USDT / USDC payments are coming; until then everything on the free plans works.",
+    "helpChoosing": "Not sure which plan to choose?",
+    "askSpoki": "Ask Spoki",
     "hireNote": "Start stays free. Hire, Team, Plus and Pro are paid in USDT or USDC. The button charges the monthly price and turns the plan on for 30 days. It does not renew by itself. Hire includes a promoted block for 7 days. Plus turns on 100 Spoki messages a day and Pro turns on 300. The free plan stays at 15. Start and Hire include 2 teammates. Team raises that company to 10. A stronger model and an automatic refund are not switched on by this payment yet.",
     "market": "Posting on the big remote boards costs $250–300 per job with no refund. Here it is free, or $79 with a guarantee.",
     "alwaysFreeTitle": "What no plan ever sells",
@@ -3039,6 +3239,7 @@
     "groups": [
       {
         "name": "Operations",
+        "hint": "Support, moderation, onboarding, processes",
         "items": [
           "Support",
           "Customer success",
@@ -3055,7 +3256,8 @@
         ]
       },
       {
-        "name": "Community",
+        "name": "Community and content",
+        "hint": "Community, social, copy, video, localization",
         "items": [
           "Community",
           "Social",
@@ -3073,7 +3275,8 @@
         ]
       },
       {
-        "name": "Growth",
+        "name": "Growth and marketing",
+        "hint": "SEO, ads, PR, partnerships, analytics",
         "items": [
           "SEO",
           "Paid media",
@@ -3097,6 +3300,7 @@
       },
       {
         "name": "Product",
+        "hint": "Strategy, UX/UI, prototypes, research, QA",
         "items": [
           "Product management",
           "Strategy",
@@ -3111,6 +3315,7 @@
       },
       {
         "name": "Development",
+        "hint": "Web, mobile, APIs, integrations, DevOps",
         "items": [
           "Web",
           "Frontend",
@@ -3126,6 +3331,7 @@
       },
       {
         "name": "Web3",
+        "hint": "Smart contracts, DAOs, ecosystem growth, communities",
         "items": [
           "Smart contracts",
           "Protocol",
@@ -3146,7 +3352,8 @@
         ]
       },
       {
-        "name": "People",
+        "name": "Team and hiring",
+        "hint": "Finding specialists, recruiting, building remote teams",
         "items": [
           "Talent sourcing",
           "Recruitment",
@@ -3161,6 +3368,7 @@
       },
       {
         "name": "Research",
+        "hint": "Market, competitors, customers, business analytics",
         "items": [
           "Market research",
           "Competitors",
@@ -3175,6 +3383,7 @@
       },
       {
         "name": "Design",
+        "hint": "Interfaces, identity, motion, design systems",
         "items": [
           "Interface",
           "Brand design",
@@ -3185,6 +3394,7 @@
       },
       {
         "name": "Communications",
+        "hint": "Press, announcements, talks, crisis notes",
         "items": [
           "Press",
           "Announcements",
@@ -3199,19 +3409,19 @@
     "about": "How the team works",
     "form": {
       "title": "Describe the task",
-      "lead": "You do not need to hire someone onto your staff. Tell us the problem — for example, SEO for a product — and a specialist team works on the result.",
+      "lead": "You do not need to find and coordinate each specialist yourself. Tell us what the business needs: we will estimate the scope, propose the team, timeline, and price.",
       "task": "The problem",
       "taskHint": "What you need done, and what “done” looks like.",
-      "reply": "How we should reach you",
-      "replyHint": "Email or Telegram",
-      "org": "Company (optional)",
+      "reply": "How should we reach you?",
+      "replyHint": "We need a contact only to answer the request.",
+      "org": "Company or project (optional)",
       "budget": "Approximate budget (optional)",
-      "budgetHint": "A range is enough. We quote after we understand the scope.",
+      "budgetHint": "This helps us suggest the right scope.",
       "budgetLong": "Keep the budget to a short range.",
-      "duration": "How long do you plan to work together",
+      "duration": "Duration or format (optional)",
       "durationHint": "A few weeks, a few months, or ongoing.",
       "durationLong": "Keep the length to a short note.",
-      "start": "When should we start",
+      "start": "When do you need to start? (optional)",
       "startHint": "As soon as possible, a date, or not sure yet.",
       "startLong": "Keep the start to a short note.",
       "send": "Send the task",
@@ -3222,9 +3432,13 @@
       "replyBad": "Enter an email or a Telegram name.",
       "orgLong": "Keep the company name under 120 characters.",
       "doneTitle": "Your request is saved",
-      "steps": { "goal": "Goal", "brief": "Brief", "review": "Review" },
+      "steps": {
+        "goal": "Goal",
+        "brief": "Chat with Spoki",
+        "review": "Agreement"
+      },
       "goalTitle": "What are you trying to achieve?",
-      "goalLead": "Start with the outcome. INTGETION will suggest a team after reviewing the request.",
+      "goalLead": "Start with the goal. If you already know which specialists you need, tick the areas below.",
       "goals": [
         {
           "id": "launch",
@@ -3243,39 +3457,48 @@
         },
         {
           "id": "team",
-          "title": "Build a team for a project",
-          "hint": "Find and coordinate specialists"
+          "title": "Build a team for a task",
+          "hint": "Hiring and managing specialists"
         },
         {
           "id": "clarify",
-          "title": "Help me define the task",
-          "hint": "We can shape the brief together"
+          "title": "Not sure yet — I need help",
+          "hint": "Spoki will help define the request"
         }
       ],
       "goalRequired": "Choose a goal or at least one team area to continue.",
-      "directionsTitle": "Team areas (optional)",
-      "directionsHint": "Choose any areas you already have in mind. You can leave this blank.",
-      "spokiTitle": "Tell Spoki about the task",
+      "directionsTitle": "Team areas",
+      "directionsHint": "You do not have to choose now — INTGETION will assemble the team from the brief.",
+      "spokiTitle": "Let's work out the task together",
+      "spokiLead": "Spoki will help you write a clear brief for the INTGETION team. You can answer in your own words.",
       "spokiName": "Spoki",
-      "spokiQuestion": "What should we create or improve, and what would a successful result look like?",
+      "spokiRole": "Your AI assistant on the platform",
+      "spokiQuestion": "What do you want to change or create? How will you know the task is done?",
+      "spokiChips": [
+        "Launch a project",
+        "Grow",
+        "Improve the product",
+        "Build a team"
+      ],
       "spokiHint": "After saving, Spoki opens with the task context. Your contact details stay in the request and are not sent to chat.",
-      "reviewTitle": "Review your brief",
-      "reviewLead": "Check the task and contact details. INTGETION will suggest the scope, team, timeline, and price after reviewing it.",
-      "goalLabel": "Goal",
-      "directionsLabel": "Team areas",
+      "reviewTitle": "Here is how we understood the task",
+      "reviewLead": "Check the summary and edit it if needed. This is not an order yet and binds you to nothing.",
+      "reviewFooter": "After you send it, the team reviews the brief. Spoki can help continue the discussion; INTGETION will propose a plan, team, timeline, and price before any work starts.",
+      "goalLabel": "Your goal",
+      "directionsLabel": "Areas",
       "taskLabel": "Task and outcome",
       "organizationLabel": "Company",
-      "budgetLabel": "Approximate budget",
-      "durationLabel": "Collaboration length",
+      "budgetLabel": "Budget",
+      "durationLabel": "Duration and start",
       "startLabel": "Start",
-      "replyLabel": "Reply to",
+      "replyLabel": "Contact",
       "unspecified": "Not provided",
       "anyDirection": "Suggest based on the task",
       "continue": "Continue",
       "back": "Back",
       "review": "Review request",
-      "editBrief": "Edit the brief",
-      "discuss": "Send request and open Spoki",
+      "editBrief": "Back to the chat",
+      "discuss": "Discuss with the team",
       "chatHandoff": "I submitted a request for an INTGETION managed team. Help me discuss the task and clarify the outcome. Do not ask for my email or Telegram contact; I provided it in the request.",
       "done": "The request is saved. Spoki is open to help you clarify the task; your contact details were kept out of the chat.",
       "trap": "Website"
@@ -3342,6 +3565,25 @@
     }
   },
   "billing": {
+    "v2": {
+      "title": "My finances",
+      "free": "Free",
+      "noEnd": "No end date",
+      "hires": "Paid hires",
+      "hiresText": "Each one lifts a job for 30 days.",
+      "operations": "Operations",
+      "noOperations": "No paid operations yet.",
+      "subscription": "Subscription",
+      "changePlan": "Change plan",
+      "methods": "Payment methods",
+      "methodsText": "Payments go from a crypto wallet linked to your account.",
+      "wallet": "Crypto wallet",
+      "back": "Back to finances",
+      "secure": "Secure payment",
+      "companyPlan": "Company plan",
+      "personalPlan": "Personal plan",
+      "pay": "Pay or top up"
+    },
     "nav": "Billing",
     "title": "Payment and plan",
     "start": "Your plan: Start",
@@ -3420,6 +3662,15 @@
     }
   },
   "postJob": {
+    "v2": {
+      "title": "New job",
+      "myJobs": "My jobs",
+      "spokiText": "Describe the role in your own words — Spoki fills in the fields and writes the job text.",
+      "spokiFill": "Fill in with Spoki",
+      "publishTitle": "Publishing for 30 days",
+      "publishText": "The job goes into the catalog after a check. The «Start» plan is free.",
+      "comparePlans": "Compare plans"
+    },
     "assistantDraft": "Draft this vacancy with the assistant",
     "title": "Post a job",
     "guest": "To post a job, sign in or create an account.",
@@ -4562,7 +4813,15 @@
     }
   },
   "events": {
+    "v2": {
+      "title": "Events",
+      "pickWithSpoki": "Pick with Spoki",
+      "all": "All",
+      "more": "More filters",
+      "details": "Details"
+    },
     "viewEvent": "Open event",
+    "askSpoki": "Find events with Spoki",
     "title": "Web3 & tech events",
     "subtitle": "Summits, conferences, meetups, hackathons, business and career meetups. Go where people hire: networking often leads to the next role.",
     "filters": "Filters",
@@ -4623,6 +4882,27 @@
     }
   },
   "freelance": {
+    "v2": {
+      "fromPrice": "from {price}",
+      "askAbout": "Ask Spoki about this service",
+      "order": "Order",
+      "room": "Order room",
+      "seller": "Freelancer",
+      "buyer": "Client",
+      "youBuy": "you are the client",
+      "youSell": "you are the freelancer",
+      "due": "due {date}",
+      "title": "Freelance",
+      "asClient": "I am a client",
+      "asSeller": "I am a freelancer",
+      "searchPlaceholder": "What needs doing? E.g. a landing page, a logo, a translation",
+      "pickWithSpoki": "Pick with Spoki",
+      "all": "All",
+      "more": "More filters",
+      "turnkeyTitle": "Don't want to look for freelancers yourself?",
+      "turnkeyText": "INTGETION does it turnkey: a team, a manager, payment by stages.",
+      "results": "{count, plural, one {# service} other {# services}} · {sort}"
+    },
     "viewService": "Open service",
     "telegram": {
       "confirmAccept": "Accept the request for “{serviceTitle}”? Contacts open to both of you.",
@@ -4718,6 +4998,9 @@
     "title": "Freelance. Ready services with a price.",
     "subtitle": "Individual specialists: what they will do, for how much and by when. Contacts open once the freelancer accepts your request. For a whole team, see Services.",
     "teamLink": "Need a team? Services",
+    "teamPromo": "INTGETION can deliver your whole project.",
+    "ugcPromoTitle": "Need several UGC videos?",
+    "ugcPromoText": "Create a campaign for creators.",
     "filters": "Filters",
     "closeFilters": "Close filters",
     "applyFilters": "Show services",
@@ -5065,6 +5348,16 @@
     "fromLabel": "Price from"
   },
   "ugc": {
+    "v2": {
+      "roleLabel": "UGC role",
+      "brand": "I'm a brand",
+      "creator": "I'm a creator",
+      "createCampaign": "Create campaign",
+      "creatorLead": "Get invitations from brands, make videos from a brief, and track payment after acceptance.",
+      "creatorInvites": "Invitations",
+      "creatorCampaigns": "My campaigns",
+      "creatorVideos": "My videos"
+    },
     "title": "UGC videos",
     "intro": "Short videos from real people for ads and social posts. One brief, creators apply, you hire the ones you pick.",
     "moneyNote": "The amount is recorded in cents. Nothing is charged or paid in this step.",
@@ -5616,6 +5909,30 @@
     "telegram": "Reminder from Spoki: {text}\n{when}"
   },
   "account": {
+    "v2": {
+      "twoProfiles": "One account, two profiles: for jobs and for freelance.",
+      "seeker": "Job seeker",
+      "freelancer": "Freelancer",
+      "openToOffers": "Open to offers",
+      "edit": "Edit",
+      "jobProfile": "Job profile",
+      "about": "About me",
+      "skills": "Skills",
+      "years": "{count, plural, one {# year} other {# years}}",
+      "lookingFor": "What I am looking for",
+      "titles": "Roles",
+      "salary": "Salary",
+      "format": "Format",
+      "timezone": "Time zone",
+      "completeness": "Profile completeness",
+      "fillProfile": "Fill in the profile",
+      "rating": "{rating} · {count, plural, one {# review} other {# reviews}}",
+      "myServices": "My services",
+      "addService": "Add a service",
+      "noServices": "No services yet. Add one and take orders.",
+      "priceFrom": "from {price}",
+      "reviews": "Client reviews"
+    },
     "nav": "My account",
     "title": "My account",
     "intro": "One account for every service on the site: profile, plan, sign-in and wallet are here.",
@@ -5763,7 +6080,8 @@
       "applied": "Responses",
       "hired": "Hired",
       "waiting": "Videos to review",
-      "accepted": "Accepted videos"
+      "accepted": "Accepted videos",
+      "deposited": "Deposited campaign budget"
     },
     "freshTitle": "Latest videos",
     "seeAll": "See all",

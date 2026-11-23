@@ -32,8 +32,8 @@
 
 ## Маршруты и страницы
 
-- Страницы: `/account`, `/profile`, `/profile/edit`, `/onboarding`, `/settings/account`, `/settings/email`, `/settings/privacy` (там же память Spoki), `/settings/notifications`.
-- API аккаунта: `/api/me`, `/api/me/profile`, `/api/me/export`, `/api/me/email`, `/api/me/email/confirm`, `GET|DELETE /api/me/wallet`, `POST /api/me/wallet/nonce`, `POST /api/me/wallet/verify`, `/api/consent`.
+- Страницы: `/account`, `/profile`, `/profile/edit`, `/onboarding`, `/settings/account`, `/settings/email`, `/settings/privacy` (там же память Spoki), `/settings/notifications`, `/settings/appearance`, `/settings/security`.
+- API аккаунта: `/api/me`, `/api/me/profile`, `/api/me/export`, `/api/me/email`, `/api/me/email/confirm`, `DELETE /api/me/sessions` (завершить остальные сессии после `requireCurrentUser`), `GET|DELETE /api/me/wallet`, `POST /api/me/wallet/nonce`, `POST /api/me/wallet/verify`, `/api/consent`.
 - API кандидата: `/api/candidates/me`, `/api/candidates/me/visibility`, `/api/candidates/me/contacts`, `/api/candidates/[id]`, `/api/notifications/agent-briefs`.
 - Cron: `/api/cron/retention` в 20 минут каждого часа.
 
@@ -53,3 +53,7 @@ D: 16 (контакты отдельно), 28, 165, 166 (выгрузка и у�
 - Переключатель компании и права по `company_id` для человека в нескольких компаниях (D570) — открыто.
 - Проверка личности на единый аккаунт (ТЗ 51, D599) — только план; документы и провайдер ждут решения.
 - Вход сейчас блокирует квота Supabase Auth (402), поэтому экраны под входом на сайте не перепроверены.
+
+## Настройки в UI 2.0
+
+- При `UI_V2=true` `/settings/*` следуют макету `Settings.dc.html`: «Аккаунт» (имя, почта, пароль через ссылку на почту, язык интерфейса, часовой пояс, роли), «Безопасность и вход» (способы входа, активные сеансы), «Уведомления», «Приватность и данные» (здесь же удаление аккаунта), «ИИ-ассистенты (MCP)» (с адресом MCP-сервера), «Оформление». Без флага — прежние вкладки.

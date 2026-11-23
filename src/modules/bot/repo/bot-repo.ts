@@ -339,6 +339,52 @@ export async function latestConversationForUser(
   return row;
 }
 
+/** One row of the conversation history (chat history screen). */
+export type ConversationSummary = {
+  id: string;
+  channel: string;
+  jobId: string | null;
+  campaignId: string | null;
+  inviteId: string | null;
+  lastMessageAt: Date;
+  firstQuestion: string | null;
+};
+
+/**
+ * The user's conversations, newest first. `firstQuestion` is the first user
+ * message still inside the text retention window (D471), else null.
+ */
+export async function listConversationsForUser(
+  userId: string,
+  limit: number,
+  now = new Date(),
+): Promise<ConversationSummary[]> {
+  const since = new Date(now.getTime() - CHAT_TEXT_TTL_MS);
+  return getDb()
+    .select({
+      id: botConversations.id,
+      channel: botConversations.channel,
+      jobId: botConversations.jobId,
+      campaignId: botConversations.campaignId,
+      inviteId: botConversations.inviteId,
+      lastMessageAt: botConversations.lastMessageAt,
+      // Raw names on purpose: drizzle prints columns without their table, so
+      // "id" inside the subquery would mean bot_messages.id.
+      firstQuestion: sql<string | null>`(
+        select bm.content from bot_messages bm
+        where bm.conversation_id = bot_conversations.id
+          and bm.role = 'user'
+          and bm.created_at >= ${since.toISOString()}::timestamptz
+        order by bm.created_at asc
+        limit 1
+      )`,
+    })
+    .from(botConversations)
+    .where(eq(botConversations.userId, userId))
+    .orderBy(desc(botConversations.lastMessageAt))
+    .limit(limit);
+}
+
 /** Undecided, unexpired cards of one user in one conversation, oldest first. */
 export async function listOpenConfirmations(input: {
   conversationId: string;

@@ -5,6 +5,7 @@
 | Файл                                         | Зона                       | Код (вход)                                            |
 | -------------------------------------------- | -------------------------- | ----------------------------------------------------- |
 | [auth.md](auth.md)                           | Auth, callback, письма     | `src/modules/auth`, `src/app/api/auth`, Supabase      |
+| [shell.md](shell.md)                         | Оболочка UI V2 и навигация | `src/app/[locale]/layout.tsx`, `src/components/shell` |
 | [deploy.md](deploy.md)                       | Vercel / Supabase / Resend | [../RUNBOOK.md](../RUNBOOK.md)                        |
 | [bot.md](bot.md)                             | Web chat + Telegram        | `src/modules/bot`, `src/app/api/bot`                  |
 | [matching.md](matching.md)                   | Скор и `/matches`          | `src/modules/matching`                                |

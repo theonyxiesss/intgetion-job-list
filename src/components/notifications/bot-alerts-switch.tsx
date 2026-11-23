@@ -48,7 +48,7 @@ export function BotAlertsSwitch({
   }
 
   return (
-    <section className="flex items-start justify-between gap-4 rounded-lg border border-line p-4">
+    <section className="flex items-start justify-between gap-4 rounded-[18px] border border-line bg-surface p-4">
       <div className="flex flex-col gap-1">
         <p className="t-h3">{labels.title}</p>
         <p className="text-fg-muted">{labels.text}</p>

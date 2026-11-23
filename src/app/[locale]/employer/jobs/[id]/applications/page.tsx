@@ -26,6 +26,7 @@ import {
 } from "@/modules/applications/service";
 import { EmployerJobTabs } from "../job-tabs";
 import { localePrefix } from "@/i18n/paths";
+import { flags } from "@/config/flags";
 
 /** DESIGN.md 9.0: application status tabs; «All» first. */
 const STATUS_TABS = ["all", ...APPLICATION_STATUSES] as const;
@@ -77,6 +78,111 @@ export default async function EmployerApplicationsPage({
 
   const count = (key: (typeof STATUS_TABS)[number]) => page.counts[key];
   const jobTitle = page.jobTitle;
+
+  // v2 (UI_V2): the hiring mockup — applications as a board by stage.
+  if (flags.uiV2Enabled && status === "all") {
+    const stages = APPLICATION_STATUSES.filter(
+      (key) => key !== "withdrawn" && key !== "rejected",
+    );
+    const initials = (name: string | null) =>
+      (name ?? "?")
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase() ?? "")
+        .join("");
+    const tones = [
+      "bg-[#8ab4ff]",
+      "bg-[#f2c46b]",
+      "bg-[#7ee0b5]",
+      "bg-[#c4a6ff]",
+      "bg-[#ff9f8a]",
+    ];
+    return (
+      <main className="flex-1 px-4 py-6 md:px-6 md:py-8">
+        <div className="mx-auto flex max-w-[1180px] flex-col gap-4">
+          <header className="flex flex-wrap items-center gap-3">
+            <h1 className="mr-auto text-[22px] font-semibold tracking-tight">
+              {t("v2.title")}
+            </h1>
+            <Link
+              href={`/employer/jobs/${id}`}
+              {...navBack}
+              className="flex min-h-10 items-center rounded-xl border border-line-strong px-3.5 text-sm hover:bg-surface"
+            >
+              {t("back")}
+            </Link>
+          </header>
+          <EmployerJobTabs jobId={id} active="applications" />
+          <p className="text-sm text-fg-muted">
+            {t("v2.job")}{" "}
+            <span className="font-medium text-fg">{jobTitle}</span>
+            {" · "}
+            {t("v2.count", { count: page.counts.all })}
+          </p>
+          {page.counts.all === 0 ? (
+            <EmptyState title={t("empty")} />
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
+              {stages.map((key) => {
+                const items = page.items.filter((item) => item.status === key);
+                return (
+                  <section
+                    key={key}
+                    aria-label={t(`status.${key}`)}
+                    className="flex min-w-0 flex-col gap-2 rounded-[18px] border border-line bg-surface p-3"
+                  >
+                    <h2 className="flex items-center justify-between px-1 text-sm font-semibold">
+                      {t(`status.${key}`)}
+                      <span className="text-xs font-normal text-fg-subtle">
+                        {count(key)}
+                      </span>
+                    </h2>
+                    <ul className="flex flex-col gap-2">
+                      {items.map((item, index) => (
+                        <li key={item.id}>
+                          <Link
+                            {...navForward}
+                            href={`/employer/applications/${item.id}`}
+                            className="flex flex-col gap-1.5 rounded-xl border border-line bg-bg p-3 hover:border-line-strong"
+                          >
+                            <span className="flex items-center gap-2">
+                              <span
+                                aria-hidden="true"
+                                className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-accent-fg ${tones[index % tones.length]}`}
+                              >
+                                {initials(item.candidateName)}
+                              </span>
+                              <span className="truncate text-sm font-semibold">
+                                {item.candidateName ?? t("unnamed")}
+                              </span>
+                            </span>
+                            <span className="text-xs text-fg-subtle">
+                              {item.createdAt.slice(0, 10)}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                );
+              })}
+            </div>
+          )}
+          {page.nextCursor ? (
+            <Link
+              href={{
+                pathname: `/employer/jobs/${id}/applications`,
+                query: { cursor: page.nextCursor },
+              }}
+              className="self-start text-sm text-fg-muted hover:text-fg"
+            >
+              {t("next")}
+            </Link>
+          ) : null}
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex-1 py-10">

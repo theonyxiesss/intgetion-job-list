@@ -70,9 +70,12 @@ export default async function UgcRoomPage({
       {money.length > 0 ? (
         <section
           aria-labelledby="money-title"
-          className="flex flex-col gap-2 rounded-lg border border-line p-4"
+          className="flex flex-col gap-2 rounded-lg border border-line p-4 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface"
         >
-          <h2 id="money-title" className="t-h4">
+          <h2
+            id="money-title"
+            className="t-h4 in-data-[ui=v2]:text-[15px] in-data-[ui=v2]:font-semibold"
+          >
             {t("moneyHistoryTitle")}
           </h2>
           <ol className="t-body-s flex flex-col gap-1">
@@ -109,9 +112,12 @@ export default async function UgcRoomPage({
   const materialsSection = (
     <section
       aria-labelledby="video-title"
-      className="flex flex-col gap-3 rounded-lg border border-line p-4"
+      className="flex flex-col gap-3 rounded-lg border border-line p-4 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface"
     >
-      <h2 id="video-title" className="t-h4">
+      <h2
+        id="video-title"
+        className="t-h4 in-data-[ui=v2]:text-[15px] in-data-[ui=v2]:font-semibold"
+      >
         {t("roomVideoTitle")}
       </h2>
       {video ? (
@@ -122,7 +128,7 @@ export default async function UgcRoomPage({
               title={t("roomVideoTitle")}
               loading="lazy"
               referrerPolicy="no-referrer"
-              className="aspect-[9/16] w-full max-w-xs rounded-lg border border-line"
+              className="aspect-[9/16] w-full max-w-xs rounded-lg border border-line in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface"
             />
           ) : null}
           <p className="break-all font-mono text-sm">{video.submission.url}</p>
@@ -167,7 +173,7 @@ export default async function UgcRoomPage({
           {room.items.map((item) => (
             <li
               key={`${item.kind}-${item.id}`}
-              className="rounded-lg border border-line p-4"
+              className="rounded-lg border border-line p-4 in-data-[ui=v2]:rounded-[18px] in-data-[ui=v2]:border-line in-data-[ui=v2]:bg-surface"
             >
               {item.kind === "event" ? (
                 <p className="t-body-s text-fg-muted">
@@ -228,9 +234,11 @@ export default async function UgcRoomPage({
   return (
     <RouteMessages namespaces={["ugc"]}>
       <main className="py-10 md:py-16">
-        <Container className="flex max-w-3xl flex-col gap-6">
+        <Container className="flex max-w-3xl in-data-[ui=v2]:max-w-[1100px] in-data-[ui=v2]:gap-5 flex-col gap-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h1 className="t-h2">{t("roomTitle")}</h1>
+            <h1 className="t-h2 in-data-[ui=v2]:text-[22px] in-data-[ui=v2]:leading-tight in-data-[ui=v2]:font-semibold in-data-[ui=v2]:tracking-tight">
+              {t("roomTitle")}
+            </h1>
             <ButtonLink href={`/campaigns/${id}`} variant="secondary">
               {t("roomBack")}
             </ButtonLink>

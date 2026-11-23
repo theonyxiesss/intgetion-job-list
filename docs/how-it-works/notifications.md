@@ -7,6 +7,7 @@
 - Один каталог событий (`lib/catalog.ts`): тип, кому, каналы, схема данных. Каналы — на сайте (in-app), почта, Telegram.
 - `notify` / `safeNotify` проверяют данные по схеме типа и по настройкам человека пишут строку `notifications` (на сайте) и письмо в очередь `notification_emails`. Отправка идёт отдельно: почта — кроном `runNotificationCron` (через Resend, `dispatchEmails`), Telegram — `runTelegramDispatch` из `/api/cron/telegram`. Если `RESEND_API_KEY` или `EMAIL_FROM` пусты, письма не уходят (`noopEmailSender`).
 - Настройки человека — `notification_preferences` (галочки на `/notifications` и `/settings/notifications`). Отписка по подписанной ссылке (`signUnsubscribe`, `unsubscribeByToken`).
+- При UI V2 `/notifications` разделена на «Ленту» и «Каналы»: лента показывает реальные события из `listNotifications`, фильтр непрочитанных и массовое прочтение, а каналы — действующие переключатели сводок, Telegram и почты. Записи ленты получают дату и отметку непрочитанного; карточки каналов стоят сеткой. Демонстрационные подписки и уведомления из `Notifications.dc.html` не добавляются.
 - Отклики работодателю собираются в пачку за час (`groupHourlyBatch`). Дайджест подборки — `pickDigestJobs`, не чаще правила `shouldSendDigest`.
 - Утренние сводки кандидатам и компаниям: `runMorningBriefsCron`, `employerBriefPayload`; админка слотов — `readBriefsAdmin`, `updateBriefSlot`, `runBriefSlotNow`.
 - Письма Supabase Auth — другой домен типов (`AUTH_EMAIL_TYPES`), их шлёт хук `send-email` модуля auth.
@@ -53,3 +54,7 @@ D: 100–103, 125–127 (каталог, пачки), 166, 186–188, 234, 236, 
 
 - Уведомления о новом сообщении в комнате заказа фриланса — в хвостах D566.
 - Доставка почты на production при квоте Supabase Auth (402) не перепроверялась для писем входа; письма каталога идут через Resend отдельно.
+
+## Настройки уведомлений в UI 2.0
+
+- При `UI_V2=true` `/settings/notifications` показывает таблицу «группа событий × канал» (`PreferenceMatrix`): «На сайте», «Почта» и «Telegram», если он привязан. Группы — `src/app/[locale]/settings/notifications/groups.ts`; тест `groups.test.ts` требует, чтобы каждый тип из `NOTIFICATION_TYPES` был ровно в одной группе. Переключатель пишет одно значение для всех типов группы через `PUT /api/notifications/preferences`.

@@ -25,6 +25,7 @@ import {
 } from "@/modules/companies/service";
 import { EmployerCompanySwitcher } from "@/modules/companies/ui/employer-company-switcher";
 import { localePrefix } from "@/i18n/paths";
+import { flags } from "@/config/flags";
 
 /** DESIGN.md 9.0: tabs by status, archive = expired, closed, removed. */
 const TABS = {
@@ -132,6 +133,36 @@ export default async function EmployerJobsPage({
             />
             {shown.length === 0 ? (
               <EmptyState title={t(`tabEmpty.${tab}`)} />
+            ) : flags.uiV2Enabled ? (
+              // v2 (UI_V2): the hiring mockup — one card per job.
+              <ul className="grid gap-3 md:grid-cols-2">
+                {shown.map(({ job }) => (
+                  <li key={job.id}>
+                    <Link
+                      {...navForward}
+                      href={`/employer/jobs/${job.id}?companyId=${selected?.id}`}
+                      className="flex h-full flex-col gap-3 rounded-[18px] border border-line bg-surface p-5 hover:border-line-strong"
+                    >
+                      <span className="flex flex-wrap items-start justify-between gap-2">
+                        <span className="min-w-0 text-[15px] font-semibold">
+                          {job.title}
+                        </span>
+                        <StatusBadge status={job.status}>
+                          {t(`statusLabel.${job.status}`)}
+                        </StatusBadge>
+                      </span>
+                      <span className="mt-auto flex flex-wrap gap-x-4 gap-y-1 text-xs text-fg-subtle">
+                        <span>
+                          {t("colPublished")}: {date(job.publishedAt)}
+                        </span>
+                        <span>
+                          {t("colExpires")}: {date(job.expiresAt)}
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             ) : (
               <Table caption={t("title")}>
                 <thead>

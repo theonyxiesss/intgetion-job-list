@@ -46,11 +46,15 @@ export type BriefFormCopy = {
   directionsTitle: string;
   directionsHint: string;
   spokiTitle: string;
+  spokiLead: string;
   spokiName: string;
+  spokiRole: string;
   spokiQuestion: string;
+  spokiChips: string[];
   spokiHint: string;
   reviewTitle: string;
   reviewLead: string;
+  reviewFooter: string;
   goalLabel: string;
   directionsLabel: string;
   taskLabel: string;
@@ -91,15 +95,19 @@ function composeTask(
 export function BriefForm({
   copy,
   directionGroups,
+  selectedDirection,
 }: {
   copy: BriefFormCopy;
-  directionGroups: string[];
+  directionGroups: { name: string; hint: string }[];
+  selectedDirection?: string;
 }) {
   const spoki = useSpoki();
   const router = useRouter();
   const [step, setStep] = useState<BriefStep>("goal");
   const [goal, setGoal] = useState("");
-  const [directions, setDirections] = useState<string[]>([]);
+  const [directions, setDirections] = useState<string[]>(
+    selectedDirection ? [selectedDirection] : [],
+  );
   const [task, setTask] = useState("");
   const [reviewTask, setReviewTask] = useState("");
   const [reply, setReply] = useState("");
@@ -323,18 +331,22 @@ export function BriefForm({
             </legend>
             <p className="text-sm text-fg-muted">{copy.directionsHint}</p>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              {directionGroups.map((direction) => (
+              {directionGroups.map(({ name, hint }) => (
                 <label
-                  key={direction}
+                  key={name}
+                  aria-label={name}
                   className="flex min-h-11 cursor-pointer items-start gap-3 border border-line-strong px-3 py-3 transition-colors hover:bg-surface-2 has-[:checked]:border-accent"
                 >
                   <input
                     type="checkbox"
-                    checked={directions.includes(direction)}
-                    onChange={() => toggleDirection(direction)}
+                    checked={directions.includes(name)}
+                    onChange={() => toggleDirection(name)}
                     className="mt-1 size-4 accent-accent"
                   />
-                  <span>{direction}</span>
+                  <span className="flex flex-col">
+                    <span>{name}</span>
+                    <span className="text-sm text-fg-muted">{hint}</span>
+                  </span>
                 </label>
               ))}
             </div>
@@ -361,6 +373,7 @@ export function BriefForm({
             <h3 id="brief-task-title" className="t-h3">
               {copy.spokiTitle}
             </h3>
+            <p className="mt-2 text-fg-muted">{copy.spokiLead}</p>
             <div className="mt-4 flex gap-3 border border-line bg-surface-2 p-4">
               <span
                 aria-hidden="true"
@@ -370,6 +383,7 @@ export function BriefForm({
               </span>
               <div className="flex flex-col gap-1">
                 <strong>{copy.spokiName}</strong>
+                <span className="text-sm text-fg-muted">{copy.spokiRole}</span>
                 <p>{copy.spokiQuestion}</p>
                 {selectedGoal ? (
                   <p className="text-sm text-fg-muted">
@@ -378,6 +392,22 @@ export function BriefForm({
                 ) : null}
                 <p className="text-sm text-fg-muted">{copy.spokiHint}</p>
               </div>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {copy.spokiChips.map((chip) => (
+                <Button
+                  key={chip}
+                  type="button"
+                  variant="secondary"
+                  onClick={() =>
+                    setTask((current) =>
+                      current.trim() ? `${current.trim()}\n${chip}` : chip,
+                    )
+                  }
+                >
+                  {chip}
+                </Button>
+              ))}
             </div>
           </div>
           <Field
@@ -507,6 +537,7 @@ export function BriefForm({
             </h3>
             <p className="mt-2 text-fg-muted">{copy.reviewLead}</p>
           </div>
+          <p className="text-sm text-fg-muted">{copy.reviewFooter}</p>
           <dl className="grid gap-0 border-t border-line">
             <div className="grid gap-2 border-b border-line py-3 sm:grid-cols-[10rem_1fr]">
               <dt className="t-label text-fg-muted">{copy.goalLabel}</dt>
