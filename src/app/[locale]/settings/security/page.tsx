@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { AccountSignIn } from "@/components/settings/account-sign-in";
 import { SecurityStubs } from "@/components/settings/security-stubs";
 import { SignOutOthers } from "@/components/settings/sign-out-others";
 import { RouteMessages } from "@/components/shell/route-messages";
@@ -18,20 +19,32 @@ export async function generateMetadata({
   return { title: t("v2.tabSecurity"), robots: { index: false } };
 }
 
-/** v2 (UI_V2) «Security and sign-in»: other devices and the coming options. */
+/**
+ * v2 (UI_V2) «Security and sign-in» as in the mockup: sign-in methods,
+ * other devices and the coming options.
+ */
 export default async function SecuritySettingsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ error?: string; provider?: string }>;
 }) {
   if (!flags.uiV2Enabled) notFound();
   const { locale } = await params;
+  const { error, provider } = await searchParams;
   setRequestLocale(locale);
-  await requireSettingsUser(locale);
+  const user = await requireSettingsUser(locale);
   const t = await getTranslations("settings");
   return (
     <RouteMessages namespaces={["settings"]}>
       <SettingsShell active="security" title={t("v2.tabSecurity")}>
+        <AccountSignIn
+          locale={locale}
+          user={user}
+          error={error}
+          provider={provider}
+        />
         <SignOutOthers />
         <SecurityStubs />
       </SettingsShell>

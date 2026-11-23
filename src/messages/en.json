@@ -657,7 +657,10 @@
       "ugc:read": "Read your company's UGC campaigns",
       "reminders:read": "Read pending reminders",
       "reminders:write": "Manage your reminders"
-    }
+    },
+    "serverAddress": "MCP server address",
+    "serverCopy": "Copy",
+    "serverCopied": "Copied"
   },
   "profile": {
     "nav": "Profile",
@@ -1558,7 +1561,25 @@
     "error": "Could not save this setting.",
     "telegram": "Telegram",
     "alwaysOnTitle": "Account and security emails",
-    "alwaysOnBody": "Email confirmation, sign-in links and password resets are always sent. They are needed to keep access to your account."
+    "alwaysOnBody": "Email confirmation, sign-in links and password resets are always sent. They are needed to keep access to your account.",
+    "v2": {
+      "inapp": "On site",
+      "intro": "What to send and where. Sign-in and account security emails always arrive.",
+      "event": "Event",
+      "channels": "Channels",
+      "telegramLinked": "Connected",
+      "telegramNotLinked": "Not connected",
+      "connect": "Connect",
+      "groups": {
+        "matches": "New matching jobs",
+        "replies": "Employer reply to your application",
+        "messages": "New message",
+        "orders": "Order: new, delivered, accepted",
+        "ugc": "UGC: invites and videos",
+        "hiring": "Hiring: applications and company jobs",
+        "checks": "Reviews, moderation and reports"
+      }
+    }
   },
   "applications": {
     "nav": "Applications",
@@ -1809,7 +1830,17 @@
       "roleSeeker": "Job seeker",
       "roleFreelancer": "Freelancer",
       "roleEmployer": "Employer",
-      "roleCreator": "Creator"
+      "roleCreator": "Creator",
+      "tabPrivacy": "Privacy and data",
+      "tabAssistants": "AI assistants (MCP)",
+      "name": "Name",
+      "email": "Email",
+      "emailConfirmed": "confirmed",
+      "password": "Password",
+      "passwordHint": "We email you a link to change it",
+      "passwordChange": "Change",
+      "language": "Interface language",
+      "languageChange": "Change language"
     },
     "siteLanguage": "Site language",
     "siteLanguageHint": "Changes the language of the site, emails and Telegram and Discord messages.",

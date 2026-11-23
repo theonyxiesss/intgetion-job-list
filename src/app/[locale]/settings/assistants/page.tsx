@@ -1,6 +1,9 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { RouteMessages } from "@/components/shell/route-messages";
 import { McpAccess } from "@/components/settings/mcp-access";
+import { McpServerAddress } from "@/components/settings/mcp-server-address";
+import { flags } from "@/config/flags";
+import { siteUrl } from "@/lib/supabase/env";
 import { requireSettingsUser } from "../require-settings-user";
 import { SettingsShell } from "../settings-tabs";
 import {
@@ -30,6 +33,7 @@ export default async function AssistantsSettingsPage({
           connections={connections}
           scopes={MCP_SCOPES}
         />
+        {flags.uiV2Enabled && <McpServerAddress url={`${siteUrl()}/api/mcp`} />}
       </SettingsShell>
     </RouteMessages>
   );

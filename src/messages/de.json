@@ -657,7 +657,10 @@
       "ugc:read": "UGC-Kampagnen deines Unternehmens lesen",
       "reminders:read": "Ausstehende Erinnerungen lesen",
       "reminders:write": "Deine Erinnerungen verwalten"
-    }
+    },
+    "serverAddress": "Adresse des MCP-Servers",
+    "serverCopy": "Kopieren",
+    "serverCopied": "Kopiert"
   },
   "profile": {
     "nav": "Profil",
@@ -1558,7 +1561,25 @@
     "error": "Diese Einstellung konnte nicht gespeichert werden.",
     "telegram": "Telegram",
     "alwaysOnTitle": "Konto- und Sicherheits-E-Mails",
-    "alwaysOnBody": "E-Mail-Bestätigung, Anmeldelinks und das Zurücksetzen des Passworts werden immer gesendet. Sie sind nötig, um den Zugang zu Ihrem Konto zu behalten."
+    "alwaysOnBody": "E-Mail-Bestätigung, Anmeldelinks und das Zurücksetzen des Passworts werden immer gesendet. Sie sind nötig, um den Zugang zu Ihrem Konto zu behalten.",
+    "v2": {
+      "inapp": "Auf der Website",
+      "intro": "Was wohin gesendet wird. E-Mails zu Anmeldung und Kontosicherheit kommen immer.",
+      "event": "Ereignis",
+      "channels": "Kanäle",
+      "telegramLinked": "Verbunden",
+      "telegramNotLinked": "Nicht verbunden",
+      "connect": "Verbinden",
+      "groups": {
+        "matches": "Neue passende Jobs",
+        "replies": "Antwort des Arbeitgebers auf die Bewerbung",
+        "messages": "Neue Nachricht",
+        "orders": "Auftrag: neu, geliefert, angenommen",
+        "ugc": "UGC: Einladungen und Videos",
+        "hiring": "Einstellung: Bewerbungen und Firmenjobs",
+        "checks": "Prüfungen, Moderation und Meldungen"
+      }
+    }
   },
   "applications": {
     "nav": "Bewerbungen",
@@ -1809,7 +1830,17 @@
       "roleSeeker": "Jobsuchend",
       "roleFreelancer": "Freelancer",
       "roleEmployer": "Arbeitgeber",
-      "roleCreator": "Creator"
+      "roleCreator": "Creator",
+      "tabPrivacy": "Datenschutz und Daten",
+      "tabAssistants": "KI-Assistenten (MCP)",
+      "name": "Name",
+      "email": "E-Mail",
+      "emailConfirmed": "bestätigt",
+      "password": "Passwort",
+      "passwordHint": "Wir senden Ihnen einen Link per E-Mail",
+      "passwordChange": "Ändern",
+      "language": "Sprache der Oberfläche",
+      "languageChange": "Sprache ändern"
     },
     "siteLanguage": "Sprache der Website",
     "siteLanguageHint": "Ändert die Sprache der Website, der E-Mails und der Nachrichten in Telegram und Discord.",

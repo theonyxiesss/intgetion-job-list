@@ -123,10 +123,10 @@ export async function SettingsShell({
       label: t("tabNotifications"),
       href: "/settings/notifications",
     },
-    { key: "privacy", label: t("tabPrivacy"), href: "/settings/privacy" },
+    { key: "privacy", label: t("v2.tabPrivacy"), href: "/settings/privacy" },
     {
       key: "assistants",
-      label: t("tabAssistants"),
+      label: t("v2.tabAssistants"),
       href: "/settings/assistants",
     },
     {

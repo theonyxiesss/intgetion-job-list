@@ -4,10 +4,12 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CookieChoice } from "@/components/settings/cookie-choice";
 import { SpokiMemory } from "@/components/settings/spoki-memory";
 import {
+  DeleteAccount,
   MarketingOptIn,
   ProfileVisibility,
 } from "@/components/settings/settings-controls";
-import { Icon, buttonClass } from "@/components/ui";
+import { Alert, Icon, buttonClass } from "@/components/ui";
+import { flags } from "@/config/flags";
 import { CONSENT_COOKIE, consentInForce } from "@/lib/consent";
 import {
   MEMORY_MAX_CHARS,
@@ -87,6 +89,13 @@ export default async function PrivacySettingsPage({
             {t("exportButton")}
           </a>
         </section>
+        {/* v2: «Delete account» sits under «Privacy and data» (mockup). */}
+        {flags.uiV2Enabled &&
+          (user.platformRole === "admin" ? (
+            <Alert tone="warning" title={t("adminCannotDelete")} />
+          ) : (
+            <DeleteAccount />
+          ))}
       </SettingsShell>
     </RouteMessages>
   );

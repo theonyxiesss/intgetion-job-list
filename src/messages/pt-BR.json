@@ -657,7 +657,10 @@
       "ugc:read": "Ler campanhas UGC da sua empresa",
       "reminders:read": "Ler lembretes pendentes",
       "reminders:write": "Gerenciar seus lembretes"
-    }
+    },
+    "serverAddress": "Endereço do servidor MCP",
+    "serverCopy": "Copiar",
+    "serverCopied": "Copiado"
   },
   "profile": {
     "nav": "Perfil",
@@ -1558,7 +1561,25 @@
     "error": "Não foi possível salvar esta configuração.",
     "telegram": "Telegram",
     "alwaysOnTitle": "E-mails de conta e segurança",
-    "alwaysOnBody": "Confirmação de e-mail, links de acesso e redefinições de senha são sempre enviados. Eles são necessários para manter o acesso à sua conta."
+    "alwaysOnBody": "Confirmação de e-mail, links de acesso e redefinições de senha são sempre enviados. Eles são necessários para manter o acesso à sua conta.",
+    "v2": {
+      "inapp": "No site",
+      "intro": "O que enviar e por onde. E-mails de login e segurança da conta chegam sempre.",
+      "event": "Evento",
+      "channels": "Canais",
+      "telegramLinked": "Conectado",
+      "telegramNotLinked": "Não conectado",
+      "connect": "Conectar",
+      "groups": {
+        "matches": "Novas vagas compatíveis",
+        "replies": "Resposta do empregador à candidatura",
+        "messages": "Nova mensagem",
+        "orders": "Pedido: novo, entregue, aceito",
+        "ugc": "UGC: convites e vídeos",
+        "hiring": "Contratação: candidaturas e vagas da empresa",
+        "checks": "Verificações, moderação e denúncias"
+      }
+    }
   },
   "applications": {
     "nav": "Candidaturas",
@@ -1809,7 +1830,17 @@
       "roleSeeker": "Candidato",
       "roleFreelancer": "Freelancer",
       "roleEmployer": "Empregador",
-      "roleCreator": "Criador"
+      "roleCreator": "Criador",
+      "tabPrivacy": "Privacidade e dados",
+      "tabAssistants": "Assistentes de IA (MCP)",
+      "name": "Nome",
+      "email": "E-mail",
+      "emailConfirmed": "confirmado",
+      "password": "Senha",
+      "passwordHint": "Enviamos um link por e-mail para trocar",
+      "passwordChange": "Trocar",
+      "language": "Idioma da interface",
+      "languageChange": "Trocar idioma"
     },
     "siteLanguage": "Idioma do site",
     "siteLanguageHint": "Muda o idioma do site, dos e-mails e das mensagens no Telegram e no Discord.",

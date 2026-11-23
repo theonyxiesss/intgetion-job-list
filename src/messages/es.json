@@ -657,7 +657,10 @@
       "ugc:read": "Leer las campañas UGC de tu empresa",
       "reminders:read": "Leer recordatorios pendientes",
       "reminders:write": "Gestionar tus recordatorios"
-    }
+    },
+    "serverAddress": "Dirección del servidor MCP",
+    "serverCopy": "Copiar",
+    "serverCopied": "Copiado"
   },
   "profile": {
     "nav": "Perfil",
@@ -1558,7 +1561,25 @@
     "error": "No se ha podido guardar este ajuste.",
     "telegram": "Telegram",
     "alwaysOnTitle": "Correos de cuenta y seguridad",
-    "alwaysOnBody": "La confirmación del correo, los enlaces de acceso y el restablecimiento de contraseña se envían siempre. Hacen falta para conservar el acceso a tu cuenta."
+    "alwaysOnBody": "La confirmación del correo, los enlaces de acceso y el restablecimiento de contraseña se envían siempre. Hacen falta para conservar el acceso a tu cuenta.",
+    "v2": {
+      "inapp": "En el sitio",
+      "intro": "Qué enviar y por dónde. Los correos de acceso y seguridad de la cuenta llegan siempre.",
+      "event": "Evento",
+      "channels": "Canales",
+      "telegramLinked": "Conectado",
+      "telegramNotLinked": "No conectado",
+      "connect": "Conectar",
+      "groups": {
+        "matches": "Nuevas ofertas que encajan",
+        "replies": "Respuesta del empleador a tu candidatura",
+        "messages": "Nuevo mensaje",
+        "orders": "Pedido: nuevo, entregado, aceptado",
+        "ugc": "UGC: invitaciones y vídeos",
+        "hiring": "Contratación: candidaturas y ofertas de la empresa",
+        "checks": "Revisiones, moderación y denuncias"
+      }
+    }
   },
   "applications": {
     "nav": "Candidaturas",
@@ -1809,7 +1830,17 @@
       "roleSeeker": "Candidato",
       "roleFreelancer": "Freelancer",
       "roleEmployer": "Empleador",
-      "roleCreator": "Creador"
+      "roleCreator": "Creador",
+      "tabPrivacy": "Privacidad y datos",
+      "tabAssistants": "Asistentes de IA (MCP)",
+      "name": "Nombre",
+      "email": "Correo",
+      "emailConfirmed": "confirmado",
+      "password": "Contraseña",
+      "passwordHint": "Te enviamos un enlace por correo para cambiarla",
+      "passwordChange": "Cambiar",
+      "language": "Idioma de la interfaz",
+      "languageChange": "Cambiar idioma"
     },
     "siteLanguage": "Idioma del sitio",
     "siteLanguageHint": "Cambia el idioma del sitio, los correos y los mensajes de Telegram y Discord.",

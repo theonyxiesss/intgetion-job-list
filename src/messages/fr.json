@@ -657,7 +657,10 @@
       "ugc:read": "Lire les campagnes UGC de votre entreprise",
       "reminders:read": "Lire les rappels en attente",
       "reminders:write": "Gérer vos rappels"
-    }
+    },
+    "serverAddress": "Adresse du serveur MCP",
+    "serverCopy": "Copier",
+    "serverCopied": "Copié"
   },
   "profile": {
     "nav": "Profil",
@@ -1558,7 +1561,25 @@
     "error": "Impossible d’enregistrer ce paramètre.",
     "telegram": "Telegram",
     "alwaysOnTitle": "E-mails de compte et de sécurité",
-    "alwaysOnBody": "La confirmation d’e-mail, les liens de connexion et la réinitialisation du mot de passe sont toujours envoyés. Ils sont nécessaires pour garder l’accès à votre compte."
+    "alwaysOnBody": "La confirmation d’e-mail, les liens de connexion et la réinitialisation du mot de passe sont toujours envoyés. Ils sont nécessaires pour garder l’accès à votre compte.",
+    "v2": {
+      "inapp": "Sur le site",
+      "intro": "Quoi envoyer et où. Les e-mails de connexion et de sécurité du compte arrivent toujours.",
+      "event": "Événement",
+      "channels": "Canaux",
+      "telegramLinked": "Connecté",
+      "telegramNotLinked": "Non connecté",
+      "connect": "Connecter",
+      "groups": {
+        "matches": "Nouvelles offres correspondantes",
+        "replies": "Réponse de l'employeur à votre candidature",
+        "messages": "Nouveau message",
+        "orders": "Commande : nouvelle, livrée, acceptée",
+        "ugc": "UGC : invitations et vidéos",
+        "hiring": "Recrutement : candidatures et offres de l'entreprise",
+        "checks": "Vérifications, modération et signalements"
+      }
+    }
   },
   "applications": {
     "nav": "Candidatures",
@@ -1809,7 +1830,17 @@
       "roleSeeker": "Candidat",
       "roleFreelancer": "Freelance",
       "roleEmployer": "Employeur",
-      "roleCreator": "Créateur"
+      "roleCreator": "Créateur",
+      "tabPrivacy": "Confidentialité et données",
+      "tabAssistants": "Assistants IA (MCP)",
+      "name": "Nom",
+      "email": "E-mail",
+      "emailConfirmed": "confirmé",
+      "password": "Mot de passe",
+      "passwordHint": "Nous vous envoyons un lien par e-mail pour le changer",
+      "passwordChange": "Modifier",
+      "language": "Langue de l'interface",
+      "languageChange": "Changer de langue"
     },
     "siteLanguage": "Langue du site",
     "siteLanguageHint": "Change la langue du site, des e-mails et des messages Telegram et Discord.",
