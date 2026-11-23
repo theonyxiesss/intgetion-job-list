@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import { authCookieOptions } from "./cookie-options";
+import { devAuthUid, withDevAuth } from "./dev-auth";
 import { supabaseAnonKey, supabaseUrl } from "./env";
 import {
   authStorageKey,
@@ -36,7 +37,7 @@ export function createSessionClient(input: {
   const baseFetch = input.fetch ?? ((...args) => fetch(...args));
   const storageKey = authStorageKey(supabaseUrl());
 
-  return createServerClient(supabaseUrl(), supabaseAnonKey(), {
+  const client = createServerClient(supabaseUrl(), supabaseAnonKey(), {
     cookieOptions: authCookieOptions(framed ? { framed: true } : {}),
     global: {
       fetch: async (requestInput, init) => {
@@ -105,6 +106,9 @@ export function createSessionClient(input: {
       },
     },
   });
+  // Local dev account only; off on every deployment (see dev-auth.ts).
+  const devUid = devAuthUid();
+  return devUid ? withDevAuth(client, devUid) : client;
 }
 
 function isRefreshGrant(url: string): boolean {
