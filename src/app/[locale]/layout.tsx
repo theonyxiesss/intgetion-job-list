@@ -6,6 +6,7 @@ import {
   setRequestLocale,
 } from "next-intl/server";
 import { cookies, headers } from "next/headers";
+import { CONSENT_COOKIE, consentInForce } from "@/lib/consent";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
@@ -254,6 +255,11 @@ export default async function LocaleLayout({
             )}
             <ServiceWorker />
             <CookieBanner
+              initialOpen={
+                !signedIn &&
+                consentInForce((await cookies()).get(CONSENT_COOKIE)?.value) ===
+                  null
+              }
               text={{
                 label: t("cookies.label"),
                 text: t("cookies.text"),

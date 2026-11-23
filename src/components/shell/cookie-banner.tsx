@@ -31,21 +31,37 @@ export interface CookieBannerText {
 }
 
 /**
- * Cookie choice (D201, D219, D220). Rendered only after hydration; the text stays
- * one short line so it never outgrows the hero as the LCP element. The three
- * buttons have equal weight; "Customize" opens the two optional categories.
+ * Cookie choice (D201, D219, D220). The three buttons have equal weight;
+ * "Customize" opens the two optional categories.
+ *
+ * `initialOpen` (D610): the server already knows a guest without a consent
+ * cookie must choose, so the banner is in the first HTML. Shown only after
+ * hydration it appeared ~3 s in and became the LCP element of the light
+ * UI 2.0 home page. Signed-in people keep the check below: they may have
+ * chosen on another device (D220).
  */
-export function CookieBanner({ text }: { text: CookieBannerText }) {
-  const [open, setOpen] = useState(false);
+export function CookieBanner({
+  text,
+  initialOpen = false,
+}: {
+  text: CookieBannerText;
+  initialOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(initialOpen);
   const [custom, setCustom] = useState(false);
   const [draft, setDraft] = useState<Consent>(NECESSARY_ONLY);
   const [gpc, setGpc] = useState(false);
 
   useEffect(() => {
     // Cookies and navigator are only readable after hydration.
-    if (readConsent(document.cookie) !== null) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (readConsent(document.cookie) !== null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setOpen(false);
+      return;
+    }
     setGpc(browserGpc());
+    // A guest's banner came open from the server: nothing stored to fetch.
+    if (initialOpen) return;
     let cancelled = false;
     // A signed-in user may have chosen on another device (D220).
     fetch("/api/consent", { cache: "no-store" })
@@ -64,7 +80,7 @@ export function CookieBanner({ text }: { text: CookieBannerText }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [initialOpen]);
 
   function choose(consent: Consent) {
     writeConsent(consent, "banner");
