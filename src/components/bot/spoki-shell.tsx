@@ -40,15 +40,18 @@ export function SpokiShell({
  */
 export function SpokiRow({
   labels,
+  hideOnHome = false,
   children,
 }: {
   labels: ComponentProps<typeof Dock>["labels"];
+  /** UI 2.0: the home page is the chat itself (see spoki-dock-home.ts). */
+  hideOnHome?: boolean;
   children: ReactNode;
 }) {
   return (
     <div className="flex min-h-0 w-full flex-1">
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
-      <Dock labels={labels} />
+      <Dock labels={labels} hideOnHome={hideOnHome} />
     </div>
   );
 }

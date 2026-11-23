@@ -208,6 +208,7 @@ export default async function LocaleLayout({
                   className="flex flex-1 flex-col"
                 >
                   <SpokiRow
+                    hideOnHome={v2}
                     labels={{
                       panel: t("nav.spokiPanel"),
                       title: t("chat.title"),
