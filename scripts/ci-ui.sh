@@ -5,7 +5,10 @@ set -euo pipefail
 pnpm exec playwright install --with-deps chromium
 pnpm test:e2e
 
-pnpm start > /tmp/next-start.log 2>&1 &
+# Measure the interface production serves: UI_V2=true on Vercel Production
+# since 2026-11-23. Without it Lighthouse timed the old home page (the
+# `hero-wordmark-run` wordmark), which visitors no longer see.
+UI_V2=true pnpm start > /tmp/next-start.log 2>&1 &
 server_pid=$!
 
 cleanup() {
