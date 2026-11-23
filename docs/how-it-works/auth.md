@@ -48,3 +48,8 @@
 - D328 (ссылка с телефона — вход на компьютере) отложен.
 - X-вход не проверен; свой домен `auth.intgetion.com` не включён (платное дополнение Supabase).
 - SEC-20261014-6: проверка утёкших паролей в Supabase Auth не включена.
+
+## Локальный dev-аккаунт (без Docker)
+
+- `src/lib/supabase/dev-auth.ts`: при `pnpm dev` и `DEV_AUTH_USER=<auth_uid>` в `.env.local` серверные `auth.getUser` / `auth.getClaims` отвечают этим пользователем; дальше строка `users` ищется по `auth_uid` как обычно. Не работает в production-сборке и на Vercel (`VERCEL`, `VERCEL_ENV`), это проверяет `dev-auth.test.ts`.
+- Нужна локальная база со строкой `users` для этого `auth_uid` (миграции и `scripts/seed-demo.mjs`). Формы входа, OAuth, письма и Storage без настоящего Supabase Auth не работают.
