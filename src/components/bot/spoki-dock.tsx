@@ -12,8 +12,10 @@ import {
 } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import { Icon } from "@/components/ui/icon";
+import { usePathname } from "@/i18n/navigation";
 import { SpokiChat } from "./spoki-chat-lazy";
 import { useSpoki } from "./spoki-context";
+import { dockHiddenOnHome } from "./spoki-dock-home";
 
 const tool =
   "inline-flex size-11 items-center justify-center rounded-full text-fg-muted transition-colors hover:bg-surface hover:text-fg";
@@ -77,7 +79,9 @@ function subscribeDockWidth(onChange: () => void) {
  */
 export function SpokiDock({
   labels,
+  hideOnHome = false,
 }: {
+  hideOnHome?: boolean;
   labels: {
     panel: string;
     title: string;
@@ -91,6 +95,7 @@ export function SpokiDock({
   };
 }) {
   const spoki = useSpoki();
+  const pathname = usePathname();
   const panelRef = useRef<HTMLElement>(null);
   const returnTo = useRef<HTMLElement | null>(null);
   const drag = useRef<{ x: number; width: number } | null>(null);
@@ -137,6 +142,7 @@ export function SpokiDock({
 
   if (!spoki) return null;
   const { mode, docked, dockHidden, expanded, target, loaded } = spoki;
+  if (dockHiddenOnHome(hideOnHome, pathname, mode)) return null;
 
   return (
     <>
