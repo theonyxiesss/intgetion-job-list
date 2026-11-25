@@ -384,8 +384,33 @@ export async function readJobs(
 ): Promise<JobWithSimilarity[]> {
   if (jobIds.length === 0) return [];
   const db = getDb();
+  // Only the scoring fields: description and the fts vector make up most of
+  // a row and are not used here (Supabase egress quota).
   const jobRows = await db
-    .select()
+    .select({
+      id: jobs.id,
+      companyId: jobs.companyId,
+      title: jobs.title,
+      category: jobs.category,
+      sectors: jobs.sectors,
+      seniority: jobs.seniority,
+      status: jobs.status,
+      workFormat: jobs.workFormat,
+      employmentType: jobs.employmentType,
+      experienceMin: jobs.experienceMin,
+      experienceMax: jobs.experienceMax,
+      locationCountry: jobs.locationCountry,
+      countryRestrictions: jobs.countryRestrictions,
+      timezoneRequired: jobs.timezoneRequired,
+      workHoursStart: jobs.workHoursStart,
+      workHoursEnd: jobs.workHoursEnd,
+      minOverlapHours: jobs.minOverlapHours,
+      salaryMin: jobs.salaryMin,
+      salaryMax: jobs.salaryMax,
+      salaryCurrency: jobs.salaryCurrency,
+      salaryPeriod: jobs.salaryPeriod,
+      salaryBasis: jobs.salaryBasis,
+    })
     .from(jobs)
     .where(inArray(jobs.id, [...jobIds]));
   const skillRows = await db
