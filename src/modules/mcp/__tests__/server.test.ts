@@ -16,6 +16,21 @@ vi.mock("@/modules/jobs/service", async (importOriginal) => ({
   getJobForPublic: (...args: unknown[]) => getJobForPublic(...args),
   getVisibleCompany: (...args: unknown[]) => getVisibleCompany(...args),
 }));
+vi.mock("next/cache", () => ({
+  unstable_cache: (fn: unknown) => fn,
+}));
+vi.mock("@/modules/public-cache/live-state", async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  readLiveStates: async (ids: readonly string[]) =>
+    new Map(
+      ids.map((id) => [
+        id,
+        { status: "published", expiresAt: null, companyStatus: "verified" },
+      ]),
+    ),
+  // filterLive calls the module-internal readLiveStates, so stub it as well.
+  filterLive: async <T>(items: T[]) => items,
+}));
 vi.mock("@/modules/events/service", async (importOriginal) => ({
   ...(await importOriginal<object>()),
   findEventsForPerson: (...args: unknown[]) => findEventsForPerson(...args),
