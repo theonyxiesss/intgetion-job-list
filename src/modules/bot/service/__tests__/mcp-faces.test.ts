@@ -1,17 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { cachedPublicSearch, cachedJobForPublic, getGuestPicks } = vi.hoisted(
-  () => ({
-    cachedPublicSearch: vi.fn(),
-    cachedJobForPublic: vi.fn(),
-    getGuestPicks: vi.fn(),
-  }),
-);
+const { cachedPublicSearch, cachedJobForPublic } = vi.hoisted(() => ({
+  cachedPublicSearch: vi.fn(),
+  cachedJobForPublic: vi.fn(),
+}));
 
 vi.mock("@/modules/public-cache", () => ({
   cachedPublicSearch,
   cachedJobForPublic,
-  getGuestPicks,
 }));
 vi.mock("@/modules/jobs/service", () => ({
   getVisibleCompany: vi.fn(),
@@ -61,20 +57,19 @@ describe("searchJobsFace", () => {
     expect(result.data).not.toHaveProperty("message");
   });
 
-  it("uses the guest picks when there is no text and no filters", async () => {
-    getGuestPicks.mockResolvedValue({
-      promoted: [],
+  it("browses with the cached syndicated search when there is no text or filter", async () => {
+    cachedPublicSearch.mockResolvedValue({
       items: [internalJob("a"), internalJob("b")],
     });
     const result = await searchJobsFace.run({ q: "  " });
-    expect(getGuestPicks).toHaveBeenCalledWith("en");
-    expect(cachedPublicSearch).not.toHaveBeenCalled();
+    expect(cachedPublicSearch).toHaveBeenCalledWith(expect.anything(), "en", {
+      syndicatedOnly: true,
+    });
     expect((result.data.jobs as unknown[]).length).toBe(2);
   });
 
-  it("keeps the syndication guard on guest picks", async () => {
-    getGuestPicks.mockResolvedValue({
-      promoted: [],
+  it("keeps the syndication guard on returned jobs", async () => {
+    cachedPublicSearch.mockResolvedValue({
       items: [
         internalJob("a"),
         {
@@ -85,22 +80,12 @@ describe("searchJobsFace", () => {
     });
     const result = await searchJobsFace.run({});
     const ids = (result.data.jobs as { id: string }[]).map((job) => job.id);
-    expect(ids).not.toContain("b");
-  });
-
-  it("returns the message when the guest picks are empty", async () => {
-    getGuestPicks.mockResolvedValue({ promoted: [], items: [] });
-    const result = await searchJobsFace.run({});
-    expect(result.data.jobs).toEqual([]);
-    expect(result.data.message).toBe(
-      "No matching active jobs on INTGETION right now.",
-    );
+    expect(ids).toEqual(["a"]);
   });
 
   it("searches when any filter is set", async () => {
     cachedPublicSearch.mockResolvedValue({ items: [] });
     await searchJobsFace.run({ country: "DE" });
-    expect(getGuestPicks).not.toHaveBeenCalled();
     expect(cachedPublicSearch).toHaveBeenCalled();
   });
 });

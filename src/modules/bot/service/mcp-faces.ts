@@ -8,11 +8,7 @@ import {
   getVisibleCompany,
   searchJobs,
 } from "@/modules/jobs/service";
-import {
-  cachedJobForPublic,
-  cachedPublicSearch,
-  getGuestPicks,
-} from "@/modules/public-cache";
+import { cachedJobForPublic, cachedPublicSearch } from "@/modules/public-cache";
 
 /**
  * What a tool shows an outside assistant over MCP (D486). It sits next to
@@ -99,20 +95,12 @@ export const searchJobsFace: McpFace<{
       employmentType: input.employmentType,
       limit: input.limit ?? MAX_JOBS,
     });
-    // No text and no filters (every optional search field empty): the shared
-    // guest picks. Otherwise the cached guest search. D484 in the query: only
-    // own jobs and open sources are read, so a category led by closed imports
-    // still returns what may be shown.
-    const isBrowse = [
-      input.q?.trim(),
-      input.category,
-      input.country,
-      input.workFormat,
-      input.employmentType,
-    ].every((value) => !value);
-    const items = isBrowse
-      ? (await getGuestPicks("en")).items.slice(0, query.limit)
-      : (await cachedPublicSearch(query, "en", { syndicatedOnly: true })).items;
+    // D484 in the query: only own jobs and open sources are read, so a
+    // category led by closed imports still fills the page. The default
+    // browse query is itself one shared cache entry.
+    const { items } = await cachedPublicSearch(query, "en", {
+      syndicatedOnly: true,
+    });
     // Second guard: the same rule on every returned job.
     const jobs = items.filter(canSyndicateJob).map(jobCard);
     if (jobs.length === 0) {
