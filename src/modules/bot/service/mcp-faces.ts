@@ -8,6 +8,11 @@ import {
   getVisibleCompany,
   searchJobs,
 } from "@/modules/jobs/service";
+import {
+  cachedJobForPublic,
+  cachedPublicSearch,
+  getGuestPicks,
+} from "@/modules/public-cache";
 
 /**
  * What a tool shows an outside assistant over MCP (D486). It sits next to
@@ -71,6 +76,10 @@ function jobCard(job: SearchedJob | PublicJob) {
   };
 }
 
+/** Shown when a search finds nothing; never padded with "similar" jobs. */
+export const NO_JOBS_MESSAGE =
+  "No matching active jobs on INTGETION right now.";
+
 export const searchJobsFace: McpFace<{
   q?: string;
   category?: (typeof JOB_CATEGORIES)[number];
@@ -90,14 +99,29 @@ export const searchJobsFace: McpFace<{
       employmentType: input.employmentType,
       limit: input.limit ?? MAX_JOBS,
     });
-    // D484 in the query: only own jobs and open sources are read, so a
-    // category led by closed imports still returns what may be shown.
-    const { items } = await searchJobs(query, "en", {
-      hidden: null,
-      syndicatedOnly: true,
-    });
+    // No text and no filters (every optional search field empty): the shared
+    // guest picks. Otherwise the cached guest search. D484 in the query: only
+    // own jobs and open sources are read, so a category led by closed imports
+    // still returns what may be shown.
+    const isBrowse = [
+      input.q?.trim(),
+      input.category,
+      input.country,
+      input.workFormat,
+      input.employmentType,
+    ].every((value) => !value);
+    const items = isBrowse
+      ? (await getGuestPicks("en")).items.slice(0, query.limit)
+      : (await cachedPublicSearch(query, "en", { syndicatedOnly: true })).items;
     // Second guard: the same rule on every returned job.
     const jobs = items.filter(canSyndicateJob).map(jobCard);
+    if (jobs.length === 0) {
+      return outcome({
+        jobs,
+        message: NO_JOBS_MESSAGE,
+        catalog: siteLink("/jobs"),
+      });
+    }
     return outcome({ jobs, catalog: siteLink("/jobs") });
   },
 };
@@ -106,7 +130,7 @@ export const getJobFace: McpFace<{ id: string }> = {
   title: "Read a job",
   description: `Read one open job with its description. Apply on the site through url. A job whose source does not allow sharing is not shown: only its page link. ${UNTRUSTED_NOTE}`,
   async run(input) {
-    const job = await getJobForPublic(input.id, { locale: "en" });
+    const job = await cachedJobForPublic(input.id, "en");
     if (!job) return outcome({ available: false, reason: "not_found" });
     // D484: a closed source stays closed even by id. No title, no text.
     if (!canSyndicateJob(job)) {
