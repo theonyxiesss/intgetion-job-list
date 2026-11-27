@@ -122,6 +122,7 @@
 
 - Расход Supabase по потокам: гостевая подборка, каталог, страницы вакансий, рекомендации, MCP, каждая фоновая задача.
 - Источники: `pg_stat_statements` (вызовы и строки по запросам) и дневной график Egress в Supabase Usage; для Vercel — Usage и Firewall Traffic.
+- Процедура: `pnpm egress:report --save before.json` до выкладки (топ-20 запросов по `rows` с метками потоков: `job-page`, `catalog`, `company`, `live-state`, `import`, `matching`, `other`); через 24 часа `pnpm egress:report --diff before.json` показывает приращение за сутки по потокам. Рядом смотреть дневной график Egress в Supabase Usage. Критерий успеха — около 150 МБ в день. Команда читает `DATABASE_MIGRATION_URL` и только выбирает из `extensions.pg_stat_statements`.
 - Ежедневная сводка (трафик за сутки и крупнейшие запросы) в Telegram владельцу. *Решение исполнителя.*
 - Решения о блокировке остальных ботов и о тарифе Pro — по измерениям после внедрения.
 
