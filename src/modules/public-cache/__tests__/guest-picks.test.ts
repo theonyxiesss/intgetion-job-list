@@ -19,12 +19,6 @@ vi.mock("../live-state", async (importOriginal) => {
   return {
     ...actual,
     readLiveStates,
-    filterLive: async <T extends { id: string }>(items: T[]) => {
-      const states = await readLiveStates(items.map((item) => item.id));
-      return items.filter((item) =>
-        actual.isLive(states.get(item.id), new Date()),
-      );
-    },
   };
 });
 
@@ -40,14 +34,21 @@ describe("getGuestPicks", () => {
     searchJobs.mockResolvedValue({ items: [{ id: "a" }, { id: "b" }] });
     readLiveStates.mockResolvedValue(
       new Map([
-        ["p1", { status: "published", expiresAt: null }],
-        ["a", { status: "closed", expiresAt: null }],
-        ["b", { status: "published", expiresAt: null }],
+        [
+          "p1",
+          { status: "published", expiresAt: null, companyStatus: "verified" },
+        ],
+        ["a", { status: "closed", expiresAt: null, companyStatus: "verified" }],
+        [
+          "b",
+          { status: "published", expiresAt: null, companyStatus: "verified" },
+        ],
       ]),
     );
     const picks = await getGuestPicks("en");
     expect(picks.items.map((j) => j.id)).toEqual(["b"]);
     expect(picks.promoted.map((j) => j.id)).toEqual(["p1"]);
+    expect(readLiveStates).toHaveBeenCalledTimes(1);
     expect(searchJobs).toHaveBeenCalledWith(
       { limit: 50, minOverlap: 3, sort: "newest" },
       "en",

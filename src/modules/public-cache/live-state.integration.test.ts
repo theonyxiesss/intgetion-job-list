@@ -10,6 +10,8 @@ const liveId = randomUUID();
 const closedId = randomUUID();
 const expiredId = randomUUID();
 const missingId = randomUUID();
+const suspendedCompanyId = randomUUID();
+const suspendedCompanyJobId = randomUUID();
 const description =
   "Integration test role description long enough for all schema constraints.";
 
@@ -30,28 +32,37 @@ beforeAll(async () => {
   await db.execute(
     sql`insert into public.companies(id,name,slug,status,created_by) values (${companyId},'Live State Test',${`live-state-${companyId.slice(0, 8)}`},'verified',${userId})`,
   );
+  await db.execute(
+    sql`insert into public.companies(id,name,slug,status,created_by) values (${suspendedCompanyId},'Live State Suspended',${`live-state-${suspendedCompanyId.slice(0, 8)}`},'suspended',${userId})`,
+  );
   await db.execute(sql`insert into public.jobs(id,company_id,title,description,category,work_format,employment_type,application_method,status,published_at,expires_at) values
     (${liveId},${companyId},'Live state live',${description},'engineering','remote','full_time','internal','published',now(),now()+interval '30 days'),
     (${closedId},${companyId},'Live state closed',${description},'engineering','remote','full_time','internal','closed',now(),now()+interval '30 days'),
-    (${expiredId},${companyId},'Live state expired',${description},'engineering','remote','full_time','internal','published',now()-interval '2 days',now()-interval '1 day')`);
+    (${expiredId},${companyId},'Live state expired',${description},'engineering','remote','full_time','internal','published',now()-interval '2 days',now()-interval '1 day'),
+    (${suspendedCompanyJobId},${suspendedCompanyId},'Live state suspended company',${description},'engineering','remote','full_time','internal','published',now(),now()+interval '30 days')`);
 });
 
 afterAll(async () => {
   await getDb().execute(
-    sql`delete from public.companies where id=${companyId}`,
+    sql`delete from public.companies where id in (${companyId},${suspendedCompanyId})`,
   );
   await getDb().execute(sql`delete from public.users where id=${userId}`);
 });
 
 describe("live state database integration", () => {
-  it("keeps only the live job, in order, dropping closed, expired and missing", async () => {
+  it("keeps only the live job, in order, dropping closed, expired, missing and suspended-company jobs", async () => {
     const items = [
       { id: liveId },
       { id: closedId },
       { id: expiredId },
       { id: missingId },
+      { id: suspendedCompanyJobId },
     ];
     expect(await filterLive(items)).toEqual([{ id: liveId }]);
+  });
+
+  it("ignores non-uuid ids without throwing", async () => {
+    expect((await readLiveStates(["foo"])).size).toBe(0);
   });
 
   it("returns an empty map for an empty id list", async () => {

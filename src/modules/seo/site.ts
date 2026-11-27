@@ -89,7 +89,7 @@ export const BLOCKED_CRAWLERS = [
 ] as const;
 
 /**
- * Обучающие краулеры; поисковые боты для ответов людям идут под общим правилом.
+ * Training crawlers; answer/search bots fall under the general rule.
  * Refused by the founder's decision (D218); Google-Extended does not affect Google Search.
  */
 export const AI_CRAWLERS = [

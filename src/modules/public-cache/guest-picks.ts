@@ -5,7 +5,7 @@ import {
   GUEST_PICKS_REVALIDATE_S,
   GUEST_PICKS_SIZE,
 } from "./config";
-import { filterLive } from "./live-state";
+import { isLive, readLiveStates } from "./live-state";
 import type { SearchResult } from "./cached-reads";
 
 export type FeedJob = SearchResult["items"][number];
@@ -26,14 +26,20 @@ export async function getGuestPicks(
         locale,
         { hidden: null },
       );
-      return { promoted: promoted as FeedJob[], items: result.items };
+      return { promoted, items: result.items };
     },
     ["guest-picks", CACHE_KEY_VERSION, locale],
     { revalidate: GUEST_PICKS_REVALIDATE_S, tags: ["guest-picks"] },
   )();
-  const [promoted, items] = await Promise.all([
-    filterLive(snapshot.promoted),
-    filterLive(snapshot.items),
+  // One live-status query over both lists.
+  const states = await readLiveStates([
+    ...snapshot.promoted.map((job) => job.id),
+    ...snapshot.items.map((job) => job.id),
   ]);
-  return { promoted, items };
+  const now = new Date();
+  const live = (job: FeedJob) => isLive(states.get(job.id), now);
+  return {
+    promoted: snapshot.promoted.filter(live),
+    items: snapshot.items.filter(live),
+  };
 }

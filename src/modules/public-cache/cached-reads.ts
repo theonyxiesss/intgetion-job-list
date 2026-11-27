@@ -12,7 +12,14 @@ import {
   COMPANY_REVALIDATE_S,
   JOB_PAGE_REVALIDATE_S,
 } from "./config";
-import { filterLive, isLive, readLiveStates } from "./live-state";
+import {
+  filterLive,
+  isCompanyStatusVisible,
+  isJobId,
+  isLive,
+  readLiveCompanyStatus,
+  readLiveStates,
+} from "./live-state";
 
 export type PublicJob = NonNullable<
   Awaited<ReturnType<typeof getJobForPublic>>
@@ -43,6 +50,7 @@ export async function cachedJobForPublic(
   id: string,
   locale: string,
 ): Promise<PublicJob | null> {
+  if (!isJobId(id)) return null;
   const states = await readLiveStates([id]);
   if (!isLive(states.get(id), new Date())) return null;
   const cached = await unstable_cache(
@@ -75,10 +83,15 @@ export async function cachedPublicSearch(
         ],
         { revalidate: CATALOG_SEARCH_REVALIDATE_S, tags: ["catalog"] },
       )();
+  // filterLive may return fewer items than `limit` while nextCursor stays as
+  // cached (accepted).
   return { ...result, items: await filterLive(result.items) };
 }
 
-export function cachedVisibleCompany(slug: string) {
+/** Company content is cached; its status is re-read live on every call. */
+export async function cachedVisibleCompany(slug: string) {
+  const status = await readLiveCompanyStatus(slug);
+  if (!isCompanyStatusVisible(status)) return null;
   return unstable_cache(
     () => getVisibleCompany(slug),
     ["public-company", CACHE_KEY_VERSION, slug],
