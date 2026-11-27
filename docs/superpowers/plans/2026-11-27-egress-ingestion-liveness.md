@@ -33,10 +33,12 @@
 ### Задача 1 (intgetion-jobs): лёгкое сохранение импортированной вакансии
 
 **Файлы:**
+
 - Изменить: `src/modules/jobs/service/imported-jobs.ts` (функция `saveImportedJob`, строка ~100)
 - Тест: `src/modules/jobs/__tests__/imported-jobs.test.ts` (или существующий тест `saveImportedJob`), интеграционный рядом
 
 **Интерфейсы:**
+
 - Даёт: `saveImportedJob(input: ImportedJobWrite): Promise<{ id: string; status: JobStatus }>` (сужение возвращаемого типа, как в платформе после PR #58); `expireImportedJobs(jobIds: string[], reason?: string)` — без изменений.
 
 Поведение — как в коммите платформы `897a4330` (PR #58): прежняя строка читается без `description` и `fts` (описание сравнивается по `md5`); если содержимое, статус и набор навыков не изменились — запись не выполняется; `returning` только `id` и `status`. Переносится сюда как владельцу логики; копия платформы остаётся до подключения модуля.
@@ -50,12 +52,14 @@
 ### Задача 2 (intgetion-ingestion): хранение результата проверки
 
 **Файлы:**
+
 - Создать: `migrations/0002_source_checks.sql`
 - Изменить: `src/db/owned.ts:33` (`jobSources`), `package.json` (`@intgetion/jobs` → `#v0.1.3`)
 - Удалить: локальную ветку `fix/skip-fresh-known-jobs` (заменена Задачей 1)
 - Тест: `src/modules/ingestion/source-checks.integration.test.ts`
 
 **Интерфейсы:**
+
 - Даёт колонки `job_sources`: `last_checked_at timestamptz null`, `last_check_result text null check (last_check_result in ('live','closed','unknown'))`, `last_check_note text null` (код ответа или причина, до 200 символов); индекс `job_sources_check_due_idx on (last_checked_at nulls first)`. В Drizzle: `lastCheckedAt`, `lastCheckResult`, `lastCheckNote`.
 - Тип: `type CheckResult = "live" | "closed" | "unknown"` в `src/modules/ingestion/service/liveness-rules.ts`.
 
@@ -68,11 +72,13 @@
 ### Задача 3 (intgetion-ingestion): ежедневная проверка «полных» источников
 
 **Файлы:**
+
 - Создать: `src/modules/ingestion/service/full-source-check.ts`
 - Изменить: `src/modules/ingestion/repo/import-repo.ts` (новая функция записи результата), `src/modules/ingestion/service/index.ts` (экспорт)
 - Тест: `src/modules/ingestion/__tests__/full-source-check.test.ts`
 
 **Интерфейсы:**
+
 - Потребляет: `LIVE_SOURCES` (`ingest-fixtures.ts:38`), существующие `touchSourceRows`, `findLinkedJobIds`, `sourceRowsNotSeenSince`/логику `expireMissing` (`ingest-fixtures.ts:388`), `expireImportedJobs` из `../../../platform`.
 - Даёт:
   - `markChecked(sourceId: string, externalIds: readonly string[], result: CheckResult, note: string | null, at: Date): Promise<void>` в `import-repo.ts`.
@@ -92,11 +98,13 @@
 ### Задача 4 (intgetion-ingestion): обход по ссылкам для «оконных» источников
 
 **Файлы:**
+
 - Создать: `src/modules/ingestion/service/liveness-rules.ts`, `src/modules/ingestion/service/liveness-sweep.ts`
 - Изменить: `src/modules/ingestion/repo/import-repo.ts` (выборка очереди), `src/modules/ingestion/service/index.ts`
 - Тест: `src/modules/ingestion/__tests__/liveness-rules.test.ts`, `src/modules/ingestion/__tests__/liveness-sweep.test.ts`
 
 **Интерфейсы:**
+
 - Даёт (`liveness-rules.ts`):
   - `classifyProbe(input: { requestedUrl: string; finalUrl: string | null; status: number | null; error: string | null }): { result: CheckResult; note: string }` — `404`/`410` → `closed`; `200–299` на том же хосте, что `requestedUrl` → `live`; `2xx` на другом хосте → `unknown` (`redirect_other_host`); всё остальное, `status === null`, `error !== null` → `unknown` с кодом/ошибкой в `note`.
   - Константы: `PROBE_TIMEOUT_MS = 10_000`, `PER_HOST_CONCURRENCY = 2`, `SWEEP_BATCH = 150`, `SWEEP_BUDGET_MS = 200_000`, `PROBE_USER_AGENT = "IntgetionLinkCheck/1.0 (+https://intgetion.com)"`.

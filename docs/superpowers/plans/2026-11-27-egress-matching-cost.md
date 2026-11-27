@@ -29,10 +29,12 @@
 ### Задача 1: Лёгкие выборки
 
 **Файлы:**
+
 - Изменить: `src/modules/matching/repo/matching-repo.ts:381-400` (`readJobs`), `:509-527` (`readStoredMatches`)
 - Тест: `src/modules/matching/__tests__/` (существующие тесты оценки) и `matching-repo.integration.test.ts`
 
 **Интерфейсы:**
+
 - `readJobs(jobIds, desiredTitles)` — тот же тип результата `JobWithSimilarity[]`; список колонок — как в платформе после PR #58 (`src/modules/matching/repo/matching-repo.ts` коммита `897a4330`: id, companyId, title, category, sectors, seniority, status, workFormat, employmentType, experienceMin/Max, locationCountry, countryRestrictions, timezoneRequired, workHoursStart/End, minOverlapHours, salaryMin/Max, salaryCurrency, salaryPeriod, salaryBasis). Тип `JobForScoring` сузить до этих полей; компилятор покажет, если оценка использует что-то ещё — тогда добавить именно это поле.
 - `readStoredMatches(userId)` — тот же `StoredMatchRow[]`; вместо `breakdown` целиком читать `lowData: sql<boolean>\`coalesce((${matchingResults.breakdown}->>'lowData')::boolean, false)\``.
 
@@ -45,10 +47,12 @@
 ### Задача 2: Счётчики стоимости
 
 **Файлы:**
+
 - Изменить: `src/modules/matching/service/compute.ts` (`computeMatches` ~101, `computeMatchesForJob` ~150)
 - Тест: `src/modules/matching/__tests__/compute.test.ts`
 
 **Интерфейсы:**
+
 - `computeMatches(userId, opts)` возвращает дополнительно `stats: { prefiltered: number; jobsRead: number; written: number; ms: number }` (если сейчас возвращает массив — обернуть в `{ results, stats }` и обновить вызов в `getMatches`).
 - `computeMatchesForJob(jobId)` возвращает `{ considered, written, ms }` (сейчас `{ considered, written }`).
 - Одна строка лога на вызов через логгер модуля: `matching.compute user=<id> prefiltered=… jobsRead=… written=… ms=…` (без личных данных, только id).
@@ -62,10 +66,12 @@
 ### Задача 3: Пересчёт по поводу, а не по таймеру
 
 **Файлы:**
+
 - Изменить: `src/modules/matching/service/cache-rules.ts:7` (`CACHE_MAX_AGE_MS`), функция `isCacheFresh`
 - Тест: `src/modules/matching/__tests__/cache-rules.test.ts`, `feed.integration.test.ts` (или существующий тест ленты)
 
 **Интерфейсы:**
+
 - `CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000`.
 - `isCacheFresh` — логика без изменений, кроме срока. Пустой набор результатов по-прежнему считается несвежим (хранить маркер пустого расчёта без миграции негде); в README отметить это как известную стоимость для пользователей без подходящих вакансий — решение о миграции за владельцем.
 
