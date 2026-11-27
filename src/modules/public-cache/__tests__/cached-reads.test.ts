@@ -65,6 +65,21 @@ describe("cachedJobForPublic", () => {
       new Map([["j1", { status: "closed", expiresAt: null }]]),
     );
     expect(await cachedJobForPublic("j1", "en")).toBeNull();
+    expect(getJobForPublic).not.toHaveBeenCalled();
+  });
+
+  it("reads uncached when the cached content is null but the job is live", async () => {
+    getJobForPublic
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({ id: "j1", title: "Role" });
+    readLiveStates.mockResolvedValue(
+      new Map([["j1", { status: "published", expiresAt: null }]]),
+    );
+    expect(await cachedJobForPublic("j1", "en")).toEqual({
+      id: "j1",
+      title: "Role",
+    });
+    expect(getJobForPublic).toHaveBeenCalledTimes(2);
   });
 
   it("returns the job when it is live", async () => {

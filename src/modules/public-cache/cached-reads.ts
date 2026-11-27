@@ -43,14 +43,16 @@ export async function cachedJobForPublic(
   id: string,
   locale: string,
 ): Promise<PublicJob | null> {
-  const job = await unstable_cache(
+  const states = await readLiveStates([id]);
+  if (!isLive(states.get(id), new Date())) return null;
+  const cached = await unstable_cache(
     () => getJobForPublic(id, { locale }),
     ["public-job", CACHE_KEY_VERSION, id, locale],
     { revalidate: JOB_PAGE_REVALIDATE_S, tags: [`job:${id}`] },
   )();
-  if (!job) return null;
-  const states = await readLiveStates([id]);
-  return isLive(states.get(id), new Date()) ? job : null;
+  // A cached null (job seen before it was published) must not outlive its live
+  // status: fall back to an uncached read.
+  return cached ?? (await getJobForPublic(id, { locale }));
 }
 
 /** Guest search (no viewer data). Cursor pages bypass the cache. */
