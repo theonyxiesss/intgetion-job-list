@@ -65,4 +65,22 @@ describe("getGuestPicks", () => {
       items: [],
     });
   });
+
+  it("rebuilds instead of serving an empty cached snapshot", async () => {
+    listPromotedJobs.mockResolvedValue([]);
+    searchJobs
+      .mockResolvedValueOnce({ items: [] })
+      .mockResolvedValueOnce({ items: [{ id: "new" }] });
+    readLiveStates.mockResolvedValue(
+      new Map([
+        [
+          "new",
+          { status: "published", expiresAt: null, companyStatus: "verified" },
+        ],
+      ]),
+    );
+    const picks = await getGuestPicks("en");
+    expect(picks.items.map((j) => j.id)).toEqual(["new"]);
+    expect(searchJobs).toHaveBeenCalledTimes(2);
+  });
 });
