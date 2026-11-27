@@ -8,7 +8,10 @@ import { LinkTabs } from "@/components/ui/tabs";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getHiddenSetsForViewer } from "@/modules/feedback/service";
-import { listPublishedJobsForCompany } from "@/modules/jobs/service";
+import {
+  getVisibleCompany,
+  listPublishedJobsForCompany,
+} from "@/modules/jobs/service";
 import {
   cachedCompanyJobs,
   cachedVisibleCompany,
@@ -64,8 +67,6 @@ export default async function CompanyPage({
   setRequestLocale(locale);
   const t = await getTranslations("companyPage");
   const seo = await getTranslations("seo");
-  const company = await cachedVisibleCompany(slug);
-  if (!company) notFound();
   let viewer: Parameters<typeof listPublishedJobsForCompany>[2] = {
     hidden: null,
   };
@@ -80,6 +81,13 @@ export default async function CompanyPage({
   } catch {
     // No request scope (prerender) → guest view.
   }
+  // Guests read the shared snapshot; signed-in viewers stay on the live read
+  // so a suspended or unverified company disappears for them at once.
+  const company =
+    viewer.hidden === null
+      ? await cachedVisibleCompany(slug)
+      : await getVisibleCompany(slug);
+  if (!company) notFound();
   // Guests share the cached list; signed-in viewers keep the uncached path
   // with their hidden jobs removed.
   const [jobs, following] = await Promise.all([
