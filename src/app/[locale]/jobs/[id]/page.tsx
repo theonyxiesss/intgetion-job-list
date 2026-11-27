@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -37,6 +38,11 @@ import { RichText } from "@/components/ui/rich-text";
 
 export const dynamic = "force-dynamic";
 
+/** Metadata and page share one database read per request (DB egress). */
+const loadJob = cache((id: string, locale: string) =>
+  getJobForPublic(id, { locale }),
+);
+
 /** Title, description, canonical and share card for search (D211). */
 export async function generateMetadata({
   params,
@@ -44,7 +50,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; id: string }>;
 }): Promise<Metadata> {
   const { locale, id } = await params;
-  const job = await getJobForPublic(id, { locale });
+  const job = await loadJob(id, locale);
   if (!job) return {};
   const title = `${job.title} — ${job.company.name}`;
   const description = metaDescription(
@@ -73,7 +79,7 @@ export default async function JobPage({
   const seo = await getTranslations("seo");
   const actions = await getTranslations("jobActions");
   const categories = await getTranslations("categories");
-  const job = await getJobForPublic(id, { locale });
+  const job = await loadJob(id, locale);
   if (!job) notFound();
   let promoted = false;
   try {

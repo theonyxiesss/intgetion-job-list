@@ -1,4 +1,12 @@
-import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
+import {
+  and,
+  desc,
+  eq,
+  getTableColumns,
+  gte,
+  inArray,
+  sql,
+} from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   companies,
@@ -12,6 +20,13 @@ import {
 } from "@/db/schema";
 
 /** Published jobs and the companies that have at least one (homepage telemetry). */
+/**
+ * Every job column except the fts vector: it is only searched in SQL, never
+ * shown, and was a large share of each row sent to the app (DB egress).
+ */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const { fts: _fts, ...publicJobColumns } = getTableColumns(jobs);
+
 export async function countPublicCatalog() {
   const db = getDb();
   const [jobsRow] = await db
@@ -193,7 +208,7 @@ export async function searchPublicJobs(query: {
         : desc(jobs.publishedAt);
   const rows = await getDb()
     .select({
-      job: jobs,
+      job: publicJobColumns,
       company: companies,
       sourceName: importSources.name,
       sourceUrl: jobSources.sourceUrl,
@@ -218,7 +233,7 @@ export async function searchPublicJobs(query: {
 export async function getPublicJobById(id: string) {
   const [row] = await getDb()
     .select({
-      job: jobs,
+      job: publicJobColumns,
       company: companies,
       sourceName: importSources.name,
       sourceUrl: jobSources.sourceUrl,
@@ -269,7 +284,7 @@ export async function getJobRequirements(ids: string[]) {
 export async function listCompanyPublicJobs(companyId: string, limit = 20) {
   return getDb()
     .select({
-      job: jobs,
+      job: publicJobColumns,
       company: companies,
       sourceName: importSources.name,
       sourceUrl: jobSources.sourceUrl,
@@ -312,7 +327,7 @@ export async function listPublicJobsByIds(ids: string[]) {
   if (ids.length === 0) return [];
   return getDb()
     .select({
-      job: jobs,
+      job: publicJobColumns,
       company: companies,
       sourceName: importSources.name,
       sourceUrl: jobSources.sourceUrl,
