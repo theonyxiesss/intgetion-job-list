@@ -11,6 +11,32 @@ describe("robots.txt against scrapers (D218)", () => {
     expect(blocked?.userAgent).toEqual([...BLOCKED_CRAWLERS, ...AI_CRAWLERS]);
   });
 
+  it("blocks training crawlers and keeps answer/search bots allowed", () => {
+    const blocked = list.find((rule) => rule.disallow === "/")?.userAgent;
+    for (const bot of [
+      "Reflectionbot",
+      "meta-externalagent",
+      "Applebot-Extended",
+      "GPTBot",
+      "ClaudeBot",
+      "CCBot",
+      "Google-Extended",
+    ]) {
+      expect(blocked).toContain(bot);
+    }
+    for (const bot of [
+      "Claude-SearchBot",
+      "OAI-SearchBot",
+      "PerplexityBot",
+      "Applebot",
+      "Meta-WebIndexer",
+      "Googlebot",
+      "Bingbot",
+    ]) {
+      expect(blocked).not.toContain(bot);
+    }
+  });
+
   it("never blocks search engines", () => {
     const agents = list.flatMap((rule) =>
       Array.isArray(rule.userAgent) ? rule.userAgent : [rule.userAgent],

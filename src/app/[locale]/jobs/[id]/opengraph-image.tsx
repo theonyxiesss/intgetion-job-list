@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getTranslations } from "next-intl/server";
 import { formatMoneyDto } from "@/lib/money";
-import { getJobForPublic } from "@/modules/jobs/service";
+import { cachedJobForPublic } from "@/modules/public-cache";
 import {
   OG_COLORS,
   OG_CONTENT_TYPE,
@@ -25,7 +25,7 @@ export default async function Image({
   params: Promise<{ locale: string; id: string }>;
 }) {
   const { locale, id } = await params;
-  const job = await getJobForPublic(id, { locale });
+  const job = await cachedJobForPublic(id, locale);
   const t = await getTranslations({ locale, namespace: "jobs" });
   const money = intlLocale(locale);
   const card = job

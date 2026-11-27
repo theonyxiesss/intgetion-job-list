@@ -9,9 +9,13 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/modules/auth/service";
 import { getHiddenSetsForViewer } from "@/modules/feedback/service";
 import {
-  listPublishedJobsForCompany,
   getVisibleCompany,
+  listPublishedJobsForCompany,
 } from "@/modules/jobs/service";
+import {
+  cachedCompanyJobs,
+  cachedVisibleCompany,
+} from "@/modules/public-cache";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
 import { isFollowing } from "@/modules/follows/service";
 import { FollowButton } from "@/modules/follows/ui/follow-button";
@@ -35,7 +39,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
-  const company = await getVisibleCompany(slug);
+  const company = await cachedVisibleCompany(slug);
   if (!company) return {};
   const description = company.description
     ? metaDescription(company.description)
@@ -63,8 +67,6 @@ export default async function CompanyPage({
   setRequestLocale(locale);
   const t = await getTranslations("companyPage");
   const seo = await getTranslations("seo");
-  const company = await getVisibleCompany(slug);
-  if (!company) notFound();
   let viewer: Parameters<typeof listPublishedJobsForCompany>[2] = {
     hidden: null,
   };
@@ -79,8 +81,19 @@ export default async function CompanyPage({
   } catch {
     // No request scope (prerender) → guest view.
   }
+  // Guests read the shared snapshot; signed-in viewers stay on the live read
+  // so a suspended or unverified company disappears for them at once.
+  const company =
+    viewer.hidden === null
+      ? await cachedVisibleCompany(slug)
+      : await getVisibleCompany(slug);
+  if (!company) notFound();
+  // Guests share the cached list; signed-in viewers keep the uncached path
+  // with their hidden jobs removed.
   const [jobs, following] = await Promise.all([
-    listPublishedJobsForCompany(company.id, locale, viewer),
+    viewer.hidden === null
+      ? cachedCompanyJobs(company.id, locale)
+      : listPublishedJobsForCompany(company.id, locale, viewer),
     viewerId ? isFollowing(viewerId, company.id) : false,
   ]);
   const jobsTab = tab === "jobs";

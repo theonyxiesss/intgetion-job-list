@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { formatMoneyDto } from "@/lib/money";
@@ -14,7 +15,7 @@ import { isJobSavedForUser } from "@/modules/feedback/service";
 import { ExternalApplyLink } from "@/modules/feedback/ui/external-apply-link";
 import { JobFeedbackActions } from "@/modules/feedback/ui/job-feedback-actions";
 import { promotedHireJobIds } from "@/modules/billing/service";
-import { getJobForPublic } from "@/modules/jobs/service";
+import { cachedJobForPublic } from "@/modules/public-cache";
 import { WhyItFits } from "@/modules/matching/ui/why-it-fits";
 import { jobPostingJsonLd } from "@/modules/seo/job-posting";
 import { JsonLd } from "@/modules/seo/json-ld";
@@ -37,6 +38,15 @@ import { RichText } from "@/components/ui/rich-text";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * One cached read per request, shared by generateMetadata and the page. The
+ * cached read returns null for a job that is not live; the page then answers
+ * 404 (it never passes a viewer, so owners get no draft preview here).
+ */
+const readJob = cache((id: string, locale: string) =>
+  cachedJobForPublic(id, locale),
+);
+
 /** Title, description, canonical and share card for search (D211). */
 export async function generateMetadata({
   params,
@@ -44,7 +54,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; id: string }>;
 }): Promise<Metadata> {
   const { locale, id } = await params;
-  const job = await getJobForPublic(id, { locale });
+  const job = await readJob(id, locale);
   if (!job) return {};
   const title = `${job.title} — ${job.company.name}`;
   const description = metaDescription(
@@ -73,7 +83,7 @@ export default async function JobPage({
   const seo = await getTranslations("seo");
   const actions = await getTranslations("jobActions");
   const categories = await getTranslations("categories");
-  const job = await getJobForPublic(id, { locale });
+  const job = await readJob(id, locale);
   if (!job) notFound();
   let promoted = false;
   try {
