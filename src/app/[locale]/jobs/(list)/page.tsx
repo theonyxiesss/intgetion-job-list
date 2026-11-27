@@ -26,6 +26,7 @@ import {
   listSearchSkillOptions,
   searchJobs,
 } from "@/modules/jobs/service";
+import { cachedPublicSearch, getGuestPicks } from "@/modules/public-cache";
 import { FilterShell } from "@/modules/jobs/ui/filter-shell";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
 import { QuickFilters } from "@/modules/jobs/ui/quick-filters";
@@ -169,13 +170,19 @@ export default async function JobsPage({
     // No session → guest view.
   }
   const showPromoted = activeCount(raw) === 0 && !text(raw, "cursor");
-  const promoted = showPromoted ? await listPromotedJobs(locale, viewer) : [];
+  // Guests share the cached reads; signed-in viewers keep their own
+  // uncached path (hidden jobs are personal data).
+  const isGuest = viewer.hidden === null;
+  const searchQuery = parsed.success ? parsed.data : jobSearchQuery.parse({});
+  const promoted = !showPromoted
+    ? []
+    : isGuest
+      ? (await getGuestPicks(locale)).promoted
+      : await listPromotedJobs(locale, viewer);
   const promotedIds = new Set(promoted.map((job) => job.id));
-  const result = await searchJobs(
-    parsed.success ? parsed.data : jobSearchQuery.parse({}),
-    locale,
-    viewer,
-  );
+  const result = isGuest
+    ? await cachedPublicSearch(searchQuery, locale)
+    : await searchJobs(searchQuery, locale, viewer);
   const skillOptions = await listSearchSkillOptions(locale);
   const nextParams = new URLSearchParams();
   for (const [key, value] of Object.entries(raw))

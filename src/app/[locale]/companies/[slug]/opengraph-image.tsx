@@ -1,9 +1,9 @@
 import { ImageResponse } from "next/og";
 import { getTranslations } from "next-intl/server";
 import {
-  getVisibleCompany,
-  listPublishedJobsForCompany,
-} from "@/modules/jobs/service";
+  cachedCompanyJobs,
+  cachedVisibleCompany,
+} from "@/modules/public-cache";
 import {
   OG_COLORS,
   OG_CONTENT_TYPE,
@@ -26,12 +26,9 @@ export default async function Image({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const company = await getVisibleCompany(slug);
+  const company = await cachedVisibleCompany(slug);
   const t = await getTranslations({ locale, namespace: "companyPage" });
-  // One query after the other on one pooled connection (D247).
-  const jobs = company
-    ? await listPublishedJobsForCompany(company.id, locale)
-    : [];
+  const jobs = company ? await cachedCompanyJobs(company.id, locale) : [];
   const card = company
     ? ogCompanyCard({
         name: company.name,

@@ -10,7 +10,7 @@ import { LandingCta } from "@/components/home/landing";
 import { buttonClass } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { navForward } from "@/components/ui/page-transition";
-import { listPromotedJobs, searchJobs } from "@/modules/jobs/service";
+import { getGuestPicks, type FeedJob } from "@/modules/public-cache";
 import { PublicJobCard } from "@/modules/jobs/ui/public-job-card";
 import { JsonLd } from "@/modules/seo/json-ld";
 import { faqPageJsonLd, homeGraphJsonLd } from "@/modules/seo/markup";
@@ -25,12 +25,9 @@ import { FileText, Layers3, MapPin, Search } from "lucide-react";
  * job feed of D332): the hero hands a task to Spoki, then a tile for each
  * service, how it works, a few top jobs and the questions.
  */
-const FEED_SIZE = 50;
 const TOP_SIZE = 3;
 const FAQ = ["what", "free", "spoki", "pay", "contacts"] as const;
 const EXAMPLES = ["work", "hire", "ugc", "task"] as const;
-
-type FeedJob = Awaited<ReturnType<typeof searchJobs>>["items"][number];
 
 /** Top: trusted companies with a stated salary first, then the newest. */
 function pickTop(jobs: readonly FeedJob[]): FeedJob[] {
@@ -47,13 +44,9 @@ function pickTop(jobs: readonly FeedJob[]): FeedJob[] {
 async function JobFeed({ locale }: { locale: string }) {
   const t = await getTranslations("home");
   const jobsT = await getTranslations("jobs");
-  const promoted = await listPromotedJobs(locale);
+  const { promoted, items } = await getGuestPicks(locale);
   const promotedIds = new Set(promoted.map((job) => job.id));
-  const result = await searchJobs(
-    { limit: FEED_SIZE, minOverlap: 3, sort: "newest" },
-    locale,
-  );
-  const top = pickTop(result.items.filter((job) => !promotedIds.has(job.id)));
+  const top = pickTop(items.filter((job) => !promotedIds.has(job.id)));
   if (top.length === 0 && promoted.length === 0) return null;
   return (
     <section
