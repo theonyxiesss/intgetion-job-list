@@ -5,7 +5,7 @@ import {
   hasCandidateProfile,
 } from "@/modules/candidates/service";
 import { getCompaniesForUser } from "@/modules/companies/service";
-import { getOwnContacts } from "@/modules/contacts/service";
+import { getOwnContacts } from "@intgetion/contacts";
 import { lookupLoginEmail } from "@/modules/notifications/service";
 import * as repo from "../repo/freelance-repo";
 import { transitionInput } from "../schemas";

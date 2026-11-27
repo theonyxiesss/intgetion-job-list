@@ -11,7 +11,7 @@ import {
   contactsInput,
   getOwnContacts,
   saveContacts,
-} from "@/modules/contacts/service";
+} from "@intgetion/contacts";
 
 export async function GET() {
   try {
@@ -33,7 +33,12 @@ export async function PUT(request: Request) {
     if (!profile) throw notFound();
     const { score } = scoreStoredProfile(profile, input.email);
     const saved = await getDb().transaction(async (tx) => {
-      const row = await saveContacts(user.id, input, tx);
+      // Same drizzle-orm; the module's transaction type has no platform schema.
+      const row = await saveContacts(
+        user.id,
+        input,
+        tx as unknown as Parameters<typeof saveContacts>[2],
+      );
       await storeCompleteness(user.id, score, tx);
       return row;
     });

@@ -12,7 +12,7 @@ import {
   storeCompleteness,
   updateCandidateInput,
 } from "@/modules/candidates/service";
-import { saveContacts } from "@/modules/contacts/service";
+import { saveContacts } from "@intgetion/contacts";
 import { seedSkills } from "@/modules/taxonomy/service";
 import {
   applyToJob,

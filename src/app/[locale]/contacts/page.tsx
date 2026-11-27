@@ -19,7 +19,7 @@ import {
   listAccessibleContacts,
   readApplicationContacts,
 } from "@/modules/applications/service";
-import type { ContactsDto } from "@/modules/contacts/service";
+import type { ContactsDto } from "@intgetion/contacts";
 import { localePrefix } from "@/i18n/paths";
 
 export default async function ContactsPage({

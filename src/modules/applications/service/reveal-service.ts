@@ -3,7 +3,7 @@ import { recordAudit } from "@/lib/audit";
 import { errorCodes, forbidden, HttpError, notFound } from "@/lib/http";
 import { findMemberRole, listMemberUserIds } from "@/modules/companies/service";
 import { safeNotify } from "@/modules/notifications/service";
-import { getOwnContacts, type ContactsDto } from "@/modules/contacts/service";
+import { getOwnContacts, type ContactsDto } from "@intgetion/contacts";
 import {
   toEmployerApplicationDto,
   type EmployerApplicationDto,
