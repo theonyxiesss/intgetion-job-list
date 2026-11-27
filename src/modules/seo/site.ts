@@ -89,8 +89,8 @@ export const BLOCKED_CRAWLERS = [
 ] as const;
 
 /**
- * Crawlers that collect text for training AI models. Refused by the
- * founder's decision (D218); Google-Extended does not affect Google Search.
+ * Обучающие краулеры; поисковые боты для ответов людям идут под общим правилом.
+ * Refused by the founder's decision (D218); Google-Extended does not affect Google Search.
  */
 export const AI_CRAWLERS = [
   "GPTBot",
@@ -98,6 +98,9 @@ export const AI_CRAWLERS = [
   "anthropic-ai",
   "Google-Extended",
   "CCBot",
+  "Reflectionbot",
+  "meta-externalagent",
+  "Applebot-Extended",
 ] as const;
 
 /**
