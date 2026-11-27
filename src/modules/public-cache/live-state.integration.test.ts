@@ -37,7 +37,9 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await getDb().execute(sql`delete from public.companies where id=${companyId}`);
+  await getDb().execute(
+    sql`delete from public.companies where id=${companyId}`,
+  );
   await getDb().execute(sql`delete from public.users where id=${userId}`);
 });
 
