@@ -23,6 +23,17 @@ vi.mock("@/modules/auth/service", () => ({ getCurrentUser: async () => null }));
 vi.mock("@/modules/billing/service", () => ({
   promotedHireJobIds: async () => [],
 }));
+// next-intl's client navigation imports "next/navigation" in a way Node ESM
+// cannot resolve outside Next; the page only needs Link to render.
+vi.mock("next-intl/navigation", () => ({
+  createNavigation: () => ({
+    Link: ({ children }: { children?: unknown }) => children,
+    redirect: () => undefined,
+    usePathname: () => "/",
+    useRouter: () => ({}),
+    getPathname: () => "/",
+  }),
+}));
 
 import JobPage from "@/app/[locale]/jobs/[id]/page";
 import { getGuestPicks } from "./guest-picks";
