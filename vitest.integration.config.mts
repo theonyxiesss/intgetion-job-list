@@ -6,6 +6,7 @@ export default defineConfig({
     environment: "node",
     include: ["src/**/*.integration.test.ts"],
     fileParallelism: false,
+    setupFiles: ["./src/test/guard-test-db.ts"],
   },
   resolve: {
     alias: {
